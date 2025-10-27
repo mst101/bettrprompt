@@ -1,0 +1,532 @@
+{
+    "steps": [
+        {
+            "id": "5897b68c-68be-4c42-9e7f-b712c6848cd0",
+            "type": "queryDataSource",
+            "displayName": "Get Personality Info",
+            "__editingData": {
+                "left": "177.75px",
+                "top": "-10.75623127729392px"
+            },
+            "queryDataSource": {
+                "query": "Using the following data:\n- taskDescription: {{taskDescription}}\n- personalityType: {{personality.personalityType}}\n- traitPercentages:\n  introExtroversion: {{personality.traitPercentages.introExtroversion}}\n  intuitionSensing: {{personality.traitPercentages.intuitionSensing}}\n  thinkingFeeling: {{personality.traitPercentages.thinkingFeeling}}\n  judgingPerceiving: {{personality.traitPercentages.judgingPerceiving}}\n  assertiveTurbulent: {{personality.traitPercentages.assertiveTurbulent}}\n\nDetermine which parts of this personality type’s profile are most relevant to:\n1. The user’s *approach to problem-solving, communication, and decision-making* in relation to the task.\n2. The *tone, style, and level of detail* that would make clarifying questions feel natural and well-received.\n3. Any *motivators, sensitivities, or potential friction points* that could affect how the Assistant should frame follow-up questions.\n\nSearch for sections that describe a {{{{personality.personalityType}}}}'s:\n- Strengths, weaknesses, and motivations\n- Learning, working, or collaboration styles\n- How this personality handles ambiguity, structure, or deadlines\n- How they respond to guidance or questioning\n- Their interpersonal communication preferences\n- Emotional or cognitive patterns that influence engagement or curiosity\n\nThen, return a concise structured summary with:\n{\n  \"communicationStyle\": \"...\",\n  \"questionToneGuidelines\": \"...\",\n  \"likelyMotivators\": \"...\",\n  \"potentialFrictionPoints\": \"...\",\n  \"relevantQuotesOrSections\": \"...\"\n}\n\nTailor the summary to the given trait percentages: for example, higher introversion = prefer reflection before interaction; higher turbulence = more reassurance and empathy; higher intuition = abstract framing; higher thinking = logic-based appeals; higher feeling = values-based framing.\n",
+                "maxResults": 3,
+                "dataSourceId": "cb4afd8c-c371-4294-aaab-cc03003014d4",
+                "destinationVar": "personalityInfo"
+            },
+            "defaultTransitionId": "cc1df798-c03c-4557-94e3-d3db5d3cd6a5"
+        },
+        {
+            "id": "fcd56407-45d1-466d-8948-ffe1ed37f05e",
+            "type": "userMessage",
+            "displayName": "Select Framework",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "You are a prompt engineering expert familiar with various prompt frameworks. You need to select the most appropriate prompt framework for a user's task.\n\nUser's Personality Type: {{personalityType}}\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\n<personality_info>\n{{personalityInfo}}\n</personality_info>\n\n<frameworks_guide>\n{{promptFrameworks}}\n</frameworks_guide>\n\nAnalyze the task description and personality type, then select the most appropriate framework for structuring clarifying questions about this task. Return your analysis as a JSON object with the following structure:\n{\n  \"selectedFramework\": string, \n  \"frameworkDescription\": string \n}",
+                "modelOverride": {
+                    "model": "amazon-nova-micro-1",
+                    "temperature": 0.5,
+                    "ignorePreamble": false,
+                    "maxResponseTokens": 4000
+                },
+                "destinationVar": "frameworkAnalysis",
+                "structuredOutputType": "json",
+                "structuredOutputExample": "{\n  \"selectedFramework\": \"SMART\",\n  \"frameworkDescription\": \"Specific, Measurable, Achievable, Relevant, Time-bound\"\n}"
+            },
+            "__editingData": {
+                "left": "-85.75px",
+                "top": "252.74376872270608px"
+            },
+            "defaultTransitionId": "4a3dd25c-3ee8-40d9-9015-2580dfc2fa99"
+        },
+        {
+            "id": "4a3dd25c-3ee8-40d9-9015-2580dfc2fa99",
+            "type": "userMessage",
+            "displayName": "Select Role",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "You are an expert in personality psychology and roleplay. You need to determine whether to adopt a complementary role or to amplify the user's personality traits based on their personality type and task.\n\nUser's Personality Type: {{personalityType}}\n\n<trait_percentages>\n{{personality.traitPercentages}}\n</trait_percentages>\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\n<personality_info>\n{{personalityInfo}}\n</personality_info>\n\nBased on this information, decide whether to adopt a complementary role (one that balances or complements the user's traits) or an amplifying role (one that enhances or mirrors the user's traits). For example, for a highly analytical personality working on a creative task, you might adopt a complementary role that brings more emotional and creative energy.\n\nReturn your decision as a JSON object with the following structure:\n{\n  \"adoptedRole\": string, \n  \"roleRationale\": string \n}",
+                "destinationVar": "roleAnalysis",
+                "structuredOutputType": "json",
+                "structuredOutputExample": "{\n  \"adoptedRole\": \"Complementary - Mediator\",\n  \"roleRationale\": \"As a Logician, you benefit from a Mediator's empathetic perspective to balance your analytical approach.\"\n}"
+            },
+            "__editingData": {
+                "left": "177.75px",
+                "top": "252.74376872270608px"
+            },
+            "defaultTransitionId": "e71f1b2a-42c6-48c1-b325-57f6b5496b6f"
+        },
+        {
+            "id": "e71f1b2a-42c6-48c1-b325-57f6b5496b6f",
+            "type": "userMessage",
+            "displayName": "Generate Questions",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "You are a prompt engineering expert who tailors communication based on personality types. Generate a series of clarifying questions to better understand the user's task.\n\nUser's Personality Type: {{personalityType}}\n\n<trait_percentages>\n{{personality.traitPercentages}}\n</trait_percentages>\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\n<personality_info>\n{{personalityInfo}}\n</personality_info>\n\n<selected_framework>\nFramework: {{get frameworkAnalysis \"$.selectedFramework\"}}\nDescription: {{get frameworkAnalysis \"$.frameworkDescription\"}}\n</selected_framework>\n\n<adopted_role>\nRole: {{get roleAnalysis \"$.adoptedRole\"}}\nRationale: {{get roleAnalysis \"$.roleRationale\"}}\n</adopted_role>\n\nCreate 4-6 clarifying questions that will help you understand the user's task better. The questions should:\n1. Follow the structure of the selected framework\n2. Be tailored to the user's personality type and preferences\n3. Reflect the adopted role\n4. Help gather essential information to create an optimized prompt\n\nReturn your questions as a JSON array of strings.",
+                "destinationVar": "clarifyingQuestions",
+                "structuredOutputType": "json",
+                "structuredOutputExample": "[\n  \"What specific features or characteristics must your work-from-home office shed include?\",\n  \"How will you measure the success of your office shed project?\",\n  \"What constraints (budget, space, time) might affect the achievability of your project?\",\n  \"Why is this office shed relevant to your work-from-home needs?\",\n  \"What is your timeline for completing this project?\"\n]"
+            },
+            "__editingData": {
+                "left": "441.25px",
+                "top": "252.74376872270608px"
+            },
+            "defaultTransitionId": "ac762fea-8ccd-46d2-bd30-e5289fd3d0cd"
+        },
+        {
+            "id": "ac762fea-8ccd-46d2-bd30-e5289fd3d0cd",
+            "type": "userMessage",
+            "displayName": "Explain Role",
+            "userMessage": {
+                "mode": "foreground",
+                "source": "system",
+                "message": "# Personality-Tailored Prompt Optimizer\n\nBased on your personality type ({{personalityType}}) and the task you've described, I'll be adopting the following approach:\n\n## My Role: {{get roleAnalysis \"$.adoptedRole\"}}\n\n{{get roleAnalysis \"$.roleRationale\"}}\n\n## Selected Framework: {{get frameworkAnalysis \"$.selectedFramework\"}}\n\n{{get frameworkAnalysis \"$.frameworkDescription\"}}\n\nI'll now ask you some clarifying questions to better understand your task and create an optimized prompt. Let's begin the conversation!\n\n{{ clarifyingQuestions }}"
+            },
+            "__editingData": {
+                "left": "704.75px",
+                "top": "252.74376872270608px"
+            },
+            "defaultTransitionId": "7ec5d419-609f-4cce-b187-86b2261c4e92"
+        },
+        {
+            "id": "7ec5d419-609f-4cce-b187-86b2261c4e92",
+            "chat": {
+                "transition": {
+                    "mode": "controlled",
+                    "historyVariableName": "chatHistory",
+                    "lastMessageVariableName": "finalUserMessage",
+                    "controlledTransitionStepId": "bf695cbb-d223-46fd-89a0-13688f9c45d7",
+                    "controlledTransitionButtonLabel": "Create optimized prompt"
+                },
+                "systemIntroMessage": "I'll be asking you some questions about your task. Feel free to provide as much detail as you'd like in your responses."
+            },
+            "type": "chat",
+            "displayName": "Discussion",
+            "__editingData": {
+                "left": "704.75px",
+                "top": "516.2437687227061px"
+            }
+        },
+        {
+            "id": "bf695cbb-d223-46fd-89a0-13688f9c45d7",
+            "type": "userMessage",
+            "displayName": "Summarize Conversation",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "Analyze the following conversation between a user and an AI assistant. The conversation is about the user's task: {{taskDescription}}.\n\n<conversation>\n{{chatHistory}}\n</conversation>\n\nProvide a concise summary of the key points and insights from this conversation. Focus on information that would be useful for creating an optimized prompt for the task. The summary should be 3-5 sentences.",
+                "destinationVar": "conversationSummary"
+            },
+            "__editingData": {
+                "left": "441.25px",
+                "top": "516.2437687227061px"
+            },
+            "defaultTransitionId": "2babf809-c3ab-4868-920a-e6c2bc8b1070"
+        },
+        {
+            "id": "2babf809-c3ab-4868-920a-e6c2bc8b1070",
+            "type": "userMessage",
+            "displayName": "Suggest Formats",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "Based on the user's task and the conversation, suggest appropriate output formats that would best present the results.\n\nUser's Personality Type: {{personalityType}}\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\n<conversation_summary>\n{{conversationSummary}}\n</conversation_summary>\n\n<personality_info>\n{{personalityInfo}}\n</personality_info>\n\nGenerate a list of 3-7 relevant output formats that would be suitable for presenting results related to this task. Consider both the nature of the task and the user's personality preferences. For example, an analytical personality might prefer structured formats like tables or decision matrices, while a more creative personality might prefer visual formats.\n\nReturn your suggestions as a JSON array of strings, with each string being a descriptive name for an output format.",
+                "destinationVar": "relevantFormats",
+                "structuredOutputType": "json",
+                "structuredOutputExample": "[\n  \"Step-by-step guide\",\n  \"Decision matrix\",\n  \"Pros/cons list\",\n  \"Materials and budget breakdown\",\n  \"Timeline with milestones\",\n  \"Visual blueprint\",\n  \"Checklist\"\n]"
+            },
+            "__editingData": {
+                "left": "177.75px",
+                "top": "516.2437687227061px"
+            },
+            "defaultTransitionId": "e12f05ea-86eb-4e9a-83be-1c84131594fc"
+        },
+        {
+            "id": "e12f05ea-86eb-4e9a-83be-1c84131594fc",
+            "type": "userMessage",
+            "displayName": "Show Format Options",
+            "userMessage": {
+                "mode": "foreground",
+                "source": "system",
+                "message": "Based on your task and our conversation, here are some output formats that would work well for presenting the results:\n\n{{#each relevantFormats}}- {{this}}\n{{/each}}\n\nIn the next step, you'll be able to select your preferred format."
+            },
+            "__editingData": {
+                "left": "-85.75px",
+                "top": "516.2437687227061px"
+            },
+            "defaultTransitionId": "0a1992e0-22d4-4ca6-b2f2-26df079d980f"
+        },
+        {
+            "id": "0a1992e0-22d4-4ca6-b2f2-26df079d980f",
+            "userInput": {
+                "prompts": [
+                    {
+                        "name": "What format would you like the output to be in? (Choose from the list above or suggest another)",
+                        "type": "shortText",
+                        "promptId": "format_prompt",
+                        "required": true,
+                        "shortText": {
+                            "placeholder": "Enter your preferred format"
+                        },
+                        "outputVariable": "preferredFormat"
+                    }
+                ]
+            },
+            "displayName": "Select Format",
+            "__editingData": {
+                "left": "-85.75px",
+                "top": "779.7437687227061px"
+            },
+            "defaultTransitionId": "3aa5b994-5462-435e-ad82-edeacff5d6bb"
+        },
+        {
+            "id": "3aa5b994-5462-435e-ad82-edeacff5d6bb",
+            "type": "userMessage",
+            "displayName": "Create Prompt",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "You are an expert prompt engineer. Create an optimized prompt for the user's task based on all the information gathered.\n\nUser's Personality Type: {{personalityType}}\n\n<trait_percentages>\n{{personality.traitPercentages}}\n</trait_percentages>\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\n<conversation_summary>\n{{conversationSummary}}\n</conversation_summary>\n\n<personality_info>\n{{personalityInfo}}\n</personality_info>\n\n<adopted_role>\n{{get roleAnalysis \"$.adoptedRole\"}}\n{{get roleAnalysis \"$.roleRationale\"}}\n</adopted_role>\n\nCreate a detailed, optimized prompt that incorporates all relevant information from the conversation. The prompt should be tailored to the user's personality type and specific needs. It should be comprehensive enough to generate high-quality results when used with an AI system.",
+                "destinationVar": "optimizedPrompt"
+            },
+            "__editingData": {
+                "left": "177.75px",
+                "top": "779.7437687227061px"
+            },
+            "defaultTransitionId": "4ee6993f-1128-4675-933b-fc2eade8c4c1"
+        },
+        {
+            "id": "4ee6993f-1128-4675-933b-fc2eade8c4c1",
+            "type": "userMessage",
+            "displayName": "Format Results",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "Format the optimized prompt according to the user's preferred format: {{preferredFormat}}\n\n<optimized_prompt>\n{{optimizedPrompt}}\n</optimized_prompt>\n\nUser's Personality Type: {{personalityType}}\n\n<task_description>\n{{taskDescription}}\n</task_description>\n\nCreate a comprehensive output in the user's preferred format. The output should include:\n\n1. A brief introduction explaining how the prompt has been tailored to their personality type\n2. The optimized prompt itself\n3. Any additional notes or suggestions for using the prompt effectively\n4. Instructions for further refinement if needed\n\nFormat everything according to the user's preferred format: {{preferredFormat}}. Use appropriate markdown formatting for headers, lists, tables, etc. to make the output visually appealing and easy to follow.",
+                "destinationVar": "formattedOutput"
+            },
+            "__editingData": {
+                "left": "441.25px",
+                "top": "779.7437687227061px"
+            },
+            "defaultTransitionId": "ce73936b-a51b-4438-bf04-9d85fc72e283"
+        },
+        {
+            "id": "ce73936b-a51b-4438-bf04-9d85fc72e283",
+            "type": "userMessage",
+            "displayName": "Present Output",
+            "userMessage": {
+                "mode": "foreground",
+                "source": "system",
+                "message": "{{formattedOutput}}"
+            },
+            "__editingData": {
+                "left": "704.75px",
+                "top": "779.7437687227061px"
+            },
+            "defaultTransitionId": "8f3de6f6-e6fe-41cf-8b07-8c05877b8112"
+        },
+        {
+            "id": "8f3de6f6-e6fe-41cf-8b07-8c05877b8112",
+            "end": {},
+            "type": "end",
+            "displayName": "End Workflow",
+            "__editingData": {
+                "left": "704.75px",
+                "top": "1043.2437687227061px"
+            }
+        },
+        {
+            "id": "11f400a8-9c07-4177-8d52-f02cf6b03364",
+            "type": "userInput",
+            "userInput": {
+                "prompts": [
+                    {
+                        "promptId": "b4154b8a-e08c-4055-a32d-11e1cb053ac3",
+                        "required": true
+                    }
+                ],
+                "cancelStepId": "0cd5409d-16d5-425c-b240-0a2a94e1a159"
+            },
+            "displayName": "Describe Task",
+            "__editingData": {
+                "left": "441.25px",
+                "top": "-10.75623127729392px"
+            },
+            "defaultTransitionId": "5897b68c-68be-4c42-9e7f-b712c6848cd0"
+        },
+        {
+            "id": "b8d303b3-27c6-4b46-9ad7-70e6714ef72a",
+            "type": "userInput",
+            "userInput": {
+                "prompts": [
+                    {
+                        "promptId": "0f04c57f-2317-4b1a-ac67-332a35c6d7ff",
+                        "required": true
+                    }
+                ]
+            },
+            "displayName": "Select Personality Type",
+            "__editingData": {
+                "left": "177.75px",
+                "top": "-274.2562312772939px"
+            },
+            "defaultTransitionId": "a387756b-0b60-4293-a672-bedb9a817f2b"
+        },
+        {
+            "id": "a387756b-0b60-4293-a672-bedb9a817f2b",
+            "type": "userInput",
+            "userInput": {
+                "prompts": [
+                    {
+                        "promptId": "cf41e2ae-c627-41a4-9db4-0a3907926b85",
+                        "required": false
+                    },
+                    {
+                        "promptId": "aa5832a4-e1d4-4f01-9906-8bc29fde421f",
+                        "required": false
+                    },
+                    {
+                        "promptId": "5a6c2f06-34b5-4b2f-b08d-01867879e9ce",
+                        "required": false
+                    },
+                    {
+                        "promptId": "984caefe-c5a7-4471-8268-c84e553deacc",
+                        "required": false
+                    },
+                    {
+                        "promptId": "f41a8883-acdd-4646-8863-4b7f7cd488cd",
+                        "required": false
+                    }
+                ]
+            },
+            "displayName": "Enter Trait Percentages",
+            "__editingData": {
+                "left": "441.25px",
+                "top": "-274.2562312772939px"
+            },
+            "defaultTransitionId": "a1e223dc-4706-4014-aba2-fabeadc68734"
+        },
+        {
+            "id": "f71cc14b-3eff-401a-bab2-d8df0df76300",
+            "type": "userMessage",
+            "displayName": "Format JSON",
+            "userMessage": {
+                "mode": "background",
+                "source": "user",
+                "message": "Create a JSON object with the following structure:\n\n```\n{\n  \"personalityType\": \"{{personalityName(personalityType)}}\",\n  \"traitPercentages\": {\n    \"introExtroversion\": (use {{introExtroversion}} if provided, otherwise use 65),\n    \"intuitionSensing\": (use {{intuitionSensing}} if provided, otherwise use 65),\n    \"thinkingFeeling\": (use {{thinkingFeeling}} if provided, otherwise use 65),\n    \"judgingPerceiving\": (use {{judgingPerceiving}} if provided, otherwise use 65),\n    \"assertiveTurbulent\": (use {{assertiveTurbulent}} if provided, otherwise use 65)\n  }\n}\n```\n\nRespond only with the valid JSON and no other text.",
+                "modelOverride": {
+                    "model": "amazon-nova-micro-1",
+                    "temperature": 0.5,
+                    "ignorePreamble": false,
+                    "maxResponseTokens": 4000
+                },
+                "destinationVar": "personality",
+                "structuredOutputType": "json",
+                "structuredOutputExample": "{\n  \"personalityType: \"Logician\",\n  \"traitPercentages: {\n    \"introExtroversion\": 65,\n    \"intuitionSensing\": 64,\n    \"thinkingFeeling\": 84,\n    \"judgingPerceiving\": 57,\n    \"assertiveTurbulent\": 84\n  }\n}"
+            },
+            "__editingData": {
+                "left": "704.75px",
+                "top": "-10.75623127729392px"
+            },
+            "defaultTransitionId": "11f400a8-9c07-4177-8d52-f02cf6b03364"
+        },
+        {
+            "id": "a1e223dc-4706-4014-aba2-fabeadc68734",
+            "type": "runFunction",
+            "runFunction": {
+                "functionId": "d1b914be-6324-4164-b3bb-35b9d24db797",
+                "configuration": {},
+                "transitionType": "controlled"
+            },
+            "__editingData": {
+                "left": "704.75px",
+                "top": "-274.2562312772939px"
+            },
+            "defaultTransitionId": "f71cc14b-3eff-401a-bab2-d8df0df76300"
+        },
+        {
+            "id": "cc1df798-c03c-4557-94e3-d3db5d3cd6a5",
+            "type": "userMessage",
+            "displayName": "Prompt Frameworks",
+            "userMessage": {
+                "mode": "background",
+                "source": "system",
+                "message": "# Comprehensive AI Prompt Engineering Framework Guide\n\n## Introduction\n\nThis guide contains detailed information about 57 different AI prompt engineering frameworks to help craft the most effective prompts. Each framework serves specific purposes and use cases, and understanding which to apply depends on the context, goals, and complexity of your task.\n\n## Framework Selection Process\n\nBefore crafting a prompt, I will ask qualifying questions to understand:\n\n1. **Project Context**: What is the overall goal or purpose?\n2. **Output Type**: What format do you need (analysis, content, code, strategy, etc.)?\n3. **Complexity Level**: Is this a simple task or complex problem?\n4. **Audience**: Who is the target audience?\n5. **Constraints**: Are there specific limitations (time, resources, format, length)?\n6. **Iterative Need**: Will this require refinement or is it a one-time output?\n7. **Decision Factors**: Are you evaluating options or generating ideas?\n\n---\n\n## Framework Categories\n\n### 1. STRUCTURED CLARITY FRAMEWORKS\n*For when you need precise, well-organized outputs*\n\n#### **CRISPE Framework** (Clarity, Relevance, Iteration, Specificity, Parameters, Examples)\n- **Best For**: Technical documentation, strategic planning, content creation requiring precision\n- **When to Use**: Tasks needing clear structure with defined boundaries\n- **Strengths**: Comprehensive coverage, flexible, ensures targeted outputs\n- **Weaknesses**: Time-intensive for simple tasks, may limit creativity if over-specified\n- **Components**:\n  - **Clarity**: Define the task unambiguously\n  - **Relevance**: Align with context/audience\n  - **Iteration**: Allow refinement through feedback\n  - **Specificity**: Add precise details\n  - **Parameters**: Set boundaries for output\n  - **Examples**: Provide sample formats\n\n#### **RELIC Framework** (Role, Emphasis, Limitation, Information, Challenge)\n- **Best For**: Content creation, strategic planning, customer interactions\n- **When to Use**: When you need focused, goal-oriented outputs with clear constraints\n- **Strengths**: Clear structure, eliminates ambiguity, highly versatile\n- **Weaknesses**: Learning curve, requires upfront effort\n- **Components**:\n  - **Role**: Define AI's role (advisor, creator, analyst)\n  - **Emphasis**: Highlight priority areas\n  - **Limitation**: Set constraints (word count, scope)\n  - **Information**: Provide necessary context\n  - **Challenge**: State the goal or problem to solve\n\n#### **RTF Framework** (Request, Task, Format)\n- **Best For**: Data retrieval, instructional content, simple clear requests\n- **When to Use**: Straightforward tasks with specific format requirements\n- **Strengths**: Simple, efficient, clear communication\n- **Weaknesses**: Less suitable for complex, exploratory tasks\n- **Components**:\n  - **Request**: State what you want clearly\n  - **Task**: Define what AI should do\n  - **Format**: Specify output structure\n\n---\n\n### 2. ITERATIVE REFINEMENT FRAMEWORKS\n*For when outputs need progressive improvement*\n\n#### **RACEF Framework** (Rephrase, Append, Contextualize, Examples, Follow-Up)\n- **Best For**: Brainstorming, data analysis, iterative problem-solving\n- **When to Use**: Dynamic, exploratory tasks requiring flexibility\n- **Strengths**: Highly flexible, encourages iterative refinement, adaptable\n- **Weaknesses**: Learning curve, time-intensive for simple tasks\n- **Components**:\n  - **Rephrase**: Refine wording for clarity\n  - **Append**: Add details/constraints\n  - **Contextualize**: Provide background information\n  - **Examples**: Include sample inputs/outputs\n  - **Follow-Up**: Enable iterative improvement\n\n#### **Chain of Destiny Framework** (Iterative Refinement)\n- **Best For**: Projects where quality trumps speed, complex ideas\n- **When to Use**: When incremental improvements lead to significant quality gains\n- **Strengths**: Continuous improvement, customized feedback, versatile\n- **Weaknesses**: Time-intensive, depends on quality feedback\n- **Process**:\n  - Start with baseline prompt\n  - Implement feedback loops\n  - Provide specific improvement feedback\n  - Integrate refinements progressively\n\n---\n\n### 3. DECISION-MAKING & PRIORITIZATION FRAMEWORKS\n*For when you need to evaluate options or prioritize*\n\n#### **RICE Framework** (Reach, Impact, Confidence, Effort)\n- **Best For**: Feature prioritization, marketing campaigns, project selection\n- **When to Use**: Need to prioritize multiple options with data-driven approach\n- **Strengths**: Quantitative analysis, clear metrics, time-saving\n- **Weaknesses**: Requires accurate data, effort estimation can be tricky\n- **Formula**: RICE Score = (Reach × Impact × Confidence) / Effort\n- **Components**:\n  - **Reach**: How many people/systems affected\n  - **Impact**: Potential value/improvement\n  - **Confidence**: Certainty of success (data-based)\n  - **Effort**: Resources required (time, money, people)\n\n#### **SMART Framework** (Specific, Measurable, Achievable, Relevant, Time-bound)\n- **Best For**: Goal-setting, project planning, personal development\n- **When to Use**: Setting clear, attainable objectives with defined timelines\n- **Strengths**: Goal-oriented, ensures efficiency, widely recognized\n- **Weaknesses**: Can be rigid, may limit creative exploration\n- **Components**:\n  - **Specific**: Clear, precise goals\n  - **Measurable**: Quantifiable metrics\n  - **Achievable**: Realistic within constraints\n  - **Relevant**: Aligned with objectives\n  - **Time-bound**: Defined deadline\n\n#### **COAST Framework** (Challenge, Objective, Actions, Strategy, Tactics)\n- **Best For**: Project management, strategic planning\n- **When to Use**: Systematically breaking down projects aligned with goals\n- **Strengths**: Comprehensive, strategic alignment\n- **Components**:\n  - **Challenge**: Identify the problem\n  - **Objective**: Define the goal\n  - **Actions**: List required steps\n  - **Strategy**: Outline the approach\n  - **Tactics**: Detail execution methods\n\n---\n\n### 4. ANALYTICAL & PROBLEM-SOLVING FRAMEWORKS\n*For when you need deep analysis or logical reasoning*\n\n#### **Chain of Thought Framework**\n- **Best For**: Mathematical problems, market analysis, scientific explanations\n- **When to Use**: Complex problems requiring step-by-step logical analysis\n- **Strengths**: Enhances reasoning, promotes depth and clarity, adaptable\n- **Weaknesses**: Requires precise prompting, can be time-consuming\n- **Structure**:\n  - **Introduction**: Present the problem clearly\n  - **Breakdown**: Dissect into manageable segments\n  - **Logical Progression**: Follow sequential reasoning\n  - **Conclusion**: Summarize findings\n\n#### **Tree of Thought Framework**\n- **Best For**: Complex problem-solving, scenario planning, brainstorming\n- **When to Use**: Exploring multiple possibilities and interconnected outcomes\n- **Strengths**: Fosters creativity, strategic thinking, iterative refinement\n- **Structure**: Organize prompts into nodes (options), edges (connections), outcomes\n\n#### **FOCUS Framework** (Focus areas for decision-making)\n- **Best For**: AI projects requiring precise goal-setting and prioritization\n- **When to Use**: Need to concentrate efforts on areas of greatest impact\n- **Strengths**: Enhances clarity, maximizes efficiency\n\n#### **Pros and Cons Analysis Framework**\n- **Best For**: Decision-making, strategic analysis\n- **When to Use**: Evaluating multiple options with benefits and drawbacks\n- **Strengths**: Balanced evaluation, comprehensive\n- **Application**: Business strategy, policy formulation, personal decisions\n\n---\n\n### 5. STORYTELLING & NARRATIVE FRAMEWORKS\n*For when you need compelling, emotionally resonant content*\n\n#### **BAB Framework** (Before, After, Bridge)\n- **Best For**: Marketing copy, case studies, persuasive content\n- **When to Use**: Connecting problems to solutions with emotional impact\n- **Strengths**: Storytelling approach, emotionally resonant, simple\n- **Weaknesses**: May oversimplify complex issues\n- **Components**:\n  - **Before**: Describe the current problem/challenge\n  - **After**: Envision the ideal outcome\n  - **Bridge**: Present the solution that gets from Before to After\n\n#### **CAR-PAR-STAR Frameworks**\n- **Best For**: Behavioral interviews, performance reviews, personal development\n- **When to Use**: Structuring experiences and achievements narratively\n- **Variants**:\n  - **CAR**: Context, Action, Result\n  - **PAR**: Problem, Action, Result\n  - **STAR**: Situation, Task, Action, Result\n\n#### **Challenge-Solution-Benefit Framework**\n- **Best For**: Marketing, product development, strategic planning\n- **When to Use**: Demonstrating clear value and addressing user needs\n- **Components**:\n  - Identify problem (Challenge)\n  - Propose solution (Solution)\n  - Highlight advantages (Benefit)\n\n---\n\n### 6. SPECIALIZED PURPOSE FRAMEWORKS\n\n#### **BLOG Framework** (Background, Logic, Outline, Goal)\n- **Best For**: Blog posts, articles, marketing content\n- **When to Use**: Content creation requiring clarity and purpose\n- **Strengths**: Enhances coherence, simplifies writing, boosts engagement\n\n#### **APE Framework** (Audience, Purpose, Execution)\n- **Best For**: Content marketing, customer support, personalized communication\n- **When to Use**: Tailoring content to specific audience needs\n- **Strengths**: Highly targeted, effective messaging\n- **Components**:\n  - **Audience**: Define who content is for\n  - **Purpose**: State what it serves\n  - **Execution**: Determine how it should be delivered\n\n#### **TAG Framework** (Topic, Audience, Goal)\n- **Best For**: Content marketing, educational resources, public communications\n- **When to Use**: Ensuring relevance and effectiveness\n- **Components**:\n  - **Topic**: Subject matter\n  - **Audience**: Intended recipients\n  - **Goal**: Desired outcome\n\n---\n\n### 7. CREATIVE & INNOVATION FRAMEWORKS\n\n#### **SCAMPER Framework** (Substitute, Combine, Adapt, Modify, Put to Another Use, Eliminate, Reverse)\n- **Best For**: Innovation workshops, product development, creative problem-solving\n- **When to Use**: Need structured creativity boost\n- **Strengths**: Proven method, actionable strategies, structured innovation\n\n#### **How Might We (HMW) Framework**\n- **Best For**: Design thinking, brainstorming, innovation workshops\n- **When to Use**: Encouraging creative, solution-oriented thinking\n- **Strengths**: Opens possibilities, fosters collaboration\n- **Format**: Frame challenges as open-ended questions starting with \"How might we...\"\n\n#### **Imagine Framework**\n- **Best For**: Strategic planning, product development, creative writing\n- **When to Use**: Envisioning future possibilities and scenarios\n- **Strengths**: Fosters innovation, explores \"what if\" scenarios\n\n#### **What If Framework**\n- **Best For**: Strategic planning, creative writing, problem-solving\n- **When to Use**: Exploring alternative scenarios and hypothetical situations\n- **Strengths**: Encourages creative thinking, diverse outcome consideration\n\n---\n\n### 8. EDUCATIONAL & LEARNING FRAMEWORKS\n\n#### **Bloom's Taxonomy Prompts Framework**\n- **Best For**: Educational content, learning assessments, training materials\n- **When to Use**: Designing comprehensive learning experiences\n- **Levels**: Remember → Understand → Apply → Analyze → Evaluate → Create\n- **Strengths**: Depth-inclusive, encourages critical thinking\n\n#### **ELI5 Framework** (Explain Like I'm 5)\n- **Best For**: Education, customer support, simplifying complex concepts\n- **When to Use**: Making information accessible to all expertise levels\n- **Strengths**: Clarity, simplicity, bridges knowledge gaps\n\n#### **Help Me Understand Framework**\n- **Best For**: Educational AI, customer support, simplifying complex information\n- **When to Use**: Breaking down intricate subjects for comprehension\n- **Strengths**: Enhances learning, user-friendly\n\n#### **TQA Approach** (Thematic, Question, Answer)\n- **Best For**: E-learning modules, educational materials\n- **When to Use**: Structuring learning and inquiry\n- **Structure**:\n  - Broad theme\n  - Engaging questions\n  - Informative answers\n\n---\n\n### 9. COMMUNICATION & ENGAGEMENT FRAMEWORKS\n\n#### **RACE Framework** (Reach, Act, Convert, Engage)\n- **Best For**: Marketing campaigns, customer relations, public engagement\n- **When to Use**: Optimizing communication strategies from attraction to retention\n- **Stages**:\n  - **Reach**: Attract attention\n  - **Act**: Generate interaction\n  - **Convert**: Drive desired action\n  - **Engage**: Foster loyalty\n\n#### **ERA Framework** (Engage, React, Act)\n- **Best For**: Marketing, behavioral change, user engagement\n- **When to Use**: Moving individuals toward desired outcomes\n- **Strengths**: Dynamic interactions, motivates action\n\n#### **CARE Framework** (Compassion, Awareness, Response, Engagement)\n- **Best For**: Customer service bots, therapeutic chatbots, educational tools\n- **When to Use**: Empathetic, user-centric AI interactions\n- **Strengths**: Considers emotional needs, builds trust\n\n---\n\n### 10. STRATEGIC ANALYSIS FRAMEWORKS\n\n#### **3Cs Model** (Company, Customer, Competitor)\n- **Best For**: Market analysis, strategic planning, business environment analysis\n- **When to Use**: Comprehensive business assessment\n- **Strengths**: Well-rounded perspective, strategic insights\n\n#### **4S Method** (Structure, Style, Substance, Speed)\n- **Best For**: Content creation, digital marketing, corporate communications\n- **When to Use**: Ensuring engaging, timely, well-organized content\n- **Components**:\n  - **Structure**: Organization and flow\n  - **Style**: Brand voice and tone\n  - **Substance**: Value and information\n  - **Speed**: Timeliness of delivery\n\n#### **GOPA Framework** (Goals, Obstacles, Plans, Actions)\n- **Best For**: Goal setting, problem-solving, project planning\n- **When to Use**: Breaking objectives into manageable components\n- **Strengths**: Clear actionable steps, systematic approach\n\n---\n\n### 11. FEEDBACK & IMPROVEMENT FRAMEWORKS\n\n#### **RISE Framework** (Reflect, Inquire, Suggest, Elevate)\n- **Best For**: Education, performance management, personal growth\n- **When to Use**: Providing constructive feedback\n- **Strengths**: Facilitates meaningful dialogue, continuous improvement\n- **Process**:\n  - Reflect on current state\n  - Ask probing questions\n  - Offer actionable suggestions\n  - Identify elevation opportunities\n\n#### **ROSES Framework** (Recognize, Observe, Strategize, Execute, Study)\n- **Best For**: Complex projects, business strategy, organizational development\n- **When to Use**: Adaptive planning with continuous learning\n- **Strengths**: Structured yet flexible, comprehensive approach\n\n#### **PEE Framework** (Point, Evidence, Explanation)\n- **Best For**: Academic writing, legal analysis, persuasive content\n- **When to Use**: Rigorous argumentation required\n- **Strengths**: Well-substantiated, logically sound\n- **Structure**:\n  - Make a claim (Point)\n  - Support with evidence (Evidence)\n  - Explain significance (Explanation)\n\n---\n\n### 12. SPECIALIZED ADVANCED FRAMEWORKS\n\n#### **SPEAR Framework** (Start, Provide, Explain, Ask, Rinse & Repeat)\n- **Best For**: Everyday tasks, straightforward requests\n- **Developed by**: Britney Muller\n- **Strengths**: Simple, clear, efficient\n- **Process**: Simplify requests with essential details\n\n#### **Few-Shot Framework**\n- **Best For**: Sentiment analysis, text classification, creative content\n- **When to Use**: Guide models with examples for contextually relevant outputs\n- **Structure**:\n  - Task description\n  - Few demonstrations\n  - Query\n\n#### **Zero-Shot Prompting**\n- **Best For**: Translation, factual queries, simple classifications\n- **When to Use**: Straightforward tasks without need for examples\n- **Strengths**: Simple, efficient, tests raw model capabilities\n- **Limitations**: Less effective for complex/context-heavy problems\n\n#### **ORID Framework** (Objective, Reflective, Interpretive, Decisional)\n- **Best For**: Group discussions, coaching sessions, reflective writing\n- **When to Use**: Leading to clarity and decision-making\n- **Strengths**: Meaningful interactions, deeper insights\n\n#### **Socratic Method**\n- **Best For**: Education, philosophy, critical analysis\n- **When to Use**: Stimulating critical thinking through questioning\n- **Strengths**: Fosters inquiry, challenges assumptions\n\n#### **PAUSE Framework** (Prepare, Assess, Uncover, Synthesize, Execute)\n- **Best For**: Management decision-making, conflict resolution\n- **When to Use**: Thoughtful consideration and strategic planning\n- **Strengths**: Reflective thinking, comprehensive assessment\n\n---\n\n### 13. COMPREHENSIVE STRUCTURED FRAMEWORKS\n\n#### **RASCEF Framework** (Role, Action, Steps, Context, Examples, Format)\n- **Best For**: Technical documentation, instructional design, complex reports\n- **When to Use**: Detailed guidance needed\n- **Strengths**: Comprehensive, ensures depth and structure\n- **Components**: All aspects carefully considered\n\n#### **RHODES Framework** (Role, Objective, Details, Examples, Sense Check)\n- **Best For**: Creative endeavors, marketing content, stylistic alignment\n- **When to Use**: Quality must align with specific stylistic/thematic requirements\n- **Strengths**: Creatively aligned outputs\n\n#### **RISEN Framework** (Role, Input, Steps, Expectation, Novelty)\n- **Best For**: Research, development, content creation requiring innovation\n- **When to Use**: Fostering creative problem-solving\n- **Strengths**: Encourages novel ideas, evolution of RISE\n\n#### **GRADE Framework** (Goal, Request, Action, Details, Example)\n- **Best For**: Project management, content creation, analytical tasks\n- **When to Use**: Need goal-oriented, actionable outputs\n- **Strengths**: Specificity, directly tied to objectives\n\n#### **TRACI Framework** (Task, Role, Audience, Create, Intent)\n- **Best For**: Marketing, education, customer service\n- **When to Use**: Creating audience-resonant messages\n- **Strengths**: Meaningful, personalized, aligned with outcomes\n\n#### **RODES Framework** (Role, Objective, Details, Examples, Sense Check)\n- **Best For**: Educational content, strategic planning, complex problem-solving\n- **When to Use**: Depth and detail required\n- **Strengths**: High accuracy, contextual understanding\n\n#### **SPARK Framework** (Situation, Problem, Aspiration, Result, Kismet)\n- **Best For**: Product development, marketing strategy, creative writing\n- **When to Use**: Need fresh, innovative perspectives\n- **Strengths**: Engaging, effective, adds surprise element\n\n---\n\n### 14. ANALYTICAL & ARGUMENTATION FRAMEWORKS\n\n#### **TRACE Framework** (Topic, Reason, Audience, Counterargument, Evidence)\n- **Best For**: Debate preparation, persuasive writing, critical thinking\n- **When to Use**: Constructing well-reasoned arguments\n- **Strengths**: Compelling, logically sound\n\n#### **SPAR Framework** (Situation, Problem, Action, Result)\n- **Best For**: Case studies, success stories, process descriptions\n- **When to Use**: Communicating experiences and results\n- **Strengths**: Coherent storyline, impactful\n\n#### **PROMPT Framework** (Precision, Relevance, Objectivity, Method, Provenance, Timeliness)\n- **Best For**: Research, journalism, data analysis\n- **When to Use**: Information integrity and reliability paramount\n- **Strengths**: High quality standards, credible\n\n---\n\n### 15. VISUAL & IMAGE GENERATION FRAMEWORKS\n\n#### **Atomic Prompting Framework**\n- **Best For**: Midjourney, DALL-E 3, Adobe Firefly image generation\n- **When to Use**: Need meticulous control over AI-generated imagery\n- **Strengths**: Precision, detail, customization\n- **Application**: Artists and developers needing exact visual specifications\n\n---\n\n### 16. DIALOGUE & QUESTIONING FRAMEWORKS\n\n#### **Five Ws and One H** (Who, What, When, Where, Why, How)\n- **Best For**: Journalism, content creation, research\n- **When to Use**: Ensuring thorough, well-rounded content\n- **Strengths**: Comprehensive exploration, complete information\n\n#### **Hamburger Model**\n- **Best For**: Blogs, articles, educational materials\n- **When to Use**: Structured writing needed\n- **Structure**:\n  - Introduction (top bun)\n  - Body content (meat)\n  - Conclusion (bottom bun)\n\n#### **Six Thinking Hats Framework**\n- **Best For**: Decision-making, problem-solving, team brainstorming\n- **When to Use**: Need diverse perspectives\n- **Hats**:\n  - **White**: Facts and data\n  - **Red**: Emotions and feelings\n  - **Black**: Risks and caution\n  - **Yellow**: Benefits and optimism\n  - **Green**: Creativity and alternatives\n  - **Blue**: Process control and overview\n\n---\n\n### 17. EMERGING & SPECIALIZED FRAMEWORKS\n\n#### **CIDI Framework** (Context, Instructions, Details, Input)\n- **Best For**: Project management, content creation, innovative problem-solving\n- **When to Use**: Breaking down complex tasks into clear prompts\n- **Strengths**: Actionable results, clarity\n\n#### **Elicitation Framework**\n- **Best For**: Research, interviews, data analysis\n- **When to Use**: Gathering detailed information and insights\n- **Strengths**: Deep understanding, comprehensive data collection\n\n---\n\n## How to Use This Guide\n\n### Step 1: Initial Assessment\nWhen you come to me with a task, I will ask you qualifying questions:\n\n1. **What is your end goal?** (e.g., create content, make a decision, solve a problem, generate ideas)\n2. **What type of output do you need?** (e.g., analysis, strategy, creative content, technical solution)\n3. **How complex is the task?** (simple/moderate/complex)\n4. **Who is the audience?** (technical experts, general public, stakeholders, etc.)\n5. **What constraints exist?** (time, format, length, resources)\n6. **Do you need iteration?** (one-time or progressive refinement)\n7. **Are you evaluating options?** (yes/no)\n8. **Do you need creativity or structure?** (or both)\n\n### Step 2: Framework Selection\nBased on your answers, I will recommend 1-3 frameworks from the categories above that best fit your needs.\n\n### Step 3: Refinement Questions\nOnce framework(s) are selected, I'll ask specific questions related to that framework's components to build a comprehensive prompt.\n\n### Step 4: Prompt Construction\nI will construct the prompt using the chosen framework(s), clearly labeling each component.\n\n### Step 5: Iteration (if needed)\nFor iterative frameworks, I'll guide you through refinement cycles.\n\n---\n\n## Quick Selection Guide\n\n**Need precision and structure?** → CRISPE, RELIC, RTF\n\n**Need iteration and refinement?** → RACEF, Chain of Destiny\n\n**Need to prioritize options?** → RICE, SMART, COAST\n\n**Need analytical depth?** → Chain of Thought, Tree of Thought, FOCUS\n\n**Need persuasive storytelling?** → BAB, CAR-PAR-STAR, Challenge-Solution-Benefit\n\n**Need content creation?** → BLOG, TAG, APE\n\n**Need innovation?** → SCAMPER, HMW, Imagine, What If\n\n**Need educational content?** → Bloom's Taxonomy, ELI5, TQA\n\n**Need marketing/engagement?** → RACE, ERA, CARE\n\n**Need strategic analysis?** → 3Cs, 4S, GOPA\n\n**Need feedback systems?** → RISE, ROSES, PEE\n\n**Need simple clarity?** → SPEAR, RTF, Zero-Shot\n\n**Need comprehensive structure?** → RASCEF, RHODES, RISEN, GRADE, TRACI\n\n**Need argumentation?** → TRACE, SPAR, PROMPT, PEE\n\n**Need image generation?** → Atomic Prompting\n\n**Need diverse perspectives?** → Six Thinking Hats, Five Ws and One H\n\n---\n\n## Framework Comparison Matrix\n\n| Framework | Complexity | Time | Flexibility | Best For |\n|-----------|-----------|------|-------------|----------|\n| CRISPE | Medium | Medium | High | Structured tasks |\n| RACEF | Medium | High | Very High | Iterative work |\n| RICE | Low | Low | Medium | Prioritization |\n| SMART | Low | Low | Low | Goal-setting |\n| Chain of Thought | High | High | Medium | Analysis |\n| BAB | Low | Low | Medium | Storytelling |\n| RELIC | Medium | Medium | High | Focused tasks |\n| RTF | Low | Low | Low | Simple requests |\n| SCAMPER | Medium | Medium | Very High | Innovation |\n| SPEAR | Low | Low | Medium | Quick tasks |\n",
+                "destinationVar": "promptFrameworks"
+            },
+            "__editingData": {
+                "left": "-85.75px",
+                "top": "-10.75623127729392px"
+            },
+            "defaultTransitionId": "fcd56407-45d1-466d-8948-ffe1ed37f05e"
+        }
+    ],
+    "refs": {
+        "prompts": {
+            "b4154b8a-e08c-4055-a32d-11e1cb053ac3": {
+                "id": "b4154b8a-e08c-4055-a32d-11e1cb053ac3",
+                "name": "What are you trying to achieve?",
+                "type": "longText",
+                "helpText": "Provide as much detail as possible.",
+                "longText": {
+                    "placeholder": "e.g. I'd like to build a work-from-home office shed.",
+                    "featuredImageUrl": ""
+                },
+                "testValue": "I'd like to build a work-from-home office shed.",
+                "outputVariable": "taskDescription"
+            },
+            "0f04c57f-2317-4b1a-ac67-332a35c6d7ff": {
+                "id": "0f04c57f-2317-4b1a-ac67-332a35c6d7ff",
+                "name": "Please select your personality type:",
+                "type": "multipleChoiceText",
+                "outputVariable": "personalityType",
+                "multipleChoiceText": {
+                    "options": [
+                        {
+                            "id": "intj",
+                            "label": "Architect (INTJ)"
+                        },
+                        {
+                            "id": "intp",
+                            "label": "Logician (INTP)"
+                        },
+                        {
+                            "id": "entj",
+                            "label": "Commander (ENTJ)"
+                        },
+                        {
+                            "id": "entp",
+                            "label": "Debater (ENTP)"
+                        },
+                        {
+                            "id": "infj",
+                            "label": "Advocate (INFJ)"
+                        },
+                        {
+                            "id": "infp",
+                            "label": "Mediator (INFP)"
+                        },
+                        {
+                            "id": "enfj",
+                            "label": "Protagonist (ENFJ)"
+                        },
+                        {
+                            "id": "enfp",
+                            "label": "Campaigner (ENFP)"
+                        },
+                        {
+                            "id": "istj",
+                            "label": "Logistician (ISTJ)"
+                        },
+                        {
+                            "id": "isfj",
+                            "label": "Defender (ISFJ)"
+                        },
+                        {
+                            "id": "estj",
+                            "label": "Executive (ESTJ)"
+                        },
+                        {
+                            "id": "esfj",
+                            "label": "Consul (ESFJ)"
+                        },
+                        {
+                            "id": "istp",
+                            "label": "Virtuoso (ISTP)"
+                        },
+                        {
+                            "id": "isfp",
+                            "label": "Adventurer (ISFP)"
+                        },
+                        {
+                            "id": "estp",
+                            "label": "Entrepreneur (ESTP)"
+                        },
+                        {
+                            "id": "esfp",
+                            "label": "Entertainer (ESFP)"
+                        }
+                    ],
+                    "allowMultipleSelect": false
+                }
+            },
+            "cf41e2ae-c627-41a4-9db4-0a3907926b85": {
+                "id": "cf41e2ae-c627-41a4-9db4-0a3907926b85",
+                "name": "Introversion/Extroversion percentage (0-100):",
+                "type": "shortText",
+                "shortText": {
+                    "placeholder": "Leave blank to use default (65)"
+                },
+                "outputVariable": "introExtroversion"
+            },
+            "aa5832a4-e1d4-4f01-9906-8bc29fde421f": {
+                "id": "aa5832a4-e1d4-4f01-9906-8bc29fde421f",
+                "name": "Intuition/Sensing percentage (0-100):",
+                "type": "shortText",
+                "shortText": {
+                    "placeholder": "Leave blank to use default (65)"
+                },
+                "outputVariable": "intuitionSensing"
+            },
+            "5a6c2f06-34b5-4b2f-b08d-01867879e9ce": {
+                "id": "5a6c2f06-34b5-4b2f-b08d-01867879e9ce",
+                "name": "Thinking/Feeling percentage (0-100):",
+                "type": "shortText",
+                "shortText": {
+                    "placeholder": "Leave blank to use default (65)"
+                },
+                "outputVariable": "thinkingFeeling"
+            },
+            "984caefe-c5a7-4471-8268-c84e553deacc": {
+                "id": "984caefe-c5a7-4471-8268-c84e553deacc",
+                "name": "Judging/Perceiving percentage (0-100):",
+                "type": "shortText",
+                "shortText": {
+                    "placeholder": "Leave blank to use default (65)"
+                },
+                "outputVariable": "judgingPerceiving"
+            },
+            "f41a8883-acdd-4646-8863-4b7f7cd488cd": {
+                "id": "f41a8883-acdd-4646-8863-4b7f7cd488cd",
+                "name": "Assertive/Turbulent percentage (0-100):",
+                "type": "shortText",
+                "shortText": {
+                    "placeholder": "Leave blank to use default (65)"
+                },
+                "outputVariable": "assertiveTurbulent"
+            }
+        },
+        "functions": {
+            "d1b914be-6324-4164-b3bb-35b9d24db797": {
+                "simulatorInput": "environment = {\n  vars: {\n    // Variables in your workflow\n    foo: 'bar',\n  },\n  config: {\n    // Variables configured by block settings\n    foo: 'bar',\n  },\n}",
+                "name": "Get Personality Name",
+                "dateLastEdited": "2025-10-28T16:10:22.267Z",
+                "code": "function personalityName(name) {\n  return name.substring(0, name.indexOf(' ('))\n}",
+                "readme": "",
+                "configurationTemplate": "config = {\n  configurationSections: [],\n}",
+                "appVersionId": "90d1eb6b-3cfb-4932-8ea5-ac0db65474d5",
+                "environment": "default",
+                "internalId": "d1b914be-6324-4164-b3bb-35b9d24db797",
+                "language": "js",
+                "dateCreated": "2025-10-28T16:08:36.977Z",
+                "id": "f6313ab3-118a-4030-bc7b-e48b99686063",
+                "description": "Returns \"Logician\" from \"Logician (INTP)\"",
+                "parsedConfigurationTemplate": {
+                    "configurationSections": []
+                },
+                "parsedSimulatorInput": {
+                    "vars": {
+                        "foo": "bar"
+                    },
+                    "config": {
+                        "foo": "bar"
+                    }
+                }
+            }
+        }
+    }
+}

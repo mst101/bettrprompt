@@ -1,0 +1,152 @@
+<pdf_content>
+    {{pdfContent}}
+</pdf_content>
+
+<example_output>
+    <main_heading>
+        # LOGICIAN GUIDE TO CAREERS
+    </main_heading>
+
+    <sub_heading>
+        ## Subheading
+    </sub_heading>
+
+    <table_of_contents>
+        ## Table of Contents
+
+        - Introduction
+        - Academic Path
+            - How Logicians Learn
+            - Logicians in High School
+            - Work or College?
+            - Logicians in College
+            - Lifelong Learning
+            - Conclusion
+        - Professional Development
+            - Jobs and Skill Sets
+            - Challenging Career Qualities
+            - Career Alternatives
+            - Workplace Cooperation Between Roles
+                - Logician–Analyst Cooperation
+                - Logician–Diplomat Cooperation
+                - Logician–Sentinel Cooperation
+                - Logician–Explorer Cooperation
+            - Conclusion
+        - Final Words
+    </table_of_contents>
+
+    <introduction>
+        ## Introduction
+
+        ### Why Academic and Professional Development Matter for Logicians
+
+        [one or more paragraphs]
+    </introduction>
+
+    <academic_path>
+        ## Academic Path
+
+        [one or more paragraphs]
+
+        <section>
+        ### How Logicians Learn
+
+        [one or more paragraphs]
+
+        #### Heading
+
+        ##### Subheading
+
+        [one or more paragraphs]
+
+        ##### Heading
+
+        [one or more paragraphs]
+
+        #### Subheading
+
+        ##### Heading
+
+        [one or more paragraphs]
+
+        ##### Heading
+
+        [one or more paragraphs]
+
+        #### Rebalancing Learning Habits
+
+        ##### Following Through
+
+        [one or more paragraphs]
+
+        ##### Gathering Evidence
+
+        [one or more paragraphs]
+
+        ### Logicians in High School
+
+        [one or more paragraphs]
+
+        #### Balanced High School Learning Habits
+
+        ##### Sparks of Interest
+
+        [one or more paragraphs]
+
+        ##### Finding Purpose
+
+        [one or more paragraphs]
+
+        #### Unbalanced High School Learning Habits
+
+        ##### Not Fitting In
+
+        [one or more paragraphs]
+
+        ##### Lack of Tolerance
+
+        [one or more paragraphs]
+
+        #### Rebalancing High School Learning Habits
+
+        ##### Social Studies
+
+        [one or more paragraphs]
+
+        ##### Tutoring to Learn
+
+        [one or more paragraphs]
+
+        ### Work or College?
+
+        [one or more paragraphs]
+
+        #### Balanced Decision-Making
+
+        ##### Subheading
+
+        [one or more paragraphs]
+
+        ##### Subheading
+
+        [one or more paragraphs]
+
+        #### Unbalanced Decision-Making
+
+        ##### Subheading
+
+        [one or more paragraphs]
+    <academic_path>
+</example_output>
+
+Convert the PDF content into well-structured Markdown format. Preserve the original document's hierarchical structure (headings, subheadings), links, formatting elements (lists, tables, emphasis), and ensure code blocks are properly formatted if present.
+
+Follow these guidelines:
+- Maintain the document's original organization and hierarchy
+- Remove any paragraphs that contain links
+- Format lists, tables, and emphasized text properly
+- Use appropriate Markdown syntax for code blocks if they appear
+- Ensure the final document is clean, readable, and follows Markdown best practices
+- End the document after the `Final Words` section
+
+Respond only with the converted Markdown document. Do not include any explanatory text or notes.
