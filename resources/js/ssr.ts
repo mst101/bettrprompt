@@ -21,8 +21,8 @@ createServer((page) =>
             return createSSRApp({ render: () => h(App, props) })
                 .use(plugin)
                 .use(ZiggyVue, {
-                    ...page.props.ziggy,
-                    location: new URL(page.props.ziggy.location),
+                    ...(page.props as any).ziggy,
+                    location: new URL((page.props as any).ziggy.location),
                 });
         },
     }),
