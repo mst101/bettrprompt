@@ -64,6 +64,40 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    n8n:
+        image: n8nio/n8n:latest
+        restart: unless-stopped
+        ports:
+            - "${N8N_PORT:-5678}:5678"
+        environment:
+            - N8N_HOST=${N8N_HOST}
+            - N8N_PORT=${N8N_PORT}
+            - N8N_PROTOCOL=${N8N_PROTOCOL}
+            - WEBHOOK_URL=${N8N_WEBHOOK_URL}
+
+            - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+            - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+            - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+
+            - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+            - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+
+            - DB_TYPE=${N8N_DB_TYPE}
+            - DB_POSTGRESDB_HOST=${N8N_DB_HOST}
+            - DB_POSTGRESDB_PORT=${N8N_DB_PORT}
+            - DB_POSTGRESDB_DATABASE=${N8N_DB_DATABASE}
+            - DB_POSTGRESDB_USER=${N8N_DB_USER}
+            - DB_POSTGRESDB_PASSWORD=${N8N_DB_PASSWORD}
+
+            # optional hardening/noise reduction
+            - N8N_DIAGNOSTICS_ENABLED=${N8N_DIAGNOSTICS_ENABLED}
+            - N8N_VERSION_NOTIFICATIONS_ENABLED=${N8N_VERSION_NOTIFICATIONS_ENABLED}
+        volumes:
+            - n8n_data:/home/node/.n8n
+        depends_on:
+            - pgsql
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
@@ -71,4 +105,6 @@ volumes:
     sail-pgsql:
         driver: local
     sail-redis:
+        driver: local
+    n8n_data:
         driver: local
