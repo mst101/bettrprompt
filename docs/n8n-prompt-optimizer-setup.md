@@ -4,7 +4,7 @@ This guide will help you create the n8n workflow for the MVP Phase 1 Prompt Opti
 
 ## Prerequisites
 
-- n8n is running at `http://localhost:5678` (via Docker/Sail)
+- n8n is accessible at `https://n8n.localhost` (via Caddy/Docker/Sail)
 - Credentials: `admin` / `password` (as configured in `.env`)
 - An LLM API key (OpenAI, Anthropic, etc.)
 
@@ -25,9 +25,10 @@ Webhook (POST)
 
 ### 1. Access n8n Dashboard
 
-1. Open your browser to `http://localhost:5678`
-2. Log in with username: `admin`, password: `password`
-3. Click "Create new workflow"
+1. Open your browser to `https://n8n.localhost`
+2. Accept the self-signed certificate (one-time browser warning)
+3. Log in with username: `admin`, password: `password`
+4. Click "Create new workflow"
 
 ### 2. Add Webhook Node (Trigger)
 
@@ -39,10 +40,9 @@ Webhook (POST)
    - **Authentication**: None (we handle this in Laravel)
    - **Respond**: "Using 'Respond to Webhook' Node"
 
-4. Copy the **Production URL** - it should be something like:
-   ```
-   http://localhost:5678/webhook/prompt-optimizer
-   ```
+4. Note the **Production URL** shown in n8n's UI (it may show `http://localhost:5678/webhook/prompt-optimizer`)
+
+   **Important:** Laravel uses the internal Docker URL (`http://n8n:5678/webhook/prompt-optimizer`) as configured in your `.env` file's `N8N_INTERNAL_URL`. The URL shown in n8n's UI is for reference only.
 
 ### 3. Add Code Node (Input Validation)
 
@@ -282,17 +282,20 @@ return [
 
 1. Click "Test workflow" button
 2. Click "Listen for test event" on the Webhook node
-3. Use this curl command to test:
+3. Use this curl command to test (from your host machine):
 
 ```bash
-curl -X POST http://localhost:5678/webhook-test/prompt-optimizer \
+curl -X POST https://n8n.localhost/webhook-test/prompt-optimizer \
   -H "Content-Type: application/json" \
+  -k \
   -d '{
     "prompt_run_id": 1,
     "personality_type": "INTJ-A",
     "task_description": "Write a technical blog post about microservices architecture"
   }'
 ```
+
+**Note:** The `-k` flag allows curl to accept the self-signed certificate.
 
 4. Check that you receive a response with `optimized_prompt`
 
@@ -305,9 +308,10 @@ Once the workflow is active, test from your application:
    composer dev
    ```
 
-2. Navigate to `http://localhost/prompt-optimizer`
-3. Fill in the form and submit
-4. Check that the optimised prompt is displayed
+2. Navigate to `https://app.localhost/prompt-optimizer`
+3. Accept the self-signed certificate if prompted
+4. Fill in the form and submit
+5. Check that the optimised prompt is displayed
 
 ## Troubleshooting
 
@@ -334,11 +338,19 @@ Once the workflow is active, test from your application:
 ```
 http://n8n:5678/webhook/prompt-optimizer
 ```
+This is configured in `.env` as `N8N_INTERNAL_URL=http://n8n:5678`
 
-**For external testing:**
+**For external testing (via Caddy HTTPS):**
+```
+https://n8n.localhost/webhook/prompt-optimizer
+```
+Use `-k` flag with curl to accept self-signed certificate.
+
+**For direct access (bypassing Caddy):**
 ```
 http://localhost:5678/webhook/prompt-optimizer
 ```
+Only works if n8n port 5678 is exposed.
 
 ## Next Steps
 

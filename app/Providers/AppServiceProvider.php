@@ -21,5 +21,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        // Force HTTPS URLs when behind reverse proxy (Caddy)
+        if ($this->app->environment('local')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }

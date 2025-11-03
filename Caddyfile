@@ -1,3 +1,10 @@
+# Global options for local development
+{
+    # Enable automatic HTTPS with self-signed certificates for .localhost domains
+    # Caddy will automatically redirect HTTP → HTTPS
+    local_certs
+}
+
 (app_common) {
     encode gzip
     log {
@@ -5,17 +12,16 @@
     }
 }
 
+# Laravel application
+# Handles both HTTP and HTTPS, automatically redirects HTTP → HTTPS
 app.localhost {
     import app_common
     reverse_proxy laravel.test:80
 }
 
+# n8n workflow automation
+# Handles both HTTP and HTTPS, automatically redirects HTTP → HTTPS
 n8n.localhost {
     import app_common
     reverse_proxy n8n:5678
-
-    # Optional Basic Auth for n8n dashboard (local dev only)
-    basicauth * {
-        admin change-me
-    }
 }
