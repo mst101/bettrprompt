@@ -1,3 +1,0 @@
-# Market Analysis
-
-Personality Tech: The $38B Team Optimization Opportunity...

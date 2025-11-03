@@ -1,0 +1,6 @@
+Client ID:
+647299737149-t407aedc0sm2fsp7jbv74d26n7n4i71m.apps.googleusercontent.com
+
+Client secret:
+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
+

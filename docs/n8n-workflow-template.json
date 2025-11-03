@@ -1,0 +1,134 @@
+{
+  "name": "Prompt Optimiser",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "prompt-optimizer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node", 
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Validate and extract input from webhook\nconst items = $input.all();\nconst body = items[0].json.body;\n\n// Validate required fields\nif (!body.personality_type) {\n  throw new Error('Missing personality_type');\n}\nif (!body.task_description) {\n  throw new Error('Missing task_description');\n}\n\n// Prepare data for LLM\nconst personalityType = body.personality_type;\nconst taskDescription = body.task_description;\nconst traitPercentages = body.trait_percentages || {};\n\n// Build the system prompt\nconst systemPrompt = `You are an expert at crafting AI prompts tailored to personality types based on the 16personalities.com framework.\n\nGiven a personality type and a task description, create an optimised prompt that:\n1. Takes into account the personality traits and communication style\n2. Uses appropriate prompt frameworks (SMART, RICE, COAST, etc.)\n3. Includes relevant context and constraints\n4. Specifies desired output format\n5. Is clear, specific, and actionable\n\nReturn ONLY the optimised prompt text, without any preamble or explanation.`;\n\n// Build the user message\nconst userMessage = `Personality Type: ${personalityType}\n${Object.keys(traitPercentages).length > 0 ? `Trait Percentages: ${JSON.stringify(traitPercentages)}` : ''}\n\nTask Description:\n${taskDescription}\n\nCreate an optimised AI prompt for this task that is tailored to this personality type.`;\n\nreturn [\n  {\n    json: {\n      prompt_run_id: body.prompt_run_id,\n      personality_type: personalityType,\n      task_description: taskDescription,\n      trait_percentages: traitPercentages,\n      system_prompt: systemPrompt,\n      user_message: userMessage\n    }\n  }\n];"
+      },
+      "id": "validate-input-node",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"max_tokens\": 2000,\n  \"system\": \"{{ $json.system_prompt }}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.user_message }}\"\n    }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        }
+      },
+      "id": "llm-request-node",
+      "name": "Call LLM API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 300],
+      "notes": "Configure with your Anthropic API key using Header Auth:\nName: x-api-key\nValue: YOUR_API_KEY\n\nOr replace with OpenAI configuration"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Extract the optimised prompt from Anthropic response\nconst items = $input.all();\nconst response = items[0].json;\n\nlet optimisedPrompt = '';\n\nif (response.content && response.content[0]?.text) {\n  optimisedPrompt = response.content[0].text.trim();\n} else {\n  throw new Error('Invalid response from LLM');\n}\n\n// Get the original data from the first node\nconst webhookData = $node[\"Validate Input\"].json;\n\nreturn [\n  {\n    json: {\n      optimized_prompt: optimisedPrompt,\n      prompt_run_id: webhookData.prompt_run_id,\n      personality_type: webhookData.personality_type,\n      model_used: response.model || 'claude-3-5-sonnet-20241022',\n      tokens_used: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n    }\n  }\n];\n\n// For OpenAI, use this code instead:\n/*\nconst items = $input.all();\nconst response = items[0].json;\n\nlet optimisedPrompt = '';\n\nif (response.choices && response.choices[0]?.message?.content) {\n  optimisedPrompt = response.choices[0].message.content.trim();\n} else {\n  throw new Error('Invalid response from LLM');\n}\n\nconst webhookData = $node[\"Validate Input\"].json;\n\nreturn [\n  {\n    json: {\n      optimized_prompt: optimisedPrompt,\n      prompt_run_id: webhookData.prompt_run_id,\n      personality_type: webhookData.personality_type,\n      model_used: response.model || 'gpt-4o',\n      tokens_used: response.usage?.total_tokens || 0\n    }\n  }\n];\n*/"
+      },
+      "id": "format-response-node",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond-webhook-node",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Call LLM API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LLM API": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
