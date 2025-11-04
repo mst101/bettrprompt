@@ -42,7 +42,7 @@ class PromptRun extends Model
     /**
      * Get the current unanswered question.
      */
-    public function getCurrentQuestion(): ?array
+    public function getCurrentQuestion(): ?string
     {
         if (!$this->framework_questions || !is_array($this->framework_questions)) {
             return null;
