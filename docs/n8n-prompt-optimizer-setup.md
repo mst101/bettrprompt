@@ -85,10 +85,28 @@ Given a personality type and a task description, create an optimised prompt that
 
 Return ONLY the optimised prompt text, without any preamble or explanation.`;
 
-// Build the user message
-const userMessage = `Personality Type: ${personalityType}
-${Object.keys(traitPercentages).length > 0 ? `Trait Percentages: ${JSON.stringify(traitPercentages)}` : ''}
+// Build the user message with formatted trait percentages
+let traitInfo = '';
+if (Object.keys(traitPercentages).length > 0) {
+  const traitLabels = {
+    mind: 'Mind (Introversion/Extraversion)',
+    energy: 'Energy (Intuitive/Observant)',
+    nature: 'Nature (Thinking/Feeling)',
+    tactics: 'Tactics (Judging/Prospecting)',
+    identity: 'Identity (Assertive/Turbulent)'
+  };
 
+  const formattedTraits = Object.entries(traitPercentages)
+    .map(([key, value]) => {
+      const label = traitLabels[key as keyof typeof traitLabels] || key;
+      return `  - ${label}: ${value}%`;
+    })
+    .join('\n');
+
+  traitInfo = `\nTrait Percentages:\n${formattedTraits}\n`;
+}
+
+const userMessage = `Personality Type: ${personalityType}${traitInfo}
 Task Description:
 ${taskDescription}
 

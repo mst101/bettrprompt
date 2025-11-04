@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 interface Props {
     personalityTypes: Record<string, string>;
@@ -32,7 +32,9 @@ const personalityTypeOptions = computed(() => {
 
 const submit = () => {
     // Only include trait_percentages if any are filled in
-    const hasTraits = Object.values(form.trait_percentages).some(val => val !== null);
+    const hasTraits = Object.values(form.trait_percentages).some(
+        (val) => val !== null,
+    );
 
     const submitData = {
         personality_type: form.personality_type,
@@ -59,15 +61,19 @@ const submit = () => {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <p class="mb-6 text-gray-600">
-                            Create optimised AI prompts customised to your personality type
-                            and specific task requirements.
+                            Create optimised AI prompts customised to your
+                            personality type and specific task requirements.
                         </p>
 
                         <form @submit.prevent="submit" class="space-y-6">
                             <!-- Personality Type Selection -->
                             <div>
-                                <label for="personality_type" class="block text-sm font-medium text-gray-700">
-                                    Personality Type <span class="text-red-500">*</span>
+                                <label
+                                    for="personality_type"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Personality Type
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <select
                                     id="personality_type"
@@ -75,7 +81,9 @@ const submit = () => {
                                     required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">Select your personality type</option>
+                                    <option value="">
+                                        Select your personality type
+                                    </option>
                                     <option
                                         v-for="option in personalityTypeOptions"
                                         :key="option.value"
@@ -84,7 +92,10 @@ const submit = () => {
                                         {{ option.label }}
                                     </option>
                                 </select>
-                                <p v-if="form.errors.personality_type" class="mt-1 text-sm text-red-600">
+                                <p
+                                    v-if="form.errors.personality_type"
+                                    class="mt-1 text-sm text-red-600"
+                                >
                                     {{ form.errors.personality_type }}
                                 </p>
                             </div>
@@ -93,26 +104,43 @@ const submit = () => {
                             <div>
                                 <button
                                     type="button"
-                                    @click="showTraitPercentages = !showTraitPercentages"
+                                    @click="
+                                        showTraitPercentages =
+                                            !showTraitPercentages
+                                    "
                                     class="text-sm text-indigo-600 hover:text-indigo-800"
                                 >
-                                    {{ showTraitPercentages ? '− Hide' : '+ Add' }} Trait Percentages (Optional)
+                                    {{
+                                        showTraitPercentages
+                                            ? '− Hide'
+                                            : '+ Add'
+                                    }}
+                                    Trait Percentages (Optional)
                                 </button>
 
-                                <div v-if="showTraitPercentages" class="mt-4 space-y-3">
+                                <div
+                                    v-if="showTraitPercentages"
+                                    class="mt-4 space-y-3"
+                                >
                                     <p class="text-sm text-gray-600">
-                                        Enter your trait percentages from 16personalities.com (optional)
+                                        Enter your trait percentages from
+                                        16personalities.com (optional)
                                     </p>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label for="mind" class="block text-sm text-gray-700">
+                                            <label
+                                                for="mind"
+                                                class="block text-sm text-gray-700"
+                                            >
                                                 Mind (Introversion/Extraversion)
                                             </label>
                                             <input
                                                 type="number"
                                                 id="mind"
-                                                v-model.number="form.trait_percentages.mind"
+                                                v-model.number="
+                                                    form.trait_percentages.mind
+                                                "
                                                 min="0"
                                                 max="100"
                                                 placeholder="%"
@@ -121,13 +149,19 @@ const submit = () => {
                                         </div>
 
                                         <div>
-                                            <label for="energy" class="block text-sm text-gray-700">
+                                            <label
+                                                for="energy"
+                                                class="block text-sm text-gray-700"
+                                            >
                                                 Energy (Intuitive/Observant)
                                             </label>
                                             <input
                                                 type="number"
                                                 id="energy"
-                                                v-model.number="form.trait_percentages.energy"
+                                                v-model.number="
+                                                    form.trait_percentages
+                                                        .energy
+                                                "
                                                 min="0"
                                                 max="100"
                                                 placeholder="%"
@@ -136,13 +170,19 @@ const submit = () => {
                                         </div>
 
                                         <div>
-                                            <label for="nature" class="block text-sm text-gray-700">
+                                            <label
+                                                for="nature"
+                                                class="block text-sm text-gray-700"
+                                            >
                                                 Nature (Thinking/Feeling)
                                             </label>
                                             <input
                                                 type="number"
                                                 id="nature"
-                                                v-model.number="form.trait_percentages.nature"
+                                                v-model.number="
+                                                    form.trait_percentages
+                                                        .nature
+                                                "
                                                 min="0"
                                                 max="100"
                                                 placeholder="%"
@@ -151,13 +191,19 @@ const submit = () => {
                                         </div>
 
                                         <div>
-                                            <label for="tactics" class="block text-sm text-gray-700">
+                                            <label
+                                                for="tactics"
+                                                class="block text-sm text-gray-700"
+                                            >
                                                 Tactics (Judging/Prospecting)
                                             </label>
                                             <input
                                                 type="number"
                                                 id="tactics"
-                                                v-model.number="form.trait_percentages.tactics"
+                                                v-model.number="
+                                                    form.trait_percentages
+                                                        .tactics
+                                                "
                                                 min="0"
                                                 max="100"
                                                 placeholder="%"
@@ -166,13 +212,19 @@ const submit = () => {
                                         </div>
 
                                         <div class="col-span-2">
-                                            <label for="identity" class="block text-sm text-gray-700">
+                                            <label
+                                                for="identity"
+                                                class="block text-sm text-gray-700"
+                                            >
                                                 Identity (Assertive/Turbulent)
                                             </label>
                                             <input
                                                 type="number"
                                                 id="identity"
-                                                v-model.number="form.trait_percentages.identity"
+                                                v-model.number="
+                                                    form.trait_percentages
+                                                        .identity
+                                                "
                                                 min="0"
                                                 max="100"
                                                 placeholder="%"
@@ -185,8 +237,12 @@ const submit = () => {
 
                             <!-- Task Description -->
                             <div>
-                                <label for="task_description" class="block text-sm font-medium text-gray-700">
-                                    Task Description <span class="text-red-500">*</span>
+                                <label
+                                    for="task_description"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Task Description
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     id="task_description"
@@ -196,11 +252,15 @@ const submit = () => {
                                     placeholder="Describe what you're trying to accomplish with AI..."
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 ></textarea>
-                                <p v-if="form.errors.task_description" class="mt-1 text-sm text-red-600">
+                                <p
+                                    v-if="form.errors.task_description"
+                                    class="mt-1 text-sm text-red-600"
+                                >
                                     {{ form.errors.task_description }}
                                 </p>
                                 <p class="mt-1 text-sm text-gray-500">
-                                    Minimum 10 characters. Be specific about your goals and requirements.
+                                    Minimum 10 characters. Be specific about
+                                    your goals and requirements.
                                 </p>
                             </div>
 
@@ -216,9 +276,11 @@ const submit = () => {
                                 <button
                                     type="submit"
                                     :disabled="form.processing"
-                                    class="inline-flex justify-centre rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                                    class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
                                 >
-                                    <span v-if="form.processing">Processing...</span>
+                                    <span v-if="form.processing"
+                                        >Processing...</span
+                                    >
                                     <span v-else>Optimise Prompt</span>
                                 </button>
                             </div>
