@@ -76,9 +76,10 @@ class PromptOptimizerController extends Controller
             'trait_percentages' => $validated['trait_percentages'] ?? null,
             'task_description' => $validated['task_description'],
             'status' => 'processing',
+            'workflow_stage' => 'submitted',
         ]);
 
-        // Prepare payload for n8n
+        // Prepare payload for framework selector
         $payload = [
             'prompt_run_id' => $promptRun->id,
             'personality_type' => $validated['personality_type'],
@@ -92,40 +93,48 @@ class PromptOptimizerController extends Controller
                 'n8n_request_payload' => $payload,
             ]);
 
-            // Trigger n8n workflow
+            // Trigger framework selector workflow
             $response = $this->n8nClient->triggerWebhook(
-                '/webhook/prompt-optimizer',
+                '/webhook/framework-selector',
                 $payload
             );
 
             if ($response->successful()) {
                 $responseData = $response->json();
 
-                // Update the prompt run with the response
+                // Update the prompt run with framework selection
                 $promptRun->update([
-                    'optimized_prompt' => $responseData['optimized_prompt'] ?? null,
+                    'selected_framework' => $responseData['selected_framework'] ?? null,
+                    'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                    'framework_questions' => $responseData['framework_questions'] ?? [],
+                    'clarifying_answers' => [],
+                    'workflow_stage' => 'framework_selected',
                     'n8n_response_payload' => $responseData,
-                    'status' => 'completed',
-                    'completed_at' => now(),
                 ]);
 
+                // Broadcast framework selected event
+                event(new \App\Events\FrameworkSelected($promptRun));
+
+                // Redirect to show page where questions will be displayed
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
-                    ->with('success', 'Prompt optimised successfully!');
+                    ->with('success', 'Framework selected! Please answer the following questions.');
             } else {
                 // Handle n8n error
                 $promptRun->update([
                     'status' => 'failed',
-                    'error_message' => 'n8n workflow failed: '.$response->body(),
+                    'workflow_stage' => 'failed',
+                    'error_message' => 'Framework selector workflow failed: '.$response->body(),
                     'completed_at' => now(),
                 ]);
 
-                return back()->with('error', 'Failed to optimise prompt. Please try again.');
+                return back()->with('error', 'Failed to select framework. Please try again.');
             }
         } catch (\Throwable $e) {
             // Handle exception
             $promptRun->update([
                 'status' => 'failed',
+                'workflow_stage' => 'failed',
                 'error_message' => $e->getMessage(),
                 'completed_at' => now(),
             ]);
@@ -146,6 +155,11 @@ class PromptOptimizerController extends Controller
 
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => $promptRun,
+            'currentQuestion' => $promptRun->getCurrentQuestion(),
+            'progress' => [
+                'answered' => $promptRun->getAnsweredQuestionsCount(),
+                'total' => $promptRun->getTotalQuestionsCount(),
+            ],
         ]);
     }
 
