@@ -116,7 +116,7 @@ class PromptOptimizerController extends Controller
                 // Handle n8n error
                 $promptRun->update([
                     'status' => 'failed',
-                    'error_message' => 'n8n workflow failed: ' . $response->body(),
+                    'error_message' => 'n8n workflow failed: '.$response->body(),
                     'completed_at' => now(),
                 ]);
 

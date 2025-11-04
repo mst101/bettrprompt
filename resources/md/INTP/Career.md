@@ -91,7 +91,6 @@ To reclaim the motivation that they need to follow through, Logicians can ask th
 - "What idea did I have about my life or my potential when I set out on this aspect of my academic journey?"
 - "What challenge, failure, or discouragement pushed me off course or diminished my enthusiasm?"
 - "What specific actions can I take to navigate around the obstacle or move on from the experience?"
-
     - For example, if they were beat up by a math course, maybe they should take another run at it, but this time ensure that they minimize other commitments or obligations, so their attention isn’t divided.
 
     - Perhaps they can create a schedule or timeline Or, maybe they need to write out a plan on a piece of paper and post it in a prominent place.
@@ -312,7 +311,7 @@ With that mindset, many worthwhile things may happen First, Logicians may gain t
 To enhance the process, Logicians can try the following exercise:
 
 - Identify a subject that doesn’t feel particularly interesting or worthwhile, especially if it’s a required course. Meet with an instructor who specializes in the subject, with the goal of better understanding their vision and inspiration
-- Ask the person questions: "_Why_ would someone become a ____ (pathologist, geographer, Shakespeare scholar)?" "What’s special or meaningful about the subject?" "What challenges does the field address, and how can it benefit humankind?"
+- Ask the person questions: "_Why_ would someone become a \_\_\_\_ (pathologist, geographer, Shakespeare scholar)?" "What’s special or meaningful about the subject?" "What challenges does the field address, and how can it benefit humankind?"
 - Take mental notes based on your conversations Use the insights therein as reminders of the value inherent in other courses and subjects
 
 Through investigation and inquiry, Logicians might just discover new passions of their own.
@@ -570,7 +569,7 @@ Focusing on the organization’s goals goes a long way to help these types be pr
 Example:
 
 | Tasks today                             | Speed | Benefit | Urgency | Total |
-|-----------------------------------------|-------|---------|---------|-------|
+| --------------------------------------- | ----- | ------- | ------- | ----- |
 | Clean bedroom                           | 3     | 1       | 1       | 5     |
 | Finalize and submit status report       | 4     | 7       | 6       | 17    |
 | Respond to customer voicemails          | 6     | 6       | 7       | 19    |

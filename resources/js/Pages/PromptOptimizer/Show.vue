@@ -56,7 +56,7 @@ const getStatusBadgeClass = (status: string) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-centre justify-between">
+            <div class="items-centre flex justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Optimised Prompt
                 </h2>
@@ -82,21 +82,33 @@ const getStatusBadgeClass = (status: string) => {
                 </div>
 
                 <!-- Input Information -->
-                <div class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div
+                    class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-gray-900">Input Information</h3>
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                            Input Information
+                        </h3>
 
                         <div class="space-y-3">
                             <div>
-                                <span class="text-sm font-medium text-gray-700">Personality Type:</span>
-                                <span class="ml-2 text-sm text-gray-900">{{ promptRun.personality_type }}</span>
+                                <span class="text-sm font-medium text-gray-700"
+                                    >Personality Type:</span
+                                >
+                                <span class="ml-2 text-sm text-gray-900">{{
+                                    promptRun.personality_type
+                                }}</span>
                             </div>
 
                             <div v-if="promptRun.trait_percentages">
-                                <span class="text-sm font-medium text-gray-700">Trait Percentages:</span>
+                                <span class="text-sm font-medium text-gray-700"
+                                    >Trait Percentages:</span
+                                >
                                 <div class="ml-2 mt-1 text-sm text-gray-900">
                                     <span
-                                        v-for="(value, key) in promptRun.trait_percentages"
+                                        v-for="(
+                                            value, key
+                                        ) in promptRun.trait_percentages"
                                         :key="key"
                                         class="mr-3"
                                     >
@@ -106,8 +118,12 @@ const getStatusBadgeClass = (status: string) => {
                             </div>
 
                             <div>
-                                <span class="text-sm font-medium text-gray-700">Task Description:</span>
-                                <p class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900">
+                                <span class="text-sm font-medium text-gray-700"
+                                    >Task Description:</span
+                                >
+                                <p
+                                    class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
+                                >
                                     {{ promptRun.task_description }}
                                 </p>
                             </div>
@@ -116,13 +132,21 @@ const getStatusBadgeClass = (status: string) => {
                 </div>
 
                 <!-- Optimised Prompt Result -->
-                <div v-if="promptRun.status === 'completed' && promptRun.optimized_prompt" class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div
+                    v-if="
+                        promptRun.status === 'completed' &&
+                        promptRun.optimized_prompt
+                    "
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="p-6">
-                        <div class="mb-4 flex items-centre justify-between">
-                            <h3 class="text-lg font-semibold text-gray-900">Optimised Prompt</h3>
+                        <div class="items-centre mb-4 flex justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                Optimised Prompt
+                            </h3>
                             <button
                                 @click="copyToClipboard"
-                                class="inline-flex items-centre rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                class="items-centre inline-flex rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 <svg
                                     v-if="!copied"
@@ -157,17 +181,28 @@ const getStatusBadgeClass = (status: string) => {
                         </div>
 
                         <div class="rounded-md bg-gray-50 p-4">
-                            <pre class="whitespace-pre-wrap font-mono text-sm text-gray-900">{{ promptRun.optimized_prompt }}</pre>
+                            <pre
+                                class="whitespace-pre-wrap font-mono text-sm text-gray-900"
+                                >{{ promptRun.optimized_prompt }}</pre
+                            >
                         </div>
                     </div>
                 </div>
 
                 <!-- Error Message -->
-                <div v-else-if="promptRun.status === 'failed'" class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div
+                    v-else-if="promptRun.status === 'failed'"
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-red-600">Error</h3>
+                        <h3 class="mb-4 text-lg font-semibold text-red-600">
+                            Error
+                        </h3>
                         <p class="text-sm text-gray-900">
-                            {{ promptRun.error_message || 'An error occurred whilst processing your request.' }}
+                            {{
+                                promptRun.error_message ||
+                                'An error occurred whilst processing your request.'
+                            }}
                         </p>
                         <div class="mt-4">
                             <a
@@ -181,20 +216,40 @@ const getStatusBadgeClass = (status: string) => {
                 </div>
 
                 <!-- Processing State -->
-                <div v-else-if="promptRun.status === 'processing'" class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div
+                    v-else-if="promptRun.status === 'processing'"
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="p-6">
-                        <div class="flex items-centre">
-                            <svg class="mr-3 h-5 w-5 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <div class="items-centre flex">
+                            <svg
+                                class="mr-3 h-5 w-5 animate-spin text-indigo-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
                             </svg>
-                            <span class="text-gray-700">Processing your request...</span>
+                            <span class="text-gray-700"
+                                >Processing your request...</span
+                            >
                         </div>
                     </div>
                 </div>
 
                 <!-- Back to History -->
-                <div class="mt-6 text-centre">
+                <div class="text-centre mt-6">
                     <a
                         :href="route('prompt-optimizer.history')"
                         class="text-sm text-indigo-600 hover:text-indigo-800"

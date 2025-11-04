@@ -8,8 +8,14 @@ import { Link } from '@inertiajs/vue3';
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
         <div>
-            <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+            <Link
+                href="/"
+                class="flex items-center gap-3 transition hover:opacity-80"
+            >
+                <ApplicationLogo
+                    class="h-16 w-16 fill-current text-indigo-600"
+                />
+                <span class="text-3xl font-bold text-gray-800">AI Buddy</span>
             </Link>
         </div>
 

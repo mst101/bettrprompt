@@ -1,7 +1,9 @@
 # ADVENTURER GUIDE TO CAREERS
+
 Make a living that allows you to express your creative freedom and imagination
 
 ## Table of Contents
+
 - Introduction
 - Academic Path
     - How Adventurers Learn
@@ -24,6 +26,7 @@ Make a living that allows you to express your creative freedom and imagination
 - Final Words
 
 # Introduction
+
 ## Why Professional Development Matters to Adventurers
 
 Adventurers, with a certain resistance to rules, hierarchies, and rigid processes, may struggle to find balance when it comes to academic and professional development. In traditional educational environments, they face unique challenges, and their innate talents and gifts are too often overlooked from an early age. As a result, some Adventurers may grow up with misgivings about their intelligence - or even their selfworth.
@@ -53,6 +56,7 @@ Hands-on mastery is the type of learning that appeals most to Adventurers. They 
 ### How Adventurers Learn
 
 # Balanced Learning Habits
+
 ## Valuing Hands-On Experiences
 
 Adventurers love to create. As long as they can make them themselves, it doesn't matter if it's artistic pieces, musical compositions, or beautiful graphic designs. People with this personality type don't respond well to just sitting still and absorbing information. Give them something to do, and they quickly become engaged. Allow them to express themselves in interesting and amusing fashions, and they'll shine, but ask them to recall a historical timeline, and they'll instantly lose interest.
@@ -60,6 +64,7 @@ Adventurers love to create. As long as they can make them themselves, it doesn't
 Adventurers also enjoy coaching and feedback on their performance. Although nobody likes criticism, these types are serious about mastering what interests them and tend to appreciate any observations that can honestly help them accomplish this. The optimal learning style for Adventurers is to watch someone modeling a technique, immediately perform that same technique themselves, and then receive feedback on their performance. Once they mature and gain mastery, they're likely to then put their own spin on their work.
 
 ## Unbalanced Learning Habits
+
 ## Struggling with Traditional Structure
 
 Even the most adaptable Adventurers can struggle in an overlystructured, traditional classroom setting - but this issue is much worse for those who have trouble operating outside of their trait preferences. Unfortunately, most academic environments focus on providing structure for students as if everyone learns in the same way. Because Sentinel personality types make up most of the population - and, consequently, educators - the idea that structured curricula work best is consistently reinforced in the academic world.
@@ -67,6 +72,7 @@ Even the most adaptable Adventurers can struggle in an overlystructured, traditi
 This system doesn't work well for many Adventurers, who are, ostensibly, the anti-Sentinels. This doesn't mean they don't like Sentinels or are against them; rather, they work in an almost opposite manner. Sentinels are rules-based, and they like to uphold tradition. They're orderly, think linearly, and favor the predictability of the traditional classroom model. Alternately, Adventurers tend to struggle in regimented environments.
 
 # Rebalancing Learning Habits
+
 ## Finding a Niche
 
 Parents and instructors who want to reach Adventurers and engage them in the learning process must help them find their niche and keep opportunities to be spontaneous open for them. They can give them something to work on independently, offering them some freedom to express themselves. Adventurers are always looking for something new and novel, and tend to respond to instruction that cultivates boldness and improvisation.
@@ -78,6 +84,7 @@ Still, it's important to remember that Adventurers are likely to only take so mu
 If you've attended high school or ever watched one of the thousands of films about teenage angst, then you already know that there's more to high school than just academics. Most would agree there are as many lessons to be learned in school yards and hallways as there are in classrooms. So, let's take a moment to consider high school as a place where some important life lessons unfold.
 
 ## Balanced Adventurers in High School
+
 ## Independent and Innovative
 
 Adventurers can be reclusive, especially if they feel out of place in the classroom. However, those who understand themselves and have found their niche can offset this tendency with their natural charm, boldness, and mastery of the right skills. Even if this occurs in areas outside of the classroom, the effects can transfer; for instance, everybody gathers around the guy with a guitar at a party. Associating with Adventurers may even appeal to the rebellious streak in some of their otherwise conventional peers.
@@ -89,6 +96,7 @@ For many Adventurers, extracurricular activities and joining clubs or groups may
 People with this personality type rarely aspire to be in leadership positions. They dislike structure and are unlikely to impose it on others. Instead, they often serve throughout life in advisory capacities and can offer a lot to organizations by coming up with innovative ways of selfexpression and problem-solving.
 
 # Unbalanced Adventurers in High School
+
 ## Out of Sync with the System
 
 Some Adventurers have a difficult time in high school. As discussed above, the typical classroom isn't a great fit for them. Their aversion to the structure of most classes might result in the impression that they're troublemakers or possibly even unintelligent. Within the traditional system, it's easy to miss the genius of another type lurking below the surface in such students. Unfortunately, too many teachers and parents lack this perspective, and they often view Adventurers as uncooperative or incapable.
@@ -96,6 +104,7 @@ Some Adventurers have a difficult time in high school. As discussed above, the t
 Let the other students memorize cold, hard facts or play with ideas, but make sure Adventurers have something practical and tangible to do. In high school, point these students toward music, art, or other courses based on skill mastery. If left to struggle with traditional education, Adventurers are likely to earn poor grades and experience painful emotional and psychological distress. The constant message they receive from their school environment is that they're out of sync with everyone else. If it's clear to them they don't fit, this realization can cause a great deal of damage to their self-esteem.
 
 # Rebalancing Adventurers in High School
+
 ## Relating Learning to Personal Interests
 
 Many places are cutting or reducing their arts programs to tighten their budgets. These cuts can be disappointing for many reasons, but they're potentially devastating for students who perform creatively. If available or reasonable, transferring to a high school of the arts may be an appropriate option for Adventurer students. They may feel more at home in such an environment and receive a healthy dose of affirming feedback.
@@ -117,6 +126,7 @@ Often, their perspective depends upon choosing the right major at the right coll
 Adventurers who attend college or university are likely to feel as though they've been set free. Leaving home and high school for college offers many of them the independence and autonomy they crave. No longer bound by the rules of high school life, people with this personality type may finally find an educational model that fits their learning style.
 
 ## Balanced Adventurers in College
+
 ## Free to Find Their Own Way
 
 Adventurers tend to choose college courses that share similarities with the subjects they connected with in high school. The artistic disciplines are a primary interest for many Adventurer college students, along with various other active professions such as teaching, forestry, and psychology.
@@ -124,6 +134,7 @@ Adventurers tend to choose college courses that share similarities with the subj
 Adventurers are likely to avoid the pressure to choose majors and courses they struggled with in high school. Sometimes parents and guidance counselors, with all the best intentions, can send a high school graduate in the wrong direction in college. If Adventurer students didn't embrace more abstract, theoretical coursework in high school, the chances aren't any better for them doing so in college.
 
 # Unbalanced Adventurers in College
+
 ## Too Focused on "Right Now"
 
 Some think the purpose of college and university is to obtain the tools needed to make a good living. Most Adventurers, however, reject this as the primary reason to get a degree. Mastery and creativity tend to be the chief motivators for these students, and they're usually convinced that their passion can see them through. Some Adventurers may place their emphasis on picking up skills in the "here and now" with little regard for the future.
@@ -133,6 +144,7 @@ Do Adventurers look for "party schools" to strengthen their university experienc
 The same is true for Adventurers who are interested in coming into their own. They're Introverts, so a vivacious social life wouldn't necessarily be attractive to them. A few good friends tend to do nicely. However, nearly all students are susceptible to the temptations of college freedom, especially when they're under some emotional stress. Explorers all tend to seek a little adventure and novelty, which could, at least occasionally, draw Adventurers into the campus party world. They may want to exercise caution.
 
 # Rebalancing Adventurers in College
+
 ## Learning to Deal with Difficulty
 
 College is a time for Adventurers to consider and exploit their strengths and talents in real ways. This is their opportunity to customize their courses of study to a level that leaves them feeling fulfilled. One area of difficulty for collegiate Adventurers is the necessity of taking those unavoidable courses - the foundational prerequisites that many independent-minded students dread. Although some students "test out" of them, into every college career a little mundane classwork must fall.
@@ -158,6 +170,7 @@ Adventurers dislike speculating about the future or dwelling on the past; instea
 This intense focus on the present comes with a cost: an aversion to long-term planning. This doesn't necessarily mean that Adventurers are reckless or shortsighted. Rather, they prefer to focus on managing controllable factors and taking immediate action, not following multistep procedures that might have some benefit in the future. Careers that require forecasting, theorizing, or performing routine or incremental tasks are typically poor fits for people with this personality type.
 
 # Live Free
+
 Adventurers cherish their freedom and resist any attempts to force them into restrictive, predictable roles. Stable, unchanging positions and one-size-fits-all career ladders make them feel suffocated, not reassured. Even in otherwise pleasant environments, people with this personality type become restless if they can't follow their instincts and express themselves freely.
 
 One reason Adventurers crave independence is so they can experiment and improvise without having to ask permission. They enjoy breaking molds and trying out new things - which is why they're often known as trendsetters. It's difficult to imagine Adventurers being happy in office cubicles, following top-down directives from nine to five. People with this personality type are free spirits, and they don't do well with strict structures, rigid expectations, or inflexible protocols.
@@ -171,6 +184,7 @@ People with the Adventurer personality type live and breathe creativity, seeking
 For exploring the unknown and reaching the heights of human ability, Adventurers can't be matched; it's their driving force and primary motivator. Their focus should be positioning themselves to master specific techniques to benefit their employers, while also retaining enough freedom to choose their own methods. This may be a challenging task for many employers - however, smart managers won't take long to notice it's good to have Adventurers on board.
 
 # Practicality and Learning
+
 Practical and down to earth, Adventurers typically remain levelheaded even when facing challenges. Where other types might focus on theories and methods, Adventurers concentrate on the reality of a situation when deciding how to proceed. They should steer their careers toward roles that reward practicality and efficiency. In addition, they should develop areas of expertise that allow them to focus on concrete details rather than abstract matters.
 
 As they progress in their careers, Adventurers should indulge their interest in learning and work by seizing opportunities for education and experimentation. For instance, many organizations offer various training programs or subscriptions to professional magazines. Employers may even offer reimbursement for courses, conferences, or workshops. By taking advantage of such opportunities, Adventurers will not only stave off boredom in their career paths but also broaden their skill sets, potentially laying the groundwork for future advancement.
@@ -196,57 +210,64 @@ The arts occasionally demand group participation - such as in an orchestra or on
 Freelancing or working independently in creative careers allow Adventurers to set their own agendas, choose the problems they want to solve and chart their own timelines. These free spirits crave the opportunity to take risks without worrying about the reactions of others.
 
 The following careers generally fit this description:
-* Musician - instrumental, vocal, or composition
-* Potter
-* Painter
-* Illustrator
-* Sculptor
-* Graphic artist
-* Weaver
-* Interior designer
-* Fashion designer
-* Jewelry designer
-* Metal smith
-* Photographer
-* Woodworker (carpenter)
+
+- Musician - instrumental, vocal, or composition
+- Potter
+- Painter
+- Illustrator
+- Sculptor
+- Graphic artist
+- Weaver
+- Interior designer
+- Fashion designer
+- Jewelry designer
+- Metal smith
+- Photographer
+- Woodworker (carpenter)
 
 # Mechanics and Engineering
+
 Adventurers are attracted to the problem-solving nature of these types of positions, as they also typically appeal to their need for handson opportunities to create and innovate. These are also practical professions where real objects are modified in real ways. Engineers and mechanics often must collaborate with others and conform to rules, which can pose problems for Adventurers; however, they can also establish their own sphere of influence, within which they can explore and experiment freely.
 
 Some specific occupations in this field include the following:
-* Auto, boat, or airplane mechanic
-* Small-engine mechanic
-* Appliance repairer
-* Heavy-equipment mechanic
-* Engineer (mechanical, computer, structural, environmental, acoustic, robotic - any of the many branches of engineering)
+
+- Auto, boat, or airplane mechanic
+- Small-engine mechanic
+- Appliance repairer
+- Heavy-equipment mechanic
+- Engineer (mechanical, computer, structural, environmental, acoustic, robotic - any of the many branches of engineering)
 
 # Animal and Child Care
+
 Many Adventurers do well in jobs that nurture others. Thanks to their sensory awareness and love of discovery, combined with their gentle and charming nature, they connect easily with children. Their patience and sensitivity also serve them well when working with animals. Some jobs that might use these special qualities are listed below:
 
-* Veterinarian or veterinarian's assistant
-* Animal trainer, groomer, or boarder
-* Animal rescue worker
-* Pet-adoption counselor
-* Kennel manager or worker
-* Preschool or early-education teacher
-* Nanny
-* Child psychologist or therapist
-* Social worker
-* Children's museum curator or docent (particularly if activity based)
+- Veterinarian or veterinarian's assistant
+- Animal trainer, groomer, or boarder
+- Animal rescue worker
+- Pet-adoption counselor
+- Kennel manager or worker
+- Preschool or early-education teacher
+- Nanny
+- Child psychologist or therapist
+- Social worker
+- Children's museum curator or docent (particularly if activity based)
 
 ## Medicine
+
 Medical careers can afford Adventurers the opportunity to master skills and use their problem-solving abilities in time-critical environments. As long as the work brings in new and interesting cases, these types do well in the medical professions. If mundane activities or restricted protocols dominate the job, however, these positions can lose their appeal for Adventurers.
 
 Overall, people with this personality type often do well in the healing professions. The following is a list of some possible roles:
-* Nurse
-* Doctor (general practice, specialist, or emergency medicine)
-* Physician's assistant
-* Midwife or doula
-* Therapist or counselor
-* Physical therapist
-* Dentist or dental hygienist
+
+- Nurse
+- Doctor (general practice, specialist, or emergency medicine)
+- Physician's assistant
+- Midwife or doula
+- Therapist or counselor
+- Physical therapist
+- Dentist or dental hygienist
 
 # Unbalanced Career Options
+
 In modern society, we spend a great deal of time at work, but we also tend to find great meaning in our employment. It's important for Adventurers to avoid situations to which they're not well suited, as they may become stuck in a difficult position. Here are characteristics of jobs that may not be suitable for Adventurers.
 
 ## Dependent on a Team
@@ -258,9 +279,11 @@ Adventurers like to operate independently. Although they may fare well enough as
 People with this personality type crave novelty, spontaneity, and challenge. Repetitive work of any kind loses their interest, even if it's well compensated or otherwise advantageous. Unless they can use their improvisational skills, Adventurers become unfocused and bored.
 
 # Restrictive Environment
+
 If the structure or the rules of a workplace are too rigid, Adventurers feel stifled and unfulfilled. When they can't act on their instincts, people with this personality type lose their edge on solving problems and facing challenges. Adventurers need the latitude to act swiftly and to take risks - two behaviors generally discouraged in hierarchical or rules-bound environments.
 
 ## Self-Employment
+
 ## Alternative Options
 
 Many people find self-employment scary; however, gone are the days of spending decades working at the same company with ensured employment. Except for certain specialized fields, job security and guaranteed prospects are generally considered things of the past. Working for oneself can be a viable alternative to conventional employment.
@@ -290,6 +313,7 @@ Adventurers can embrace these strengths in the job-hunting stage. As Introverts,
 To do so, Adventurers should highlight a range of past projects, list skill sets they've developed, and mention side gigs or hobbies where they've established mastery. Even if these details seem only tangentially related to the position, they emphasize their abilities in problem-solving and innovation and help distinguish them from the competition.
 
 # Finding the Right Job
+
 With job interviews, Adventurers may not want to spend time preparing; instead, they trust their skills and enthusiasm can put them above everybody else. Many interviewers rely on template questions, though. Adventurers may lose out to other candidates who have prepared answers to common interview questions, such as "What's your greatest weakness?" or "Who are some people you admire?" By spending even a few minutes before an interview brainstorming likely questions and drafting answers, Adventurers can increase their chances of success.
 
 On the flip side, Adventurers shouldn't hesitate to ask their interviewers questions, as it might be the only way they can determine whether a position is a good fit that allows for such things as room to experiment and freedom from micromanagement.
@@ -313,6 +337,7 @@ As they become better acquainted, Adventurers and Analysts can learn to work tog
 For an illustration of this dynamic, consider Apollo 13, the space mission (and the eponymous movie) that brought us the iconic phrase, "Houston, we have a problem." After a mechanical mishap, three U.S. astronauts had to operate a crippled space capsule. Ground control whom we might compare to Analysts - calculated all the numbers, ran analyses, and worked out a trajectory that could get the astronauts home. The astronauts - whom we might think of as Adventurers - then had to work as problem-solvers, implementing the plan and coping with mishaps along the way. In the end, the astronauts did indeed make it back to Earth safely, exemplifying how different functions and styles can work together to fulfill the same goal.
 
 # Unbalanced Adventurer-Analyst Cooperation
+
 ## Ideas versus Action
 
 When they first meet, Adventurers might feel as if Analysts ignore important details in favor of vague, impractical ideas and hypothesizing. As time goes on, it can be tempting for Adventurers to dismiss Analysts as having their heads in the clouds and not understanding the practical side of - well, anything. In return, Adventurers might be judged by Analysts as reckless or narrow-minded. In such situations, communication and collaboration can grind to a halt.
@@ -328,6 +353,7 @@ Although Adventurers enjoy details and implementation, they need to remember tha
 Adventurers should also ask Analysts to give them feedback from a bigpicture perspective. This can help Adventurers identify their blind spots, particularly any long-term considerations that they've been neglecting in favor of quick action and results. Such a vantage point can save Adventurers from going in a wrong direction or wasting their efforts.
 
 # R-E-S-P-E-C-T
+
 Adventurers and Analysts, like all personality types, operate best in an environment of mutual respect. To cultivate this, Adventurers shouldn't rush to dismiss Analysts and their theories. After all, Analysts are seeking efficient outcomes, just like Adventurers. Instead, Adventurers can pose concrete, specific questions about their ideas, such as, "What type of budget would this entail?" and "What milestones would we want to set to stay on track?" These questions have a dual benefit: They remind Analysts of practical considerations, and they force Adventurers to acknowledge the merits of an analytical process.
 
 ## Balanced Adventurer-Diplomat Cooperation
@@ -335,6 +361,7 @@ Adventurers and Analysts, like all personality types, operate best in an environ
 Adventurers with their practical approach to life and problems and Diplomats with their more idealistic bent seem likely to conflict with one another. However, if, instead of thinking of these traits as opposite, these types see them as complementary, there may be much potential for Adventurer-Diplomat cooperation. They find common ground when they tap into each other's passion and desire to bring about improvements.
 
 # The Pursuit of Something Better
+
 Both Adventurers and Diplomats deploy their creativity in pursuit of something better. For Adventurers, this means finding novel and interesting solutions to practical and specific problems. They can look at a tangled mess of a program and figure out how to make it work - often in unique and interesting ways. Although Diplomats and Adventurers have a shared interest in improvement, Diplomats are more focused on personal growth, moral development, and well-being.
 
 As their professional relationships together progress, Adventurers and Diplomats might discover additional common ground: Both types respect independence, and neither feels beholden to rules or convention. Together, these two types can enjoy productive and pleasant working relationships, particularly if their missions involve innovation and change.
@@ -346,6 +373,7 @@ As with Analysts, Adventurers and Diplomats can function together as a one-two p
 As an illustration, suppose that a Diplomat recognizes that an organization needs to create a greater sense of community and cohesion within its ranks. Communication around the office is poor, and the Diplomat senses a lack of connection among coworkers. An Adventurer might then step in to address the Diplomat's insight - for example, by creating an email newsletter, a phone chain, a podcast, or an agenda for lunchtime activities. In this relationship, the Diplomat can stick to generating ideas and insights, and the Adventurer can step in and act.
 
 # Unbalanced Adventurer-Diplomat Cooperation
+
 ## Action versus Consideration
 
 Adventurers may trust their instincts a little too much by putting their plans in motion without taking other people's opinions, views, or welfare into account. Such behavior can rile sensitive Diplomats, whose values include cooperation and harmony. By acting unilaterally, Adventurers may also ignore potential long-term consequences, upsetting Diplomats even further.
@@ -375,6 +403,7 @@ Adventurers and Sentinels can complement each other well when things go wrong. S
 However, Adventurers in such situations can benefit from Sentinels, too. Adventurers might feel tempted to act impulsively. When this happens, Sentinels can ground them and help them retrace their steps as necessary. Sometimes, boldly "winging it" can lead to effective solutions, and sometimes, this approach can create more problems than it solves. If willing, Adventurers and Sentinels can negotiate a balanced approach to tackling challenges together.
 
 # Unbalanced Adventurer-Sentinel Cooperation
+
 ## Order versus Flow
 
 Adventurers may also feel as if Sentinels are continually blocking their efforts to try new things - whether this means hiring a new vendor or even buying a different type of printer paper. Adventurers don't mind cutting corners when necessary, but Sentinels want those corners to remain intact - just the way they've always been. This can trigger tension and disagreement.
@@ -406,6 +435,7 @@ Adventurers and their fellow Explorers typically find themselves "speaking the s
 When working together, Adventurers and other Explorers want to figure out the best way to do the job. They may bypass rules, standards, or traditions that hinder their strategies. Because of this pronounced spontaneity and independence, other types often see them as risktakers. In the workplace, Adventurers may bond with other Explorers who share this willingness to experiment and break from protocol.
 
 # Practical Innovation
+
 Working together, Adventurers and Explorers can free an organization from being stuck in a rut and following old, ineffective patterns. They may not spend their days making diagrams on whiteboards, but by jumping in and solving problems on the fly, together they often innovate in ways that create new best practices. The harnessed energy of Adventurers and other Explorers can be a formidable asset to any organization.
 
 ## Unbalanced Adventurer-Explorer Cooperation
@@ -423,6 +453,7 @@ Adventurers and other Explorers might also find that their actions, although eff
 The immediacy of the shared mindset of Adventurers and Explorers can create a type of tunnel vision if not adjusted and kept in check. Even when both types don't recognize the problem, their supervisors might accuse them of thumbing their noses at the vision and values of the company.
 
 # Rebalancing Adventurer-Explorer Cooperation
+
 ## Appreciating Commonalities
 
 When Adventurers and Explorers work together, they can take advantage of their easy camaraderie by brainstorming new and better ways of doing things. The two types are likely to come up with fresh approaches and promising experiments. They can make the work experience even more productive and rewarding if they find something to tinker with while they're chatting.

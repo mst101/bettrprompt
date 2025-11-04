@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class N8nClient
 {
     protected string $baseUrl;
+
     protected string $username;
+
     protected string $password;
 
     public function __construct()
@@ -22,7 +24,7 @@ class N8nClient
     {
         try {
             $response = Http::withBasicAuth($this->username, $this->password)
-                ->post(rtrim($this->baseUrl, '/') . '/' . ltrim($path, '/'), $payload);
+                ->post(rtrim($this->baseUrl, '/').'/'.ltrim($path, '/'), $payload);
 
             if ($response->failed()) {
                 Log::error('n8n webhook failed', [
@@ -34,7 +36,7 @@ class N8nClient
 
             return $response;
         } catch (\Throwable $e) {
-            Log::error('n8n call error: ' . $e->getMessage(), [
+            Log::error('n8n call error: '.$e->getMessage(), [
                 'path' => $path,
                 'payload' => $payload,
             ]);

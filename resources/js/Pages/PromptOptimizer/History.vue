@@ -66,13 +66,13 @@ const formatDate = (dateString: string) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-centre justify-between">
+            <div class="items-centre flex justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Prompt History
                 </h2>
                 <a
                     :href="route('prompt-optimizer.index')"
-                    class="inline-flex items-centre rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
                 >
                     Create New
                 </a>
@@ -82,7 +82,10 @@ const formatDate = (dateString: string) => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div v-if="promptRuns.data.length === 0" class="p-6 text-centre text-gray-500">
+                    <div
+                        v-if="promptRuns.data.length === 0"
+                        class="text-centre p-6 text-gray-500"
+                    >
                         <p>No prompt history yet.</p>
                         <a
                             :href="route('prompt-optimizer.index')"
@@ -98,45 +101,92 @@ const formatDate = (dateString: string) => {
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             Personality Type
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             Task Description
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             Status
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             Created
                                         </th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    <tr v-for="promptRun in promptRuns.data" :key="promptRun.id" class="hover:bg-gray-50">
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                                <tbody
+                                    class="divide-y divide-gray-200 bg-white"
+                                >
+                                    <tr
+                                        v-for="promptRun in promptRuns.data"
+                                        :key="promptRun.id"
+                                        class="hover:bg-gray-50"
+                                    >
+                                        <td
+                                            class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
+                                        >
                                             {{ promptRun.personality_type }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-gray-700">
-                                            {{ truncate(promptRun.task_description, 80) }}
+                                        <td
+                                            class="px-6 py-4 text-sm text-gray-700"
+                                        >
+                                            {{
+                                                truncate(
+                                                    promptRun.task_description,
+                                                    80,
+                                                )
+                                            }}
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm">
+                                        <td
+                                            class="whitespace-nowrap px-6 py-4 text-sm"
+                                        >
                                             <span
-                                                :class="getStatusBadgeClass(promptRun.status)"
+                                                :class="
+                                                    getStatusBadgeClass(
+                                                        promptRun.status,
+                                                    )
+                                                "
                                                 class="inline-flex rounded-full px-2 py-1 text-xs font-semibold uppercase"
                                             >
                                                 {{ promptRun.status }}
                                             </span>
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                            {{ formatDate(promptRun.created_at) }}
+                                        <td
+                                            class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
+                                        >
+                                            {{
+                                                formatDate(promptRun.created_at)
+                                            }}
                                         </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                        <td
+                                            class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+                                        >
                                             <Link
-                                                :href="route('prompt-optimizer.show', promptRun.id)"
+                                                :href="
+                                                    route(
+                                                        'prompt-optimizer.show',
+                                                        promptRun.id,
+                                                    )
+                                                "
                                                 class="text-indigo-600 hover:text-indigo-900"
                                             >
                                                 View
@@ -148,49 +198,85 @@ const formatDate = (dateString: string) => {
                         </div>
 
                         <!-- Pagination -->
-                        <div v-if="promptRuns.last_page > 1" class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                            <div class="flex items-centre justify-between">
-                                <div class="flex flex-1 justify-between sm:hidden">
+                        <div
+                            v-if="promptRuns.last_page > 1"
+                            class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+                        >
+                            <div class="items-centre flex justify-between">
+                                <div
+                                    class="flex flex-1 justify-between sm:hidden"
+                                >
                                     <Link
                                         v-if="promptRuns.current_page > 1"
                                         :href="promptRuns.links[0].url || '#'"
-                                        class="relative inline-flex items-centre rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                        class="items-centre relative inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Previous
                                     </Link>
                                     <Link
-                                        v-if="promptRuns.current_page < promptRuns.last_page"
-                                        :href="promptRuns.links[promptRuns.links.length - 1].url || '#'"
-                                        class="relative ml-3 inline-flex items-centre rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                        v-if="
+                                            promptRuns.current_page <
+                                            promptRuns.last_page
+                                        "
+                                        :href="
+                                            promptRuns.links[
+                                                promptRuns.links.length - 1
+                                            ].url || '#'
+                                        "
+                                        class="items-centre relative ml-3 inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Next
                                     </Link>
                                 </div>
-                                <div class="hidden sm:flex sm:flex-1 sm:items-centre sm:justify-between">
+                                <div
+                                    class="sm:items-centre hidden sm:flex sm:flex-1 sm:justify-between"
+                                >
                                     <div>
                                         <p class="text-sm text-gray-700">
                                             Showing
-                                            <span class="font-medium">{{ (promptRuns.current_page - 1) * promptRuns.per_page + 1 }}</span>
+                                            <span class="font-medium">{{
+                                                (promptRuns.current_page - 1) *
+                                                    promptRuns.per_page +
+                                                1
+                                            }}</span>
                                             to
-                                            <span class="font-medium">{{ Math.min(promptRuns.current_page * promptRuns.per_page, promptRuns.total) }}</span>
+                                            <span class="font-medium">{{
+                                                Math.min(
+                                                    promptRuns.current_page *
+                                                        promptRuns.per_page,
+                                                    promptRuns.total,
+                                                )
+                                            }}</span>
                                             of
-                                            <span class="font-medium">{{ promptRuns.total }}</span>
+                                            <span class="font-medium">{{
+                                                promptRuns.total
+                                            }}</span>
                                             results
                                         </p>
                                     </div>
                                     <div>
-                                        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                        <nav
+                                            class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                            aria-label="Pagination"
+                                        >
                                             <Link
-                                                v-for="(link, index) in promptRuns.links"
+                                                v-for="(
+                                                    link, index
+                                                ) in promptRuns.links"
                                                 :key="index"
                                                 :href="link.url || '#'"
                                                 :class="[
                                                     link.active
-                                                        ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
-                                                    'relative inline-flex items-centre border px-4 py-2 text-sm font-medium',
-                                                    index === 0 ? 'rounded-l-md' : '',
-                                                    index === promptRuns.links.length - 1 ? 'rounded-r-md' : '',
+                                                        ? 'z-10 border-indigo-500 bg-indigo-50 text-indigo-600'
+                                                        : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50',
+                                                    'items-centre relative inline-flex border px-4 py-2 text-sm font-medium',
+                                                    index === 0
+                                                        ? 'rounded-l-md'
+                                                        : '',
+                                                    index ===
+                                                    promptRuns.links.length - 1
+                                                        ? 'rounded-r-md'
+                                                        : '',
                                                 ]"
                                                 :disabled="!link.url"
                                                 v-html="link.label"
