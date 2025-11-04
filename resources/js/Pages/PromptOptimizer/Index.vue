@@ -10,7 +10,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const form = useForm({
-    personality_type: '',
+    personality_type: 'INTP-A',
     trait_percentages: {
         mind: null as number | null,
         energy: null as number | null,
@@ -18,7 +18,7 @@ const form = useForm({
         tactics: null as number | null,
         identity: null as number | null,
     },
-    task_description: '',
+    task_description: 'I want to build a work-from-home office shed.',
 });
 
 const showTraitPercentages = ref(false);
