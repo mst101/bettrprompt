@@ -1,0 +1,185 @@
+{
+  "name": "Final Prompt Optimizer",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "final-prompt-optimizer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "aa11bb22-cc33-dd44-ee55-ff6677889900",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "final-prompt-optimizer-webhook-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate and extract input from webhook\nconst items = $input.all();\nconst body = items[0].json.body;\n\n// Validate required fields\nif (!body.personality_type) {\n  throw new Error('Missing personality_type');\n}\nif (!body.task_description) {\n  throw new Error('Missing task_description');\n}\nif (!body.selected_framework) {\n  throw new Error('Missing selected_framework');\n}\nif (!body.prompt_run_id) {\n  throw new Error('Missing prompt_run_id');\n}\n\n// Extract data\nconst personalityType = body.personality_type;\nconst taskDescription = body.task_description;\nconst traitPercentages = body.trait_percentages || {};\nconst selectedFramework = body.selected_framework;\nconst frameworkReasoning = body.framework_reasoning || '';\nconst questions = body.framework_questions || [];\nconst answers = body.clarifying_answers || [];\nconst promptRunId = body.prompt_run_id;\n\n// Build trait information for context\nlet traitInfo = '';\nif (Object.keys(traitPercentages).length > 0) {\n  const traitLabels = {\n    mind: 'Mind (Introversion/Extraversion)',\n    energy: 'Energy (Intuitive/Observant)',\n    nature: 'Nature (Thinking/Feeling)',\n    tactics: 'Tactics (Judging/Prospecting)',\n    identity: 'Identity (Assertive/Turbulent)'\n  };\n\n  const formattedTraits = Object.entries(traitPercentages)\n    .map(([key, value]) => {\n      const label = traitLabels[key] || key;\n      return `  - ${label}: ${value}%`;\n    })\n    .join('\\n');\n\n  traitInfo = `\\nTrait Percentages:\\n${formattedTraits}`;\n}\n\n// Build Q&A section\nlet qaSection = '';\nif (questions.length > 0) {\n  qaSection = '\\n\\nClarifying Questions & Answers:\\n';\n  questions.forEach((question, index) => {\n    const answer = answers[index];\n    if (answer && answer !== null && answer !== '') {\n      qaSection += `Q${index + 1}: ${question}\\nA${index + 1}: ${answer}\\n\\n`;\n    } else {\n      qaSection += `Q${index + 1}: ${question}\\nA${index + 1}: [Skipped]\\n\\n`;\n    }\n  });\n}\n\nreturn {\n  prompt_run_id: promptRunId,\n  personality_type: personalityType,\n  trait_info: traitInfo,\n  task_description: taskDescription,\n  selected_framework: selectedFramework,\n  framework_reasoning: frameworkReasoning,\n  qa_section: qaSection\n};"
+      },
+      "id": "bb22cc33-dd44-ee55-ff66-778899001122",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the system prompt for final optimization\nconst systemPrompt = `You are an expert at crafting AI prompts tailored to personality types based on the 16personalities.com framework.\n\nYour task is to create an optimised, comprehensive AI prompt that:\n1. Uses the specified prompt engineering framework as its foundation\n2. Takes into account the user's personality traits and communication style\n3. Incorporates all provided clarifying answers to add specificity\n4. Includes relevant context, constraints, and requirements\n5. Specifies desired output format clearly\n6. Is clear, specific, actionable, and ready to use\n\nThe prompt should be well-structured, comprehensive, and tailored to maximize effectiveness for the user's personality type.\n\nReturn ONLY the optimised prompt text, without any preamble, explanation, or commentary. The prompt should be ready to use as-is.`;\n\n// Build the user message with all context\nconst inputData = $input.first().json;\n\nconst userMessage = `Personality Type: ${inputData.personality_type}${inputData.trait_info}\n\nTask Description:\n${inputData.task_description}\n\nSelected Framework: ${inputData.selected_framework}\n\nFramework Selection Reasoning:\n${inputData.framework_reasoning}${inputData.qa_section}\n\n---\n\nUsing the ${inputData.selected_framework} framework and incorporating all the context above, create a comprehensive, optimised AI prompt for this task that is perfectly tailored to this user's personality type and requirements.`;\n\nreturn {\n  prompt_run_id: inputData.prompt_run_id,\n  personality_type: inputData.personality_type,\n  system_prompt: systemPrompt,\n  user_message: userMessage\n};"
+      },
+      "id": "cc33dd44-ee55-ff66-7788-990011223344",
+      "name": "Build LLM Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"max_tokens\": 4000,\n  \"temperature\": 0.7,\n  \"system\": {{ JSON.stringify($json.system_prompt) }},\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": {{ JSON.stringify($json.user_message) }}\n        }\n      ]\n    }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "dd44ee55-ff66-7788-9900-112233445566",
+      "name": "Call Claude Sonnet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        660,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5u3Dji2E1ZKRUSRX",
+          "name": "Header Auth account"
+        }
+      },
+      "notes": "Uses Claude Sonnet for high-quality final prompt generation"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the optimised prompt from Anthropic response\nconst items = $input.all();\nconst response = items[0].json;\n\nlet optimisedPrompt = '';\n\nif (response.content && response.content[0]?.text) {\n  optimisedPrompt = response.content[0].text.trim();\n} else {\n  throw new Error('Invalid response from LLM');\n}\n\n// Get the original data from the Build LLM Prompt node\nconst webhookData = $node[\"Build LLM Prompt\"].json;\n\nreturn {\n  optimized_prompt: optimisedPrompt,\n  prompt_run_id: webhookData.prompt_run_id,\n  personality_type: webhookData.personality_type,\n  model_used: response.model || 'claude-3-5-sonnet-20241022',\n  tokens_used: {\n    input: response.usage?.input_tokens || 0,\n    output: response.usage?.output_tokens || 0,\n    total: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n  }\n};"
+      },
+      "id": "ee55ff66-7788-9900-1122-334455667788",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "ff667788-9900-1122-3344-556677889900",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Build LLM Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build LLM Prompt": {
+      "main": [
+        [
+          {
+            "node": "Call Claude Sonnet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Claude Sonnet": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "final-prompt-optimizer-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
+  },
+  "id": "FinalPromptOptimizer001",
+  "tags": []
+}

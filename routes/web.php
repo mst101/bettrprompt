@@ -34,6 +34,10 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.store');
     Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
         ->name('prompt-optimizer.show');
+    Route::post('/prompt-optimizer/{promptRun}/answer', [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
+        ->name('prompt-optimizer.answer');
+    Route::post('/prompt-optimizer/{promptRun}/skip', [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
+        ->name('prompt-optimizer.skip');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
 });

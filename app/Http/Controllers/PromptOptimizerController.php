@@ -164,6 +164,159 @@ class PromptOptimizerController extends Controller
     }
 
     /**
+     * Submit an answer to a clarifying question
+     */
+    public function answerQuestion(Request $request, PromptRun $promptRun)
+    {
+        // Authorise that the user can update this prompt run
+        if ($promptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot answer questions at this stage.');
+        }
+
+        $validated = $request->validate([
+            'answer' => 'required|string|max:1000',
+        ]);
+
+        // Get current answers and append new one
+        $answers = $promptRun->clarifying_answers ?? [];
+        $answers[] = $validated['answer'];
+
+        // Update the prompt run
+        $promptRun->update([
+            'clarifying_answers' => $answers,
+            'workflow_stage' => 'answering_questions',
+        ]);
+
+        // Check if all questions have been answered
+        if ($promptRun->hasAnsweredAllQuestions()) {
+            // Trigger final prompt optimization
+            return $this->triggerFinalOptimization($promptRun);
+        }
+
+        // More questions to answer - redirect back to show page
+        return redirect()
+            ->route('prompt-optimizer.show', $promptRun)
+            ->with('success', 'Answer saved. Next question:');
+    }
+
+    /**
+     * Skip a clarifying question
+     */
+    public function skipQuestion(PromptRun $promptRun)
+    {
+        // Authorise that the user can update this prompt run
+        if ($promptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot skip questions at this stage.');
+        }
+
+        // Get current answers and append null for skipped question
+        $answers = $promptRun->clarifying_answers ?? [];
+        $answers[] = null;
+
+        // Update the prompt run
+        $promptRun->update([
+            'clarifying_answers' => $answers,
+            'workflow_stage' => 'answering_questions',
+        ]);
+
+        // Check if all questions have been processed
+        if ($promptRun->hasAnsweredAllQuestions()) {
+            // Trigger final prompt optimization
+            return $this->triggerFinalOptimization($promptRun);
+        }
+
+        // More questions to process - redirect back to show page
+        return redirect()
+            ->route('prompt-optimizer.show', $promptRun)
+            ->with('success', 'Question skipped. Next question:');
+    }
+
+    /**
+     * Trigger the final prompt optimization workflow
+     */
+    protected function triggerFinalOptimization(PromptRun $promptRun)
+    {
+        // Update workflow stage
+        $promptRun->update([
+            'workflow_stage' => 'generating_prompt',
+            'status' => 'processing',
+        ]);
+
+        // Prepare payload for final optimization
+        $payload = [
+            'prompt_run_id' => $promptRun->id,
+            'personality_type' => $promptRun->personality_type,
+            'trait_percentages' => $promptRun->trait_percentages,
+            'task_description' => $promptRun->task_description,
+            'selected_framework' => $promptRun->selected_framework,
+            'framework_reasoning' => $promptRun->framework_reasoning,
+            'framework_questions' => $promptRun->framework_questions,
+            'clarifying_answers' => $promptRun->clarifying_answers,
+        ];
+
+        try {
+            // Trigger final prompt optimizer workflow
+            $response = $this->n8nClient->triggerWebhook(
+                '/webhook/final-prompt-optimizer',
+                $payload
+            );
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+
+                // Update the prompt run with the final optimized prompt
+                $promptRun->update([
+                    'optimized_prompt' => $responseData['optimized_prompt'] ?? null,
+                    'workflow_stage' => 'completed',
+                    'status' => 'completed',
+                    'completed_at' => now(),
+                ]);
+
+                // Broadcast completion event
+                event(new \App\Events\PromptOptimizationCompleted($promptRun));
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $promptRun)
+                    ->with('success', 'Your optimised prompt is ready!');
+            } else {
+                // Handle n8n error
+                $promptRun->update([
+                    'status' => 'failed',
+                    'workflow_stage' => 'failed',
+                    'error_message' => 'Final optimization workflow failed: '.$response->body(),
+                    'completed_at' => now(),
+                ]);
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $promptRun)
+                    ->with('error', 'Failed to generate optimised prompt. Please try again.');
+            }
+        } catch (\Throwable $e) {
+            // Handle exception
+            $promptRun->update([
+                'status' => 'failed',
+                'workflow_stage' => 'failed',
+                'error_message' => $e->getMessage(),
+                'completed_at' => now(),
+            ]);
+
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('error', 'An error occurred whilst generating your prompt.');
+        }
+    }
+
+    /**
      * Display history of prompt runs
      */
     public function history()
