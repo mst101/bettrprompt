@@ -32,5 +32,9 @@
         "vite": "^7.0.7",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.24"
+    },
+    "dependencies": {
+        "laravel-echo": "^2.2.4",
+        "pusher-js": "^8.4.0"
     }
 }
