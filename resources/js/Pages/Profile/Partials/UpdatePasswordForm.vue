@@ -10,9 +10,9 @@ const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
 
 const form = useForm({
-    current_password: '',
+    currentPassword: '',
     password: '',
-    password_confirmation: '',
+    passwordConfirmation: '',
 });
 
 const updatePassword = () => {
@@ -23,11 +23,11 @@ const updatePassword = () => {
         },
         onError: () => {
             if (form.errors.password) {
-                form.reset('password', 'password_confirmation');
+                form.reset('password', 'passwordConfirmation');
                 passwordInput.value?.focus();
             }
-            if (form.errors.current_password) {
-                form.reset('current_password');
+            if (form.errors.currentPassword) {
+                form.reset('currentPassword');
                 currentPasswordInput.value?.focus();
             }
         },
@@ -48,19 +48,19 @@ const updatePassword = () => {
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="current_password" value="Current Password" />
+                <InputLabel for="currentPassword" value="Current Password" />
 
                 <TextInput
-                    id="current_password"
+                    id="currentPassword"
                     ref="currentPasswordInput"
-                    v-model="form.current_password"
+                    v-model="form.currentPassword"
                     type="password"
                     class="mt-1 block w-full"
                     autocomplete="current-password"
                 />
 
                 <InputError
-                    :message="form.errors.current_password"
+                    :message="form.errors.currentPassword"
                     class="mt-2"
                 />
             </div>
@@ -82,20 +82,20 @@ const updatePassword = () => {
 
             <div>
                 <InputLabel
-                    for="password_confirmation"
+                    for="passwordConfirmation"
                     value="Confirm Password"
                 />
 
                 <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
+                    id="passwordConfirmation"
+                    v-model="form.passwordConfirmation"
                     type="password"
                     class="mt-1 block w-full"
                     autocomplete="new-password"
                 />
 
                 <InputError
-                    :message="form.errors.password_confirmation"
+                    :message="form.errors.passwordConfirmation"
                     class="mt-2"
                 />
             </div>

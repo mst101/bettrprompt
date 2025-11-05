@@ -10,15 +10,15 @@ interface Props {
 const props = defineProps<Props>();
 
 const form = useForm({
-    personality_type: 'INTP-A',
-    trait_percentages: {
+    personalityType: 'INTP-A',
+    traitPercentages: {
         mind: null as number | null,
         energy: null as number | null,
         nature: null as number | null,
         tactics: null as number | null,
         identity: null as number | null,
     },
-    task_description: 'I want to build a work-from-home office shed.',
+    taskDescription: 'I want to build a work-from-home office shed.',
 });
 
 const showTraitPercentages = ref(false);
@@ -31,17 +31,6 @@ const personalityTypeOptions = computed(() => {
 });
 
 const submit = () => {
-    // Only include trait_percentages if any are filled in
-    const hasTraits = Object.values(form.trait_percentages).some(
-        (val) => val !== null,
-    );
-
-    const submitData = {
-        personality_type: form.personality_type,
-        task_description: form.task_description,
-        ...(hasTraits ? { trait_percentages: form.trait_percentages } : {}),
-    };
-
     form.post(route('prompt-optimizer.store'));
 };
 </script>
@@ -69,15 +58,15 @@ const submit = () => {
                             <!-- Personality Type Selection -->
                             <div>
                                 <label
-                                    for="personality_type"
+                                    for="personalityType"
                                     class="block text-sm font-medium text-gray-700"
                                 >
                                     Personality Type
                                     <span class="text-red-500">*</span>
                                 </label>
                                 <select
-                                    id="personality_type"
-                                    v-model="form.personality_type"
+                                    id="personalityType"
+                                    v-model="form.personalityType"
                                     required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
@@ -93,10 +82,10 @@ const submit = () => {
                                     </option>
                                 </select>
                                 <p
-                                    v-if="form.errors.personality_type"
+                                    v-if="form.errors.personalityType"
                                     class="mt-1 text-sm text-red-600"
                                 >
-                                    {{ form.errors.personality_type }}
+                                    {{ form.errors.personalityType }}
                                 </p>
                             </div>
 
@@ -139,7 +128,7 @@ const submit = () => {
                                                 type="number"
                                                 id="mind"
                                                 v-model.number="
-                                                    form.trait_percentages.mind
+                                                    form.traitPercentages.mind
                                                 "
                                                 min="0"
                                                 max="100"
@@ -159,7 +148,7 @@ const submit = () => {
                                                 type="number"
                                                 id="energy"
                                                 v-model.number="
-                                                    form.trait_percentages
+                                                    form.traitPercentages
                                                         .energy
                                                 "
                                                 min="0"
@@ -180,7 +169,7 @@ const submit = () => {
                                                 type="number"
                                                 id="nature"
                                                 v-model.number="
-                                                    form.trait_percentages
+                                                    form.traitPercentages
                                                         .nature
                                                 "
                                                 min="0"
@@ -201,7 +190,7 @@ const submit = () => {
                                                 type="number"
                                                 id="tactics"
                                                 v-model.number="
-                                                    form.trait_percentages
+                                                    form.traitPercentages
                                                         .tactics
                                                 "
                                                 min="0"
@@ -222,7 +211,7 @@ const submit = () => {
                                                 type="number"
                                                 id="identity"
                                                 v-model.number="
-                                                    form.trait_percentages
+                                                    form.traitPercentages
                                                         .identity
                                                 "
                                                 min="0"
@@ -238,25 +227,25 @@ const submit = () => {
                             <!-- Task Description -->
                             <div>
                                 <label
-                                    for="task_description"
+                                    for="taskDescription"
                                     class="block text-sm font-medium text-gray-700"
                                 >
                                     Task Description
                                     <span class="text-red-500">*</span>
                                 </label>
                                 <textarea
-                                    id="task_description"
-                                    v-model="form.task_description"
+                                    id="taskDescription"
+                                    v-model="form.taskDescription"
                                     required
                                     rows="6"
                                     placeholder="Describe what you're trying to accomplish with AI..."
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 ></textarea>
                                 <p
-                                    v-if="form.errors.task_description"
+                                    v-if="form.errors.taskDescription"
                                     class="mt-1 text-sm text-red-600"
                                 >
-                                    {{ form.errors.task_description }}
+                                    {{ form.errors.taskDescription }}
                                 </p>
                                 <p class="mt-1 text-sm text-gray-500">
                                     Minimum 10 characters. Be specific about
