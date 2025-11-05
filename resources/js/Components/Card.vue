@@ -1,7 +1,6 @@
 <script setup lang="ts">
 interface Props {
     padding?: 'none' | 'small' | 'medium' | 'large';
-    class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,7 +18,7 @@ const paddingClasses = {
 <template>
     <div
         class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
-        :class="[paddingClasses[padding], class]"
+        :class="paddingClasses[padding]"
     >
         <slot />
     </div>

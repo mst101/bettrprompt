@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/Card.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -140,7 +140,9 @@ const formatDate = (dateString: string) => {
                                         <td
                                             class="whitespace-nowrap px-6 py-4 text-sm"
                                         >
-                                            <StatusBadge :status="promptRun.status" />
+                                            <StatusBadge
+                                                :status="promptRun.status"
+                                            />
                                         </td>
                                         <td
                                             class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
