@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AnswerQuestionRequest;
+use App\Http\Requests\StorePromptRunRequest;
 use App\Models\PromptRun;
 use App\Services\N8nClient;
 use Illuminate\Http\Request;
@@ -61,13 +63,9 @@ class PromptOptimizerController extends Controller
     /**
      * Store a new prompt optimization request
      */
-    public function store(Request $request)
+    public function store(StorePromptRunRequest $request)
     {
-        $validated = $request->validate([
-            'personality_type' => 'required|string|max:6',
-            'trait_percentages' => 'nullable|array',
-            'task_description' => 'required|string|min:10',
-        ]);
+        $validated = $request->validated();
 
         // Create the prompt run record
         $promptRun = PromptRun::create([
@@ -183,21 +181,14 @@ class PromptOptimizerController extends Controller
     /**
      * Submit an answer to a clarifying question
      */
-    public function answerQuestion(Request $request, PromptRun $promptRun)
+    public function answerQuestion(AnswerQuestionRequest $request, PromptRun $promptRun)
     {
-        // Authorise that the user can update this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
-
         // Validate that we're in the correct workflow stage
         if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
             return back()->with('error', 'Cannot answer questions at this stage.');
         }
 
-        $validated = $request->validate([
-            'answer' => 'required|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         // Get current answers and append new one
         $answers = $promptRun->clarifying_answers ?? [];
