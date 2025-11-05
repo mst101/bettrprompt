@@ -36,6 +36,33 @@ const props = defineProps<Props>();
 const copied = ref(false);
 const isSubmitting = ref(false);
 
+// Collapsible Q&A state
+const expandedQuestions = ref<Set<number>>(new Set());
+
+const toggleQuestion = (index: number) => {
+    if (expandedQuestions.value.has(index)) {
+        expandedQuestions.value.delete(index);
+    } else {
+        expandedQuestions.value.add(index);
+    }
+};
+
+const allExpanded = () => {
+    const totalQuestions = props.promptRun.framework_questions?.length ?? 0;
+    return totalQuestions > 0 && expandedQuestions.value.size === totalQuestions;
+};
+
+const toggleAll = () => {
+    if (allExpanded()) {
+        expandedQuestions.value.clear();
+    } else {
+        const totalQuestions = props.promptRun.framework_questions?.length ?? 0;
+        for (let i = 0; i < totalQuestions; i++) {
+            expandedQuestions.value.add(i);
+        }
+    }
+};
+
 // Form for submitting answers
 const answerForm = useForm({
     answer: '',
@@ -403,9 +430,104 @@ onUnmounted(() => {
                     </div>
                 </div>
 
+                <!-- Clarifying Questions & Answers -->
+                <div
+                    v-if="
+                        promptRun.framework_questions &&
+                        promptRun.framework_questions.length > 0 &&
+                        promptRun.clarifying_answers &&
+                        promptRun.clarifying_answers.length > 0 &&
+                        promptRun.workflow_stage === 'completed'
+                    "
+                    class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                >
+                    <div class="p-6">
+                        <div class="mb-4 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-grey-900">
+                                Clarifying Questions
+                            </h3>
+                            <button
+                                @click="toggleAll"
+                                class="inline-flex items-center rounded-md border border-grey-300 bg-white px-3 py-2 text-sm font-medium text-grey-700 shadow-sm hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                {{ allExpanded() ? 'Hide All' : 'Show All' }}
+                            </button>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div
+                                v-for="(question, index) in promptRun.framework_questions"
+                                :key="index"
+                                class="border-b border-grey-200 pb-3 last:border-b-0"
+                            >
+                                <button
+                                    @click="toggleQuestion(index)"
+                                    class="flex w-full items-start justify-between text-left"
+                                >
+                                    <div class="flex-1">
+                                        <div class="flex items-start">
+                                            <span
+                                                class="mr-2 mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                            >
+                                                {{ index + 1 }}
+                                            </span>
+                                            <p class="text-sm font-medium text-grey-900">
+                                                {{ question }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <svg
+                                        :class="[
+                                            'ml-4 h-5 w-5 flex-shrink-0 text-grey-400 transition-transform',
+                                            expandedQuestions.has(index)
+                                                ? 'rotate-180'
+                                                : '',
+                                        ]"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </button>
+
+                                <div
+                                    v-show="expandedQuestions.has(index)"
+                                    class="ml-8 mt-2"
+                                >
+                                    <div
+                                        v-if="
+                                            promptRun.clarifying_answers[index] !== null &&
+                                            promptRun.clarifying_answers[index] !== undefined
+                                        "
+                                        class="rounded-md bg-grey-50 p-3"
+                                    >
+                                        <p class="text-sm text-grey-700">
+                                            {{ promptRun.clarifying_answers[index] }}
+                                        </p>
+                                    </div>
+                                    <div
+                                        v-else
+                                        class="rounded-md bg-grey-50 p-3"
+                                    >
+                                        <p class="text-sm italic text-grey-500">
+                                            [Skipped]
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Optimised Prompt Result -->
                 <div
-                    v-else-if="
+                    v-if="
                         promptRun.workflow_stage === 'completed' &&
                         promptRun.optimized_prompt
                     "
