@@ -128,14 +128,14 @@ onMounted(() => {
     channel.listen('FrameworkSelected', (event: any) => {
         console.log('Framework selected:', event);
         // Reload the page to show questions
-        router.reload({ preserveScroll: true });
+        router.reload();
     });
 
     // Listen for prompt optimization completion
     channel.listen('PromptOptimizationCompleted', (event: any) => {
         console.log('Optimization completed:', event);
         // Reload the page to show final prompt
-        router.reload({ preserveScroll: true });
+        router.reload();
     });
 });
 
@@ -209,8 +209,7 @@ onUnmounted(() => {
                                 </p>
                             </div>
                         </div>
-                    </div>
-                </div>
+                </Card>
 
                 <!-- Framework Selection Info -->
                 <div

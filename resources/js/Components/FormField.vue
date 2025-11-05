@@ -13,7 +13,6 @@ interface Props {
     required?: boolean;
     autofocus?: boolean;
     autocomplete?: string;
-    class?: string;
     rows?: number;
     min?: number | string;
     max?: number | string;
@@ -39,7 +38,7 @@ const updateValue = (event: Event) => {
 </script>
 
 <template>
-    <div :class="class">
+    <div>
         <InputLabel :for="id" :value="label" />
 
         <!-- Textarea variant -->
@@ -63,7 +62,7 @@ const updateValue = (event: Event) => {
             v-else
             :id="id"
             :type="type"
-            :model-value="modelValue"
+            :model-value="(modelValue ?? '') as string"
             :placeholder="placeholder"
             :required="required"
             :autofocus="autofocus"

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 interface Props {
     size?: 'small' | 'medium' | 'large';
-    class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,7 +17,7 @@ const sizeClasses = {
 <template>
     <svg
         class="animate-spin text-indigo-600"
-        :class="[sizeClasses[size], class]"
+        :class="sizeClasses[size]"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
