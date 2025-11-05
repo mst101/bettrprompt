@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Card from '@/Components/Card.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
 import type { PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -23,19 +25,6 @@ interface Props {
 }
 
 defineProps<Props>();
-
-const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-        case 'completed':
-            return 'bg-green-100 text-green-800';
-        case 'processing':
-            return 'bg-yellow-100 text-yellow-800';
-        case 'failed':
-            return 'bg-red-100 text-red-800';
-        default:
-            return 'bg-gray-100 text-gray-800';
-    }
-};
 
 const truncate = (text: string, length: number = 100) => {
     if (text.length <= length) return text;
@@ -73,7 +62,7 @@ const formatDate = (dateString: string) => {
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <Card padding="none">
                     <div
                         v-if="promptRuns.data.length === 0"
                         class="text-centre p-6 text-gray-500"
@@ -151,16 +140,7 @@ const formatDate = (dateString: string) => {
                                         <td
                                             class="whitespace-nowrap px-6 py-4 text-sm"
                                         >
-                                            <span
-                                                :class="
-                                                    getStatusBadgeClass(
-                                                        promptRun.status,
-                                                    )
-                                                "
-                                                class="inline-flex rounded-full px-2 py-1 text-xs font-semibold uppercase"
-                                            >
-                                                {{ promptRun.status }}
-                                            </span>
+                                            <StatusBadge :status="promptRun.status" />
                                         </td>
                                         <td
                                             class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
@@ -279,7 +259,7 @@ const formatDate = (dateString: string) => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
         </div>
     </AuthenticatedLayout>

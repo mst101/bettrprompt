@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Card from '@/Components/Card.vue';
+import LoadingSpinner from '@/Components/LoadingSpinner.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { PromptRunResource } from '@/types';
@@ -98,19 +101,6 @@ const copyToClipboard = async () => {
     }
 };
 
-const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-        case 'completed':
-            return 'bg-green-100 text-green-800';
-        case 'processing':
-            return 'bg-yellow-100 text-yellow-800';
-        case 'failed':
-            return 'bg-red-100 text-red-800';
-        default:
-            return 'bg-gray-100 text-gray-800';
-    }
-};
-
 const getWorkflowStageLabel = (stage: string) => {
     switch (stage) {
         case 'submitted':
@@ -175,10 +165,7 @@ onUnmounted(() => {
         <div class="py-12">
             <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
                 <!-- Input Information -->
-                <div
-                    class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
-                >
-                    <div class="p-6">
+                <Card class="mb-6">
                         <div class="flex justify-between">
                             <h3
                                 class="mb-4 text-lg font-semibold text-gray-900"
@@ -188,14 +175,7 @@ onUnmounted(() => {
 
                             <!-- Status Badges -->
                             <div class="mb-4 flex items-center gap-2">
-                                <span
-                                    :class="
-                                        getStatusBadgeClass(promptRun.status)
-                                    "
-                                    class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase"
-                                >
-                                    {{ promptRun.status }}
-                                </span>
+                                <StatusBadge :status="promptRun.status" />
                                 <span
                                     class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
                                 >
