@@ -16,6 +16,15 @@
 # Handles both HTTP and HTTPS, automatically redirects HTTP → HTTPS
 app.localhost {
     import app_common
+
+    # WebSocket support for Laravel Reverb
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    reverse_proxy @websockets localhost:8080
+
+    # Regular HTTP traffic to Laravel
     reverse_proxy laravel.test:80
 }
 
