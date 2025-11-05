@@ -2,23 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { onMounted, onUnmounted, ref } from 'vue';
-
-interface PromptRun {
-    id: number;
-    personality_type: string;
-    trait_percentages: Record<string, number> | null;
-    task_description: string;
-    selected_framework: string | null;
-    framework_reasoning: string | null;
-    framework_questions: string[] | null;
-    clarifying_answers: (string | null)[] | null;
-    optimized_prompt: string | null;
-    status: string;
-    workflow_stage: string;
-    error_message: string | null;
-    created_at: string;
-    completed_at: string | null;
-}
+import type { PromptRunResource } from '@/types';
 
 interface Progress {
     answered: number;
@@ -26,7 +10,7 @@ interface Progress {
 }
 
 interface Props {
-    promptRun: PromptRun;
+    promptRun: PromptRunResource;
     currentQuestion: string | null;
     progress: Progress;
 }
@@ -48,7 +32,7 @@ const toggleQuestion = (index: number) => {
 };
 
 const allExpanded = () => {
-    const totalQuestions = props.promptRun.framework_questions?.length ?? 0;
+    const totalQuestions = props.promptRun.frameworkQuestions?.length ?? 0;
     return (
         totalQuestions > 0 && expandedQuestions.value.size === totalQuestions
     );
@@ -58,7 +42,7 @@ const toggleAll = () => {
     if (allExpanded()) {
         expandedQuestions.value.clear();
     } else {
-        const totalQuestions = props.promptRun.framework_questions?.length ?? 0;
+        const totalQuestions = props.promptRun.frameworkQuestions?.length ?? 0;
         for (let i = 0; i < totalQuestions; i++) {
             expandedQuestions.value.add(i);
         }
@@ -101,10 +85,10 @@ const skipQuestion = () => {
 };
 
 const copyToClipboard = async () => {
-    if (!props.promptRun.optimized_prompt) return;
+    if (!props.promptRun.optimizedPrompt) return;
 
     try {
-        await navigator.clipboard.writeText(props.promptRun.optimized_prompt);
+        await navigator.clipboard.writeText(props.promptRun.optimizedPrompt);
         copied.value = true;
         setTimeout(() => {
             copied.value = false;
@@ -217,7 +201,7 @@ onUnmounted(() => {
                                 >
                                     {{
                                         getWorkflowStageLabel(
-                                            promptRun.workflow_stage,
+                                            promptRun.workflowStage,
                                         )
                                     }}
                                 </span>
@@ -230,7 +214,7 @@ onUnmounted(() => {
                                     >Personality Type:</span
                                 >
                                 <span class="ml-2 text-sm text-gray-900">{{
-                                    promptRun.personality_type
+                                    promptRun.personalityType
                                 }}</span>
                             </div>
 
@@ -241,7 +225,7 @@ onUnmounted(() => {
                                 <p
                                     class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
                                 >
-                                    {{ promptRun.task_description }}
+                                    {{ promptRun.taskDescription }}
                                 </p>
                             </div>
                         </div>
@@ -251,8 +235,8 @@ onUnmounted(() => {
                 <!-- Framework Selection Info -->
                 <div
                     v-if="
-                        promptRun.selected_framework &&
-                        promptRun.framework_reasoning
+                        promptRun.selectedFramework &&
+                        promptRun.frameworkReasoning
                     "
                     class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
@@ -266,7 +250,7 @@ onUnmounted(() => {
                                 <span
                                     class="inline-flex rounded-md bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-800"
                                 >
-                                    {{ promptRun.selected_framework }}
+                                    {{ promptRun.selectedFramework }}
                                 </span>
                             </div>
 
@@ -275,7 +259,7 @@ onUnmounted(() => {
                                     >Why this framework:</span
                                 >
                                 <p class="mt-1 text-sm text-gray-700">
-                                    {{ promptRun.framework_reasoning }}
+                                    {{ promptRun.frameworkReasoning }}
                                 </p>
                             </div>
                         </div>
@@ -285,8 +269,8 @@ onUnmounted(() => {
                 <!-- Question Answering Interface -->
                 <div
                     v-if="
-                        (promptRun.workflow_stage === 'framework_selected' ||
-                            promptRun.workflow_stage ===
+                        (promptRun.workflowStage === 'framework_selected' ||
+                            promptRun.workflowStage ===
                                 'answering_questions') &&
                         currentQuestion
                     "
@@ -405,7 +389,7 @@ onUnmounted(() => {
 
                 <!-- Generating Prompt Loading State -->
                 <div
-                    v-else-if="promptRun.workflow_stage === 'generating_prompt'"
+                    v-else-if="promptRun.workflowStage === 'generating_prompt'"
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6">
@@ -436,7 +420,7 @@ onUnmounted(() => {
                                 <p class="mt-1 text-sm text-gray-600">
                                     This may take a few moments. We're crafting
                                     a personalised prompt using the
-                                    {{ promptRun.selected_framework }}
+                                    {{ promptRun.selectedFramework }}
                                     framework.
                                 </p>
                             </div>
@@ -447,11 +431,11 @@ onUnmounted(() => {
                 <!-- Clarifying Questions & Answers -->
                 <div
                     v-if="
-                        promptRun.framework_questions &&
-                        promptRun.framework_questions.length > 0 &&
-                        promptRun.clarifying_answers &&
-                        promptRun.clarifying_answers.length > 0 &&
-                        promptRun.workflow_stage === 'completed'
+                        promptRun.frameworkQuestions &&
+                        promptRun.frameworkQuestions.length > 0 &&
+                        promptRun.clarifyingAnswers &&
+                        promptRun.clarifyingAnswers.length > 0 &&
+                        promptRun.workflowStage === 'completed'
                     "
                     class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
@@ -472,7 +456,7 @@ onUnmounted(() => {
                             <div
                                 v-for="(
                                     question, index
-                                ) in promptRun.framework_questions"
+                                ) in promptRun.frameworkQuestions"
                                 :key="index"
                                 class="border-b border-gray-200 pb-3 last:border-b-0"
                             >
@@ -520,10 +504,10 @@ onUnmounted(() => {
                                 >
                                     <div
                                         v-if="
-                                            promptRun.clarifying_answers[
+                                            promptRun.clarifyingAnswers[
                                                 index
                                             ] !== null &&
-                                            promptRun.clarifying_answers[
+                                            promptRun.clarifyingAnswers[
                                                 index
                                             ] !== undefined
                                         "
@@ -533,7 +517,7 @@ onUnmounted(() => {
                                             class="whitespace-break-spaces text-sm text-gray-700"
                                         >
                                             {{
-                                                promptRun.clarifying_answers[
+                                                promptRun.clarifyingAnswers[
                                                     index
                                                 ]
                                             }}
@@ -556,8 +540,8 @@ onUnmounted(() => {
                 <!-- Optimised Prompt Result -->
                 <div
                     v-if="
-                        promptRun.workflow_stage === 'completed' &&
-                        promptRun.optimized_prompt
+                        promptRun.workflowStage === 'completed' &&
+                        promptRun.optimizedPrompt
                     "
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
@@ -605,7 +589,7 @@ onUnmounted(() => {
                         <div class="rounded-md bg-gray-50 p-4">
                             <pre
                                 class="whitespace-pre-wrap font-mono text-sm text-gray-900"
-                                >{{ promptRun.optimized_prompt }}</pre
+                                >{{ promptRun.optimizedPrompt }}</pre
                             >
                         </div>
 
@@ -613,11 +597,11 @@ onUnmounted(() => {
                             <p class="text-sm text-gray-600">
                                 This prompt was generated using the
                                 <span class="font-medium">{{
-                                    promptRun.selected_framework
+                                    promptRun.selectedFramework
                                 }}</span>
                                 framework, tailored to your
                                 <span class="font-medium">{{
-                                    promptRun.personality_type
+                                    promptRun.personalityType
                                 }}</span>
                                 personality type.
                             </p>
@@ -636,7 +620,7 @@ onUnmounted(() => {
                         </h3>
                         <p class="text-sm text-gray-900">
                             {{
-                                promptRun.error_message ||
+                                promptRun.errorMessage ||
                                 'An error occurred whilst processing your request.'
                             }}
                         </p>
@@ -655,7 +639,7 @@ onUnmounted(() => {
                 <div
                     v-else-if="
                         promptRun.status === 'processing' &&
-                        promptRun.workflow_stage === 'submitted'
+                        promptRun.workflowStage === 'submitted'
                     "
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
