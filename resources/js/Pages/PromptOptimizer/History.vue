@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import type { PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-
-interface PromptRun {
-    id: number;
-    personality_type: string;
-    task_description: string;
-    status: string;
-    created_at: string;
-    completed_at: string | null;
-}
 
 interface PaginationLink {
     url: string | null;
@@ -18,11 +10,11 @@ interface PaginationLink {
 }
 
 interface PaginatedPromptRuns {
-    data: PromptRun[];
+    data: PromptRunResource[];
     links: PaginationLink[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
     total: number;
 }
 
@@ -144,14 +136,14 @@ const formatDate = (dateString: string) => {
                                         <td
                                             class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
                                         >
-                                            {{ promptRun.personality_type }}
+                                            {{ promptRun.personalityType }}
                                         </td>
                                         <td
                                             class="px-6 py-4 text-sm text-gray-700"
                                         >
                                             {{
                                                 truncate(
-                                                    promptRun.task_description,
+                                                    promptRun.taskDescription,
                                                     80,
                                                 )
                                             }}
@@ -174,7 +166,7 @@ const formatDate = (dateString: string) => {
                                             class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
                                         >
                                             {{
-                                                formatDate(promptRun.created_at)
+                                                formatDate(promptRun.createdAt)
                                             }}
                                         </td>
                                         <td
@@ -199,7 +191,7 @@ const formatDate = (dateString: string) => {
 
                         <!-- Pagination -->
                         <div
-                            v-if="promptRuns.last_page > 1"
+                            v-if="promptRuns.lastPage > 1"
                             class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
                         >
                             <div class="items-centre flex justify-between">
@@ -207,7 +199,7 @@ const formatDate = (dateString: string) => {
                                     class="flex flex-1 justify-between sm:hidden"
                                 >
                                     <Link
-                                        v-if="promptRuns.current_page > 1"
+                                        v-if="promptRuns.currentPage > 1"
                                         :href="promptRuns.links[0].url || '#'"
                                         class="items-centre relative inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                     >
@@ -215,8 +207,8 @@ const formatDate = (dateString: string) => {
                                     </Link>
                                     <Link
                                         v-if="
-                                            promptRuns.current_page <
-                                            promptRuns.last_page
+                                            promptRuns.currentPage <
+                                            promptRuns.lastPage
                                         "
                                         :href="
                                             promptRuns.links[
@@ -235,15 +227,15 @@ const formatDate = (dateString: string) => {
                                         <p class="text-sm text-gray-700">
                                             Showing
                                             <span class="font-medium">{{
-                                                (promptRuns.current_page - 1) *
-                                                    promptRuns.per_page +
+                                                (promptRuns.currentPage - 1) *
+                                                    promptRuns.perPage +
                                                 1
                                             }}</span>
                                             to
                                             <span class="font-medium">{{
                                                 Math.min(
-                                                    promptRuns.current_page *
-                                                        promptRuns.per_page,
+                                                    promptRuns.currentPage *
+                                                        promptRuns.perPage,
                                                     promptRuns.total,
                                                 )
                                             }}</span>
@@ -279,8 +271,8 @@ const formatDate = (dateString: string) => {
                                                         : '',
                                                 ]"
                                                 :disabled="!link.url"
-                                                v-html="link.label"
-                                            />
+                                                >{{ link.label }}
+                                            </Link>
                                         </nav>
                                     </div>
                                 </div>
