@@ -102,6 +102,12 @@ class PromptOptimizerController extends Controller
             if ($response->successful()) {
                 $responseData = $response->json();
 
+                // Log the response for debugging
+                \Log::info('Framework Selector Response', [
+                    'prompt_run_id' => $promptRun->id,
+                    'response' => $responseData,
+                ]);
+
                 // Update the prompt run with framework selection
                 $promptRun->update([
                     'selected_framework' => $responseData['selected_framework'] ?? null,
@@ -110,6 +116,17 @@ class PromptOptimizerController extends Controller
                     'clarifying_answers' => [],
                     'workflow_stage' => 'framework_selected',
                     'n8n_response_payload' => $responseData,
+                ]);
+
+                // Refresh the model to ensure we have latest data
+                $promptRun->refresh();
+
+                // Log what was saved
+                \Log::info('Saved Framework Selection', [
+                    'prompt_run_id' => $promptRun->id,
+                    'selected_framework' => $promptRun->selected_framework,
+                    'questions_count' => count($promptRun->framework_questions ?? []),
+                    'framework_questions' => $promptRun->framework_questions,
                 ]);
 
                 // Broadcast framework selected event
@@ -186,10 +203,26 @@ class PromptOptimizerController extends Controller
         $answers = $promptRun->clarifying_answers ?? [];
         $answers[] = $validated['answer'];
 
+        // Log the answer submission
+        \Log::info('Submitting Answer', [
+            'prompt_run_id' => $promptRun->id,
+            'current_answers_count' => count($promptRun->clarifying_answers ?? []),
+            'new_answer' => $validated['answer'],
+            'total_after' => count($answers),
+        ]);
+
         // Update the prompt run
         $promptRun->update([
             'clarifying_answers' => $answers,
             'workflow_stage' => 'answering_questions',
+        ]);
+
+        // Refresh and log what was saved
+        $promptRun->refresh();
+        \Log::info('Saved Answer', [
+            'prompt_run_id' => $promptRun->id,
+            'saved_answers_count' => count($promptRun->clarifying_answers ?? []),
+            'all_answers' => $promptRun->clarifying_answers,
         ]);
 
         // Check if all questions have been answered
