@@ -265,14 +265,7 @@ const submit = () => {
                             </div>
 
                             <!-- Submit Button -->
-                            <div class="flex items-center justify-between">
-                                <a
-                                    :href="route('prompt-optimizer.history')"
-                                    class="text-sm text-indigo-600 hover:text-indigo-800"
-                                >
-                                    View History
-                                </a>
-
+                            <div class="flex items-center justify-end">
                                 <button
                                     type="submit"
                                     :disabled="form.processing"

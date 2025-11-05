@@ -658,16 +658,6 @@ onUnmounted(() => {
                         </div>
                     </div>
                 </div>
-
-                <!-- Back to History -->
-                <div class="mt-6 text-center">
-                    <a
-                        :href="route('prompt-optimizer.history')"
-                        class="text-sm text-indigo-600 hover:text-indigo-800"
-                    >
-                        View All History
-                    </a>
-                </div>
             </div>
         </div>
     </AuthenticatedLayout>

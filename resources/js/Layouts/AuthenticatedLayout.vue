@@ -33,9 +33,23 @@ const showingNavigationDropdown = ref(false);
                             >
                                 <NavLink
                                     :href="route('prompt-optimizer.index')"
-                                    :active="route().current('prompt-optimizer.index')"
+                                    :active="
+                                        route().current(
+                                            'prompt-optimizer.index',
+                                        )
+                                    "
                                 >
                                     Prompt Optimiser
+                                </NavLink>
+                                <NavLink
+                                    :href="route('prompt-optimizer.history')"
+                                    :active="
+                                        route().current(
+                                            'prompt-optimizer.history',
+                                        )
+                                    "
+                                >
+                                    Prompt History
                                 </NavLink>
                             </div>
                         </div>
