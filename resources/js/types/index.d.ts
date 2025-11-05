@@ -15,3 +15,9 @@ export type PageProps<
     };
     ziggy: Config & { location: string };
 };
+
+// Re-export everything from models
+export * from './models';
+
+// Re-export everything from resources
+export * from './resources';
