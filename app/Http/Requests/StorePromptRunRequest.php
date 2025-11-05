@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class StorePromptRunRequest extends FormRequest
+class StorePromptRunRequest extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
