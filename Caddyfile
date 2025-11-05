@@ -22,7 +22,7 @@ app.localhost {
         header Connection *Upgrade*
         header Upgrade websocket
     }
-    reverse_proxy @websockets localhost:8080
+    reverse_proxy @websockets reverb:8080
 
     # Regular HTTP traffic to Laravel
     reverse_proxy laravel.test:80
