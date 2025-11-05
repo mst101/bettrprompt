@@ -24,7 +24,7 @@ Before crafting a prompt, I will ask qualifying questions to understand:
 
 ### 1. STRUCTURED CLARITY FRAMEWORKS
 
-*For when you need precise, well-organized outputs*
+_For when you need precise, well-organized outputs_
 
 #### **CRISPE Framework** (Clarity, Relevance, Iteration, Specificity, Parameters, Examples)
 
@@ -68,7 +68,7 @@ Before crafting a prompt, I will ask qualifying questions to understand:
 
 ### 2. ITERATIVE REFINEMENT FRAMEWORKS
 
-*For when outputs need progressive improvement*
+_For when outputs need progressive improvement_
 
 #### **RACEF Framework** (Rephrase, Append, Contextualize, Examples, Follow-Up)
 
@@ -99,7 +99,7 @@ Before crafting a prompt, I will ask qualifying questions to understand:
 
 ### 3. DECISION-MAKING & PRIORITIZATION FRAMEWORKS
 
-*For when you need to evaluate options or prioritize*
+_For when you need to evaluate options or prioritize_
 
 #### **RICE Framework** (Reach, Impact, Confidence, Effort)
 
@@ -143,7 +143,7 @@ Before crafting a prompt, I will ask qualifying questions to understand:
 
 ### 4. ANALYTICAL & PROBLEM-SOLVING FRAMEWORKS
 
-*For when you need deep analysis or logical reasoning*
+_For when you need deep analysis or logical reasoning_
 
 #### **Chain of Thought Framework**
 
@@ -181,7 +181,7 @@ Before crafting a prompt, I will ask qualifying questions to understand:
 
 ### 5. STORYTELLING & NARRATIVE FRAMEWORKS
 
-*For when you need compelling, emotionally resonant content*
+_For when you need compelling, emotionally resonant content_
 
 #### **BAB Framework** (Before, After, Bridge)
 
@@ -632,7 +632,7 @@ For iterative frameworks, I'll guide you through refinement cycles.
 ## Framework Comparison Matrix
 
 | Framework        | Complexity | Time   | Flexibility | Best For         |
-|------------------|------------|--------|-------------|------------------|
+| ---------------- | ---------- | ------ | ----------- | ---------------- |
 | CRISPE           | Medium     | Medium | High        | Structured tasks |
 | RACEF            | Medium     | High   | Very High   | Iterative work   |
 | RICE             | Low        | Low    | Medium      | Prioritization   |

@@ -18,17 +18,14 @@ class PromptOptimizationCompleted implements ShouldBroadcast
      */
     public function __construct(
         public PromptRun $promptRun
-    ) {
-    }
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('prompt-run.' . $this->promptRun->id);
+        return new Channel('prompt-run.'.$this->promptRun->id);
     }
 
     /**

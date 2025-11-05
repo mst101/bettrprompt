@@ -44,7 +44,7 @@ class PromptRun extends Model
      */
     public function getCurrentQuestion(): ?string
     {
-        if (!$this->framework_questions || !is_array($this->framework_questions)) {
+        if (! $this->framework_questions || ! is_array($this->framework_questions)) {
             return null;
         }
 
@@ -59,7 +59,7 @@ class PromptRun extends Model
      */
     public function hasAnsweredAllQuestions(): bool
     {
-        if (!$this->framework_questions) {
+        if (! $this->framework_questions) {
             return false;
         }
 

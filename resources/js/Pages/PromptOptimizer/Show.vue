@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 interface PromptRun {
     id: number;
@@ -49,7 +49,9 @@ const toggleQuestion = (index: number) => {
 
 const allExpanded = () => {
     const totalQuestions = props.promptRun.framework_questions?.length ?? 0;
-    return totalQuestions > 0 && expandedQuestions.value.size === totalQuestions;
+    return (
+        totalQuestions > 0 && expandedQuestions.value.size === totalQuestions
+    );
 };
 
 const toggleAll = () => {
@@ -121,7 +123,7 @@ const getStatusBadgeClass = (status: string) => {
         case 'failed':
             return 'bg-red-100 text-red-800';
         default:
-            return 'bg-grey-100 text-grey-800';
+            return 'bg-gray-100 text-gray-800';
     }
 };
 
@@ -174,7 +176,7 @@ onUnmounted(() => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-grey-800">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Prompt Optimiser
                 </h2>
                 <a
@@ -188,46 +190,56 @@ onUnmounted(() => {
 
         <div class="py-12">
             <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                <!-- Status Badges -->
-                <div class="mb-4 flex items-center gap-2">
-                    <span
-                        :class="getStatusBadgeClass(promptRun.status)"
-                        class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase"
-                    >
-                        {{ promptRun.status }}
-                    </span>
-                    <span
-                        class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
-                    >
-                        {{ getWorkflowStageLabel(promptRun.workflow_stage) }}
-                    </span>
-                </div>
-
                 <!-- Input Information -->
                 <div
                     class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-grey-900">
-                            Your Task
-                        </h3>
+                        <div class="flex justify-between">
+                            <h3
+                                class="mb-4 text-lg font-semibold text-gray-900"
+                            >
+                                Your Task
+                            </h3>
+
+                            <!-- Status Badges -->
+                            <div class="mb-4 flex items-center gap-2">
+                                <span
+                                    :class="
+                                        getStatusBadgeClass(promptRun.status)
+                                    "
+                                    class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase"
+                                >
+                                    {{ promptRun.status }}
+                                </span>
+                                <span
+                                    class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
+                                >
+                                    {{
+                                        getWorkflowStageLabel(
+                                            promptRun.workflow_stage,
+                                        )
+                                    }}
+                                </span>
+                            </div>
+                        </div>
 
                         <div class="space-y-3">
                             <div>
-                                <span class="text-sm font-medium text-grey-700"
+                                <span class="text-sm font-medium text-gray-700"
                                     >Personality Type:</span
                                 >
-                                <span class="ml-2 text-sm text-grey-900">{{
+                                <span class="ml-2 text-sm text-gray-900">{{
                                     promptRun.personality_type
                                 }}</span>
                             </div>
 
                             <div>
-                                <span class="text-sm font-medium text-grey-700"
+                                <span class="text-sm font-medium text-gray-700"
                                     >Task Description:</span
                                 >
                                 <p
-                                    class="ml-2 mt-1 whitespace-pre-wrap text-sm text-grey-900"
+                                    class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
                                 >
                                     {{ promptRun.task_description }}
                                 </p>
@@ -245,7 +257,7 @@ onUnmounted(() => {
                     class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-grey-900">
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
                             Selected Framework
                         </h3>
 
@@ -259,10 +271,10 @@ onUnmounted(() => {
                             </div>
 
                             <div>
-                                <span class="text-sm font-medium text-grey-700"
+                                <span class="text-sm font-medium text-gray-700"
                                     >Why this framework:</span
                                 >
-                                <p class="mt-1 text-sm text-grey-700">
+                                <p class="mt-1 text-sm text-gray-700">
                                     {{ promptRun.framework_reasoning }}
                                 </p>
                             </div>
@@ -284,11 +296,11 @@ onUnmounted(() => {
                         <!-- Progress Indicator -->
                         <div class="mb-6">
                             <div class="mb-2 flex items-center justify-between">
-                                <span class="text-sm font-medium text-grey-700">
+                                <span class="text-sm font-medium text-gray-700">
                                     Question {{ progress.answered + 1 }} of
                                     {{ progress.total }}
                                 </span>
-                                <span class="text-sm text-grey-500">
+                                <span class="text-sm text-gray-500">
                                     {{
                                         Math.round(
                                             (progress.answered /
@@ -299,7 +311,7 @@ onUnmounted(() => {
                                 </span>
                             </div>
                             <div
-                                class="h-2 w-full overflow-hidden rounded-full bg-grey-200"
+                                class="h-2 w-full overflow-hidden rounded-full bg-gray-200"
                             >
                                 <div
                                     class="h-full bg-indigo-600 transition-all duration-300"
@@ -310,11 +322,11 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <h3 class="mb-4 text-lg font-semibold text-grey-900">
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
                             Clarifying Question
                         </h3>
 
-                        <p class="mb-6 text-grey-800">
+                        <p class="mb-6 text-gray-800">
                             {{ currentQuestion }}
                         </p>
 
@@ -322,7 +334,7 @@ onUnmounted(() => {
                             <div>
                                 <label
                                     for="answer"
-                                    class="block text-sm font-medium text-grey-700"
+                                    class="block text-sm font-medium text-gray-700"
                                 >
                                     Your Answer
                                 </label>
@@ -330,7 +342,7 @@ onUnmounted(() => {
                                     id="answer"
                                     v-model="answerForm.answer"
                                     rows="4"
-                                    class="mt-1 block w-full rounded-md border-grey-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Type your answer here..."
                                     :disabled="isSubmitting"
                                 ></textarea>
@@ -346,9 +358,10 @@ onUnmounted(() => {
                                 <button
                                     type="submit"
                                     :disabled="
-                                        isSubmitting || !answerForm.answer.trim()
+                                        isSubmitting ||
+                                        !answerForm.answer.trim()
                                     "
-                                    class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <svg
                                         v-if="isSubmitting"
@@ -381,7 +394,7 @@ onUnmounted(() => {
                                     type="button"
                                     @click="skipQuestion"
                                     :disabled="isSubmitting"
-                                    class="inline-flex items-center rounded-md border border-grey-300 bg-white px-4 py-2 text-sm font-medium text-grey-700 shadow-sm hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     Skip Question
                                 </button>
@@ -417,13 +430,14 @@ onUnmounted(() => {
                                 ></path>
                             </svg>
                             <div>
-                                <p class="font-medium text-grey-900">
+                                <p class="font-medium text-gray-900">
                                     Generating your optimised prompt...
                                 </p>
-                                <p class="mt-1 text-sm text-grey-600">
+                                <p class="mt-1 text-sm text-gray-600">
                                     This may take a few moments. We're crafting
                                     a personalised prompt using the
-                                    {{ promptRun.selected_framework }} framework.
+                                    {{ promptRun.selected_framework }}
+                                    framework.
                                 </p>
                             </div>
                         </div>
@@ -443,12 +457,12 @@ onUnmounted(() => {
                 >
                     <div class="p-6">
                         <div class="mb-4 flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-grey-900">
+                            <h3 class="text-lg font-semibold text-gray-900">
                                 Clarifying Questions
                             </h3>
                             <button
                                 @click="toggleAll"
-                                class="inline-flex items-center rounded-md border border-grey-300 bg-white px-3 py-2 text-sm font-medium text-grey-700 shadow-sm hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 {{ allExpanded() ? 'Hide All' : 'Show All' }}
                             </button>
@@ -456,9 +470,11 @@ onUnmounted(() => {
 
                         <div class="space-y-3">
                             <div
-                                v-for="(question, index) in promptRun.framework_questions"
+                                v-for="(
+                                    question, index
+                                ) in promptRun.framework_questions"
                                 :key="index"
-                                class="border-b border-grey-200 pb-3 last:border-b-0"
+                                class="border-b border-gray-200 pb-3 last:border-b-0"
                             >
                                 <button
                                     @click="toggleQuestion(index)"
@@ -471,14 +487,16 @@ onUnmounted(() => {
                                             >
                                                 {{ index + 1 }}
                                             </span>
-                                            <p class="text-sm font-medium text-grey-900">
+                                            <p
+                                                class="text-sm font-medium text-gray-900"
+                                            >
                                                 {{ question }}
                                             </p>
                                         </div>
                                     </div>
                                     <svg
                                         :class="[
-                                            'ml-4 h-5 w-5 flex-shrink-0 text-grey-400 transition-transform',
+                                            'ml-4 h-5 w-5 flex-shrink-0 text-gray-400 transition-transform',
                                             expandedQuestions.has(index)
                                                 ? 'rotate-180'
                                                 : '',
@@ -502,20 +520,30 @@ onUnmounted(() => {
                                 >
                                     <div
                                         v-if="
-                                            promptRun.clarifying_answers[index] !== null &&
-                                            promptRun.clarifying_answers[index] !== undefined
+                                            promptRun.clarifying_answers[
+                                                index
+                                            ] !== null &&
+                                            promptRun.clarifying_answers[
+                                                index
+                                            ] !== undefined
                                         "
-                                        class="rounded-md bg-grey-50 p-3"
+                                        class="rounded-md bg-gray-50 p-3"
                                     >
-                                        <p class="text-sm text-grey-700">
-                                            {{ promptRun.clarifying_answers[index] }}
+                                        <p
+                                            class="whitespace-break-spaces text-sm text-gray-700"
+                                        >
+                                            {{
+                                                promptRun.clarifying_answers[
+                                                    index
+                                                ]
+                                            }}
                                         </p>
                                     </div>
                                     <div
                                         v-else
-                                        class="rounded-md bg-grey-50 p-3"
+                                        class="rounded-md bg-gray-50 p-3"
                                     >
-                                        <p class="text-sm italic text-grey-500">
+                                        <p class="text-sm italic text-gray-500">
                                             [Skipped]
                                         </p>
                                     </div>
@@ -535,12 +563,12 @@ onUnmounted(() => {
                 >
                     <div class="p-6">
                         <div class="mb-4 flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-grey-900">
+                            <h3 class="text-lg font-semibold text-gray-900">
                                 Your Optimised Prompt
                             </h3>
                             <button
                                 @click="copyToClipboard"
-                                class="inline-flex items-center rounded-md border border-grey-300 bg-white px-3 py-2 text-sm font-medium text-grey-700 shadow-sm hover:bg-grey-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 <svg
                                     v-if="!copied"
@@ -574,15 +602,15 @@ onUnmounted(() => {
                             </button>
                         </div>
 
-                        <div class="rounded-md bg-grey-50 p-4">
+                        <div class="rounded-md bg-gray-50 p-4">
                             <pre
-                                class="whitespace-pre-wrap font-mono text-sm text-grey-900"
+                                class="whitespace-pre-wrap font-mono text-sm text-gray-900"
                                 >{{ promptRun.optimized_prompt }}</pre
                             >
                         </div>
 
                         <div class="mt-4">
-                            <p class="text-sm text-grey-600">
+                            <p class="text-sm text-gray-600">
                                 This prompt was generated using the
                                 <span class="font-medium">{{
                                     promptRun.selected_framework
@@ -606,7 +634,7 @@ onUnmounted(() => {
                         <h3 class="mb-4 text-lg font-semibold text-red-600">
                             Error
                         </h3>
-                        <p class="text-sm text-grey-900">
+                        <p class="text-sm text-gray-900">
                             {{
                                 promptRun.error_message ||
                                 'An error occurred whilst processing your request.'
@@ -652,7 +680,7 @@ onUnmounted(() => {
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 ></path>
                             </svg>
-                            <span class="text-grey-700"
+                            <span class="text-gray-700"
                                 >Selecting optimal framework...</span
                             >
                         </div>
