@@ -1,0 +1,58 @@
+[
+    {
+        "body": {
+            "model": "claude-3-5-haiku-20241022",
+            "id": "msg_01BgD3R2j4D7PiEZCSddD5WP",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "{\n  \"selected_framework\": \"RACEF\",\n  \"reasoning\": \"For an INTP working on feature brainstorming, RACEF is ideal as it provides a highly flexible, iterative approach to exploring multiple potential solutions. This framework aligns perfectly with the INTP's natural tendency for expansive, analytical thinking and comprehensive exploration of possibilities.\",\n  \"questions\": [\n    \"What specific user problems or pain points are you hoping to solve with this meal planner app's features?\",\n    \"Are there any existing meal planning apps or services that you find particularly inspiring or lacking in certain areas?\",\n    \"What are the primary target user segments for this app (e.g., busy professionals, fitness enthusiasts, families, budget-conscious individuals)?\",\n    \"What technical constraints or platform limitations should we consider when brainstorming features?\",\n    \"Would you prefer the brainstorming to focus more on functional features, user experience innovations, or a balanced approach?\"\n  ]\n}"
+                }
+            ],
+            "stop_reason": "end_turn",
+            "stop_sequence": null,
+            "usage": {
+                "input_tokens": 1655,
+                "cache_creation_input_tokens": 0,
+                "cache_read_input_tokens": 0,
+                "cache_creation": {
+                    "ephemeral_5m_input_tokens": 0,
+                    "ephemeral_1h_input_tokens": 0
+                },
+                "output_tokens": 221,
+                "service_tier": "standard"
+            }
+        },
+        "headers": {
+            "date": "Thu, 06 Nov 2025 13:34:46 GMT",
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "connection": "close",
+            "anthropic-ratelimit-input-tokens-limit": "50000",
+            "anthropic-ratelimit-input-tokens-remaining": "49000",
+            "anthropic-ratelimit-input-tokens-reset": "2025-11-06T13:34:43Z",
+            "anthropic-ratelimit-output-tokens-limit": "10000",
+            "anthropic-ratelimit-output-tokens-remaining": "10000",
+            "anthropic-ratelimit-output-tokens-reset": "2025-11-06T13:34:47Z",
+            "anthropic-ratelimit-requests-limit": "50",
+            "anthropic-ratelimit-requests-remaining": "49",
+            "anthropic-ratelimit-requests-reset": "2025-11-06T13:34:42Z",
+            "retry-after": "18",
+            "anthropic-ratelimit-tokens-limit": "60000",
+            "anthropic-ratelimit-tokens-remaining": "59000",
+            "anthropic-ratelimit-tokens-reset": "2025-11-06T13:34:43Z",
+            "request-id": "req_011CUrit7r5ynwi7CSKCVx8h",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "anthropic-organization-id": "f48f4b14-5781-4652-8a74-847e6d27356e",
+            "x-envoy-upstream-service-time": "5350",
+            "cf-cache-status": "DYNAMIC",
+            "x-robots-tag": "none",
+            "server": "cloudflare",
+            "cf-ray": "99a4f843a9562534-LHR"
+        },
+        "statusCode": 200,
+        "statusMessage": "OK"
+    }
+]
