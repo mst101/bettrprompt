@@ -24,6 +24,13 @@ class ProfileUpdateRequest extends BaseFormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'personality_type' => ['nullable', 'string', 'max:6', 'regex:/^[A-Z]{4}-[AT]$/'],
+            'trait_percentages' => ['nullable', 'array'],
+            'trait_percentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
         ];
     }
 }

@@ -19,7 +19,7 @@ export interface PromptRun {
     readonly clarifyingAnswers: Record<string, any>;
     readonly optimizedPrompt: string | null;
     readonly n8nRequestPayload: Record<string, any>;
-    readonly n8nResponsePayload: Record<string, any>;
+    readonly n8nResponsePayload: any;
     readonly status: string | null;
     readonly workflowStage: string | null;
     readonly errorMessage: string | null;

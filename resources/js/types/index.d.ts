@@ -5,6 +5,14 @@ export interface User {
     name: string;
     email: string;
     email_verified_at?: string;
+    personalityType?: string | null;
+    traitPercentages?: {
+        mind: number | null;
+        energy: number | null;
+        nature: number | null;
+        tactics: number | null;
+        identity: number | null;
+    } | null;
 }
 
 export type PageProps<

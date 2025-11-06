@@ -10,4 +10,12 @@ export interface UserResource {
     readonly createdAt: string;
     readonly updatedAt: string;
     readonly emailVerifiedAt: string | null;
+    readonly personalityType: string | null;
+    readonly traitPercentages: {
+        mind: number | null;
+        energy: number | null;
+        nature: number | null;
+        tactics: number | null;
+        identity: number | null;
+    } | null;
 }

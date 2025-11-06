@@ -20,8 +20,6 @@ class StorePromptRunRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'personality_type' => 'required|string|max:6',
-            'trait_percentages' => 'nullable|array',
             'task_description' => 'required|string|min:10',
         ];
     }
@@ -34,8 +32,6 @@ class StorePromptRunRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'personality_type.required' => 'Please select your personality type.',
-            'personality_type.max' => 'The personality type format is invalid.',
             'task_description.required' => 'Please describe the task you want to accomplish.',
             'task_description.min' => 'The task description must be at least 10 characters.',
         ];

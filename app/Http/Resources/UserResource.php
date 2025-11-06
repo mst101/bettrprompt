@@ -17,6 +17,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly createdAt: string;
  *   readonly updatedAt: string;
  *   readonly emailVerifiedAt: string | null;
+ *   readonly personalityType: string | null;
+ *   readonly traitPercentages: {
+ *     mind: number | null;
+ *     energy: number | null;
+ *     nature: number | null;
+ *     tactics: number | null;
+ *     identity: number | null;
+ *   } | null;
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -36,6 +44,8 @@ class UserResource extends JsonResource
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
             'emailVerifiedAt' => $this->email_verified_at?->format('Y-m-d H:i:s'),
+            'personalityType' => $this->personality_type,
+            'traitPercentages' => $this->trait_percentages,
         ];
     }
 }

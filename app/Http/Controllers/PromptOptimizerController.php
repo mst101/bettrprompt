@@ -22,28 +22,7 @@ class PromptOptimizerController extends Controller
      */
     public function index()
     {
-        $personalityTypes = [
-            'INTJ' => 'Architect',
-            'INTP' => 'Logician',
-            'ENTJ' => 'Commander',
-            'ENTP' => 'Debater',
-            'INFJ' => 'Advocate',
-            'INFP' => 'Mediator',
-            'ENFJ' => 'Protagonist',
-            'ENFP' => 'Campaigner',
-            'ISTJ' => 'Logistician',
-            'ISFJ' => 'Defender',
-            'ESTJ' => 'Executive',
-            'ESFJ' => 'Consul',
-            'ISTP' => 'Virtuoso',
-            'ISFP' => 'Adventurer',
-            'ESTP' => 'Entrepreneur',
-            'ESFP' => 'Entertainer',
-        ];
-
-        return Inertia::render('PromptOptimizer/Index', [
-            'personalityTypes' => $personalityTypes,
-        ]);
+        return Inertia::render('PromptOptimizer/Index');
     }
 
     /**
@@ -52,12 +31,13 @@ class PromptOptimizerController extends Controller
     public function store(StorePromptRunRequest $request)
     {
         $validated = $request->validated();
+        $user = auth()->user();
 
-        // Create the prompt run record
+        // Create the prompt run record using personality from user profile
         $promptRun = PromptRun::create([
-            'user_id' => auth()->id(),
-            'personality_type' => $validated['personality_type'],
-            'trait_percentages' => $validated['trait_percentages'] ?? null,
+            'user_id' => $user->id,
+            'personality_type' => $user->personality_type,
+            'trait_percentages' => $user->trait_percentages ?? null,
             'task_description' => $validated['task_description'],
             'status' => 'processing',
             'workflow_stage' => 'submitted',
@@ -66,8 +46,8 @@ class PromptOptimizerController extends Controller
         // Prepare payload for framework selector
         $payload = [
             'prompt_run_id' => $promptRun->id,
-            'personality_type' => $validated['personality_type'],
-            'trait_percentages' => $validated['trait_percentages'] ?? null,
+            'personality_type' => $user->personality_type,
+            'trait_percentages' => $user->trait_percentages ?? null,
             'task_description' => $validated['task_description'],
         ];
 

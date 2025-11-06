@@ -19,9 +19,29 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $personalityTypes = [
+            'INTJ' => 'Architect',
+            'INTP' => 'Logician',
+            'ENTJ' => 'Commander',
+            'ENTP' => 'Debater',
+            'INFJ' => 'Advocate',
+            'INFP' => 'Mediator',
+            'ENFJ' => 'Protagonist',
+            'ENFP' => 'Campaigner',
+            'ISTJ' => 'Logistician',
+            'ISFJ' => 'Defender',
+            'ESTJ' => 'Executive',
+            'ESFJ' => 'Consul',
+            'ISTP' => 'Virtuoso',
+            'ISFP' => 'Adventurer',
+            'ESTP' => 'Entrepreneur',
+            'ESFP' => 'Entertainer',
+        ];
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'personalityTypes' => $personalityTypes,
         ]);
     }
 

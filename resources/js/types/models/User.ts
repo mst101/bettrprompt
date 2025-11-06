@@ -12,6 +12,8 @@ export interface User {
     readonly name: string | null;
     readonly email: string | null;
     readonly password: string;
+    readonly personalityType: string | null;
+    readonly traitPercentages: Record<string, any>;
     readonly notifications: DatabaseNotification[] | null;
     readonly readNotifications: DatabaseNotification[] | null;
     readonly unreadNotifications: DatabaseNotification[] | null;
