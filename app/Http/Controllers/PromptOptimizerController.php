@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AnswerQuestionRequest;
 use App\Http\Requests\StorePromptRunRequest;
+use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
 use App\Services\N8nClient;
 use Illuminate\Http\Request;
@@ -169,7 +170,7 @@ class PromptOptimizerController extends Controller
         }
 
         return Inertia::render('PromptOptimizer/Show', [
-            'promptRun' => $promptRun,
+            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $promptRun->getCurrentQuestion(),
             'progress' => [
                 'answered' => $promptRun->getAnsweredQuestionsCount(),

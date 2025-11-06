@@ -7,6 +7,14 @@ export interface StatusConfig {
 
 export function useStatusBadge() {
     const getStatusConfig = (status: StatusType): StatusConfig => {
+        // Handle undefined or null status
+        if (!status) {
+            return {
+                label: 'Unknown',
+                colorClass: 'bg-gray-100 text-gray-800',
+            };
+        }
+
         switch (status) {
             case 'completed':
                 return {
