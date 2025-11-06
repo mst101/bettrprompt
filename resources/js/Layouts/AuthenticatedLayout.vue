@@ -132,7 +132,16 @@ const showingNavigationDropdown = ref(false);
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Prompt Optimiser
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            :href="route('prompt-optimizer.history')"
+                            :active="
+                                route().current('prompt-optimizer.history')
+                            "
+                        >
+                            Prompt History
                         </ResponsiveNavLink>
                     </div>
 

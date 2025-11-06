@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface Props {
     personalityTypes: Record<string, string>;
@@ -9,8 +9,25 @@ interface Props {
 
 const props = defineProps<Props>();
 
+// Load from local storage
+const savedPersonalityBase = localStorage.getItem('personalityBase') || '';
+const savedIdentity = localStorage.getItem('personalityIdentity') || '';
+
+const personalityBase = ref(savedPersonalityBase);
+const identity = ref<'A' | 'T' | ''>(
+    savedIdentity as 'A' | 'T' | '',
+);
+
+// Compute full personality type
+const fullPersonalityType = computed(() => {
+    if (personalityBase.value && identity.value) {
+        return `${personalityBase.value}-${identity.value}`;
+    }
+    return '';
+});
+
 const form = useForm({
-    personalityType: 'INTP-A',
+    personalityType: fullPersonalityType.value,
     traitPercentages: {
         mind: null as number | null,
         energy: null as number | null,
@@ -18,7 +35,7 @@ const form = useForm({
         tactics: null as number | null,
         identity: null as number | null,
     },
-    taskDescription: 'I want to build a work-from-home office shed.',
+    taskDescription: '',
 });
 
 const showTraitPercentages = ref(false);
@@ -26,8 +43,26 @@ const showTraitPercentages = ref(false);
 const personalityTypeOptions = computed(() => {
     return Object.entries(props.personalityTypes).map(([value, label]) => ({
         value,
-        label,
+        label: `${label} (${value})`,
     }));
+});
+
+// Watch for changes and save to local storage
+watch(personalityBase, (newValue) => {
+    if (newValue) {
+        localStorage.setItem('personalityBase', newValue);
+    }
+});
+
+watch(identity, (newValue) => {
+    if (newValue) {
+        localStorage.setItem('personalityIdentity', newValue);
+    }
+});
+
+// Update form when personality type changes
+watch(fullPersonalityType, (newValue) => {
+    form.personalityType = newValue;
 });
 
 const submit = () => {
@@ -56,37 +91,87 @@ const submit = () => {
 
                         <form @submit.prevent="submit" class="space-y-6">
                             <!-- Personality Type Selection -->
-                            <div>
-                                <label
-                                    for="personalityType"
-                                    class="block text-sm font-medium text-gray-700"
-                                >
-                                    Personality Type
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select
-                                    id="personalityType"
-                                    v-model="form.personalityType"
-                                    required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                >
-                                    <option value="">
-                                        Select your personality type
-                                    </option>
-                                    <option
-                                        v-for="option in personalityTypeOptions"
-                                        :key="option.value"
-                                        :value="option.value"
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        for="personalityBase"
+                                        class="block text-sm font-medium text-gray-700"
                                     >
-                                        {{ option.label }}
-                                    </option>
-                                </select>
-                                <p
-                                    v-if="form.errors.personalityType"
-                                    class="mt-1 text-sm text-red-600"
+                                        Personality Type
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        id="personalityBase"
+                                        v-model="personalityBase"
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    >
+                                        <option value="">
+                                            Select your personality type
+                                        </option>
+                                        <option
+                                            v-for="option in personalityTypeOptions"
+                                            :key="option.value"
+                                            :value="option.value"
+                                        >
+                                            {{ option.label }}
+                                        </option>
+                                    </select>
+                                    <p
+                                        v-if="form.errors.personalityType"
+                                        class="mt-1 text-sm text-red-600"
+                                    >
+                                        {{ form.errors.personalityType }}
+                                    </p>
+                                </div>
+
+                                <!-- Identity Selection -->
+                                <div v-if="personalityBase">
+                                    <label
+                                        class="block text-sm font-medium text-gray-700"
+                                    >
+                                        Identity
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="mt-2 flex gap-6">
+                                        <label class="flex items-center">
+                                            <input
+                                                v-model="identity"
+                                                type="radio"
+                                                value="A"
+                                                required
+                                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                            <span
+                                                class="ml-2 text-sm text-gray-700"
+                                                >Assertive (A)</span
+                                            >
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input
+                                                v-model="identity"
+                                                type="radio"
+                                                value="T"
+                                                required
+                                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                            <span
+                                                class="ml-2 text-sm text-gray-700"
+                                                >Turbulent (T)</span
+                                            >
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Selected Personality Display -->
+                                <div
+                                    v-if="fullPersonalityType"
+                                    class="rounded-md bg-indigo-50 p-3"
                                 >
-                                    {{ form.errors.personalityType }}
-                                </p>
+                                    <p class="text-sm font-medium text-indigo-900">
+                                        Selected: {{ fullPersonalityType }}
+                                    </p>
+                                </div>
                             </div>
 
                             <!-- Optional Trait Percentages -->
@@ -236,7 +321,7 @@ const submit = () => {
                                     v-model="form.taskDescription"
                                     required
                                     rows="6"
-                                    placeholder="Describe what you're trying to accomplish with AI..."
+                                    placeholder="Describe what you're trying to accomplish..."
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 ></textarea>
                                 <p
