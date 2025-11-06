@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/Card.vue';
-import LoadingSpinner from '@/Components/LoadingSpinner.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import type { PromptRunResource } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { onMounted, onUnmounted, ref } from 'vue';
-import type { PromptRunResource } from '@/types';
 
 interface Progress {
     answered: number;
@@ -166,49 +166,47 @@ onUnmounted(() => {
             <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
                 <!-- Input Information -->
                 <Card class="mb-6">
-                        <div class="flex justify-between">
-                            <h3
-                                class="mb-4 text-lg font-semibold text-gray-900"
+                    <div class="flex justify-between">
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                            Your Task
+                        </h3>
+
+                        <!-- Status Badges -->
+                        <div class="mb-4 flex items-center gap-2">
+                            <StatusBadge :status="promptRun.status" />
+                            <span
+                                class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
                             >
-                                Your Task
-                            </h3>
+                                {{
+                                    getWorkflowStageLabel(
+                                        promptRun.workflowStage,
+                                    )
+                                }}
+                            </span>
+                        </div>
+                    </div>
 
-                            <!-- Status Badges -->
-                            <div class="mb-4 flex items-center gap-2">
-                                <StatusBadge :status="promptRun.status" />
-                                <span
-                                    class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
-                                >
-                                    {{
-                                        getWorkflowStageLabel(
-                                            promptRun.workflowStage,
-                                        )
-                                    }}
-                                </span>
-                            </div>
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-sm font-medium text-gray-700"
+                                >Personality Type:</span
+                            >
+                            <span class="ml-2 text-sm text-gray-900">{{
+                                promptRun.personalityType
+                            }}</span>
                         </div>
 
-                        <div class="space-y-3">
-                            <div>
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Personality Type:</span
-                                >
-                                <span class="ml-2 text-sm text-gray-900">{{
-                                    promptRun.personalityType
-                                }}</span>
-                            </div>
-
-                            <div>
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Task Description:</span
-                                >
-                                <p
-                                    class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
-                                >
-                                    {{ promptRun.taskDescription }}
-                                </p>
-                            </div>
+                        <div>
+                            <span class="text-sm font-medium text-gray-700"
+                                >Task Description:</span
+                            >
+                            <p
+                                class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
+                            >
+                                {{ promptRun.taskDescription }}
+                            </p>
                         </div>
+                    </div>
                 </Card>
 
                 <!-- Framework Selection Info -->
@@ -326,26 +324,11 @@ onUnmounted(() => {
                                     "
                                     class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
-                                    <svg
+                                    <DynamicIcon
                                         v-if="isSubmitting"
-                                        class="mr-2 h-4 w-4 animate-spin"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            class="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            stroke-width="4"
-                                        ></circle>
-                                        <path
-                                            class="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                        ></path>
-                                    </svg>
+                                        name="spinner"
+                                        class="mr-2 h-4 w-4"
+                                    />
                                     {{
                                         isSubmitting
                                             ? 'Submitting...'
@@ -373,25 +356,10 @@ onUnmounted(() => {
                 >
                     <div class="p-6">
                         <div class="flex items-center">
-                            <svg
-                                class="mr-3 h-5 w-5 animate-spin text-indigo-600"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    class="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    stroke-width="4"
-                                ></circle>
-                                <path
-                                    class="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
+                            <DynamicIcon
+                                name="spinner"
+                                class="mr-3 h-5 w-5 text-indigo-600"
+                            />
                             <div>
                                 <p class="font-medium text-gray-900">
                                     Generating your optimised prompt...
@@ -457,24 +425,15 @@ onUnmounted(() => {
                                             </p>
                                         </div>
                                     </div>
-                                    <svg
+                                    <DynamicIcon
+                                        name="chevron-down"
                                         :class="[
                                             'ml-4 h-5 w-5 flex-shrink-0 text-gray-400 transition-transform',
                                             expandedQuestions.has(index)
                                                 ? 'rotate-180'
                                                 : '',
                                         ]"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M19 9l-7 7-7-7"
-                                        />
-                                    </svg>
+                                    />
                                 </button>
 
                                 <div
@@ -533,34 +492,16 @@ onUnmounted(() => {
                                 @click="copyToClipboard"
                                 class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                <svg
+                                <DynamicIcon
                                     v-if="!copied"
+                                    name="clipboard"
                                     class="mr-2 h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                    />
-                                </svg>
-                                <svg
+                                />
+                                <DynamicIcon
                                     v-else
+                                    name="check"
                                     class="mr-2 h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M5 13l4 4L19 7"
-                                    />
-                                </svg>
+                                />
                                 {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                             </button>
                         </div>
@@ -598,19 +539,10 @@ onUnmounted(() => {
                             <div
                                 class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100"
                             >
-                                <svg
+                                <DynamicIcon
+                                    name="exclamation-triangle"
                                     class="h-6 w-6 text-red-600"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                                    />
-                                </svg>
+                                />
                             </div>
                             <div class="ml-4 flex-1">
                                 <h3 class="text-lg font-semibold text-red-600">
@@ -707,19 +639,10 @@ onUnmounted(() => {
                                         "
                                         class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
-                                        <svg
+                                        <DynamicIcon
+                                            name="arrow-path"
                                             class="mr-2 h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                                            />
-                                        </svg>
+                                        />
                                         Retry
                                     </button>
                                     <a
@@ -744,25 +667,10 @@ onUnmounted(() => {
                 >
                     <div class="p-6">
                         <div class="flex items-center">
-                            <svg
-                                class="mr-3 h-5 w-5 animate-spin text-indigo-600"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    class="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    stroke-width="4"
-                                ></circle>
-                                <path
-                                    class="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
+                            <DynamicIcon
+                                name="spinner"
+                                class="mr-3 h-5 w-5 text-indigo-600"
+                            />
                             <span class="text-gray-700"
                                 >Selecting optimal framework...</span
                             >

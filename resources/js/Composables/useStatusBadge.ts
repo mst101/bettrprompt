@@ -1,4 +1,9 @@
-export type StatusType = 'completed' | 'processing' | 'failed' | 'pending' | string;
+export type StatusType =
+    | 'completed'
+    | 'processing'
+    | 'failed'
+    | 'pending'
+    | string;
 
 export interface StatusConfig {
     label: string;

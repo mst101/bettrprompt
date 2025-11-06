@@ -148,8 +148,7 @@ const submit = () => {
                                                 type="number"
                                                 id="energy"
                                                 v-model.number="
-                                                    form.traitPercentages
-                                                        .energy
+                                                    form.traitPercentages.energy
                                                 "
                                                 min="0"
                                                 max="100"
@@ -169,8 +168,7 @@ const submit = () => {
                                                 type="number"
                                                 id="nature"
                                                 v-model.number="
-                                                    form.traitPercentages
-                                                        .nature
+                                                    form.traitPercentages.nature
                                                 "
                                                 min="0"
                                                 max="100"
