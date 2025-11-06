@@ -24,13 +24,25 @@ class ProfileUpdateRequest extends BaseFormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
-            'personality_type' => ['nullable', 'string', 'max:6', 'regex:/^[A-Z]{4}-[AT]$/'],
-            'trait_percentages' => ['nullable', 'array'],
-            'trait_percentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'personalityType' => ['nullable', 'string', 'max:6', 'regex:/^[A-Z]{4}-[AT]$/'],
+            'traitPercentages' => ['nullable', 'array'],
+            'traitPercentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'traitPercentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'traitPercentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'traitPercentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'traitPercentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Convert camelCase to snake_case for database
+        $this->merge([
+            'personality_type' => $this->personalityType,
+            'trait_percentages' => $this->traitPercentages,
+        ]);
     }
 }
