@@ -14,7 +14,8 @@ class PromptOptimizerController extends Controller
 {
     public function __construct(
         protected N8nClient $n8nClient
-    ) {}
+    ) {
+    }
 
     /**
      * Display the prompt optimizer form
@@ -491,10 +492,10 @@ class PromptOptimizerController extends Controller
     {
         $promptRuns = PromptRun::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(6);
 
         return Inertia::render('PromptOptimizer/History', [
-            'promptRuns' => $promptRuns,
+            'promptRuns' => inertiaPaginated($promptRuns, PromptRunResource::class),
         ]);
     }
 }

@@ -2,31 +2,17 @@
 import Card from '@/Components/Card.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { PromptRunResource } from '@/types';
+import type { Paginated, PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginatedPromptRuns {
-    data: PromptRunResource[];
-    links: PaginationLink[];
-    currentPage: number;
-    lastPage: number;
-    perPage: number;
-    total: number;
-}
-
 interface Props {
-    promptRuns: PaginatedPromptRuns;
+    promptRuns: Paginated<PromptRunResource>;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
-const truncate = (text: string, length: number = 100) => {
+const truncate = (text: string | null | undefined, length: number = 100) => {
+    if (!text) return '';
     if (text.length <= length) return text;
     return text.substring(0, length) + '...';
 };
@@ -173,7 +159,7 @@ const formatDate = (dateString: string) => {
 
                         <!-- Pagination -->
                         <div
-                            v-if="promptRuns.lastPage > 1"
+                            v-if="promptRuns.meta.lastPage > 1"
                             class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
                         >
                             <div class="items-centre flex justify-between">
@@ -181,22 +167,15 @@ const formatDate = (dateString: string) => {
                                     class="flex flex-1 justify-between sm:hidden"
                                 >
                                     <Link
-                                        v-if="promptRuns.currentPage > 1"
-                                        :href="promptRuns.links[0].url || '#'"
+                                        v-if="promptRuns.meta.prevPageUrl"
+                                        :href="promptRuns.meta.prevPageUrl"
                                         class="items-centre relative inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Previous
                                     </Link>
                                     <Link
-                                        v-if="
-                                            promptRuns.currentPage <
-                                            promptRuns.lastPage
-                                        "
-                                        :href="
-                                            promptRuns.links[
-                                                promptRuns.links.length - 1
-                                            ].url || '#'
-                                        "
+                                        v-if="promptRuns.meta.nextPageUrl"
+                                        :href="promptRuns.meta.nextPageUrl"
                                         class="items-centre relative ml-3 inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                     >
                                         Next
@@ -206,24 +185,24 @@ const formatDate = (dateString: string) => {
                                     class="sm:items-centre hidden sm:flex sm:flex-1 sm:justify-between"
                                 >
                                     <div>
-                                        <p class="text-sm text-gray-700">
+                                        <p
+                                            v-if="
+                                                promptRuns.meta.from &&
+                                                promptRuns.meta.to
+                                            "
+                                            class="text-sm text-gray-700"
+                                        >
                                             Showing
                                             <span class="font-medium">{{
-                                                (promptRuns.currentPage - 1) *
-                                                    promptRuns.perPage +
-                                                1
+                                                promptRuns.meta.from
                                             }}</span>
                                             to
                                             <span class="font-medium">{{
-                                                Math.min(
-                                                    promptRuns.currentPage *
-                                                        promptRuns.perPage,
-                                                    promptRuns.total,
-                                                )
+                                                promptRuns.meta.to
                                             }}</span>
                                             of
                                             <span class="font-medium">{{
-                                                promptRuns.total
+                                                promptRuns.meta.total
                                             }}</span>
                                             results
                                         </p>
@@ -234,26 +213,26 @@ const formatDate = (dateString: string) => {
                                             aria-label="Pagination"
                                         >
                                             <Link
-                                                v-for="(
-                                                    link, index
-                                                ) in promptRuns.links"
-                                                :key="index"
-                                                :href="link.url || '#'"
-                                                :class="[
-                                                    link.active
-                                                        ? 'z-10 border-indigo-500 bg-indigo-50 text-indigo-600'
-                                                        : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50',
-                                                    'items-centre relative inline-flex border px-4 py-2 text-sm font-medium',
-                                                    index === 0
-                                                        ? 'rounded-l-md'
-                                                        : '',
-                                                    index ===
-                                                    promptRuns.links.length - 1
-                                                        ? 'rounded-r-md'
-                                                        : '',
-                                                ]"
-                                                :disabled="!link.url"
-                                                >{{ link.label }}
+                                                v-if="promptRuns.meta.prevPageUrl"
+                                                :href="promptRuns.meta.prevPageUrl"
+                                                class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                            >
+                                                Previous
+                                            </Link>
+                                            <span
+                                                class="items-centre relative inline-flex border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                            >
+                                                Page
+                                                {{ promptRuns.meta.currentPage }}
+                                                of
+                                                {{ promptRuns.meta.lastPage }}
+                                            </span>
+                                            <Link
+                                                v-if="promptRuns.meta.nextPageUrl"
+                                                :href="promptRuns.meta.nextPageUrl"
+                                                class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                            >
+                                                Next
                                             </Link>
                                         </nav>
                                     </div>

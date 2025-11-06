@@ -16,6 +16,9 @@ export type PageProps<
     ziggy: Config & { location: string };
 };
 
+// Re-export everything from shared
+export * from './shared';
+
 // Re-export everything from models
 export * from './models';
 
