@@ -594,22 +594,142 @@ onUnmounted(() => {
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-red-600">
-                            Error
-                        </h3>
-                        <p class="text-sm text-gray-900">
-                            {{
-                                promptRun.errorMessage ||
-                                'An error occurred whilst processing your request.'
-                            }}
-                        </p>
-                        <div class="mt-4">
-                            <a
-                                :href="route('prompt-optimizer.index')"
-                                class="text-sm text-indigo-600 hover:text-indigo-800"
+                        <div class="flex items-start">
+                            <div
+                                class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100"
                             >
-                                Try again
-                            </a>
+                                <svg
+                                    class="h-6 w-6 text-red-600"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h3 class="text-lg font-semibold text-red-600">
+                                    Processing Failed
+                                </h3>
+                                <p class="mt-2 text-sm text-gray-900">
+                                    {{
+                                        promptRun.errorMessage ||
+                                        'An error occurred whilst processing your request.'
+                                    }}
+                                </p>
+
+                                <!-- Error Details (if available) -->
+                                <div
+                                    v-if="
+                                        promptRun.n8nResponsePayload &&
+                                        promptRun.n8nResponsePayload.details
+                                    "
+                                    class="mt-3 rounded-md bg-red-50 p-3"
+                                >
+                                    <p class="text-xs font-medium text-red-800">
+                                        Error Details:
+                                    </p>
+                                    <dl class="mt-2 space-y-1">
+                                        <div
+                                            v-if="
+                                                promptRun.n8nResponsePayload
+                                                    .details.http_code
+                                            "
+                                            class="flex text-xs"
+                                        >
+                                            <dt
+                                                class="font-medium text-red-700"
+                                            >
+                                                HTTP Code:
+                                            </dt>
+                                            <dd class="ml-2 text-red-600">
+                                                {{
+                                                    promptRun.n8nResponsePayload
+                                                        .details.http_code
+                                                }}
+                                            </dd>
+                                        </div>
+                                        <div
+                                            v-if="
+                                                promptRun.n8nResponsePayload
+                                                    .details.error_type
+                                            "
+                                            class="flex text-xs"
+                                        >
+                                            <dt
+                                                class="font-medium text-red-700"
+                                            >
+                                                Error Type:
+                                            </dt>
+                                            <dd class="ml-2 text-red-600">
+                                                {{
+                                                    promptRun.n8nResponsePayload
+                                                        .details.error_type
+                                                }}
+                                            </dd>
+                                        </div>
+                                        <div
+                                            v-if="
+                                                promptRun.n8nResponsePayload
+                                                    .details.description
+                                            "
+                                            class="flex text-xs"
+                                        >
+                                            <dt
+                                                class="font-medium text-red-700"
+                                            >
+                                                Description:
+                                            </dt>
+                                            <dd class="ml-2 text-red-600">
+                                                {{
+                                                    promptRun.n8nResponsePayload
+                                                        .details.description
+                                                }}
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+
+                                <div class="mt-4 flex items-center gap-3">
+                                    <button
+                                        @click="
+                                            router.post(
+                                                route(
+                                                    'prompt-optimizer.retry',
+                                                    promptRun.id,
+                                                ),
+                                            )
+                                        "
+                                        class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        <svg
+                                            class="mr-2 h-4 w-4"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                                            />
+                                        </svg>
+                                        Retry
+                                    </button>
+                                    <a
+                                        :href="route('prompt-optimizer.index')"
+                                        class="text-sm text-gray-600 hover:text-gray-900"
+                                    >
+                                        Start New Request
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -136,13 +136,30 @@ class PromptOptimizerController extends Controller
                     ->route('prompt-optimizer.show', $promptRun)
                     ->with('success', 'Framework selected! Please answer the following questions.');
             } else {
-                // Handle n8n error
-                $promptRun->update([
-                    'status' => 'failed',
-                    'workflow_stage' => 'failed',
-                    'error_message' => 'Framework selector workflow failed: '.$response->body(),
-                    'completed_at' => now(),
-                ]);
+                // Handle n8n error - parse the error response
+                $errorData = $response->json();
+                $errorMessage = 'Framework selector workflow failed';
+
+                // Extract detailed error message if available
+                if (is_array($errorData) && isset($errorData[0])) {
+                    $error = $errorData[0];
+                    if (isset($error['error'])) {
+                        $errorMessage = $error['error'];
+                    }
+                    // Store the full error details
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $errorMessage,
+                        'n8n_response_payload' => $error,
+                    ]);
+                } else {
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $errorMessage.': '.$response->body(),
+                    ]);
+                }
 
                 return back()->with('error', 'Failed to select framework. Please try again.');
             }
@@ -314,13 +331,32 @@ class PromptOptimizerController extends Controller
                     ->route('prompt-optimizer.show', $promptRun)
                     ->with('success', 'Your optimised prompt is ready!');
             } else {
-                // Handle n8n error
-                $promptRun->update([
-                    'status' => 'failed',
-                    'workflow_stage' => 'failed',
-                    'error_message' => 'Final optimization workflow failed: '.$response->body(),
-                    'completed_at' => now(),
-                ]);
+                // Handle n8n error - parse the error response
+                $errorData = $response->json();
+                $errorMessage = 'Final optimization workflow failed';
+
+                // Extract detailed error message if available
+                if (is_array($errorData) && isset($errorData[0])) {
+                    $error = $errorData[0];
+                    if (isset($error['error'])) {
+                        $errorMessage = $error['error'];
+                    }
+                    // Store the full error details
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $errorMessage,
+                        'n8n_response_payload' => $error,
+                        'completed_at' => now(),
+                    ]);
+                } else {
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $errorMessage.': '.$response->body(),
+                        'completed_at' => now(),
+                    ]);
+                }
 
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
@@ -339,6 +375,113 @@ class PromptOptimizerController extends Controller
                 ->route('prompt-optimizer.show', $promptRun)
                 ->with('error', 'An error occurred whilst generating your prompt.');
         }
+    }
+
+    /**
+     * Retry a failed prompt run
+     */
+    public function retry(PromptRun $promptRun)
+    {
+        // Authorise that the user can retry this prompt run
+        if ($promptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only allow retry for failed runs
+        if ($promptRun->status !== 'failed') {
+            return back()->with('error', 'Only failed runs can be retried.');
+        }
+
+        // Determine which stage failed and retry from there
+        $workflowStage = $promptRun->workflow_stage;
+
+        if ($workflowStage === 'failed' || $workflowStage === 'submitted') {
+            // Framework selection failed - retry from the beginning
+            $promptRun->update([
+                'status' => 'processing',
+                'workflow_stage' => 'submitted',
+                'error_message' => null,
+                'completed_at' => null,
+            ]);
+
+            // Prepare payload for framework selector
+            $payload = [
+                'prompt_run_id' => $promptRun->id,
+                'personality_type' => $promptRun->personality_type,
+                'trait_percentages' => $promptRun->trait_percentages,
+                'task_description' => $promptRun->task_description,
+            ];
+
+            try {
+                // Trigger framework selector workflow
+                $response = $this->n8nClient->triggerWebhook(
+                    '/webhook/framework-selector',
+                    $payload
+                );
+
+                if ($response->successful()) {
+                    $responseData = $response->json();
+
+                    // Update the prompt run with framework selection
+                    $promptRun->update([
+                        'selected_framework' => $responseData['selected_framework'] ?? null,
+                        'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                        'framework_questions' => $responseData['framework_questions'] ?? [],
+                        'workflow_stage' => 'framework_selected',
+                        'n8n_response_payload' => $responseData,
+                    ]);
+
+                    // Broadcast framework selected event
+                    event(new \App\Events\FrameworkSelected($promptRun));
+
+                    return redirect()
+                        ->route('prompt-optimizer.show', $promptRun)
+                        ->with('success', 'Framework selected! Please answer the following questions.');
+                } else {
+                    // Handle n8n error
+                    $errorData = $response->json();
+                    $errorMessage = 'Framework selector workflow failed';
+
+                    if (is_array($errorData) && isset($errorData[0])) {
+                        $error = $errorData[0];
+                        if (isset($error['error'])) {
+                            $errorMessage = $error['error'];
+                        }
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => $errorMessage,
+                            'n8n_response_payload' => $error,
+                        ]);
+                    } else {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => $errorMessage.': '.$response->body(),
+                        ]);
+                    }
+
+                    return redirect()
+                        ->route('prompt-optimizer.show', $promptRun)
+                        ->with('error', 'Retry failed. '.$errorMessage);
+                }
+            } catch (\Throwable $e) {
+                $promptRun->update([
+                    'status' => 'failed',
+                    'workflow_stage' => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]);
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $promptRun)
+                    ->with('error', 'An error occurred whilst retrying.');
+            }
+        } elseif ($workflowStage === 'generating_prompt') {
+            // Final optimization failed - retry that step
+            return $this->triggerFinalOptimization($promptRun);
+        }
+
+        return back()->with('error', 'Cannot retry from this stage.');
     }
 
     /**
