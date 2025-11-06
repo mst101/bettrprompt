@@ -68,6 +68,7 @@
           }
         }
       },
+      "continueOnFail": true,
       "id": "59cff0dc-fc72-4480-8676-603998bf973e",
       "name": "Call Claude Sonnet",
       "type": "n8n-nodes-base.httpRequest",
@@ -86,6 +87,78 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "check-no-error",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "check-status-code",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "name": "Check Response Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle API error response\nconst item = $input.first();\nconst response = item.json;\nconst webhookData = $node[\"Build LLM Prompt\"].json;\n\nlet errorMessage = 'API call failed';\nlet errorDetails = {};\n\n// Check if this is an n8n error (when continueOnFail is true)\nif (response.errorMessage) {\n  // n8n error format\n  errorMessage = response.errorMessage || 'Unknown error';\n  \n  // Add description if available\n  if (response.errorDescription) {\n    errorDetails.description = response.errorDescription;\n    // Use description as main error message if more specific\n    if (response.errorDescription !== errorMessage) {\n      errorMessage = response.errorDescription;\n    }\n  }\n  \n  // Extract error details\n  if (response.errorDetails) {\n    // HTTP code\n    if (response.errorDetails.httpCode) {\n      errorDetails.http_code = response.errorDetails.httpCode;\n    }\n    \n    // Raw error message (contains the actual API response)\n    if (response.errorDetails.rawErrorMessage && response.errorDetails.rawErrorMessage.length > 0) {\n      const rawError = response.errorDetails.rawErrorMessage[0];\n      \n      // Try to parse if it's a JSON string\n      const match = rawError.match(/\\{.*\\}/);\n      if (match) {\n        try {\n          const parsed = JSON.parse(match[0].replace(/\\\\/g, ''));\n          if (parsed.error) {\n            if (parsed.error.type) {\n              errorDetails.error_type = parsed.error.type;\n            }\n            if (parsed.error.message) {\n              errorDetails.api_message = parsed.error.message;\n              // Use API message as main error if more specific\n              if (parsed.error.message !== errorMessage) {\n                errorMessage = parsed.error.message;\n              }\n            }\n          }\n        } catch (e) {\n          // If parsing fails, just store the raw message\n          errorDetails.raw_error = rawError;\n        }\n      }\n    }\n  }\n  \n  // Add n8n-specific details for debugging\n  if (response.n8nDetails) {\n    errorDetails.node_name = response.n8nDetails.nodeName;\n    errorDetails.time = response.n8nDetails.time;\n  }\n} else if (response.statusCode && response.statusCode !== 200) {\n  // HTTP error (non-200 status) without n8n error wrapper\n  errorDetails.status_code = response.statusCode;\n  \n  if (response.statusMessage) {\n    errorDetails.status_message = response.statusMessage;\n  }\n  \n  // Try to get error from response body\n  if (response.body && response.body.error) {\n    errorMessage = response.body.error.message || response.body.error.type || errorMessage;\n    errorDetails.error_type = response.body.error.type;\n  }\n}\n\nreturn {\n  prompt_run_id: webhookData.prompt_run_id,\n  success: false,\n  error: errorMessage,\n  details: errorDetails\n};"
+      },
+      "id": "b2c3d4e5-f6a7-8901-2345-678901bcdef0",
+      "name": "Format Error Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "c3d4e5f6-a7b8-9012-3456-789012cdef01",
+      "name": "Respond with Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        -120
+      ]
+    },
+    {
+      "parameters": {
         "jsCode": "// Extract the optimised prompt from Anthropic response\nconst items = $input.all();\nconst response = items[0].json;\n\nlet optimisedPrompt = '';\n\nif (response.content && response.content[0]?.text) {\n  optimisedPrompt = response.content[0].text.trim();\n} else {\n  throw new Error('Invalid response from LLM');\n}\n\n// Get the original data from the Build LLM Prompt node\nconst webhookData = $node[\"Build LLM Prompt\"].json;\n\nreturn {\n  optimized_prompt: optimisedPrompt,\n  prompt_run_id: webhookData.prompt_run_id,\n  personality_type: webhookData.personality_type,\n  model_used: response.model || 'claude-3-5-sonnet-20241022',\n  tokens_used: {\n    input: response.usage?.input_tokens || 0,\n    output: response.usage?.output_tokens || 0,\n    total: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n  }\n};"
       },
       "id": "4494baa3-045f-40ec-86b0-5cdba1f7c554",
@@ -93,8 +166,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1088,
-        -240
+        1312,
+        -360
       ]
     },
     {
@@ -152,7 +225,36 @@
       "main": [
         [
           {
+            "node": "Check Response Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Response Status": {
+      "main": [
+        [
+          {
             "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Response": {
+      "main": [
+        [
+          {
+            "node": "Respond with Error",
             "type": "main",
             "index": 0
           }

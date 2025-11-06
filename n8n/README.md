@@ -4,7 +4,7 @@ This directory contains n8n workflow JSON files for the AI Buddy application.
 
 ## Workflows
 
-### Framework Selector.json
+### 1. Framework Selector.json
 
 **Purpose**: Analyses a user's task description and personality type to select the optimal prompt engineering framework
 and generate clarifying questions.
@@ -69,7 +69,80 @@ and generate clarifying questions.
 ]
 ```
 
+### 2. Final Prompt Optimizer.json
+
+**Purpose**: Takes the selected framework, clarifying answers, and task details to generate the final optimised AI prompt.
+
+**Webhook Endpoint**: `POST /webhook/final-prompt-optimizer`
+
+**Input Payload**:
+
+```json
+{
+    "prompt_run_id": 123,
+    "personality_type": "INTJ-A",
+    "task_description": "Write a function to...",
+    "trait_percentages": {
+        "mind": 60,
+        "energy": 75,
+        "nature": 80,
+        "tactics": 70,
+        "identity": 65
+    },
+    "selected_framework": "CRISPE",
+    "framework_reasoning": "CRISPE is ideal because...",
+    "framework_questions": [
+        "What is the expected input format?",
+        "Are there any performance constraints?",
+        "Should the function handle edge cases?"
+    ],
+    "clarifying_answers": [
+        "JSON format with id and name fields",
+        "Must process 1000+ items per second",
+        "Yes, handle null values and empty arrays"
+    ]
+}
+```
+
+**Success Response** (HTTP 200):
+
+```json
+{
+    "prompt_run_id": 123,
+    "optimized_prompt": "You are an expert software engineer...\n\n[Full optimised prompt text]",
+    "personality_type": "INTJ-A",
+    "model_used": "claude-3-7-sonnet-20250219",
+    "tokens_used": {
+        "input": 2500,
+        "output": 850,
+        "total": 3350
+    }
+}
+```
+
+**Error Response** (HTTP 500):
+
+```json
+[
+    {
+        "prompt_run_id": 123,
+        "success": false,
+        "error": "Overloaded",
+        "details": {
+            "description": "Overloaded",
+            "http_code": "529",
+            "error_type": "overloaded_error",
+            "api_message": "Overloaded",
+            "node_name": "Call Claude Sonnet",
+            "time": "06/11/2025, 10:08:35"
+        }
+    }
+]
+```
+
 ## Workflow Nodes
+
+### Framework Selector Workflow
 
 1. **Webhook** - Receives POST requests from Laravel
 2. **Validate Input** - Validates required fields (personality_type, task_description, prompt_run_id)
@@ -85,13 +158,28 @@ and generate clarifying questions.
 9. **Respond to Webhook** - Returns success response to Laravel (HTTP 200)
 10. **Respond with Error** - Returns error response to Laravel (HTTP 500)
 
+### Final Prompt Optimizer Workflow
+
+1. **Webhook** - Receives POST requests from Laravel
+2. **Validate Input** - Validates required fields and extracts all context data
+3. **Build LLM Prompt** - Constructs comprehensive prompt with framework, Q&A, and personality context
+4. **Call Claude Sonnet** - Makes API call to Anthropic Claude API (uses Sonnet for higher quality)
+    - **continueOnFail: true** - Allows workflow to continue even if API call fails
+5. **Check Response Status** - Validates response (checks for errors and HTTP 200)
+    - **Success path**: Proceeds to Format Response
+    - **Error path**: Proceeds to Format Error Response
+6. **Format Response** - Extracts optimised prompt text and token usage
+7. **Format Error Response** - Formats error details into structured JSON
+8. **Respond to Webhook** - Returns success response to Laravel (HTTP 200)
+9. **Respond with Error** - Returns error response to Laravel (HTTP 500)
+
 ## Error Handling
 
-The workflow includes comprehensive error handling:
+Both workflows include comprehensive error handling:
 
 - **API Failures**: If the Claude API returns an error (rate limit, overload, auth failure, etc.), the workflow captures
   the error and returns it to Laravel
-- **Continue On Fail**: The "Call Claude Haiku" node has `continueOnFail: true`, which means n8n will pass the error to
+- **Continue On Fail**: The API call nodes have `continueOnFail: true`, which means n8n will pass the error to
   the next node instead of stopping execution
 - **Error Detection**: The "Check Response Status" IF node checks:
     - `$json.error` is empty (no n8n error object)
