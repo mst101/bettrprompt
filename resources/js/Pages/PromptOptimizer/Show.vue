@@ -3,9 +3,9 @@ import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { PromptRunResource } from '@/types';
+import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 interface Progress {
     answered: number;
@@ -19,6 +19,15 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+// Type guard for n8nResponsePayload
+const errorResponse = computed((): N8nErrorResponse | null => {
+    const payload = props.promptRun.n8nResponsePayload;
+    if (payload && typeof payload === 'object' && 'details' in payload) {
+        return payload as N8nErrorResponse;
+    }
+    return null;
+});
 
 const copied = ref(false);
 const isSubmitting = ref(false);
@@ -557,10 +566,7 @@ onUnmounted(() => {
 
                                 <!-- Error Details (if available) -->
                                 <div
-                                    v-if="
-                                        promptRun.n8nResponsePayload &&
-                                        promptRun.n8nResponsePayload.details
-                                    "
+                                    v-if="errorResponse"
                                     class="mt-3 rounded-md bg-red-50 p-3"
                                 >
                                     <p class="text-xs font-medium text-red-800">
@@ -568,10 +574,7 @@ onUnmounted(() => {
                                     </p>
                                     <dl class="mt-2 space-y-1">
                                         <div
-                                            v-if="
-                                                promptRun.n8nResponsePayload
-                                                    .details.http_code
-                                            "
+                                            v-if="errorResponse.details.httpCode"
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -580,17 +583,11 @@ onUnmounted(() => {
                                                 HTTP Code:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{
-                                                    promptRun.n8nResponsePayload
-                                                        .details.http_code
-                                                }}
+                                                {{ errorResponse.details.httpCode }}
                                             </dd>
                                         </div>
                                         <div
-                                            v-if="
-                                                promptRun.n8nResponsePayload
-                                                    .details.error_type
-                                            "
+                                            v-if="errorResponse.details.errorType"
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -599,17 +596,11 @@ onUnmounted(() => {
                                                 Error Type:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{
-                                                    promptRun.n8nResponsePayload
-                                                        .details.error_type
-                                                }}
+                                                {{ errorResponse.details.errorType }}
                                             </dd>
                                         </div>
                                         <div
-                                            v-if="
-                                                promptRun.n8nResponsePayload
-                                                    .details.description
-                                            "
+                                            v-if="errorResponse.details.description"
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -618,10 +609,7 @@ onUnmounted(() => {
                                                 Description:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{
-                                                    promptRun.n8nResponsePayload
-                                                        .details.description
-                                                }}
+                                                {{ errorResponse.details.description }}
                                             </dd>
                                         </div>
                                     </dl>

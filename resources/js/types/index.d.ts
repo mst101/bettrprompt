@@ -24,3 +24,6 @@ export * from './models';
 
 // Re-export everything from resources
 export * from './resources';
+
+// Re-export n8n types
+export * from './n8n';

@@ -10,6 +10,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
+ * import type { N8nResponsePayload } from '@/types/n8n';
+ *
  * interface PromptRun {
  *   readonly id: number;
  *   readonly userId: number | null;
@@ -21,8 +23,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
- *   readonly n8nRequestPayload: Array<unknown> | null;
- *   readonly n8nResponsePayload: Array<unknown> | null;
+ *   readonly n8nRequestPayload: Record<string, unknown> | null;
+ *   readonly n8nResponsePayload: N8nResponsePayload | null;
  *   readonly status: string;
  *   readonly workflowStage: string;
  *   readonly errorMessage: string | null;

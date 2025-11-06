@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\N8nResponsePayload;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -30,7 +31,7 @@ class PromptRun extends Model
         'framework_questions' => 'array',
         'clarifying_answers' => 'array',
         'n8n_request_payload' => 'array',
-        'n8n_response_payload' => 'array',
+        'n8n_response_payload' => N8nResponsePayload::class,
         'completed_at' => 'datetime',
     ];
 
