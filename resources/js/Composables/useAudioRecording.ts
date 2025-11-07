@@ -99,7 +99,7 @@ export function useAudioRecording() {
         formData.append('audio', audioBlob, 'recording.webm');
 
         try {
-            const response = await fetch('/api/voice-transcription', {
+            const response = await fetch('/voice-transcription', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': (

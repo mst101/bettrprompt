@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VoiceTranscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -50,6 +51,10 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.retry');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
+
+    // Voice transcription endpoint (requires session authentication)
+    Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
+        ->middleware('throttle:30,1');
 });
 
 require __DIR__.'/auth.php';
