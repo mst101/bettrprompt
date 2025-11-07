@@ -15,8 +15,7 @@ readonly class N8nErrorDetails implements Arrayable, JsonSerializable
         public ?string $nodeName = null,
         public ?string $time = null,
         public ?string $rawError = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

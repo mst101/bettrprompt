@@ -213,8 +213,12 @@ const formatDate = (dateString: string) => {
                                             aria-label="Pagination"
                                         >
                                             <Link
-                                                v-if="promptRuns.meta.prevPageUrl"
-                                                :href="promptRuns.meta.prevPageUrl"
+                                                v-if="
+                                                    promptRuns.meta.prevPageUrl
+                                                "
+                                                :href="
+                                                    promptRuns.meta.prevPageUrl
+                                                "
                                                 class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
                                             >
                                                 Previous
@@ -223,13 +227,19 @@ const formatDate = (dateString: string) => {
                                                 class="items-centre relative inline-flex border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                                             >
                                                 Page
-                                                {{ promptRuns.meta.currentPage }}
+                                                {{
+                                                    promptRuns.meta.currentPage
+                                                }}
                                                 of
                                                 {{ promptRuns.meta.lastPage }}
                                             </span>
                                             <Link
-                                                v-if="promptRuns.meta.nextPageUrl"
-                                                :href="promptRuns.meta.nextPageUrl"
+                                                v-if="
+                                                    promptRuns.meta.nextPageUrl
+                                                "
+                                                :href="
+                                                    promptRuns.meta.nextPageUrl
+                                                "
                                                 class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
                                             >
                                                 Next

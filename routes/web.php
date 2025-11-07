@@ -1,18 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 // Route::get('/dashboard', function () {
 //    return Inertia::render('Dashboard');
@@ -24,7 +21,8 @@ Route::get('/dashboard', [\App\Http\Controllers\PromptOptimizerController::class
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::patch('/profile/personality', [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
+    Route::patch('/profile/personality',
+        [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Prompt Optimizer routes
@@ -34,11 +32,14 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.store');
     Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
         ->name('prompt-optimizer.show');
-    Route::post('/prompt-optimizer/{promptRun}/answer', [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
+    Route::post('/prompt-optimizer/{promptRun}/answer',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
         ->name('prompt-optimizer.answer');
-    Route::post('/prompt-optimizer/{promptRun}/skip', [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
+    Route::post('/prompt-optimizer/{promptRun}/skip',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
         ->name('prompt-optimizer.skip');
-    Route::post('/prompt-optimizer/{promptRun}/retry', [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
+    Route::post('/prompt-optimizer/{promptRun}/retry',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
         ->name('prompt-optimizer.retry');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');

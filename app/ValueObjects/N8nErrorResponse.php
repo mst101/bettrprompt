@@ -12,8 +12,7 @@ readonly class N8nErrorResponse implements Arrayable, JsonSerializable
         public bool $success,
         public string $error,
         public N8nErrorDetails $details,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

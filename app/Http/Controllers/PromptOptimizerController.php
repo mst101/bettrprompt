@@ -14,8 +14,7 @@ class PromptOptimizerController extends Controller
 {
     public function __construct(
         protected N8nClient $n8nClient
-    ) {
-    }
+    ) {}
 
     /**
      * Display the prompt optimizer form

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use     App\Http\Requests\DeleteProfileRequest;
+use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePersonalityTypeRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

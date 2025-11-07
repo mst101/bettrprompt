@@ -3,6 +3,7 @@
 ## Problem
 
 When accessing `https://app.localhost`, you may see:
+
 - Blank page
 - Console errors like:
   ```
@@ -15,11 +16,13 @@ Notice the URLs are `http://` instead of `https://`.
 ## Root Cause
 
 **Mixed Content Issue:**
+
 1. Browser loads page via HTTPS: `https://app.localhost`
 2. Laravel generates asset URLs as HTTP: `http://app.localhost/build/assets/...`
 3. Browser blocks loading HTTP resources on HTTPS pages (security policy)
 
 **Why Laravel Generates HTTP URLs:**
+
 - Caddy (HTTPS) → Laravel (HTTP internal communication)
 - Laravel sees the internal HTTP request
 - Without proxy configuration, Laravel thinks all requests are HTTP
@@ -43,6 +46,7 @@ Two changes were made to fix this:
 ```
 
 **What this does:**
+
 - Tells Laravel to trust the `X-Forwarded-Proto` header from Caddy
 - Caddy sets `X-Forwarded-Proto: https` when it proxies HTTPS requests
 - Laravel now knows the original request was HTTPS
@@ -64,6 +68,7 @@ public function boot(): void
 ```
 
 **What this does:**
+
 - Forces all URL generation helpers to use HTTPS
 - Applies only in `local` environment
 - Ensures consistency even if proxy headers are missing
@@ -100,19 +105,21 @@ curl -k -s https://app.localhost | grep -o 'https://[^"]*\.js'
 ```
 
 Should output:
+
 ```
 https://app.localhost/build/assets/app-xxx.js
-https://app.localhost/build/assets/Welcome-xxx.js
+https://app.localhost/build/assets/Home-xxx.js
 ```
 
 ## Why Both Changes?
 
-| Change | Purpose | When It Helps |
-|--------|---------|---------------|
-| `trustProxies()` | Read forwarded headers from Caddy | Laravel detects HTTPS from proxy headers |
-| `forceScheme()` | Guarantee HTTPS URL generation | Fallback if headers are missing; ensures consistency |
+| Change           | Purpose                           | When It Helps                                        |
+|------------------|-----------------------------------|------------------------------------------------------|
+| `trustProxies()` | Read forwarded headers from Caddy | Laravel detects HTTPS from proxy headers             |
+| `forceScheme()`  | Guarantee HTTPS URL generation    | Fallback if headers are missing; ensures consistency |
 
 Both together provide:
+
 - ✅ Proper protocol detection
 - ✅ Guaranteed HTTPS URLs
 - ✅ Works with all Laravel URL helpers (`route()`, `asset()`, `url()`)
@@ -149,12 +156,14 @@ In production, you should:
 ## Common Pitfalls
 
 ### Forgot to Clear Cache
+
 ```bash
 # Always clear after config changes
 ./vendor/bin/sail artisan config:clear
 ```
 
 ### Mixed HTTP/HTTPS in .env
+
 ```env
 # ❌ Wrong - mismatched protocols
 APP_URL=http://app.localhost
@@ -165,6 +174,7 @@ APP_URL=https://app.localhost
 ```
 
 ### Trusting All Proxies in Production
+
 ```php
 // ❌ Security risk in production
 $middleware->trustProxies(at: '*');
@@ -187,8 +197,8 @@ After applying the fix:
 ## Still Having Issues?
 
 1. **Clear browser cache:**
-   - Chrome: Cmd/Ctrl + Shift + Delete
-   - Hard refresh: Cmd/Ctrl + Shift + R
+    - Chrome: Cmd/Ctrl + Shift + Delete
+    - Hard refresh: Cmd/Ctrl + Shift + R
 
 2. **Check Caddy logs:**
    ```bash

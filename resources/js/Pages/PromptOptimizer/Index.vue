@@ -80,6 +80,7 @@ const submit = () => {
                                     v-model="form.taskDescription"
                                     :disabled="!hasPersonalityType"
                                     required
+                                    autofocus
                                     rows="6"
                                     placeholder="Describe what you're trying to accomplish..."
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500"

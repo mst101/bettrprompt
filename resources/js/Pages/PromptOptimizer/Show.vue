@@ -574,7 +574,9 @@ onUnmounted(() => {
                                     </p>
                                     <dl class="mt-2 space-y-1">
                                         <div
-                                            v-if="errorResponse.details.httpCode"
+                                            v-if="
+                                                errorResponse.details.httpCode
+                                            "
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -583,11 +585,16 @@ onUnmounted(() => {
                                                 HTTP Code:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{ errorResponse.details.httpCode }}
+                                                {{
+                                                    errorResponse.details
+                                                        .httpCode
+                                                }}
                                             </dd>
                                         </div>
                                         <div
-                                            v-if="errorResponse.details.errorType"
+                                            v-if="
+                                                errorResponse.details.errorType
+                                            "
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -596,11 +603,17 @@ onUnmounted(() => {
                                                 Error Type:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{ errorResponse.details.errorType }}
+                                                {{
+                                                    errorResponse.details
+                                                        .errorType
+                                                }}
                                             </dd>
                                         </div>
                                         <div
-                                            v-if="errorResponse.details.description"
+                                            v-if="
+                                                errorResponse.details
+                                                    .description
+                                            "
                                             class="flex text-xs"
                                         >
                                             <dt
@@ -609,7 +622,10 @@ onUnmounted(() => {
                                                 Description:
                                             </dt>
                                             <dd class="ml-2 text-red-600">
-                                                {{ errorResponse.details.description }}
+                                                {{
+                                                    errorResponse.details
+                                                        .description
+                                                }}
                                             </dd>
                                         </div>
                                     </dl>
