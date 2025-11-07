@@ -10,6 +10,7 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'isReturningVisitor' => request()->cookie('returning_visitor') !== null,
+        'modal' => request()->query('modal'),
     ]);
 })->name('home');
 

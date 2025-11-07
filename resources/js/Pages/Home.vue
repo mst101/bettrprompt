@@ -3,19 +3,29 @@ import FeatureCard from '@/Components/FeatureCard.vue';
 import StepCard from '@/Components/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { inject } from 'vue';
+import { inject, onMounted } from 'vue';
 
 defineOptions({
     layout: AppLayout,
 });
 
-defineProps<{
+const props = defineProps<{
     isReturningVisitor: boolean;
+    modal?: 'login' | 'register';
 }>();
 
 // Access the modal controls from AppLayout
 const openLoginModal = inject<() => void>('openLoginModal');
 const openRegisterModal = inject<() => void>('openRegisterModal');
+
+// Open modal based on query parameter
+onMounted(() => {
+    if (props.modal === 'login' && openLoginModal) {
+        openLoginModal();
+    } else if (props.modal === 'register' && openRegisterModal) {
+        openRegisterModal();
+    }
+});
 </script>
 
 <template>
