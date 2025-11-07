@@ -2,11 +2,11 @@
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineOptions({
     layout: AppLayout,
 });
-import { computed } from 'vue';
 
 const props = defineProps<{
     status?: string;
@@ -24,7 +24,6 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-    
     <Head title="Email Verification" />
 
     <div class="mb-4 text-sm text-gray-600">
@@ -37,8 +36,8 @@ const verificationLinkSent = computed(
         class="mb-4 text-sm font-medium text-green-600"
         v-if="verificationLinkSent"
     >
-        A new verification link has been sent to the email address you
-        provided during registration.
+        A new verification link has been sent to the email address you provided
+        during registration.
     </div>
 
     <form @submit.prevent="submit">
@@ -59,5 +58,4 @@ const verificationLinkSent = computed(
             >
         </div>
     </form>
-    
 </template>

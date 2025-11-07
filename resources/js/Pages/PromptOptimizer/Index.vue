@@ -50,9 +50,7 @@ const submit = () => {
                                 />
                             </div>
                             <div class="ml-3">
-                                <h3
-                                    class="text-sm font-medium text-amber-800"
-                                >
+                                <h3 class="text-sm font-medium text-amber-800">
                                     Personality type required
                                 </h3>
                                 <div class="mt-2 text-sm text-amber-700">
@@ -64,8 +62,8 @@ const submit = () => {
                                         >
                                             enter your personality type
                                         </Link>
-                                        on your profile page before
-                                        submitting a task description.
+                                        on your profile page before submitting a
+                                        task description.
                                     </p>
                                 </div>
                             </div>
@@ -73,8 +71,8 @@ const submit = () => {
                     </div>
 
                     <p class="mb-6 text-gray-600">
-                        Create optimised AI prompts customised to your
-                        specific task requirements and personality type.
+                        Create optimised AI prompts customised to your specific
+                        task requirements and personality type.
                     </p>
 
                     <form @submit.prevent="submit" class="space-y-6">
@@ -97,8 +95,8 @@ const submit = () => {
                                 {{ form.errors.taskDescription }}
                             </p>
                             <p class="mt-1 text-sm text-gray-500">
-                                Minimum 10 characters. Be specific about
-                                your goals and requirements.
+                                Minimum 10 characters. Be specific about your
+                                goals and requirements.
                             </p>
                         </div>
 

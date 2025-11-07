@@ -59,7 +59,9 @@ const close = () => {
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center text-sm">
-                        <span class="bg-white px-2 text-gray-500">Or continue with email</span>
+                        <span class="bg-white px-2 text-gray-500"
+                            >Or continue with email</span
+                        >
                     </div>
                 </div>
             </div>

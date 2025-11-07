@@ -30,7 +30,6 @@ const submit = () => {
 </script>
 
 <template>
-    
     <Head title="Reset Password" />
 
     <form @submit.prevent="submit">
@@ -76,5 +75,4 @@ const submit = () => {
             </PrimaryButton>
         </div>
     </form>
-    
 </template>

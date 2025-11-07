@@ -191,11 +191,7 @@ onUnmounted(() => {
                         <span
                             class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
                         >
-                            {{
-                                getWorkflowStageLabel(
-                                    promptRun.workflowStage,
-                                )
-                            }}
+                            {{ getWorkflowStageLabel(promptRun.workflowStage) }}
                         </span>
                     </div>
                 </div>
@@ -226,8 +222,7 @@ onUnmounted(() => {
             <!-- Framework Selection Info -->
             <div
                 v-if="
-                    promptRun.selectedFramework &&
-                    promptRun.frameworkReasoning
+                    promptRun.selectedFramework && promptRun.frameworkReasoning
                 "
                 class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
             >
@@ -261,8 +256,7 @@ onUnmounted(() => {
             <div
                 v-if="
                     (promptRun.workflowStage === 'framework_selected' ||
-                        promptRun.workflowStage ===
-                            'answering_questions') &&
+                        promptRun.workflowStage === 'answering_questions') &&
                     currentQuestion
                 "
                 class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
@@ -278,8 +272,7 @@ onUnmounted(() => {
                             <span class="text-sm text-gray-500">
                                 {{
                                     Math.round(
-                                        (progress.answered /
-                                            progress.total) *
+                                        (progress.answered / progress.total) *
                                             100,
                                     )
                                 }}% complete
@@ -333,8 +326,7 @@ onUnmounted(() => {
                             <button
                                 type="submit"
                                 :disabled="
-                                    isSubmitting ||
-                                    !answerForm.answer.trim()
+                                    isSubmitting || !answerForm.answer.trim()
                                 "
                                 class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
@@ -379,8 +371,8 @@ onUnmounted(() => {
                                 Generating your optimised prompt...
                             </p>
                             <p class="mt-1 text-sm text-gray-600">
-                                This may take a few moments. We're crafting
-                                a personalised prompt using the
+                                This may take a few moments. We're crafting a
+                                personalised prompt using the
                                 {{ promptRun.selectedFramework }}
                                 framework.
                             </p>
@@ -456,29 +448,20 @@ onUnmounted(() => {
                             >
                                 <div
                                     v-if="
-                                        promptRun.clarifyingAnswers[
-                                            index
-                                        ] !== null &&
-                                        promptRun.clarifyingAnswers[
-                                            index
-                                        ] !== undefined
+                                        promptRun.clarifyingAnswers[index] !==
+                                            null &&
+                                        promptRun.clarifyingAnswers[index] !==
+                                            undefined
                                     "
                                     class="rounded-md bg-gray-50 p-3"
                                 >
                                     <p
                                         class="whitespace-break-spaces text-sm text-gray-700"
                                     >
-                                        {{
-                                            promptRun.clarifyingAnswers[
-                                                index
-                                            ]
-                                        }}
+                                        {{ promptRun.clarifyingAnswers[index] }}
                                     </p>
                                 </div>
-                                <div
-                                    v-else
-                                    class="rounded-md bg-gray-50 p-3"
-                                >
+                                <div v-else class="rounded-md bg-gray-50 p-3">
                                     <p class="text-sm italic text-gray-500">
                                         [Skipped]
                                     </p>
@@ -579,51 +562,34 @@ onUnmounted(() => {
                                 </p>
                                 <dl class="mt-2 space-y-1">
                                     <div
-                                        v-if="
-                                            errorResponse.details.httpCode
-                                        "
+                                        v-if="errorResponse.details.httpCode"
                                         class="flex text-xs"
                                     >
-                                        <dt
-                                            class="font-medium text-red-700"
-                                        >
+                                        <dt class="font-medium text-red-700">
                                             HTTP Code:
                                         </dt>
                                         <dd class="ml-2 text-red-600">
-                                            {{
-                                                errorResponse.details
-                                                    .httpCode
-                                            }}
+                                            {{ errorResponse.details.httpCode }}
                                         </dd>
                                     </div>
                                     <div
-                                        v-if="
-                                            errorResponse.details.errorType
-                                        "
+                                        v-if="errorResponse.details.errorType"
                                         class="flex text-xs"
                                     >
-                                        <dt
-                                            class="font-medium text-red-700"
-                                        >
+                                        <dt class="font-medium text-red-700">
                                             Error Type:
                                         </dt>
                                         <dd class="ml-2 text-red-600">
                                             {{
-                                                errorResponse.details
-                                                    .errorType
+                                                errorResponse.details.errorType
                                             }}
                                         </dd>
                                     </div>
                                     <div
-                                        v-if="
-                                            errorResponse.details
-                                                .description
-                                        "
+                                        v-if="errorResponse.details.description"
                                         class="flex text-xs"
                                     >
-                                        <dt
-                                            class="font-medium text-red-700"
-                                        >
+                                        <dt class="font-medium text-red-700">
                                             Description:
                                         </dt>
                                         <dd class="ml-2 text-red-600">

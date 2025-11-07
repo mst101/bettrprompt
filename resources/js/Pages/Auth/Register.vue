@@ -25,7 +25,6 @@ const submit = () => {
 </script>
 
 <template>
-    
     <Head title="Register" />
 
     <form @submit.prevent="submit">
@@ -90,5 +89,4 @@ const submit = () => {
             </PrimaryButton>
         </div>
     </form>
-    
 </template>

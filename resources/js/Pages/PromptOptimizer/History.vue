@@ -105,9 +105,7 @@ const formatDate = (dateString: string) => {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody
-                                class="divide-y divide-gray-200 bg-white"
-                            >
+                            <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr
                                     v-for="promptRun in promptRuns.data"
                                     :key="promptRun.id"
@@ -118,9 +116,7 @@ const formatDate = (dateString: string) => {
                                     >
                                         {{ promptRun.personalityType }}
                                     </td>
-                                    <td
-                                        class="px-6 py-4 text-sm text-gray-700"
-                                    >
+                                    <td class="px-6 py-4 text-sm text-gray-700">
                                         {{
                                             truncate(
                                                 promptRun.taskDescription,
@@ -138,9 +134,7 @@ const formatDate = (dateString: string) => {
                                     <td
                                         class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
                                     >
-                                        {{
-                                            formatDate(promptRun.createdAt)
-                                        }}
+                                        {{ formatDate(promptRun.createdAt) }}
                                     </td>
                                     <td
                                         class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
@@ -168,9 +162,7 @@ const formatDate = (dateString: string) => {
                         class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
                     >
                         <div class="items-centre flex justify-between">
-                            <div
-                                class="flex flex-1 justify-between sm:hidden"
-                            >
+                            <div class="flex flex-1 justify-between sm:hidden">
                                 <Link
                                     v-if="promptRuns.meta.prevPageUrl"
                                     :href="promptRuns.meta.prevPageUrl"
@@ -218,12 +210,8 @@ const formatDate = (dateString: string) => {
                                         aria-label="Pagination"
                                     >
                                         <Link
-                                            v-if="
-                                                promptRuns.meta.prevPageUrl
-                                            "
-                                            :href="
-                                                promptRuns.meta.prevPageUrl
-                                            "
+                                            v-if="promptRuns.meta.prevPageUrl"
+                                            :href="promptRuns.meta.prevPageUrl"
                                             class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
                                         >
                                             Previous
@@ -232,19 +220,13 @@ const formatDate = (dateString: string) => {
                                             class="items-centre relative inline-flex border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                                         >
                                             Page
-                                            {{
-                                                promptRuns.meta.currentPage
-                                            }}
+                                            {{ promptRuns.meta.currentPage }}
                                             of
                                             {{ promptRuns.meta.lastPage }}
                                         </span>
                                         <Link
-                                            v-if="
-                                                promptRuns.meta.nextPageUrl
-                                            "
-                                            :href="
-                                                promptRuns.meta.nextPageUrl
-                                            "
+                                            v-if="promptRuns.meta.nextPageUrl"
+                                            :href="promptRuns.meta.nextPageUrl"
                                             class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
                                         >
                                             Next

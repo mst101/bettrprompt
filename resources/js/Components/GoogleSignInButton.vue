@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-
 defineProps<{
     text?: string;
 }>();
 </script>
 
 <template>
-    <Link
+    <a
         :href="route('auth.google')"
         class="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
     >
-        <svg class="h-5 w-5" viewBox="0 0 24 24">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
             <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -30,5 +28,5 @@ defineProps<{
             />
         </svg>
         {{ text || 'Continue with Google' }}
-    </Link>
+    </a>
 </template>
