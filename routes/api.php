@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\VoiceTranscriptionController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+
+// Voice transcription endpoint (requires authentication)
+Route::middleware(['auth:sanctum', 'throttle:30,1'])
+    ->post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe']);
 
 Route::post('/n8n/webhook', function (Request $request) {
     // Verify secret

@@ -66,6 +66,7 @@ import SvgMagnifyingGlass from '@/Icons/SvgMagnifyingGlass.vue';
 import SvgMap from '@/Icons/SvgMap.vue';
 import SvgMastodon from '@/Icons/SvgMastodon.vue';
 import SvgMegaphone from '@/Icons/SvgMegaphone.vue';
+import SvgMicrophone from '@/Icons/SvgMicrophone.vue';
 import SvgMinusCircle from '@/Icons/SvgMinusCircle.vue';
 import SvgMoon from '@/Icons/SvgMoon.vue';
 import SvgPaperAirplane from '@/Icons/SvgPaperAirplane.vue';
@@ -173,6 +174,7 @@ const iconMap: Record<string, any> = {
     map: SvgMap,
     mastodon: SvgMastodon,
     megaphone: SvgMegaphone,
+    microphone: SvgMicrophone,
     'minus-circle': SvgMinusCircle,
     moon: SvgMoon,
     'paper-airplane': SvgPaperAirplane,

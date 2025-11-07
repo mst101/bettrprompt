@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -19,6 +20,14 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('prompt-optimizer.store'));
+};
+
+const handleTranscription = (text: string) => {
+    // Append transcription to existing text (with space if text exists)
+    if (form.taskDescription && !form.taskDescription.endsWith(' ')) {
+        form.taskDescription += ' ';
+    }
+    form.taskDescription += text;
 };
 </script>
 
@@ -78,6 +87,18 @@ const submit = () => {
                     <form @submit.prevent="submit" class="space-y-6">
                         <!-- Task Description -->
                         <div>
+                            <div class="mb-2 flex items-center justify-between">
+                                <label
+                                    for="taskDescription"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Task Description
+                                </label>
+                                <VoiceInputButton
+                                    @transcription="handleTranscription"
+                                    v-if="hasPersonalityType"
+                                />
+                            </div>
                             <textarea
                                 id="taskDescription"
                                 v-model="form.taskDescription"
