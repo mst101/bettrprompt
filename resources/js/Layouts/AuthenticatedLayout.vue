@@ -21,10 +21,17 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('home')">
+                                <Link
+                                    :href="route('home')"
+                                    class="flex items-center gap-1 transition hover:opacity-80"
+                                >
                                     <ApplicationLogo
                                         class="block h-10 w-auto fill-current text-indigo-600"
                                     />
+                                    <span
+                                        class="mt-2 text-xl font-bold text-gray-800"
+                                        >AI Buddy</span
+                                    >
                                 </Link>
                             </div>
 

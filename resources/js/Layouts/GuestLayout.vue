@@ -7,15 +7,18 @@ import { Link } from '@inertiajs/vue3';
     <div
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
-        <div>
+        <!-- Logo -->
+        <div class="flex shrink-0 items-center">
             <Link
-                href="/"
-                class="flex items-center gap-3 transition hover:opacity-80"
+                :href="route('home')"
+                class="flex items-center gap-1 transition hover:opacity-80"
             >
                 <ApplicationLogo
-                    class="h-16 w-16 fill-current text-indigo-600"
+                    class="block h-10 w-auto fill-current text-indigo-600"
                 />
-                <span class="text-3xl font-bold text-gray-800">AI Buddy</span>
+                <span class="mt-2 text-xl font-bold text-gray-800"
+                    >AI Buddy</span
+                >
             </Link>
         </div>
 
