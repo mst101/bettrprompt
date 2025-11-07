@@ -4,6 +4,10 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
+defineOptions({
+    layout: AppLayout,
+});
+
 const props = defineProps<{
     email: string;
     token: string;
@@ -26,51 +30,51 @@ const submit = () => {
 </script>
 
 <template>
-    <AppLayout>
-        <Head title="Reset Password" />
+    
+    <Head title="Reset Password" />
 
-        <form @submit.prevent="submit">
-            <FormField
-                id="email"
-                v-model="form.email"
-                label="Email"
-                type="email"
-                :error="form.errors.email"
-                required
-                autofocus
-                autocomplete="username"
-            />
+    <form @submit.prevent="submit">
+        <FormField
+            id="email"
+            v-model="form.email"
+            label="Email"
+            type="email"
+            :error="form.errors.email"
+            required
+            autofocus
+            autocomplete="username"
+        />
 
-            <FormField
-                id="password"
-                v-model="form.password"
-                label="Password"
-                type="password"
-                :error="form.errors.password"
-                class="mt-4"
-                required
-                autocomplete="new-password"
-            />
+        <FormField
+            id="password"
+            v-model="form.password"
+            label="Password"
+            type="password"
+            :error="form.errors.password"
+            class="mt-4"
+            required
+            autocomplete="new-password"
+        />
 
-            <FormField
-                id="passwordConfirmation"
-                v-model="form.passwordConfirmation"
-                label="Confirm Password"
-                type="password"
-                :error="form.errors.passwordConfirmation"
-                class="mt-4"
-                required
-                autocomplete="new-password"
-            />
+        <FormField
+            id="passwordConfirmation"
+            v-model="form.passwordConfirmation"
+            label="Confirm Password"
+            type="password"
+            :error="form.errors.passwordConfirmation"
+            class="mt-4"
+            required
+            autocomplete="new-password"
+        />
 
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Reset Password
-                </PrimaryButton>
-            </div>
-        </form>
-    </AppLayout>
+        <div class="mt-4 flex items-center justify-end">
+            <PrimaryButton
+                :class="{ 'opacity-25': form.processing }"
+                :disabled="form.processing"
+            >
+                Reset Password
+            </PrimaryButton>
+        </div>
+    </form>
+    
 </template>
