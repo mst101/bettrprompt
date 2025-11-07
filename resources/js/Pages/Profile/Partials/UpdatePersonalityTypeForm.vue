@@ -2,6 +2,7 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TraitPercentageInput from '@/Components/TraitPercentageInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
@@ -175,83 +176,35 @@ const submit = () => {
                     </p>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <InputLabel
-                                for="mind"
-                                value="Mind (Introversion/Extraversion)"
-                            />
-                            <input
-                                type="number"
-                                id="mind"
-                                v-model.number="form.traitPercentages.mind"
-                                min="0"
-                                max="100"
-                                placeholder="%"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                        </div>
+                        <TraitPercentageInput
+                            id="mind"
+                            label="Mind (Introversion/Extraversion)"
+                            v-model="form.traitPercentages.mind"
+                        />
 
-                        <div>
-                            <InputLabel
-                                for="energy"
-                                value="Energy (Intuitive/Observant)"
-                            />
-                            <input
-                                type="number"
-                                id="energy"
-                                v-model.number="form.traitPercentages.energy"
-                                min="0"
-                                max="100"
-                                placeholder="%"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                        </div>
+                        <TraitPercentageInput
+                            id="energy"
+                            label="Energy (Intuitive/Observant)"
+                            v-model="form.traitPercentages.energy"
+                        />
 
-                        <div>
-                            <InputLabel
-                                for="nature"
-                                value="Nature (Thinking/Feeling)"
-                            />
-                            <input
-                                type="number"
-                                id="nature"
-                                v-model.number="form.traitPercentages.nature"
-                                min="0"
-                                max="100"
-                                placeholder="%"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                        </div>
+                        <TraitPercentageInput
+                            id="nature"
+                            label="Nature (Thinking/Feeling)"
+                            v-model="form.traitPercentages.nature"
+                        />
 
-                        <div>
-                            <InputLabel
-                                for="tactics"
-                                value="Tactics (Judging/Prospecting)"
-                            />
-                            <input
-                                type="number"
-                                id="tactics"
-                                v-model.number="form.traitPercentages.tactics"
-                                min="0"
-                                max="100"
-                                placeholder="%"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                        </div>
+                        <TraitPercentageInput
+                            id="tactics"
+                            label="Tactics (Judging/Prospecting)"
+                            v-model="form.traitPercentages.tactics"
+                        />
 
                         <div class="col-span-2">
-                            <InputLabel
-                                for="identityPercent"
-                                value="Identity (Assertive/Turbulent)"
-                            />
-                            <input
-                                type="number"
+                            <TraitPercentageInput
                                 id="identityPercent"
-                                v-model.number="form.traitPercentages.identity"
-                                min="0"
-                                max="100"
-                                placeholder="%"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                label="Identity (Assertive/Turbulent)"
+                                v-model="form.traitPercentages.identity"
                             />
                         </div>
                     </div>
