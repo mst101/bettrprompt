@@ -1,25 +1,11 @@
 import { Config } from 'ziggy-js';
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
-    personalityType?: string | null;
-    traitPercentages?: {
-        mind: number | null;
-        energy: number | null;
-        nature: number | null;
-        tactics: number | null;
-        identity: number | null;
-    } | null;
-}
+import type { UserResource } from './resources';
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth?: {
-        user?: User;
+        user?: UserResource;
     };
     ziggy: Config & { location: string };
 };
