@@ -2,7 +2,7 @@
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
@@ -156,7 +156,7 @@ onUnmounted(() => {
 <template>
     <Head title="Optimised Prompt" />
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -683,5 +683,5 @@ onUnmounted(() => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>

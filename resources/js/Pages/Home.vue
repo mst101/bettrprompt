@@ -1,97 +1,15 @@
 <script setup lang="ts">
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
-import LoginModal from '@/Components/LoginModal.vue';
-import RegisterModal from '@/Components/RegisterModal.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
-
-defineProps<{
-    canLogin?: boolean;
-    canRegister?: boolean;
-    status?: string;
-}>();
-
-const showLoginModal = ref(false);
-const showRegisterModal = ref(false);
-const showForgotPasswordModal = ref(false);
-
-const openLogin = () => {
-    showRegisterModal.value = false;
-    showForgotPasswordModal.value = false;
-    showLoginModal.value = true;
-};
-
-const openRegister = () => {
-    showLoginModal.value = false;
-    showForgotPasswordModal.value = false;
-    showRegisterModal.value = true;
-};
-
-const openForgotPassword = () => {
-    showLoginModal.value = false;
-    showRegisterModal.value = false;
-    showForgotPasswordModal.value = true;
-};
 </script>
 
 <template>
     <Head title="Welcome to AI Buddy" />
 
-    <div
-        class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50"
-    >
-        <!-- Header -->
-        <header class="relative z-10">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between">
-                    <!-- Logo -->
-                    <Link
-                        href="/"
-                        class="flex items-center gap-3 transition hover:opacity-80"
-                    >
-                        <ApplicationLogo
-                            class="h-12 w-12 fill-current text-indigo-600"
-                        />
-                        <span class="text-2xl font-bold text-gray-800"
-                            >AI Buddy</span
-                        >
-                    </Link>
-
-                    <!-- Auth Links -->
-                    <nav v-if="canLogin" class="flex items-center gap-4">
-                        <Link
-                            v-if="$page.props.auth?.user"
-                            :href="route('dashboard')"
-                            class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600"
-                        >
-                            Dashboard
-                        </Link>
-
-                        <template v-else>
-                            <button
-                                @click="openLogin"
-                                class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600"
-                            >
-                                Log in
-                            </button>
-
-                            <button
-                                v-if="canRegister"
-                                @click="openRegister"
-                                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
-                            >
-                                Get Started
-                            </button>
-                        </template>
-                    </nav>
-                </div>
-            </div>
-        </header>
-
-        <!-- Hero Section -->
-        <main class="relative">
+    <AppLayout>
+        <div class="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+            <!-- Hero Section -->
             <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
                 <div class="text-center">
                     <!-- Main Heading -->
@@ -125,20 +43,10 @@ const openForgotPassword = () => {
                             Try It Now
                         </Link>
                         <template v-else>
-                            <button
-                                v-if="canRegister"
-                                @click="openRegister"
-                                class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Get Started Free
-                            </button>
-                            <button
-                                v-if="canLogin"
-                                @click="openLogin"
-                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Log In
-                            </button>
+                            <p class="text-lg text-gray-600">
+                                Get started by logging in or creating an account
+                                above
+                            </p>
                         </template>
                     </div>
                 </div>
@@ -291,36 +199,15 @@ const openForgotPassword = () => {
                     </div>
                 </div>
             </div>
-        </main>
 
-        <!-- Footer -->
-        <footer class="border-t border-gray-200 bg-white">
-            <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500">
-                    AI Buddy - Personalised AI Prompt Optimisation
-                </p>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Auth Modals -->
-    <LoginModal
-        :show="showLoginModal"
-        @close="showLoginModal = false"
-        @switch-to-register="openRegister"
-        @switch-to-forgot-password="openForgotPassword"
-    />
-
-    <RegisterModal
-        :show="showRegisterModal"
-        @close="showRegisterModal = false"
-        @switch-to-login="openLogin"
-    />
-
-    <ForgotPasswordModal
-        :show="showForgotPasswordModal"
-        :status="status"
-        @close="showForgotPasswordModal = false"
-        @switch-to-login="openLogin"
-    />
+            <!-- Footer -->
+            <footer class="border-t border-gray-200 bg-white">
+                <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    <p class="text-center text-sm text-gray-500">
+                        AI Buddy - Personalised AI Prompt Optimisation
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </AppLayout>
 </template>

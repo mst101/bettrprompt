@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FormField from '@/Components/FormField.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -21,7 +21,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <AppLayout>
         <Head title="Register" />
 
         <form @submit.prevent="submit">
@@ -86,5 +86,5 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
-    </GuestLayout>
+    </AppLayout>
 </template>

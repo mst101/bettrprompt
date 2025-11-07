@@ -3,12 +3,39 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
+import LoginModal from '@/Components/LoginModal.vue';
 import NavLink from '@/Components/NavLink.vue';
+import RegisterModal from '@/Components/RegisterModal.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
 
 const showingNavigationDropdown = ref(false);
+const showLoginModal = ref(false);
+const showRegisterModal = ref(false);
+const showForgotPasswordModal = ref(false);
+
+const openLogin = () => {
+    showRegisterModal.value = false;
+    showForgotPasswordModal.value = false;
+    showLoginModal.value = true;
+};
+
+const openRegister = () => {
+    showLoginModal.value = false;
+    showForgotPasswordModal.value = false;
+    showRegisterModal.value = true;
+};
+
+const openForgotPassword = () => {
+    showLoginModal.value = false;
+    showRegisterModal.value = false;
+    showForgotPasswordModal.value = true;
+};
 </script>
 
 <template>
@@ -35,8 +62,9 @@ const showingNavigationDropdown = ref(false);
                                 </Link>
                             </div>
 
-                            <!-- Navigation Links -->
+                            <!-- Navigation Links (Authenticated) -->
                             <div
+                                v-if="isAuthenticated"
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
                                 <NavLink
@@ -62,9 +90,10 @@ const showingNavigationDropdown = ref(false);
                             </div>
                         </div>
 
+                        <!-- Right Side Navigation -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
-                            <div class="relative ms-3">
+                            <!-- Authenticated User Dropdown -->
+                            <div v-if="isAuthenticated" class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -72,9 +101,7 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
-                                                {{
-                                                    $page.props.auth!.user!.name
-                                                }}
+                                                {{ $page.props.auth!.user!.name }}
 
                                                 <DynamicIcon
                                                     name="chevron-down"
@@ -100,9 +127,26 @@ const showingNavigationDropdown = ref(false);
                                     </template>
                                 </Dropdown>
                             </div>
+
+                            <!-- Guest Buttons -->
+                            <nav v-else class="flex items-center gap-4">
+                                <button
+                                    @click="openLogin"
+                                    class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+                                >
+                                    Log in
+                                </button>
+
+                                <button
+                                    @click="openRegister"
+                                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+                                >
+                                    Get Started
+                                </button>
+                            </nav>
                         </div>
 
-                        <!-- Hamburger -->
+                        <!-- Hamburger (Mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
                                 @click="
@@ -134,48 +178,75 @@ const showingNavigationDropdown = ref(false);
                     }"
                     class="sm:hidden"
                 >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
-                        >
-                            Prompt Optimiser
-                        </ResponsiveNavLink>
-
-                        <ResponsiveNavLink
-                            :href="route('prompt-optimizer.history')"
-                            :active="
-                                route().current('prompt-optimizer.history')
-                            "
-                        >
-                            Prompt History
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth!.user!.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth!.user!.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
+                    <!-- Authenticated Mobile Nav -->
+                    <template v-if="isAuthenticated">
+                        <div class="space-y-1 pb-3 pt-2">
                             <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
+                                :href="route('prompt-optimizer.index')"
+                                :active="
+                                    route().current('prompt-optimizer.index')
+                                "
                             >
-                                Log Out
+                                Prompt Optimiser
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink
+                                :href="route('prompt-optimizer.history')"
+                                :active="
+                                    route().current('prompt-optimizer.history')
+                                "
+                            >
+                                Prompt History
                             </ResponsiveNavLink>
                         </div>
-                    </div>
+
+                        <!-- Responsive Settings Options -->
+                        <div class="border-t border-gray-200 pb-1 pt-4">
+                            <div class="px-4">
+                                <div
+                                    class="text-base font-medium text-gray-800"
+                                >
+                                    {{ $page.props.auth!.user!.name }}
+                                </div>
+                                <div class="text-sm font-medium text-gray-500">
+                                    {{ $page.props.auth!.user!.email }}
+                                </div>
+                            </div>
+
+                            <div class="mt-3 space-y-1">
+                                <ResponsiveNavLink
+                                    :href="route('profile.edit')"
+                                >
+                                    Profile
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    :href="route('logout')"
+                                    method="post"
+                                    as="button"
+                                >
+                                    Log Out
+                                </ResponsiveNavLink>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Guest Mobile Nav -->
+                    <template v-else>
+                        <div class="space-y-1 pb-3 pt-2">
+                            <button
+                                @click="openLogin"
+                                class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+                            >
+                                Log in
+                            </button>
+                            <button
+                                @click="openRegister"
+                                class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+                            >
+                                Get Started
+                            </button>
+                        </div>
+                    </template>
                 </div>
             </nav>
 
@@ -191,5 +262,25 @@ const showingNavigationDropdown = ref(false);
                 <slot />
             </main>
         </div>
+
+        <!-- Auth Modals -->
+        <LoginModal
+            :show="showLoginModal"
+            @close="showLoginModal = false"
+            @switch-to-register="openRegister"
+            @switch-to-forgot-password="openForgotPassword"
+        />
+
+        <RegisterModal
+            :show="showRegisterModal"
+            @close="showRegisterModal = false"
+            @switch-to-login="openLogin"
+        />
+
+        <ForgotPasswordModal
+            :show="showForgotPasswordModal"
+            @close="showForgotPasswordModal = false"
+            @switch-to-login="openLogin"
+        />
     </div>
 </template>

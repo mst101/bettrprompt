@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -21,7 +21,7 @@ const submit = () => {
 <template>
     <Head title="Prompt Optimiser" />
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Prompt Optimiser
@@ -119,5 +119,5 @@ const submit = () => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>

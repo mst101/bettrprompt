@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -31,7 +31,7 @@ const formatDate = (dateString: string) => {
 <template>
     <Head title="Prompt History" />
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <template #header>
             <div class="items-centre flex justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -253,5 +253,5 @@ const formatDate = (dateString: string) => {
                 </Card>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>
