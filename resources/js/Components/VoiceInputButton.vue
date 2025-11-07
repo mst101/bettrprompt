@@ -54,10 +54,20 @@ const buttonLabel = computed(() => {
     return 'Record';
 });
 
-// Watch for Web Speech API transcription
+// Watch for Web Speech API transcription (emit only new text)
+let previousTranscriptLength = 0;
 watch(speechTranscript, (newTranscript) => {
-    if (newTranscript) {
-        emit('transcription', newTranscript);
+    if (!newTranscript) {
+        // Reset tracking when transcript is cleared (new recording session)
+        previousTranscriptLength = 0;
+        return;
+    }
+
+    if (newTranscript.length > previousTranscriptLength) {
+        // Emit only the new portion (delta)
+        const newText = newTranscript.slice(previousTranscriptLength);
+        previousTranscriptLength = newTranscript.length;
+        emit('transcription', newText);
     }
 });
 
