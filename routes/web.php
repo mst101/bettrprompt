@@ -9,6 +9,7 @@ Route::get('/', function () {
     return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
+        'isReturningVisitor' => request()->cookie('returning_visitor') !== null,
     ]);
 })->name('home');
 

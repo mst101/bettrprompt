@@ -9,7 +9,7 @@ import NavLink from '@/Components/NavLink.vue';
 import RegisterModal from '@/Components/RegisterModal.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
@@ -36,6 +36,10 @@ const openForgotPassword = () => {
     showRegisterModal.value = false;
     showForgotPasswordModal.value = true;
 };
+
+// Provide modal controls to child components
+provide('openLoginModal', openLogin);
+provide('openRegisterModal', openRegister);
 </script>
 
 <template>

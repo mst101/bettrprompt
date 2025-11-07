@@ -3,6 +3,15 @@ import FeatureCard from '@/Components/FeatureCard.vue';
 import StepCard from '@/Components/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { inject } from 'vue';
+
+defineProps<{
+    isReturningVisitor: boolean;
+}>();
+
+// Access the modal controls from AppLayout
+const openLoginModal = inject<() => void>('openLoginModal');
+const openRegisterModal = inject<() => void>('openRegisterModal');
 </script>
 
 <template>
@@ -44,10 +53,22 @@ import { Head, Link } from '@inertiajs/vue3';
                             Try It Now
                         </Link>
                         <template v-else>
-                            <p class="text-lg text-gray-600">
-                                Get started by logging in or creating an account
-                                above
-                            </p>
+                            <!-- Returning visitor -->
+                            <button
+                                v-if="isReturningVisitor"
+                                @click="openLoginModal?.()"
+                                class="inline-flex items-center justify-center rounded-md border border-indigo-600 bg-white px-6 py-3 text-base font-medium text-indigo-600 shadow-sm transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                Welcome back! Log in to continue
+                            </button>
+                            <!-- New visitor -->
+                            <button
+                                v-else
+                                @click="openRegisterModal?.()"
+                                class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                Get Started for Free
+                            </button>
                         </template>
                     </div>
                 </div>
