@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FeatureCard from '@/Components/FeatureCard.vue';
+import StepCard from '@/Components/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 </script>
@@ -54,77 +55,29 @@ import { Head, Link } from '@inertiajs/vue3';
                 <!-- Features Grid -->
                 <div class="mt-24">
                     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        <!-- Feature 1 -->
-                        <div
-                            class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-100"
-                        >
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100"
-                            >
-                                <DynamicIcon
-                                    name="user"
-                                    class="h-6 w-6 text-indigo-600"
-                                />
-                            </div>
-                            <h3
-                                class="mt-4 text-lg font-semibold text-gray-900"
-                            >
-                                Personality-Tailored
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                Based on your 16personalities type (INTJ, ENFP,
-                                etc.), we craft prompts that match your
-                                communication style and thinking patterns.
-                            </p>
-                        </div>
+                        <FeatureCard
+                            icon="user"
+                            title="Personality-Tailored"
+                            description="Based on your 16personalities type (INTJ, ENFP, etc.), we craft prompts that match your communication style and thinking patterns."
+                            icon-bg-colour="bg-indigo-100"
+                            icon-colour="text-indigo-600"
+                        />
 
-                        <!-- Feature 2 -->
-                        <div
-                            class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-100"
-                        >
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100"
-                            >
-                                <DynamicIcon
-                                    name="sparkles"
-                                    class="h-6 w-6 text-purple-600"
-                                />
-                            </div>
-                            <h3
-                                class="mt-4 text-lg font-semibold text-gray-900"
-                            >
-                                Intelligent Optimisation
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                Our AI analyses your task and personality to
-                                create prompts using proven frameworks like
-                                SMART, RICE, and COAST.
-                            </p>
-                        </div>
+                        <FeatureCard
+                            icon="sparkles"
+                            title="Intelligent Optimisation"
+                            description="Our AI analyses your task and personality to create prompts using proven frameworks like SMART, RICE, and COAST."
+                            icon-bg-colour="bg-purple-100"
+                            icon-colour="text-purple-600"
+                        />
 
-                        <!-- Feature 3 -->
-                        <div
-                            class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-100"
-                        >
-                            <div
-                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100"
-                            >
-                                <DynamicIcon
-                                    name="document"
-                                    class="h-6 w-6 text-indigo-600"
-                                />
-                            </div>
-                            <h3
-                                class="mt-4 text-lg font-semibold text-gray-900"
-                            >
-                                Save & Track History
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                All your optimised prompts are saved. Review
-                                your history, copy successful prompts, and
-                                iterate on what works best.
-                            </p>
-                        </div>
+                        <FeatureCard
+                            icon="document"
+                            title="Save & Track History"
+                            description="All your optimised prompts are saved. Review your history, copy successful prompts, and iterate on what works best."
+                            icon-bg-colour="bg-indigo-100"
+                            icon-colour="text-indigo-600"
+                        />
                     </div>
                 </div>
 
@@ -142,60 +95,26 @@ import { Head, Link } from '@inertiajs/vue3';
                     </div>
 
                     <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        <!-- Step 1 -->
-                        <div class="relative text-center">
-                            <div
-                                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600 text-xl font-bold text-white"
-                            >
-                                1
-                            </div>
-                            <h3
-                                class="mt-6 text-lg font-semibold text-gray-900"
-                            >
-                                Enter Your Personality
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                Select your 16personalities type and optionally
-                                add trait percentages for even better results.
-                            </p>
-                        </div>
+                        <StepCard
+                            :number="1"
+                            title="Enter Your Personality"
+                            description="Select your 16personalities type and optionally add trait percentages for even better results."
+                            bg-colour="bg-indigo-600"
+                        />
 
-                        <!-- Step 2 -->
-                        <div class="relative text-center">
-                            <div
-                                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-xl font-bold text-white"
-                            >
-                                2
-                            </div>
-                            <h3
-                                class="mt-6 text-lg font-semibold text-gray-900"
-                            >
-                                Describe Your Task
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                Tell us what you're trying to accomplish with
-                                AI. Be specific about your goals and
-                                requirements.
-                            </p>
-                        </div>
+                        <StepCard
+                            :number="2"
+                            title="Describe Your Task"
+                            description="Tell us what you're trying to accomplish with AI. Be specific about your goals and requirements."
+                            bg-colour="bg-purple-600"
+                        />
 
-                        <!-- Step 3 -->
-                        <div class="relative text-center">
-                            <div
-                                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600 text-xl font-bold text-white"
-                            >
-                                3
-                            </div>
-                            <h3
-                                class="mt-6 text-lg font-semibold text-gray-900"
-                            >
-                                Get Your Optimised Prompt
-                            </h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                Receive a tailored prompt you can use with any
-                                AI tool. Copy it and get better results!
-                            </p>
-                        </div>
+                        <StepCard
+                            :number="3"
+                            title="Get Your Optimised Prompt"
+                            description="Receive a tailored prompt you can use with any AI tool. Copy it and get better results!"
+                            bg-colour="bg-indigo-600"
+                        />
                     </div>
                 </div>
             </div>
