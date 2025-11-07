@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import ButtonClose from '@/Components/ButtonClose.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import GoogleSignInButton from '@/Components/GoogleSignInButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
@@ -50,7 +51,20 @@ const close = () => {
 
             <h2 class="text-lg font-medium text-gray-900">Log in</h2>
 
-            <form @submit.prevent="submit" class="mt-6">
+            <div class="mt-6">
+                <GoogleSignInButton />
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="bg-white px-2 text-gray-500">Or continue with email</span>
+                    </div>
+                </div>
+            </div>
+
+            <form @submit.prevent="submit">
                 <div>
                     <InputLabel for="login-email" value="Email" />
 

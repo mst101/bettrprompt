@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonClose from '@/Components/ButtonClose.vue';
 import FormField from '@/Components/FormField.vue';
+import GoogleSignInButton from '@/Components/GoogleSignInButton.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
@@ -43,7 +44,20 @@ const close = () => {
 
             <h2 class="text-lg font-medium text-gray-900">Register</h2>
 
-            <form @submit.prevent="submit" class="mt-6">
+            <div class="mt-6">
+                <GoogleSignInButton text="Sign up with Google" />
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="bg-white px-2 text-gray-500">Or continue with email</span>
+                    </div>
+                </div>
+            </div>
+
+            <form @submit.prevent="submit">
                 <FormField
                     id="register-name"
                     v-model="form.name"

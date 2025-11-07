@@ -40,4 +40,10 @@ return [
         'password' => env('N8N_BASIC_AUTH_PASSWORD'),
         'webhook_secret' => env('N8N_WEBHOOK_SECRET'),
     ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
 ];
