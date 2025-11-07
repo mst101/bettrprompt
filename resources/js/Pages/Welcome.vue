@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import LoginModal from '@/Components/LoginModal.vue';
+import RegisterModal from '@/Components/RegisterModal.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
 }>();
+
+const showLoginModal = ref(false);
+const showRegisterModal = ref(false);
+
+const openLogin = () => {
+    showRegisterModal.value = false;
+    showLoginModal.value = true;
+};
+
+const openRegister = () => {
+    showLoginModal.value = false;
+    showRegisterModal.value = true;
+};
 </script>
 
 <template>
@@ -43,20 +59,20 @@ defineProps<{
                         </Link>
 
                         <template v-else>
-                            <Link
-                                :href="route('login')"
+                            <button
+                                @click="openLogin"
                                 class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600"
                             >
                                 Log in
-                            </Link>
+                            </button>
 
-                            <Link
+                            <button
                                 v-if="canRegister"
-                                :href="route('register')"
+                                @click="openRegister"
                                 class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
                             >
                                 Get Started
-                            </Link>
+                            </button>
                         </template>
                     </nav>
                 </div>
@@ -98,20 +114,20 @@ defineProps<{
                             Try It Now
                         </Link>
                         <template v-else>
-                            <Link
+                            <button
                                 v-if="canRegister"
-                                :href="route('register')"
+                                @click="openRegister"
                                 class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 Get Started Free
-                            </Link>
-                            <Link
+                            </button>
+                            <button
                                 v-if="canLogin"
-                                :href="route('login')"
+                                @click="openLogin"
                                 class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-6 py-3 text-base font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                                 Log In
-                            </Link>
+                            </button>
                         </template>
                     </div>
                 </div>
@@ -275,4 +291,18 @@ defineProps<{
             </div>
         </footer>
     </div>
+
+    <!-- Auth Modals -->
+    <LoginModal
+        :show="showLoginModal"
+        :can-reset-password="true"
+        @close="showLoginModal = false"
+        @switch-to-register="openRegister"
+    />
+
+    <RegisterModal
+        :show="showRegisterModal"
+        @close="showRegisterModal = false"
+        @switch-to-login="openLogin"
+    />
 </template>
