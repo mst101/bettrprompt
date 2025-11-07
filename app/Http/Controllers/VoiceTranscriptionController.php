@@ -49,9 +49,16 @@ class VoiceTranscriptionController extends Controller
                 'transcript' => $response->text,
             ]);
         } catch (\Exception $e) {
+            \Log::error('Voice transcription failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to transcribe audio. Please try again.',
+                'error' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'Failed to transcribe audio. Please try again.',
             ], 500);
         }
     }
