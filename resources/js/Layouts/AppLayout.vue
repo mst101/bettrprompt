@@ -55,6 +55,7 @@ provide('openRegisterModal', openRegister);
                                 <Link
                                     :href="route('home')"
                                     class="flex items-center gap-1 transition hover:opacity-80"
+                                    @click="showingNavigationDropdown = false"
                                 >
                                     <ApplicationLogo
                                         class="block h-10 w-auto fill-current text-indigo-600"
