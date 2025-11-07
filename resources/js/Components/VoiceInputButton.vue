@@ -9,31 +9,43 @@ const emit = defineEmits<{
 }>();
 
 // Web Speech API (primary method for Chrome/Edge/Safari)
-const speechRecognition = useSpeechRecognition({
+const {
+    isSupported: speechSupported,
+    isListening: speechListening,
+    transcript: speechTranscript,
+    interimTranscript: speechInterimTranscript,
+    error: speechError,
+    start: startSpeech,
+    stop: stopSpeech,
+} = useSpeechRecognition({
     lang: 'en-GB',
     continuous: true,
     interimResults: true,
 });
 
 // Audio recording fallback (for Firefox and unsupported browsers)
-const audioRecording = useAudioRecording();
+const {
+    isRecording,
+    isProcessing,
+    error: recordingError,
+    startRecording,
+    stopRecording,
+} = useAudioRecording();
 
 // Determine which method to use
-const useSpeechAPI = computed(() => speechRecognition.isSupported.value);
+const useSpeechAPI = computed(() => speechSupported.value);
 
 // Combined state
 const isActive = computed(() =>
     useSpeechAPI.value
-        ? speechRecognition.isListening.value
-        : audioRecording.isRecording.value || audioRecording.isProcessing.value,
+        ? speechListening.value
+        : isRecording.value || isProcessing.value,
 );
 
-const displayError = computed(
-    () => speechRecognition.error.value || audioRecording.error.value,
-);
+const displayError = computed(() => speechError.value || recordingError.value);
 
 const buttonLabel = computed(() => {
-    if (audioRecording.isProcessing.value) {
+    if (isProcessing.value) {
         return 'Transcribing...';
     }
     if (isActive.value) {
@@ -43,7 +55,7 @@ const buttonLabel = computed(() => {
 });
 
 // Watch for Web Speech API transcription
-watch(speechRecognition.transcript, (newTranscript) => {
+watch(speechTranscript, (newTranscript) => {
     if (newTranscript) {
         emit('transcription', newTranscript);
     }
@@ -52,22 +64,22 @@ watch(speechRecognition.transcript, (newTranscript) => {
 const toggleRecording = async () => {
     if (useSpeechAPI.value) {
         // Use Web Speech API (real-time)
-        if (speechRecognition.isListening.value) {
-            speechRecognition.stop();
+        if (speechListening.value) {
+            stopSpeech();
         } else {
-            speechRecognition.start();
+            startSpeech();
         }
     } else {
         // Use Audio Recording + Whisper API (batch)
-        if (audioRecording.isRecording.value) {
+        if (isRecording.value) {
             try {
-                const transcript = await audioRecording.stopRecording();
+                const transcript = await stopRecording();
                 emit('transcription', transcript);
             } catch (err) {
                 console.error('Recording error:', err);
             }
         } else {
-            audioRecording.startRecording();
+            startRecording();
         }
     }
 };
@@ -78,13 +90,13 @@ const toggleRecording = async () => {
         <button
             type="button"
             @click="toggleRecording"
-            :disabled="audioRecording.isProcessing.value"
+            :disabled="isProcessing"
             :class="[
                 'inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-all',
                 isActive
                     ? 'animate-pulse bg-red-600 text-white hover:bg-red-700'
                     : 'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
-                audioRecording.isProcessing.value ? 'cursor-wait opacity-75' : '',
+                isProcessing ? 'cursor-wait opacity-75' : '',
             ]"
             :title="
                 isActive
@@ -93,7 +105,7 @@ const toggleRecording = async () => {
             "
         >
             <DynamicIcon
-                v-if="!audioRecording.isProcessing.value"
+                v-if="!isProcessing"
                 name="microphone"
                 :class="['h-5 w-5', isActive ? 'text-white' : 'text-gray-600']"
             />
@@ -107,24 +119,18 @@ const toggleRecording = async () => {
 
         <!-- Show interim transcript (Web Speech API only) -->
         <div
-            v-if="
-                useSpeechAPI &&
-                speechRecognition.isListening &&
-                speechRecognition.interimTranscript
-            "
+            v-if="useSpeechAPI && speechListening && speechInterimTranscript"
             class="absolute left-0 top-full z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-sm"
         >
             <div class="flex items-center gap-2">
                 <div class="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-                <span class="italic">{{
-                    speechRecognition.interimTranscript
-                }}</span>
+                <span class="italic">{{ speechInterimTranscript }}</span>
             </div>
         </div>
 
         <!-- Processing indicator (Whisper API) -->
         <div
-            v-if="audioRecording.isProcessing.value"
+            v-if="isProcessing"
             class="absolute left-0 top-full z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-sm"
         >
             <div class="flex items-center gap-2">
