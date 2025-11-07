@@ -1,5 +1,4 @@
-import { ref, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { onUnmounted, ref } from 'vue';
 
 export function useAudioRecording() {
     const isRecording = ref(false);
@@ -37,8 +36,7 @@ export function useAudioRecording() {
                 error.value =
                     'Microphone access denied. Please enable microphone permissions.';
             } else if (err.name === 'NotFoundError') {
-                error.value =
-                    'No microphone found. Please check your device.';
+                error.value = 'No microphone found. Please check your device.';
             } else {
                 error.value = 'Failed to start recording. Please try again.';
             }
@@ -93,9 +91,11 @@ export function useAudioRecording() {
             const response = await fetch('/api/voice-transcription', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': (document.querySelector(
-                        'meta[name="csrf-token"]',
-                    ) as HTMLMetaElement)?.content,
+                    'X-CSRF-TOKEN': (
+                        document.querySelector(
+                            'meta[name="csrf-token"]',
+                        ) as HTMLMetaElement
+                    )?.content,
                 },
                 body: formData,
                 credentials: 'same-origin',

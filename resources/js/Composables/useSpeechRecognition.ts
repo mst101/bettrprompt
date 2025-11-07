@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 
 export interface SpeechRecognitionOptions {
     lang?: string;
@@ -84,7 +84,8 @@ export function useSpeechRecognition(options: SpeechRecognitionOptions = {}) {
 
     const start = () => {
         if (!isSupported.value) {
-            error.value = 'Speech recognition is not supported in this browser.';
+            error.value =
+                'Speech recognition is not supported in this browser.';
             return;
         }
 

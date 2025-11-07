@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useAudioRecording } from '@/Composables/useAudioRecording';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { computed, watch } from 'vue';
 
 const emit = defineEmits<{
@@ -25,11 +25,11 @@ const useSpeechAPI = computed(() => speechRecognition.isSupported.value);
 const isActive = computed(() =>
     useSpeechAPI.value
         ? speechRecognition.isListening.value
-        : audioRecording.isRecording.value || audioRecording.isProcessing.value
+        : audioRecording.isRecording.value || audioRecording.isProcessing.value,
 );
 
-const displayError = computed(() =>
-    speechRecognition.error.value || audioRecording.error.value
+const displayError = computed(
+    () => speechRecognition.error.value || audioRecording.error.value,
 );
 
 const buttonLabel = computed(() => {
@@ -84,9 +84,7 @@ const toggleRecording = async () => {
                 isActive
                     ? 'animate-pulse bg-red-600 text-white hover:bg-red-700'
                     : 'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
-                audioRecording.isProcessing
-                    ? 'cursor-wait opacity-75'
-                    : '',
+                audioRecording.isProcessing.value ? 'cursor-wait opacity-75' : '',
             ]"
             :title="
                 isActive
@@ -95,12 +93,9 @@ const toggleRecording = async () => {
             "
         >
             <DynamicIcon
-                v-if="!audioRecording.isProcessing"
+                v-if="!audioRecording.isProcessing.value"
                 name="microphone"
-                :class="[
-                    'h-5 w-5',
-                    isActive ? 'text-white' : 'text-gray-600',
-                ]"
+                :class="['h-5 w-5', isActive ? 'text-white' : 'text-gray-600']"
             />
             <DynamicIcon
                 v-else
@@ -129,7 +124,7 @@ const toggleRecording = async () => {
 
         <!-- Processing indicator (Whisper API) -->
         <div
-            v-if="audioRecording.isProcessing"
+            v-if="audioRecording.isProcessing.value"
             class="absolute left-0 top-full z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-sm"
         >
             <div class="flex items-center gap-2">
@@ -147,7 +142,10 @@ const toggleRecording = async () => {
             class="absolute left-0 top-full z-10 mt-2 max-w-xs rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 shadow-sm"
         >
             <div class="flex items-center gap-2">
-                <DynamicIcon name="exclamation-triangle" class="h-4 w-4 flex-shrink-0" />
+                <DynamicIcon
+                    name="exclamation-triangle"
+                    class="h-4 w-4 flex-shrink-0"
+                />
                 <span>{{ displayError }}</span>
             </div>
         </div>
