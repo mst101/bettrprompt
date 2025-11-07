@@ -3,6 +3,7 @@
 ## High Importance
 
 - Find a name
+- Error handling
 
 ## Medium Importance
 

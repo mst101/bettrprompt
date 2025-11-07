@@ -30,8 +30,14 @@ class VoiceTranscriptionController extends Controller
             ], 422);
         }
 
+        $tempPath = null;
+
         try {
             $audioFile = $request->file('audio');
+
+            // Save temporarily with proper extension (Whisper needs to detect format)
+            $tempPath = sys_get_temp_dir().'/'.uniqid('audio_', true).'.webm';
+            $audioFile->move(dirname($tempPath), basename($tempPath));
 
             // Initialize OpenAI client
             $client = OpenAI::client(config('services.openai.api_key'));
@@ -39,16 +45,25 @@ class VoiceTranscriptionController extends Controller
             // Call Whisper API for transcription
             $response = $client->audio()->transcribe([
                 'model' => 'whisper-1',
-                'file' => fopen($audioFile->getRealPath(), 'r'),
+                'file' => fopen($tempPath, 'r'),
                 'language' => 'en', // English transcription
                 'response_format' => 'json',
             ]);
+
+            // Clean up temporary file
+            if (file_exists($tempPath)) {
+                unlink($tempPath);
+            }
 
             return response()->json([
                 'success' => true,
                 'transcript' => $response->text,
             ]);
         } catch (\Exception $e) {
+            // Clean up temporary file on error
+            if ($tempPath && file_exists($tempPath)) {
+                unlink($tempPath);
+            }
             \Log::error('Voice transcription failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
