@@ -98,15 +98,28 @@ export function useAudioRecording() {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.webm');
 
+        // Get CSRF token from cookie (Laravel sets XSRF-TOKEN automatically)
+        const getCsrfToken = () => {
+            const name = 'XSRF-TOKEN=';
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return '';
+        };
+
         try {
             const response = await fetch('/voice-transcription', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': (
-                        document.querySelector(
-                            'meta[name="csrf-token"]',
-                        ) as HTMLMetaElement
-                    )?.content,
+                    'X-XSRF-TOKEN': getCsrfToken(),
                 },
                 body: formData,
                 credentials: 'same-origin',
