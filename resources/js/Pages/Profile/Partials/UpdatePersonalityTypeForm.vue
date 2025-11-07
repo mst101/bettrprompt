@@ -47,6 +47,9 @@ const form = useForm({
     },
 });
 
+// Persist the CTA only after a successful save in this session
+const showTaskCta = ref(false);
+
 const showTraitPercentages = ref(false);
 
 const personalityTypeOptions = computed(() => {
@@ -65,7 +68,8 @@ const submit = () => {
     form.patch(route('profile.personality.update'), {
         preserveScroll: true,
         onSuccess: () => {
-            // Success handled by backend
+            // Keep the CTA visible after saving; do not rely on recentlySuccessful (which fades)
+            showTaskCta.value = true;
         },
     });
 };
@@ -257,25 +261,20 @@ const submit = () => {
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
+                <!-- Persist CTA after a successful save in this session -->
                 <Transition
                     enter-active-class="transition ease-in-out"
                     enter-from-class="opacity-0"
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <div
-                        v-if="form.recentlySuccessful"
-                        class="flex items-center gap-2 text-sm"
+                    <Link
+                        v-if="showTaskCta"
+                        :href="route('prompt-optimizer.index')"
+                        class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                     >
-                        <p class="text-gray-600">Saved.</p>
-                        <span class="text-gray-400">•</span>
-                        <Link
-                            :href="route('prompt-optimizer.index')"
-                            class="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                            Enter your Task Description →
-                        </Link>
-                    </div>
+                        Enter your Task Description →
+                    </Link>
                 </Transition>
             </div>
         </form>
