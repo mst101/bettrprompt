@@ -192,6 +192,7 @@ provide('openRegisterModal', openRegister);
                                 :active="
                                     route().current('prompt-optimizer.index')
                                 "
+                                @click="showingNavigationDropdown = false"
                             >
                                 Prompt Optimiser
                             </ResponsiveNavLink>
@@ -201,6 +202,7 @@ provide('openRegisterModal', openRegister);
                                 :active="
                                     route().current('prompt-optimizer.history')
                                 "
+                                @click="showingNavigationDropdown = false"
                             >
                                 Prompt History
                             </ResponsiveNavLink>
@@ -222,6 +224,7 @@ provide('openRegisterModal', openRegister);
                             <div class="mt-3 space-y-1">
                                 <ResponsiveNavLink
                                     :href="route('profile.edit')"
+                                    @click="showingNavigationDropdown = false"
                                 >
                                     Profile
                                 </ResponsiveNavLink>
@@ -229,6 +232,7 @@ provide('openRegisterModal', openRegister);
                                     :href="route('logout')"
                                     method="post"
                                     as="button"
+                                    @click="showingNavigationDropdown = false"
                                 >
                                     Log Out
                                 </ResponsiveNavLink>
@@ -240,13 +244,19 @@ provide('openRegisterModal', openRegister);
                     <template v-else>
                         <div class="space-y-1 pb-3 pt-2">
                             <button
-                                @click="openLogin"
+                                @click="
+                                    openLogin();
+                                    showingNavigationDropdown = false;
+                                "
                                 class="block w-full border-l-4 border-transparent py-2 pe-4 ps-3 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-none"
                             >
                                 Log in
                             </button>
                             <button
-                                @click="openRegister"
+                                @click="
+                                    openRegister();
+                                    showingNavigationDropdown = false;
+                                "
                                 class="block w-full border-l-4 border-transparent py-2 pe-4 ps-3 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-none"
                             >
                                 Get Started
