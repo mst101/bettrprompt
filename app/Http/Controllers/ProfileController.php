@@ -68,8 +68,8 @@ class ProfileController extends Controller
     public function updatePersonality(UpdatePersonalityTypeRequest $request): RedirectResponse
     {
         $request->user()->update([
-            'personality_type' => $request->validated('personality_type'),
-            'trait_percentages' => $request->validated('trait_percentages'),
+            'personality_type' => $request->validated('personalityType'),
+            'trait_percentages' => $request->validated('traitPercentages'),
         ]);
 
         return Redirect::route('profile.edit');
