@@ -41,6 +41,11 @@ export function useAudioRecording() {
                 error.value = 'Failed to start recording. Please try again.';
             }
             console.error('Audio recording error:', err);
+
+            // Auto-dismiss error after 5 seconds
+            setTimeout(() => {
+                error.value = null;
+            }, 5000);
         }
     };
 
@@ -75,6 +80,12 @@ export function useAudioRecording() {
                     isProcessing.value = false;
                     error.value =
                         'Failed to transcribe audio. Please try again.';
+
+                    // Auto-dismiss error after 5 seconds
+                    setTimeout(() => {
+                        error.value = null;
+                    }, 5000);
+
                     reject(err);
                 }
             };

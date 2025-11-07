@@ -75,6 +75,11 @@ export function useSpeechRecognition(options: SpeechRecognitionOptions = {}) {
                 default:
                     error.value = `Speech recognition error: ${event.error}`;
             }
+
+            // Auto-dismiss error after 5 seconds
+            setTimeout(() => {
+                error.value = null;
+            }, 5000);
         };
 
         recognition.onend = () => {
@@ -86,6 +91,9 @@ export function useSpeechRecognition(options: SpeechRecognitionOptions = {}) {
         if (!isSupported.value) {
             error.value =
                 'Speech recognition is not supported in this browser.';
+            setTimeout(() => {
+                error.value = null;
+            }, 5000);
             return;
         }
 
@@ -101,6 +109,9 @@ export function useSpeechRecognition(options: SpeechRecognitionOptions = {}) {
             recognition.start();
         } catch (err) {
             error.value = 'Failed to start speech recognition.';
+            setTimeout(() => {
+                error.value = null;
+            }, 5000);
             console.error('Speech recognition error:', err);
         }
     };

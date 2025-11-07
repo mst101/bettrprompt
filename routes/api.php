@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 // Voice transcription endpoint (requires authentication)
-Route::middleware(['auth:sanctum', 'throttle:30,1'])
+Route::middleware(['auth', 'throttle:30,1'])
     ->post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe']);
 
 Route::post('/n8n/webhook', function (Request $request) {
