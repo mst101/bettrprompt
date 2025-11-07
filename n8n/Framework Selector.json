@@ -14,7 +14,7 @@
       "typeVersion": 1,
       "position": [
         -832,
-        208
+        288
       ],
       "webhookId": "framework-selector-webhook-001"
     },
@@ -28,7 +28,7 @@
       "typeVersion": 2,
       "position": [
         -608,
-        208
+        288
       ]
     },
     {
@@ -41,7 +41,7 @@
       "typeVersion": 2,
       "position": [
         -384,
-        208
+        288
       ]
     },
     {
@@ -54,7 +54,7 @@
       "typeVersion": 2,
       "position": [
         -160,
-        208
+        288
       ]
     },
     {
@@ -89,7 +89,7 @@
       "typeVersion": 4.1,
       "position": [
         64,
-        208
+        288
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -106,7 +106,7 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "loose",
+            "typeValidation": "strict",
             "version": 1
           },
           "conditions": [
@@ -122,10 +122,10 @@
             },
             {
               "id": "check-status-code",
-              "leftValue": "={{ $json.statusCode }}",
-              "rightValue": 200,
+              "leftValue": "={{$json[\"statusCode\"].toString() }}",
+              "rightValue": "200",
               "operator": {
-                "type": "number",
+                "type": "string",
                 "operation": "equals"
               }
             }
@@ -139,8 +139,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        288,
-        208
+        -832,
+        -32
       ]
     },
     {
@@ -153,7 +153,7 @@
       "typeVersion": 2,
       "position": [
         512,
-        304
+        384
       ]
     },
     {
@@ -170,12 +170,12 @@
       "typeVersion": 1,
       "position": [
         736,
-        304
+        384
       ]
     },
     {
       "parameters": {
-        "jsCode": "// Parse the JSON response from Claude\nconst items = $input.all();\nconst response = items[0].json;\n\nlet selectedFramework = '';\nlet reasoning = '';\nlet questions = [];\n\n// Extract text from Anthropic response\nif (response.content && response.content[0]?.text) {\n  const responseText = response.content[0].text.trim();\n  \n  try {\n    // Parse JSON response\n    const parsed = JSON.parse(responseText);\n    \n    selectedFramework = parsed.selected_framework || '';\n    reasoning = parsed.reasoning || '';\n    questions = parsed.questions || [];\n    \n    // Validate we have all required fields\n    if (!selectedFramework || !reasoning || questions.length < 3 || questions.length > 5) {\n      throw new Error('Invalid response structure: missing fields or incorrect question count');\n    }\n  } catch (error) {\n    throw new Error(`Failed to parse LLM response: ${error.message}. Response was: ${responseText}`);\n  }\n} else {\n  throw new Error('Invalid response format from LLM');\n}\n\n// Get the original data\nconst webhookData = $node[\"Build LLM Prompt\"].json;\n\nreturn {\n  prompt_run_id: webhookData.prompt_run_id,\n  selected_framework: selectedFramework,\n  framework_reasoning: reasoning,\n  framework_questions: questions,\n  model_used: response.model || 'claude-3-5-haiku-20241022',\n  tokens_used: {\n    input: response.usage?.input_tokens || 0,\n    output: response.usage?.output_tokens || 0,\n    total: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n  }\n};"
+        "jsCode": "// Parse the JSON response from Claude\nconst items = $input.all();\nconst response = items[0].json;\n\nlet selectedFramework = '';\nlet reasoning = '';\nlet questions = [];\n\n// Extract text from Anthropic response\nif (response.body.content && response.body.content[0]?.text) {\n  const responseText = response.body.content[0].text.trim();\n  \n  try {\n    // Parse JSON response\n    const parsed = JSON.parse(responseText);\n    \n    selectedFramework = parsed.selected_framework || '';\n    reasoning = parsed.reasoning || '';\n    questions = parsed.questions || [];\n    \n    // Validate we have all required fields\n    if (!selectedFramework || !reasoning || questions.length < 3 || questions.length > 5) {\n      throw new Error('Invalid response structure: missing fields or incorrect question count');\n    }\n  } catch (error) {\n    throw new Error(`Failed to parse LLM response: ${error.message}. Response was: ${responseText}`);\n  }\n} else {\n  throw new Error('Invalid response format from LLM');\n}\n\n// Get the original data\nconst webhookData = $node[\"Build LLM Prompt\"].json;\n\nreturn {\n  prompt_run_id: webhookData.prompt_run_id,\n  selected_framework: selectedFramework,\n  framework_reasoning: reasoning,\n  framework_questions: questions,\n  model_used: response.model || 'claude-3-5-haiku-20241022',\n  tokens_used: {\n    input: response.usage?.input_tokens || 0,\n    output: response.usage?.output_tokens || 0,\n    total: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n  }\n};"
       },
       "id": "dcdf6eee-0a67-40f9-9b69-7c41c324a234",
       "name": "Parse Response",
@@ -183,7 +183,7 @@
       "typeVersion": 2,
       "position": [
         512,
-        112
+        192
       ]
     },
     {
@@ -198,11 +198,166 @@
       "typeVersion": 1,
       "position": [
         736,
-        112
+        192
       ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 200,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "e204b2ca-4b2a-4c7a-922f-b0960f2045a9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0cd6ad45-b343-42cc-84d6-4b0307311547",
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 200,
+                    "operator": {
+                      "type": "number",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "failure"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        288,
+        288
+      ],
+      "id": "967d9ce1-60ee-4aa1-ade7-03bea9892f25",
+      "name": "Check response"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Call Claude Haiku": [
+      {
+        "json": {
+          "body": {
+            "model": "claude-3-5-haiku-20241022",
+            "id": "msg_01BgD3R2j4D7PiEZCSddD5WP",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"selected_framework\": \"RACEF\",\n  \"reasoning\": \"For an INTP working on feature brainstorming, RACEF is ideal as it provides a highly flexible, iterative approach to exploring multiple potential solutions. This framework aligns perfectly with the INTP's natural tendency for expansive, analytical thinking and comprehensive exploration of possibilities.\",\n  \"questions\": [\n    \"What specific user problems or pain points are you hoping to solve with this meal planner app's features?\",\n    \"Are there any existing meal planning apps or services that you find particularly inspiring or lacking in certain areas?\",\n    \"What are the primary target user segments for this app (e.g., busy professionals, fitness enthusiasts, families, budget-conscious individuals)?\",\n    \"What technical constraints or platform limitations should we consider when brainstorming features?\",\n    \"Would you prefer the brainstorming to focus more on functional features, user experience innovations, or a balanced approach?\"\n  ]\n}"
+              }
+            ],
+            "stop_reason": "end_turn",
+            "stop_sequence": null,
+            "usage": {
+              "input_tokens": 1655,
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 0,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 0
+              },
+              "output_tokens": 221,
+              "service_tier": "standard"
+            }
+          },
+          "headers": {
+            "date": "Thu, 06 Nov 2025 13:34:46 GMT",
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "connection": "close",
+            "anthropic-ratelimit-input-tokens-limit": "50000",
+            "anthropic-ratelimit-input-tokens-remaining": "49000",
+            "anthropic-ratelimit-input-tokens-reset": "2025-11-06T13:34:43Z",
+            "anthropic-ratelimit-output-tokens-limit": "10000",
+            "anthropic-ratelimit-output-tokens-remaining": "10000",
+            "anthropic-ratelimit-output-tokens-reset": "2025-11-06T13:34:47Z",
+            "anthropic-ratelimit-requests-limit": "50",
+            "anthropic-ratelimit-requests-remaining": "49",
+            "anthropic-ratelimit-requests-reset": "2025-11-06T13:34:42Z",
+            "retry-after": "18",
+            "anthropic-ratelimit-tokens-limit": "60000",
+            "anthropic-ratelimit-tokens-remaining": "59000",
+            "anthropic-ratelimit-tokens-reset": "2025-11-06T13:34:43Z",
+            "request-id": "req_011CUrit7r5ynwi7CSKCVx8h",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "anthropic-organization-id": "f48f4b14-5781-4652-8a74-847e6d27356e",
+            "x-envoy-upstream-service-time": "5350",
+            "cf-cache-status": "DYNAMIC",
+            "x-robots-tag": "none",
+            "server": "cloudflare",
+            "cf-ray": "99a4f843a9562534-LHR"
+          },
+          "statusCode": 200,
+          "statusMessage": "OK"
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n:5678",
+            "user-agent": "GuzzleHttp/7",
+            "content-type": "application/json",
+            "authorization": "Basic YWRtaW46cGFzc3dvcmQ=",
+            "content-length": "242"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "prompt_run_id": 9,
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+              "mind": null,
+              "energy": null,
+              "nature": null,
+              "tactics": null,
+              "identity": null
+            },
+            "task_description": "I want to brainstorm all potential features for a meal planner app. Be thorough."
+          },
+          "webhookUrl": "https://n8n.localhost/webhook/framework-selector",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "connections": {
     "Webhook": {
       "main": [
@@ -252,7 +407,7 @@
       "main": [
         [
           {
-            "node": "Check Response Status",
+            "node": "Check response",
             "type": "main",
             "index": 0
           }
@@ -261,20 +416,8 @@
     },
     "Check Response Status": {
       "main": [
-        [
-          {
-            "node": "Parse Response",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Format Error Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [],
+        []
       ]
     },
     "Format Error Response": {
@@ -298,13 +441,31 @@
           }
         ]
       ]
+    },
+    "Check response": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "c2f0d938-1b06-4462-933a-738d965d8971",
+  "versionId": "50f4226b-a027-4311-befb-4daf73432e90",
   "meta": {
     "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
   },

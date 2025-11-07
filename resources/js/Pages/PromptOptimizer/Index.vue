@@ -77,7 +77,7 @@ const submit = () => {
 
                         <p class="mb-6 text-gray-600">
                             Create optimised AI prompts customised to your
-                            personality type and specific task requirements.
+                            specific task requirements and personality type.
                         </p>
 
                         <form @submit.prevent="submit" class="space-y-6">
@@ -115,7 +115,9 @@ const submit = () => {
                             <div class="flex items-center justify-end">
                                 <button
                                     type="submit"
-                                    :disabled="!hasPersonalityType || form.processing"
+                                    :disabled="
+                                        !hasPersonalityType || form.processing
+                                    "
                                     class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <span v-if="form.processing"

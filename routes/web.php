@@ -24,6 +24,7 @@ Route::get('/dashboard', [\App\Http\Controllers\PromptOptimizerController::class
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/personality', [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Prompt Optimizer routes

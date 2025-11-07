@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DeleteProfileRequest;
+use     App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdatePersonalityTypeRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -57,6 +58,19 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        return Redirect::route('profile.edit');
+    }
+
+    /**
+     * Update the user's personality type.
+     */
+    public function updatePersonality(UpdatePersonalityTypeRequest $request): RedirectResponse
+    {
+        $request->user()->update([
+            'personality_type' => $request->validated('personality_type'),
+            'trait_percentages' => $request->validated('trait_percentages'),
+        ]);
 
         return Redirect::route('profile.edit');
     }

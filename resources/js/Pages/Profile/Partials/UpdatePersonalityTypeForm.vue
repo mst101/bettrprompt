@@ -29,6 +29,8 @@ const fullPersonalityType = computed(() => {
 });
 
 const form = useForm({
+    name: user.value?.name || '',
+    email: user.value?.email || '',
     personalityType: fullPersonalityType.value,
     traitPercentages: (user.value?.traitPercentages || {
         mind: null,
@@ -60,7 +62,7 @@ watch(fullPersonalityType, (newValue) => {
 });
 
 const submit = () => {
-    form.patch(route('profile.update'), {
+    form.patch(route('profile.personality.update'), {
         preserveScroll: true,
         onSuccess: () => {
             // Success handled by backend
