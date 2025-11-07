@@ -1,18 +1,23 @@
+<!-- Move text/hover from DynamicIcon to the button; keep fill/stroke on the icon -->
 <script setup lang="ts">
+import ButtonClose from '@/Components/ButtonClose.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 
 defineProps<{
     show: boolean;
-    canResetPassword?: boolean;
 }>();
 
-const emit = defineEmits(['close', 'switchToRegister']);
+const emit = defineEmits([
+    'close',
+    'switchToRegister',
+    'switchToForgotPassword',
+]);
 
 const form = useForm({
     email: '',
@@ -40,7 +45,9 @@ const close = () => {
 
 <template>
     <Modal :show="show" @close="close" max-width="md">
-        <div class="p-6">
+        <div class="relative p-6">
+            <ButtonClose @close="close" />
+
             <h2 class="text-lg font-medium text-gray-900">Log in</h2>
 
             <form @submit.prevent="submit" class="mt-6">
@@ -89,13 +96,13 @@ const close = () => {
 
                 <div class="mt-6 flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <Link
-                            v-if="canResetPassword"
-                            :href="route('password.request')"
+                        <button
+                            type="button"
+                            @click="emit('switchToForgotPassword')"
                             class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
                             Forgot password?
-                        </Link>
+                        </button>
 
                         <button
                             type="button"
@@ -106,22 +113,12 @@ const close = () => {
                         </button>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <button
-                            type="button"
-                            @click="close"
-                            class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-                        >
-                            Cancel
-                        </button>
-
-                        <PrimaryButton
-                            :class="{ 'opacity-25': form.processing }"
-                            :disabled="form.processing"
-                        >
-                            Log in
-                        </PrimaryButton>
-                    </div>
+                    <PrimaryButton
+                        :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing"
+                    >
+                        Log in
+                    </PrimaryButton>
                 </div>
             </form>
         </div>

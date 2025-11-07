@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonClose from '@/Components/ButtonClose.vue';
 import FormField from '@/Components/FormField.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -37,7 +38,9 @@ const close = () => {
 
 <template>
     <Modal :show="show" @close="close" max-width="md">
-        <div class="p-6">
+        <div class="relative p-6">
+            <ButtonClose @close="close" />
+
             <h2 class="text-lg font-medium text-gray-900">Register</h2>
 
             <form @submit.prevent="submit" class="mt-6">
@@ -94,22 +97,12 @@ const close = () => {
                         Already registered?
                     </button>
 
-                    <div class="flex items-center gap-3">
-                        <button
-                            type="button"
-                            @click="close"
-                            class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-                        >
-                            Cancel
-                        </button>
-
-                        <PrimaryButton
-                            :class="{ 'opacity-25': form.processing }"
-                            :disabled="form.processing"
-                        >
-                            Register
-                        </PrimaryButton>
-                    </div>
+                    <PrimaryButton
+                        :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing"
+                    >
+                        Register
+                    </PrimaryButton>
                 </div>
             </form>
         </div>

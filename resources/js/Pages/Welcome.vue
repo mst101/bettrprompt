@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
 import LoginModal from '@/Components/LoginModal.vue';
 import RegisterModal from '@/Components/RegisterModal.vue';
 import { Head, Link } from '@inertiajs/vue3';
@@ -9,19 +10,29 @@ import { ref } from 'vue';
 defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
+    status?: string;
 }>();
 
 const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
+const showForgotPasswordModal = ref(false);
 
 const openLogin = () => {
     showRegisterModal.value = false;
+    showForgotPasswordModal.value = false;
     showLoginModal.value = true;
 };
 
 const openRegister = () => {
     showLoginModal.value = false;
+    showForgotPasswordModal.value = false;
     showRegisterModal.value = true;
+};
+
+const openForgotPassword = () => {
+    showLoginModal.value = false;
+    showRegisterModal.value = false;
+    showForgotPasswordModal.value = true;
 };
 </script>
 
@@ -295,14 +306,21 @@ const openRegister = () => {
     <!-- Auth Modals -->
     <LoginModal
         :show="showLoginModal"
-        :can-reset-password="true"
         @close="showLoginModal = false"
         @switch-to-register="openRegister"
+        @switch-to-forgot-password="openForgotPassword"
     />
 
     <RegisterModal
         :show="showRegisterModal"
         @close="showRegisterModal = false"
+        @switch-to-login="openLogin"
+    />
+
+    <ForgotPasswordModal
+        :show="showForgotPasswordModal"
+        :status="status"
+        @close="showForgotPasswordModal = false"
         @switch-to-login="openLogin"
     />
 </template>

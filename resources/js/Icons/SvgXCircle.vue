@@ -1,13 +1,23 @@
 <template>
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <!-- Circle: fill and stroke inherit from the SVG element -->
+        <circle
+            cx="12"
+            cy="12"
+            r="9.75"
+            fill="inherit"
+            stroke="inherit"
+            stroke-width="1"
+        />
+
+        <!-- Cross: uses current text color (text-*) -->
         <path
-            fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-            clip-rule="evenodd"
+            d="M9 9l6 6M15 9l-6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
         />
     </svg>
 </template>

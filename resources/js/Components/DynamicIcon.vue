@@ -223,6 +223,7 @@ const iconComponent = computed(() => {
 </script>
 
 <template>
-    <component :is="iconComponent" v-if="iconComponent" />
+    <!-- Forward all attributes (class, style, size, etc.) to the SVG root -->
+    <component :is="iconComponent" v-if="iconComponent" v-bind="$attrs" />
     <div v-else class="size-5 rounded bg-gray-200" />
 </template>
