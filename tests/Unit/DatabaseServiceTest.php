@@ -1,97 +1,53 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Services\DatabaseService;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class DatabaseServiceTest extends TestCase
-{
-    use RefreshDatabase;
+test('retry on deadlock succeeds on first attempt', function () {
+    $result = DatabaseService::retryOnDeadlock(function () {
+        return 'success';
+    });
 
-    public function test_retry_on_deadlock_succeeds_on_first_attempt(): void
-    {
-        $result = DatabaseService::retryOnDeadlock(function () {
-            return 'success';
-        });
+    expect($result)->toBe('success');
+});
 
-        $this->assertEquals('success', $result);
-    }
+test('retry on deadlock retries on deadlock error', function () {
+    $attempts = 0;
 
-    public function test_retry_on_deadlock_retries_on_deadlock_error(): void
-    {
-        $attempts = 0;
+    // Mock a deadlock on first attempt, success on second
+    $result = DatabaseService::retryOnDeadlock(function () use (&$attempts) {
+        $attempts++;
 
-        // Mock a deadlock on first attempt, success on second
-        $result = DatabaseService::retryOnDeadlock(function () use (&$attempts) {
-            $attempts++;
-
-            if ($attempts === 1) {
-                // Simulate PostgreSQL deadlock error (error code 40P01)
-                $pdoException = new \PDOException('deadlock detected');
-                $exception = new QueryException(
-                    'pgsql',
-                    'UPDATE users SET name = ?',
-                    ['test'],
-                    $pdoException
-                );
-
-                // Set the PostgreSQL deadlock error code using reflection
-                $reflection = new \ReflectionClass($exception);
-                $property = $reflection->getProperty('errorInfo');
-                $property->setAccessible(true);
-                $property->setValue($exception, [null, '40P01', 'deadlock detected']);
-
-                throw $exception;
-            }
-
-            return 'success after retry';
-        });
-
-        $this->assertEquals(2, $attempts);
-        $this->assertEquals('success after retry', $result);
-    }
-
-    public function test_retry_on_deadlock_throws_non_deadlock_errors_immediately(): void
-    {
-        $this->expectException(QueryException::class);
-
-        DatabaseService::retryOnDeadlock(function () {
-            // Simulate a different database error (not a deadlock) - PostgreSQL unique violation
-            $pdoException = new \PDOException('unique constraint violation');
+        if ($attempts === 1) {
+            // Simulate PostgreSQL deadlock error (error code 40P01)
+            $pdoException = new \PDOException('deadlock detected');
             $exception = new QueryException(
                 'pgsql',
-                'INSERT INTO users VALUES (?)',
+                'UPDATE users SET name = ?',
                 ['test'],
                 $pdoException
             );
 
-            // Set a non-deadlock error code (23505 = unique violation in PostgreSQL)
+            // Set the PostgreSQL deadlock error code using reflection
             $reflection = new \ReflectionClass($exception);
             $property = $reflection->getProperty('errorInfo');
             $property->setAccessible(true);
-            $property->setValue($exception, [null, '23505', 'unique constraint violation']);
+            $property->setValue($exception, [null, '40P01', 'deadlock detected']);
 
             throw $exception;
-        });
-    }
+        }
 
-    public function test_transaction_executes_successfully(): void
-    {
-        $result = DatabaseService::transaction(function () {
-            return 'transaction success';
-        });
+        return 'success after retry';
+    });
 
-        $this->assertEquals('transaction success', $result);
-    }
+    expect($attempts)->toBe(2)
+        ->and($result)->toBe('success after retry');
+});
 
-    public function test_is_constraint_violation_detects_duplicate_errors(): void
-    {
+test('retry on deadlock throws non deadlock errors immediately', function () {
+    DatabaseService::retryOnDeadlock(function () {
+        // Simulate a different database error (not a deadlock) - PostgreSQL unique violation
         $pdoException = new \PDOException('unique constraint violation');
-
-        // Create a QueryException with duplicate error code (23505 for PostgreSQL)
         $exception = new QueryException(
             'pgsql',
             'INSERT INTO users VALUES (?)',
@@ -99,46 +55,71 @@ class DatabaseServiceTest extends TestCase
             $pdoException
         );
 
-        // Set the error code using reflection since errorInfo is protected
+        // Set a non-deadlock error code (23505 = unique violation in PostgreSQL)
         $reflection = new \ReflectionClass($exception);
         $property = $reflection->getProperty('errorInfo');
         $property->setAccessible(true);
         $property->setValue($exception, [null, '23505', 'unique constraint violation']);
 
-        $this->assertTrue(DatabaseService::isConstraintViolation($exception));
-    }
+        throw $exception;
+    });
+})->throws(QueryException::class);
 
-    public function test_is_constraint_violation_returns_false_for_other_exceptions(): void
-    {
-        $exception = new \Exception('Not a database error');
+test('transaction executes successfully', function () {
+    $result = DatabaseService::transaction(function () {
+        return 'transaction success';
+    });
 
-        $this->assertFalse(DatabaseService::isConstraintViolation($exception));
-    }
+    expect($result)->toBe('transaction success');
+});
 
-    public function test_is_deadlock_detects_deadlock_errors(): void
-    {
-        $pdoException = new \PDOException('deadlock detected');
+test('is constraint violation detects duplicate errors', function () {
+    $pdoException = new \PDOException('unique constraint violation');
 
-        $exception = new QueryException(
-            'pgsql',
-            'UPDATE users SET name = ?',
-            ['test'],
-            $pdoException
-        );
+    // Create a QueryException with duplicate error code (23505 for PostgreSQL)
+    $exception = new QueryException(
+        'pgsql',
+        'INSERT INTO users VALUES (?)',
+        ['test'],
+        $pdoException
+    );
 
-        // Set the deadlock error code (40P01 for PostgreSQL)
-        $reflection = new \ReflectionClass($exception);
-        $property = $reflection->getProperty('errorInfo');
-        $property->setAccessible(true);
-        $property->setValue($exception, [null, '40P01', 'deadlock detected']);
+    // Set the error code using reflection since errorInfo is protected
+    $reflection = new \ReflectionClass($exception);
+    $property = $reflection->getProperty('errorInfo');
+    $property->setAccessible(true);
+    $property->setValue($exception, [null, '23505', 'unique constraint violation']);
 
-        $this->assertTrue(DatabaseService::isDeadlock($exception));
-    }
+    expect(DatabaseService::isConstraintViolation($exception))->toBeTrue();
+});
 
-    public function test_is_deadlock_returns_false_for_other_exceptions(): void
-    {
-        $exception = new \Exception('Not a deadlock');
+test('is constraint violation returns false for other exceptions', function () {
+    $exception = new \Exception('Not a database error');
 
-        $this->assertFalse(DatabaseService::isDeadlock($exception));
-    }
-}
+    expect(DatabaseService::isConstraintViolation($exception))->toBeFalse();
+});
+
+test('is deadlock detects deadlock errors', function () {
+    $pdoException = new \PDOException('deadlock detected');
+
+    $exception = new QueryException(
+        'pgsql',
+        'UPDATE users SET name = ?',
+        ['test'],
+        $pdoException
+    );
+
+    // Set the deadlock error code (40P01 for PostgreSQL)
+    $reflection = new \ReflectionClass($exception);
+    $property = $reflection->getProperty('errorInfo');
+    $property->setAccessible(true);
+    $property->setValue($exception, [null, '40P01', 'deadlock detected']);
+
+    expect(DatabaseService::isDeadlock($exception))->toBeTrue();
+});
+
+test('is deadlock returns false for other exceptions', function () {
+    $exception = new \Exception('Not a deadlock');
+
+    expect(DatabaseService::isDeadlock($exception))->toBeFalse();
+});
