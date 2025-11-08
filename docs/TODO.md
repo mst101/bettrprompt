@@ -13,5 +13,7 @@
 - Tests
 - Feedback loop / Feature request list
 - Dark mode
+- Performance improvements
+- Code refactoring
 
 ## Low Importance
