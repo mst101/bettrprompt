@@ -12,7 +12,7 @@ import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
 // Track connection state
-let echoInstance: Echo | null = null;
+let echoInstance: Echo<any> | null = null;
 let connectionState: 'connected' | 'connecting' | 'disconnected' | 'failed' =
     'connecting';
 
@@ -89,7 +89,7 @@ window.getEchoConnectionState = () => {
 initializeEcho();
 
 // Export for use in components
-export function getEcho(): Echo | null {
+export function getEcho(): Echo<any> | null {
     return echoInstance;
 }
 

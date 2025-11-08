@@ -181,7 +181,6 @@ const startPolling = () => {
     pollInterval = window.setInterval(() => {
         router.reload({
             only: ['promptRun', 'currentQuestion', 'progress'],
-            preserveScroll: true,
         });
     }, 5000); // Poll every 5 seconds
 };
@@ -197,7 +196,9 @@ const stopPolling = () => {
 onMounted(() => {
     // Check if Echo is available and connected
     if (!window.Echo || !window.isEchoConnected()) {
-        console.warn('Echo not available or not connected, using polling fallback');
+        console.warn(
+            'Echo not available or not connected, using polling fallback',
+        );
         useFallbackPolling.value = true;
         startPolling();
         return;
