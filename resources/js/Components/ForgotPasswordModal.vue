@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import ButtonClose from '@/Components/ButtonClose.vue';
+import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
-defineProps<{
+const props = defineProps<{
     show: boolean;
     status?: string;
 }>();
@@ -34,12 +33,14 @@ const close = () => {
 </script>
 
 <template>
-    <Modal :show="show" @close="close" max-width="md">
-        <div class="relative p-6">
-            <ButtonClose @close="close" />
-
-            <h2 class="text-lg font-medium text-gray-900">Forgot Password</h2>
-
+    <BaseAuthModal
+        :show="show"
+        title="Forgot Password"
+        :show-google-divider="false"
+        @close="close"
+        @submit="submit"
+    >
+        <template #status>
             <div class="mt-4 text-sm text-gray-600">
                 Forgot your password? No problem. Just let us know your email
                 address and we will email you a password reset link that will
@@ -52,41 +53,43 @@ const close = () => {
             >
                 {{ status }}
             </div>
+        </template>
 
-            <form @submit.prevent="submit" class="mt-6">
-                <div>
-                    <InputLabel for="forgot-password-email" value="Email" />
+        <template #fields>
+            <div>
+                <InputLabel for="forgot-password-email" value="Email" />
 
-                    <TextInput
-                        id="forgot-password-email"
-                        type="email"
-                        class="mt-1 block w-full"
-                        v-model="form.email"
-                        required
-                        autofocus
-                        autocomplete="username"
-                    />
+                <TextInput
+                    id="forgot-password-email"
+                    type="email"
+                    class="mt-1 block w-full"
+                    v-model="form.email"
+                    required
+                    autofocus
+                    autocomplete="username"
+                />
 
-                    <InputError class="mt-2" :message="form.errors.email" />
-                </div>
+                <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+        </template>
 
-                <div class="mt-6 flex items-center justify-between">
-                    <button
-                        type="button"
-                        @click="emit('switchToLogin')"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Back to log in
-                    </button>
+        <template #footer-links>
+            <button
+                type="button"
+                @click="emit('switchToLogin')"
+                class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                Back to log in
+            </button>
+        </template>
 
-                    <PrimaryButton
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                    >
-                        Email Password Reset Link
-                    </PrimaryButton>
-                </div>
-            </form>
-        </div>
-    </Modal>
+        <template #submit-button>
+            <PrimaryButton
+                :class="{ 'opacity-25': form.processing }"
+                :disabled="form.processing"
+            >
+                Email Password Reset Link
+            </PrimaryButton>
+        </template>
+    </BaseAuthModal>
 </template>

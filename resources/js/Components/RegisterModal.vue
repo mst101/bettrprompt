@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import ButtonClose from '@/Components/ButtonClose.vue';
+import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import FormField from '@/Components/FormField.vue';
 import GoogleSignInButton from '@/Components/GoogleSignInButton.vue';
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -38,89 +37,80 @@ const close = () => {
 </script>
 
 <template>
-    <Modal :show="show" @close="close" max-width="md">
-        <div class="relative p-6">
-            <ButtonClose @close="close" />
+    <BaseAuthModal
+        :show="show"
+        title="Register"
+        :show-google-divider="true"
+        @close="close"
+        @submit="submit"
+    >
+        <template #google-signin>
+            <GoogleSignInButton text="Sign up with Google" />
+        </template>
 
-            <h2 class="text-lg font-medium text-gray-900">Register</h2>
+        <template #fields>
+            <FormField
+                id="register-name"
+                v-model="form.name"
+                label="Name"
+                type="text"
+                :error="form.errors.name"
+                required
+                autofocus
+                autocomplete="name"
+            />
 
-            <div class="mt-6">
-                <GoogleSignInButton text="Sign up with Google" />
+            <FormField
+                id="register-email"
+                v-model="form.email"
+                label="Email"
+                type="email"
+                :error="form.errors.email"
+                class="mt-4"
+                required
+                autocomplete="username"
+            />
 
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="bg-white px-2 text-gray-500"
-                            >Or continue with email</span
-                        >
-                    </div>
-                </div>
-            </div>
+            <FormField
+                id="register-password"
+                v-model="form.password"
+                label="Password"
+                type="password"
+                :error="form.errors.password"
+                class="mt-4"
+                required
+                autocomplete="new-password"
+            />
 
-            <form @submit.prevent="submit">
-                <FormField
-                    id="register-name"
-                    v-model="form.name"
-                    label="Name"
-                    type="text"
-                    :error="form.errors.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+            <FormField
+                id="register-password-confirmation"
+                v-model="form.passwordConfirmation"
+                label="Confirm Password"
+                type="password"
+                :error="form.errors.passwordConfirmation"
+                class="mt-4"
+                required
+                autocomplete="new-password"
+            />
+        </template>
 
-                <FormField
-                    id="register-email"
-                    v-model="form.email"
-                    label="Email"
-                    type="email"
-                    :error="form.errors.email"
-                    class="mt-4"
-                    required
-                    autocomplete="username"
-                />
+        <template #footer-links>
+            <button
+                type="button"
+                @click="emit('switchToLogin')"
+                class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                Already registered?
+            </button>
+        </template>
 
-                <FormField
-                    id="register-password"
-                    v-model="form.password"
-                    label="Password"
-                    type="password"
-                    :error="form.errors.password"
-                    class="mt-4"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <FormField
-                    id="register-password-confirmation"
-                    v-model="form.passwordConfirmation"
-                    label="Confirm Password"
-                    type="password"
-                    :error="form.errors.passwordConfirmation"
-                    class="mt-4"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <div class="mt-6 flex items-center justify-between">
-                    <button
-                        type="button"
-                        @click="emit('switchToLogin')"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Already registered?
-                    </button>
-
-                    <PrimaryButton
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                    >
-                        Register
-                    </PrimaryButton>
-                </div>
-            </form>
-        </div>
-    </Modal>
+        <template #submit-button>
+            <PrimaryButton
+                :class="{ 'opacity-25': form.processing }"
+                :disabled="form.processing"
+            >
+                Register
+            </PrimaryButton>
+        </template>
+    </BaseAuthModal>
 </template>
