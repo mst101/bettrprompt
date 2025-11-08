@@ -1,9 +1,9 @@
 <?php
 
-test('registration screen can be rendered', function () {
+test('registration route redirects to home page with register modal open', function () {
     $response = $this->get('/register');
 
-    $response->assertStatus(200);
+    $response->assertRedirect(route('home', ['modal' => 'register'], absolute: false));
 });
 
 test('new users can register', function () {

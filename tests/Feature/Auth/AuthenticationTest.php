@@ -2,10 +2,10 @@
 
 use App\Models\User;
 
-test('login screen can be rendered', function () {
+test('login screen redirects to home page with login modal open', function () {
     $response = $this->get('/login');
 
-    $response->assertStatus(200);
+    $response->assertRedirect(route('home', ['modal' => 'login'], absolute: false));
 });
 
 test('users can authenticate using the login screen', function () {
