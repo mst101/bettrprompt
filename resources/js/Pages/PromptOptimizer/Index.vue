@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import ToggleSwitch from '@/Components/ToggleSwitch.vue';
 import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -39,6 +40,11 @@ const preferWhisperAPI = ref(
     localStorage.getItem('preferWhisperAPI') === 'true',
 );
 
+// Persist preference changes to localStorage
+watch(preferWhisperAPI, (newValue) => {
+    localStorage.setItem('preferWhisperAPI', String(newValue));
+});
+
 // Check if browser supports speech recognition
 const speechRecognitionSupported = computed(() => {
     return !!(
@@ -46,14 +52,6 @@ const speechRecognitionSupported = computed(() => {
         (window as any).webkitSpeechRecognition
     );
 });
-
-const toggleVoiceMethod = () => {
-    preferWhisperAPI.value = !preferWhisperAPI.value;
-    localStorage.setItem(
-        'preferWhisperAPI',
-        String(preferWhisperAPI.value),
-    );
-};
 </script>
 
 <template>
@@ -164,45 +162,17 @@ const toggleVoiceMethod = () => {
                             </p>
 
                             <!-- Voice input method toggle (only show if browser supports speech) -->
-                            <div
+                            <ToggleSwitch
                                 v-if="
                                     hasPersonalityType &&
                                     speechRecognitionSupported
                                 "
-                                class="mt-3 flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 p-3"
-                            >
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Voice input method:</span
-                                >
-                                <button
-                                    type="button"
-                                    @click="toggleVoiceMethod"
-                                    :class="[
-                                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
-                                        preferWhisperAPI
-                                            ? 'bg-indigo-600'
-                                            : 'bg-gray-200',
-                                    ]"
-                                    role="switch"
-                                    :aria-checked="preferWhisperAPI"
-                                >
-                                    <span
-                                        :class="[
-                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            preferWhisperAPI
-                                                ? 'translate-x-5'
-                                                : 'translate-x-0',
-                                        ]"
-                                    />
-                                </button>
-                                <span class="text-sm text-gray-600">
-                                    {{
-                                        preferWhisperAPI
-                                            ? 'OpenAI Whisper API (more accurate, slower)'
-                                            : 'Browser native (instant, free)'
-                                    }}
-                                </span>
-                            </div>
+                                v-model="preferWhisperAPI"
+                                label="Voice input method:"
+                                enabled-text="AI transcription (more accurate, slower)"
+                                disabled-text="Browser native (instant)"
+                                class="mt-3"
+                            />
                         </div>
 
                         <!-- Submit Button -->
