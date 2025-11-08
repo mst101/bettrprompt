@@ -7,8 +7,10 @@ import { PageProps as AppPageProps } from './';
 declare global {
     interface Window {
         axios: AxiosInstance;
-        Echo: Echo;
+        Echo: Echo | null;
         Pusher: any;
+        isEchoConnected: () => boolean;
+        getEchoConnectionState: () => 'connected' | 'connecting' | 'disconnected' | 'failed';
     }
 
     /* eslint-disable no-var */

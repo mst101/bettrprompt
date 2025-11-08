@@ -169,27 +169,112 @@ const getWorkflowStageLabel = (stage: string) => {
     }
 };
 
-// Laravel Echo for real-time updates
-onMounted(() => {
-    const channel = window.Echo.channel(`prompt-run.${props.promptRun.id}`);
+// Laravel Echo for real-time updates with error handling and fallback
+const echoAvailable = ref(false);
+const useFallbackPolling = ref(false);
+let pollInterval: number | null = null;
 
-    // Listen for framework selection
-    channel.listen('FrameworkSelected', (event: any) => {
-        console.log('Framework selected:', event);
-        // Reload the page to show questions
-        router.reload();
+const startPolling = () => {
+    if (pollInterval) return; // Already polling
+
+    console.log('Starting polling fallback for prompt run updates');
+    pollInterval = window.setInterval(() => {
+        router.reload({
+            only: ['promptRun', 'currentQuestion', 'progress'],
+            preserveScroll: true,
+        });
+    }, 5000); // Poll every 5 seconds
+};
+
+const stopPolling = () => {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        console.log('Stopped polling fallback');
+    }
+};
+
+onMounted(() => {
+    // Check if Echo is available and connected
+    if (!window.Echo || !window.isEchoConnected()) {
+        console.warn('Echo not available or not connected, using polling fallback');
+        useFallbackPolling.value = true;
+        startPolling();
+        return;
+    }
+
+    echoAvailable.value = true;
+
+    try {
+        const channel = window.Echo.channel(`prompt-run.${props.promptRun.id}`);
+
+        // Listen for framework selection
+        channel.listen('FrameworkSelected', (event: any) => {
+            try {
+                console.log('Framework selected:', event);
+                router.reload();
+            } catch (error) {
+                console.error('Error handling FrameworkSelected event', error);
+            }
+        });
+
+        // Listen for prompt optimization completion
+        channel.listen('PromptOptimizationCompleted', (event: any) => {
+            try {
+                console.log('Optimization completed:', event);
+                router.reload();
+            } catch (error) {
+                console.error(
+                    'Error handling PromptOptimizationCompleted event',
+                    error,
+                );
+            }
+        });
+
+        // Handle channel errors
+        channel.error((error: any) => {
+            console.error('WebSocket channel error', error);
+            if (!useFallbackPolling.value) {
+                console.warn('Falling back to polling due to channel error');
+                useFallbackPolling.value = true;
+                startPolling();
+            }
+        });
+    } catch (error) {
+        console.error('Failed to set up WebSocket listeners', error);
+        useFallbackPolling.value = true;
+        startPolling();
+    }
+
+    // Listen for Echo disconnection
+    window.addEventListener('echo-disconnected', () => {
+        if (!useFallbackPolling.value) {
+            console.warn('Echo disconnected, falling back to polling');
+            useFallbackPolling.value = true;
+            startPolling();
+        }
     });
 
-    // Listen for prompt optimization completion
-    channel.listen('PromptOptimizationCompleted', (event: any) => {
-        console.log('Optimization completed:', event);
-        // Reload the page to show final prompt
-        router.reload();
+    // Listen for Echo reconnection
+    window.addEventListener('echo-connected', () => {
+        if (useFallbackPolling.value) {
+            console.log('Echo reconnected, stopping polling');
+            useFallbackPolling.value = false;
+            stopPolling();
+        }
     });
 });
 
 onUnmounted(() => {
-    window.Echo.leave(`prompt-run.${props.promptRun.id}`);
+    stopPolling();
+
+    try {
+        if (window.Echo) {
+            window.Echo.leave(`prompt-run.${props.promptRun.id}`);
+        }
+    } catch (error) {
+        console.error('Error leaving WebSocket channel', error);
+    }
 });
 </script>
 
