@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePersonalityTypeRequest;
+use App\Services\DatabaseService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -51,15 +53,29 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+                if ($request->user()->isDirty('email')) {
+                    $request->user()->email_verified_at = null;
+                }
+
+                $request->user()->save();
+            });
+
+            return Redirect::route('profile.edit')
+                ->with('status', 'profile-updated');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Failed to update user profile', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error',
+                'Failed to update profile. Please try again.');
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit');
     }
 
     /**
@@ -67,12 +83,27 @@ class ProfileController extends Controller
      */
     public function updatePersonality(UpdatePersonalityTypeRequest $request): RedirectResponse
     {
-        $request->user()->update([
-            'personality_type' => $request->validated('personalityType'),
-            'trait_percentages' => $request->validated('traitPercentages'),
-        ]);
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->update([
+                    'personality_type' => $request->validated('personalityType'),
+                    'trait_percentages' => $request->validated('traitPercentages'),
+                ]);
+            });
 
-        return Redirect::route('profile.edit');
+            return Redirect::route('profile.edit')
+                ->with('status', 'personality-updated');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Failed to update user personality type', [
+                'user_id' => $request->user()->id,
+                'personality_type' => $request->validated('personalityType'),
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error',
+                'Failed to update personality type. Please try again.');
+        }
     }
 
     /**
@@ -82,13 +113,40 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        Auth::logout();
+        try {
+            // Use transaction to ensure all operations succeed or fail together
+            DatabaseService::transaction(function () use ($user, $request) {
+                Auth::logout();
+                $user->delete();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            });
 
-        $user->delete();
+            return Redirect::to('/')
+                ->with('status', 'Your account has been deleted.');
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Failed to delete user account', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
 
-        return Redirect::to('/');
+            // Re-login the user since we logged them out
+            Auth::login($user);
+
+            return Redirect::back()->with('error',
+                'Failed to delete account. Please try again or contact support.');
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error during account deletion', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            // Re-login the user
+            Auth::login($user);
+
+            return Redirect::back()->with('error',
+                'An unexpected error occurred. Please contact support.');
+        }
     }
 }
