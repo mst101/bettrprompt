@@ -6,8 +6,10 @@ use App\Http\Requests\AnswerQuestionRequest;
 use App\Http\Requests\StorePromptRunRequest;
 use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
+use App\Services\DatabaseService;
 use App\Services\N8nClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class PromptOptimizerController extends Controller
@@ -32,29 +34,33 @@ class PromptOptimizerController extends Controller
         $validated = $request->validated();
         $user = auth()->user();
 
-        // Create the prompt run record using personality from user profile
-        $promptRun = PromptRun::create([
-            'user_id' => $user->id,
-            'personality_type' => $user->personality_type,
-            'trait_percentages' => $user->trait_percentages ?? null,
-            'task_description' => $validated['task_description'],
-            'status' => 'processing',
-            'workflow_stage' => 'submitted',
-        ]);
-
-        // Prepare payload for framework selector
-        $payload = [
-            'prompt_run_id' => $promptRun->id,
-            'personality_type' => $user->personality_type,
-            'trait_percentages' => $user->trait_percentages ?? null,
-            'task_description' => $validated['task_description'],
-        ];
-
         try {
+            // Create the prompt run record using personality from user profile
+            $promptRun = DatabaseService::retryOnDeadlock(function () use ($user, $validated) {
+                return PromptRun::create([
+                    'user_id' => $user->id,
+                    'personality_type' => $user->personality_type,
+                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'task_description' => $validated['task_description'],
+                    'status' => 'processing',
+                    'workflow_stage' => 'submitted',
+                ]);
+            });
+
+            // Prepare payload for framework selector
+            $payload = [
+                'prompt_run_id' => $promptRun->id,
+                'personality_type' => $user->personality_type,
+                'trait_percentages' => $user->trait_percentages ?? null,
+                'task_description' => $validated['task_description'],
+            ];
+
             // Store the request payload
-            $promptRun->update([
-                'n8n_request_payload' => $payload,
-            ]);
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $payload) {
+                $promptRun->update([
+                    'n8n_request_payload' => $payload,
+                ]);
+            });
 
             // Trigger framework selector workflow
             $response = $this->n8nClient->triggerWebhook(
@@ -62,30 +68,32 @@ class PromptOptimizerController extends Controller
                 $payload
             );
 
-            if ($response->successful()) {
-                $responseData = $response->json();
+            if ($response['success']) {
+                $responseData = $response['data'];
 
                 // Log the response for debugging
-                \Log::info('Framework Selector Response', [
+                Log::info('Framework Selector Response', [
                     'prompt_run_id' => $promptRun->id,
                     'response' => $responseData,
                 ]);
 
                 // Update the prompt run with framework selection
-                $promptRun->update([
-                    'selected_framework' => $responseData['selected_framework'] ?? null,
-                    'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
-                    'framework_questions' => $responseData['framework_questions'] ?? [],
-                    'clarifying_answers' => [],
-                    'workflow_stage' => 'framework_selected',
-                    'n8n_response_payload' => $responseData,
-                ]);
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $responseData) {
+                    $promptRun->update([
+                        'selected_framework' => $responseData['selected_framework'] ?? null,
+                        'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                        'framework_questions' => $responseData['framework_questions'] ?? [],
+                        'clarifying_answers' => [],
+                        'workflow_stage' => 'framework_selected',
+                        'n8n_response_payload' => $responseData,
+                    ]);
+                });
 
                 // Refresh the model to ensure we have latest data
                 $promptRun->refresh();
 
                 // Log what was saved
-                \Log::info('Saved Framework Selection', [
+                Log::info('Saved Framework Selection', [
                     'prompt_run_id' => $promptRun->id,
                     'selected_framework' => $promptRun->selected_framework,
                     'questions_count' => count($promptRun->framework_questions ?? []),
@@ -93,48 +101,95 @@ class PromptOptimizerController extends Controller
                 ]);
 
                 // Broadcast framework selected event
-                event(new \App\Events\FrameworkSelected($promptRun));
+                try {
+                    event(new \App\Events\FrameworkSelected($promptRun));
+                } catch (\Exception $e) {
+                    Log::error('Failed to broadcast FrameworkSelected event', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
 
                 // Redirect to show page where questions will be displayed
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
                     ->with('success', 'Framework selected! Please answer the following questions.');
             } else {
-                // Handle n8n error - parse the error response
-                $errorData = $response->json();
-                $errorMessage = 'Framework selector workflow failed';
+                // Handle n8n error
+                $errorMessage = $response['error'] ?? 'Framework selector workflow failed';
+                $errorPayload = $response['payload'] ?? null;
 
-                // Extract detailed error message if available
-                if (is_array($errorData) && isset($errorData[0])) {
-                    $error = $errorData[0];
-                    if (isset($error['error'])) {
-                        $errorMessage = $error['error'];
-                    }
-                    // Store the full error details
+                Log::error('Framework selector workflow failed', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $errorMessage,
+                    'payload' => $errorPayload,
+                ]);
+
+                // Store the error details
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $errorMessage, $errorPayload) {
                     $promptRun->update([
                         'status' => 'failed',
                         'workflow_stage' => 'failed',
                         'error_message' => $errorMessage,
-                        'n8n_response_payload' => $error,
+                        'n8n_response_payload' => $errorPayload,
                     ]);
-                } else {
-                    $promptRun->update([
-                        'status' => 'failed',
-                        'workflow_stage' => 'failed',
-                        'error_message' => $errorMessage.': '.$response->body(),
-                    ]);
-                }
+                });
 
                 return back()->with('error', 'Failed to select framework. Please try again.');
             }
-        } catch (\Throwable $e) {
-            // Handle exception
-            $promptRun->update([
-                'status' => 'failed',
-                'workflow_stage' => 'failed',
-                'error_message' => $e->getMessage(),
-                'completed_at' => now(),
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error in prompt run creation', [
+                'user_id' => $user->id,
+                'task_description' => $validated['task_description'],
+                'error' => $e->getMessage(),
             ]);
+
+            // Attempt to mark as failed (only if promptRun was created)
+            if (isset($promptRun)) {
+                try {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => 'Database error occurred',
+                            'completed_at' => now(),
+                        ]);
+                    });
+                } catch (\Exception $updateError) {
+                    Log::error('Failed to mark prompt run as failed', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $updateError->getMessage(),
+                    ]);
+                }
+            }
+
+            return back()->with('error', 'A database error occurred. Please try again.');
+
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error in prompt run creation', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Attempt to mark as failed (only if promptRun was created)
+            if (isset($promptRun)) {
+                try {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $e) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => $e->getMessage(),
+                            'completed_at' => now(),
+                        ]);
+                    });
+                } catch (\Exception $updateError) {
+                    Log::error('Failed to mark prompt run as failed', [
+                        'prompt_run_id' => $promptRun->id ?? 'unknown',
+                        'error' => $updateError->getMessage(),
+                    ]);
+                }
+            }
 
             return back()->with('error', 'An error occurred whilst processing your request.');
         }
@@ -172,42 +227,62 @@ class PromptOptimizerController extends Controller
 
         $validated = $request->validated();
 
-        // Get current answers and append new one
-        $answers = $promptRun->clarifying_answers ?? [];
-        $answers[] = $validated['answer'];
+        try {
+            // Get current answers and append new one
+            $answers = $promptRun->clarifying_answers ?? [];
+            $answers[] = $validated['answer'];
 
-        // Log the answer submission
-        \Log::info('Submitting Answer', [
-            'prompt_run_id' => $promptRun->id,
-            'current_answers_count' => count($promptRun->clarifying_answers ?? []),
-            'new_answer' => $validated['answer'],
-            'total_after' => count($answers),
-        ]);
+            // Log the answer submission
+            Log::info('Submitting Answer', [
+                'prompt_run_id' => $promptRun->id,
+                'current_answers_count' => count($promptRun->clarifying_answers ?? []),
+                'new_answer' => $validated['answer'],
+                'total_after' => count($answers),
+            ]);
 
-        // Update the prompt run
-        $promptRun->update([
-            'clarifying_answers' => $answers,
-            'workflow_stage' => 'answering_questions',
-        ]);
+            // Update the prompt run with retry logic
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => 'answering_questions',
+                ]);
+            });
 
-        // Refresh and log what was saved
-        $promptRun->refresh();
-        \Log::info('Saved Answer', [
-            'prompt_run_id' => $promptRun->id,
-            'saved_answers_count' => count($promptRun->clarifying_answers ?? []),
-            'all_answers' => $promptRun->clarifying_answers,
-        ]);
+            // Refresh and log what was saved
+            $promptRun->refresh();
+            Log::info('Saved Answer', [
+                'prompt_run_id' => $promptRun->id,
+                'saved_answers_count' => count($promptRun->clarifying_answers ?? []),
+                'all_answers' => $promptRun->clarifying_answers,
+            ]);
 
-        // Check if all questions have been answered
-        if ($promptRun->hasAnsweredAllQuestions()) {
-            // Trigger final prompt optimization
-            return $this->triggerFinalOptimization($promptRun);
+            // Check if all questions have been answered
+            if ($promptRun->hasAnsweredAllQuestions()) {
+                // Trigger final prompt optimization
+                return $this->triggerFinalOptimization($promptRun);
+            }
+
+            // More questions to answer - redirect back to show page
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('success', 'Answer saved. Next question:');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error saving answer', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to save answer. Please try again.');
+
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error saving answer', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'An error occurred. Please try again.');
         }
-
-        // More questions to answer - redirect back to show page
-        return redirect()
-            ->route('prompt-optimizer.show', $promptRun)
-            ->with('success', 'Answer saved. Next question:');
     }
 
     /**
@@ -225,26 +300,54 @@ class PromptOptimizerController extends Controller
             return back()->with('error', 'Cannot skip questions at this stage.');
         }
 
-        // Get current answers and append null for skipped question
-        $answers = $promptRun->clarifying_answers ?? [];
-        $answers[] = null;
+        try {
+            // Get current answers and append null for skipped question
+            $answers = $promptRun->clarifying_answers ?? [];
+            $answers[] = null;
 
-        // Update the prompt run
-        $promptRun->update([
-            'clarifying_answers' => $answers,
-            'workflow_stage' => 'answering_questions',
-        ]);
+            Log::info('Skipping question', [
+                'prompt_run_id' => $promptRun->id,
+                'question_number' => count($answers),
+            ]);
 
-        // Check if all questions have been processed
-        if ($promptRun->hasAnsweredAllQuestions()) {
-            // Trigger final prompt optimization
-            return $this->triggerFinalOptimization($promptRun);
+            // Update the prompt run with retry logic
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => 'answering_questions',
+                ]);
+            });
+
+            // Refresh the model
+            $promptRun->refresh();
+
+            // Check if all questions have been processed
+            if ($promptRun->hasAnsweredAllQuestions()) {
+                // Trigger final prompt optimization
+                return $this->triggerFinalOptimization($promptRun);
+            }
+
+            // More questions to process - redirect back to show page
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('success', 'Question skipped. Next question:');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error skipping question', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to skip question. Please try again.');
+
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error skipping question', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'An error occurred. Please try again.');
         }
-
-        // More questions to process - redirect back to show page
-        return redirect()
-            ->route('prompt-optimizer.show', $promptRun)
-            ->with('success', 'Question skipped. Next question:');
     }
 
     /**
@@ -252,88 +355,144 @@ class PromptOptimizerController extends Controller
      */
     protected function triggerFinalOptimization(PromptRun $promptRun)
     {
-        // Update workflow stage
-        $promptRun->update([
-            'workflow_stage' => 'generating_prompt',
-            'status' => 'processing',
-        ]);
-
-        // Prepare payload for final optimization
-        $payload = [
-            'prompt_run_id' => $promptRun->id,
-            'personality_type' => $promptRun->personality_type,
-            'trait_percentages' => $promptRun->trait_percentages,
-            'task_description' => $promptRun->task_description,
-            'selected_framework' => $promptRun->selected_framework,
-            'framework_reasoning' => $promptRun->framework_reasoning,
-            'framework_questions' => $promptRun->framework_questions,
-            'clarifying_answers' => $promptRun->clarifying_answers,
-        ];
-
         try {
+            // Update workflow stage with retry logic
+            DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                $promptRun->update([
+                    'workflow_stage' => 'generating_prompt',
+                    'status' => 'processing',
+                ]);
+            });
+
+            // Prepare payload for final optimization
+            $payload = [
+                'prompt_run_id' => $promptRun->id,
+                'personality_type' => $promptRun->personality_type,
+                'trait_percentages' => $promptRun->trait_percentages,
+                'task_description' => $promptRun->task_description,
+                'selected_framework' => $promptRun->selected_framework,
+                'framework_reasoning' => $promptRun->framework_reasoning,
+                'framework_questions' => $promptRun->framework_questions,
+                'clarifying_answers' => $promptRun->clarifying_answers,
+            ];
+
+            Log::info('Triggering final prompt optimization', [
+                'prompt_run_id' => $promptRun->id,
+                'selected_framework' => $promptRun->selected_framework,
+            ]);
+
             // Trigger final prompt optimizer workflow
             $response = $this->n8nClient->triggerWebhook(
                 '/webhook/final-prompt-optimizer',
                 $payload
             );
 
-            if ($response->successful()) {
-                $responseData = $response->json();
+            if ($response['success']) {
+                $responseData = $response['data'];
 
-                // Update the prompt run with the final optimized prompt
-                $promptRun->update([
-                    'optimized_prompt' => $responseData['optimized_prompt'] ?? null,
-                    'workflow_stage' => 'completed',
-                    'status' => 'completed',
-                    'completed_at' => now(),
+                Log::info('Final prompt optimization completed', [
+                    'prompt_run_id' => $promptRun->id,
                 ]);
 
-                // Broadcast completion event
-                event(new \App\Events\PromptOptimizationCompleted($promptRun));
-
-                return redirect()
-                    ->route('prompt-optimizer.show', $promptRun)
-                    ->with('success', 'Your optimised prompt is ready!');
-            } else {
-                // Handle n8n error - parse the error response
-                $errorData = $response->json();
-                $errorMessage = 'Final optimization workflow failed';
-
-                // Extract detailed error message if available
-                if (is_array($errorData) && isset($errorData[0])) {
-                    $error = $errorData[0];
-                    if (isset($error['error'])) {
-                        $errorMessage = $error['error'];
-                    }
-                    // Store the full error details
+                // Update the prompt run with the final optimized prompt
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $responseData) {
                     $promptRun->update([
-                        'status' => 'failed',
-                        'workflow_stage' => 'failed',
-                        'error_message' => $errorMessage,
-                        'n8n_response_payload' => $error,
+                        'optimized_prompt' => $responseData['optimized_prompt'] ?? null,
+                        'workflow_stage' => 'completed',
+                        'status' => 'completed',
                         'completed_at' => now(),
                     ]);
-                } else {
-                    $promptRun->update([
-                        'status' => 'failed',
-                        'workflow_stage' => 'failed',
-                        'error_message' => $errorMessage.': '.$response->body(),
-                        'completed_at' => now(),
+                });
+
+                // Broadcast completion event
+                try {
+                    event(new \App\Events\PromptOptimizationCompleted($promptRun));
+                } catch (\Exception $e) {
+                    Log::error('Failed to broadcast PromptOptimizationCompleted event', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $e->getMessage(),
                     ]);
                 }
 
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
+                    ->with('success', 'Your optimised prompt is ready!');
+            } else {
+                // Handle n8n error
+                $errorMessage = $response['error'] ?? 'Final optimization workflow failed';
+                $errorPayload = $response['payload'] ?? null;
+
+                Log::error('Final prompt optimization failed', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $errorMessage,
+                    'payload' => $errorPayload,
+                ]);
+
+                // Store the error details
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $errorMessage, $errorPayload) {
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $errorMessage,
+                        'n8n_response_payload' => $errorPayload,
+                        'completed_at' => now(),
+                    ]);
+                });
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $promptRun)
                     ->with('error', 'Failed to generate optimised prompt. Please try again.');
             }
-        } catch (\Throwable $e) {
-            // Handle exception
-            $promptRun->update([
-                'status' => 'failed',
-                'workflow_stage' => 'failed',
-                'error_message' => $e->getMessage(),
-                'completed_at' => now(),
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error in final prompt optimization', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
             ]);
+
+            // Attempt to mark as failed
+            try {
+                DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => 'Database error occurred',
+                        'completed_at' => now(),
+                    ]);
+                });
+            } catch (\Exception $updateError) {
+                Log::error('Failed to mark prompt run as failed', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $updateError->getMessage(),
+                ]);
+            }
+
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('error', 'A database error occurred. Please try again.');
+
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error in final prompt optimization', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Attempt to mark as failed
+            try {
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $e) {
+                    $promptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $e->getMessage(),
+                        'completed_at' => now(),
+                    ]);
+                });
+            } catch (\Exception $updateError) {
+                Log::error('Failed to mark prompt run as failed', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $updateError->getMessage(),
+                ]);
+            }
 
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
@@ -360,81 +519,133 @@ class PromptOptimizerController extends Controller
         $workflowStage = $promptRun->workflow_stage;
 
         if ($workflowStage === 'failed' || $workflowStage === 'submitted') {
-            // Framework selection failed - retry from the beginning
-            $promptRun->update([
-                'status' => 'processing',
-                'workflow_stage' => 'submitted',
-                'error_message' => null,
-                'completed_at' => null,
-            ]);
-
-            // Prepare payload for framework selector
-            $payload = [
-                'prompt_run_id' => $promptRun->id,
-                'personality_type' => $promptRun->personality_type,
-                'trait_percentages' => $promptRun->trait_percentages,
-                'task_description' => $promptRun->task_description,
-            ];
-
             try {
+                Log::info('Retrying framework selection', [
+                    'prompt_run_id' => $promptRun->id,
+                ]);
+
+                // Framework selection failed - retry from the beginning
+                DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                    $promptRun->update([
+                        'status' => 'processing',
+                        'workflow_stage' => 'submitted',
+                        'error_message' => null,
+                        'completed_at' => null,
+                    ]);
+                });
+
+                // Prepare payload for framework selector
+                $payload = [
+                    'prompt_run_id' => $promptRun->id,
+                    'personality_type' => $promptRun->personality_type,
+                    'trait_percentages' => $promptRun->trait_percentages,
+                    'task_description' => $promptRun->task_description,
+                ];
+
                 // Trigger framework selector workflow
                 $response = $this->n8nClient->triggerWebhook(
                     '/webhook/framework-selector',
                     $payload
                 );
 
-                if ($response->successful()) {
-                    $responseData = $response->json();
+                if ($response['success']) {
+                    $responseData = $response['data'];
 
                     // Update the prompt run with framework selection
-                    $promptRun->update([
-                        'selected_framework' => $responseData['selected_framework'] ?? null,
-                        'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
-                        'framework_questions' => $responseData['framework_questions'] ?? [],
-                        'workflow_stage' => 'framework_selected',
-                        'n8n_response_payload' => $responseData,
-                    ]);
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $responseData) {
+                        $promptRun->update([
+                            'selected_framework' => $responseData['selected_framework'] ?? null,
+                            'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                            'framework_questions' => $responseData['framework_questions'] ?? [],
+                            'workflow_stage' => 'framework_selected',
+                            'n8n_response_payload' => $responseData,
+                        ]);
+                    });
 
                     // Broadcast framework selected event
-                    event(new \App\Events\FrameworkSelected($promptRun));
+                    try {
+                        event(new \App\Events\FrameworkSelected($promptRun));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to broadcast FrameworkSelected event on retry', [
+                            'prompt_run_id' => $promptRun->id,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
 
                     return redirect()
                         ->route('prompt-optimizer.show', $promptRun)
                         ->with('success', 'Framework selected! Please answer the following questions.');
                 } else {
                     // Handle n8n error
-                    $errorData = $response->json();
-                    $errorMessage = 'Framework selector workflow failed';
+                    $errorMessage = $response['error'] ?? 'Framework selector workflow failed';
+                    $errorPayload = $response['payload'] ?? null;
 
-                    if (is_array($errorData) && isset($errorData[0])) {
-                        $error = $errorData[0];
-                        if (isset($error['error'])) {
-                            $errorMessage = $error['error'];
-                        }
+                    Log::error('Framework selector retry failed', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $errorMessage,
+                    ]);
+
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $errorMessage, $errorPayload) {
                         $promptRun->update([
                             'status' => 'failed',
                             'workflow_stage' => 'failed',
                             'error_message' => $errorMessage,
-                            'n8n_response_payload' => $error,
+                            'n8n_response_payload' => $errorPayload,
                         ]);
-                    } else {
-                        $promptRun->update([
-                            'status' => 'failed',
-                            'workflow_stage' => 'failed',
-                            'error_message' => $errorMessage.': '.$response->body(),
-                        ]);
-                    }
+                    });
 
                     return redirect()
                         ->route('prompt-optimizer.show', $promptRun)
                         ->with('error', 'Retry failed. '.$errorMessage);
                 }
-            } catch (\Throwable $e) {
-                $promptRun->update([
-                    'status' => 'failed',
-                    'workflow_stage' => 'failed',
-                    'error_message' => $e->getMessage(),
+            } catch (\Illuminate\Database\QueryException $e) {
+                Log::error('Database error during retry', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $e->getMessage(),
                 ]);
+
+                // Attempt to mark as failed
+                try {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => 'Database error occurred during retry',
+                        ]);
+                    });
+                } catch (\Exception $updateError) {
+                    Log::error('Failed to mark prompt run as failed during retry', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $updateError->getMessage(),
+                    ]);
+                }
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $promptRun)
+                    ->with('error', 'A database error occurred whilst retrying.');
+
+            } catch (\Throwable $e) {
+                Log::error('Unexpected error during retry', [
+                    'prompt_run_id' => $promptRun->id,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
+                // Attempt to mark as failed
+                try {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $e) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'workflow_stage' => 'failed',
+                            'error_message' => $e->getMessage(),
+                        ]);
+                    });
+                } catch (\Exception $updateError) {
+                    Log::error('Failed to mark prompt run as failed during retry', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $updateError->getMessage(),
+                    ]);
+                }
 
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
@@ -442,6 +653,10 @@ class PromptOptimizerController extends Controller
             }
         } elseif ($workflowStage === 'generating_prompt') {
             // Final optimization failed - retry that step
+            Log::info('Retrying final optimization', [
+                'prompt_run_id' => $promptRun->id,
+            ]);
+
             return $this->triggerFinalOptimization($promptRun);
         }
 
