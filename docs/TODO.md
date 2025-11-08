@@ -10,6 +10,7 @@
 - Login & Register to be pop-ups
 - Privacy policy
 - Terms of Use
--
+- Tests
+- Feedback loop / Feature request list
 
 ## Low Importance

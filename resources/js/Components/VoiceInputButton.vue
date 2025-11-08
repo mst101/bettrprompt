@@ -4,6 +4,10 @@ import { useAudioRecording } from '@/Composables/useAudioRecording';
 import { useSpeechRecognition } from '@/Composables/useSpeechRecognition';
 import { computed, watch } from 'vue';
 
+const props = defineProps<{
+    forceWhisperAPI?: boolean;
+}>();
+
 const emit = defineEmits<{
     transcription: [text: string];
 }>();
@@ -33,7 +37,14 @@ const {
 } = useAudioRecording();
 
 // Determine which method to use
-const useSpeechAPI = computed(() => speechSupported.value);
+const useSpeechAPI = computed(() => {
+    // If user prefers Whisper API, use it (even if browser supports speech)
+    if (props.forceWhisperAPI) {
+        return false;
+    }
+    // Otherwise use speech recognition if supported
+    return speechSupported.value;
+});
 
 // Combined state
 const isActive = computed(() =>
