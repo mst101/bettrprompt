@@ -29,6 +29,10 @@ const handleTranscription = (text: string) => {
     }
     form.taskDescription += text;
 };
+
+const clearTaskDescription = () => {
+    form.taskDescription = '';
+};
 </script>
 
 <template>
@@ -94,10 +98,27 @@ const handleTranscription = (text: string) => {
                                 >
                                     Task Description
                                 </label>
-                                <VoiceInputButton
-                                    @transcription="handleTranscription"
+                                <div
                                     v-if="hasPersonalityType"
-                                />
+                                    class="flex items-center gap-2"
+                                >
+                                    <button
+                                        v-if="form.taskDescription"
+                                        type="button"
+                                        @click="clearTaskDescription"
+                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50"
+                                        title="Clear text"
+                                    >
+                                        <DynamicIcon
+                                            name="trash"
+                                            class="h-5 w-5 text-gray-600"
+                                        />
+                                        <span>Clear</span>
+                                    </button>
+                                    <VoiceInputButton
+                                        @transcription="handleTranscription"
+                                    />
+                                </div>
                             </div>
                             <textarea
                                 id="taskDescription"
