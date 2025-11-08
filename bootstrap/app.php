@@ -22,5 +22,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle CSRF token expiration (419 errors)
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            // If it's a logout request and session expired, redirect to home
+            if ($request->routeIs('logout')) {
+                return redirect('/')->with('status', 'Your session has expired. You have been logged out.');
+            }
+
+            // For Inertia requests, return a user-friendly error
+            if ($request->header('X-Inertia')) {
+                return back()->with('error',
+                    'Your session has expired. Please refresh the page and try again.');
+            }
+
+            // For regular requests
+            return redirect()->route('login')
+                ->with('error', 'Your session has expired. Please log in again.');
+        });
     })->create();

@@ -12,5 +12,6 @@
 - Terms of Use
 - Tests
 - Feedback loop / Feature request list
+- Dark mode
 
 ## Low Importance
