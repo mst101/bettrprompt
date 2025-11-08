@@ -3,11 +3,9 @@
 ## High Importance
 
 - Find a name
-- Error handling
 
 ## Medium Importance
 
-- Login & Register to be pop-ups
 - Privacy policy
 - Terms of Use
 - Tests
