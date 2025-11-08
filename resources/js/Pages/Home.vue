@@ -52,7 +52,9 @@ onMounted(() => {
                 >
                     Get better AI responses tailored to your unique personality
                     type. AI Buddy transforms your tasks into optimised prompts
-                    based on the 16personalities.com framework.
+                    based on the <span class="font-bold italic">task</span> you
+                    wish to accomplish and your
+                    <span class="font-bold italic">personality</span>.
                 </p>
 
                 <!-- CTA Buttons -->
@@ -91,7 +93,7 @@ onMounted(() => {
                     <FeatureCard
                         icon="user"
                         title="Personality-Tailored"
-                        description="Based on your 16personalities type (INTJ, ENFP, etc.), we craft prompts that match your communication style and thinking patterns."
+                        description="Based on your <a class='underline underline-offset-2 hover:text-purple-800' target='_blank' href='https://www.16personalities.com'>16personalities.com</a> type (INTJ-A, ENFP-J, etc.), we craft prompts that match your communication style and thinking patterns."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -129,7 +131,7 @@ onMounted(() => {
                     <StepCard
                         :number="1"
                         title="Enter Your Personality"
-                        description="Select your 16personalities type and optionally add trait percentages for even better results."
+                        description="Select your <a class='underline underline-offset-2 hover:text-purple-800' target='_blank' href='https://www.16personalities.com'>16personalities.com</a> type and optionally add trait percentages for even better results."
                         bg-colour="bg-indigo-600"
                     />
 

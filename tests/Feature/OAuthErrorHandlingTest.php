@@ -17,7 +17,7 @@ class OAuthErrorHandlingTest extends TestCase
     {
         // Mock Socialite to throw InvalidStateException
         Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-        Socialite::shouldReceive('user')->andThrow(new InvalidStateException());
+        Socialite::shouldReceive('user')->andThrow(new InvalidStateException);
 
         $response = $this->get(route('auth.google.callback'));
 

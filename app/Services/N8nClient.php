@@ -152,6 +152,7 @@ class N8nClient
 
                     // Exponential backoff
                     sleep(pow(2, $attempt));
+
                     continue;
                 }
 

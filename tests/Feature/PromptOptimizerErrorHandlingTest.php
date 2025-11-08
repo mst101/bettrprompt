@@ -6,7 +6,6 @@ use App\Models\PromptRun;
 use App\Models\User;
 use App\Services\N8nClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class PromptOptimizerErrorHandlingTest extends TestCase

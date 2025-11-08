@@ -41,6 +41,7 @@ class DatabaseService
 
                     // Exponential backoff: 100ms, 200ms, 400ms
                     usleep(pow(2, $attempts) * 100000);
+
                     continue;
                 }
 
@@ -161,9 +162,6 @@ class DatabaseService
 
     /**
      * Check if an exception is a constraint violation
-     *
-     * @param  \Throwable  $exception
-     * @return bool
      */
     public static function isConstraintViolation(\Throwable $exception): bool
     {
@@ -180,9 +178,6 @@ class DatabaseService
 
     /**
      * Check if an exception is a deadlock
-     *
-     * @param  \Throwable  $exception
-     * @return bool
      */
     public static function isDeadlock(\Throwable $exception): bool
     {

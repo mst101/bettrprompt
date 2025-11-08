@@ -30,8 +30,6 @@ defineProps<{
                 </h3>
             </div>
         </div>
-        <p class="mt-4 text-sm text-gray-600">
-            {{ description }}
-        </p>
+        <p class="mt-4 text-sm text-gray-600" v-html="description"></p>
     </div>
 </template>

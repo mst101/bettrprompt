@@ -41,8 +41,8 @@ class OAuthController extends Controller
             // Validate required fields from OAuth provider
             if (! $googleUser->id || ! $googleUser->email) {
                 Log::warning('Google OAuth returned incomplete user data', [
-                    'has_id' => ! ! $googleUser->id,
-                    'has_email' => ! ! $googleUser->email,
+                    'has_id' => (bool) $googleUser->id,
+                    'has_email' => (bool) $googleUser->email,
                 ]);
 
                 return redirect()->route('login')

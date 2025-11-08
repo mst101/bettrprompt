@@ -5,8 +5,6 @@ namespace Tests\Unit;
 use App\Services\DatabaseService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class DatabaseServiceTest extends TestCase

@@ -14,11 +14,12 @@ Route::post('/n8n/webhook', function (Request $request) {
         // Verify secret
         $secret = $request->header('X-N8N-SECRET');
 
-        if (!$secret || $secret !== config('services.n8n.webhook_secret')) {
+        if (! $secret || $secret !== config('services.n8n.webhook_secret')) {
             Log::warning('Invalid N8n webhook secret received', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+
             return response()->json(['error' => 'Unauthorised'], 403);
         }
 
@@ -41,6 +42,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                 'errors' => $validator->errors()->toArray(),
                 'payload' => $request->all(),
             ]);
+
             return response()->json([
                 'success' => false,
                 'error' => 'Invalid payload',
@@ -59,10 +61,11 @@ Route::post('/n8n/webhook', function (Request $request) {
         $promptRunId = $request->input('prompt_run_id');
         $promptRun = PromptRun::find($promptRunId);
 
-        if (!$promptRun) {
+        if (! $promptRun) {
             Log::error('Prompt run not found for N8n webhook', [
                 'prompt_run_id' => $promptRunId,
             ]);
+
             return response()->json([
                 'success' => false,
                 'error' => 'Prompt run not found',
@@ -131,6 +134,7 @@ Route::post('/n8n/webhook', function (Request $request) {
             'error' => $e->getMessage(),
             'payload' => $request->all(),
         ]);
+
         return response()->json([
             'success' => false,
             'error' => 'Database error',
@@ -142,6 +146,7 @@ Route::post('/n8n/webhook', function (Request $request) {
             'trace' => $e->getTraceAsString(),
             'payload' => $request->all(),
         ]);
+
         return response()->json([
             'success' => false,
             'error' => 'Internal server error',
