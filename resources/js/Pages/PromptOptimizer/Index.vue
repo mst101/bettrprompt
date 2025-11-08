@@ -36,8 +36,11 @@ const clearTaskDescription = () => {
 };
 
 // Voice input method preference (when browser supports both)
+// Default to true (Whisper API) for better accuracy
 const preferWhisperAPI = ref(
-    localStorage.getItem('preferWhisperAPI') === 'true',
+    localStorage.getItem('preferWhisperAPI') !== null
+        ? localStorage.getItem('preferWhisperAPI') === 'true'
+        : true,
 );
 
 // Persist preference changes to localStorage

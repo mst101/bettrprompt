@@ -2,10 +2,12 @@
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import ToggleSwitch from '@/Components/ToggleSwitch.vue';
+import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -99,6 +101,40 @@ const skipQuestion = () => {
         },
     );
 };
+
+// Voice input functionality
+const handleTranscription = (text: string) => {
+    // Append transcription to existing text (with space if text exists)
+    if (answerForm.answer && !answerForm.answer.endsWith(' ')) {
+        answerForm.answer += ' ';
+    }
+    answerForm.answer += text;
+};
+
+const clearAnswer = () => {
+    answerForm.answer = '';
+};
+
+// Voice input method preference (when browser supports both)
+// Default to true (Whisper API) for better accuracy
+const preferWhisperAPI = ref(
+    localStorage.getItem('preferWhisperAPI') !== null
+        ? localStorage.getItem('preferWhisperAPI') === 'true'
+        : true,
+);
+
+// Persist preference changes to localStorage
+watch(preferWhisperAPI, (newValue) => {
+    localStorage.setItem('preferWhisperAPI', String(newValue));
+});
+
+// Check if browser supports speech recognition
+const speechRecognitionSupported = computed(() => {
+    return !!(
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition
+    );
+});
 
 const copyToClipboard = async () => {
     if (!props.promptRun.optimizedPrompt) return;
@@ -300,12 +336,34 @@ onUnmounted(() => {
 
                     <form @submit.prevent="submitAnswer" class="space-y-4">
                         <div>
-                            <label
-                                for="answer"
-                                class="block text-sm font-medium text-gray-700"
-                            >
-                                Your Answer
-                            </label>
+                            <div class="mb-2 flex items-center justify-between">
+                                <label
+                                    for="answer"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Your Answer
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        v-if="answerForm.answer"
+                                        type="button"
+                                        @click="clearAnswer"
+                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50"
+                                        title="Clear text"
+                                        :disabled="isSubmitting"
+                                    >
+                                        <DynamicIcon
+                                            name="trash"
+                                            class="h-5 w-5 text-gray-600"
+                                        />
+                                        <span>Clear</span>
+                                    </button>
+                                    <VoiceInputButton
+                                        @transcription="handleTranscription"
+                                        :force-whisper-a-p-i="preferWhisperAPI"
+                                    />
+                                </div>
+                            </div>
                             <textarea
                                 id="answer"
                                 v-model="answerForm.answer"
@@ -320,6 +378,16 @@ onUnmounted(() => {
                             >
                                 {{ answerForm.errors.answer }}
                             </p>
+
+                            <!-- Voice input method toggle (only show if browser supports speech) -->
+                            <ToggleSwitch
+                                v-if="speechRecognitionSupported"
+                                v-model="preferWhisperAPI"
+                                label="Voice input method:"
+                                enabled-text="AI transcription (more accurate, slower)"
+                                disabled-text="Browser native (instant)"
+                                class="mt-3"
+                            />
                         </div>
 
                         <div class="flex items-center gap-3">
