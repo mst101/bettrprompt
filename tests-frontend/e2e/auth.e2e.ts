@@ -1,24 +1,30 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Authentication', () => {
-    test('should show login modal when clicking login button', async ({ page }) => {
+    test('should show login modal when clicking login button', async ({
+        page,
+    }) => {
         await page.goto('/');
 
-        // Look for a login button or link in the navigation
-        const loginButton = page.getByRole('link', { name: /log in/i });
+        // Look for the login button in the navigation (it's a button, not a link)
+        // Use .first() to get the desktop version (mobile is hidden by default)
+        const loginButton = page.getByRole('button', { name: /^log in$/i }).first();
 
-        // If the button exists (user not logged in), click it
-        if (await loginButton.isVisible()) {
-            await loginButton.click();
+        // Verify button exists and is visible
+        await expect(loginButton).toBeVisible();
 
-            // Wait for modal or navigation to login page
-            // The app might use a modal or navigate to /login
-            // Check for either scenario
-            const isModal = await page.locator('[role="dialog"]').isVisible().catch(() => false);
-            const isLoginPage = page.url().includes('/login');
+        // Click the login button
+        await loginButton.click();
 
-            expect(isModal || isLoginPage).toBeTruthy();
-        }
+        // Wait for the login modal to appear
+        // Note: There are multiple modals on the page, so we use getByRole('dialog')
+        // which will find the open one (it has the 'open' attribute)
+        const modal = page.getByRole('dialog');
+        await expect(modal).toBeVisible({ timeout: 10000 });
+
+        // Verify the modal contains login-specific content (using labels)
+        await expect(page.getByLabel(/email/i)).toBeVisible();
+        await expect(page.getByLabel(/password/i)).toBeVisible();
     });
 
     test('should navigate to home page', async ({ page }) => {
@@ -29,7 +35,9 @@ test.describe('Authentication', () => {
         await expect(page).toHaveTitle(/Welcome to AI Buddy/);
     });
 
-    test('should display Google Sign-In option when available', async ({ page }) => {
+    test('should display Google Sign-In option when available', async ({
+        page,
+    }) => {
         // Navigate to login page or open login modal
         await page.goto('/?modal=login');
 
@@ -39,7 +47,7 @@ test.describe('Authentication', () => {
         // Check if Google Sign-In button exists
         // This is a flexible test - it won't fail if the button isn't there
         const googleButton = page.getByRole('button', { name: /google/i });
-        const googleButtonExists = await googleButton.count() > 0;
+        const googleButtonExists = (await googleButton.count()) > 0;
 
         // Just verify the page loaded successfully
         expect(page.url()).toBeTruthy();
@@ -51,13 +59,19 @@ test.describe('Authentication', () => {
         await page.waitForLoadState('networkidle');
 
         // Look for a "register" or "sign up" link
-        const registerLink = page.getByRole('link', { name: /register|sign up/i }).first();
+        const registerLink = page
+            .getByRole('link', { name: /register|sign up/i })
+            .first();
 
         if (await registerLink.isVisible().catch(() => false)) {
             await registerLink.click();
 
             // Verify we navigated or opened register modal
-            const hasRegisterContent = await page.getByText(/register|sign up|create account/i).first().isVisible().catch(() => false);
+            const hasRegisterContent = await page
+                .getByText(/register|sign up|create account/i)
+                .first()
+                .isVisible()
+                .catch(() => false);
 
             // This is a flexible check - just ensure something happened
             expect(page.url()).toBeTruthy();
@@ -82,14 +96,18 @@ test.describe('Authentication', () => {
             await expect(passwordInput).toBeVisible();
 
             // Verify there's a submit button
-            const submitButton = page.getByRole('button', { name: /log in|sign in/i }).first();
+            const submitButton = page
+                .getByRole('button', { name: /log in|sign in/i })
+                .first();
             await expect(submitButton).toBeVisible();
         }
     });
 });
 
 test.describe('Protected Routes', () => {
-    test('should redirect unauthenticated users from profile page', async ({ page }) => {
+    test('should redirect unauthenticated users from profile page', async ({
+        page,
+    }) => {
         // Try to access the profile page without authentication
         await page.goto('/profile');
 
@@ -103,7 +121,9 @@ test.describe('Protected Routes', () => {
         expect(isRedirected).toBeTruthy();
     });
 
-    test('should redirect unauthenticated users from prompt optimizer', async ({ page }) => {
+    test('should redirect unauthenticated users from prompt optimizer', async ({
+        page,
+    }) => {
         // Try to access the prompt optimizer without authentication
         await page.goto('/prompt-optimizer');
 
