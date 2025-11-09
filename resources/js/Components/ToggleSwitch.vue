@@ -31,6 +31,7 @@ const toggle = () => {
             ]"
             role="switch"
             :aria-checked="modelValue"
+            :aria-label="label"
         >
             <span
                 :class="[
