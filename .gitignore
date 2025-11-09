@@ -13,8 +13,10 @@
 /.zed
 /auth.json
 /bootstrap/ssr
+/coverage
 /docs/deployment
 /node_modules
+/playwright-report/
 /public/build
 /public/hot
 /public/storage

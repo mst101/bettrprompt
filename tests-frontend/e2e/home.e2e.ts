@@ -37,7 +37,8 @@ test.describe('Home Page', () => {
         await page.goto('/');
 
         // Check for navigation (header should contain links)
-        const nav = page.locator('nav');
+        // Use .first() since there may be multiple nav elements
+        const nav = page.locator('nav').first();
         await expect(nav).toBeVisible();
     });
 

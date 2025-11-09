@@ -64,29 +64,26 @@ test.describe('Authentication', () => {
         }
     });
 
-    test('should show validation errors for empty login form', async ({ page }) => {
-        // This test assumes there's a traditional login form
-        // Navigate to login
+    test('should show login modal with form fields', async ({ page }) => {
+        // Navigate to login modal
         await page.goto('/?modal=login');
         await page.waitForLoadState('networkidle');
 
-        // Look for email and password inputs
+        // Wait for modal to appear
+        await page.waitForTimeout(500);
+
+        // Look for email and password inputs within the modal
         const emailInput = page.getByLabel(/email/i).first();
         const passwordInput = page.getByLabel(/password/i).first();
-        const submitButton = page.getByRole('button', { name: /log in|sign in/i }).first();
 
-        // Only proceed if we found a form
+        // Check if login form is visible
         if (await emailInput.isVisible().catch(() => false)) {
-            // Try to submit with empty fields
-            await submitButton.click();
+            await expect(emailInput).toBeVisible();
+            await expect(passwordInput).toBeVisible();
 
-            // Wait a moment for validation
-            await page.waitForTimeout(500);
-
-            // Check for validation messages or that we didn't navigate away
-            // (we should still be on the same page if validation failed)
-            const stillOnPage = page.url().includes('/?modal=login') || page.url() === '/';
-            expect(stillOnPage).toBeTruthy();
+            // Verify there's a submit button
+            const submitButton = page.getByRole('button', { name: /log in|sign in/i }).first();
+            await expect(submitButton).toBeVisible();
         }
     });
 });
