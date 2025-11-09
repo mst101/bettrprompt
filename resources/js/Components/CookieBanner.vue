@@ -29,20 +29,27 @@ const closeSettings = () => {
         >
             <div
                 v-if="!hasConsent"
-                class="fixed inset-x-0 bottom-0 z-50 pb-safe"
+                class="pb-safe fixed inset-x-0 bottom-0 z-50"
                 role="dialog"
                 aria-modal="false"
                 aria-label="Cookie consent banner"
             >
                 <div class="bg-gray-900">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <div class="lg:flex lg:items-center lg:justify-between lg:gap-8">
+                        <div
+                            class="lg:flex lg:items-center lg:justify-between lg:gap-8"
+                        >
                             <div class="flex-1">
                                 <h2 class="text-lg font-semibold text-white">
                                     We use cookies
                                 </h2>
                                 <p class="mt-2 text-sm text-gray-300">
-                                    We use essential cookies to make our site work. With your consent, we may also use non-essential cookies to improve user experience and analyse website traffic. By clicking "Accept All", you agree to our use of cookies.
+                                    We use essential cookies to make our site
+                                    work. With your consent, we may also use
+                                    non-essential cookies to improve user
+                                    experience and analyse website traffic. By
+                                    clicking "Accept All", you agree to our use
+                                    of cookies.
                                     <Link
                                         :href="route('cookies')"
                                         class="underline hover:text-white"
@@ -51,7 +58,9 @@ const closeSettings = () => {
                                     </Link>
                                 </p>
                             </div>
-                            <div class="mt-6 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:flex-shrink-0">
+                            <div
+                                class="mt-6 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:flex-shrink-0"
+                            >
                                 <button
                                     @click="rejectAll"
                                     type="button"

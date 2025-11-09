@@ -18,7 +18,8 @@ export const COOKIE_CATEGORIES = {
             },
             {
                 name: 'XSRF-TOKEN',
-                purpose: 'Provides security against cross-site request forgery attacks',
+                purpose:
+                    'Provides security against cross-site request forgery attacks',
                 duration: '2 hours',
             },
             {
@@ -43,7 +44,8 @@ export const COOKIE_CATEGORIES = {
             },
             {
                 name: 'voice_input_preference',
-                purpose: 'Remembers your voice input method preference (Browser vs Whisper API)',
+                purpose:
+                    'Remembers your voice input method preference (Browser vs Whisper API)',
                 duration: '1 year',
             },
         ],

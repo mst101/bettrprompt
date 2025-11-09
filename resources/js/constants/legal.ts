@@ -5,10 +5,11 @@
  */
 
 export const COMPANY_INFO = {
-    name: '[COMPANY NAME]',
-    registeredAddress: '[REGISTERED ADDRESS]',
-    contactEmail: '[CONTACT EMAIL]',
-    hostingProvider: '[HOSTING PROVIDER]',
+    name: 'Hidden Gambia Ltd.',
+    registeredAddress:
+        '8 Baird House, Second Avenue The Pensnett Estate, Kingswinford, West Midlands, DY6 7YA',
+    contactEmail: 'info@hiddengambia.com',
+    hostingProvider: 'DigitalOcean Holdings, Inc.',
 } as const;
 
 export const LEGAL_URLS = {

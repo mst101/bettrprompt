@@ -1,7 +1,4 @@
-import {
-    type CookiePreferences,
-    DEFAULT_COOKIE_PREFERENCES,
-} from '@/constants/cookies';
+import { type CookiePreferences } from '@/constants/cookies';
 import { computed, ref } from 'vue';
 
 const CONSENT_COOKIE_NAME = 'cookie_consent';

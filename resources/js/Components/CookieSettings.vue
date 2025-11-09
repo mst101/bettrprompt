@@ -78,7 +78,8 @@ const analyticsEnabled = computed({
                         Cookie Settings
                     </h2>
                     <p class="mt-1 text-sm text-gray-600">
-                        Manage your cookie preferences. You can enable or disable different types of cookies below.
+                        Manage your cookie preferences. You can enable or
+                        disable different types of cookies below.
                         <Link
                             :href="route('cookies')"
                             class="text-indigo-600 hover:text-indigo-800"
