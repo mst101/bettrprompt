@@ -243,6 +243,12 @@ useRealtimeUpdates(
                             <button
                                 @click="toggleQuestion(index)"
                                 class="flex w-full items-start justify-between text-left"
+                                :aria-label="
+                                    expandedQuestions.has(index)
+                                        ? `Hide question ${index + 1}`
+                                        : `Show question ${index + 1}`
+                                "
+                                :aria-expanded="expandedQuestions.has(index)"
                             >
                                 <div class="flex-1">
                                     <div class="flex items-start">

@@ -123,6 +123,7 @@ const progressPercent = computed(() => {
                             <ToggleSwitch
                                 v-model="preferWhisperAPI"
                                 :disabled="isSubmitting"
+                                label="Voice input method"
                             />
                             <span class="text-sm text-gray-600"
                                 >Whisper API</span
