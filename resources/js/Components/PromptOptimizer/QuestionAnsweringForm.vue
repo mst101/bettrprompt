@@ -94,7 +94,10 @@ const progressPercent = computed(() => {
                 <textarea
                     :value="answer"
                     @input="
-                        emit('update:answer', ($event.target as HTMLTextAreaElement).value)
+                        emit(
+                            'update:answer',
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
                     "
                     rows="4"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -116,9 +119,7 @@ const progressPercent = computed(() => {
                             v-if="speechRecognitionSupported"
                             class="flex items-center gap-2"
                         >
-                            <span class="text-sm text-gray-600"
-                                >Browser</span
-                            >
+                            <span class="text-sm text-gray-600">Browser</span>
                             <ToggleSwitch
                                 v-model="preferWhisperAPI"
                                 :disabled="isSubmitting"

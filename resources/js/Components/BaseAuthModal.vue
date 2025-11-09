@@ -48,7 +48,10 @@ const handleSubmit = () => {
             <slot name="status" />
 
             <!-- Form content -->
-            <form @submit.prevent="handleSubmit" :class="showGoogleDivider ? '' : 'mt-6'">
+            <form
+                @submit.prevent="handleSubmit"
+                :class="showGoogleDivider ? '' : 'mt-6'"
+            >
                 <slot name="fields" />
 
                 <!-- Footer with navigation and submit button -->

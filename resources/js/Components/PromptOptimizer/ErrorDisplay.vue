@@ -50,10 +50,7 @@ const retry = () => {
             </div>
 
             <!-- Detailed error (if available) -->
-            <div
-                v-if="errorResponse?.details"
-                class="rounded-lg bg-red-50 p-4"
-            >
+            <div v-if="errorResponse?.details" class="rounded-lg bg-red-50 p-4">
                 <p class="text-sm font-medium text-red-900">Error Details:</p>
                 <p class="mt-1 text-sm text-red-700">
                     {{ errorResponse.details }}

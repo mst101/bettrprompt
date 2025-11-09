@@ -154,7 +154,9 @@ useRealtimeUpdates(
 
             <!-- Framework Selection Info -->
             <FrameworkSelectionDisplay
-                v-if="promptRun.selectedFramework && promptRun.frameworkReasoning"
+                v-if="
+                    promptRun.selectedFramework && promptRun.frameworkReasoning
+                "
                 :framework="promptRun.selectedFramework"
                 :reasoning="promptRun.frameworkReasoning"
                 class="mb-6"

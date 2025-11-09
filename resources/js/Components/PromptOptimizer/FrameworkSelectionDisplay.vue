@@ -13,9 +13,7 @@ defineProps<Props>();
     <Card data-testid="framework-selection-display">
         <div class="space-y-4">
             <div class="flex items-center gap-2">
-                <div
-                    class="rounded-lg bg-indigo-100 p-2 text-indigo-600"
-                >
+                <div class="rounded-lg bg-indigo-100 p-2 text-indigo-600">
                     <svg
                         class="h-6 w-6"
                         fill="none"
@@ -32,15 +30,23 @@ defineProps<Props>();
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Selected Framework</p>
-                    <h3 data-testid="framework-name" class="text-lg font-semibold text-gray-900">
+                    <h3
+                        data-testid="framework-name"
+                        class="text-lg font-semibold text-gray-900"
+                    >
                         {{ framework }}
                     </h3>
                 </div>
             </div>
 
             <div class="rounded-lg bg-gray-50 p-4">
-                <p class="text-sm font-medium text-gray-700">Why this framework?</p>
-                <p data-testid="framework-reasoning" class="mt-1 text-sm text-gray-600">
+                <p class="text-sm font-medium text-gray-700">
+                    Why this framework?
+                </p>
+                <p
+                    data-testid="framework-reasoning"
+                    class="mt-1 text-sm text-gray-600"
+                >
                     {{ reasoning }}
                 </p>
             </div>

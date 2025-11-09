@@ -73,7 +73,10 @@ export function useRealtimeUpdates(
             Object.entries(events).forEach(([eventName, handler]) => {
                 channel.listen(eventName, (data: any) => {
                     try {
-                        console.log(`[useRealtimeUpdates] Event: ${eventName}`, data);
+                        console.log(
+                            `[useRealtimeUpdates] Event: ${eventName}`,
+                            data,
+                        );
                         handler(data);
                     } catch (error) {
                         console.error(
@@ -86,15 +89,22 @@ export function useRealtimeUpdates(
 
             // Handle channel errors
             channel.error((error: any) => {
-                console.error('[useRealtimeUpdates] WebSocket channel error:', error);
+                console.error(
+                    '[useRealtimeUpdates] WebSocket channel error:',
+                    error,
+                );
                 if (!usingFallback.value) {
-                    console.warn('[useRealtimeUpdates] Falling back to polling due to channel error');
+                    console.warn(
+                        '[useRealtimeUpdates] Falling back to polling due to channel error',
+                    );
                     startPolling();
                 }
             });
 
             connected.value = true;
-            console.log(`[useRealtimeUpdates] Connected to channel: ${channelName}`);
+            console.log(
+                `[useRealtimeUpdates] Connected to channel: ${channelName}`,
+            );
         } catch (error) {
             console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
             startPolling();
@@ -103,7 +113,9 @@ export function useRealtimeUpdates(
 
     const handleEchoDisconnect = () => {
         if (!usingFallback.value) {
-            console.warn('[useRealtimeUpdates] Echo disconnected, falling back to polling');
+            console.warn(
+                '[useRealtimeUpdates] Echo disconnected, falling back to polling',
+            );
             connected.value = false;
             startPolling();
         }
@@ -111,7 +123,9 @@ export function useRealtimeUpdates(
 
     const handleEchoReconnect = () => {
         if (usingFallback.value) {
-            console.log('[useRealtimeUpdates] Echo reconnected, stopping polling');
+            console.log(
+                '[useRealtimeUpdates] Echo reconnected, stopping polling',
+            );
             connected.value = true;
             stopPolling();
         }
@@ -123,7 +137,9 @@ export function useRealtimeUpdates(
         try {
             if (window.Echo && channel) {
                 window.Echo.leave(channelName);
-                console.log(`[useRealtimeUpdates] Left channel: ${channelName}`);
+                console.log(
+                    `[useRealtimeUpdates] Left channel: ${channelName}`,
+                );
             }
         } catch (error) {
             console.error('[useRealtimeUpdates] Error leaving channel:', error);

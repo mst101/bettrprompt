@@ -20,10 +20,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): Ref<T> {
                 return JSON.parse(stored);
             }
         } catch (error) {
-            console.warn(
-                `Error reading localStorage key "${key}":`,
-                error,
-            );
+            console.warn(`Error reading localStorage key "${key}":`, error);
         }
         return defaultValue;
     };
