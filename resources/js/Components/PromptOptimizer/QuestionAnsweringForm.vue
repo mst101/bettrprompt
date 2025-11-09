@@ -86,24 +86,20 @@ const progressPercent = computed(() => {
             </div>
 
             <!-- Answer Input -->
-            <FormField
-                id="answer"
-                label="Your Answer"
-                :error="hasError ? errorMessage : undefined"
-            >
-                <textarea
-                    :value="answer"
-                    @input="
-                        emit(
-                            'update:answer',
-                            ($event.target as HTMLTextAreaElement).value,
-                        )
+            <div>
+                <FormField
+                    id="answer"
+                    label="Your Answer"
+                    type="textarea"
+                    :model-value="answer"
+                    @update:model-value="
+                        (value) => emit('update:answer', value)
                     "
-                    rows="4"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    :error="hasError ? errorMessage : undefined"
                     :disabled="isSubmitting"
                     placeholder="Type your answer here..."
-                ></textarea>
+                    :rows="4"
+                />
 
                 <!-- Voice Input Controls -->
                 <div class="mt-3 flex items-center justify-between">
@@ -142,7 +138,7 @@ const progressPercent = computed(() => {
                         </button>
                     </div>
                 </div>
-            </FormField>
+            </div>
 
             <!-- Action Buttons -->
             <div class="flex gap-3">
