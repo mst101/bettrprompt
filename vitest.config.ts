@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     plugins: [
@@ -55,7 +55,9 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
-            'ziggy-js': fileURLToPath(new URL('./vendor/tightenco/ziggy', import.meta.url)),
+            'ziggy-js': fileURLToPath(
+                new URL('./vendor/tightenco/ziggy', import.meta.url),
+            ),
         },
     },
 });

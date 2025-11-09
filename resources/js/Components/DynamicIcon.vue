@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, type Component } from 'vue';
+import { computed, defineAsyncComponent, h, type Component } from 'vue';
 
 interface Props {
     name: string;
@@ -33,7 +33,7 @@ const getIconPath = (iconName: string): string => {
     // Check if there's an alias for this icon
     const resolvedName = iconAliases[iconName] || iconName;
     const pascalName = kebabToPascal(resolvedName);
-    return `/resources/js/Icons/Svg${pascalName}.vue`;
+    return `Svg${pascalName}.vue`;
 };
 
 const iconComponent = computed(() => {
@@ -53,10 +53,13 @@ const iconComponent = computed(() => {
     return defineAsyncComponent({
         loader: iconModules[moduleKey],
         loadingComponent: {
-            template: '<div class="size-5 animate-pulse rounded bg-gray-200" />',
+            render: () =>
+                h('div', {
+                    class: 'size-5 animate-pulse rounded bg-gray-200',
+                }),
         },
         errorComponent: {
-            template: '<div class="size-5 rounded bg-gray-200" />',
+            render: () => h('div', { class: 'size-5 rounded bg-gray-200' }),
         },
         delay: 0, // Show loading immediately
         timeout: 3000, // Timeout after 3 seconds
