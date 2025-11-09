@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { COMPANY_INFO, LEGAL_URLS } from '@/constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
@@ -24,7 +25,7 @@ defineOptions({
                     <div class="prose prose-indigo mt-8 max-w-none">
                         <h2>1. Introduction</h2>
                         <p>
-                            [COMPANY NAME] ("we", "us", or "our") operates AI Buddy (the "Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our Service.
+                            {{ COMPANY_INFO.name }} ("we", "us", or "our") operates AI Buddy (the "Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our Service.
                         </p>
                         <p>
                             We are committed to protecting your privacy and ensuring compliance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.
@@ -35,9 +36,9 @@ defineOptions({
                             For the purposes of UK GDPR, the data controller is:
                         </p>
                         <p>
-                            [COMPANY NAME]<br>
-                            [REGISTERED ADDRESS]<br>
-                            Email: [CONTACT EMAIL]
+                            {{ COMPANY_INFO.name }}<br>
+                            {{ COMPANY_INFO.registeredAddress }}<br>
+                            Email: {{ COMPANY_INFO.contactEmail }}
                         </p>
 
                         <h2>3. Information We Collect</h2>
@@ -108,7 +109,7 @@ defineOptions({
                         <ul>
                             <li><strong>OpenAI (ChatGPT API):</strong> We send your task descriptions and personality information to OpenAI's API to generate optimised prompts. OpenAI's data processing is governed by their <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800">Privacy Policy</a> and <a href="https://openai.com/policies/terms-of-use" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800">Terms of Use</a>.</li>
                             <li><strong>Google OAuth:</strong> For authentication services, subject to Google's <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800">Privacy Policy</a>.</li>
-                            <li><strong>Hosting Provider:</strong> Our servers and databases are hosted securely with [HOSTING PROVIDER].</li>
+                            <li><strong>Hosting Provider:</strong> Our servers and databases are hosted securely with {{ COMPANY_INFO.hostingProvider }}.</li>
                         </ul>
 
                         <h3>6.2 Analytics and Performance</h3>
@@ -158,7 +159,7 @@ defineOptions({
                             <li><strong>Right to Complain:</strong> Lodge a complaint with the Information Commissioner's Office (ICO)</li>
                         </ul>
                         <p>
-                            To exercise these rights, please contact us at [CONTACT EMAIL].
+                            To exercise these rights, please contact us at {{ COMPANY_INFO.contactEmail }}.
                         </p>
 
                         <h2>9. Data Security</h2>
@@ -211,7 +212,7 @@ defineOptions({
                         <ul>
                             <li>Clicking the "unsubscribe" link in any marketing email</li>
                             <li>Updating your preferences in your account settings</li>
-                            <li>Contacting us at [CONTACT EMAIL]</li>
+                            <li>Contacting us at {{ COMPANY_INFO.contactEmail }}</li>
                         </ul>
                         <p>
                             Please note that you will continue to receive essential service-related communications regardless of your marketing preferences.
@@ -236,15 +237,15 @@ defineOptions({
                         </p>
                         <p>
                             <strong>Data Protection Enquiries:</strong><br>
-                            [COMPANY NAME]<br>
-                            [REGISTERED ADDRESS]<br>
-                            Email: [CONTACT EMAIL]
+                            {{ COMPANY_INFO.name }}<br>
+                            {{ COMPANY_INFO.registeredAddress }}<br>
+                            Email: {{ COMPANY_INFO.contactEmail }}
                         </p>
                         <p>
                             <strong>Supervisory Authority:</strong><br>
                             If you are not satisfied with our response, you have the right to lodge a complaint with the Information Commissioner's Office (ICO):<br>
-                            Website: <a href="https://ico.org.uk/" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800">https://ico.org.uk/</a><br>
-                            Telephone: 0303 123 1113
+                            Website: <a :href="LEGAL_URLS.ico" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800">{{ LEGAL_URLS.ico }}</a><br>
+                            Telephone: {{ LEGAL_URLS.icoPhone }}
                         </p>
                     </div>
                 </div>

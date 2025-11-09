@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import CookieSettings from './CookieSettings.vue';
+
+const showCookieSettings = ref(false);
+
+const openCookieSettings = () => {
+    showCookieSettings.value = true;
+};
+
+const closeCookieSettings = () => {
+    showCookieSettings.value = false;
+};
 </script>
 
 <template>
@@ -28,8 +40,24 @@ import { Link } from '@inertiajs/vue3';
                     >
                         Privacy Policy
                     </Link>
+                    <Link
+                        :href="route('cookies')"
+                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                    >
+                        Cookie Policy
+                    </Link>
+                    <button
+                        @click="openCookieSettings"
+                        type="button"
+                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                    >
+                        Cookie Settings
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- Cookie Settings Modal -->
+        <CookieSettings :show="showCookieSettings" @close="closeCookieSettings" />
     </footer>
 </template>

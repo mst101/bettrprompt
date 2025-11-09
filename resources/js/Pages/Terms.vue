@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { COMPANY_INFO } from '@/constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
@@ -24,7 +25,7 @@ defineOptions({
                     <div class="prose prose-indigo mt-8 max-w-none">
                         <h2>1. Agreement to Terms</h2>
                         <p>
-                            By accessing and using AI Buddy ("the Service"), operated by [COMPANY NAME] ("we", "us", or "our"), you agree to be bound by these Terms of Use and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using the Service.
+                            By accessing and using AI Buddy ("the Service"), operated by {{ COMPANY_INFO.name }} ("we", "us", or "our"), you agree to be bound by these Terms of Use and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using the Service.
                         </p>
 
                         <h2>2. Description of Service</h2>
@@ -63,7 +64,7 @@ defineOptions({
 
                         <h2>5. Intellectual Property</h2>
                         <p>
-                            The Service, including its original content, features, and functionality, is owned by [COMPANY NAME] and is protected by international copyright, trademark, and other intellectual property laws.
+                            The Service, including its original content, features, and functionality, is owned by {{ COMPANY_INFO.name }} and is protected by international copyright, trademark, and other intellectual property laws.
                         </p>
                         <p>
                             You retain ownership of the prompts and content you create using the Service. By using the Service, you grant us a licence to use, store, and process your prompts solely for the purpose of providing the Service to you.
@@ -104,7 +105,7 @@ defineOptions({
 
                         <h2>9. Limitation of Liability</h2>
                         <p>
-                            TO THE MAXIMUM EXTENT PERMITTED BY LAW, [COMPANY NAME] SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES RESULTING FROM:
+                            TO THE MAXIMUM EXTENT PERMITTED BY LAW, {{ COMPANY_INFO.name }} SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES RESULTING FROM:
                         </p>
                         <ul>
                             <li>Your use or inability to use the Service</li>
@@ -116,7 +117,7 @@ defineOptions({
 
                         <h2>10. Indemnification</h2>
                         <p>
-                            You agree to indemnify, defend, and hold harmless [COMPANY NAME], its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses, including reasonable legal fees, arising out of or in any way connected with your access to or use of the Service, or your violation of these Terms.
+                            You agree to indemnify, defend, and hold harmless {{ COMPANY_INFO.name }}, its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses, including reasonable legal fees, arising out of or in any way connected with your access to or use of the Service, or your violation of these Terms.
                         </p>
 
                         <h2>11. Modifications to the Service</h2>
@@ -149,9 +150,9 @@ defineOptions({
                             If you have any questions about these Terms, please contact us at:
                         </p>
                         <p>
-                            [COMPANY NAME]<br>
-                            [REGISTERED ADDRESS]<br>
-                            Email: [CONTACT EMAIL]
+                            {{ COMPANY_INFO.name }}<br>
+                            {{ COMPANY_INFO.registeredAddress }}<br>
+                            Email: {{ COMPANY_INFO.contactEmail }}
                         </p>
                     </div>
                 </div>

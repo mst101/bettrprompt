@@ -23,6 +23,10 @@ Route::get('/privacy', function () {
     return Inertia::render('Privacy');
 })->name('privacy');
 
+Route::get('/cookies', function () {
+    return Inertia::render('Cookies');
+})->name('cookies');
+
 // Google OAuth routes
 Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');

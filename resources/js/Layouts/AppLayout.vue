@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
@@ -305,5 +306,8 @@ provide('openRegisterModal', openRegister);
             @close="showForgotPasswordModal = false"
             @switch-to-login="openLogin"
         />
+
+        <!-- Cookie Banner -->
+        <CookieBanner />
     </div>
 </template>
