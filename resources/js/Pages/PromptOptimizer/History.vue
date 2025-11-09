@@ -38,7 +38,7 @@ const formatDate = (dateString: string) => {
     <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div class="items-centre flex justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     Prompt History
                 </h2>
                 <a
@@ -75,31 +75,31 @@ const formatDate = (dateString: string) => {
                                 <tr>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Personality Type
                                     </th>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Task Description
                                     </th>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Status
                                     </th>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Created
                                     </th>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        class="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
                                         Actions
                                     </th>
@@ -112,7 +112,7 @@ const formatDate = (dateString: string) => {
                                     class="hover:bg-gray-50"
                                 >
                                     <td
-                                        class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
+                                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
                                     >
                                         {{ promptRun.personalityType }}
                                     </td>
@@ -125,19 +125,19 @@ const formatDate = (dateString: string) => {
                                         }}
                                     </td>
                                     <td
-                                        class="whitespace-nowrap px-6 py-4 text-sm"
+                                        class="px-6 py-4 text-sm whitespace-nowrap"
                                     >
                                         <StatusBadge
                                             :status="promptRun.status"
                                         />
                                     </td>
                                     <td
-                                        class="whitespace-nowrap px-6 py-4 text-sm text-gray-500"
+                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
                                     >
                                         {{ formatDate(promptRun.createdAt) }}
                                     </td>
                                     <td
-                                        class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+                                        class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap"
                                     >
                                         <Link
                                             :href="

@@ -116,7 +116,7 @@ const toggleRecording = async () => {
                 'inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium shadow-xs transition-all',
                 isActive
                     ? 'animate-pulse bg-red-600 text-white hover:bg-red-700'
-                    : 'bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
+                    : 'bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-50',
                 isProcessing ? 'cursor-wait opacity-75' : '',
             ]"
             :title="
@@ -141,7 +141,7 @@ const toggleRecording = async () => {
         <!-- Show interim transcript (Web Speech API only) -->
         <div
             v-if="useSpeechAPI && speechListening && speechInterimTranscript"
-            class="absolute left-0 top-full z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-xs"
+            class="absolute top-full left-0 z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-xs"
         >
             <div class="flex items-center gap-2">
                 <div class="h-2 w-2 animate-pulse rounded-full bg-red-500" />
@@ -152,7 +152,7 @@ const toggleRecording = async () => {
         <!-- Processing indicator (Whisper API) -->
         <div
             v-if="isProcessing"
-            class="absolute left-0 top-full z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-xs"
+            class="absolute top-full left-0 z-10 mt-2 rounded-md bg-indigo-50 px-3 py-2 text-sm text-indigo-700 shadow-xs"
         >
             <div class="flex items-center gap-2">
                 <DynamicIcon
@@ -166,7 +166,7 @@ const toggleRecording = async () => {
         <!-- Error message -->
         <div
             v-if="displayError"
-            class="absolute left-0 top-full z-10 mt-2 max-w-xs rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 shadow-xs"
+            class="absolute top-full left-0 z-10 mt-2 max-w-xs rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 shadow-xs"
         >
             <div class="flex items-center gap-2">
                 <DynamicIcon

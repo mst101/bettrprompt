@@ -106,7 +106,7 @@ provide('openRegisterModal', openRegister);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{
@@ -115,7 +115,7 @@ provide('openRegisterModal', openRegister);
 
                                                 <DynamicIcon
                                                     name="chevron-down"
-                                                    class="-me-0.5 ms-2 h-4 w-4"
+                                                    class="ms-2 -me-0.5 h-4 w-4"
                                                 />
                                             </button>
                                         </span>
@@ -191,7 +191,7 @@ provide('openRegisterModal', openRegister);
                 >
                     <!-- Authenticated Mobile Nav -->
                     <template v-if="isAuthenticated">
-                        <div class="space-y-1 pb-3 pt-2">
+                        <div class="space-y-1 pt-2 pb-3">
                             <ResponsiveNavLink
                                 :href="route('prompt-optimizer.index')"
                                 :active="
@@ -214,7 +214,7 @@ provide('openRegisterModal', openRegister);
                         </div>
 
                         <!-- Responsive Settings Options -->
-                        <div class="border-t border-gray-200 pb-1 pt-4">
+                        <div class="border-t border-gray-200 pt-4 pb-1">
                             <div class="px-4">
                                 <div
                                     class="text-base font-medium text-gray-800"
@@ -247,13 +247,13 @@ provide('openRegisterModal', openRegister);
 
                     <!-- Guest Mobile Nav -->
                     <template v-else>
-                        <div class="space-y-1 pb-3 pt-2">
+                        <div class="space-y-1 pt-2 pb-3">
                             <button
                                 @click="
                                     openLogin();
                                     showingNavigationDropdown = false;
                                 "
-                                class="block w-full border-l-4 border-transparent py-2 pe-4 ps-3 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
+                                class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
                             >
                                 Log in
                             </button>
@@ -262,7 +262,7 @@ provide('openRegisterModal', openRegister);
                                     openRegister();
                                     showingNavigationDropdown = false;
                                 "
-                                class="block w-full border-l-4 border-transparent py-2 pe-4 ps-3 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
+                                class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
                             >
                                 Get Started
                             </button>

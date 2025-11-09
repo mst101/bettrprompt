@@ -17,7 +17,6 @@ declare global {
             | 'failed';
     }
 
-    /* eslint-disable no-var */
     var route: typeof ziggyRoute;
 }
 

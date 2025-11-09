@@ -62,7 +62,7 @@ const speechRecognitionSupported = computed(() => {
 
     <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            <h2 class="text-xl leading-tight font-semibold text-gray-800">
                 Prompt Optimiser
             </h2>
         </div>
@@ -128,7 +128,7 @@ const speechRecognitionSupported = computed(() => {
                                         v-if="form.taskDescription"
                                         type="button"
                                         @click="clearTaskDescription"
-                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50"
+                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
                                         title="Clear text"
                                     >
                                         <DynamicIcon
@@ -187,7 +187,7 @@ const speechRecognitionSupported = computed(() => {
                                     form.processing ||
                                     !hasTask
                                 "
-                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <span v-if="form.processing"
                                     >Processing...</span

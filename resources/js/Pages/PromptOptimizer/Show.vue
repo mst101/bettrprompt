@@ -90,7 +90,7 @@ useRealtimeUpdates(
     <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     Prompt Optimiser
                 </h2>
                 <a
@@ -138,7 +138,7 @@ useRealtimeUpdates(
                             >Task Description:</span
                         >
                         <p
-                            class="ml-2 mt-1 whitespace-pre-wrap text-sm text-gray-900"
+                            class="mt-1 ml-2 text-sm whitespace-pre-wrap text-gray-900"
                         >
                             {{ promptRun.taskDescription }}
                         </p>
@@ -220,7 +220,7 @@ useRealtimeUpdates(
                         </h3>
                         <button
                             @click="toggleAll"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                         >
                             {{ allExpanded() ? 'Hide All' : 'Show All' }}
                         </button>
@@ -251,7 +251,7 @@ useRealtimeUpdates(
                                 <div class="flex-1">
                                     <div class="flex items-start">
                                         <span
-                                            class="mr-2 mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                            class="mt-0.5 mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
                                         >
                                             {{ index + 1 }}
                                         </span>
@@ -275,7 +275,7 @@ useRealtimeUpdates(
 
                             <div
                                 v-show="expandedQuestions.has(index)"
-                                class="ml-8 mt-2"
+                                class="mt-2 ml-8"
                             >
                                 <div
                                     v-if="
@@ -287,13 +287,13 @@ useRealtimeUpdates(
                                     class="rounded-md bg-gray-50 p-3"
                                 >
                                     <p
-                                        class="whitespace-break-spaces text-sm text-gray-700"
+                                        class="text-sm whitespace-break-spaces text-gray-700"
                                     >
                                         {{ promptRun.clarifyingAnswers[index] }}
                                     </p>
                                 </div>
                                 <div v-else class="rounded-md bg-gray-50 p-3">
-                                    <p class="text-sm italic text-gray-500">
+                                    <p class="text-sm text-gray-500 italic">
                                         [Skipped]
                                     </p>
                                 </div>

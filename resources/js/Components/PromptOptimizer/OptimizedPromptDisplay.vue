@@ -89,7 +89,7 @@ const copyToClipboard = async (text: string) => {
                 data-testid="optimized-prompt-text"
                 class="rounded-lg bg-gray-50 p-6 font-mono text-sm leading-relaxed text-gray-800"
             >
-                <pre class="whitespace-pre-wrap wrap-break-word">{{
+                <pre class="wrap-break-word whitespace-pre-wrap">{{
                     optimizedPrompt
                 }}</pre>
             </div>

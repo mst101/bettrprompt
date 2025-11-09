@@ -64,21 +64,21 @@ const closeSettings = () => {
                                 <button
                                     @click="rejectAll"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
                                 >
                                     Reject All
                                 </button>
                                 <button
                                     @click="openSettings"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
                                 >
                                     Customise
                                 </button>
                                 <button
                                     @click="acceptAll"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
                                 >
                                     Accept All
                                 </button>
