@@ -3,6 +3,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import Footer from '@/Components/Footer.vue';
 import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
 import LoginModal from '@/Components/LoginModal.vue';
 import NavLink from '@/Components/NavLink.vue';
@@ -280,6 +281,9 @@ provide('openRegisterModal', openRegister);
             <main>
                 <slot />
             </main>
+
+            <!-- Footer -->
+            <Footer />
         </div>
 
         <!-- Auth Modals -->
