@@ -7,7 +7,7 @@ export default defineConfig({
         vue({
             template: {
                 transformAssetUrls: {
-                    base: null,
+                    base: null as null,
                     includeAbsolute: false,
                 },
             },
@@ -49,7 +49,6 @@ export default defineConfig({
                 functions: 13,
                 lines: 14,
             },
-            all: true,
         },
     },
     resolve: {
