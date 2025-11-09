@@ -8,7 +8,9 @@ test.describe('Authentication', () => {
 
         // Look for the login button in the navigation (it's a button, not a link)
         // Use .first() to get the desktop version (mobile is hidden by default)
-        const loginButton = page.getByRole('button', { name: /^log in$/i }).first();
+        const loginButton = page
+            .getByRole('button', { name: /^log in$/i })
+            .first();
 
         // Verify button exists and is visible
         await expect(loginButton).toBeVisible();
@@ -16,13 +18,9 @@ test.describe('Authentication', () => {
         // Click the login button
         await loginButton.click();
 
-        // Wait for the login modal to appear
-        // Note: There are multiple modals on the page, so we use getByRole('dialog')
-        // which will find the open one (it has the 'open' attribute)
-        const modal = page.getByRole('dialog');
-        await expect(modal).toBeVisible({ timeout: 10000 });
-
-        // Verify the modal contains login-specific content (using labels)
+        // Wait for the login modal content to appear
+        // Note: The dialog element gets 'open' attribute immediately, but content
+        // transitions in over 300ms. We wait for actual content visibility.
         await expect(page.getByLabel(/email/i)).toBeVisible();
         await expect(page.getByLabel(/password/i)).toBeVisible();
     });
@@ -54,28 +52,30 @@ test.describe('Authentication', () => {
     });
 
     test('should allow navigation to register from login', async ({ page }) => {
-        // Try to open login modal
+        // Open login modal
         await page.goto('/?modal=login');
         await page.waitForLoadState('networkidle');
 
-        // Look for a "register" or "sign up" link
-        const registerLink = page
-            .getByRole('link', { name: /register|sign up/i })
-            .first();
+        // Wait for login modal content to appear
+        await expect(page.getByLabel(/email/i)).toBeVisible();
 
-        if (await registerLink.isVisible().catch(() => false)) {
-            await registerLink.click();
+        // Look for the "Need an account?" button in the login modal
+        const switchToRegisterButton = page.getByRole('button', { name: /need an account/i });
 
-            // Verify we navigated or opened register modal
-            const hasRegisterContent = await page
-                .getByText(/register|sign up|create account/i)
-                .first()
-                .isVisible()
-                .catch(() => false);
+        // Verify button exists and click it
+        await expect(switchToRegisterButton).toBeVisible();
+        await switchToRegisterButton.click();
 
-            // This is a flexible check - just ensure something happened
-            expect(page.url()).toBeTruthy();
-        }
+        // Verify the register modal opened (check for register-specific field)
+        // "Confirm Password" is unique to the register modal
+        await expect(page.getByLabel(/confirm password/i)).toBeVisible();
+
+        // Also verify other register fields are present
+        await expect(page.getByLabel(/^name$/i)).toBeVisible();
+
+        // Verify it's NOT the login modal by checking the submit button text
+        const registerSubmitButton = page.getByRole('button', { name: /^register$/i });
+        await expect(registerSubmitButton).toBeVisible();
     });
 
     test('should show login modal with form fields', async ({ page }) => {
