@@ -13,7 +13,7 @@ interface Props {
     promptRuns: Paginated<PromptRunResource>;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const truncate = (text: string | null | undefined, length: number = 100) => {
     if (!text) return '';

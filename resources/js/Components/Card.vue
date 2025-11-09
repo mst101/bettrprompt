@@ -3,7 +3,7 @@ interface Props {
     padding?: 'none' | 'small' | 'medium' | 'large';
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     padding: 'medium',
 });
 

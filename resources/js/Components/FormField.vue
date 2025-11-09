@@ -20,7 +20,7 @@ interface Props {
     inputClass?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     type: 'text',
     required: false,
     autofocus: false,

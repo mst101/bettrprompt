@@ -70,14 +70,8 @@ const toggleAll = () => {
 };
 
 // Question answering composable
-const {
-    answerForm,
-    isSubmitting,
-    submitAnswer,
-    skipQuestion,
-    handleTranscription,
-    clearAnswer,
-} = usePromptAnswering(props.promptRun.id);
+const { answerForm, isSubmitting, submitAnswer, skipQuestion, clearAnswer } =
+    usePromptAnswering(props.promptRun.id);
 
 // Real-time updates composable
 useRealtimeUpdates(
@@ -240,9 +234,13 @@ useRealtimeUpdates(
                             :key="index"
                             class="border-b border-gray-200 pb-3 last:border-b-0"
                         >
-                            <button
+                            <div
                                 @click="toggleQuestion(index)"
-                                class="flex w-full items-start justify-between text-left"
+                                @keydown.enter="toggleQuestion(index)"
+                                @keydown.space.prevent="toggleQuestion(index)"
+                                role="button"
+                                tabindex="0"
+                                class="flex w-full cursor-pointer items-start justify-between text-left"
                                 :aria-label="
                                     expandedQuestions.has(index)
                                         ? `Hide question ${index + 1}`
@@ -273,7 +271,7 @@ useRealtimeUpdates(
                                             : '',
                                     ]"
                                 />
-                            </button>
+                            </div>
 
                             <div
                                 v-show="expandedQuestions.has(index)"

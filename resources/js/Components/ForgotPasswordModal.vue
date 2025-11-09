@@ -6,7 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
-const props = defineProps<{
+defineProps<{
     show: boolean;
     status?: string;
 }>();
