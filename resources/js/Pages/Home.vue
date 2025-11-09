@@ -90,6 +90,7 @@ onMounted(() => {
 
             <!-- Features Grid -->
             <div class="mt-24">
+                <h2 class="sr-only">Features</h2>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
                         icon="user"
