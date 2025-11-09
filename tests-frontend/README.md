@@ -85,12 +85,14 @@ The project enforces minimum coverage requirements:
 - **Lines**: 70%
 
 Files excluded from coverage:
+
 - Entry points (`app.ts`, `ssr.ts`)
 - Type definitions (`*.d.ts`)
 - Config files (`*.config.ts`)
 - Icon components (`Icons/**`)
 
 View coverage reports:
+
 - **Terminal**: Run `pnpm test:coverage`
 - **HTML Report**: Open `coverage/index.html` after running coverage
 
@@ -221,6 +223,7 @@ test.describe('Home Page', () => {
 ### Inertia.js
 
 Automatically mocked in `tests/setup/vitest.setup.ts`:
+
 - `usePage()` - Returns mock page props with auth.user
 - `useForm()` - Returns mock form object with all methods
 - `router` - Mock router with navigation methods
@@ -229,6 +232,7 @@ Automatically mocked in `tests/setup/vitest.setup.ts`:
 ### Laravel Echo (WebSockets)
 
 Mock Echo instance with channel management:
+
 ```typescript
 const mockChannel = createMockEchoChannel();
 mockChannel.listen('EventName', (data) => {
@@ -278,29 +282,30 @@ Located in `tests/helpers/mount.ts`:
 We use a hybrid approach for selecting elements in E2E tests, prioritising resilience and maintainability:
 
 1. **Semantic Selectors (Preferred)**: Use Playwright's built-in semantic selectors for interactive and user-facing elements:
-   - `getByRole('button', { name: /submit/i })` - For buttons, links, headings
-   - `getByLabel(/your answer/i)` - For form fields with labels
-   - `getByText(/welcome/i)` - For text content
-   - `getByPlaceholder(/search/i)` - For inputs with placeholders
+    - `getByRole('button', { name: /submit/i })` - For buttons, links, headings
+    - `getByLabel(/your answer/i)` - For form fields with labels
+    - `getByText(/welcome/i)` - For text content
+    - `getByPlaceholder(/search/i)` - For inputs with placeholders
 
 2. **Test IDs (Escape Hatch)**: Use `data-testid` attributes for decorative or complex elements where semantic selectors are insufficient:
-   - `getByTestId('hero-gradient-text')` - For styled/decorative text
-   - `getByTestId('status-badge')` - For status indicators
-   - `getByTestId('progress-bar')` - For progress indicators
-   - `getByTestId('copy-prompt-button')` - For complex interactive elements
+    - `getByTestId('hero-gradient-text')` - For styled/decorative text
+    - `getByTestId('status-badge')` - For status indicators
+    - `getByTestId('progress-bar')` - For progress indicators
+    - `getByTestId('copy-prompt-button')` - For complex interactive elements
 
 3. **When to Use Test IDs**:
-   - Element has no semantic meaning (decorative spans, divs)
-   - Multiple similar elements exist and need disambiguation
-   - Element is dynamically generated or has unstable text
-   - CSS classes are likely to change (Tailwind utility classes)
+    - Element has no semantic meaning (decorative spans, divs)
+    - Multiple similar elements exist and need disambiguation
+    - Element is dynamically generated or has unstable text
+    - CSS classes are likely to change (Tailwind utility classes)
 
 4. **When NOT to Use Test IDs**:
-   - Element has a clear semantic role (button, link, heading)
-   - Element has a visible label or accessible name
-   - Text content is stable and unique
+    - Element has a clear semantic role (button, link, heading)
+    - Element has a visible label or accessible name
+    - Text content is stable and unique
 
 **Example**:
+
 ```typescript
 // ✅ Good: Semantic selector for button
 const submitButton = page.getByRole('button', { name: /submit answer/i });
@@ -351,30 +356,35 @@ Tests run automatically in CI environments:
 
 - **Vitest**: Runs with coverage reporting
 - **Playwright**:
-  - Runs in headless mode
-  - Retries failed tests twice
-  - Generates HTML reports
-  - Saves traces, videos, and screenshots on failure
+    - Runs in headless mode
+    - Retries failed tests twice
+    - Generates HTML reports
+    - Saves traces, videos, and screenshots on failure
 
 ## Troubleshooting
 
 ### Vitest Issues
 
 **Problem**: Tests fail with "Cannot find module '@/Components/...'"
+
 - **Solution**: Check that `vitest.config.ts` has correct path aliases matching `tsconfig.json`
 
 **Problem**: Mocks not working
+
 - **Solution**: Ensure `tests/setup/vitest.setup.ts` is loaded in `vitest.config.ts` setupFiles
 
 ### Playwright Issues
 
 **Problem**: E2E tests timeout
+
 - **Solution**: Increase timeout in `playwright.config.ts` or use `test.setTimeout(60000)` in specific tests
 
 **Problem**: Browser not found
+
 - **Solution**: Run `pnpm exec playwright install chromium`
 
 **Problem**: Laravel server not starting
+
 - **Solution**: Check that `php artisan serve` works independently and port 8000 is available
 
 ## Further Reading

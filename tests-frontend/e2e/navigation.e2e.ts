@@ -1,13 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Site Navigation', () => {
-    test('should navigate from home to prompt optimizer (requires auth)', async ({ page }) => {
+    test('should navigate from home to prompt optimizer (requires auth)', async ({
+        page,
+    }) => {
         await page.goto('/');
 
         // Look for "Get Started" or similar CTA button
-        const ctaButton = page.getByRole('link', { name: /get started|try now|start/i });
+        const ctaButton = page.getByRole('link', {
+            name: /get started|try now|start/i,
+        });
 
-        if (await ctaButton.count() > 0) {
+        if ((await ctaButton.count()) > 0) {
             await ctaButton.first().click();
             await page.waitForLoadState('networkidle');
 
@@ -39,7 +43,9 @@ test.describe('Site Navigation', () => {
         expect(count).toBeGreaterThan(0);
     });
 
-    test('should show navigation for unauthenticated users', async ({ page }) => {
+    test('should show navigation for unauthenticated users', async ({
+        page,
+    }) => {
         await page.goto('/');
 
         // Should have some navigation links
@@ -56,9 +62,11 @@ test.describe('Site Navigation', () => {
         await page.goto('/');
 
         // Look for hamburger menu button
-        const menuButton = page.getByRole('button', { name: /menu|navigation/i });
+        const menuButton = page.getByRole('button', {
+            name: /menu|navigation/i,
+        });
 
-        if (await menuButton.count() > 0) {
+        if ((await menuButton.count()) > 0) {
             await expect(menuButton.first()).toBeVisible();
 
             // Click to open mobile menu
@@ -68,7 +76,9 @@ test.describe('Site Navigation', () => {
             await page.waitForTimeout(500);
 
             // Check if navigation items are now visible
-            const navItems = page.getByRole('link', { name: /log in|get started/i });
+            const navItems = page.getByRole('button', {
+                name: /log in|get started/i,
+            });
             await expect(navItems.first()).toBeVisible();
         }
     });
@@ -91,7 +101,7 @@ test.describe('Accessibility', () => {
         const emailInput = page.getByLabel(/email/i);
         const passwordInput = page.getByLabel(/password/i);
 
-        if (await emailInput.count() > 0) {
+        if ((await emailInput.count()) > 0) {
             // Labels should be associated with inputs
             await expect(emailInput.first()).toBeVisible();
             await expect(passwordInput.first()).toBeVisible();
@@ -160,9 +170,11 @@ test.describe('Accessibility', () => {
         await page.goto('/');
 
         // Check if there's a dark mode toggle
-        const darkModeToggle = page.getByRole('button', { name: /dark mode|theme/i });
+        const darkModeToggle = page.getByRole('button', {
+            name: /dark mode|theme/i,
+        });
 
-        if (await darkModeToggle.count() > 0) {
+        if ((await darkModeToggle.count()) > 0) {
             await darkModeToggle.first().click();
 
             // Wait for theme change
@@ -173,8 +185,9 @@ test.describe('Accessibility', () => {
             const className = await html.getAttribute('class');
 
             // Common dark mode implementations
-            const hasDarkMode = className?.includes('dark') ||
-                               await html.getAttribute('data-theme') === 'dark';
+            const hasDarkMode =
+                className?.includes('dark') ||
+                (await html.getAttribute('data-theme')) === 'dark';
 
             // If toggle exists, it should work
             expect(hasDarkMode).toBeTruthy();

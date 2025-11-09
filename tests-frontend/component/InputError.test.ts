@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import InputError from '@/Components/InputError.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('InputError', () => {
     it('should render error message', () => {

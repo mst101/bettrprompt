@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { useStatusBadge } from '@/Composables/useStatusBadge';
+import { describe, expect, it } from 'vitest';
 
 describe('useStatusBadge', () => {
     it('should return config for completed status', () => {

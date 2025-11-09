@@ -1,7 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Profile - Unauthenticated Access', () => {
-    test('should redirect to login when accessing profile without auth', async ({ page }) => {
+    test('should redirect to login when accessing profile without auth', async ({
+        page,
+    }) => {
         await page.goto('/profile');
         await page.waitForLoadState('networkidle');
 
@@ -55,7 +57,9 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         await nameInput.fill(newName);
 
         // Submit the form
-        const saveButton = page.getByRole('button', { name: /save|update/i }).first();
+        const saveButton = page
+            .getByRole('button', { name: /save|update/i })
+            .first();
         await saveButton.click();
 
         // Wait for success message or page reload
@@ -70,13 +74,17 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         await page.goto('/profile');
 
         // Look for personality type section
-        const personalityHeading = page.getByRole('heading', { name: /personality type/i });
+        const personalityHeading = page.getByRole('heading', {
+            name: /personality type/i,
+        });
 
         if (await personalityHeading.isVisible().catch(() => false)) {
             await expect(personalityHeading).toBeVisible();
 
             // Should see trait sliders or inputs
-            const traitInputs = page.locator('input[type="range"], input[type="number"]');
+            const traitInputs = page.locator(
+                'input[type="range"], input[type="number"]',
+            );
             const count = await traitInputs.count();
 
             // Expect personality traits (5 traits from 16personalities: E-I, S-N, T-F, J-P, A-T)
@@ -95,7 +103,9 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
             await traitSlider.fill('70');
 
             // Submit personality form
-            const saveButton = page.getByRole('button', { name: /save|update/i }).last();
+            const saveButton = page
+                .getByRole('button', { name: /save|update/i })
+                .last();
             await saveButton.click();
 
             // Wait for success
@@ -119,7 +129,9 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
             await page.getByLabel(/confirm password/i).fill('new-password');
 
             // Submit password form
-            const updateButton = page.getByRole('button', { name: /update password/i });
+            const updateButton = page.getByRole('button', {
+                name: /update password/i,
+            });
             await updateButton.click();
 
             // Either success or validation error (if using placeholder passwords)
@@ -130,7 +142,9 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         }
     });
 
-    test('should show validation errors for mismatched passwords', async ({ page }) => {
+    test('should show validation errors for mismatched passwords', async ({
+        page,
+    }) => {
         await page.goto('/profile');
 
         const currentPasswordInput = page.getByLabel(/current password/i);
@@ -138,9 +152,13 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         if (await currentPasswordInput.isVisible().catch(() => false)) {
             await currentPasswordInput.fill('current-password');
             await page.getByLabel(/^new password$/i).fill('password123');
-            await page.getByLabel(/confirm password/i).fill('different-password');
+            await page
+                .getByLabel(/confirm password/i)
+                .fill('different-password');
 
-            const updateButton = page.getByRole('button', { name: /update password/i });
+            const updateButton = page.getByRole('button', {
+                name: /update password/i,
+            });
             await updateButton.click();
 
             // Should show validation error
@@ -153,17 +171,23 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         await page.goto('/profile');
 
         // Find delete account section
-        const deleteButton = page.getByRole('button', { name: /delete account/i });
+        const deleteButton = page.getByRole('button', {
+            name: /delete account/i,
+        });
 
         if (await deleteButton.isVisible().catch(() => false)) {
             await deleteButton.click();
 
             // Should show confirmation modal
-            const confirmModal = page.getByText(/are you sure|permanently delete/i);
+            const confirmModal = page.getByText(
+                /are you sure|permanently delete/i,
+            );
             await expect(confirmModal).toBeVisible({ timeout: 3000 });
 
             // Cancel the deletion (don't actually delete the account)
-            const cancelButton = page.getByRole('button', { name: /cancel|no/i });
+            const cancelButton = page.getByRole('button', {
+                name: /cancel|no/i,
+            });
             await cancelButton.click();
 
             // Modal should close
@@ -175,7 +199,9 @@ test.describe.skip('Profile - Authenticated User (requires auth)', () => {
         await page.goto('/profile');
 
         // Check for avatar image
-        const avatar = page.locator('img[alt*="avatar"], img[alt*="profile"]').first();
+        const avatar = page
+            .locator('img[alt*="avatar"], img[alt*="profile"]')
+            .first();
 
         if (await avatar.isVisible().catch(() => false)) {
             await expect(avatar).toBeVisible();

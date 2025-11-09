@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('SecondaryButton', () => {
     it('should render button element', () => {

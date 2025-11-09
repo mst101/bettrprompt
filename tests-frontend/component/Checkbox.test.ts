@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import Checkbox from '@/Components/Checkbox.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('Checkbox', () => {
     it('should render checkbox input', () => {

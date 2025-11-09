@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import TextInput from '@/Components/TextInput.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('TextInput', () => {
     it('should render input element', () => {
@@ -36,7 +36,9 @@ describe('TextInput', () => {
         await input.setValue('New value');
 
         expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['New value']);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([
+            'New value',
+        ]);
     });
 
     it('should have correct styling classes', () => {
@@ -85,7 +87,9 @@ describe('TextInput', () => {
             },
         });
 
-        expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
+        expect((wrapper.find('input').element as HTMLInputElement).value).toBe(
+            '',
+        );
     });
 
     it('should update value when modelValue prop changes', async () => {

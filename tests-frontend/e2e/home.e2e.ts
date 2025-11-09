@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Home Page', () => {
     test('should load the home page successfully', async ({ page }) => {
@@ -12,7 +12,7 @@ test.describe('Home Page', () => {
 
         // Verify main heading is visible
         await expect(
-            page.getByRole('heading', { name: /Optimise AI Prompts for/ })
+            page.getByRole('heading', { name: /Optimise AI Prompts for/ }),
         ).toBeVisible();
     });
 
@@ -44,7 +44,9 @@ test.describe('Home Page', () => {
         await page.goto('/');
 
         // Scroll to ensure all content is loaded
-        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.evaluate(() =>
+            window.scrollTo(0, document.body.scrollHeight),
+        );
 
         // Wait a bit for any lazy-loaded content
         await page.waitForTimeout(1000);
@@ -62,7 +64,7 @@ test.describe('Home Page', () => {
 
         // Verify page still loads and main heading is visible
         await expect(
-            page.getByRole('heading', { name: /Optimise AI Prompts for/ })
+            page.getByRole('heading', { name: /Optimise AI Prompts for/ }),
         ).toBeVisible();
     });
 

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('StatusBadge', () => {
     it('should render completed status', () => {

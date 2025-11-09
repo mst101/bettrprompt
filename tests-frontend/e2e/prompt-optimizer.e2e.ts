@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Prompt Optimizer - Unauthenticated', () => {
     test('should redirect to home when not logged in', async ({ page }) => {
@@ -15,7 +15,9 @@ test.describe('Prompt Optimizer - Authenticated Flow', () => {
     // Note: These tests require authentication setup
     // For now, they check that the pages are accessible (will redirect to login)
 
-    test('should show prompt optimizer index page structure', async ({ page }) => {
+    test('should show prompt optimizer index page structure', async ({
+        page,
+    }) => {
         await page.goto('/prompt-optimizer');
         await page.waitForLoadState('networkidle');
 
@@ -46,7 +48,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         // await authenticateUser(page);
     });
 
-    test('should submit a prompt and receive framework selection', async ({ page }) => {
+    test('should submit a prompt and receive framework selection', async ({
+        page,
+    }) => {
         await page.goto('/prompt-optimizer');
 
         // Fill in the prompt
@@ -54,7 +58,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         await promptInput.fill('Help me write better code documentation');
 
         // Submit the form
-        const submitButton = page.getByRole('button', { name: /submit|optimise/i });
+        const submitButton = page.getByRole('button', {
+            name: /submit|optimise/i,
+        });
         await submitButton.click();
 
         // Wait for processing
@@ -65,7 +71,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         await expect(statusBadge).toBeVisible({ timeout: 10000 });
     });
 
-    test('should display framework selection after processing', async ({ page }) => {
+    test('should display framework selection after processing', async ({
+        page,
+    }) => {
         // TODO: Create a prompt run via API first, then navigate to show page
 
         // For now, placeholder test
@@ -138,7 +146,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         await page.goto('/prompt-optimizer');
 
         // Look for voice input button
-        const voiceButton = page.getByRole('button', { name: /voice|microphone/i });
+        const voiceButton = page.getByRole('button', {
+            name: /voice|microphone/i,
+        });
 
         if (await voiceButton.isVisible().catch(() => false)) {
             // Voice input feature is present
@@ -150,11 +160,15 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         await page.goto('/prompt-optimizer-history');
 
         // Should see a list or table of previous prompts
-        const heading = page.getByRole('heading', { name: /history|previous prompts/i });
+        const heading = page.getByRole('heading', {
+            name: /history|previous prompts/i,
+        });
         await expect(heading).toBeVisible();
     });
 
-    test('should navigate from history to a specific prompt', async ({ page }) => {
+    test('should navigate from history to a specific prompt', async ({
+        page,
+    }) => {
         await page.goto('/prompt-optimizer-history');
 
         // Find and click on a prompt in the history

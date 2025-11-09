@@ -60,7 +60,9 @@ test.describe('Authentication', () => {
         await expect(page.getByLabel(/email/i)).toBeVisible();
 
         // Look for the "Need an account?" button in the login modal
-        const switchToRegisterButton = page.getByRole('button', { name: /need an account/i });
+        const switchToRegisterButton = page.getByRole('button', {
+            name: /need an account/i,
+        });
 
         // Verify button exists and click it
         await expect(switchToRegisterButton).toBeVisible();
@@ -74,7 +76,9 @@ test.describe('Authentication', () => {
         await expect(page.getByLabel(/^name$/i)).toBeVisible();
 
         // Verify it's NOT the login modal by checking the submit button text
-        const registerSubmitButton = page.getByRole('button', { name: /^register$/i });
+        const registerSubmitButton = page.getByRole('button', {
+            name: /^register$/i,
+        });
         await expect(registerSubmitButton).toBeVisible();
     });
 

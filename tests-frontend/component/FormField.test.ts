@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import FormField from '@/Components/FormField.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('FormField', () => {
     it('should render label', () => {

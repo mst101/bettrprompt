@@ -1,12 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 // Mock DynamicIcon component to avoid complex icon loading in tests
 const DynamicIconStub = {
     name: 'DynamicIcon',
     props: ['name'],
-    template: '<svg data-testid="icon" :data-icon-name="name"><title>Icon</title></svg>',
+    template:
+        '<svg data-testid="icon" :data-icon-name="name"><title>Icon</title></svg>',
 };
 
 describe('LoadingSpinner', () => {

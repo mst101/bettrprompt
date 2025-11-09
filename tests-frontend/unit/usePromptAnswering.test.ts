@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('usePromptAnswering', () => {
     beforeEach(() => {
@@ -33,7 +33,8 @@ describe('usePromptAnswering', () => {
     });
 
     it('should submit valid answer', () => {
-        const { answerForm, submitAnswer, isSubmitting } = usePromptAnswering(1);
+        const { answerForm, submitAnswer, isSubmitting } =
+            usePromptAnswering(1);
 
         answerForm.answer = 'My answer to the question';
         submitAnswer();

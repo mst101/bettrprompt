@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 
 describe('useLocalStorage', () => {
@@ -57,7 +57,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-key',
-            JSON.stringify('updated')
+            JSON.stringify('updated'),
         );
         expect(localStorageMock['test-key']).toBe(JSON.stringify('updated'));
     });
@@ -74,7 +74,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-object',
-            JSON.stringify({ count: 5 })
+            JSON.stringify({ count: 5 }),
         );
     });
 
@@ -88,7 +88,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-deep',
-            JSON.stringify({ nested: { count: 10 } })
+            JSON.stringify({ nested: { count: 10 } }),
         );
     });
 
@@ -103,7 +103,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-array',
-            JSON.stringify([4, 5, 6])
+            JSON.stringify([4, 5, 6]),
         );
     });
 
@@ -118,7 +118,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-bool',
-            JSON.stringify(true)
+            JSON.stringify(true),
         );
     });
 
@@ -133,7 +133,7 @@ describe('useLocalStorage', () => {
 
         expect(localStorage.setItem).toHaveBeenCalledWith(
             'test-number',
-            JSON.stringify(42)
+            JSON.stringify(42),
         );
     });
 
@@ -152,7 +152,9 @@ describe('useLocalStorage', () => {
     });
 
     it('should handle localStorage.setItem errors', async () => {
-        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const errorSpy = vi
+            .spyOn(console, 'error')
+            .mockImplementation(() => {});
 
         // Mock setItem to throw an error (e.g., quota exceeded)
         vi.mocked(localStorage.setItem).mockImplementation(() => {

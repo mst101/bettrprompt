@@ -33,7 +33,7 @@ interface MountInertiaOptions {
  */
 export function mountWithInertia(
     component: Component,
-    options: MountInertiaOptions = {}
+    options: MountInertiaOptions = {},
 ): VueWrapper {
     const { props = {}, pageProps = {}, global = {} } = options;
 
@@ -67,13 +67,15 @@ export function mountWithInertia(
             ...global,
             mocks: {
                 ...(global.mocks || {}),
-                route: global.route || vi.fn((name: string, params?: any) => {
-                    if (params && typeof params === 'object') {
-                        const paramString = Object.values(params).join('/');
-                        return `/${name}/${paramString}`;
-                    }
-                    return `/${name}`;
-                }),
+                route:
+                    global.route ||
+                    vi.fn((name: string, params?: any) => {
+                        if (params && typeof params === 'object') {
+                            const paramString = Object.values(params).join('/');
+                            return `/${name}/${paramString}`;
+                        }
+                        return `/${name}`;
+                    }),
             },
             stubs: {
                 ...(global.stubs || {}),
@@ -85,13 +87,15 @@ export function mountWithInertia(
 /**
  * Create a mock User object
  */
-export function createMockUser(overrides: Partial<{
-    id: number;
-    name: string;
-    email: string;
-    google_id: string | null;
-    avatar: string | null;
-}> = {}) {
+export function createMockUser(
+    overrides: Partial<{
+        id: number;
+        name: string;
+        email: string;
+        google_id: string | null;
+        avatar: string | null;
+    }> = {},
+) {
     return {
         id: 1,
         name: 'Test User',
@@ -105,21 +109,26 @@ export function createMockUser(overrides: Partial<{
 /**
  * Create a mock PromptRun object
  */
-export function createMockPromptRun(overrides: Partial<{
-    id: number;
-    user_id: number;
-    slug: string;
-    original_prompt: string;
-    status: string;
-    workflow_stage: string;
-    selected_framework: string | null;
-    framework_reasoning: string | null;
-    framework_questions: Array<{ question: string; reasoning: string }> | null;
-    clarifying_answers: Record<string, string> | null;
-    optimised_prompt: string | null;
-    created_at: string;
-    updated_at: string;
-}> = {}) {
+export function createMockPromptRun(
+    overrides: Partial<{
+        id: number;
+        user_id: number;
+        slug: string;
+        original_prompt: string;
+        status: string;
+        workflow_stage: string;
+        selected_framework: string | null;
+        framework_reasoning: string | null;
+        framework_questions: Array<{
+            question: string;
+            reasoning: string;
+        }> | null;
+        clarifying_answers: Record<string, string> | null;
+        optimised_prompt: string | null;
+        created_at: string;
+        updated_at: string;
+    }> = {},
+) {
     return {
         id: 1,
         user_id: 1,

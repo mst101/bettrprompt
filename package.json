@@ -6,7 +6,7 @@
         "build": "vue-tsc && vite build && vite build --ssr",
         "dev": "vite",
         "lint": "eslint resources/js --ext .js,.ts,.vue --ignore-path .gitignore --fix",
-        "format": "prettier --write resources/",
+        "format": "prettier --write resources/ tests-frontend",
         "test": "vitest",
         "test:unit": "vitest run",
         "test:coverage": "vitest run --coverage",
