@@ -4,11 +4,11 @@ test.describe('Google OAuth Authentication', () => {
     test('should display Google Sign-In button on home page', async ({ page }) => {
         await page.goto('/');
 
-        // Look for Google Sign-In button
-        const googleButton = page.getByRole('button', { name: /google/i });
+        // Look for Google Sign-In button using test ID
+        const googleButton = page.getByTestId('google-sign-in-button');
 
         if (await googleButton.count() > 0) {
-            await expect(googleButton.first()).toBeVisible();
+            await expect(googleButton).toBeVisible();
         }
     });
 

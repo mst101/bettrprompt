@@ -41,6 +41,7 @@ onMounted(() => {
                 >
                     Optimise AI Prompts for
                     <span
+                        data-testid="hero-gradient-text"
                         class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
                         >Your Personality</span
                     >

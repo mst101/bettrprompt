@@ -10,7 +10,7 @@ defineProps<Props>();
 </script>
 
 <template>
-    <Card>
+    <Card data-testid="framework-selection-display">
         <div class="space-y-4">
             <div class="flex items-center gap-2">
                 <div
@@ -32,7 +32,7 @@ defineProps<Props>();
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Selected Framework</p>
-                    <h3 class="text-lg font-semibold text-gray-900">
+                    <h3 data-testid="framework-name" class="text-lg font-semibold text-gray-900">
                         {{ framework }}
                     </h3>
                 </div>
@@ -40,7 +40,7 @@ defineProps<Props>();
 
             <div class="rounded-lg bg-gray-50 p-4">
                 <p class="text-sm font-medium text-gray-700">Why this framework?</p>
-                <p class="mt-1 text-sm text-gray-600">
+                <p data-testid="framework-reasoning" class="mt-1 text-sm text-gray-600">
                     {{ reasoning }}
                 </p>
             </div>

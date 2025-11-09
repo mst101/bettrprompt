@@ -267,11 +267,53 @@ Located in `tests/helpers/mount.ts`:
 ### E2E Tests
 
 1. **Test critical user journeys**: Focus on important flows
-2. **Use meaningful selectors**: Prefer `getByRole`, `getByLabel` over CSS selectors
+2. **Use meaningful selectors**: Follow the selector strategy below
 3. **Wait for elements**: Use `waitForLoadState`, `waitForSelector` appropriately
 4. **Handle flakiness**: Add appropriate waits and retries
 5. **Test responsive design**: Include mobile viewport tests
 6. **Clean up after tests**: Ensure tests don't affect each other
+
+#### Selector Strategy (Hybrid Approach)
+
+We use a hybrid approach for selecting elements in E2E tests, prioritising resilience and maintainability:
+
+1. **Semantic Selectors (Preferred)**: Use Playwright's built-in semantic selectors for interactive and user-facing elements:
+   - `getByRole('button', { name: /submit/i })` - For buttons, links, headings
+   - `getByLabel(/your answer/i)` - For form fields with labels
+   - `getByText(/welcome/i)` - For text content
+   - `getByPlaceholder(/search/i)` - For inputs with placeholders
+
+2. **Test IDs (Escape Hatch)**: Use `data-testid` attributes for decorative or complex elements where semantic selectors are insufficient:
+   - `getByTestId('hero-gradient-text')` - For styled/decorative text
+   - `getByTestId('status-badge')` - For status indicators
+   - `getByTestId('progress-bar')` - For progress indicators
+   - `getByTestId('copy-prompt-button')` - For complex interactive elements
+
+3. **When to Use Test IDs**:
+   - Element has no semantic meaning (decorative spans, divs)
+   - Multiple similar elements exist and need disambiguation
+   - Element is dynamically generated or has unstable text
+   - CSS classes are likely to change (Tailwind utility classes)
+
+4. **When NOT to Use Test IDs**:
+   - Element has a clear semantic role (button, link, heading)
+   - Element has a visible label or accessible name
+   - Text content is stable and unique
+
+**Example**:
+```typescript
+// ✅ Good: Semantic selector for button
+const submitButton = page.getByRole('button', { name: /submit answer/i });
+
+// ✅ Good: Test ID for decorative element
+const gradientText = page.getByTestId('hero-gradient-text');
+
+// ❌ Bad: CSS class selector (fragile)
+const statusBadge = page.locator('[class*="badge"]');
+
+// ❌ Bad: Test ID for semantic element
+const heading = page.getByTestId('main-heading'); // Use getByRole('heading') instead
+```
 
 ## Debugging Tests
 

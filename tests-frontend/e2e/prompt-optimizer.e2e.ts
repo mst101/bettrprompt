@@ -61,7 +61,7 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         await page.waitForLoadState('networkidle');
 
         // Should see a status indicator or framework selection
-        const statusBadge = page.locator('[class*="badge"]').first();
+        const statusBadge = page.getByTestId('status-badge');
         await expect(statusBadge).toBeVisible({ timeout: 10000 });
     });
 
@@ -78,8 +78,8 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
 
         // Expected flow:
         // 1. See current question
-        // 2. Enter answer in textarea
-        // 3. Click Submit Answer
+        // 2. Enter answer in textarea using getByLabel
+        // 3. Click Submit Answer using getByTestId('submit-answer-button')
         // 4. See next question or final result
 
         await page.goto('/prompt-optimizer');
@@ -91,7 +91,7 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
 
         // Expected flow:
         // 1. See current question
-        // 2. Click Skip Question button
+        // 2. Click Skip Question button using getByTestId('skip-question-button')
         // 3. See next question or final result
 
         await page.goto('/prompt-optimizer');
@@ -102,9 +102,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         // TODO: Navigate to a completed prompt run
 
         // Expected flow:
-        // 1. See optimised prompt
-        // 2. See copy to clipboard button
-        // 3. See framework selection reasoning
+        // 1. See optimised prompt using getByTestId('optimized-prompt-display')
+        // 2. See copy to clipboard button using getByTestId('copy-prompt-button')
+        // 3. See framework selection using getByTestId('framework-selection-display')
 
         await page.goto('/prompt-optimizer');
         expect(page.url()).toContain('/prompt-optimizer');
@@ -114,9 +114,9 @@ test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
         // TODO: Navigate to a completed prompt run
 
         // Expected flow:
-        // 1. Click copy button
-        // 2. Verify clipboard contains prompt text
-        // 3. See success feedback
+        // 1. Click copy button using getByTestId('copy-prompt-button')
+        // 2. Verify clipboard contains prompt text from getByTestId('optimized-prompt-text')
+        // 3. See success feedback (button text changes to "Copied!")
 
         await page.goto('/prompt-optimizer');
         expect(page.url()).toContain('/prompt-optimizer');

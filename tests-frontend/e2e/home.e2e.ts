@@ -25,10 +25,8 @@ test.describe('Home Page', () => {
         });
         await expect(heading).toBeVisible();
 
-        // Verify "Your Personality" span exists (gradient text)
-        const gradientText = page.locator(
-            'span.bg-gradient-to-r.from-indigo-600.to-purple-600'
-        );
+        // Verify "Your Personality" span exists (using test ID instead of CSS classes)
+        const gradientText = page.getByTestId('hero-gradient-text');
         await expect(gradientText).toBeVisible();
         await expect(gradientText).toContainText('Your Personality');
     });

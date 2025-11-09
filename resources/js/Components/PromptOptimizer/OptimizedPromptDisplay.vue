@@ -25,7 +25,7 @@ const copyToClipboard = async (text: string) => {
 </script>
 
 <template>
-    <Card>
+    <Card data-testid="optimized-prompt-display">
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -49,7 +49,7 @@ const copyToClipboard = async (text: string) => {
                     </h3>
                 </div>
 
-                <PrimaryButton @click="copyToClipboard(optimizedPrompt)">
+                <PrimaryButton data-testid="copy-prompt-button" @click="copyToClipboard(optimizedPrompt)">
                     <svg
                         v-if="!copied"
                         class="mr-2 h-5 w-5"
@@ -83,6 +83,7 @@ const copyToClipboard = async (text: string) => {
             </div>
 
             <div
+                data-testid="optimized-prompt-text"
                 class="rounded-lg bg-gray-50 p-6 font-mono text-sm leading-relaxed text-gray-800"
             >
                 <pre class="whitespace-pre-wrap break-words">{{ optimizedPrompt }}</pre>

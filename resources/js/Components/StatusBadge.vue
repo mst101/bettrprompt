@@ -14,6 +14,8 @@ const config = computed(() => getStatusConfig(props.status));
 
 <template>
     <span
+        data-testid="status-badge"
+        :data-test-status="status"
         class="inline-flex rounded-full px-2 py-1 text-xs font-semibold uppercase"
         :class="config.colorClass"
     >

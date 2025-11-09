@@ -59,7 +59,7 @@ const progressPercent = computed(() => {
     <Card>
         <div class="space-y-6">
             <!-- Progress -->
-            <div>
+            <div data-testid="progress-indicator">
                 <div class="flex items-center justify-between text-sm">
                     <span class="font-medium text-gray-700"
                         >Question {{ currentQuestionNumber }} of
@@ -71,6 +71,7 @@ const progressPercent = computed(() => {
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
                     <div
+                        data-testid="progress-bar"
                         class="h-full bg-indigo-600 transition-all duration-300"
                         :style="{ width: `${progressPercent}%` }"
                     ></div>
@@ -144,6 +145,7 @@ const progressPercent = computed(() => {
             <!-- Action Buttons -->
             <div class="flex gap-3">
                 <PrimaryButton
+                    data-testid="submit-answer-button"
                     @click="emit('submit')"
                     :disabled="!answer.trim() || isSubmitting"
                     class="flex-1"
@@ -153,6 +155,7 @@ const progressPercent = computed(() => {
                 </PrimaryButton>
 
                 <SecondaryButton
+                    data-testid="skip-question-button"
                     @click="emit('skip')"
                     :disabled="isSubmitting"
                 >
