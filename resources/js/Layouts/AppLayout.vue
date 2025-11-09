@@ -45,8 +45,8 @@ provide('openRegisterModal', openRegister);
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
+    <div class="flex min-h-screen flex-col bg-gray-100">
+        <div class="flex flex-1 flex-col">
             <nav class="border-b border-gray-100 bg-white">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -279,13 +279,13 @@ provide('openRegisterModal', openRegister);
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-1">
                 <slot />
             </main>
-
-            <!-- Footer -->
-            <Footer />
         </div>
+
+        <!-- Footer -->
+        <Footer />
 
         <!-- Auth Modals -->
         <LoginModal
