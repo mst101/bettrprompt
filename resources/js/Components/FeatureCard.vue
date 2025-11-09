@@ -11,12 +11,12 @@ defineProps<{
 </script>
 
 <template>
-    <div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-100">
+    <div class="rounded-lg bg-white p-6 shadow-xs ring-1 ring-gray-100">
         <div class="flex items-center gap-4">
             <div
                 :class="[
                     iconBgColour || 'bg-indigo-100',
-                    'flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg',
+                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-lg',
                 ]"
             >
                 <DynamicIcon

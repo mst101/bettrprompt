@@ -87,7 +87,7 @@ useRealtimeUpdates(
 <template>
     <Head title="Optimised Prompt" />
 
-    <header class="bg-white shadow">
+    <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -179,7 +179,7 @@ useRealtimeUpdates(
             <!-- Generating Prompt Loading State -->
             <div
                 v-else-if="promptRun.workflowStage === 'generating_prompt'"
-                class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                class="overflow-hidden bg-white shadow-xs sm:rounded-lg"
             >
                 <div class="p-6">
                     <div class="flex items-center">
@@ -211,7 +211,7 @@ useRealtimeUpdates(
                     promptRun.clarifyingAnswers.length > 0 &&
                     promptRun.workflowStage === 'completed'
                 "
-                class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
             >
                 <div class="p-6">
                     <div class="mb-4 flex items-center justify-between">
@@ -220,7 +220,7 @@ useRealtimeUpdates(
                         </h3>
                         <button
                             @click="toggleAll"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
                             {{ allExpanded() ? 'Hide All' : 'Show All' }}
                         </button>
@@ -251,7 +251,7 @@ useRealtimeUpdates(
                                 <div class="flex-1">
                                     <div class="flex items-start">
                                         <span
-                                            class="mr-2 mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                            class="mr-2 mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
                                         >
                                             {{ index + 1 }}
                                         </span>
@@ -265,7 +265,7 @@ useRealtimeUpdates(
                                 <DynamicIcon
                                     name="chevron-down"
                                     :class="[
-                                        'ml-4 h-5 w-5 flex-shrink-0 text-gray-400 transition-transform',
+                                        'ml-4 h-5 w-5 shrink-0 text-gray-400 transition-transform',
                                         expandedQuestions.has(index)
                                             ? 'rotate-180'
                                             : '',
@@ -326,7 +326,7 @@ useRealtimeUpdates(
                     promptRun.status === 'processing' &&
                     promptRun.workflowStage === 'submitted'
                 "
-                class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                class="overflow-hidden bg-white shadow-xs sm:rounded-lg"
             >
                 <div class="p-6">
                     <div class="flex items-center">

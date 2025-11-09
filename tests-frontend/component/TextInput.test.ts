@@ -51,7 +51,7 @@ describe('TextInput', () => {
         const input = wrapper.find('input');
         expect(input.classes()).toContain('rounded-md');
         expect(input.classes()).toContain('border-gray-300');
-        expect(input.classes()).toContain('shadow-sm');
+        expect(input.classes()).toContain('shadow-xs');
     });
 
     it('should focus on autofocus attribute', async () => {

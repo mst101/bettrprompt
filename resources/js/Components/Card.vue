@@ -17,7 +17,7 @@ const paddingClasses = {
 
 <template>
     <div
-        class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+        class="overflow-hidden bg-white shadow-xs sm:rounded-lg"
         :class="paddingClasses[padding]"
     >
         <slot />

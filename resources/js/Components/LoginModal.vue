@@ -99,7 +99,7 @@ const close = () => {
                 <button
                     type="button"
                     @click="emit('switchToForgotPassword')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Forgot password?
                 </button>
@@ -107,7 +107,7 @@ const close = () => {
                 <button
                     type="button"
                     @click="emit('switchToRegister')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Need an account?
                 </button>

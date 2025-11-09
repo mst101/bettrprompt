@@ -29,7 +29,7 @@ const handleInput = (event: Event) => {
             min="0"
             max="100"
             placeholder="%"
-            class="mt-1 block w-full rounded-md border-gray-300 text-right shadow-sm placeholder:text-right focus:border-indigo-500 focus:ring-indigo-500"
+            class="mt-1 block w-full rounded-md border-gray-300 text-right shadow-xs placeholder:text-right focus:border-indigo-500 focus:ring-indigo-500"
         />
     </div>
 </template>

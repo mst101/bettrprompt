@@ -364,7 +364,7 @@ Display additional information:
     <section>
       <h3>Clarifying Questions</h3>
       <div v-for="(qa, index) in questionsAndAnswers" :key="index">
-        <div class="bg-gray-50 p-4 rounded">
+        <div class="bg-gray-50 p-4 rounded-sm">
           <p class="font-medium">Q{{ index + 1 }}: {{ qa.question }}</p>
           <p class="text-sm text-gray-600">
             Framework Component: {{ qa.framework_component }}

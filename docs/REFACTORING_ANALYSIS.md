@@ -170,7 +170,7 @@ Appears in multiple locations:
 
 ```vue
 
-<div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+<div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
     <!-- Content -->
 </div>
 ```
@@ -179,7 +179,7 @@ Appears in multiple locations:
 
 ```vue
 
-<div class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
+<div class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg">
     <div class="p-6">
         <!-- Content -->
     </div>
@@ -1048,12 +1048,12 @@ Priority: Final touches
 
 ```vue
 <!-- Profile page -->
-<div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+<div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
     <UpdateProfileInformationForm ... />
 </div>
 
 <!-- Show page -->
-<div class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
+<div class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg">
     <div class="p-6">
         <!-- Content -->
     </div>

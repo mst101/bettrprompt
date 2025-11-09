@@ -14,7 +14,7 @@ defineOptions({
 
     <div class="py-12">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
                 <div class="p-6 lg:p-8">
                     <h1 class="text-3xl font-bold text-gray-900">
                         Cookie Policy
@@ -94,7 +94,7 @@ defineOptions({
                                     v-for="cookie in COOKIE_CATEGORIES.essential
                                         .cookies"
                                     :key="cookie.name"
-                                    class="rounded border border-gray-200 bg-white p-3"
+                                    class="rounded-sm border border-gray-200 bg-white p-3"
                                 >
                                     <div
                                         class="text-sm font-medium text-gray-900"
@@ -126,7 +126,7 @@ defineOptions({
                                     v-for="cookie in COOKIE_CATEGORIES
                                         .functional.cookies"
                                     :key="cookie.name"
-                                    class="rounded border border-gray-200 bg-white p-3"
+                                    class="rounded-sm border border-gray-200 bg-white p-3"
                                 >
                                     <div
                                         class="text-sm font-medium text-gray-900"
@@ -158,7 +158,7 @@ defineOptions({
                                     v-for="cookie in COOKIE_CATEGORIES.analytics
                                         .cookies"
                                     :key="cookie.name"
-                                    class="rounded border border-gray-200 bg-white p-3"
+                                    class="rounded-sm border border-gray-200 bg-white p-3"
                                 >
                                     <div
                                         class="text-sm font-medium text-gray-900"

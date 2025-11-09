@@ -60,7 +60,7 @@ const speechRecognitionSupported = computed(() => {
 <template>
     <Head title="Prompt Optimiser" />
 
-    <header class="bg-white shadow">
+    <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Prompt Optimiser
@@ -70,7 +70,7 @@ const speechRecognitionSupported = computed(() => {
 
     <div class="py-12">
         <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
                 <div class="p-6">
                     <!-- Warning message if no personality type -->
                     <div
@@ -78,7 +78,7 @@ const speechRecognitionSupported = computed(() => {
                         class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
                     >
                         <div class="flex">
-                            <div class="flex-shrink-0">
+                            <div class="shrink-0">
                                 <DynamicIcon
                                     name="exclamation-triangle"
                                     class="h-5 w-5 text-amber-400"
@@ -128,7 +128,7 @@ const speechRecognitionSupported = computed(() => {
                                         v-if="form.taskDescription"
                                         type="button"
                                         @click="clearTaskDescription"
-                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50"
+                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50"
                                         title="Clear text"
                                     >
                                         <DynamicIcon
@@ -151,7 +151,7 @@ const speechRecognitionSupported = computed(() => {
                                 autofocus
                                 rows="6"
                                 placeholder="Describe what you're trying to accomplish..."
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500"
                             ></textarea>
                             <p
                                 v-if="form.errors.taskDescription"
@@ -187,7 +187,7 @@ const speechRecognitionSupported = computed(() => {
                                     form.processing ||
                                     !hasTask
                                 "
-                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <span v-if="form.processing"
                                     >Processing...</span

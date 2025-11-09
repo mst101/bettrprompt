@@ -73,7 +73,7 @@ describe('Checkbox', () => {
         });
 
         const input = wrapper.find('input[type="checkbox"]');
-        expect(input.classes()).toContain('rounded');
+        expect(input.classes()).toContain('rounded-sm');
         expect(input.classes()).toContain('border-gray-300');
         expect(input.classes()).toContain('text-indigo-600');
     });

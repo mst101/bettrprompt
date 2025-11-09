@@ -10,7 +10,7 @@ describe('Card', () => {
         expect(card.exists()).toBe(true);
         expect(card.classes()).toContain('p-6');
         expect(card.classes()).toContain('bg-white');
-        expect(card.classes()).toContain('shadow-sm');
+        expect(card.classes()).toContain('shadow-xs');
     });
 
     it('should render with no padding', () => {
@@ -52,7 +52,7 @@ describe('Card', () => {
         expect(wrapper.html()).toContain('Card content');
     });
 
-    it('should have rounded corners on larger screens', () => {
+    it('should have rounded-sm corners on larger screens', () => {
         const wrapper = mount(Card);
         const card = wrapper.find('div');
 

@@ -35,7 +35,7 @@ const formatDate = (dateString: string) => {
 <template>
     <Head title="Prompt History" />
 
-    <header class="bg-white shadow">
+    <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div class="items-centre flex justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -43,7 +43,7 @@ const formatDate = (dateString: string) => {
                 </h2>
                 <a
                     :href="route('prompt-optimizer.index')"
-                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700"
                 >
                     Create New
                 </a>
@@ -206,7 +206,7 @@ const formatDate = (dateString: string) => {
                                 </div>
                                 <div>
                                     <nav
-                                        class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                        class="isolate inline-flex -space-x-px rounded-md shadow-xs"
                                         aria-label="Pagination"
                                     >
                                         <Link
