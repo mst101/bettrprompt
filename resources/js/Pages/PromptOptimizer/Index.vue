@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FormToggle from '@/Components/FormToggle.vue';
+import VoiceInputMethodToggle from '@/Components/VoiceInputMethodToggle.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
@@ -46,24 +46,6 @@ const preferWhisperAPI = ref(
 // Persist preference changes to localStorage
 watch(preferWhisperAPI, (newValue) => {
     localStorage.setItem('preferWhisperAPI', String(newValue));
-});
-
-// Check if browser supports speech recognition
-const speechRecognitionSupported = computed(() => {
-    return !!(
-        (
-            window as Window & {
-                SpeechRecognition?: unknown;
-                webkitSpeechRecognition?: unknown;
-            }
-        ).SpeechRecognition ||
-        (
-            window as Window & {
-                SpeechRecognition?: unknown;
-                webkitSpeechRecognition?: unknown;
-            }
-        ).webkitSpeechRecognition
-    );
 });
 </script>
 
@@ -179,15 +161,9 @@ const speechRecognitionSupported = computed(() => {
                             </p>
 
                             <!-- Voice input method toggle (only show if browser supports speech) -->
-                            <FormToggle
-                                v-if="
-                                    hasPersonalityType &&
-                                    speechRecognitionSupported
-                                "
+                            <VoiceInputMethodToggle
+                                v-if="hasPersonalityType"
                                 v-model="preferWhisperAPI"
-                                label="Voice input method:"
-                                enabled-text="AI transcription (more accurate, slower)"
-                                disabled-text="Browser native (instant)"
                                 class="mt-3"
                             />
                         </div>

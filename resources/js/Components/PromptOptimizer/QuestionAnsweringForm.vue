@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
-import FormField from '@/Components/FormField.vue';
-import FormToggle from '@/Components/FormToggle.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import VoiceInputMethodToggle from '@/Components/VoiceInputMethodToggle.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { computed } from 'vue';
 
@@ -31,14 +30,6 @@ const emit = defineEmits<Emits>();
 
 // Voice input method preference
 const preferWhisperAPI = useLocalStorage('preferWhisperAPI', true);
-
-// Check if browser supports speech recognition
-const speechRecognitionSupported = computed(() => {
-    return !!(
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition
-    );
-});
 
 const handleTranscription = (text: string) => {
     let newAnswer = props.answer;
@@ -87,56 +78,68 @@ const progressPercent = computed(() => {
 
             <!-- Answer Input -->
             <div>
-                <FormField
+                <div class="mb-2 flex items-center justify-between">
+                    <label
+                        for="answer"
+                        class="block text-sm font-medium text-gray-700"
+                    >
+                        Your Answer
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <ButtonVoiceInput
+                            @transcription="handleTranscription"
+                            :prefer-whisper-a-p-i="preferWhisperAPI"
+                            :disabled="isSubmitting"
+                        />
+                    </div>
+                </div>
+
+                <textarea
                     id="answer"
-                    label="Your Answer"
-                    type="textarea"
-                    :model-value="answer"
-                    @update:model-value="
-                        (value) => emit('update:answer', value)
+                    :value="answer"
+                    @input="
+                        emit(
+                            'update:answer',
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
                     "
-                    :error="hasError ? errorMessage : undefined"
                     :disabled="isSubmitting"
                     placeholder="Type your answer here..."
                     :rows="4"
+                    class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    :class="[
+                        { 'cursor-not-allowed opacity-50': isSubmitting },
+                        {
+                            'border-red-300 focus:border-red-500 focus:ring-red-500':
+                                hasError,
+                        },
+                    ]"
                 />
+                <p
+                    v-if="hasError && errorMessage"
+                    class="mt-2 text-sm text-red-600"
+                >
+                    {{ errorMessage }}
+                </p>
 
                 <!-- Voice Input Controls -->
                 <div class="mt-3 flex items-center justify-between">
-                    <ButtonVoiceInput
-                        @transcription="handleTranscription"
-                        :prefer-whisper-a-p-i="preferWhisperAPI"
+                    <!-- Voice Method Toggle -->
+                    <VoiceInputMethodToggle
+                        v-model="preferWhisperAPI"
                         :disabled="isSubmitting"
                     />
 
-                    <div class="flex items-center gap-6">
-                        <!-- Voice Method Toggle (only show if browser supports both) -->
-                        <div
-                            v-if="speechRecognitionSupported"
-                            class="flex items-center gap-2"
-                        >
-                            <span class="text-sm text-gray-600">Browser</span>
-                            <FormToggle
-                                v-model="preferWhisperAPI"
-                                :disabled="isSubmitting"
-                                label="Voice input method"
-                            />
-                            <span class="text-sm text-gray-600"
-                                >Whisper API</span
-                            >
-                        </div>
-
-                        <!-- Clear Button -->
-                        <button
-                            v-if="answer"
-                            @click="emit('clear')"
-                            type="button"
-                            class="text-sm text-gray-500 hover:text-gray-700"
-                            :disabled="isSubmitting"
-                        >
-                            Clear
-                        </button>
-                    </div>
+                    <!-- Clear Button -->
+                    <button
+                        v-if="answer"
+                        @click="emit('clear')"
+                        type="button"
+                        class="text-sm text-gray-500 hover:text-gray-700"
+                        :disabled="isSubmitting"
+                    >
+                        Clear
+                    </button>
                 </div>
             </div>
 
