@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import ToggleSwitch from '@/Components/ToggleSwitch.vue';
+import FormToggle from '@/Components/FormToggle.vue';
 import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
@@ -51,8 +51,18 @@ watch(preferWhisperAPI, (newValue) => {
 // Check if browser supports speech recognition
 const speechRecognitionSupported = computed(() => {
     return !!(
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition
+        (
+            window as Window & {
+                SpeechRecognition?: unknown;
+                webkitSpeechRecognition?: unknown;
+            }
+        ).SpeechRecognition ||
+        (
+            window as Window & {
+                SpeechRecognition?: unknown;
+                webkitSpeechRecognition?: unknown;
+            }
+        ).webkitSpeechRecognition
     );
 });
 </script>
@@ -119,6 +129,7 @@ const speechRecognitionSupported = computed(() => {
                                     class="block text-sm font-medium text-gray-700"
                                 >
                                     Task Description
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <div
                                     v-if="hasPersonalityType"
@@ -143,6 +154,7 @@ const speechRecognitionSupported = computed(() => {
                                     />
                                 </div>
                             </div>
+
                             <textarea
                                 id="taskDescription"
                                 v-model="form.taskDescription"
@@ -151,21 +163,23 @@ const speechRecognitionSupported = computed(() => {
                                 autofocus
                                 rows="6"
                                 placeholder="Describe what you're trying to accomplish..."
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500"
+                                class="mt-1 block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
                             ></textarea>
+
                             <p
                                 v-if="form.errors.taskDescription"
                                 class="mt-1 text-sm text-red-600"
                             >
                                 {{ form.errors.taskDescription }}
                             </p>
+
                             <p class="mt-1 text-sm text-gray-500">
                                 Minimum 10 characters. Be specific about your
                                 goals and requirements.
                             </p>
 
                             <!-- Voice input method toggle (only show if browser supports speech) -->
-                            <ToggleSwitch
+                            <FormToggle
                                 v-if="
                                     hasPersonalityType &&
                                     speechRecognitionSupported

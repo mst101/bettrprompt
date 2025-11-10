@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormTextarea from '@/Components/FormTextarea.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -30,36 +31,30 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string | number): void;
 }>();
-
-const updateValue = (event: Event) => {
-    const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    emit('update:modelValue', target.value);
-};
 </script>
 
 <template>
-    <div>
+    <!-- Textarea variant -->
+    <FormTextarea
+        v-if="type === 'textarea'"
+        :id="id"
+        :label="label"
+        :model-value="(modelValue ?? '') as string"
+        :placeholder="placeholder"
+        :required="required"
+        :autofocus="autofocus"
+        :rows="rows"
+        :disabled="disabled"
+        :error="error"
+        :custom-class="inputClass"
+        @update:model-value="(value) => emit('update:modelValue', value)"
+    />
+
+    <!-- Text input variant -->
+    <div v-else>
         <InputLabel :for="id" :value="label" />
 
-        <!-- Textarea variant -->
-        <textarea
-            v-if="type === 'textarea'"
-            :id="id"
-            :value="modelValue"
-            :placeholder="placeholder"
-            :required="required"
-            :autofocus="autofocus"
-            :autocomplete="autocomplete"
-            :rows="rows"
-            :disabled="disabled"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
-            :class="inputClass"
-            @input="updateValue"
-        />
-
-        <!-- Text input variant -->
         <TextInput
-            v-else
             :id="id"
             :type="type"
             :model-value="(modelValue ?? '') as string"
@@ -70,7 +65,7 @@ const updateValue = (event: Event) => {
             :min="min"
             :max="max"
             :disabled="disabled"
-            class="mt-1 block w-full"
+            class="mt-1 block w-full bg-white text-black"
             :class="inputClass"
             @update:model-value="(value) => emit('update:modelValue', value)"
         />
