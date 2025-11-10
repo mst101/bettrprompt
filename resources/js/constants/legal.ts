@@ -5,9 +5,8 @@
  */
 
 export const COMPANY_INFO = {
-    name: 'Hidden Gambia Ltd.',
-    registeredAddress:
-        '8 Baird House, Second Avenue The Pensnett Estate, Kingswinford, West Midlands, DY6 7YA',
+    name: 'AI Buddy Ltd.',
+    registeredAddress: '27 East Road, Bromsgrove, Worcs. B60 2NW',
     contactEmail: 'info@hiddengambia.com',
     hostingProvider: 'DigitalOcean Holdings, Inc.',
 } as const;

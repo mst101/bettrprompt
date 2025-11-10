@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -99,6 +100,8 @@ provide('openRegisterModal', openRegister);
 
                         <!-- Right Side Navigation -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            <ButtonDarkMode class="mr-2 size-10 shrink-0 p-2" />
+
                             <!-- Authenticated User Dropdown -->
                             <div v-if="isAuthenticated" class="relative ms-3">
                                 <Dropdown align="right" width="48">

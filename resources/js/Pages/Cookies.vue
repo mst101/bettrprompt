@@ -31,7 +31,7 @@ defineOptions({
                     </p>
 
                     <div
-                        class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-p:mb-4 prose-p:leading-relaxed prose-ul:my-4 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none"
+                        class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700 prose-p:mb-4 prose-p:text-gray-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-gray-600 prose-strong:text-gray-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none"
                     >
                         <h2>1. What Are Cookies?</h2>
                         <p>

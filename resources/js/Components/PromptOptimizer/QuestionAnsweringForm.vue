@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
+import FormToggle from '@/Components/FormToggle.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import ToggleSwitch from '@/Components/ToggleSwitch.vue';
 import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { computed } from 'vue';
@@ -116,7 +116,7 @@ const progressPercent = computed(() => {
                             class="flex items-center gap-2"
                         >
                             <span class="text-sm text-gray-600">Browser</span>
-                            <ToggleSwitch
+                            <FormToggle
                                 v-model="preferWhisperAPI"
                                 :disabled="isSubmitting"
                                 label="Voice input method"

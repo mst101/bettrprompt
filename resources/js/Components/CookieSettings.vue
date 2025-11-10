@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import FormToggle from '@/Components/FormToggle.vue';
 import Modal from '@/Components/Modal.vue';
-import ToggleSwitch from '@/Components/ToggleSwitch.vue';
 import { useCookieConsent } from '@/Composables/useCookieConsent';
 import { COOKIE_CATEGORIES, type CookiePreferences } from '@/constants/cookies';
 import { Link } from '@inertiajs/vue3';
@@ -124,7 +124,7 @@ const analyticsEnabled = computed({
                             </p>
                         </div>
                         <div class="ml-4">
-                            <ToggleSwitch
+                            <FormToggle
                                 v-model="functionalEnabled"
                                 label="Functional cookies"
                             />
@@ -144,7 +144,7 @@ const analyticsEnabled = computed({
                             </p>
                         </div>
                         <div class="ml-4">
-                            <ToggleSwitch
+                            <FormToggle
                                 v-model="analyticsEnabled"
                                 label="Analytics cookies"
                             />

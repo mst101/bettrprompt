@@ -34,7 +34,7 @@ const closeSettings = () => {
                 aria-modal="false"
                 aria-label="Cookie consent banner"
             >
-                <div class="bg-gray-900">
+                <div class="bg-gray-800">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <div
                             class="lg:flex lg:items-center lg:justify-between lg:gap-8"
