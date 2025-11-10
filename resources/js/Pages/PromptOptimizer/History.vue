@@ -75,7 +75,7 @@ const formatDate = (dateString: string) => {
                                 <tr>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                        class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                     >
                                         Personality Type
                                     </th>
@@ -87,7 +87,7 @@ const formatDate = (dateString: string) => {
                                     </th>
                                     <th
                                         scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                        class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                     >
                                         Status
                                     </th>
@@ -97,22 +97,24 @@ const formatDate = (dateString: string) => {
                                     >
                                         Created
                                     </th>
-                                    <th
-                                        scope="col"
-                                        class="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Actions
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr
                                     v-for="promptRun in promptRuns.data"
                                     :key="promptRun.id"
-                                    class="hover:bg-gray-50"
+                                    class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-100"
+                                    @click="
+                                        $inertia.visit(
+                                            route(
+                                                'prompt-optimizer.show',
+                                                promptRun.id,
+                                            ),
+                                        )
+                                    "
                                 >
                                     <td
-                                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
+                                        class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:table-cell"
                                     >
                                         {{ promptRun.personalityType }}
                                     </td>
@@ -125,7 +127,7 @@ const formatDate = (dateString: string) => {
                                         }}
                                     </td>
                                     <td
-                                        class="px-6 py-4 text-sm whitespace-nowrap"
+                                        class="hidden px-6 py-4 text-sm whitespace-nowrap sm:table-cell"
                                     >
                                         <StatusBadge
                                             :status="promptRun.status"
@@ -134,22 +136,16 @@ const formatDate = (dateString: string) => {
                                     <td
                                         class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
                                     >
-                                        {{ formatDate(promptRun.createdAt) }}
-                                    </td>
-                                    <td
-                                        class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap"
-                                    >
-                                        <Link
-                                            :href="
-                                                route(
-                                                    'prompt-optimizer.show',
-                                                    promptRun.id,
-                                                )
-                                            "
-                                            class="text-indigo-600 hover:text-indigo-900"
-                                        >
-                                            View
-                                        </Link>
+                                        <div>
+                                            {{
+                                                formatDate(promptRun.createdAt)
+                                            }}
+                                        </div>
+                                        <div class="mt-1 sm:hidden">
+                                            <StatusBadge
+                                                :status="promptRun.status"
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
