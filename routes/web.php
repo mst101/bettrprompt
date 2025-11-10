@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoiceTranscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,12 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.retry');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
+
+    // Feedback routes
+    Route::get('/feedback', [FeedbackController::class, 'create'])
+        ->name('feedback.create');
+    Route::post('/feedback', [FeedbackController::class, 'store'])
+        ->name('feedback.store');
 
     // Voice transcription endpoint (requires session authentication)
     Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])

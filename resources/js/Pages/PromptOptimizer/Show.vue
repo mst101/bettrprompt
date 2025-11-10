@@ -95,7 +95,7 @@ useRealtimeUpdates(
                 </h2>
                 <Link
                     :href="route('prompt-optimizer.index')"
-                    class="rounded-md p-1 text-sm text-indigo-600 hover:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                 >
                     Create New
                 </Link>
@@ -116,6 +116,7 @@ useRealtimeUpdates(
                     <div class="mb-4 flex items-center gap-2">
                         <StatusBadge :status="promptRun.status" />
                         <span
+                            v-if="promptRun.status !== 'completed'"
                             class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
                         >
                             {{ getWorkflowStageLabel(promptRun.workflowStage) }}

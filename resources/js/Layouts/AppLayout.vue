@@ -109,6 +109,12 @@ provide('openRegisterModal', openRegister);
                                 >
                                     Prompt History
                                 </NavLink>
+                                <NavLink
+                                    :href="route('feedback.create')"
+                                    :active="route().current('feedback.create')"
+                                >
+                                    Feedback
+                                </NavLink>
                             </div>
                         </div>
 
@@ -249,6 +255,18 @@ provide('openRegisterModal', openRegister);
                                         "
                                     >
                                         Prompt History
+                                    </ResponsiveNavLink>
+
+                                    <ResponsiveNavLink
+                                        :href="route('feedback.create')"
+                                        :active="
+                                            route().current('feedback.create')
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Feedback
                                     </ResponsiveNavLink>
                                 </div>
 
