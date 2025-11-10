@@ -11,8 +11,8 @@ import LoginModal from '@/Components/LoginModal.vue';
 import NavLink from '@/Components/NavLink.vue';
 import RegisterModal from '@/Components/RegisterModal.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link, usePage } from '@inertiajs/vue3';
-import { computed, provide, ref } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { computed, onMounted, onUnmounted, provide, ref } from 'vue';
 
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
@@ -21,6 +21,20 @@ const showingNavigationDropdown = ref(false);
 const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 const showForgotPasswordModal = ref(false);
+const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
+
+// Close dropdown on navigation
+const closeDropdownOnNavigate = () => {
+    userDropdown.value?.close();
+};
+
+onMounted(() => {
+    router.on('start', closeDropdownOnNavigate);
+});
+
+onUnmounted(() => {
+    router.off('start', closeDropdownOnNavigate);
+});
 
 const openLogin = () => {
     showRegisterModal.value = false;
@@ -104,7 +118,11 @@ provide('openRegisterModal', openRegister);
 
                             <!-- Authenticated User Dropdown -->
                             <div v-if="isAuthenticated" class="relative ms-3">
-                                <Dropdown align="right" width="48">
+                                <Dropdown
+                                    ref="userDropdown"
+                                    align="right"
+                                    width="48"
+                                >
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button
@@ -187,93 +205,117 @@ provide('openRegisterModal', openRegister);
                 </div>
 
                 <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
-                >
-                    <!-- Authenticated Mobile Nav -->
-                    <template v-if="isAuthenticated">
-                        <div class="space-y-1 pt-2 pb-3">
-                            <ResponsiveNavLink
-                                :href="route('prompt-optimizer.index')"
-                                :active="
-                                    route().current('prompt-optimizer.index')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Prompt Optimiser
-                            </ResponsiveNavLink>
+                <Teleport to="body">
+                    <Transition
+                        enter-active-class="transition ease-out duration-200"
+                        enter-from-class="opacity-0 -translate-y-2"
+                        enter-to-class="opacity-100 translate-y-0"
+                        leave-active-class="transition ease-in duration-75"
+                        leave-from-class="opacity-100 translate-y-0"
+                        leave-to-class="opacity-0 -translate-y-2"
+                    >
+                        <div
+                            v-show="showingNavigationDropdown"
+                            class="fixed top-16 right-0 left-0 z-40 bg-white shadow-lg sm:hidden"
+                        >
+                            <!-- Authenticated Mobile Nav -->
+                            <template v-if="isAuthenticated">
+                                <div class="space-y-1 pt-2 pb-3">
+                                    <ResponsiveNavLink
+                                        :href="route('prompt-optimizer.index')"
+                                        :active="
+                                            route().current(
+                                                'prompt-optimizer.index',
+                                            )
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Prompt Optimiser
+                                    </ResponsiveNavLink>
 
-                            <ResponsiveNavLink
-                                :href="route('prompt-optimizer.history')"
-                                :active="
-                                    route().current('prompt-optimizer.history')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Prompt History
-                            </ResponsiveNavLink>
-                        </div>
-
-                        <!-- Responsive Settings Options -->
-                        <div class="border-t border-gray-200 pt-4 pb-1">
-                            <div class="px-4">
-                                <div
-                                    class="text-base font-medium text-gray-800"
-                                >
-                                    {{ $page.props.auth!.user!.name }}
+                                    <ResponsiveNavLink
+                                        :href="
+                                            route('prompt-optimizer.history')
+                                        "
+                                        :active="
+                                            route().current(
+                                                'prompt-optimizer.history',
+                                            )
+                                        "
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Prompt History
+                                    </ResponsiveNavLink>
                                 </div>
-                                <div class="text-sm font-medium text-gray-500">
-                                    {{ $page.props.auth!.user!.email }}
+
+                                <!-- Responsive Settings Options -->
+                                <div class="border-t border-gray-200 pt-4 pb-1">
+                                    <div class="px-4">
+                                        <div
+                                            class="text-base font-medium text-gray-800"
+                                        >
+                                            {{ $page.props.auth!.user!.name }}
+                                        </div>
+                                        <div
+                                            class="text-sm font-medium text-gray-500"
+                                        >
+                                            {{ $page.props.auth!.user!.email }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 space-y-1">
+                                        <ResponsiveNavLink
+                                            :href="route('profile.edit')"
+                                            @click="
+                                                showingNavigationDropdown = false
+                                            "
+                                        >
+                                            Profile
+                                        </ResponsiveNavLink>
+                                        <ResponsiveNavLink
+                                            :href="route('logout')"
+                                            method="post"
+                                            as="button"
+                                            @click="
+                                                showingNavigationDropdown = false
+                                            "
+                                        >
+                                            Log Out
+                                        </ResponsiveNavLink>
+                                    </div>
                                 </div>
-                            </div>
+                            </template>
 
-                            <div class="mt-3 space-y-1">
-                                <ResponsiveNavLink
-                                    :href="route('profile.edit')"
-                                    @click="showingNavigationDropdown = false"
-                                >
-                                    Profile
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink
-                                    :href="route('logout')"
-                                    method="post"
-                                    as="button"
-                                    @click="showingNavigationDropdown = false"
-                                >
-                                    Log Out
-                                </ResponsiveNavLink>
-                            </div>
+                            <!-- Guest Mobile Nav -->
+                            <template v-else>
+                                <div class="space-y-1 pt-2 pb-3">
+                                    <button
+                                        @click="
+                                            openLogin();
+                                            showingNavigationDropdown = false;
+                                        "
+                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
+                                    >
+                                        Log in
+                                    </button>
+                                    <button
+                                        @click="
+                                            openRegister();
+                                            showingNavigationDropdown = false;
+                                        "
+                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
+                                    >
+                                        Get Started
+                                    </button>
+                                </div>
+                            </template>
                         </div>
-                    </template>
-
-                    <!-- Guest Mobile Nav -->
-                    <template v-else>
-                        <div class="space-y-1 pt-2 pb-3">
-                            <button
-                                @click="
-                                    openLogin();
-                                    showingNavigationDropdown = false;
-                                "
-                                class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
-                            >
-                                Log in
-                            </button>
-                            <button
-                                @click="
-                                    openRegister();
-                                    showingNavigationDropdown = false;
-                                "
-                                class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
-                            >
-                                Get Started
-                            </button>
-                        </div>
-                    </template>
-                </div>
+                    </Transition>
+                </Teleport>
             </nav>
 
             <!-- Page Heading -->
@@ -314,5 +356,14 @@ provide('openRegisterModal', openRegister);
 
         <!-- Cookie Banner -->
         <CookieBanner />
+
+        <!-- Mobile Navigation Overlay -->
+        <Teleport to="body">
+            <div
+                v-show="showingNavigationDropdown"
+                class="fixed inset-0 z-30 sm:hidden"
+                @click="showingNavigationDropdown = false"
+            ></div>
+        </Teleport>
     </div>
 </template>
