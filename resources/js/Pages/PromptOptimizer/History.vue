@@ -41,12 +41,12 @@ const formatDate = (dateString: string) => {
                 <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     Prompt History
                 </h2>
-                <a
+                <Link
                     :href="route('prompt-optimizer.index')"
-                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700"
+                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                 >
                     Create New
-                </a>
+                </Link>
             </div>
         </div>
     </header>
@@ -212,7 +212,7 @@ const formatDate = (dateString: string) => {
                                         <Link
                                             v-if="promptRuns.meta.prevPageUrl"
                                             :href="promptRuns.meta.prevPageUrl"
-                                            class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                            class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                         >
                                             Previous
                                         </Link>
@@ -227,7 +227,7 @@ const formatDate = (dateString: string) => {
                                         <Link
                                             v-if="promptRuns.meta.nextPageUrl"
                                             :href="promptRuns.meta.nextPageUrl"
-                                            class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                            class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                         >
                                             Next
                                         </Link>

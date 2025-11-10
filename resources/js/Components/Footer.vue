@@ -30,26 +30,26 @@ const closeCookieSettings = () => {
                 <div class="flex flex-wrap justify-center gap-6">
                     <Link
                         :href="route('terms')"
-                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     >
                         Terms of Use
                     </Link>
                     <Link
                         :href="route('privacy')"
-                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     >
                         Privacy Policy
                     </Link>
                     <Link
                         :href="route('cookies')"
-                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     >
                         Cookie Policy
                     </Link>
                     <button
                         @click="openCookieSettings"
                         type="button"
-                        class="text-sm text-gray-600 transition hover:text-indigo-600"
+                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     >
                         Cookie Settings
                     </button>

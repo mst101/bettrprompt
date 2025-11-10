@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormToggle from '@/Components/FormToggle.vue';
-import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
@@ -148,7 +148,7 @@ const speechRecognitionSupported = computed(() => {
                                         />
                                         <span>Clear</span>
                                     </button>
-                                    <VoiceInputButton
+                                    <ButtonVoiceInput
                                         @transcription="handleTranscription"
                                         :force-whisper-a-p-i="preferWhisperAPI"
                                     />

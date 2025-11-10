@@ -11,7 +11,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { getWorkflowStageLabel } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 defineOptions({
@@ -93,12 +93,12 @@ useRealtimeUpdates(
                 <h2 class="text-xl leading-tight font-semibold text-gray-800">
                     Prompt Optimiser
                 </h2>
-                <a
+                <Link
                     :href="route('prompt-optimizer.index')"
-                    class="text-sm text-indigo-600 hover:text-indigo-800"
+                    class="rounded-md p-1 text-sm text-indigo-600 hover:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                 >
                     Create New
-                </a>
+                </Link>
             </div>
         </div>
     </header>
@@ -220,7 +220,7 @@ useRealtimeUpdates(
                         </h3>
                         <button
                             @click="toggleAll"
-                            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                            class="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                         >
                             {{ allExpanded() ? 'Hide All' : 'Show All' }}
                         </button>
@@ -240,7 +240,7 @@ useRealtimeUpdates(
                                 @keydown.space.prevent="toggleQuestion(index)"
                                 role="button"
                                 tabindex="0"
-                                class="flex w-full cursor-pointer items-start justify-between text-left"
+                                class="flex w-full cursor-pointer items-start justify-between rounded-md p-1 text-left focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                 :aria-label="
                                     expandedQuestions.has(index)
                                         ? `Hide question ${index + 1}`

@@ -57,7 +57,7 @@ provide('openRegisterModal', openRegister);
                             <div class="flex shrink-0 items-center">
                                 <Link
                                     :href="route('home')"
-                                    class="flex items-center gap-1 transition hover:opacity-80"
+                                    class="flex items-center gap-1 rounded-md p-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     @click="showingNavigationDropdown = false"
                                 >
                                     <ApplicationLogo
@@ -109,7 +109,7 @@ provide('openRegisterModal', openRegister);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{
@@ -161,7 +161,7 @@ provide('openRegisterModal', openRegister);
 
                         <!-- Hamburger (Mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
-                            <ButtonDarkMode class="mr-2 size-10 shrink-0 p-2" />
+                            <ButtonDarkMode class="mr-4 size-10 shrink-0 p-2" />
 
                             <button
                                 @click="

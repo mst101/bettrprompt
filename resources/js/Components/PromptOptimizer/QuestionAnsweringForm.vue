@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import FormToggle from '@/Components/FormToggle.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import VoiceInputButton from '@/Components/VoiceInputButton.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { computed } from 'vue';
 
@@ -103,7 +103,7 @@ const progressPercent = computed(() => {
 
                 <!-- Voice Input Controls -->
                 <div class="mt-3 flex items-center justify-between">
-                    <VoiceInputButton
+                    <ButtonVoiceInput
                         @transcription="handleTranscription"
                         :prefer-whisper-a-p-i="preferWhisperAPI"
                         :disabled="isSubmitting"
