@@ -161,6 +161,8 @@ provide('openRegisterModal', openRegister);
 
                         <!-- Hamburger (Mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
+                            <ButtonDarkMode class="mr-2 size-10 shrink-0 p-2" />
+
                             <button
                                 @click="
                                     showingNavigationDropdown =
