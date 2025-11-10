@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import FormInput from '@/Components/FormInput.vue';
+import FormSelect from '@/Components/FormSelect.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TraitPercentageInput from '@/Components/TraitPercentageInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
@@ -92,31 +91,15 @@ const submit = () => {
         <form @submit.prevent="submit" class="mt-6 space-y-6">
             <!-- Personality Type Selection -->
             <div class="space-y-4">
-                <div>
-                    <InputLabel
-                        for="personalityBase"
-                        value="Personality Type"
-                    />
-                    <select
-                        id="personalityBase"
-                        v-model="personalityBase"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
-                        autofocus
-                    >
-                        <option value="">Select your personality type</option>
-                        <option
-                            v-for="option in personalityTypeOptions"
-                            :key="option.value"
-                            :value="option.value"
-                        >
-                            {{ option.label }}
-                        </option>
-                    </select>
-                    <InputError
-                        :message="form.errors.personalityType"
-                        class="mt-2"
-                    />
-                </div>
+                <FormSelect
+                    id="personalityBase"
+                    label="Personality Type"
+                    v-model="personalityBase"
+                    :options="personalityTypeOptions"
+                    :error="form.errors.personalityType"
+                    placeholder="Select your personality type"
+                    :autofocus="true"
+                />
 
                 <!-- Identity Selection -->
                 <div v-if="personalityBase">
@@ -176,35 +159,60 @@ const submit = () => {
                     </p>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <TraitPercentageInput
+                        <FormInput
                             id="mind"
+                            type="number"
                             label="Mind (Introversion/Extraversion)"
                             v-model="form.traitPercentages.mind"
+                            :min="0"
+                            :max="100"
+                            placeholder="%"
+                            custom-class="text-right placeholder:text-right"
                         />
 
-                        <TraitPercentageInput
+                        <FormInput
                             id="energy"
+                            type="number"
                             label="Energy (Intuitive/Observant)"
                             v-model="form.traitPercentages.energy"
+                            :min="0"
+                            :max="100"
+                            placeholder="%"
+                            custom-class="text-right placeholder:text-right"
                         />
 
-                        <TraitPercentageInput
+                        <FormInput
                             id="nature"
+                            type="number"
                             label="Nature (Thinking/Feeling)"
                             v-model="form.traitPercentages.nature"
+                            :min="0"
+                            :max="100"
+                            placeholder="%"
+                            custom-class="text-right placeholder:text-right"
                         />
 
-                        <TraitPercentageInput
+                        <FormInput
                             id="tactics"
+                            type="number"
                             label="Tactics (Judging/Prospecting)"
                             v-model="form.traitPercentages.tactics"
+                            :min="0"
+                            :max="100"
+                            placeholder="%"
+                            custom-class="text-right placeholder:text-right"
                         />
 
                         <div class="col-span-2">
-                            <TraitPercentageInput
+                            <FormInput
                                 id="identityPercent"
+                                type="number"
                                 label="Identity (Assertive/Turbulent)"
                                 v-model="form.traitPercentages.identity"
+                                :min="0"
+                                :max="100"
+                                placeholder="%"
+                                custom-class="text-right placeholder:text-right"
                             />
                         </div>
                     </div>
