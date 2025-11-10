@@ -1,15 +1,12 @@
-<script>
+<script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 
-export default {
-    name: 'ButtonClose',
-    components: { DynamicIcon },
-    emits: ['close'],
-    methods: {
-        emitClose(event) {
-            this.$emit('close', event);
-        },
-    },
+const emit = defineEmits<{
+    (e: 'close', event: Event): void;
+}>();
+
+const emitClose = (event: Event) => {
+    emit('close', event);
 };
 </script>
 
