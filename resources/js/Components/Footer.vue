@@ -56,11 +56,13 @@ const closeCookieSettings = () => {
                 </div>
             </div>
         </div>
+    </footer>
 
-        <!-- Cookie Settings Modal -->
+    <!-- Cookie Settings Modal -->
+    <Teleport to="body">
         <CookieSettings
             :show="showCookieSettings"
             @close="closeCookieSettings"
         />
-    </footer>
+    </Teleport>
 </template>
