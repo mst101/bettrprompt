@@ -116,8 +116,9 @@ const close = () => {
 
         <template #submit-button>
             <ButtonPrimary
-                :class="{ 'opacity-25': form.processing }"
+                type="submit"
                 :disabled="form.processing"
+                :loading="form.processing"
             >
                 Log in
             </ButtonPrimary>

@@ -3,7 +3,6 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
-import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed } from 'vue';
 
@@ -150,12 +149,12 @@ const progressPercent = computed(() => {
                 </ButtonSecondary>
 
                 <ButtonPrimary
+                    type="button"
                     data-testid="submit-answer-button"
                     @click="emit('submit')"
                     :disabled="!answer.trim() || isSubmitting"
-                    class=""
+                    :loading="isSubmitting"
                 >
-                    <LoadingSpinner v-if="isSubmitting" class="mr-2" />
                     Submit Answer
                 </ButtonPrimary>
             </div>

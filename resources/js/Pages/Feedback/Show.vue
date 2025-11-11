@@ -257,6 +257,7 @@ const formatDate = (dateString: string) => {
                         <ButtonPrimary
                             type="submit"
                             :disabled="form.processing"
+                            :loading="form.processing"
                         >
                             Update Feedback
                         </ButtonPrimary>

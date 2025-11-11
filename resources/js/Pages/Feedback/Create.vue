@@ -209,6 +209,7 @@ const submit = () => {
                         <ButtonPrimary
                             type="submit"
                             :disabled="form.processing"
+                            :loading="form.processing"
                         >
                             Submit Feedback
                         </ButtonPrimary>

@@ -95,6 +95,7 @@ const saveEdits = () => {
                         Edit
                     </ButtonSecondary>
                     <ButtonPrimary
+                        type="button"
                         data-testid="copy-prompt-button"
                         @click="copyToClipboard(optimizedPrompt)"
                     >

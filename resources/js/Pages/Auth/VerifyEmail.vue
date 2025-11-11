@@ -43,8 +43,9 @@ const verificationLinkSent = computed(
     <form @submit.prevent="submit">
         <div class="mt-4 flex items-center justify-between">
             <ButtonPrimary
-                :class="{ 'opacity-25': form.processing }"
+                type="submit"
                 :disabled="form.processing"
+                :loading="form.processing"
             >
                 Resend Verification Email
             </ButtonPrimary>
