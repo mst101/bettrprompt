@@ -666,14 +666,39 @@ class PromptOptimizerController extends Controller
     /**
      * Display history of prompt runs
      */
-    public function history()
+    public function history(Request $request)
     {
+        // Get sorting parameters
+        $sortBy = $request->query('sort_by', 'created_at');
+        $sortDirection = $request->query('sort_direction', 'desc');
+
+        // Get per-page parameter (default 15, allowed: 10, 15, 25, 50)
+        $perPage = $request->query('per_page', 15);
+        $perPage = in_array($perPage, [10, 15, 25, 50]) ? $perPage : 15;
+
+        // Validate sort column
+        $allowedSortColumns = ['created_at', 'personality_type', 'status', 'task_description', 'selected_framework'];
+        if (! in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'created_at';
+        }
+
+        // Validate sort direction
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
         $promptRuns = PromptRun::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(6);
+            ->orderBy($sortBy, $sortDirection)
+            ->paginate($perPage)
+            ->withQueryString();
 
         return Inertia::render('PromptOptimizer/History', [
             'promptRuns' => inertiaPaginated($promptRuns, PromptRunResource::class),
+            'filters' => [
+                'sort_by' => $sortBy,
+                'sort_direction' => $sortDirection,
+                'per_page' => $perPage,
+            ],
         ]);
     }
 }

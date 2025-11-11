@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import SvgChevronDown from '@/Icons/SvgChevronDown.vue';
+import SvgChevronUp from '@/Icons/SvgChevronUp.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import type { Paginated, PromptRunResource } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -11,9 +15,14 @@ defineOptions({
 
 interface Props {
     promptRuns: Paginated<PromptRunResource>;
+    filters: {
+        sort_by: string;
+        sort_direction: string;
+        per_page: number;
+    };
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const truncate = (text: string | null | undefined, length: number = 100) => {
     if (!text) return '';
@@ -30,6 +39,75 @@ const formatDate = (dateString: string) => {
         minute: '2-digit',
     });
 };
+
+const getPersonalityTypeName = (type: string | null) => {
+    if (!type) return '';
+    // Extract base type without -A/-T suffix
+    const baseType = type.split('-')[0] as keyof typeof PERSONALITY_TYPE_NAMES;
+    return PERSONALITY_TYPE_NAMES[baseType] || '';
+};
+
+const getFullPersonalityType = (type: string | null) => {
+    if (!type) return '';
+    const name = getPersonalityTypeName(type);
+    return name ? `${name} (${type})` : type;
+};
+
+const sortBy = (column: string) => {
+    const currentSortBy = props.filters.sort_by;
+    const currentDirection = props.filters.sort_direction;
+
+    let newDirection = 'asc';
+    if (currentSortBy === column && currentDirection === 'asc') {
+        newDirection = 'desc';
+    }
+
+    router.get(
+        route('prompt-optimizer.history'),
+        {
+            sort_by: column,
+            sort_direction: newDirection,
+            per_page: props.filters.per_page,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+const changePerPage = (event: Event) => {
+    const target = event.target as HTMLSelectElement;
+    const perPage = parseInt(target.value);
+
+    router.get(
+        route('prompt-optimizer.history'),
+        {
+            sort_by: props.filters.sort_by,
+            sort_direction: props.filters.sort_direction,
+            per_page: perPage,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+const isSortedBy = (column: string) => {
+    return props.filters.sort_by === column;
+};
+
+const sortDirection = computed(() => {
+    return props.filters.sort_direction;
+});
+
+const perPageOptions = [
+    { value: '10', label: '10' },
+    { value: '15', label: '15' },
+    { value: '25', label: '25' },
+    { value: '50', label: '50' },
+];
 </script>
 
 <template>
@@ -68,6 +146,32 @@ const formatDate = (dateString: string) => {
                 </div>
 
                 <div v-else>
+                    <!-- Per-page selector -->
+                    <div
+                        class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6"
+                    >
+                        <div class="flex items-center gap-2">
+                            <label for="per-page" class="text-sm text-gray-700">
+                                Show
+                            </label>
+                            <select
+                                id="per-page"
+                                :value="filters.per_page"
+                                @change="changePerPage"
+                                class="rounded-md border-gray-300 py-1 pr-8 pl-3 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            >
+                                <option
+                                    v-for="option in perPageOptions"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                            <span class="text-sm text-gray-700">per page</span>
+                        </div>
+                    </div>
+
                     <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -77,25 +181,238 @@ const formatDate = (dateString: string) => {
                                         scope="col"
                                         class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                     >
-                                        Personality Type
+                                        <button
+                                            @click="sortBy('personality_type')"
+                                            class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                        >
+                                            Personality Type
+                                            <span class="flex flex-col">
+                                                <SvgChevronUp
+                                                    class="h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'personality_type',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'asc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'personality_type',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'asc',
+                                                    }"
+                                                />
+                                                <SvgChevronDown
+                                                    class="-mt-1 h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'personality_type',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'desc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'personality_type',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'desc',
+                                                    }"
+                                                />
+                                            </span>
+                                        </button>
                                     </th>
                                     <th
                                         scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
-                                        Task Description
+                                        <button
+                                            @click="sortBy('task_description')"
+                                            class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                        >
+                                            Task Description
+                                            <span class="flex flex-col">
+                                                <SvgChevronUp
+                                                    class="h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'task_description',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'asc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'task_description',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'asc',
+                                                    }"
+                                                />
+                                                <SvgChevronDown
+                                                    class="-mt-1 h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'task_description',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'desc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'task_description',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'desc',
+                                                    }"
+                                                />
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell"
+                                    >
+                                        <button
+                                            @click="
+                                                sortBy('selected_framework')
+                                            "
+                                            class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                        >
+                                            Framework
+                                            <span class="flex flex-col">
+                                                <SvgChevronUp
+                                                    class="h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'selected_framework',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'asc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'selected_framework',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'asc',
+                                                    }"
+                                                />
+                                                <SvgChevronDown
+                                                    class="-mt-1 h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'selected_framework',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'desc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'selected_framework',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'desc',
+                                                    }"
+                                                />
+                                            </span>
+                                        </button>
                                     </th>
                                     <th
                                         scope="col"
                                         class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                     >
-                                        Status
+                                        <button
+                                            @click="sortBy('status')"
+                                            class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                        >
+                                            Status
+                                            <span class="flex flex-col">
+                                                <SvgChevronUp
+                                                    class="h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'status',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'asc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'status',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'asc',
+                                                    }"
+                                                />
+                                                <SvgChevronDown
+                                                    class="-mt-1 h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'status',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'desc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'status',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'desc',
+                                                    }"
+                                                />
+                                            </span>
+                                        </button>
                                     </th>
                                     <th
                                         scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                     >
-                                        Created
+                                        <button
+                                            @click="sortBy('created_at')"
+                                            class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                        >
+                                            Created
+                                            <span class="flex flex-col">
+                                                <SvgChevronUp
+                                                    class="h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'created_at',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'asc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'created_at',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'asc',
+                                                    }"
+                                                />
+                                                <SvgChevronDown
+                                                    class="-mt-1 h-3 w-3 transition-colors"
+                                                    :class="{
+                                                        'text-indigo-600':
+                                                            isSortedBy(
+                                                                'created_at',
+                                                            ) &&
+                                                            sortDirection ===
+                                                                'desc',
+                                                        'text-gray-400':
+                                                            !isSortedBy(
+                                                                'created_at',
+                                                            ) ||
+                                                            sortDirection !==
+                                                                'desc',
+                                                    }"
+                                                />
+                                            </span>
+                                        </button>
                                     </th>
                                 </tr>
                             </thead>
@@ -116,7 +433,14 @@ const formatDate = (dateString: string) => {
                                     <td
                                         class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:table-cell"
                                     >
-                                        {{ promptRun.personalityType }}
+                                        <span class="lg:hidden">{{
+                                            promptRun.personalityType
+                                        }}</span>
+                                        <span class="hidden lg:inline">{{
+                                            getFullPersonalityType(
+                                                promptRun.personalityType,
+                                            )
+                                        }}</span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-700">
                                         {{
@@ -124,6 +448,14 @@ const formatDate = (dateString: string) => {
                                                 promptRun.taskDescription,
                                                 80,
                                             )
+                                        }}
+                                    </td>
+                                    <td
+                                        class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 lg:table-cell"
+                                    >
+                                        {{
+                                            promptRun.selectedFramework ||
+                                            '\u2014'
                                         }}
                                     </td>
                                     <td
