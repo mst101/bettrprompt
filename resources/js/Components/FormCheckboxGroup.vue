@@ -45,14 +45,18 @@ const toggleOption = async (value: string) => {
         }
     } else {
         currentValues.push(value);
-        // If checking "other", focus the textarea after it appears
-        if (value === 'other') {
-            await nextTick();
-            otherTextarea.value?.focus();
-        }
     }
 
     emit('update:modelValue', currentValues);
+
+    // If checking "other", focus the textarea after the transition
+    if (value === 'other' && index === -1) {
+        await nextTick();
+        // Wait for transition to complete
+        setTimeout(() => {
+            otherTextarea.value?.focus();
+        }, 250);
+    }
 };
 
 const showOtherInput = computed(() => {

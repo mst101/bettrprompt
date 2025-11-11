@@ -7,18 +7,38 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineOptions({
     layout: AppLayout,
 });
 
+interface FeedbackData {
+    experienceLevel: number;
+    usefulness: number;
+    recommendationLikelihood: number;
+    suggestions: string | null;
+    desiredFeatures: string[];
+    desiredFeaturesOther: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface Props {
+    feedback: FeedbackData;
+}
+
+const props = defineProps<Props>();
+
+const isEditing = ref(false);
+
 const form = useForm({
-    experienceLevel: null,
-    usefulness: null,
-    recommendationLikelihood: null,
-    suggestions: '',
-    desiredFeatures: [] as string[],
-    desiredFeaturesOther: '',
+    experienceLevel: props.feedback.experienceLevel,
+    usefulness: props.feedback.usefulness,
+    recommendationLikelihood: props.feedback.recommendationLikelihood,
+    suggestions: props.feedback.suggestions || '',
+    desiredFeatures: props.feedback.desiredFeatures || [],
+    desiredFeaturesOther: props.feedback.desiredFeaturesOther || '',
 });
 
 const featureOptions = [
@@ -60,21 +80,32 @@ const featureOptions = [
 ];
 
 const submit = () => {
-    form.post(route('feedback.store'), {
+    form.put(route('feedback.update'), {
         onSuccess: () => {
-            // Redirect will be handled by controller
+            isEditing.value = false;
         },
+    });
+};
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
     });
 };
 </script>
 
 <template>
-    <Head title="Feedback" />
+    <Head title="Your Feedback" />
 
     <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                Feedback
+                Your Feedback
             </h2>
         </div>
     </header>
@@ -83,13 +114,25 @@ const submit = () => {
         <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
             <Card>
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        We'd love to hear from you!
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-600">
-                        Your feedback will help us decide whether to improve
-                        this project - or to abandon it!<br />
-                        Please be honest.
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                Thank you for your feedback!
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-600">
+                                You can update your responses at any time.
+                            </p>
+                        </div>
+                        <SecondaryButton
+                            v-if="!isEditing"
+                            type="button"
+                            @click="isEditing = true"
+                        >
+                            Edit
+                        </SecondaryButton>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">
+                        Last updated: {{ formatDate(feedback.updatedAt) }}
                     </p>
                 </div>
 
@@ -106,7 +149,7 @@ const submit = () => {
                             v-model="form.experienceLevel"
                             left-label="Novice"
                             right-label="Experienced"
-                            :disabled="form.processing"
+                            :disabled="!isEditing || form.processing"
                         />
                         <p
                             v-if="form.errors.experienceLevel"
@@ -127,7 +170,7 @@ const submit = () => {
                             v-model="form.usefulness"
                             left-label="Not useful"
                             right-label="Extremely useful"
-                            :disabled="form.processing"
+                            :disabled="!isEditing || form.processing"
                         />
                         <p
                             v-if="form.errors.usefulness"
@@ -149,7 +192,7 @@ const submit = () => {
                             v-model="form.recommendationLikelihood"
                             left-label="Very unlikely"
                             right-label="Very likely"
-                            :disabled="form.processing"
+                            :disabled="!isEditing || form.processing"
                         />
                         <p
                             v-if="form.errors.recommendationLikelihood"
@@ -167,7 +210,7 @@ const submit = () => {
                             type="textarea"
                             v-model="form.suggestions"
                             :error="form.errors.suggestions"
-                            :disabled="form.processing"
+                            :disabled="!isEditing || form.processing"
                             placeholder="Mention any steps you found confusing or features you'd like to see next."
                             :rows="5"
                         />
@@ -188,19 +231,24 @@ const submit = () => {
                             v-model="form.desiredFeatures"
                             v-model:other-value="form.desiredFeaturesOther"
                             :options="featureOptions"
-                            :disabled="form.processing"
+                            :disabled="!isEditing || form.processing"
                             :error="form.errors.desiredFeatures"
                         />
                     </div>
 
                     <!-- Submit Buttons -->
-                    <div class="flex items-center justify-end gap-3">
+                    <div
+                        v-if="isEditing"
+                        class="flex items-center justify-end gap-3"
+                    >
                         <SecondaryButton
                             type="button"
                             @click="
-                                $inertia.visit(
-                                    route('prompt-optimizer.history'),
-                                )
+                                () => {
+                                    isEditing = false;
+                                    form.reset();
+                                    form.clearErrors();
+                                }
                             "
                             :disabled="form.processing"
                         >
@@ -210,7 +258,7 @@ const submit = () => {
                             type="submit"
                             :disabled="form.processing"
                         >
-                            Submit Feedback
+                            Update Feedback
                         </PrimaryButton>
                     </div>
                 </form>

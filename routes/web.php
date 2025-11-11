@@ -66,10 +66,14 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.history');
 
     // Feedback routes
-    Route::get('/feedback', [FeedbackController::class, 'create'])
+    Route::get('/feedback/create', [FeedbackController::class, 'create'])
         ->name('feedback.create');
+    Route::get('/feedback', [FeedbackController::class, 'show'])
+        ->name('feedback.show');
     Route::post('/feedback', [FeedbackController::class, 'store'])
         ->name('feedback.store');
+    Route::put('/feedback', [FeedbackController::class, 'update'])
+        ->name('feedback.update');
 
     // Voice transcription endpoint (requires session authentication)
     Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])

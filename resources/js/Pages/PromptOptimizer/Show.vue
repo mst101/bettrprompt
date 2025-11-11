@@ -8,7 +8,10 @@ import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnswerin
 import StatusBadge from '@/Components/StatusBadge.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
-import { getWorkflowStageLabel } from '@/constants/workflow';
+import {
+    getWorkflowStageLabel,
+    PERSONALITY_TYPE_NAMES,
+} from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
@@ -30,6 +33,19 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const getPersonalityTypeName = (type: string | null) => {
+    if (!type) return '';
+    // Extract base type without -A/-T suffix
+    const baseType = type.split('-')[0] as keyof typeof PERSONALITY_TYPE_NAMES;
+    return PERSONALITY_TYPE_NAMES[baseType] || '';
+};
+
+const getFullPersonalityType = (type: string | null) => {
+    if (!type) return '';
+    const name = getPersonalityTypeName(type);
+    return name ? `${name} (${type})` : type;
+};
 
 // Type guard for n8nResponsePayload
 const errorResponse = computed((): N8nErrorResponse | null => {
@@ -67,6 +83,13 @@ const toggleAll = () => {
             expandedQuestions.value.add(i);
         }
     }
+};
+
+// Show all questions mode
+const showAllQuestions = ref(false);
+
+const toggleShowAll = () => {
+    showAllQuestions.value = !showAllQuestions.value;
 };
 
 // Question answering composable
@@ -130,7 +153,7 @@ useRealtimeUpdates(
                             >Personality Type:</span
                         >
                         <span class="ml-2 text-sm text-gray-900">{{
-                            promptRun.personalityType
+                            getFullPersonalityType(promptRun.personalityType)
                         }}</span>
                     </div>
 
@@ -162,7 +185,8 @@ useRealtimeUpdates(
                 v-if="
                     (promptRun.workflowStage === 'framework_selected' ||
                         promptRun.workflowStage === 'answering_questions') &&
-                    currentQuestion
+                    currentQuestion &&
+                    !showAllQuestions
                 "
                 :question="currentQuestion"
                 v-model:answer="answerForm.answer"
@@ -171,11 +195,104 @@ useRealtimeUpdates(
                 :is-submitting="isSubmitting"
                 :has-error="!!answerForm.errors.answer"
                 :error-message="answerForm.errors.answer"
+                :show-all="showAllQuestions"
                 @submit="submitAnswer"
                 @skip="skipQuestion"
                 @clear="clearAnswer"
+                @toggle-show-all="toggleShowAll"
                 class="mb-6"
             />
+
+            <!-- Show All Questions Mode -->
+            <Card
+                v-if="
+                    (promptRun.workflowStage === 'framework_selected' ||
+                        promptRun.workflowStage === 'answering_questions') &&
+                    showAllQuestions &&
+                    promptRun.frameworkQuestions
+                "
+                class="mb-6"
+            >
+                <div class="space-y-6">
+                    <!-- Header with toggle link -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-gray-700"
+                                >All Questions</span
+                            >
+                            <button
+                                @click="toggleShowAll"
+                                type="button"
+                                class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+                            >
+                                (one-at-a-time)
+                            </button>
+                        </div>
+                        <span class="text-sm text-gray-500"
+                            >{{ progress.answered }} of
+                            {{ progress.total }} answered</span
+                        >
+                    </div>
+
+                    <!-- All questions list -->
+                    <div class="space-y-4">
+                        <div
+                            v-for="(
+                                question, index
+                            ) in promptRun.frameworkQuestions"
+                            :key="index"
+                            class="rounded-lg border border-gray-200 p-4"
+                            :class="{
+                                'border-green-200 bg-green-50':
+                                    promptRun.clarifyingAnswers &&
+                                    promptRun.clarifyingAnswers[index] !==
+                                        null &&
+                                    promptRun.clarifyingAnswers[index] !==
+                                        undefined,
+                            }"
+                        >
+                            <div class="mb-2 flex items-start">
+                                <span
+                                    class="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                >
+                                    {{ index + 1 }}
+                                </span>
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ question }}
+                                </p>
+                            </div>
+                            <div
+                                v-if="
+                                    promptRun.clarifyingAnswers &&
+                                    promptRun.clarifyingAnswers[index] !==
+                                        null &&
+                                    promptRun.clarifyingAnswers[index] !==
+                                        undefined
+                                "
+                                class="ml-8 text-sm text-gray-700"
+                            >
+                                <strong>Answer:</strong>
+                                {{ promptRun.clarifyingAnswers[index] }}
+                            </div>
+                            <div
+                                v-else-if="
+                                    promptRun.clarifyingAnswers &&
+                                    promptRun.clarifyingAnswers[index] === null
+                                "
+                                class="ml-8 text-sm text-gray-500 italic"
+                            >
+                                Question skipped
+                            </div>
+                            <div
+                                v-else
+                                class="ml-8 text-sm text-gray-400 italic"
+                            >
+                                Not yet answered
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Card>
 
             <!-- Generating Prompt Loading State -->
             <div

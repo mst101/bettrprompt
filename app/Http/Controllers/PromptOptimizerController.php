@@ -672,9 +672,10 @@ class PromptOptimizerController extends Controller
         $sortBy = $request->query('sort_by', 'created_at');
         $sortDirection = $request->query('sort_direction', 'desc');
 
-        // Get per-page parameter (default 15, allowed: 10, 15, 25, 50)
-        $perPage = $request->query('per_page', 15);
-        $perPage = in_array($perPage, [10, 15, 25, 50]) ? $perPage : 15;
+        // Get per-page parameter (default 10, allowed: 1-100)
+        $perPage = $request->query('per_page', 10);
+        $perPage = is_numeric($perPage) ? (int) $perPage : 10;
+        $perPage = max(1, min(100, $perPage)); // Clamp between 1 and 100
 
         // Validate sort column
         $allowedSortColumns = ['created_at', 'personality_type', 'status', 'task_description', 'selected_framework'];

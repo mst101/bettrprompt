@@ -5,6 +5,7 @@ import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
 import Footer from '@/Components/Footer.vue';
 import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
 import LoginModal from '@/Components/LoginModal.vue';
@@ -16,6 +17,19 @@ import { computed, onMounted, onUnmounted, provide, ref } from 'vue';
 
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
+
+// Flash messages
+const flashMessage = computed(() => {
+    const flash = page.props.flash as
+        | { success?: string; warning?: string; error?: string }
+        | undefined;
+    if (flash?.success)
+        return { message: flash.success, type: 'success' as const };
+    if (flash?.warning)
+        return { message: flash.warning, type: 'warning' as const };
+    if (flash?.error) return { message: flash.error, type: 'error' as const };
+    return null;
+});
 
 const showingNavigationDropdown = ref(false);
 const showLoginModal = ref(false);
@@ -383,5 +397,12 @@ provide('openRegisterModal', openRegister);
                 @click="showingNavigationDropdown = false"
             ></div>
         </Teleport>
+
+        <!-- Flash Message -->
+        <FlashMessage
+            v-if="flashMessage"
+            :message="flashMessage.message"
+            :type="flashMessage.type"
+        />
     </div>
 </template>

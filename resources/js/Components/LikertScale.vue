@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 interface Props {
-    modelValue: number;
+    modelValue: number | null;
     min?: number;
     max?: number;
     leftLabel: string;
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: number): void;
+    (e: 'update:modelValue', value: number | null): void;
 }>();
 
 const options = computed(() => {

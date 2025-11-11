@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormInput from '@/Components/FormInput.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     personalityTypes: Record<string, string>;
@@ -50,6 +51,7 @@ const form = useForm({
 
 // Persist the CTA only after a successful save in this session
 const showTaskCta = ref(false);
+const taskCtaButton = ref<HTMLAnchorElement | null>(null);
 
 const showTraitPercentages = ref(false);
 
@@ -68,9 +70,12 @@ watch(fullPersonalityType, (newValue) => {
 const submit = () => {
     form.patch(route('profile.personality.update'), {
         preserveScroll: true,
-        onSuccess: () => {
+        onSuccess: async () => {
             // Keep the CTA visible after saving; do not rely on recentlySuccessful (which fades)
             showTaskCta.value = true;
+            // Focus the button after it appears
+            await nextTick();
+            taskCtaButton.value?.focus();
         },
     });
 };
@@ -100,17 +105,24 @@ const submit = () => {
                     :error="form.errors.personalityType"
                     placeholder="Select your personality type"
                     :autofocus="true"
+                    :required="true"
                 />
 
                 <!-- Identity Selection -->
                 <div v-if="personalityBase">
-                    <InputLabel for="identity" value="Identity" />
+                    <InputLabel
+                        for="identity"
+                        value="Identity"
+                        :required="true"
+                    />
                     <div class="mt-2 flex gap-6">
                         <label class="flex items-center">
                             <input
                                 v-model="identity"
                                 type="radio"
+                                name="identity"
                                 value="A"
+                                required
                                 class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span class="ml-2 text-sm text-gray-700"
@@ -121,7 +133,9 @@ const submit = () => {
                             <input
                                 v-model="identity"
                                 type="radio"
+                                name="identity"
                                 value="T"
+                                required
                                 class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span class="ml-2 text-sm text-gray-700"
@@ -232,10 +246,12 @@ const submit = () => {
                 >
                     <Link
                         v-if="showTaskCta"
+                        ref="taskCtaButton"
                         :href="route('prompt-optimizer.index')"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                        class="inline-flex items-center gap-2 rounded-md border border-transparent bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                     >
-                        Enter your Task Description →
+                        Enter your Task
+                        <DynamicIcon name="arrow-right" class="h-4 w-4" />
                     </Link>
                 </Transition>
             </div>
