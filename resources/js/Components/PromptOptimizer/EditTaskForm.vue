@@ -28,12 +28,17 @@ const handleTranscription = (transcript: string) => {
 };
 
 const submit = () => {
-    form.post(route('prompt-optimizer.create-child', props.promptRunId), {
-        preserveScroll: true,
-        onSuccess: () => {
-            // Redirect happens automatically via controller
+    form.post(
+        route('prompt-optimizer.create-child', {
+            parentPromptRun: props.promptRunId,
+        }),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                // Redirect happens automatically via controller
+            },
         },
-    });
+    );
 };
 </script>
 
