@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Card from '@/Components/Card.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { ref } from 'vue';
 
 interface Props {
@@ -49,7 +49,7 @@ const copyToClipboard = async (text: string) => {
                     </h3>
                 </div>
 
-                <PrimaryButton
+                <ButtonPrimary
                     data-testid="copy-prompt-button"
                     @click="copyToClipboard(optimizedPrompt)"
                 >
@@ -82,7 +82,7 @@ const copyToClipboard = async (text: string) => {
                         />
                     </svg>
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
-                </PrimaryButton>
+                </ButtonPrimary>
             </div>
 
             <div

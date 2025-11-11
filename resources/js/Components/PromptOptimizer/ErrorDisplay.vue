@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import type { N8nErrorResponse } from '@/types';
 import { router } from '@inertiajs/vue3';
 
@@ -59,7 +59,7 @@ const retry = () => {
 
             <!-- Action Buttons -->
             <div class="flex gap-3">
-                <SecondaryButton @click="retry"> Try Again </SecondaryButton>
+                <ButtonSecondary @click="retry"> Try Again </ButtonSecondary>
                 <a
                     :href="route('prompt-optimizer.index')"
                     class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"

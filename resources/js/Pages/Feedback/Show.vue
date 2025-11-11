@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
 import FormField from '@/Components/FormField.vue';
 import LikertScale from '@/Components/LikertScale.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -123,13 +123,13 @@ const formatDate = (dateString: string) => {
                                 You can update your responses at any time.
                             </p>
                         </div>
-                        <SecondaryButton
+                        <ButtonSecondary
                             v-if="!isEditing"
                             type="button"
                             @click="isEditing = true"
                         >
                             Edit
-                        </SecondaryButton>
+                        </ButtonSecondary>
                     </div>
                     <p class="mt-2 text-xs text-gray-500">
                         Last updated: {{ formatDate(feedback.updatedAt) }}
@@ -241,7 +241,7 @@ const formatDate = (dateString: string) => {
                         v-if="isEditing"
                         class="flex items-center justify-end gap-3"
                     >
-                        <SecondaryButton
+                        <ButtonSecondary
                             type="button"
                             @click="
                                 () => {
@@ -253,13 +253,13 @@ const formatDate = (dateString: string) => {
                             :disabled="form.processing"
                         >
                             Cancel
-                        </SecondaryButton>
-                        <PrimaryButton
+                        </ButtonSecondary>
+                        <ButtonPrimary
                             type="submit"
                             :disabled="form.processing"
                         >
                             Update Feedback
-                        </PrimaryButton>
+                        </ButtonPrimary>
                     </div>
                 </form>
             </Card>

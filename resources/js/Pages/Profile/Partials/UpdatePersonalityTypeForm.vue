@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormInput from '@/Components/FormInput.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -237,7 +237,7 @@ const submit = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <ButtonPrimary :disabled="form.processing">Save</ButtonPrimary>
 
                 <!-- Persist CTA after a successful save in this session -->
                 <Transition

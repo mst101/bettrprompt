@@ -7,10 +7,10 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
 import Footer from '@/Components/Footer.vue';
-import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue';
-import LoginModal from '@/Components/LoginModal.vue';
+import ModalForgotPassword from '@/Components/ModalForgotPassword.vue';
+import ModalLogin from '@/Components/ModalLogin.vue';
+import ModalRegister from '@/Components/ModalRegister.vue';
 import NavLink from '@/Components/NavLink.vue';
-import RegisterModal from '@/Components/RegisterModal.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, provide, ref } from 'vue';
@@ -367,20 +367,20 @@ provide('openRegisterModal', openRegister);
         <Footer />
 
         <!-- Auth Modals -->
-        <LoginModal
+        <ModalLogin
             :show="showLoginModal"
             @close="showLoginModal = false"
             @switch-to-register="openRegister"
             @switch-to-forgot-password="openForgotPassword"
         />
 
-        <RegisterModal
+        <ModalRegister
             :show="showRegisterModal"
             @close="showRegisterModal = false"
             @switch-to-login="openLogin"
         />
 
-        <ForgotPasswordModal
+        <ModalForgotPassword
             :show="showForgotPasswordModal"
             @close="showForgotPasswordModal = false"
             @switch-to-login="openLogin"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import FormField from '@/Components/FormField.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -73,7 +73,7 @@ const updatePassword = () => {
             />
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <ButtonPrimary :disabled="form.processing">Save</ButtonPrimary>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

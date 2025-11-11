@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
+import ButtonGoogleSignIn from '@/Components/ButtonGoogleSignIn.vue';
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import FormField from '@/Components/FormField.vue';
-import GoogleSignInButton from '@/Components/GoogleSignInButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
 
 defineProps<{
@@ -45,7 +45,7 @@ const close = () => {
         @submit="submit"
     >
         <template #google-signin>
-            <GoogleSignInButton text="Sign up with Google" />
+            <ButtonGoogleSignIn text="Sign up with Google" />
         </template>
 
         <template #fields>
@@ -105,12 +105,12 @@ const close = () => {
         </template>
 
         <template #submit-button>
-            <PrimaryButton
+            <ButtonPrimary
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
             >
                 Register
-            </PrimaryButton>
+            </ButtonPrimary>
         </template>
     </BaseAuthModal>
 </template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
+import ButtonGoogleSignIn from '@/Components/ButtonGoogleSignIn.vue';
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Checkbox from '@/Components/Checkbox.vue';
-import GoogleSignInButton from '@/Components/GoogleSignInButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -51,7 +51,7 @@ const close = () => {
         @submit="submit"
     >
         <template #google-signin>
-            <GoogleSignInButton />
+            <ButtonGoogleSignIn />
         </template>
 
         <template #fields>
@@ -115,12 +115,12 @@ const close = () => {
         </template>
 
         <template #submit-button>
-            <PrimaryButton
+            <ButtonPrimary
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
             >
                 Log in
-            </PrimaryButton>
+            </ButtonPrimary>
         </template>
     </BaseAuthModal>
 </template>

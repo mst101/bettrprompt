@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -42,12 +42,12 @@ const verificationLinkSent = computed(
 
     <form @submit.prevent="submit">
         <div class="mt-4 flex items-center justify-between">
-            <PrimaryButton
+            <ButtonPrimary
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
             >
                 Resend Verification Email
-            </PrimaryButton>
+            </ButtonPrimary>
 
             <Link
                 :href="route('logout')"

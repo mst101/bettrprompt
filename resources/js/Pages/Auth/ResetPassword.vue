@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import FormField from '@/Components/FormField.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -67,12 +67,12 @@ const submit = () => {
         />
 
         <div class="mt-4 flex items-center justify-end">
-            <PrimaryButton
+            <ButtonPrimary
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
             >
                 Reset Password
-            </PrimaryButton>
+            </ButtonPrimary>
         </div>
     </form>
 </template>

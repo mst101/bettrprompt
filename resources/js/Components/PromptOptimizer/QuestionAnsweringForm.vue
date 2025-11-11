@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed } from 'vue';
 
@@ -141,15 +141,15 @@ const progressPercent = computed(() => {
 
             <!-- Action Buttons -->
             <div class="flex justify-between gap-3">
-                <SecondaryButton
+                <ButtonSecondary
                     data-testid="skip-question-button"
                     @click="emit('skip')"
                     :disabled="isSubmitting"
                 >
                     Skip Question
-                </SecondaryButton>
+                </ButtonSecondary>
 
-                <PrimaryButton
+                <ButtonPrimary
                     data-testid="submit-answer-button"
                     @click="emit('submit')"
                     :disabled="!answer.trim() || isSubmitting"
@@ -157,7 +157,7 @@ const progressPercent = computed(() => {
                 >
                     <LoadingSpinner v-if="isSubmitting" class="mr-2" />
                     Submit Answer
-                </PrimaryButton>
+                </ButtonPrimary>
             </div>
         </div>
     </Card>

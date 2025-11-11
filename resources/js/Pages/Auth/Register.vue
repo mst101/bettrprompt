@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import FormField from '@/Components/FormField.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -80,13 +80,13 @@ const submit = () => {
                 Already registered?
             </Link>
 
-            <PrimaryButton
+            <ButtonPrimary
                 class="ms-4"
                 :class="{ 'opacity-25': form.processing }"
                 :disabled="form.processing"
             >
                 Register
-            </PrimaryButton>
+            </ButtonPrimary>
         </div>
     </form>
 </template>
