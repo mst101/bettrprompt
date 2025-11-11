@@ -44,7 +44,9 @@ const truncateText = (text: string, maxLength: number = 60) => {
                     <StatusBadge :status="parent.status" />
                 </div>
                 <Link
-                    :href="route('prompt-optimizer.show', parent.id)"
+                    :href="
+                        route('prompt-optimizer.show', { promptRun: parent.id })
+                    "
                     class="block text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
                 >
                     {{ truncateText(parent.taskDescription) }}
@@ -75,7 +77,11 @@ const truncateText = (text: string, maxLength: number = 60) => {
                         <StatusBadge :status="child.status" />
                     </div>
                     <Link
-                        :href="route('prompt-optimizer.show', child.id)"
+                        :href="
+                            route('prompt-optimizer.show', {
+                                promptRun: child.id,
+                            })
+                        "
                         class="block text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
                     >
                         {{ truncateText(child.taskDescription) }}
