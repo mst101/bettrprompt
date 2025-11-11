@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 type MessageType = 'success' | 'warning' | 'error';
 
@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const show = ref(!!props.message);
+const messageElement = ref<HTMLElement | null>(null);
 
 watch(
     () => props.message,
@@ -32,6 +33,25 @@ watch(
         }
     },
 );
+
+// Dismiss when clicking outside the message
+const handleClickOutside = (event: MouseEvent) => {
+    if (
+        show.value &&
+        messageElement.value &&
+        !messageElement.value.contains(event.target as Node)
+    ) {
+        show.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 
 const typeConfig = computed(() => {
     const configs = {
@@ -79,6 +99,7 @@ const typeConfig = computed(() => {
     >
         <div
             v-if="message && show"
+            ref="messageElement"
             class="fixed top-20 right-4 left-4 z-50 mx-auto max-w-xl sm:right-8 sm:left-auto"
         >
             <div

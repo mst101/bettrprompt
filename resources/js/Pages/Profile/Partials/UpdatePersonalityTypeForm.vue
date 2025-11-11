@@ -51,7 +51,7 @@ const form = useForm({
 
 // Persist the CTA only after a successful save in this session
 const showTaskCta = ref(false);
-const taskCtaButton = ref<HTMLAnchorElement | null>(null);
+const taskCtaButton = ref<InstanceType<typeof Link> | null>(null);
 
 const showTraitPercentages = ref(false);
 
@@ -71,11 +71,13 @@ const submit = () => {
     form.patch(route('profile.personality.update'), {
         preserveScroll: true,
         onSuccess: async () => {
-            // Keep the CTA visible after saving; do not rely on recentlySuccessful (which fades)
+            // Show CTA after saving
             showTaskCta.value = true;
             // Focus the button after it appears
             await nextTick();
-            taskCtaButton.value?.focus();
+            // Get the underlying DOM element from the Link component
+            const linkElement = taskCtaButton.value?.$el as HTMLElement;
+            linkElement?.focus();
         },
     });
 };

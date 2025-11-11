@@ -581,7 +581,7 @@ onMounted(() => {
                                     type="number"
                                     min="1"
                                     max="100"
-                                    class="w-16 rounded-md border-gray-300 px-2 py-1 pl-4 text-center text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    class="w-16 rounded-md border-gray-300 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 />
                                 <span class="text-sm text-gray-700"
                                     >per page</span
@@ -634,7 +634,7 @@ onMounted(() => {
                                     type="number"
                                     min="1"
                                     max="100"
-                                    class="w-16 rounded-md border-gray-300 py-1 pl-2 text-center text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    class="w-16 rounded-md border-gray-300 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 />
                                 <span class="text-sm text-gray-700"
                                     >per page</span

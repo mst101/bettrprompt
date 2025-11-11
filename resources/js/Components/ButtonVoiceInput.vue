@@ -53,7 +53,7 @@ const toggleRecording = async () => {
             type="button"
             @click="toggleRecording"
             :disabled="isProcessing || disabled"
-            class="rounded-md hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            class="rounded-md text-xs tracking-wider uppercase hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             :class="[
                 'inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium shadow-xs transition-all',
                 isActive

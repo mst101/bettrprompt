@@ -97,7 +97,6 @@ const clearTaskDescription = () => {
                                     class="block text-sm font-medium text-gray-700"
                                 >
                                     Task Description
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <div
                                     v-if="hasPersonalityType"
@@ -155,7 +154,7 @@ const clearTaskDescription = () => {
                                     form.processing ||
                                     !hasTask
                                 "
-                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
+                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium tracking-wide text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <span v-if="form.processing"
                                     >Processing...</span

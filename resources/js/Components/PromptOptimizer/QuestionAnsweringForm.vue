@@ -109,7 +109,7 @@ const progressPercent = computed(() => {
                         )
                     "
                     :disabled="isSubmitting"
-                    placeholder="Type your answer here..."
+                    placeholder="Type your answer here (or enter via speech)..."
                     :rows="4"
                     class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     :class="[
@@ -141,17 +141,7 @@ const progressPercent = computed(() => {
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex gap-3">
-                <PrimaryButton
-                    data-testid="submit-answer-button"
-                    @click="emit('submit')"
-                    :disabled="!answer.trim() || isSubmitting"
-                    class="flex-1"
-                >
-                    <LoadingSpinner v-if="isSubmitting" class="mr-2" />
-                    Submit Answer
-                </PrimaryButton>
-
+            <div class="flex justify-between gap-3">
                 <SecondaryButton
                     data-testid="skip-question-button"
                     @click="emit('skip')"
@@ -159,6 +149,16 @@ const progressPercent = computed(() => {
                 >
                     Skip Question
                 </SecondaryButton>
+
+                <PrimaryButton
+                    data-testid="submit-answer-button"
+                    @click="emit('submit')"
+                    :disabled="!answer.trim() || isSubmitting"
+                    class=""
+                >
+                    <LoadingSpinner v-if="isSubmitting" class="mr-2" />
+                    Submit Answer
+                </PrimaryButton>
             </div>
         </div>
     </Card>
