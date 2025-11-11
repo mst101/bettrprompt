@@ -1,7 +1,26 @@
+<script setup lang="ts">
+import Button from '@/Components/Button.vue';
+
+interface Props {
+    disabled?: boolean;
+    type?: 'button' | 'submit' | 'reset';
+    loading?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+    disabled: false,
+    type: 'button',
+    loading: false,
+});
+</script>
+
 <template>
-    <button
-        class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out hover:bg-indigo-700 focus:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden active:bg-indigo-800"
+    <Button
+        variant="primary"
+        :disabled="disabled"
+        :type="type"
+        :loading="loading"
     >
         <slot />
-    </button>
+    </Button>
 </template>

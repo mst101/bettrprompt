@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -22,12 +23,10 @@ const submit = () => {
     form.post(route('prompt-optimizer.store'));
 };
 
+const { appendText } = useTextAppend();
+
 const handleTranscription = (text: string) => {
-    // Append transcription to existing text (with space if text exists)
-    if (form.taskDescription && !form.taskDescription.endsWith(' ')) {
-        form.taskDescription += ' ';
-    }
-    form.taskDescription += text;
+    form.taskDescription = appendText(form.taskDescription, text);
 };
 
 const clearTaskDescription = () => {

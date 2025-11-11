@@ -21,3 +21,6 @@ export * from './resources';
 
 // Re-export n8n types
 export * from './n8n';
+
+// Re-export form types
+export * from './form';

@@ -1,7 +1,19 @@
+<script setup lang="ts">
+import Button from '@/Components/Button.vue';
+
+interface Props {
+    disabled?: boolean;
+    type?: 'button' | 'submit' | 'reset';
+}
+
+withDefaults(defineProps<Props>(), {
+    disabled: false,
+    type: 'button',
+});
+</script>
+
 <template>
-    <button
-        class="inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out hover:bg-red-500 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-hidden active:bg-red-700"
-    >
+    <Button variant="danger" :disabled="disabled" :type="type">
         <slot />
-    </button>
+    </Button>
 </template>

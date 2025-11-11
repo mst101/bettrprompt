@@ -1,22 +1,8 @@
 <script setup lang="ts">
 import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
+import type { FormTextareaProps } from '@/types';
 
-interface Props {
-    id: string;
-    label: string;
-    modelValue?: string;
-    rows?: number;
-    error?: string;
-    required?: boolean;
-    placeholder?: string;
-    disabled?: boolean;
-    helpText?: string;
-    customClass?: string;
-    maxlength?: number;
-    autofocus?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
     rows: 3,
     error: '',

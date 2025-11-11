@@ -4,6 +4,7 @@ import Card from '@/Components/Card.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed } from 'vue';
 
 interface Props {
@@ -28,12 +29,10 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
+const { appendText } = useTextAppend();
+
 const handleTranscription = (text: string) => {
-    let newAnswer = props.answer;
-    if (newAnswer && !newAnswer.endsWith(' ')) {
-        newAnswer += ' ';
-    }
-    newAnswer += text;
+    const newAnswer = appendText(props.answer, text);
     emit('update:answer', newAnswer);
 };
 

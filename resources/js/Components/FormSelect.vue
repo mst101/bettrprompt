@@ -1,29 +1,9 @@
 <script setup lang="ts">
 import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
-import type { Nullable } from '@/types';
+import type { FormSelectProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
-interface SelectOption {
-    value: string | number;
-    label: string;
-}
-
-interface Props {
-    id: string;
-    label: string;
-    modelValue?: string | number;
-    options: SelectOption[];
-    error?: string;
-    required?: boolean;
-    disabled?: boolean;
-    placeholder?: string;
-    showPlaceholder?: boolean;
-    customClass?: string;
-    helpText?: string;
-    autofocus?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<FormSelectProps>(), {
     modelValue: '',
     error: '',
     required: false,

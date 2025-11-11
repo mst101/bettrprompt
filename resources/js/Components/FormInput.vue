@@ -1,26 +1,9 @@
 <script setup lang="ts">
 import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
-import type { Nullable } from '@/types';
+import type { FormInputProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
-interface Props {
-    id: string;
-    modelValue?: string | number | null;
-    label: string;
-    type?: string;
-    error?: string;
-    required?: boolean;
-    placeholder?: string;
-    disabled?: boolean;
-    autofocus?: boolean;
-    autocomplete?: string;
-    customClass?: string;
-    helpText?: string;
-    min?: number | string;
-    max?: number | string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<FormInputProps>(), {
     modelValue: '',
     type: 'text',
     error: '',

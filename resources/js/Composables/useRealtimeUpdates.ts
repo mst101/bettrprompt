@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/vue3';
+import type { Channel } from 'laravel-echo';
 import { onMounted, onUnmounted, ref } from 'vue';
 
 interface ReloadOptions {
@@ -6,7 +7,7 @@ interface ReloadOptions {
 }
 
 interface EventHandlers {
-    [eventName: string]: (data: any) => void;
+    [eventName: string]: (data: unknown) => void;
 }
 
 /**
@@ -37,7 +38,7 @@ export function useRealtimeUpdates(
     const connected = ref(false);
     const usingFallback = ref(false);
     let pollInterval: number | null = null;
-    let channel: any = null;
+    let channel: Channel | null = null;
 
     const startPolling = () => {
         if (pollInterval) return; // Already polling
@@ -71,7 +72,7 @@ export function useRealtimeUpdates(
 
             // Set up event listeners
             Object.entries(events).forEach(([eventName, handler]) => {
-                channel.listen(eventName, (data: any) => {
+                channel!.listen(eventName, (data: unknown) => {
                     try {
                         console.log(
                             `[useRealtimeUpdates] Event: ${eventName}`,
@@ -88,7 +89,7 @@ export function useRealtimeUpdates(
             });
 
             // Handle channel errors
-            channel.error((error: any) => {
+            channel.error((error: Error) => {
                 console.error(
                     '[useRealtimeUpdates] WebSocket channel error:',
                     error,
