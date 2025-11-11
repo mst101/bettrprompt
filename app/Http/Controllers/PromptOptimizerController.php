@@ -925,4 +925,45 @@ class PromptOptimizerController extends Controller
                 ->with('error', 'An error occurred whilst creating the new prompt optimisation. Please try again.');
         }
     }
+
+    /**
+     * Update the optimised prompt text
+     */
+    public function updateOptimizedPrompt(Request $request, PromptRun $promptRun)
+    {
+        // Authorise that the user can update this prompt run
+        if ($promptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate that the prompt run is completed
+        if ($promptRun->workflow_stage !== 'completed') {
+            return back()->with('error', 'Can only edit completed prompt runs.');
+        }
+
+        $validated = $request->validate([
+            'optimized_prompt' => 'required|string|max:50000',
+        ]);
+
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated) {
+                $promptRun->update([
+                    'optimized_prompt' => $validated['optimized_prompt'],
+                ]);
+            });
+
+            Log::info('Updated optimised prompt', [
+                'prompt_run_id' => $promptRun->id,
+            ]);
+
+            return back()->with('success', 'Prompt updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to update optimised prompt', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to update prompt. Please try again.');
+        }
+    }
 }

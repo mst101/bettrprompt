@@ -15,7 +15,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 defineOptions({
@@ -134,6 +134,21 @@ watch(
     },
     { immediate: true },
 );
+
+// Save edited optimised prompt
+const saveOptimizedPrompt = (editedPrompt: string) => {
+    router.patch(
+        route('prompt-optimizer.update-prompt', {
+            promptRun: props.promptRun.id,
+        }),
+        {
+            optimized_prompt: editedPrompt,
+        },
+        {
+            preserveScroll: true,
+        },
+    );
+};
 
 // Real-time updates composable
 useRealtimeUpdates(
@@ -323,6 +338,8 @@ useRealtimeUpdates(
                     promptRun.optimizedPrompt
                 "
                 :optimized-prompt="promptRun.optimizedPrompt"
+                :prompt-run-id="promptRun.id"
+                @save="saveOptimizedPrompt"
             />
 
             <!-- Error Message -->
