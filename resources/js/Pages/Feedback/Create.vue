@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
 import FormField from '@/Components/FormField.vue';
 import LikertScale from '@/Components/LikertScale.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -15,7 +16,48 @@ const form = useForm({
     experienceLevel: 4,
     usefulness: 5,
     suggestions: '',
+    recommendationLikelihood: 5,
+    desiredFeatures: [] as string[],
+    desiredFeaturesOther: '',
 });
+
+const featureOptions = [
+    {
+        value: 'templates',
+        label: 'Prompt templates library',
+        description:
+            'Pre-built templates for common use cases (code review, content writing, data analysis, etc.)',
+    },
+    {
+        value: 'compare',
+        label: 'Compare prompt versions side-by-side',
+        description:
+            'Visual comparison tool showing differences between prompt versions and their effectiveness',
+    },
+    {
+        value: 'api-integration',
+        label: 'Integration with ChatGPT/Claude APIs',
+        description:
+            'Test prompts directly with AI models, see real responses, and iterate within the app',
+    },
+    {
+        value: 'collaboration',
+        label: 'Team collaboration features',
+        description:
+            'Share prompts within your organisation, add comments, track versions, and manage permissions',
+    },
+    {
+        value: 'model-specific',
+        label: 'AI model-specific optimisation',
+        description:
+            'Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences',
+    },
+    {
+        value: 'other',
+        label: 'Other',
+        description: "Something else? Let us know what you'd like to see!",
+    },
+];
 
 const submit = () => {
     form.post(route('feedback.store'), {
@@ -93,17 +135,59 @@ const submit = () => {
                         </p>
                     </div>
 
-                    <!-- Question 3: Suggestions -->
+                    <!-- Question 3: Recommendation Likelihood -->
+                    <div class="mt-16">
+                        <label
+                            class="mb-4 block text-sm font-medium text-gray-900"
+                        >
+                            3. How likely are you to recommend this app to a
+                            colleague?
+                        </label>
+                        <LikertScale
+                            v-model="form.recommendationLikelihood"
+                            left-label="Very unlikely"
+                            right-label="Very likely"
+                            :disabled="form.processing"
+                        />
+                        <p
+                            v-if="form.errors.recommendationLikelihood"
+                            class="mt-2 text-sm text-red-600"
+                        >
+                            {{ form.errors.recommendationLikelihood }}
+                        </p>
+                    </div>
+
+                    <!-- Question 4: Suggestions -->
                     <div class="mt-16">
                         <FormField
                             id="suggestions"
-                            label="3. What's one thing you'd change or improve about the app?"
+                            label="4. What's one thing you'd change or improve about the app?"
                             type="textarea"
                             v-model="form.suggestions"
                             :error="form.errors.suggestions"
                             :disabled="form.processing"
                             placeholder="Mention any steps you found confusing or features you'd like to see next."
                             :rows="5"
+                        />
+                    </div>
+
+                    <!-- Question 5: Desired Features -->
+                    <div class="mt-16">
+                        <label
+                            class="mb-4 block text-sm font-medium text-gray-900"
+                        >
+                            5. Which features would you most want to see added
+                            next?
+                            <span class="font-normal text-gray-600"
+                                >(Select all that apply)</span
+                            >
+                        </label>
+                        <FormCheckboxGroup
+                            v-model="form.desiredFeatures"
+                            v-model:other-value="form.desiredFeaturesOther"
+                            :options="featureOptions"
+                            :disabled="form.processing"
+                            :error="form.errors.desiredFeatures"
                         />
                     </div>
 

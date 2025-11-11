@@ -1,74 +1,142 @@
 <script setup lang="ts">
-import FormCheckbox from '@/Components/ui/FormCheckbox.vue';
-import FormFieldWrapper from '@/Components/ui/FormFieldWrapper.vue';
-import { computed } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 interface Option {
     value: string;
     label: string;
+    description: string;
 }
 
 interface Props {
-    id: string;
     modelValue: string[];
-    name: string;
-    label?: string;
     options: Option[];
-    columns?: number;
+    otherValue?: string;
+    disabled?: boolean;
     error?: string;
-    helpText?: string;
-    required?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    label: '',
-    columns: 3,
-    error: '',
-    helpText: '',
-    required: false,
+    disabled: false,
+    otherValue: '',
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: string[]): void;
+    (e: 'update:otherValue', value: string): void;
+}>();
 
-function updateValue(newValue: string[]) {
-    emit('update:modelValue', newValue);
-}
+const otherTextarea = ref<HTMLTextAreaElement | null>(null);
 
-// Compute the grid class based on columns prop
-const columnsClass = computed(() => {
-    switch (props.columns) {
-        case 1:
-            return 'grid-cols-1';
-        case 2:
-            return 'grid-cols-1 sm:grid-cols-2';
-        case 3:
-            return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3';
-        case 4:
-            return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
-        default:
-            return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3';
+const isChecked = (value: string) => {
+    return props.modelValue.includes(value);
+};
+
+const toggleOption = async (value: string) => {
+    if (props.disabled) return;
+
+    const currentValues = [...props.modelValue];
+    const index = currentValues.indexOf(value);
+
+    if (index > -1) {
+        currentValues.splice(index, 1);
+        // If unchecking "other", clear the other text
+        if (value === 'other') {
+            emit('update:otherValue', '');
+        }
+    } else {
+        currentValues.push(value);
+        // If checking "other", focus the textarea after it appears
+        if (value === 'other') {
+            await nextTick();
+            otherTextarea.value?.focus();
+        }
     }
+
+    emit('update:modelValue', currentValues);
+};
+
+const showOtherInput = computed(() => {
+    return props.modelValue.includes('other');
 });
 </script>
 
 <template>
-    <FormFieldWrapper
-        :id="id"
-        :label="label"
-        :error="error"
-        :required="required"
-        :help-text="helpText"
-    >
-        <div class="mt-2 grid gap-2" :class="columnsClass">
-            <FormCheckbox
+    <div>
+        <div class="space-y-3">
+            <label
                 v-for="option in options"
-                :id="`${name}-${option.value}`"
                 :key="option.value"
-                :model-value="modelValue"
-                :value="option.value"
-                :label="option.label"
-                @update:model-value="updateValue"
-            />
+                class="flex items-start gap-3 rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
+                :class="{
+                    'cursor-pointer': !disabled,
+                    'cursor-not-allowed opacity-50': disabled,
+                    'border-indigo-500 bg-indigo-50': isChecked(option.value),
+                    'hover:bg-indigo-50': isChecked(option.value),
+                }"
+            >
+                <input
+                    type="checkbox"
+                    :value="option.value"
+                    :checked="isChecked(option.value)"
+                    @change="toggleOption(option.value)"
+                    :disabled="disabled"
+                    class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-gray-900">
+                        {{ option.label }}
+                    </div>
+                    <div class="mt-1 text-sm text-gray-600">
+                        {{ option.description }}
+                    </div>
+                </div>
+            </label>
         </div>
-    </FormFieldWrapper>
+
+        <!-- Other Text Input -->
+        <Transition
+            enter-active-class="transition ease-out duration-200"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-2"
+        >
+            <div v-if="showOtherInput" class="mt-4">
+                <label
+                    for="other-text"
+                    class="block text-sm font-medium text-gray-700"
+                >
+                    Please describe the feature you'd like
+                </label>
+                <textarea
+                    id="other-text"
+                    ref="otherTextarea"
+                    :value="otherValue"
+                    @input="
+                        emit(
+                            'update:otherValue',
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
+                    "
+                    :disabled="disabled"
+                    placeholder="Describe the feature you'd like to see..."
+                    rows="3"
+                    maxlength="500"
+                    class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    :class="{
+                        'cursor-not-allowed opacity-50': disabled,
+                    }"
+                />
+                <div class="mt-1 text-right text-xs text-gray-500">
+                    {{ otherValue.length }} / 500 characters
+                </div>
+            </div>
+        </Transition>
+
+        <!-- Error Message -->
+        <p v-if="error" class="mt-2 text-sm text-red-600">
+            {{ error }}
+        </p>
+    </div>
 </template>
