@@ -65,6 +65,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/prompt-optimizer/{parentPromptRun}/create-child',
         [\App\Http\Controllers\PromptOptimizerController::class, 'createChild'])
         ->name('prompt-optimizer.create-child');
+    Route::post('/prompt-optimizer/{parentPromptRun}/create-child-from-answers',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'createChildFromAnswers'])
+        ->name('prompt-optimizer.create-child-from-answers');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
 

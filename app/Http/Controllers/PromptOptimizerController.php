@@ -803,4 +803,126 @@ class PromptOptimizerController extends Controller
                 ->with('error', 'An error occurred whilst creating the new prompt optimisation. Please try again.');
         }
     }
+
+    /**
+     * Create a child prompt run from edited clarifying answers
+     */
+    public function createChildFromAnswers(Request $request, PromptRun $parentPromptRun)
+    {
+        // Authorise that the user can create a child of this prompt run
+        if ($parentPromptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate that parent has framework questions
+        if (! $parentPromptRun->framework_questions || empty($parentPromptRun->framework_questions)) {
+            return back()->with('error', 'Parent prompt run does not have framework questions.');
+        }
+
+        $validated = $request->validate([
+            'clarifying_answers' => 'required|array',
+            'clarifying_answers.*' => 'nullable|string|max:5000',
+        ]);
+
+        // Convert empty strings to null for consistency
+        $clarifyingAnswers = array_map(
+            fn ($answer) => ($answer === '' || $answer === null) ? null : $answer,
+            $validated['clarifying_answers']
+        );
+
+        $user = auth()->user();
+
+        try {
+            // Create the child prompt run record with same framework but new answers
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $clarifyingAnswers) {
+                return PromptRun::create([
+                    'user_id' => $user->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $user->personality_type,
+                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'task_description' => $parentPromptRun->task_description,
+                    'selected_framework' => $parentPromptRun->selected_framework,
+                    'framework_reasoning' => $parentPromptRun->framework_reasoning,
+                    'framework_questions' => $parentPromptRun->framework_questions,
+                    'clarifying_answers' => $clarifyingAnswers,
+                    'status' => 'processing',
+                    'workflow_stage' => 'generating_prompt',
+                ]);
+            });
+
+            Log::info('Created child prompt run from edited answers', [
+                'parent_id' => $parentPromptRun->id,
+                'child_id' => $childPromptRun->id,
+            ]);
+
+            // Trigger final optimization directly with edited answers
+            $payload = [
+                'prompt_run_id' => $childPromptRun->id,
+                'personality_type' => $user->personality_type,
+                'trait_percentages' => $user->trait_percentages ?? null,
+                'task_description' => $parentPromptRun->task_description,
+                'selected_framework' => $parentPromptRun->selected_framework,
+                'framework_reasoning' => $parentPromptRun->framework_reasoning,
+                'framework_questions' => $parentPromptRun->framework_questions,
+                'clarifying_answers' => $clarifyingAnswers,
+            ];
+
+            // Store the request payload
+            DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $payload) {
+                $childPromptRun->update([
+                    'n8n_request_payload' => $payload,
+                ]);
+            });
+
+            // Trigger final prompt optimizer workflow
+            $response = $this->n8nClient->triggerWebhook(
+                '/webhook/final-prompt-optimizer',
+                $payload
+            );
+
+            if ($response['success']) {
+                $responseData = $response['data'];
+
+                // Update the prompt run with the optimized prompt
+                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $responseData) {
+                    $childPromptRun->update([
+                        'optimized_prompt' => $responseData['optimized_prompt'] ?? null,
+                        'workflow_stage' => 'completed',
+                        'status' => 'completed',
+                        'completed_at' => now(),
+                        'n8n_response_payload' => $responseData,
+                    ]);
+                });
+
+                // Refresh the model
+                $childPromptRun->refresh();
+
+                return redirect()
+                    ->route('prompt-optimizer.show', ['promptRun' => $childPromptRun->id])
+                    ->with('success', 'New prompt optimisation created with edited answers.');
+            } else {
+                // Handle error response
+                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $response) {
+                    $childPromptRun->update([
+                        'status' => 'failed',
+                        'workflow_stage' => 'failed',
+                        'error_message' => $response['message'] ?? 'Final optimization failed',
+                        'n8n_response_payload' => $response['data'] ?? null,
+                    ]);
+                });
+
+                return back()
+                    ->with('error', 'Failed to generate optimised prompt. Please try again.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to create child from edited answers', [
+                'parent_prompt_run_id' => $parentPromptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', 'An error occurred whilst creating the new prompt optimisation. Please try again.');
+        }
+    }
 }

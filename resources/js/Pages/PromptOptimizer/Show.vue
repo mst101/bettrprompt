@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AllQuestionsCard from '@/Components/PromptOptimizer/AllQuestionsCard.vue';
 import ClarifyingQuestionsCard from '@/Components/PromptOptimizer/ClarifyingQuestionsCard.vue';
+import EditClarifyingAnswersForm from '@/Components/PromptOptimizer/EditClarifyingAnswersForm.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import FrameworkSelectionDisplay from '@/Components/PromptOptimizer/FrameworkSelectionDisplay.vue';
@@ -60,22 +61,34 @@ const errorResponse = computed((): N8nErrorResponse | null => {
     return null;
 });
 
-// Edit mode state
-const isEditing = ref(false);
+// Edit mode state for task description
+const isEditingTask = ref(false);
 
-const startEditing = () => {
-    isEditing.value = true;
+const startEditingTask = () => {
+    isEditingTask.value = true;
 };
 
-const cancelEditing = () => {
-    isEditing.value = false;
+const cancelEditingTask = () => {
+    isEditingTask.value = false;
 };
 
-// Reset edit mode when navigating to different prompt run
+// Edit mode state for clarifying answers
+const isEditingAnswers = ref(false);
+
+const startEditingAnswers = () => {
+    isEditingAnswers.value = true;
+};
+
+const cancelEditingAnswers = () => {
+    isEditingAnswers.value = false;
+};
+
+// Reset edit modes when navigating to different prompt run
 watch(
     () => props.promptRun.id,
     () => {
-        isEditing.value = false;
+        isEditingTask.value = false;
+        isEditingAnswers.value = false;
     },
 );
 
@@ -167,11 +180,11 @@ useRealtimeUpdates(
 
             <!-- Input Information -->
             <TaskInformationCard
-                v-if="!isEditing"
+                v-if="!isEditingTask"
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
-                @edit="startEditing"
+                @edit="startEditingTask"
                 class="mb-6"
             />
 
@@ -187,7 +200,7 @@ useRealtimeUpdates(
                     <EditTaskForm
                         :prompt-run-id="promptRun.id"
                         :initial-task-description="promptRun.taskDescription"
-                        @cancel="cancelEditing"
+                        @cancel="cancelEditingTask"
                     />
                 </div>
             </div>
@@ -246,18 +259,62 @@ useRealtimeUpdates(
                 :selected-framework="promptRun.selectedFramework ?? undefined"
             />
 
-            <!-- Clarifying Questions & Answers -->
-            <ClarifyingQuestionsCard
+            <!-- Clarifying Questions & Answers (View Mode) -->
+            <div
                 v-if="
                     promptRun.frameworkQuestions &&
                     promptRun.frameworkQuestions.length > 0 &&
                     promptRun.clarifyingAnswers &&
                     promptRun.clarifyingAnswers.length > 0 &&
-                    promptRun.workflowStage === 'completed'
+                    promptRun.workflowStage === 'completed' &&
+                    !isEditingAnswers
                 "
-                :prompt-run="promptRun"
                 class="mb-6"
-            />
+            >
+                <ClarifyingQuestionsCard :prompt-run="promptRun" />
+                <div class="mt-3 flex justify-end">
+                    <button
+                        @click="startEditingAnswers"
+                        class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                    >
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                        </svg>
+                        Edit Answers
+                    </button>
+                </div>
+            </div>
+
+            <!-- Edit Clarifying Answers Form -->
+            <div
+                v-if="
+                    promptRun.frameworkQuestions &&
+                    promptRun.frameworkQuestions.length > 0 &&
+                    promptRun.workflowStage === 'completed' &&
+                    isEditingAnswers
+                "
+                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
+            >
+                <div class="p-6">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                        Edit Clarifying Answers & Create New Optimisation
+                    </h3>
+                    <EditClarifyingAnswersForm
+                        :prompt-run="promptRun"
+                        @cancel="cancelEditingAnswers"
+                    />
+                </div>
+            </div>
 
             <!-- Optimised Prompt Result -->
             <OptimizedPromptDisplay
