@@ -128,7 +128,7 @@ const formatDate = (dateString: string) => {
                             type="button"
                             @click="isEditing = true"
                         >
-                            Edit
+                            Edit Responses
                         </ButtonSecondary>
                     </div>
                     <p class="mt-2 text-xs text-gray-500">

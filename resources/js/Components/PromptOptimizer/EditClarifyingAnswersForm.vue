@@ -63,9 +63,14 @@ const submit = () => {
                 <div class="ml-8">
                     <FormTextarea
                         :id="`answer-${index}`"
+                        label=""
                         v-model="form.clarifying_answers[index]"
                         :rows="3"
-                        :error="form.errors[`clarifying_answers.${index}`]"
+                        :error="
+                            (form.errors as Record<string, string>)[
+                                `clarifying_answers.${index}`
+                            ]
+                        "
                         placeholder="Your answer (leave empty to skip)..."
                     />
                 </div>

@@ -60,7 +60,7 @@ const emit = defineEmits<{
                         class="inline-flex items-center gap-1"
                     >
                         <DynamicIcon name="edit" class="h-4 w-4" />
-                        Edit
+                        Edit Task
                     </ButtonSecondary>
                 </div>
                 <p class="mt-1 ml-2 text-sm whitespace-pre-wrap text-gray-900">
