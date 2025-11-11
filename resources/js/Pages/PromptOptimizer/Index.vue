@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import VoiceInputMethodToggle from '@/Components/VoiceInputMethodToggle.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -34,19 +33,6 @@ const handleTranscription = (text: string) => {
 const clearTaskDescription = () => {
     form.taskDescription = '';
 };
-
-// Voice input method preference (when browser supports both)
-// Default to true (Whisper API) for better accuracy
-const preferWhisperAPI = ref(
-    localStorage.getItem('preferWhisperAPI') !== null
-        ? localStorage.getItem('preferWhisperAPI') === 'true'
-        : true,
-);
-
-// Persist preference changes to localStorage
-watch(preferWhisperAPI, (newValue) => {
-    localStorage.setItem('preferWhisperAPI', String(newValue));
-});
 </script>
 
 <template>
@@ -132,7 +118,6 @@ watch(preferWhisperAPI, (newValue) => {
                                     </button>
                                     <ButtonVoiceInput
                                         @transcription="handleTranscription"
-                                        :force-whisper-a-p-i="preferWhisperAPI"
                                     />
                                 </div>
                             </div>
@@ -159,13 +144,6 @@ watch(preferWhisperAPI, (newValue) => {
                                 Minimum 10 characters. Be specific about your
                                 goals and requirements.
                             </p>
-
-                            <!-- Voice input method toggle (only show if browser supports speech) -->
-                            <VoiceInputMethodToggle
-                                v-if="hasPersonalityType"
-                                v-model="preferWhisperAPI"
-                                class="mt-3"
-                            />
                         </div>
 
                         <!-- Submit Button -->

@@ -4,8 +4,6 @@ import Card from '@/Components/Card.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import VoiceInputMethodToggle from '@/Components/VoiceInputMethodToggle.vue';
-import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { computed } from 'vue';
 
 interface Props {
@@ -16,6 +14,7 @@ interface Props {
     isSubmitting: boolean;
     hasError?: boolean;
     errorMessage?: string;
+    showAll?: boolean;
 }
 
 interface Emits {
@@ -23,13 +22,11 @@ interface Emits {
     (e: 'submit'): void;
     (e: 'skip'): void;
     (e: 'clear'): void;
+    (e: 'toggle-show-all'): void;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-
-// Voice input method preference
-const preferWhisperAPI = useLocalStorage('preferWhisperAPI', true);
 
 const handleTranscription = (text: string) => {
     let newAnswer = props.answer;
@@ -52,10 +49,19 @@ const progressPercent = computed(() => {
             <!-- Progress -->
             <div data-testid="progress-indicator">
                 <div class="flex items-center justify-between text-sm">
-                    <span class="font-medium text-gray-700"
-                        >Question {{ currentQuestionNumber }} of
-                        {{ totalQuestions }}</span
-                    >
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium text-gray-700"
+                            >Question {{ currentQuestionNumber }} of
+                            {{ totalQuestions }}</span
+                        >
+                        <button
+                            @click="emit('toggle-show-all')"
+                            type="button"
+                            class="text-indigo-600 hover:text-indigo-800 hover:underline"
+                        >
+                            {{ showAll ? '(one-at-a-time)' : '(show all)' }}
+                        </button>
+                    </div>
                     <span class="text-gray-500"
                         >{{ Math.round(progressPercent) }}% complete</span
                     >
@@ -88,7 +94,6 @@ const progressPercent = computed(() => {
                     <div class="flex items-center gap-2">
                         <ButtonVoiceInput
                             @transcription="handleTranscription"
-                            :prefer-whisper-a-p-i="preferWhisperAPI"
                             :disabled="isSubmitting"
                         />
                     </div>
@@ -122,17 +127,9 @@ const progressPercent = computed(() => {
                     {{ errorMessage }}
                 </p>
 
-                <!-- Voice Input Controls -->
-                <div class="mt-3 flex items-center justify-between">
-                    <!-- Voice Method Toggle -->
-                    <VoiceInputMethodToggle
-                        v-model="preferWhisperAPI"
-                        :disabled="isSubmitting"
-                    />
-
-                    <!-- Clear Button -->
+                <!-- Clear Button -->
+                <div v-if="answer" class="mt-3 flex justify-end">
                     <button
-                        v-if="answer"
                         @click="emit('clear')"
                         type="button"
                         class="text-sm text-gray-500 hover:text-gray-700"
