@@ -6,6 +6,7 @@ use App\Casts\N8nResponsePayload;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PromptRun extends Model
 {
@@ -13,6 +14,7 @@ class PromptRun extends Model
 
     protected $fillable = [
         'user_id',
+        'parent_id',
         'personality_type',
         'trait_percentages',
         'task_description',
@@ -41,6 +43,16 @@ class PromptRun extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(PromptRun::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(PromptRun::class, 'parent_id');
     }
 
     /**

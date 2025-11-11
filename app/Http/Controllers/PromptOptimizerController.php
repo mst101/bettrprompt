@@ -205,6 +205,9 @@ class PromptOptimizerController extends Controller
             abort(403);
         }
 
+        // Load parent and children relationships
+        $promptRun->load(['parent', 'children']);
+
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $promptRun->getCurrentQuestion(),
@@ -701,5 +704,99 @@ class PromptOptimizerController extends Controller
                 'per_page' => $perPage,
             ],
         ]);
+    }
+
+    /**
+     * Create a child prompt run with a new task description
+     */
+    public function createChild(Request $request, PromptRun $parentPromptRun)
+    {
+        // Authorise that the user can create a child of this prompt run
+        if ($parentPromptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'task_description' => 'required|string|max:5000',
+        ]);
+
+        $user = auth()->user();
+
+        try {
+            // Create the child prompt run record
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $validated) {
+                return PromptRun::create([
+                    'user_id' => $user->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $user->personality_type,
+                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'task_description' => $validated['task_description'],
+                    'status' => 'processing',
+                    'workflow_stage' => 'submitted',
+                ]);
+            });
+
+            // Prepare payload for framework selector
+            $payload = [
+                'prompt_run_id' => $childPromptRun->id,
+                'personality_type' => $user->personality_type,
+                'trait_percentages' => $user->trait_percentages ?? null,
+                'task_description' => $validated['task_description'],
+            ];
+
+            // Store the request payload
+            DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $payload) {
+                $childPromptRun->update([
+                    'n8n_request_payload' => $payload,
+                ]);
+            });
+
+            // Trigger framework selector workflow
+            $response = $this->n8nClient->triggerWebhook(
+                '/webhook/framework-selector',
+                $payload
+            );
+
+            if ($response['success']) {
+                $responseData = $response['data'];
+
+                // Update the prompt run with framework selection
+                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $responseData) {
+                    $childPromptRun->update([
+                        'selected_framework' => $responseData['selected_framework'] ?? null,
+                        'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                        'framework_questions' => $responseData['framework_questions'] ?? [],
+                        'clarifying_answers' => [],
+                        'workflow_stage' => 'framework_selected',
+                        'n8n_response_payload' => $responseData,
+                    ]);
+                });
+
+                return redirect()
+                    ->route('prompt-optimizer.show', $childPromptRun)
+                    ->with('success', 'New prompt optimisation created successfully.');
+            } else {
+                // Handle error response
+                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $response) {
+                    $childPromptRun->update([
+                        'status' => 'failed',
+                        'error_message' => $response['message'] ?? 'Framework selection failed',
+                        'n8n_response_payload' => $response['data'] ?? null,
+                    ]);
+                });
+
+                return back()
+                    ->with('error', 'Failed to select framework. Please try again.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to create child prompt run', [
+                'parent_prompt_run_id' => $parentPromptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', 'An error occurred whilst creating the new prompt optimisation. Please try again.');
+        }
     }
 }

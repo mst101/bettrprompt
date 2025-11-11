@@ -8,6 +8,7 @@ import type { N8nResponsePayload, UserResource } from '@/types';
 export interface PromptRunResource {
     readonly id: number;
     readonly userId: number | null;
+    readonly parentId: number | null;
     readonly personalityType: string;
     readonly traitPercentages: Array<unknown> | null;
     readonly taskDescription: string;
@@ -25,4 +26,6 @@ export interface PromptRunResource {
     readonly createdAt: string;
     readonly updatedAt: string;
     readonly user?: UserResource | null;
+    readonly parent?: PromptRunResource | null;
+    readonly children?: PromptRunResource[];
 }

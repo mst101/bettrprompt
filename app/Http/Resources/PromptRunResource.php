@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * interface PromptRun {
  *   readonly id: number;
  *   readonly userId: number | null;
+ *   readonly parentId: number | null;
  *   readonly personalityType: string;
  *   readonly traitPercentages: Array<unknown> | null;
  *   readonly taskDescription: string;
@@ -34,6 +35,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  *   // Relationships
  *   readonly user?: UserResource | null;
+ *   readonly parent?: PromptRunResource | null;
+ *   readonly children?: PromptRunResource[];
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -49,6 +52,7 @@ class PromptRunResource extends JsonResource
         return [
             'id' => $this->id,
             'userId' => $this->user_id,
+            'parentId' => $this->parent_id,
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
             'taskDescription' => $this->task_description,
@@ -69,6 +73,12 @@ class PromptRunResource extends JsonResource
             // Relationships
             'user' => $this->whenLoaded('user', function () {
                 return $this->user ? new UserResource($this->user) : null;
+            }),
+            'parent' => $this->whenLoaded('parent', function () {
+                return $this->parent ? new PromptRunResource($this->parent) : null;
+            }),
+            'children' => $this->whenLoaded('children', function () {
+                return PromptRunResource::collection($this->children);
             }),
         ];
     }

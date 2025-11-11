@@ -62,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/prompt-optimizer/{promptRun}/retry',
         [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
         ->name('prompt-optimizer.retry');
+    Route::post('/prompt-optimizer/{parentPromptRun}/create-child',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'createChild'])
+        ->name('prompt-optimizer.create-child');
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
 
