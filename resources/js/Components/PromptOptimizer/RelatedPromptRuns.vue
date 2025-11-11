@@ -13,7 +13,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const hasRelations =
-    props.parent || (props.children && props.children.length > 0);
+    (props.parent && props.parent.id) ||
+    (props.children && props.children.length > 0);
 
 const truncateText = (text: string, maxLength: number = 60) => {
     if (text.length <= maxLength) return text;
@@ -30,7 +31,7 @@ const truncateText = (text: string, maxLength: number = 60) => {
         <div class="space-y-4">
             <!-- Parent Link -->
             <div
-                v-if="parent"
+                v-if="parent && parent.id"
                 class="rounded-lg border border-gray-200 bg-gray-50 p-4"
             >
                 <div class="mb-2 flex items-center gap-2">
