@@ -208,6 +208,7 @@ class PromptOptimizerController extends Controller
         // Load parent and children relationships
         $promptRun->load(['parent', 'children']);
 
+        //        dd(PromptRunResource::make($promptRun)->resolve());
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $promptRun->getCurrentQuestion(),

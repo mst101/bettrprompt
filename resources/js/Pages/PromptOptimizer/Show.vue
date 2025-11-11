@@ -71,6 +71,14 @@ const cancelEditing = () => {
     isEditing.value = false;
 };
 
+// Reset edit mode when navigating to different prompt run
+watch(
+    () => props.promptRun.id,
+    () => {
+        isEditing.value = false;
+    },
+);
+
 // Show all questions mode
 const showAllQuestions = ref(false);
 
