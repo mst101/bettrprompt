@@ -237,7 +237,9 @@ const submit = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <ButtonPrimary :disabled="form.processing">Save</ButtonPrimary>
+                <ButtonPrimary :disabled="form.processing" type="submit"
+                    >Save</ButtonPrimary
+                >
 
                 <!-- Persist CTA after a successful save in this session -->
                 <Transition

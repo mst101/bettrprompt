@@ -772,8 +772,11 @@ class PromptOptimizerController extends Controller
                     ]);
                 });
 
+                // Refresh the model to ensure we have latest data
+                $childPromptRun->refresh();
+
                 return redirect()
-                    ->route('prompt-optimizer.show', $childPromptRun)
+                    ->route('prompt-optimizer.show', ['promptRun' => $childPromptRun->id])
                     ->with('success', 'New prompt optimisation created successfully.');
             } else {
                 // Handle error response
