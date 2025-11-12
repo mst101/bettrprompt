@@ -184,7 +184,7 @@ const submit = () => {
                             :min="0"
                             :max="100"
                             placeholder="%"
-                            custom-class="text-right placeholder:text-right"
+                            class="text-right placeholder:text-right"
                         />
 
                         <FormInput
@@ -195,7 +195,7 @@ const submit = () => {
                             :min="0"
                             :max="100"
                             placeholder="%"
-                            custom-class="text-right placeholder:text-right"
+                            class="text-right placeholder:text-right"
                         />
 
                         <FormInput
@@ -206,7 +206,7 @@ const submit = () => {
                             :min="0"
                             :max="100"
                             placeholder="%"
-                            custom-class="text-right placeholder:text-right"
+                            class="text-right placeholder:text-right"
                         />
 
                         <FormInput
@@ -217,7 +217,7 @@ const submit = () => {
                             :min="0"
                             :max="100"
                             placeholder="%"
-                            custom-class="text-right placeholder:text-right"
+                            class="text-right placeholder:text-right"
                         />
 
                         <div class="col-span-2">
@@ -229,7 +229,7 @@ const submit = () => {
                                 :min="0"
                                 :max="100"
                                 placeholder="%"
-                                custom-class="text-right placeholder:text-right"
+                                class="text-right placeholder:text-right"
                             />
                         </div>
                     </div>

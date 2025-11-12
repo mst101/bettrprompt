@@ -3,6 +3,10 @@ import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormInputProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const props = withDefaults(defineProps<FormInputProps>(), {
     modelValue: '',
     type: 'text',
@@ -12,7 +16,6 @@ const props = withDefaults(defineProps<FormInputProps>(), {
     disabled: false,
     autofocus: false,
     autocomplete: '',
-    customClass: '',
     helpText: '',
 });
 
@@ -58,8 +61,9 @@ function updateValue(event: Event): void {
             :placeholder="placeholder"
             :min="min"
             :max="max"
+            v-bind="$attrs"
             class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            :class="[customClass, { 'bg-gray-50': disabled }]"
+            :class="{ 'bg-gray-50': disabled }"
             :required="required"
             :disabled="disabled"
             :autocomplete="autocomplete"

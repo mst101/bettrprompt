@@ -72,7 +72,7 @@ const closeModal = () => {
                         type="password"
                         :error="form.errors.password"
                         placeholder="Password"
-                        custom-class="w-3/4"
+                        class="w-3/4"
                         @keyup.enter="deleteUser"
                     />
                 </div>

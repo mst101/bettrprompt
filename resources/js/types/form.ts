@@ -23,9 +23,6 @@ export interface BaseFormFieldProps {
     /** Help text displayed below the field */
     helpText?: string;
 
-    /** Additional CSS classes to apply to the input element */
-    customClass?: string;
-
     /** Whether to auto-focus the field on mount */
     autofocus?: boolean;
 }

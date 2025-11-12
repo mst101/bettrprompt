@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import FeatureCard from '@/Components/FeatureCard.vue';
 import StepCard from '@/Components/StepCard.vue';
@@ -73,18 +74,18 @@ onMounted(() => {
                         <ButtonSecondary
                             v-if="isReturningVisitor"
                             @click="openLoginModal?.()"
-                            class="p-4"
+                            size="lg"
                         >
                             Welcome back! Log in to continue
                         </ButtonSecondary>
                         <!-- New visitor -->
-                        <button
+                        <ButtonPrimary
                             v-else
                             @click="openRegisterModal?.()"
-                            class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                            size="lg"
                         >
                             Get Started for Free
-                        </button>
+                        </ButtonPrimary>
                     </template>
                 </div>
             </div>

@@ -3,6 +3,10 @@ import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormSelectProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const props = withDefaults(defineProps<FormSelectProps>(), {
     modelValue: '',
     error: '',
@@ -10,7 +14,6 @@ const props = withDefaults(defineProps<FormSelectProps>(), {
     disabled: false,
     placeholder: 'Please select...',
     showPlaceholder: true,
-    customClass: '',
     helpText: '',
     autofocus: false,
 });
@@ -40,11 +43,9 @@ onMounted(() => {
             ref="select"
             :id="props.id"
             :value="props.modelValue"
+            v-bind="$attrs"
             class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            :class="[
-                props.customClass,
-                { 'cursor-not-allowed bg-gray-50': props.disabled },
-            ]"
+            :class="{ 'cursor-not-allowed bg-gray-50': props.disabled }"
             :required="props.required"
             :disabled="props.disabled"
             @change="
