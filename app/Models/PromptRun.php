@@ -20,6 +20,7 @@ class PromptRun extends Model
         'task_description',
         'selected_framework',
         'framework_reasoning',
+        'personality_approach',
         'framework_questions',
         'clarifying_answers',
         'optimized_prompt',

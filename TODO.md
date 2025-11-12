@@ -35,4 +35,12 @@
 -
     - Option 1:
 
-... Ultimately, decide which features to include on the MVP for the numpties 
+... Ultimately, decide which features to include on the MVP for the numpties
+
+If the user's personality type is known, on `PromptOptimizer/Index.vue` ask the user whether they would like the AI to
+generate a prompt that:
+a) amplifies their personality type
+b) counterbalances their personality type
+c) a mixture of both
+
+Then create a new n8n workflow that 

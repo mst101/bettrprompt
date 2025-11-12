@@ -21,6 +21,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly taskDescription: string;
  *   readonly selectedFramework: string | null;
  *   readonly frameworkReasoning: string | null;
+ *   readonly personalityApproach: string | null;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
@@ -58,6 +59,7 @@ class PromptRunResource extends JsonResource
             'taskDescription' => $this->task_description,
             'selectedFramework' => $this->selected_framework,
             'frameworkReasoning' => $this->framework_reasoning,
+            'personalityApproach' => $this->personality_approach,
             'frameworkQuestions' => $this->framework_questions,
             'clarifyingAnswers' => $this->clarifying_answers,
             'optimizedPrompt' => $this->optimized_prompt,

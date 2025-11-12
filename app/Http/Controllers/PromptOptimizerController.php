@@ -86,6 +86,7 @@ class PromptOptimizerController extends Controller
                     $promptRun->update([
                         'selected_framework' => $responseData['selected_framework'] ?? null,
                         'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                        'personality_approach' => $responseData['personality_approach'] ?? null,
                         'framework_questions' => $responseData['framework_questions'] ?? [],
                         'clarifying_answers' => [],
                         'workflow_stage' => 'framework_selected',
@@ -378,6 +379,7 @@ class PromptOptimizerController extends Controller
                 'task_description' => $promptRun->task_description,
                 'selected_framework' => $promptRun->selected_framework,
                 'framework_reasoning' => $promptRun->framework_reasoning,
+                'personality_approach' => $promptRun->personality_approach,
                 'framework_questions' => $promptRun->framework_questions,
                 'clarifying_answers' => $promptRun->clarifying_answers,
             ];
@@ -572,6 +574,7 @@ class PromptOptimizerController extends Controller
                         $promptRun->update([
                             'selected_framework' => $responseData['selected_framework'] ?? null,
                             'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                            'personality_approach' => $responseData['personality_approach'] ?? null,
                             'framework_questions' => $responseData['framework_questions'] ?? [],
                             'workflow_stage' => 'framework_selected',
                             'n8n_response_payload' => $responseData,
@@ -782,6 +785,7 @@ class PromptOptimizerController extends Controller
                     $childPromptRun->update([
                         'selected_framework' => $responseData['selected_framework'] ?? null,
                         'framework_reasoning' => $responseData['framework_reasoning'] ?? null,
+                        'personality_approach' => $responseData['personality_approach'] ?? null,
                         'framework_questions' => $responseData['framework_questions'] ?? [],
                         'clarifying_answers' => [],
                         'workflow_stage' => 'framework_selected',
@@ -863,6 +867,7 @@ class PromptOptimizerController extends Controller
                     'task_description' => $parentPromptRun->task_description,
                     'selected_framework' => $parentPromptRun->selected_framework,
                     'framework_reasoning' => $parentPromptRun->framework_reasoning,
+                    'personality_approach' => $parentPromptRun->personality_approach,
                     'framework_questions' => $parentPromptRun->framework_questions,
                     'clarifying_answers' => $clarifyingAnswers,
                     'status' => 'processing',
@@ -881,6 +886,7 @@ class PromptOptimizerController extends Controller
                 'task_description' => $parentPromptRun->task_description,
                 'selected_framework' => $parentPromptRun->selected_framework,
                 'framework_reasoning' => $parentPromptRun->framework_reasoning,
+                'personality_approach' => $parentPromptRun->personality_approach,
                 'framework_questions' => $parentPromptRun->framework_questions,
                 'clarifying_answers' => $clarifyingAnswers,
             ];

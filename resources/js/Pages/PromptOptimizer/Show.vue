@@ -340,6 +340,9 @@ watch(
                             "
                             :framework="promptRun.selectedFramework"
                             :reasoning="promptRun.frameworkReasoning"
+                            :personality-approach="
+                                promptRun.personalityApproach
+                            "
                         />
                     </div>
 
@@ -506,6 +509,7 @@ watch(
                 "
                 :framework="promptRun.selectedFramework"
                 :reasoning="promptRun.frameworkReasoning"
+                :personality-approach="promptRun.personalityApproach"
                 class="mb-6"
             />
         </template>
