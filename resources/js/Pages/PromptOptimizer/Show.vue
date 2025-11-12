@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
 import ClarifyingQuestions from '@/Components/PromptOptimizer/Cards/ClarifyingQuestions.vue';
+import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
+import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import EditClarifyingAnswersForm from '@/Components/PromptOptimizer/EditClarifyingAnswersForm.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
-import FrameworkSelectionCard from '@/Components/PromptOptimizer/FrameworkSelectionDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
-import OptimizedPromptDisplay from '@/Components/PromptOptimizer/OptimizedPromptDisplay.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
@@ -162,7 +162,7 @@ useRealtimeUpdates(
 );
 
 // Tab navigation for completed runs
-const activeTab = ref('overview');
+const activeTab = ref('prompt');
 
 const hasRelatedRuns = computed(
     () =>
@@ -180,13 +180,23 @@ const hasAnsweredQuestions = computed(
 );
 
 const tabs = computed<Tab[]>(() => {
-    const allTabs: Tab[] = [
-        {
-            id: 'overview',
-            label: 'Overview',
-            icon: 'squares-2x2',
-        },
-    ];
+    const allTabs: Tab[] = [];
+
+    // Optimised Prompt tab (first, only for completed runs with prompt)
+    if (props.promptRun.optimizedPrompt) {
+        allTabs.push({
+            id: 'prompt',
+            label: 'Optimised Prompt',
+            icon: 'sparkles',
+        });
+    }
+
+    // Your Task tab (always shown)
+    allTabs.push({
+        id: 'task',
+        label: 'Your Task',
+        icon: 'squares-2x2',
+    });
 
     if (hasRelatedRuns.value) {
         allTabs.push({
@@ -217,11 +227,11 @@ const tabs = computed<Tab[]>(() => {
     return allTabs;
 });
 
-// Reset to overview tab when navigating between prompt runs
+// Reset to prompt tab when navigating between prompt runs
 watch(
     () => props.promptRun.id,
     () => {
-        activeTab.value = 'overview';
+        activeTab.value = 'prompt';
     },
 );
 </script>
@@ -260,8 +270,18 @@ watch(
                     </div>
 
                     <div class="p-6">
-                        <!-- Overview Tab -->
-                        <div v-show="activeTab === 'overview'">
+                        <!-- Optimised Prompt Tab -->
+                        <div v-show="activeTab === 'prompt'">
+                            <OptimizedPrompt
+                                v-if="promptRun.optimizedPrompt"
+                                :optimized-prompt="promptRun.optimizedPrompt"
+                                :prompt-run-id="promptRun.id"
+                                @save="saveOptimizedPrompt"
+                            />
+                        </div>
+
+                        <!-- Your Task Tab -->
+                        <div v-show="activeTab === 'task'">
                             <TaskInformation
                                 v-if="!isEditingTask"
                                 :prompt-run="promptRun"
@@ -291,7 +311,7 @@ watch(
                                 </div>
                             </div>
 
-                            <FrameworkSelectionCard
+                            <FrameworkSelection
                                 v-if="
                                     promptRun.selectedFramework &&
                                     promptRun.frameworkReasoning
@@ -312,7 +332,7 @@ watch(
 
                         <!-- Framework Tab -->
                         <div v-show="activeTab === 'framework'">
-                            <FrameworkSelectionCard
+                            <FrameworkSelection
                                 v-if="
                                     promptRun.selectedFramework &&
                                     promptRun.frameworkReasoning
@@ -415,7 +435,7 @@ watch(
                 </div>
 
                 <!-- Framework Selection Info -->
-                <FrameworkSelectionCard
+                <FrameworkSelection
                     v-if="
                         promptRun.selectedFramework &&
                         promptRun.frameworkReasoning
@@ -468,17 +488,6 @@ watch(
                 v-if="promptRun.workflowStage === 'generating_prompt'"
                 state="generating-prompt"
                 :selected-framework="promptRun.selectedFramework ?? undefined"
-            />
-
-            <!-- Optimised Prompt Result -->
-            <OptimizedPromptDisplay
-                v-if="
-                    promptRun.workflowStage === 'completed' &&
-                    promptRun.optimizedPrompt
-                "
-                :optimized-prompt="promptRun.optimizedPrompt"
-                :prompt-run-id="promptRun.id"
-                @save="saveOptimizedPrompt"
             />
 
             <!-- Error Message -->
