@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
-import ClarifyingQuestions from '@/Components/PromptOptimizer/Cards/ClarifyingQuestions.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
@@ -16,7 +17,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 defineOptions({
@@ -76,12 +77,40 @@ const cancelEditingTask = () => {
 // Edit mode state for clarifying answers
 const isEditingAnswers = ref(false);
 
+// Initialize form for editing answers (convert nulls to empty strings)
+const initialAnswers =
+    props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
+
+const answersEditForm = useForm({
+    clarifying_answers: initialAnswers,
+});
+
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
+    // Reset form to current values when starting edit
+    answersEditForm.clarifying_answers =
+        props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
 };
 
 const cancelEditingAnswers = () => {
     isEditingAnswers.value = false;
+    answersEditForm.reset();
+    answersEditForm.clearErrors();
+};
+
+const submitEditedAnswers = () => {
+    answersEditForm.post(
+        route('prompt-optimizer.create-child-from-answers', {
+            parentPromptRun: props.promptRun.id,
+        }),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditingAnswers.value = false;
+                // Redirect happens automatically via controller
+            },
+        },
+    );
 };
 
 // Reset edit modes when navigating to different prompt run
@@ -90,6 +119,8 @@ watch(
     () => {
         isEditingTask.value = false;
         isEditingAnswers.value = false;
+        answersEditForm.reset();
+        answersEditForm.clearErrors();
     },
 );
 
@@ -322,27 +353,120 @@ watch(
 
                         <!-- Questions Tab -->
                         <div v-show="activeTab === 'questions'">
-                            <ClarifyingQuestions
-                                v-if="hasAnsweredQuestions && !isEditingAnswers"
-                                :prompt-run="promptRun"
-                                @edit="startEditingAnswers"
-                            />
-
                             <div
-                                v-if="isEditingAnswers"
-                                class="overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                                class="overflow-hidden rounded-lg bg-white shadow-xs"
                             >
                                 <div class="p-6">
-                                    <h3
-                                        class="mb-4 text-lg font-semibold text-gray-900"
+                                    <div
+                                        class="mb-4 flex items-center justify-between"
                                     >
-                                        Edit Clarifying Answers & Create New
-                                        Optimisation
-                                    </h3>
+                                        <h3
+                                            class="text-lg font-semibold text-gray-900"
+                                        >
+                                            Clarifying Questions
+                                        </h3>
+                                        <div
+                                            v-if="!isEditingAnswers"
+                                            class="flex items-center gap-2"
+                                        >
+                                            <ButtonSecondary
+                                                type="button"
+                                                @click="startEditingAnswers"
+                                            >
+                                                Edit Answers
+                                            </ButtonSecondary>
+                                        </div>
+                                        <div
+                                            v-else
+                                            class="flex items-center gap-2"
+                                        >
+                                            <ButtonSecondary
+                                                type="button"
+                                                @click="cancelEditingAnswers"
+                                                :disabled="
+                                                    answersEditForm.processing
+                                                "
+                                            >
+                                                Cancel
+                                            </ButtonSecondary>
+                                            <ButtonPrimary
+                                                type="button"
+                                                @click="submitEditedAnswers"
+                                                :loading="
+                                                    answersEditForm.processing
+                                                "
+                                            >
+                                                Optimise Prompt with Edited
+                                                Answers
+                                            </ButtonPrimary>
+                                        </div>
+                                    </div>
+
                                     <ClarifyingAnswersEdit
+                                        v-if="isEditingAnswers"
                                         :prompt-run="promptRun"
-                                        @cancel="cancelEditingAnswers"
+                                        :form="answersEditForm"
                                     />
+
+                                    <div v-else class="space-y-3">
+                                        <div
+                                            v-for="(
+                                                question, index
+                                            ) in promptRun.frameworkQuestions"
+                                            :key="index"
+                                            class="border-b border-gray-200 pb-3 last:border-b-0"
+                                        >
+                                            <div class="flex items-start">
+                                                <span
+                                                    class="mt-0.5 mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                                >
+                                                    {{ index + 1 }}
+                                                </span>
+                                                <div class="flex-1">
+                                                    <p
+                                                        class="text-sm font-medium text-gray-900"
+                                                    >
+                                                        {{ question }}
+                                                    </p>
+                                                    <div
+                                                        v-if="
+                                                            promptRun.clarifyingAnswers &&
+                                                            promptRun
+                                                                .clarifyingAnswers[
+                                                                index
+                                                            ] !== null &&
+                                                            promptRun
+                                                                .clarifyingAnswers[
+                                                                index
+                                                            ] !== undefined
+                                                        "
+                                                        class="mt-2 rounded-md bg-gray-50 p-3"
+                                                    >
+                                                        <p
+                                                            class="text-sm whitespace-break-spaces text-gray-700"
+                                                        >
+                                                            {{
+                                                                promptRun
+                                                                    .clarifyingAnswers[
+                                                                    index
+                                                                ]
+                                                            }}
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        v-else
+                                                        class="mt-2 rounded-md bg-gray-50 p-3"
+                                                    >
+                                                        <p
+                                                            class="text-sm text-gray-500 italic"
+                                                        >
+                                                            [Skipped]
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
