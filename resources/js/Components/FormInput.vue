@@ -52,6 +52,7 @@ function updateValue(event: Event): void {
         :error="error"
         :required="required"
         :help-text="helpText"
+        v-bind="$attrs"
     >
         <input
             :id="id"
@@ -64,8 +65,7 @@ function updateValue(event: Event): void {
             :required="required"
             :disabled="disabled"
             :autocomplete="autocomplete"
-            v-bind="$attrs"
-            class="mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             :class="{ 'bg-gray-50': disabled }"
             @input="updateValue"
             @blur="$emit('blur', $event)"
@@ -85,6 +85,6 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-text-fill-color: inherit !important;
-    transition: background-color 5000s ease-in-out 0s;
+    transition: all 5000s ease-in-out 0s;
 }
 </style>
