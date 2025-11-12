@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
             <span v-if="props.required" class="text-red-500">*</span>
         </label>
 
-        <slot />
+        <slot v-bind="$attrs" />
 
         <p v-if="props.helpText" class="mt-1 text-xs text-gray-500">
             {{ props.helpText }}
