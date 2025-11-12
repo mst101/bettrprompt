@@ -45,33 +45,34 @@ const clearTaskDescription = () => {
     <ContainerPage>
         <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
             <div class="p-6">
-                <!-- Warning message if no personality type -->
+                <!-- Info message if no personality type -->
                 <div
                     v-if="!hasPersonalityType"
-                    class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
+                    class="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4"
                 >
                     <div class="flex">
                         <div class="shrink-0">
                             <DynamicIcon
-                                name="exclamation-triangle"
-                                class="h-5 w-5 text-amber-400"
+                                name="information-circle"
+                                class="h-5 w-5 text-blue-400"
                             />
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-amber-800">
-                                Personality type required
+                            <h3 class="text-sm font-medium text-blue-800">
+                                Get personalised prompts
                             </h3>
-                            <div class="mt-2 text-sm text-amber-700">
+                            <div class="mt-2 text-sm text-blue-700">
                                 <p>
-                                    Please
+                                    For personalised prompts tailored to your
+                                    communication style,
                                     <Link
                                         :href="route('profile.edit')"
-                                        class="font-medium underline hover:text-amber-600"
+                                        class="font-medium underline hover:text-blue-600"
                                     >
-                                        enter your personality type
+                                        add your personality type
                                     </Link>
-                                    on your profile page before submitting a
-                                    task description.
+                                    to your profile. Otherwise, we'll select the
+                                    best framework based purely on your task.
                                 </p>
                             </div>
                         </div>
@@ -79,8 +80,15 @@ const clearTaskDescription = () => {
                 </div>
 
                 <p class="mb-6 text-gray-600">
-                    Create optimised AI prompts customised to your specific task
-                    requirements and personality type.
+                    Create optimised AI prompts using expert frameworks.
+                    <span v-if="hasPersonalityType">
+                        Prompts will be customised to your personality type and
+                        task requirements.
+                    </span>
+                    <span v-else>
+                        Prompts will be optimised for your specific task
+                        requirements.
+                    </span>
                 </p>
 
                 <form @submit.prevent="submit" class="space-y-6">
@@ -89,7 +97,6 @@ const clearTaskDescription = () => {
                         id="taskDescription"
                         v-model="form.taskDescription"
                         label="Task Description"
-                        :disabled="!hasPersonalityType"
                         :error="form.errors.taskDescription"
                         help-text="Minimum 10 characters. Be specific about your goals and requirements."
                         required
@@ -99,9 +106,7 @@ const clearTaskDescription = () => {
                     >
                         <template #actions>
                             <button
-                                v-if="
-                                    hasPersonalityType && form.taskDescription
-                                "
+                                v-if="form.taskDescription"
                                 type="button"
                                 @click="clearTaskDescription"
                                 class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
@@ -114,7 +119,6 @@ const clearTaskDescription = () => {
                                 <span>Clear</span>
                             </button>
                             <ButtonVoiceInput
-                                v-if="hasPersonalityType"
                                 @transcription="handleTranscription"
                             />
                         </template>
@@ -124,11 +128,7 @@ const clearTaskDescription = () => {
                     <div class="flex items-center justify-end">
                         <button
                             type="submit"
-                            :disabled="
-                                !hasPersonalityType ||
-                                form.processing ||
-                                !hasTask
-                            "
+                            :disabled="form.processing || !hasTask"
                             class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium tracking-wide text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <span v-if="form.processing">Processing...</span>

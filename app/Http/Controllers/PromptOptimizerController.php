@@ -35,11 +35,11 @@ class PromptOptimizerController extends Controller
         $user = auth()->user();
 
         try {
-            // Create the prompt run record using personality from user profile
+            // Create the prompt run record using personality from user profile (if available)
             $promptRun = DatabaseService::retryOnDeadlock(function () use ($user, $validated) {
                 return PromptRun::create([
                     'user_id' => $user->id,
-                    'personality_type' => $user->personality_type,
+                    'personality_type' => $user->personality_type ?? null,
                     'trait_percentages' => $user->trait_percentages ?? null,
                     'task_description' => $validated['task_description'],
                     'status' => 'processing',
@@ -48,12 +48,16 @@ class PromptOptimizerController extends Controller
             });
 
             // Prepare payload for framework selector
+            // Only include personality data if available
             $payload = [
                 'prompt_run_id' => $promptRun->id,
-                'personality_type' => $user->personality_type,
-                'trait_percentages' => $user->trait_percentages ?? null,
                 'task_description' => $validated['task_description'],
             ];
+
+            if ($user->personality_type) {
+                $payload['personality_type'] = $user->personality_type;
+                $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            }
 
             // Store the request payload
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $payload) {
@@ -371,14 +375,18 @@ class PromptOptimizerController extends Controller
             // Prepare payload for final optimization
             $payload = [
                 'prompt_run_id' => $promptRun->id,
-                'personality_type' => $promptRun->personality_type,
-                'trait_percentages' => $promptRun->trait_percentages,
                 'task_description' => $promptRun->task_description,
                 'selected_framework' => $promptRun->selected_framework,
                 'framework_reasoning' => $promptRun->framework_reasoning,
                 'framework_questions' => $promptRun->framework_questions,
                 'clarifying_answers' => $promptRun->clarifying_answers,
             ];
+
+            // Include personality data if available
+            if ($promptRun->personality_type) {
+                $payload['personality_type'] = $promptRun->personality_type;
+                $payload['trait_percentages'] = $promptRun->trait_percentages;
+            }
 
             Log::info('Triggering final prompt optimization', [
                 'prompt_run_id' => $promptRun->id,
@@ -539,12 +547,16 @@ class PromptOptimizerController extends Controller
                 });
 
                 // Prepare payload for framework selector
+                // Only include personality data if available
                 $payload = [
                     'prompt_run_id' => $promptRun->id,
-                    'personality_type' => $promptRun->personality_type,
-                    'trait_percentages' => $promptRun->trait_percentages,
                     'task_description' => $promptRun->task_description,
                 ];
+
+                if ($promptRun->personality_type) {
+                    $payload['personality_type'] = $promptRun->personality_type;
+                    $payload['trait_percentages'] = $promptRun->trait_percentages;
+                }
 
                 // Trigger framework selector workflow
                 $response = $this->n8nClient->triggerWebhook(
@@ -729,7 +741,7 @@ class PromptOptimizerController extends Controller
                 return PromptRun::create([
                     'user_id' => $user->id,
                     'parent_id' => $parentPromptRun->id,
-                    'personality_type' => $user->personality_type,
+                    'personality_type' => $user->personality_type ?? null,
                     'trait_percentages' => $user->trait_percentages ?? null,
                     'task_description' => $validated['task_description'],
                     'status' => 'processing',
@@ -738,12 +750,16 @@ class PromptOptimizerController extends Controller
             });
 
             // Prepare payload for framework selector
+            // Only include personality data if available
             $payload = [
                 'prompt_run_id' => $childPromptRun->id,
-                'personality_type' => $user->personality_type,
-                'trait_percentages' => $user->trait_percentages ?? null,
                 'task_description' => $validated['task_description'],
             ];
+
+            if ($user->personality_type) {
+                $payload['personality_type'] = $user->personality_type;
+                $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            }
 
             // Store the request payload
             DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $payload) {
@@ -842,7 +858,7 @@ class PromptOptimizerController extends Controller
                 return PromptRun::create([
                     'user_id' => $user->id,
                     'parent_id' => $parentPromptRun->id,
-                    'personality_type' => $user->personality_type,
+                    'personality_type' => $user->personality_type ?? null,
                     'trait_percentages' => $user->trait_percentages ?? null,
                     'task_description' => $parentPromptRun->task_description,
                     'selected_framework' => $parentPromptRun->selected_framework,
@@ -862,14 +878,18 @@ class PromptOptimizerController extends Controller
             // Trigger final optimization directly with edited answers
             $payload = [
                 'prompt_run_id' => $childPromptRun->id,
-                'personality_type' => $user->personality_type,
-                'trait_percentages' => $user->trait_percentages ?? null,
                 'task_description' => $parentPromptRun->task_description,
                 'selected_framework' => $parentPromptRun->selected_framework,
                 'framework_reasoning' => $parentPromptRun->framework_reasoning,
                 'framework_questions' => $parentPromptRun->framework_questions,
                 'clarifying_answers' => $clarifyingAnswers,
             ];
+
+            // Include personality data if available
+            if ($user->personality_type) {
+                $payload['personality_type'] = $user->personality_type;
+                $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            }
 
             // Store the request payload
             DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $payload) {

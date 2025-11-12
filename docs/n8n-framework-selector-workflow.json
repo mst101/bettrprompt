@@ -1,0 +1,134 @@
+{
+  "name": "Framework Selector",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "framework-selector",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Validate and extract input from webhook\nconst items = $input.all();\nconst body = items[0].json.body;\n\n// Validate required fields\nif (!body.task_description) {\n  throw new Error('Missing task_description');\n}\n\n// Extract data\nconst taskDescription = body.task_description;\nconst promptRunId = body.prompt_run_id;\n\n// Framework categories and their characteristics\nconst frameworksGuide = `You are an expert at selecting the optimal prompt engineering framework based on task analysis.\n\nANALYSE THE TASK AND SELECT THE BEST FRAMEWORK(S):\n\n## Available Framework Categories:\n\n### 1. STRUCTURED CLARITY (Precision & Organisation)\n- **CRISPE** (Clarity, Relevance, Iteration, Specificity, Parameters, Examples)\n  Best for: Technical documentation, strategic planning, precise content\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **RELIC** (Role, Emphasis, Limitation, Information, Challenge)\n  Best for: Content creation, strategic planning, customer interactions\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **RTF** (Request, Task, Format)\n  Best for: Data retrieval, simple clear requests, instructional content\n  Complexity: Low | Time: Low | Flexibility: Low\n\n### 2. ITERATIVE REFINEMENT (Progressive Improvement)\n- **RACEF** (Rephrase, Append, Contextualize, Examples, Follow-Up)\n  Best for: Brainstorming, data analysis, exploratory tasks\n  Complexity: Medium | Time: High | Flexibility: Very High\n  \n- **Chain of Destiny**\n  Best for: Projects where quality > speed, complex ideas\n  Complexity: High | Time: High | Flexibility: Very High\n\n### 3. DECISION-MAKING & PRIORITISATION\n- **RICE** (Reach, Impact, Confidence, Effort)\n  Best for: Feature prioritisation, marketing campaigns, project selection\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **SMART** (Specific, Measurable, Achievable, Relevant, Time-bound)\n  Best for: Goal-setting, project planning, personal development\n  Complexity: Low | Time: Low | Flexibility: Low\n  \n- **COAST** (Challenge, Objective, Actions, Strategy, Tactics)\n  Best for: Project management, strategic planning\n  Complexity: Medium | Time: Medium | Flexibility: Medium\n\n### 4. ANALYTICAL & PROBLEM-SOLVING\n- **Chain of Thought**\n  Best for: Mathematical problems, market analysis, scientific explanations\n  Complexity: High | Time: High | Flexibility: Medium\n  \n- **Tree of Thought**\n  Best for: Complex problem-solving, scenario planning, brainstorming\n  Complexity: High | Time: High | Flexibility: Very High\n  \n- **Pros and Cons Analysis**\n  Best for: Decision-making, strategic analysis, evaluating options\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n### 5. STORYTELLING & NARRATIVE\n- **BAB** (Before, After, Bridge)\n  Best for: Marketing copy, case studies, persuasive content\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **STAR** (Situation, Task, Action, Result)\n  Best for: Behavioural interviews, performance reviews, achievements\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **Challenge-Solution-Benefit**\n  Best for: Marketing, product development, demonstrating value\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n### 6. CONTENT CREATION\n- **BLOG** (Background, Logic, Outline, Goal)\n  Best for: Blog posts, articles, marketing content\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **APE** (Audience, Purpose, Execution)\n  Best for: Content marketing, customer support, personalised communication\n  Complexity: Low | Time: Low | Flexibility: High\n  \n- **TAG** (Topic, Audience, Goal)\n  Best for: Content marketing, educational resources, public communications\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n### 7. CREATIVE & INNOVATION\n- **SCAMPER** (Substitute, Combine, Adapt, Modify, Put to Another Use, Eliminate, Reverse)\n  Best for: Innovation workshops, product development, creative problem-solving\n  Complexity: Medium | Time: Medium | Flexibility: Very High\n  \n- **How Might We (HMW)**\n  Best for: Design thinking, brainstorming, innovation workshops\n  Complexity: Low | Time: Low | Flexibility: Very High\n  \n- **What If**\n  Best for: Strategic planning, creative writing, exploring alternatives\n  Complexity: Low | Time: Low | Flexibility: Very High\n\n### 8. EDUCATIONAL & LEARNING\n- **Bloom's Taxonomy**\n  Best for: Educational content, learning assessments, training materials\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **ELI5** (Explain Like I'm 5)\n  Best for: Education, customer support, simplifying complex concepts\n  Complexity: Low | Time: Low | Flexibility: Low\n  \n- **TQA** (Thematic, Question, Answer)\n  Best for: E-learning modules, educational materials\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n### 9. COMMUNICATION & ENGAGEMENT\n- **RACE** (Reach, Act, Convert, Engage)\n  Best for: Marketing campaigns, customer relations, public engagement\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **ERA** (Engage, React, Act)\n  Best for: Marketing, behavioural change, user engagement\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **CARE** (Compassion, Awareness, Response, Engagement)\n  Best for: Customer service, therapeutic chatbots, educational tools\n  Complexity: Medium | Time: Medium | Flexibility: High\n\n### 10. STRATEGIC ANALYSIS\n- **3Cs** (Company, Customer, Competitor)\n  Best for: Market analysis, strategic planning, business environment analysis\n  Complexity: Medium | Time: Medium | Flexibility: Medium\n  \n- **4S** (Structure, Style, Substance, Speed)\n  Best for: Content creation, digital marketing, corporate communications\n  Complexity: Medium | Time: Medium | Flexibility: Medium\n  \n- **GOPA** (Goals, Obstacles, Plans, Actions)\n  Best for: Goal setting, problem-solving, project planning\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n### 11. COMPREHENSIVE STRUCTURED\n- **RASCEF** (Role, Action, Steps, Context, Examples, Format)\n  Best for: Technical documentation, instructional design, complex reports\n  Complexity: High | Time: High | Flexibility: High\n  \n- **RHODES** (Role, Objective, Details, Examples, Sense Check)\n  Best for: Creative endeavours, marketing content, stylistic alignment\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **GRADE** (Goal, Request, Action, Details, Example)\n  Best for: Project management, content creation, analytical tasks\n  Complexity: Medium | Time: Medium | Flexibility: High\n  \n- **TRACI** (Task, Role, Audience, Create, Intent)\n  Best for: Marketing, education, customer service\n  Complexity: Medium | Time: Medium | Flexibility: High\n\n### 12. QUICK & SIMPLE\n- **SPEAR** (Start, Provide, Explain, Ask, Rinse & Repeat)\n  Best for: Everyday tasks, straightforward requests\n  Complexity: Low | Time: Low | Flexibility: Medium\n  \n- **Zero-Shot Prompting**\n  Best for: Translation, factual queries, simple classifications\n  Complexity: Low | Time: Low | Flexibility: Low\n  \n- **Few-Shot**\n  Best for: Sentiment analysis, text classification, creative content\n  Complexity: Low | Time: Low | Flexibility: Medium\n\n## TASK ANALYSIS CRITERIA:\n\n1. **Goal Type**: What is the primary objective?\n   - Create content → Content Creation, Storytelling, Educational\n   - Make decision → Decision-Making, Analytical\n   - Solve problem → Problem-Solving, Analytical, Iterative\n   - Generate ideas → Creative & Innovation\n   - Plan strategy → Strategic Analysis, Decision-Making\n   - Learn/teach → Educational\n   - Persuade/market → Storytelling, Communication\n\n2. **Complexity Level**:\n   - Simple/straightforward → Quick & Simple frameworks\n   - Moderate → Structured Clarity, Content Creation\n   - Complex/multi-faceted → Analytical, Comprehensive Structured, Iterative\n\n3. **Output Characteristics**:\n   - Needs precision → Structured Clarity\n   - Needs creativity → Creative & Innovation\n   - Needs persuasion → Storytelling & Narrative\n   - Needs analysis → Analytical & Problem-Solving\n   - Needs iteration → Iterative Refinement\n\n4. **Time Constraints**:\n   - Quick/simple → RTF, SPEAR, Zero-Shot, ELI5\n   - Moderate → Most frameworks\n   - Quality over speed → Chain of Thought, RACEF, Chain of Destiny\n\n5. **Special Requirements**:\n   - Multiple options to evaluate → RICE, Pros and Cons\n   - Step-by-step reasoning → Chain of Thought\n   - Audience-specific → APE, TAG, TRACI\n   - Goal-oriented → SMART, COAST, GOPA, GRADE\n\n## YOUR TASK:\n\nAnalyse the provided task description and respond with a JSON object containing:\n\n{\n  \"selected_framework\": \"NAME_OF_FRAMEWORK\",\n  \"reasoning\": \"Brief explanation (2-3 sentences) of why this framework is optimal for this task, referencing specific task characteristics\",\n  \"task_characteristics\": {\n    \"goal_type\": \"primary objective category\",\n    \"complexity\": \"simple|moderate|complex\",\n    \"output_type\": \"what kind of output is needed\",\n    \"special_requirements\": [\"list\", \"of\", \"relevant\", \"factors\"]\n  },\n  \"alternative_frameworks\": [\n    {\n      \"name\": \"ALTERNATIVE_FRAMEWORK_1\",\n      \"reason\": \"Why this could also work\"\n    },\n    {\n      \"name\": \"ALTERNATIVE_FRAMEWORK_2\",\n      \"reason\": \"Why this could also work\"\n    }\n  ]\n}\n\nIMPORTANT:\n- Select the SINGLE BEST framework (not multiple)\n- Base selection purely on task characteristics, NOT personality\n- Provide 1-2 viable alternatives\n- Keep reasoning concise and specific\n- Ensure JSON is valid`;\n\nreturn [\n  {\n    json: {\n      prompt_run_id: promptRunId,\n      task_description: taskDescription,\n      system_prompt: frameworksGuide\n    }\n  }\n];"
+      },
+      "id": "validate-input-node",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"max_tokens\": 1500,\n  \"system\": \"{{ $json.system_prompt }}\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyse this task and select the optimal prompt framework:\\n\\nTask: {{ $json.task_description }}\\n\\nRespond with JSON only.\"\n    }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        }
+      },
+      "id": "llm-request-node",
+      "name": "Call LLM API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 300],
+      "notes": "Configure with your Anthropic API key using Header Auth:\nName: x-api-key\nValue: YOUR_API_KEY"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Extract the framework selection from Anthropic response\nconst items = $input.all();\nconst response = items[0].json;\n\nlet frameworkSelection = null;\n\nif (response.content && response.content[0]?.text) {\n  const responseText = response.content[0].text.trim();\n  \n  try {\n    // Parse the JSON response\n    frameworkSelection = JSON.parse(responseText);\n  } catch (parseError) {\n    // If JSON parsing fails, try to extract JSON from markdown code blocks\n    const jsonMatch = responseText.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n    if (jsonMatch && jsonMatch[1]) {\n      frameworkSelection = JSON.parse(jsonMatch[1].trim());\n    } else {\n      throw new Error('Failed to parse framework selection response as JSON');\n    }\n  }\n} else {\n  throw new Error('Invalid response from LLM');\n}\n\n// Validate the response structure\nif (!frameworkSelection.selected_framework || !frameworkSelection.reasoning) {\n  throw new Error('Invalid framework selection response structure');\n}\n\n// Get the original data\nconst webhookData = $node[\"Validate Input\"].json;\n\nreturn [\n  {\n    json: {\n      prompt_run_id: webhookData.prompt_run_id,\n      selected_framework: frameworkSelection.selected_framework,\n      framework_reasoning: frameworkSelection.reasoning,\n      task_characteristics: frameworkSelection.task_characteristics || {},\n      alternative_frameworks: frameworkSelection.alternative_frameworks || [],\n      model_used: response.model || 'claude-3-5-sonnet-20241022',\n      tokens_used: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0)\n    }\n  }\n];"
+      },
+      "id": "format-response-node",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond-webhook-node",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Call LLM API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LLM API": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
