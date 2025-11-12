@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import AllQuestionsCard from '@/Components/PromptOptimizer/AllQuestionsCard.vue';
-import ClarifyingQuestionsCard from '@/Components/PromptOptimizer/ClarifyingQuestionsCard.vue';
+import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
+import ClarifyingQuestions from '@/Components/PromptOptimizer/Cards/ClarifyingQuestions.vue';
+import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
+import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import EditClarifyingAnswersForm from '@/Components/PromptOptimizer/EditClarifyingAnswersForm.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
-import FrameworkSelectionDisplay from '@/Components/PromptOptimizer/FrameworkSelectionDisplay.vue';
+import FrameworkSelectionCard from '@/Components/PromptOptimizer/FrameworkSelectionDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import OptimizedPromptDisplay from '@/Components/PromptOptimizer/OptimizedPromptDisplay.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
-import RelatedPromptRuns from '@/Components/PromptOptimizer/RelatedPromptRuns.vue';
-import TaskInformationCard from '@/Components/PromptOptimizer/TaskInformationCard.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
@@ -194,7 +194,7 @@ useRealtimeUpdates(
             />
 
             <!-- Input Information -->
-            <TaskInformationCard
+            <TaskInformation
                 v-if="!isEditingTask"
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
@@ -221,7 +221,7 @@ useRealtimeUpdates(
             </div>
 
             <!-- Framework Selection Info -->
-            <FrameworkSelectionDisplay
+            <FrameworkSelectionCard
                 v-if="
                     promptRun.selectedFramework && promptRun.frameworkReasoning
                 "
@@ -254,7 +254,7 @@ useRealtimeUpdates(
             />
 
             <!-- Show All Questions Mode -->
-            <AllQuestionsCard
+            <AllQuestions
                 v-if="
                     (promptRun.workflowStage === 'framework_selected' ||
                         promptRun.workflowStage === 'answering_questions') &&
@@ -286,7 +286,7 @@ useRealtimeUpdates(
                 "
                 class="mb-6"
             >
-                <ClarifyingQuestionsCard :prompt-run="promptRun" />
+                <ClarifyingQuestions :prompt-run="promptRun" />
                 <div class="mt-3 flex justify-end">
                     <button
                         @click="startEditingAnswers"
