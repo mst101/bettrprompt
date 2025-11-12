@@ -5,7 +5,7 @@ import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSele
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
-import EditClarifyingAnswersForm from '@/Components/PromptOptimizer/EditClarifyingAnswersForm.vue';
+import ClarifyingAnswersEdit from '@/Components/PromptOptimizer/ClarifyingAnswersEdit.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
@@ -198,15 +198,6 @@ const tabs = computed<Tab[]>(() => {
         icon: 'squares-2x2',
     });
 
-    if (hasRelatedRuns.value) {
-        allTabs.push({
-            id: 'related',
-            label: 'Related',
-            icon: 'link',
-            badge: props.promptRun.children?.length || undefined,
-        });
-    }
-
     if (props.promptRun.selectedFramework) {
         allTabs.push({
             id: 'framework',
@@ -285,7 +276,6 @@ watch(
                             <TaskInformation
                                 v-if="!isEditingTask"
                                 :prompt-run="promptRun"
-                                :personality-type-label="personalityTypeLabel"
                                 :show-edit-button="true"
                                 @edit="startEditingTask"
                                 class="mb-6"
@@ -311,20 +301,8 @@ watch(
                                 </div>
                             </div>
 
-                            <FrameworkSelection
-                                v-if="
-                                    promptRun.selectedFramework &&
-                                    promptRun.frameworkReasoning
-                                "
-                                :framework="promptRun.selectedFramework"
-                                :reasoning="promptRun.frameworkReasoning"
-                                class="mb-6"
-                            />
-                        </div>
-
-                        <!-- Related Runs Tab -->
-                        <div v-show="activeTab === 'related'">
                             <RelatedPromptRuns
+                                v-if="hasRelatedRuns"
                                 :parent="promptRun.parent"
                                 :children="promptRun.children"
                             />
@@ -345,37 +323,14 @@ watch(
                         <!-- Questions Tab -->
                         <div v-show="activeTab === 'questions'">
                             <ClarifyingQuestions
-                                v-if="hasAnsweredQuestions"
+                                v-if="hasAnsweredQuestions && !isEditingAnswers"
                                 :prompt-run="promptRun"
+                                @edit="startEditingAnswers"
                             />
-                            <div
-                                v-if="!isEditingAnswers"
-                                class="mt-3 flex justify-end"
-                            >
-                                <button
-                                    @click="startEditingAnswers"
-                                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                                >
-                                    <svg
-                                        class="h-4 w-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                        />
-                                    </svg>
-                                    Edit Answers
-                                </button>
-                            </div>
 
                             <div
-                                v-else
-                                class="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                                v-if="isEditingAnswers"
+                                class="overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
                             >
                                 <div class="p-6">
                                     <h3
@@ -384,7 +339,7 @@ watch(
                                         Edit Clarifying Answers & Create New
                                         Optimisation
                                     </h3>
-                                    <EditClarifyingAnswersForm
+                                    <ClarifyingAnswersEdit
                                         :prompt-run="promptRun"
                                         @cancel="cancelEditingAnswers"
                                     />

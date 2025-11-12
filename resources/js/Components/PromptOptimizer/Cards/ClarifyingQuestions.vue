@@ -9,6 +9,10 @@ interface Props {
 
 defineProps<Props>();
 
+const emit = defineEmits<{
+    (e: 'edit'): void;
+}>();
+
 // Collapsible Q&A state for answered questions
 const expandedQuestions = ref<Set<number>>(new Set());
 
@@ -44,18 +48,29 @@ const toggleAll = (totalQuestions: number) => {
                 <h3 class="text-lg font-semibold text-gray-900">
                     Clarifying Questions
                 </h3>
-                <button
-                    @click="
-                        toggleAll(promptRun.frameworkQuestions?.length ?? 0)
-                    "
-                    class="inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                >
-                    {{
-                        allExpanded(promptRun.frameworkQuestions?.length ?? 0)
-                            ? 'Hide All'
-                            : 'Show All'
-                    }}
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        @click="
+                            toggleAll(promptRun.frameworkQuestions?.length ?? 0)
+                        "
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                    >
+                        {{
+                            allExpanded(
+                                promptRun.frameworkQuestions?.length ?? 0,
+                            )
+                                ? 'Hide All'
+                                : 'Show All'
+                        }}
+                    </button>
+                    <button
+                        @click="emit('edit')"
+                        class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                    >
+                        <DynamicIcon name="edit" class="h-4 w-4" />
+                        Edit Answers
+                    </button>
+                </div>
             </div>
 
             <div class="space-y-3">

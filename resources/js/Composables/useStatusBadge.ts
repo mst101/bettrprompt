@@ -28,7 +28,7 @@ export function useStatusBadge() {
                 };
             case 'processing':
                 return {
-                    label: 'Processing',
+                    label: 'Clarifying Questions',
                     colorClass: 'bg-yellow-100 text-yellow-800',
                 };
             case 'failed':
