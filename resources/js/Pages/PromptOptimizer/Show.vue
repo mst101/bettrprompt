@@ -10,6 +10,7 @@ import FrameworkSelectionCard from '@/Components/PromptOptimizer/FrameworkSelect
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import OptimizedPromptDisplay from '@/Components/PromptOptimizer/OptimizedPromptDisplay.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
+import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
@@ -159,6 +160,70 @@ useRealtimeUpdates(
     },
     { only: ['promptRun', 'currentQuestion', 'progress'] },
 );
+
+// Tab navigation for completed runs
+const activeTab = ref('overview');
+
+const hasRelatedRuns = computed(
+    () =>
+        props.promptRun.parent ||
+        (props.promptRun.children && props.promptRun.children.length > 0),
+);
+
+const hasAnsweredQuestions = computed(
+    () =>
+        props.promptRun.frameworkQuestions &&
+        props.promptRun.frameworkQuestions.length > 0 &&
+        props.promptRun.clarifyingAnswers &&
+        props.promptRun.clarifyingAnswers.length > 0 &&
+        props.promptRun.workflowStage === 'completed',
+);
+
+const tabs = computed<Tab[]>(() => {
+    const allTabs: Tab[] = [
+        {
+            id: 'overview',
+            label: 'Overview',
+            icon: 'squares-2x2',
+        },
+    ];
+
+    if (hasRelatedRuns.value) {
+        allTabs.push({
+            id: 'related',
+            label: 'Related',
+            icon: 'link',
+            badge: props.promptRun.children?.length || undefined,
+        });
+    }
+
+    if (props.promptRun.selectedFramework) {
+        allTabs.push({
+            id: 'framework',
+            label: 'Framework',
+            icon: 'beaker',
+        });
+    }
+
+    if (hasAnsweredQuestions.value) {
+        allTabs.push({
+            id: 'questions',
+            label: 'Questions',
+            icon: 'question-mark-circle',
+            badge: props.promptRun.frameworkQuestions?.length || undefined,
+        });
+    }
+
+    return allTabs;
+});
+
+// Reset to overview tab when navigating between prompt runs
+watch(
+    () => props.promptRun.id,
+    () => {
+        activeTab.value = 'overview';
+    },
+);
 </script>
 
 <template>
@@ -182,53 +247,184 @@ useRealtimeUpdates(
 
     <div class="py-12">
         <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
-            <!-- Related Prompt Runs -->
-            <RelatedPromptRuns
-                v-if="
-                    promptRun.parent ||
-                    (promptRun.children && promptRun.children.length > 0)
-                "
-                :parent="promptRun.parent"
-                :children="promptRun.children"
-                class="mb-6"
-            />
-
-            <!-- Input Information -->
-            <TaskInformation
-                v-if="!isEditingTask"
-                :prompt-run="promptRun"
-                :personality-type-label="personalityTypeLabel"
-                :show-edit-button="promptRun.status === 'completed'"
-                @edit="startEditingTask"
-                class="mb-6"
-            />
-
-            <!-- Edit Task Form -->
+            <!-- Tabs for completed runs with optional sections -->
             <div
-                v-else
-                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
+                v-if="
+                    promptRun.workflowStage === 'completed' && tabs.length > 1
+                "
+                class="mb-6"
             >
-                <div class="p-6">
-                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                        Edit Task & Create New Optimisation
-                    </h3>
-                    <EditTaskForm
-                        :prompt-run-id="promptRun.id"
-                        :initial-task-description="promptRun.taskDescription"
-                        @cancel="cancelEditingTask"
-                    />
+                <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
+                    <div class="px-6 pt-6">
+                        <Tabs v-model="activeTab" :tabs="tabs" />
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Overview Tab -->
+                        <div v-show="activeTab === 'overview'">
+                            <TaskInformation
+                                v-if="!isEditingTask"
+                                :prompt-run="promptRun"
+                                :personality-type-label="personalityTypeLabel"
+                                :show-edit-button="true"
+                                @edit="startEditingTask"
+                                class="mb-6"
+                            />
+
+                            <div
+                                v-else
+                                class="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                            >
+                                <div class="p-6">
+                                    <h3
+                                        class="mb-4 text-lg font-semibold text-gray-900"
+                                    >
+                                        Edit Task & Create New Optimisation
+                                    </h3>
+                                    <EditTaskForm
+                                        :prompt-run-id="promptRun.id"
+                                        :initial-task-description="
+                                            promptRun.taskDescription
+                                        "
+                                        @cancel="cancelEditingTask"
+                                    />
+                                </div>
+                            </div>
+
+                            <FrameworkSelectionCard
+                                v-if="
+                                    promptRun.selectedFramework &&
+                                    promptRun.frameworkReasoning
+                                "
+                                :framework="promptRun.selectedFramework"
+                                :reasoning="promptRun.frameworkReasoning"
+                                class="mb-6"
+                            />
+                        </div>
+
+                        <!-- Related Runs Tab -->
+                        <div v-show="activeTab === 'related'">
+                            <RelatedPromptRuns
+                                :parent="promptRun.parent"
+                                :children="promptRun.children"
+                            />
+                        </div>
+
+                        <!-- Framework Tab -->
+                        <div v-show="activeTab === 'framework'">
+                            <FrameworkSelectionCard
+                                v-if="
+                                    promptRun.selectedFramework &&
+                                    promptRun.frameworkReasoning
+                                "
+                                :framework="promptRun.selectedFramework"
+                                :reasoning="promptRun.frameworkReasoning"
+                            />
+                        </div>
+
+                        <!-- Questions Tab -->
+                        <div v-show="activeTab === 'questions'">
+                            <ClarifyingQuestions
+                                v-if="hasAnsweredQuestions"
+                                :prompt-run="promptRun"
+                            />
+                            <div
+                                v-if="!isEditingAnswers"
+                                class="mt-3 flex justify-end"
+                            >
+                                <button
+                                    @click="startEditingAnswers"
+                                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                >
+                                    <svg
+                                        class="h-4 w-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                        />
+                                    </svg>
+                                    Edit Answers
+                                </button>
+                            </div>
+
+                            <div
+                                v-else
+                                class="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                            >
+                                <div class="p-6">
+                                    <h3
+                                        class="mb-4 text-lg font-semibold text-gray-900"
+                                    >
+                                        Edit Clarifying Answers & Create New
+                                        Optimisation
+                                    </h3>
+                                    <EditClarifyingAnswersForm
+                                        :prompt-run="promptRun"
+                                        @cancel="cancelEditingAnswers"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Framework Selection Info -->
-            <FrameworkSelectionCard
-                v-if="
-                    promptRun.selectedFramework && promptRun.frameworkReasoning
-                "
-                :framework="promptRun.selectedFramework"
-                :reasoning="promptRun.frameworkReasoning"
-                class="mb-6"
-            />
+            <!-- Non-completed or single-section runs: show original layout -->
+            <template v-else>
+                <!-- Related Prompt Runs -->
+                <RelatedPromptRuns
+                    v-if="hasRelatedRuns"
+                    :parent="promptRun.parent"
+                    :children="promptRun.children"
+                    class="mb-6"
+                />
+
+                <!-- Input Information -->
+                <TaskInformation
+                    v-if="!isEditingTask"
+                    :prompt-run="promptRun"
+                    :personality-type-label="personalityTypeLabel"
+                    :show-edit-button="promptRun.status === 'completed'"
+                    @edit="startEditingTask"
+                    class="mb-6"
+                />
+
+                <!-- Edit Task Form -->
+                <div
+                    v-else
+                    class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
+                >
+                    <div class="p-6">
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                            Edit Task & Create New Optimisation
+                        </h3>
+                        <EditTaskForm
+                            :prompt-run-id="promptRun.id"
+                            :initial-task-description="
+                                promptRun.taskDescription
+                            "
+                            @cancel="cancelEditingTask"
+                        />
+                    </div>
+                </div>
+
+                <!-- Framework Selection Info -->
+                <FrameworkSelectionCard
+                    v-if="
+                        promptRun.selectedFramework &&
+                        promptRun.frameworkReasoning
+                    "
+                    :framework="promptRun.selectedFramework"
+                    :reasoning="promptRun.frameworkReasoning"
+                    class="mb-6"
+                />
+            </template>
 
             <!-- Question Answering Interface -->
             <QuestionAnsweringForm
@@ -273,63 +469,6 @@ useRealtimeUpdates(
                 state="generating-prompt"
                 :selected-framework="promptRun.selectedFramework ?? undefined"
             />
-
-            <!-- Clarifying Questions & Answers (View Mode) -->
-            <div
-                v-if="
-                    promptRun.frameworkQuestions &&
-                    promptRun.frameworkQuestions.length > 0 &&
-                    promptRun.clarifyingAnswers &&
-                    promptRun.clarifyingAnswers.length > 0 &&
-                    promptRun.workflowStage === 'completed' &&
-                    !isEditingAnswers
-                "
-                class="mb-6"
-            >
-                <ClarifyingQuestions :prompt-run="promptRun" />
-                <div class="mt-3 flex justify-end">
-                    <button
-                        @click="startEditingAnswers"
-                        class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                        </svg>
-                        Edit Answers
-                    </button>
-                </div>
-            </div>
-
-            <!-- Edit Clarifying Answers Form -->
-            <div
-                v-if="
-                    promptRun.frameworkQuestions &&
-                    promptRun.frameworkQuestions.length > 0 &&
-                    promptRun.workflowStage === 'completed' &&
-                    isEditingAnswers
-                "
-                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
-            >
-                <div class="p-6">
-                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                        Edit Clarifying Answers & Create New Optimisation
-                    </h3>
-                    <EditClarifyingAnswersForm
-                        :prompt-run="promptRun"
-                        @cancel="cancelEditingAnswers"
-                    />
-                </div>
-            </div>
 
             <!-- Optimised Prompt Result -->
             <OptimizedPromptDisplay
