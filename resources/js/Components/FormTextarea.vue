@@ -40,7 +40,7 @@ const emit = defineEmits<{
             :maxlength="props.maxlength"
             :autofocus="props.autofocus"
             v-bind="$attrs"
-            class="mt-2 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            class="mt-2 block w-full rounded-md border-indigo-300 bg-indigo-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             :class="{ 'cursor-not-allowed opacity-50': props.disabled }"
             @input="
                 emit(
