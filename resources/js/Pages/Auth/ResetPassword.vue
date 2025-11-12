@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormField from '@/Components/FormField.vue';
+import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -33,7 +33,7 @@ const submit = () => {
     <Head title="Reset Password" />
 
     <form @submit.prevent="submit">
-        <FormField
+        <FormInput
             id="email"
             v-model="form.email"
             label="Email"
@@ -44,7 +44,7 @@ const submit = () => {
             autocomplete="username"
         />
 
-        <FormField
+        <FormInput
             id="password"
             v-model="form.password"
             label="Password"
@@ -55,7 +55,7 @@ const submit = () => {
             autocomplete="new-password"
         />
 
-        <FormField
+        <FormInput
             id="passwordConfirmation"
             v-model="form.passwordConfirmation"
             label="Confirm Password"

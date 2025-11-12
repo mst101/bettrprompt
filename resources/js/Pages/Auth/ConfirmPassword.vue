@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
+import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -32,19 +30,16 @@ const submit = () => {
     </div>
 
     <form @submit.prevent="submit">
-        <div>
-            <InputLabel for="password" value="Password" />
-            <TextInput
-                id="password"
-                type="password"
-                class="mt-1 block w-full"
-                v-model="form.password"
-                required
-                autocomplete="current-password"
-                autofocus
-            />
-            <InputError class="mt-2" :message="form.errors.password" />
-        </div>
+        <FormInput
+            id="password"
+            label="Password"
+            type="password"
+            v-model="form.password"
+            :error="form.errors.password"
+            required
+            autocomplete="current-password"
+            autofocus
+        />
 
         <div class="mt-4 flex justify-end">
             <ButtonPrimary

@@ -4,7 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
-import FormField from '@/Components/FormField.vue';
+import FormTextarea from '@/Components/FormTextarea.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LikertScale from '@/Components/LikertScale.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -193,10 +193,9 @@ const formatDate = (dateString: string) => {
 
                 <!-- Question 4: Suggestions -->
                 <div class="mt-16">
-                    <FormField
+                    <FormTextarea
                         id="suggestions"
                         label="4. What's one thing you'd change or improve about the app?"
-                        type="textarea"
                         v-model="form.suggestions"
                         :error="form.errors.suggestions"
                         :disabled="!isEditing || form.processing"

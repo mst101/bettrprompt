@@ -3,9 +3,7 @@ import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import ButtonGoogleSignIn from '@/Components/ButtonGoogleSignIn.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
+import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
 defineProps<{
@@ -55,36 +53,27 @@ const close = () => {
         </template>
 
         <template #fields>
-            <div>
-                <InputLabel for="login-email" value="Email" />
+            <FormInput
+                id="login-email"
+                label="Email"
+                type="email"
+                v-model="form.email"
+                :error="form.errors.email"
+                required
+                autofocus
+                autocomplete="username"
+            />
 
-                <TextInput
-                    id="login-email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="login-password" value="Password" />
-
-                <TextInput
-                    id="login-password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+            <FormInput
+                id="login-password"
+                label="Password"
+                type="password"
+                v-model="form.password"
+                :error="form.errors.password"
+                class="mt-4"
+                required
+                autocomplete="current-password"
+            />
 
             <div class="mt-4 block">
                 <label class="flex items-center">

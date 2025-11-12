@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import ButtonDanger from '@/Components/ButtonDanger.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import FormInput from '@/Components/FormInput.vue';
 import Modal from '@/Components/Modal.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 
@@ -67,23 +65,16 @@ const closeModal = () => {
                 </p>
 
                 <div class="mt-6">
-                    <InputLabel
-                        for="password"
-                        value="Password"
-                        class="sr-only"
-                    />
-
-                    <TextInput
+                    <FormInput
                         id="password"
-                        ref="passwordInput"
+                        label="Password"
                         v-model="form.password"
                         type="password"
-                        class="mt-1 block w-3/4"
+                        :error="form.errors.password"
                         placeholder="Password"
+                        custom-class="w-3/4"
                         @keyup.enter="deleteUser"
                     />
-
-                    <InputError :message="form.errors.password" class="mt-2" />
                 </div>
 
                 <div class="mt-6 flex justify-end">

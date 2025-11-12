@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -85,7 +87,7 @@ provide('openRegisterModal', openRegister);
                             <div class="flex shrink-0 items-center">
                                 <Link
                                     :href="route('home')"
-                                    class="flex items-center gap-1 rounded-md p-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                    class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     @click="showingNavigationDropdown = false"
                                 >
                                     <ApplicationLogo
@@ -101,7 +103,7 @@ provide('openRegisterModal', openRegister);
                             <!-- Navigation Links (Authenticated) -->
                             <div
                                 v-if="isAuthenticated"
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:items-center"
                             >
                                 <NavLink
                                     :href="route('prompt-optimizer.index')"
@@ -147,7 +149,7 @@ provide('openRegisterModal', openRegister);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{
@@ -181,19 +183,13 @@ provide('openRegisterModal', openRegister);
 
                             <!-- Guest Buttons -->
                             <nav v-else class="flex items-center gap-4">
-                                <button
-                                    @click="openLogin"
-                                    class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition hover:text-indigo-600"
-                                >
+                                <ButtonSecondary @click="openLogin">
                                     Log in
-                                </button>
+                                </ButtonSecondary>
 
-                                <button
-                                    @click="openRegister"
-                                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition hover:bg-indigo-700"
-                                >
+                                <ButtonPrimary @click="openRegister">
                                     Get Started
-                                </button>
+                                </ButtonPrimary>
                             </nav>
                         </div>
 

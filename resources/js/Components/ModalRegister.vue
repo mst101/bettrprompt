@@ -2,7 +2,7 @@
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import ButtonGoogleSignIn from '@/Components/ButtonGoogleSignIn.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormField from '@/Components/FormField.vue';
+import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
 defineProps<{
@@ -49,7 +49,7 @@ const close = () => {
         </template>
 
         <template #fields>
-            <FormField
+            <FormInput
                 id="register-name"
                 v-model="form.name"
                 label="Name"
@@ -60,7 +60,7 @@ const close = () => {
                 autocomplete="name"
             />
 
-            <FormField
+            <FormInput
                 id="register-email"
                 v-model="form.email"
                 label="Email"
@@ -71,7 +71,7 @@ const close = () => {
                 autocomplete="username"
             />
 
-            <FormField
+            <FormInput
                 id="register-password"
                 v-model="form.password"
                 label="Password"
@@ -82,7 +82,7 @@ const close = () => {
                 autocomplete="new-password"
             />
 
-            <FormField
+            <FormInput
                 id="register-password-confirmation"
                 v-model="form.passwordConfirmation"
                 label="Confirm Password"

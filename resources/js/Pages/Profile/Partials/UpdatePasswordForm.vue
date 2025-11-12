@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormField from '@/Components/FormField.vue';
+import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -45,7 +45,7 @@ const updatePassword = () => {
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <FormField
+            <FormInput
                 id="currentPassword"
                 v-model="form.currentPassword"
                 label="Current Password"
@@ -54,7 +54,7 @@ const updatePassword = () => {
                 autocomplete="current-password"
             />
 
-            <FormField
+            <FormInput
                 id="password"
                 v-model="form.password"
                 label="New Password"
@@ -63,7 +63,7 @@ const updatePassword = () => {
                 autocomplete="new-password"
             />
 
-            <FormField
+            <FormInput
                 id="passwordConfirmation"
                 v-model="form.passwordConfirmation"
                 label="Confirm Password"

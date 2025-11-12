@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
+import FormInput from '@/Components/FormInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps<{
@@ -34,35 +32,25 @@ const form = useForm({
             @submit.prevent="form.patch(route('profile.update'))"
             class="mt-6 space-y-6"
         >
-            <div>
-                <InputLabel for="name" value="Name" />
+            <FormInput
+                id="name"
+                label="Name"
+                type="text"
+                v-model="form.name"
+                :error="form.errors.name"
+                required
+                autocomplete="name"
+            />
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+            <FormInput
+                id="email"
+                label="Email"
+                type="email"
+                v-model="form.email"
+                :error="form.errors.email"
+                required
+                autocomplete="username"
+            />
 
             <div v-if="mustVerifyEmail && user.emailVerifiedAt === null">
                 <p class="mt-2 text-sm text-gray-800">

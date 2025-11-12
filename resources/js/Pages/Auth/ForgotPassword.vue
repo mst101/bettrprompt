@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
+import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
@@ -37,21 +35,16 @@ const submit = () => {
     </div>
 
     <form @submit.prevent="submit">
-        <div>
-            <InputLabel for="email" value="Email" />
-
-            <TextInput
-                id="email"
-                type="email"
-                class="mt-1 block w-full"
-                v-model="form.email"
-                required
-                autofocus
-                autocomplete="username"
-            />
-
-            <InputError class="mt-2" :message="form.errors.email" />
-        </div>
+        <FormInput
+            id="email"
+            label="Email"
+            type="email"
+            v-model="form.email"
+            :error="form.errors.email"
+            required
+            autofocus
+            autocomplete="username"
+        />
 
         <div class="mt-4 flex items-center justify-end">
             <ButtonPrimary

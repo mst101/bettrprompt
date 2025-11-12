@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
+import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
 defineProps<{
@@ -56,21 +54,16 @@ const close = () => {
         </template>
 
         <template #fields>
-            <div>
-                <InputLabel for="forgot-password-email" value="Email" />
-
-                <TextInput
-                    id="forgot-password-email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+            <FormInput
+                id="forgot-password-email"
+                label="Email"
+                type="email"
+                v-model="form.email"
+                :error="form.errors.email"
+                required
+                autofocus
+                autocomplete="username"
+            />
         </template>
 
         <template #footer-links>
