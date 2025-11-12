@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
+import LinkHeader from '@/Components/LinkHeader.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
@@ -153,12 +154,9 @@ onMounted(() => {
 
     <HeaderPage title="Prompt History">
         <template #actions>
-            <Link
-                :href="route('prompt-optimizer.index')"
-                class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-            >
+            <LinkHeader :href="route('prompt-optimizer.index')">
                 Create New
-            </Link>
+            </LinkHeader>
         </template>
     </HeaderPage>
 

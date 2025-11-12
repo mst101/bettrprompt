@@ -2,6 +2,7 @@
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
+import LinkHeader from '@/Components/LinkHeader.vue';
 import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
@@ -18,7 +19,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 defineOptions({
@@ -264,12 +265,9 @@ watch(
 
     <HeaderPage title="Prompt Optimiser">
         <template #actions>
-            <Link
-                :href="route('prompt-optimizer.index')"
-                class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-            >
+            <LinkHeader :href="route('prompt-optimizer.index')">
                 Create New
-            </Link>
+            </LinkHeader>
         </template>
     </HeaderPage>
 
