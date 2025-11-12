@@ -79,11 +79,13 @@ function updateValue(event: Event): void {
 </template>
 
 <style scoped>
-/* Override browser autofill background to maintain white background */
+/* Override browser autofill styles to maintain white background and black text */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    transition: background-color 5000s ease-in-out 0s;
+    transition:
+        background-color 5000s ease-in-out 0s,
+        color 5000s ease-in-out 0s;
 }
 </style>
