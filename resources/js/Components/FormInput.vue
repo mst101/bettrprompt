@@ -77,3 +77,14 @@ function updateValue(event: Event): void {
         </template>
     </FormFieldWrapper>
 </template>
+
+<style scoped>
+/* Override browser autofill styles to inherit text colour from component classes */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+</style>

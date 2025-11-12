@@ -56,7 +56,7 @@ const close = () => {
             <FormInput
                 id="login-email"
                 label="Email"
-                class="text-pink-500"
+                class="bg-green-300 text-pink-500"
                 type="email"
                 v-model="form.email"
                 :error="form.errors.email"
