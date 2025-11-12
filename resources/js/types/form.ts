@@ -81,4 +81,7 @@ export interface FormTextareaProps extends BaseFormFieldProps {
 
     /** Maximum character length */
     maxlength?: number;
+
+    /** Custom CSS classes to apply to the textarea element */
+    textareaClass?: string;
 }

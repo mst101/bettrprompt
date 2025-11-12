@@ -4,10 +4,9 @@ import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkHeader from '@/Components/LinkHeader.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import TableHeaderSortable from '@/Components/TableHeaderSortable.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
-import SvgChevronDown from '@/Icons/SvgChevronDown.vue';
-import SvgChevronUp from '@/Icons/SvgChevronUp.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -121,10 +120,6 @@ const changePerPage = () => {
     );
 };
 
-const isSortedBy = (column: string) => {
-    return props.filters.sort_by === column;
-};
-
 const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
@@ -186,218 +181,66 @@ onMounted(() => {
                                     scope="col"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                 >
-                                    <button
-                                        @click="sortBy('personality_type')"
-                                        class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                    <TableHeaderSortable
+                                        column="personality_type"
+                                        :current-sort="filters.sort_by"
+                                        :sort-direction="sortDirection"
+                                        @sort="sortBy"
                                     >
                                         Personality Type
-                                        <span class="flex flex-col">
-                                            <SvgChevronUp
-                                                class="h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'personality_type',
-                                                        ) &&
-                                                        sortDirection === 'asc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'personality_type',
-                                                        ) ||
-                                                        sortDirection !== 'asc',
-                                                }"
-                                            />
-                                            <SvgChevronDown
-                                                class="-mt-1 h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'personality_type',
-                                                        ) &&
-                                                        sortDirection ===
-                                                            'desc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'personality_type',
-                                                        ) ||
-                                                        sortDirection !==
-                                                            'desc',
-                                                }"
-                                            />
-                                        </span>
-                                    </button>
+                                    </TableHeaderSortable>
                                 </th>
                                 <th
                                     scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                 >
-                                    <button
-                                        @click="sortBy('task_description')"
-                                        class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                    <TableHeaderSortable
+                                        column="task_description"
+                                        :current-sort="filters.sort_by"
+                                        :sort-direction="sortDirection"
+                                        @sort="sortBy"
                                     >
                                         Task Description
-                                        <span class="flex flex-col">
-                                            <SvgChevronUp
-                                                class="h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'task_description',
-                                                        ) &&
-                                                        sortDirection === 'asc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'task_description',
-                                                        ) ||
-                                                        sortDirection !== 'asc',
-                                                }"
-                                            />
-                                            <SvgChevronDown
-                                                class="-mt-1 h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'task_description',
-                                                        ) &&
-                                                        sortDirection ===
-                                                            'desc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'task_description',
-                                                        ) ||
-                                                        sortDirection !==
-                                                            'desc',
-                                                }"
-                                            />
-                                        </span>
-                                    </button>
+                                    </TableHeaderSortable>
                                 </th>
                                 <th
                                     scope="col"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell"
                                 >
-                                    <button
-                                        @click="sortBy('selected_framework')"
-                                        class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                    <TableHeaderSortable
+                                        column="selected_framework"
+                                        :current-sort="filters.sort_by"
+                                        :sort-direction="sortDirection"
+                                        @sort="sortBy"
                                     >
                                         Framework
-                                        <span class="flex flex-col">
-                                            <SvgChevronUp
-                                                class="h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'selected_framework',
-                                                        ) &&
-                                                        sortDirection === 'asc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'selected_framework',
-                                                        ) ||
-                                                        sortDirection !== 'asc',
-                                                }"
-                                            />
-                                            <SvgChevronDown
-                                                class="-mt-1 h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'selected_framework',
-                                                        ) &&
-                                                        sortDirection ===
-                                                            'desc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'selected_framework',
-                                                        ) ||
-                                                        sortDirection !==
-                                                            'desc',
-                                                }"
-                                            />
-                                        </span>
-                                    </button>
+                                    </TableHeaderSortable>
                                 </th>
                                 <th
                                     scope="col"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
                                 >
-                                    <button
-                                        @click="sortBy('status')"
-                                        class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                    <TableHeaderSortable
+                                        column="status"
+                                        :current-sort="filters.sort_by"
+                                        :sort-direction="sortDirection"
+                                        @sort="sortBy"
                                     >
                                         Status
-                                        <span class="flex flex-col">
-                                            <SvgChevronUp
-                                                class="h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy('status') &&
-                                                        sortDirection === 'asc',
-                                                    'text-gray-400':
-                                                        !isSortedBy('status') ||
-                                                        sortDirection !== 'asc',
-                                                }"
-                                            />
-                                            <SvgChevronDown
-                                                class="-mt-1 h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy('status') &&
-                                                        sortDirection ===
-                                                            'desc',
-                                                    'text-gray-400':
-                                                        !isSortedBy('status') ||
-                                                        sortDirection !==
-                                                            'desc',
-                                                }"
-                                            />
-                                        </span>
-                                    </button>
+                                    </TableHeaderSortable>
                                 </th>
                                 <th
                                     scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                 >
-                                    <button
-                                        @click="sortBy('created_at')"
-                                        class="group inline-flex items-center gap-1 hover:text-gray-700"
+                                    <TableHeaderSortable
+                                        column="created_at"
+                                        :current-sort="filters.sort_by"
+                                        :sort-direction="sortDirection"
+                                        @sort="sortBy"
                                     >
                                         Created
-                                        <span class="flex flex-col">
-                                            <SvgChevronUp
-                                                class="h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'created_at',
-                                                        ) &&
-                                                        sortDirection === 'asc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'created_at',
-                                                        ) ||
-                                                        sortDirection !== 'asc',
-                                                }"
-                                            />
-                                            <SvgChevronDown
-                                                class="-mt-1 h-3 w-3 transition-colors"
-                                                :class="{
-                                                    'text-indigo-600':
-                                                        isSortedBy(
-                                                            'created_at',
-                                                        ) &&
-                                                        sortDirection ===
-                                                            'desc',
-                                                    'text-gray-400':
-                                                        !isSortedBy(
-                                                            'created_at',
-                                                        ) ||
-                                                        sortDirection !==
-                                                            'desc',
-                                                }"
-                                            />
-                                        </span>
-                                    </button>
+                                    </TableHeaderSortable>
                                 </th>
                             </tr>
                         </thead>

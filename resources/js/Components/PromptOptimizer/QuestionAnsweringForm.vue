@@ -3,6 +3,7 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
+import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed } from 'vue';
 
@@ -38,6 +39,24 @@ const handleTranscription = (text: string) => {
 const progressPercent = computed(() => {
     if (props.totalQuestions === 0) return 0;
     return (props.currentQuestionNumber / props.totalQuestions) * 100;
+});
+
+const textareaClasses = computed(() => {
+    const baseClasses =
+        'mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm';
+    const conditionalClasses = [];
+
+    if (props.isSubmitting) {
+        conditionalClasses.push('cursor-not-allowed opacity-50');
+    }
+
+    if (props.hasError) {
+        conditionalClasses.push(
+            'border-red-300 focus:border-red-500 focus:ring-red-500',
+        );
+    }
+
+    return [baseClasses, ...conditionalClasses].join(' ');
 });
 </script>
 
@@ -81,61 +100,35 @@ const progressPercent = computed(() => {
             </div>
 
             <!-- Answer Input -->
-            <div>
-                <div class="mb-2 flex items-center justify-between">
-                    <label
-                        for="answer"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Your Answer
-                    </label>
-                    <div class="flex items-center gap-2">
-                        <ButtonVoiceInput
-                            @transcription="handleTranscription"
-                            :disabled="isSubmitting"
-                        />
-                    </div>
-                </div>
-
-                <textarea
-                    id="answer"
-                    :value="answer"
-                    @input="
-                        emit(
-                            'update:answer',
-                            ($event.target as HTMLTextAreaElement).value,
-                        )
-                    "
-                    :disabled="isSubmitting"
-                    placeholder="Type your answer here (or enter via speech)..."
-                    :rows="4"
-                    class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    :class="[
-                        { 'cursor-not-allowed opacity-50': isSubmitting },
-                        {
-                            'border-red-300 focus:border-red-500 focus:ring-red-500':
-                                hasError,
-                        },
-                    ]"
-                />
-                <p
-                    v-if="hasError && errorMessage"
-                    class="mt-2 text-sm text-red-600"
-                >
-                    {{ errorMessage }}
-                </p>
-
-                <!-- Clear Button -->
-                <div v-if="answer" class="mt-3 flex justify-end">
-                    <button
-                        @click="emit('clear')"
-                        type="button"
-                        class="text-sm text-gray-500 hover:text-gray-700"
+            <FormTextareaWithActions
+                id="answer"
+                :model-value="answer"
+                @update:model-value="emit('update:answer', $event)"
+                label="Your Answer"
+                :disabled="isSubmitting"
+                :error="hasError && errorMessage ? errorMessage : ''"
+                placeholder="Type your answer here (or enter via speech)..."
+                :rows="4"
+                :textarea-class="textareaClasses"
+            >
+                <template #actions>
+                    <ButtonVoiceInput
+                        @transcription="handleTranscription"
                         :disabled="isSubmitting"
-                    >
-                        Clear
-                    </button>
-                </div>
+                    />
+                </template>
+            </FormTextareaWithActions>
+
+            <!-- Clear Button -->
+            <div v-if="answer" class="mt-3 flex justify-end">
+                <button
+                    @click="emit('clear')"
+                    type="button"
+                    class="text-sm text-gray-500 hover:text-gray-700"
+                    :disabled="isSubmitting"
+                >
+                    Clear
+                </button>
             </div>
 
             <!-- Action Buttons -->

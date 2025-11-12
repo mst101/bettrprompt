@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormTextareaProps } from '@/types';
 import { computed } from 'vue';
 
@@ -28,20 +27,27 @@ const textareaClasses = computed(() => {
         return props.textareaClass;
     }
     return [
-        'mt-2 block w-full rounded-md border-indigo-300 bg-indigo-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm',
-        { 'cursor-not-allowed opacity-50': props.disabled },
+        'mt-1 block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm',
+        { 'cursor-not-allowed bg-gray-50 text-gray-500': props.disabled },
     ];
 });
 </script>
 
 <template>
-    <FormFieldWrapper
-        :id="props.id"
-        :label="props.label"
-        :error="props.error"
-        :required="props.required"
-        :help-text="props.helpText"
-    >
+    <div v-bind="$attrs">
+        <div class="mb-2 flex items-center justify-between">
+            <label
+                :for="props.id"
+                class="block text-sm font-medium text-gray-700"
+            >
+                {{ props.label }}
+                <span v-if="props.required" class="text-red-500">*</span>
+            </label>
+            <div class="flex items-center gap-2">
+                <slot name="actions" />
+            </div>
+        </div>
+
         <textarea
             :id="props.id"
             :value="props.modelValue"
@@ -51,7 +57,6 @@ const textareaClasses = computed(() => {
             :disabled="props.disabled"
             :maxlength="props.maxlength"
             :autofocus="props.autofocus"
-            v-bind="$attrs"
             :class="textareaClasses"
             @input="
                 emit(
@@ -60,5 +65,13 @@ const textareaClasses = computed(() => {
                 )
             "
         />
-    </FormFieldWrapper>
+
+        <p v-if="props.helpText" class="mt-1 text-xs text-gray-500">
+            {{ props.helpText }}
+        </p>
+
+        <p v-if="props.error" class="mt-1 text-sm text-red-600">
+            {{ props.error }}
+        </p>
+    </div>
 </template>

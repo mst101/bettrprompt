@@ -2,6 +2,7 @@
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -84,60 +85,40 @@ const clearTaskDescription = () => {
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <!-- Task Description -->
-                    <div>
-                        <div class="mb-2 flex items-center justify-between">
-                            <label
-                                for="taskDescription"
-                                class="block text-sm font-medium text-gray-700"
+                    <FormTextareaWithActions
+                        id="taskDescription"
+                        v-model="form.taskDescription"
+                        label="Task Description"
+                        :disabled="!hasPersonalityType"
+                        :error="form.errors.taskDescription"
+                        help-text="Minimum 10 characters. Be specific about your goals and requirements."
+                        required
+                        autofocus
+                        :rows="6"
+                        placeholder="Describe what you're trying to accomplish..."
+                    >
+                        <template #actions>
+                            <button
+                                v-if="
+                                    hasPersonalityType && form.taskDescription
+                                "
+                                type="button"
+                                @click="clearTaskDescription"
+                                class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
+                                title="Clear text"
                             >
-                                Task Description
-                            </label>
-                            <div
-                                v-if="hasPersonalityType"
-                                class="flex items-center gap-2"
-                            >
-                                <button
-                                    v-if="form.taskDescription"
-                                    type="button"
-                                    @click="clearTaskDescription"
-                                    class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
-                                    title="Clear text"
-                                >
-                                    <DynamicIcon
-                                        name="trash"
-                                        class="h-5 w-5 text-gray-600"
-                                    />
-                                    <span>Clear</span>
-                                </button>
-                                <ButtonVoiceInput
-                                    @transcription="handleTranscription"
+                                <DynamicIcon
+                                    name="trash"
+                                    class="h-5 w-5 text-gray-600"
                                 />
-                            </div>
-                        </div>
-
-                        <textarea
-                            id="taskDescription"
-                            v-model="form.taskDescription"
-                            :disabled="!hasPersonalityType"
-                            required
-                            autofocus
-                            rows="6"
-                            placeholder="Describe what you're trying to accomplish..."
-                            class="mt-1 block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
-                        ></textarea>
-
-                        <p
-                            v-if="form.errors.taskDescription"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ form.errors.taskDescription }}
-                        </p>
-
-                        <p class="mt-1 text-sm text-gray-500">
-                            Minimum 10 characters. Be specific about your goals
-                            and requirements.
-                        </p>
-                    </div>
+                                <span>Clear</span>
+                            </button>
+                            <ButtonVoiceInput
+                                v-if="hasPersonalityType"
+                                @transcription="handleTranscription"
+                            />
+                        </template>
+                    </FormTextareaWithActions>
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
