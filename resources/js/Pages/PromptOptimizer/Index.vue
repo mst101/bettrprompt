@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
+import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
@@ -40,125 +41,121 @@ const clearTaskDescription = () => {
 
     <HeaderPage title="Prompt Optimiser" />
 
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
-                <div class="p-6">
-                    <!-- Warning message if no personality type -->
-                    <div
-                        v-if="!hasPersonalityType"
-                        class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
-                    >
-                        <div class="flex">
-                            <div class="shrink-0">
-                                <DynamicIcon
-                                    name="exclamation-triangle"
-                                    class="h-5 w-5 text-amber-400"
-                                />
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-amber-800">
-                                    Personality type required
-                                </h3>
-                                <div class="mt-2 text-sm text-amber-700">
-                                    <p>
-                                        Please
-                                        <Link
-                                            :href="route('profile.edit')"
-                                            class="font-medium underline hover:text-amber-600"
-                                        >
-                                            enter your personality type
-                                        </Link>
-                                        on your profile page before submitting a
-                                        task description.
-                                    </p>
-                                </div>
+    <ContainerPage>
+        <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
+            <div class="p-6">
+                <!-- Warning message if no personality type -->
+                <div
+                    v-if="!hasPersonalityType"
+                    class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
+                >
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <DynamicIcon
+                                name="exclamation-triangle"
+                                class="h-5 w-5 text-amber-400"
+                            />
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-amber-800">
+                                Personality type required
+                            </h3>
+                            <div class="mt-2 text-sm text-amber-700">
+                                <p>
+                                    Please
+                                    <Link
+                                        :href="route('profile.edit')"
+                                        class="font-medium underline hover:text-amber-600"
+                                    >
+                                        enter your personality type
+                                    </Link>
+                                    on your profile page before submitting a
+                                    task description.
+                                </p>
                             </div>
                         </div>
                     </div>
-
-                    <p class="mb-6 text-gray-600">
-                        Create optimised AI prompts customised to your specific
-                        task requirements and personality type.
-                    </p>
-
-                    <form @submit.prevent="submit" class="space-y-6">
-                        <!-- Task Description -->
-                        <div>
-                            <div class="mb-2 flex items-center justify-between">
-                                <label
-                                    for="taskDescription"
-                                    class="block text-sm font-medium text-gray-700"
-                                >
-                                    Task Description
-                                </label>
-                                <div
-                                    v-if="hasPersonalityType"
-                                    class="flex items-center gap-2"
-                                >
-                                    <button
-                                        v-if="form.taskDescription"
-                                        type="button"
-                                        @click="clearTaskDescription"
-                                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
-                                        title="Clear text"
-                                    >
-                                        <DynamicIcon
-                                            name="trash"
-                                            class="h-5 w-5 text-gray-600"
-                                        />
-                                        <span>Clear</span>
-                                    </button>
-                                    <ButtonVoiceInput
-                                        @transcription="handleTranscription"
-                                    />
-                                </div>
-                            </div>
-
-                            <textarea
-                                id="taskDescription"
-                                v-model="form.taskDescription"
-                                :disabled="!hasPersonalityType"
-                                required
-                                autofocus
-                                rows="6"
-                                placeholder="Describe what you're trying to accomplish..."
-                                class="mt-1 block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
-                            ></textarea>
-
-                            <p
-                                v-if="form.errors.taskDescription"
-                                class="mt-1 text-sm text-red-600"
-                            >
-                                {{ form.errors.taskDescription }}
-                            </p>
-
-                            <p class="mt-1 text-sm text-gray-500">
-                                Minimum 10 characters. Be specific about your
-                                goals and requirements.
-                            </p>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex items-center justify-end">
-                            <button
-                                type="submit"
-                                :disabled="
-                                    !hasPersonalityType ||
-                                    form.processing ||
-                                    !hasTask
-                                "
-                                class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium tracking-wide text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <span v-if="form.processing"
-                                    >Processing...</span
-                                >
-                                <span v-else>Optimise Prompt</span>
-                            </button>
-                        </div>
-                    </form>
                 </div>
+
+                <p class="mb-6 text-gray-600">
+                    Create optimised AI prompts customised to your specific task
+                    requirements and personality type.
+                </p>
+
+                <form @submit.prevent="submit" class="space-y-6">
+                    <!-- Task Description -->
+                    <div>
+                        <div class="mb-2 flex items-center justify-between">
+                            <label
+                                for="taskDescription"
+                                class="block text-sm font-medium text-gray-700"
+                            >
+                                Task Description
+                            </label>
+                            <div
+                                v-if="hasPersonalityType"
+                                class="flex items-center gap-2"
+                            >
+                                <button
+                                    v-if="form.taskDescription"
+                                    type="button"
+                                    @click="clearTaskDescription"
+                                    class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
+                                    title="Clear text"
+                                >
+                                    <DynamicIcon
+                                        name="trash"
+                                        class="h-5 w-5 text-gray-600"
+                                    />
+                                    <span>Clear</span>
+                                </button>
+                                <ButtonVoiceInput
+                                    @transcription="handleTranscription"
+                                />
+                            </div>
+                        </div>
+
+                        <textarea
+                            id="taskDescription"
+                            v-model="form.taskDescription"
+                            :disabled="!hasPersonalityType"
+                            required
+                            autofocus
+                            rows="6"
+                            placeholder="Describe what you're trying to accomplish..."
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-white text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+                        ></textarea>
+
+                        <p
+                            v-if="form.errors.taskDescription"
+                            class="mt-1 text-sm text-red-600"
+                        >
+                            {{ form.errors.taskDescription }}
+                        </p>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Minimum 10 characters. Be specific about your goals
+                            and requirements.
+                        </p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-end">
+                        <button
+                            type="submit"
+                            :disabled="
+                                !hasPersonalityType ||
+                                form.processing ||
+                                !hasTask
+                            "
+                            class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium tracking-wide text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <span v-if="form.processing">Processing...</span>
+                            <span v-else>Optimise Prompt</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
+    </ContainerPage>
 </template>

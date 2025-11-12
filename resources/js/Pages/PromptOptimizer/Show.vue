@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkHeader from '@/Components/LinkHeader.vue';
 import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
@@ -271,192 +272,184 @@ watch(
         </template>
     </HeaderPage>
 
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <!-- Tabs for completed runs with optional sections -->
-            <div
-                v-if="
-                    promptRun.workflowStage === 'completed' && tabs.length > 1
-                "
-                class="mb-6"
-            >
-                <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
-                    <div class="px-6 pt-6">
-                        <Tabs v-model="activeTab" :tabs="tabs" />
+    <ContainerPage>
+        <!-- Tabs for completed runs with optional sections -->
+        <div
+            v-if="promptRun.workflowStage === 'completed' && tabs.length > 1"
+            class="mb-6"
+        >
+            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
+                <div class="px-6 pt-6">
+                    <Tabs v-model="activeTab" :tabs="tabs" />
+                </div>
+
+                <div class="p-6">
+                    <!-- Optimised Prompt Tab -->
+                    <div v-show="activeTab === 'prompt'">
+                        <OptimizedPrompt
+                            v-if="promptRun.optimizedPrompt"
+                            :optimized-prompt="promptRun.optimizedPrompt"
+                            :prompt-run-id="promptRun.id"
+                            @save="saveOptimizedPrompt"
+                        />
                     </div>
 
-                    <div class="p-6">
-                        <!-- Optimised Prompt Tab -->
-                        <div v-show="activeTab === 'prompt'">
-                            <OptimizedPrompt
-                                v-if="promptRun.optimizedPrompt"
-                                :optimized-prompt="promptRun.optimizedPrompt"
-                                :prompt-run-id="promptRun.id"
-                                @save="saveOptimizedPrompt"
-                            />
-                        </div>
+                    <!-- Your Task Tab -->
+                    <div v-show="activeTab === 'task'">
+                        <TaskInformation
+                            v-if="!isEditingTask"
+                            :prompt-run="promptRun"
+                            :show-edit-button="true"
+                            @edit="startEditingTask"
+                            class="mb-6"
+                        />
 
-                        <!-- Your Task Tab -->
-                        <div v-show="activeTab === 'task'">
-                            <TaskInformation
-                                v-if="!isEditingTask"
-                                :prompt-run="promptRun"
-                                :show-edit-button="true"
-                                @edit="startEditingTask"
-                                class="mb-6"
-                            />
-
-                            <div
-                                v-else
-                                class="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
-                            >
-                                <div class="p-6">
-                                    <h3
-                                        class="mb-4 text-lg font-semibold text-gray-900"
-                                    >
-                                        Edit Task & Create New Optimisation
-                                    </h3>
-                                    <EditTaskForm
-                                        :prompt-run-id="promptRun.id"
-                                        :initial-task-description="
-                                            promptRun.taskDescription
-                                        "
-                                        @cancel="cancelEditingTask"
-                                    />
-                                </div>
+                        <div
+                            v-else
+                            class="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                        >
+                            <div class="p-6">
+                                <h3
+                                    class="mb-4 text-lg font-semibold text-gray-900"
+                                >
+                                    Edit Task & Create New Optimisation
+                                </h3>
+                                <EditTaskForm
+                                    :prompt-run-id="promptRun.id"
+                                    :initial-task-description="
+                                        promptRun.taskDescription
+                                    "
+                                    @cancel="cancelEditingTask"
+                                />
                             </div>
-
-                            <RelatedPromptRuns
-                                v-if="hasRelatedRuns"
-                                :parent="promptRun.parent"
-                                :children="promptRun.children"
-                            />
                         </div>
 
-                        <!-- Framework Tab -->
-                        <div v-show="activeTab === 'framework'">
-                            <FrameworkSelection
-                                v-if="
-                                    promptRun.selectedFramework &&
-                                    promptRun.frameworkReasoning
-                                "
-                                :framework="promptRun.selectedFramework"
-                                :reasoning="promptRun.frameworkReasoning"
-                            />
-                        </div>
+                        <RelatedPromptRuns
+                            v-if="hasRelatedRuns"
+                            :parent="promptRun.parent"
+                            :children="promptRun.children"
+                        />
+                    </div>
 
-                        <!-- Questions Tab -->
-                        <div v-show="activeTab === 'questions'">
-                            <div
-                                class="overflow-hidden rounded-lg bg-white shadow-xs"
-                            >
-                                <div class="p-6">
-                                    <div
-                                        class="mb-4 flex items-center justify-between"
+                    <!-- Framework Tab -->
+                    <div v-show="activeTab === 'framework'">
+                        <FrameworkSelection
+                            v-if="
+                                promptRun.selectedFramework &&
+                                promptRun.frameworkReasoning
+                            "
+                            :framework="promptRun.selectedFramework"
+                            :reasoning="promptRun.frameworkReasoning"
+                        />
+                    </div>
+
+                    <!-- Questions Tab -->
+                    <div v-show="activeTab === 'questions'">
+                        <div
+                            class="overflow-hidden rounded-lg bg-white shadow-xs"
+                        >
+                            <div class="p-6">
+                                <div
+                                    class="mb-4 flex items-center justify-between"
+                                >
+                                    <h3
+                                        class="text-lg font-semibold text-gray-900"
                                     >
-                                        <h3
-                                            class="text-lg font-semibold text-gray-900"
+                                        Clarifying Questions
+                                    </h3>
+                                    <div
+                                        v-if="!isEditingAnswers"
+                                        class="flex items-center gap-2"
+                                    >
+                                        <ButtonSecondary
+                                            type="button"
+                                            @click="startEditingAnswers"
                                         >
-                                            Clarifying Questions
-                                        </h3>
-                                        <div
-                                            v-if="!isEditingAnswers"
-                                            class="flex items-center gap-2"
-                                        >
-                                            <ButtonSecondary
-                                                type="button"
-                                                @click="startEditingAnswers"
-                                            >
-                                                Edit Answers
-                                            </ButtonSecondary>
-                                        </div>
-                                        <div
-                                            v-else
-                                            class="flex items-center gap-2"
-                                        >
-                                            <ButtonSecondary
-                                                type="button"
-                                                @click="cancelEditingAnswers"
-                                                :disabled="
-                                                    answersEditForm.processing
-                                                "
-                                            >
-                                                Cancel
-                                            </ButtonSecondary>
-                                            <ButtonPrimary
-                                                type="button"
-                                                @click="submitEditedAnswers"
-                                                :loading="
-                                                    answersEditForm.processing
-                                                "
-                                            >
-                                                Optimise Prompt with Edited
-                                                Answers
-                                            </ButtonPrimary>
-                                        </div>
+                                            Edit Answers
+                                        </ButtonSecondary>
                                     </div>
-
-                                    <ClarifyingAnswersEdit
-                                        v-if="isEditingAnswers"
-                                        :prompt-run="promptRun"
-                                        :form="answersEditForm"
-                                    />
-
-                                    <div v-else class="space-y-3">
-                                        <div
-                                            v-for="(
-                                                question, index
-                                            ) in promptRun.frameworkQuestions"
-                                            :key="index"
-                                            class="border-b border-gray-200 pb-3 last:border-b-0"
+                                    <div v-else class="flex items-center gap-2">
+                                        <ButtonSecondary
+                                            type="button"
+                                            @click="cancelEditingAnswers"
+                                            :disabled="
+                                                answersEditForm.processing
+                                            "
                                         >
-                                            <div class="flex items-start">
-                                                <span
-                                                    class="mt-0.5 mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                            Cancel
+                                        </ButtonSecondary>
+                                        <ButtonPrimary
+                                            type="button"
+                                            @click="submitEditedAnswers"
+                                            :loading="
+                                                answersEditForm.processing
+                                            "
+                                        >
+                                            Optimise Prompt with Edited Answers
+                                        </ButtonPrimary>
+                                    </div>
+                                </div>
+
+                                <ClarifyingAnswersEdit
+                                    v-if="isEditingAnswers"
+                                    :prompt-run="promptRun"
+                                    :form="answersEditForm"
+                                />
+
+                                <div v-else class="space-y-3">
+                                    <div
+                                        v-for="(
+                                            question, index
+                                        ) in promptRun.frameworkQuestions"
+                                        :key="index"
+                                        class="border-b border-gray-200 pb-3 last:border-b-0"
+                                    >
+                                        <div class="flex items-start">
+                                            <span
+                                                class="mt-0.5 mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                            >
+                                                {{ index + 1 }}
+                                            </span>
+                                            <div class="flex-1">
+                                                <p
+                                                    class="text-sm font-medium text-gray-900"
                                                 >
-                                                    {{ index + 1 }}
-                                                </span>
-                                                <div class="flex-1">
+                                                    {{ question }}
+                                                </p>
+                                                <div
+                                                    v-if="
+                                                        promptRun.clarifyingAnswers &&
+                                                        promptRun
+                                                            .clarifyingAnswers[
+                                                            index
+                                                        ] !== null &&
+                                                        promptRun
+                                                            .clarifyingAnswers[
+                                                            index
+                                                        ] !== undefined
+                                                    "
+                                                    class="mt-2 rounded-md bg-gray-50 p-3"
+                                                >
                                                     <p
-                                                        class="text-sm font-medium text-gray-900"
+                                                        class="text-sm whitespace-break-spaces text-gray-700"
                                                     >
-                                                        {{ question }}
+                                                        {{
+                                                            promptRun
+                                                                .clarifyingAnswers[
+                                                                index
+                                                            ]
+                                                        }}
                                                     </p>
-                                                    <div
-                                                        v-if="
-                                                            promptRun.clarifyingAnswers &&
-                                                            promptRun
-                                                                .clarifyingAnswers[
-                                                                index
-                                                            ] !== null &&
-                                                            promptRun
-                                                                .clarifyingAnswers[
-                                                                index
-                                                            ] !== undefined
-                                                        "
-                                                        class="mt-2 rounded-md bg-gray-50 p-3"
+                                                </div>
+                                                <div
+                                                    v-else
+                                                    class="mt-2 rounded-md bg-gray-50 p-3"
+                                                >
+                                                    <p
+                                                        class="text-sm text-gray-500 italic"
                                                     >
-                                                        <p
-                                                            class="text-sm whitespace-break-spaces text-gray-700"
-                                                        >
-                                                            {{
-                                                                promptRun
-                                                                    .clarifyingAnswers[
-                                                                    index
-                                                                ]
-                                                            }}
-                                                        </p>
-                                                    </div>
-                                                    <div
-                                                        v-else
-                                                        class="mt-2 rounded-md bg-gray-50 p-3"
-                                                    >
-                                                        <p
-                                                            class="text-sm text-gray-500 italic"
-                                                        >
-                                                            [Skipped]
-                                                        </p>
-                                                    </div>
+                                                        [Skipped]
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -467,118 +460,115 @@ watch(
                     </div>
                 </div>
             </div>
-
-            <!-- Non-completed or single-section runs: show original layout -->
-            <template v-else>
-                <!-- Related Prompt Runs -->
-                <RelatedPromptRuns
-                    v-if="hasRelatedRuns"
-                    :parent="promptRun.parent"
-                    :children="promptRun.children"
-                    class="mb-6"
-                />
-
-                <!-- Input Information -->
-                <TaskInformation
-                    v-if="!isEditingTask"
-                    :prompt-run="promptRun"
-                    :personality-type-label="personalityTypeLabel"
-                    :show-edit-button="promptRun.status === 'completed'"
-                    @edit="startEditingTask"
-                    class="mb-6"
-                />
-
-                <!-- Edit Task Form -->
-                <div
-                    v-else
-                    class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
-                >
-                    <div class="p-6">
-                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                            Edit Task & Create New Optimisation
-                        </h3>
-                        <EditTaskForm
-                            :prompt-run-id="promptRun.id"
-                            :initial-task-description="
-                                promptRun.taskDescription
-                            "
-                            @cancel="cancelEditingTask"
-                        />
-                    </div>
-                </div>
-
-                <!-- Framework Selection Info -->
-                <FrameworkSelection
-                    v-if="
-                        promptRun.selectedFramework &&
-                        promptRun.frameworkReasoning
-                    "
-                    :framework="promptRun.selectedFramework"
-                    :reasoning="promptRun.frameworkReasoning"
-                    class="mb-6"
-                />
-            </template>
-
-            <!-- Question Answering Interface -->
-            <QuestionAnsweringForm
-                v-if="
-                    (promptRun.workflowStage === 'framework_selected' ||
-                        promptRun.workflowStage === 'answering_questions') &&
-                    currentQuestion &&
-                    !showAllQuestions
-                "
-                :question="currentQuestion"
-                v-model:answer="answerForm.answer"
-                :current-question-number="progress.answered + 1"
-                :total-questions="progress.total"
-                :is-submitting="isSubmitting"
-                :has-error="!!answerForm.errors.answer"
-                :error-message="answerForm.errors.answer"
-                :show-all="showAllQuestions"
-                @submit="submitAnswer"
-                @skip="skipQuestion"
-                @clear="clearAnswer"
-                @toggle-show-all="toggleShowAll"
-                class="mb-6"
-            />
-
-            <!-- Show All Questions Mode -->
-            <AllQuestions
-                v-if="
-                    (promptRun.workflowStage === 'framework_selected' ||
-                        promptRun.workflowStage === 'answering_questions') &&
-                    showAllQuestions &&
-                    promptRun.frameworkQuestions
-                "
-                :prompt-run="promptRun"
-                :progress="progress"
-                @toggle-show-all="toggleShowAll"
-                class="mb-6"
-            />
-
-            <!-- Generating Prompt Loading State -->
-            <LoadingStateCard
-                v-if="promptRun.workflowStage === 'generating_prompt'"
-                state="generating-prompt"
-                :selected-framework="promptRun.selectedFramework ?? undefined"
-            />
-
-            <!-- Error Message -->
-            <ErrorDisplay
-                v-else-if="promptRun.status === 'failed'"
-                :prompt-run-id="promptRun.id"
-                :error-message="promptRun.errorMessage ?? undefined"
-                :error-response="errorResponse"
-            />
-
-            <!-- Processing State (initial submission) -->
-            <LoadingStateCard
-                v-else-if="
-                    promptRun.status === 'processing' &&
-                    promptRun.workflowStage === 'submitted'
-                "
-                state="selecting-framework"
-            />
         </div>
-    </div>
+
+        <!-- Non-completed or single-section runs: show original layout -->
+        <template v-else>
+            <!-- Related Prompt Runs -->
+            <RelatedPromptRuns
+                v-if="hasRelatedRuns"
+                :parent="promptRun.parent"
+                :children="promptRun.children"
+                class="mb-6"
+            />
+
+            <!-- Input Information -->
+            <TaskInformation
+                v-if="!isEditingTask"
+                :prompt-run="promptRun"
+                :personality-type-label="personalityTypeLabel"
+                :show-edit-button="promptRun.status === 'completed'"
+                @edit="startEditingTask"
+                class="mb-6"
+            />
+
+            <!-- Edit Task Form -->
+            <div
+                v-else
+                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
+            >
+                <div class="p-6">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                        Edit Task & Create New Optimisation
+                    </h3>
+                    <EditTaskForm
+                        :prompt-run-id="promptRun.id"
+                        :initial-task-description="promptRun.taskDescription"
+                        @cancel="cancelEditingTask"
+                    />
+                </div>
+            </div>
+
+            <!-- Framework Selection Info -->
+            <FrameworkSelection
+                v-if="
+                    promptRun.selectedFramework && promptRun.frameworkReasoning
+                "
+                :framework="promptRun.selectedFramework"
+                :reasoning="promptRun.frameworkReasoning"
+                class="mb-6"
+            />
+        </template>
+
+        <!-- Question Answering Interface -->
+        <QuestionAnsweringForm
+            v-if="
+                (promptRun.workflowStage === 'framework_selected' ||
+                    promptRun.workflowStage === 'answering_questions') &&
+                currentQuestion &&
+                !showAllQuestions
+            "
+            :question="currentQuestion"
+            v-model:answer="answerForm.answer"
+            :current-question-number="progress.answered + 1"
+            :total-questions="progress.total"
+            :is-submitting="isSubmitting"
+            :has-error="!!answerForm.errors.answer"
+            :error-message="answerForm.errors.answer"
+            :show-all="showAllQuestions"
+            @submit="submitAnswer"
+            @skip="skipQuestion"
+            @clear="clearAnswer"
+            @toggle-show-all="toggleShowAll"
+            class="mb-6"
+        />
+
+        <!-- Show All Questions Mode -->
+        <AllQuestions
+            v-if="
+                (promptRun.workflowStage === 'framework_selected' ||
+                    promptRun.workflowStage === 'answering_questions') &&
+                showAllQuestions &&
+                promptRun.frameworkQuestions
+            "
+            :prompt-run="promptRun"
+            :progress="progress"
+            @toggle-show-all="toggleShowAll"
+            class="mb-6"
+        />
+
+        <!-- Generating Prompt Loading State -->
+        <LoadingStateCard
+            v-if="promptRun.workflowStage === 'generating_prompt'"
+            state="generating-prompt"
+            :selected-framework="promptRun.selectedFramework ?? undefined"
+        />
+
+        <!-- Error Message -->
+        <ErrorDisplay
+            v-else-if="promptRun.status === 'failed'"
+            :prompt-run-id="promptRun.id"
+            :error-message="promptRun.errorMessage ?? undefined"
+            :error-response="errorResponse"
+        />
+
+        <!-- Processing State (initial submission) -->
+        <LoadingStateCard
+            v-else-if="
+                promptRun.status === 'processing' &&
+                promptRun.workflowStage === 'submitted'
+            "
+            state="selecting-framework"
+        />
+    </ContainerPage>
 </template>

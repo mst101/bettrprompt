@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HeaderPage from '@/Components/HeaderPage.vue';
 import { COMPANY_INFO } from '@/constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -11,35 +12,37 @@ defineOptions({
 <template>
     <Head title="Terms of Use" />
 
-    <div class="py-12">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
-                <div class="p-6 lg:p-8">
-                    <h1 class="text-3xl font-bold text-gray-900">
-                        Terms of Use
-                    </h1>
-                    <p class="mt-2 text-sm text-gray-600">
-                        Last updated:
-                        {{
-                            new Date().toLocaleDateString('en-GB', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            })
-                        }}
-                    </p>
+    <HeaderPage title="Terms of Use">
+        <template #actions>
+            <p class="mt-2 text-sm text-gray-600">
+                Last updated:
+                {{
+                    new Date().toLocaleDateString('en-GB', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    })
+                }}
+            </p>
+        </template>
+    </HeaderPage>
 
+    <div class="py-12">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
+                <div class="p-6">
                     <div
-                        class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700 prose-p:mb-4 prose-p:text-gray-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-gray-600 prose-strong:text-gray-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none"
+                        class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700 prose-p:mb-4 prose-p:text-gray-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-gray-600 prose-strong:text-gray-700 prose-ul:space-y-2 prose-li:leading-relaxed"
                     >
                         <h2>1. Agreement to Terms</h2>
                         <p>
                             By accessing and using AI Buddy ("the Service"),
-                            operated by {{ COMPANY_INFO.name }} ("we", "us", or
-                            "our"), you agree to be bound by these Terms of Use
-                            and all applicable laws and regulations. If you do
-                            not agree with any of these terms, you are
-                            prohibited from using the Service.
+                            operated by
+                            {{ COMPANY_INFO.name }} ("we", "us", or "our"), you
+                            agree to be bound by these Terms of Use and all
+                            applicable laws and regulations. If you do not agree
+                            with any of these terms, you are prohibited from
+                            using the Service.
                         </p>
 
                         <h2>2. Description of Service</h2>

@@ -66,7 +66,7 @@ const selectOption = (value: number) => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
+    <div class="flex max-w-xl flex-col gap-4">
         <!-- Circles -->
         <div class="flex items-center justify-center gap-2 sm:gap-4">
             <button

@@ -2,8 +2,10 @@
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
+import ContainerPage from '@/Components/ContainerPage.vue';
 import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
 import FormField from '@/Components/FormField.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import LikertScale from '@/Components/LikertScale.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -102,170 +104,151 @@ const formatDate = (dateString: string) => {
 <template>
     <Head title="Your Feedback" />
 
-    <header class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Your Feedback
-                </h2>
-            </div>
-        </div>
-    </header>
+    <HeaderPage title="Your Feedback" />
 
-    <div class="py-12">
-        <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
-            <Card>
-                <div class="mb-6">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">
-                                Thank you for your feedback!
-                            </h3>
-                            <p class="mt-1 text-sm text-gray-600">
-                                You can update your responses at any time.
-                            </p>
-                        </div>
-                        <ButtonSecondary
-                            v-if="!isEditing"
-                            type="button"
-                            @click="isEditing = true"
-                        >
-                            Edit Responses
-                        </ButtonSecondary>
+    <ContainerPage>
+        <Card>
+            <div class="mb-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            Thank you for your feedback!
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">
+                            You can update your responses at any time.
+                        </p>
                     </div>
-                    <p class="mt-2 text-xs text-gray-500">
-                        Last updated: {{ formatDate(feedback.updatedAt) }}
+                    <ButtonSecondary
+                        v-if="!isEditing"
+                        type="button"
+                        @click="isEditing = true"
+                    >
+                        Edit Responses
+                    </ButtonSecondary>
+                </div>
+                <p class="mt-2 text-xs text-gray-500">
+                    Last updated: {{ formatDate(feedback.updatedAt) }}
+                </p>
+            </div>
+
+            <form @submit.prevent="submit" class="space-y-8">
+                <!-- Question 1: Experience Level -->
+                <div class="mt-8">
+                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                        1. How experienced are you with AI tools like ChatGPT or
+                        Claude?
+                    </label>
+                    <LikertScale
+                        v-model="form.experienceLevel"
+                        left-label="Novice"
+                        right-label="Experienced"
+                        :disabled="!isEditing || form.processing"
+                    />
+                    <p
+                        v-if="form.errors.experienceLevel"
+                        class="mt-2 text-sm text-red-600"
+                    >
+                        {{ form.errors.experienceLevel }}
                     </p>
                 </div>
 
-                <form @submit.prevent="submit" class="space-y-8">
-                    <!-- Question 1: Experience Level -->
-                    <div class="mt-8">
-                        <label
-                            class="mb-4 block text-sm font-medium text-gray-900"
-                        >
-                            1. How experienced are you with AI tools like
-                            ChatGPT or Claude?
-                        </label>
-                        <LikertScale
-                            v-model="form.experienceLevel"
-                            left-label="Novice"
-                            right-label="Experienced"
-                            :disabled="!isEditing || form.processing"
-                        />
-                        <p
-                            v-if="form.errors.experienceLevel"
-                            class="mt-2 text-sm text-red-600"
-                        >
-                            {{ form.errors.experienceLevel }}
-                        </p>
-                    </div>
-
-                    <!-- Question 2: Usefulness -->
-                    <div class="mt-16">
-                        <label
-                            class="mb-4 block text-sm font-medium text-gray-900"
-                        >
-                            2. How useful was the app for improving your prompt?
-                        </label>
-                        <LikertScale
-                            v-model="form.usefulness"
-                            left-label="Not useful"
-                            right-label="Extremely useful"
-                            :disabled="!isEditing || form.processing"
-                        />
-                        <p
-                            v-if="form.errors.usefulness"
-                            class="mt-2 text-sm text-red-600"
-                        >
-                            {{ form.errors.usefulness }}
-                        </p>
-                    </div>
-
-                    <!-- Question 3: Recommendation Likelihood -->
-                    <div class="mt-16">
-                        <label
-                            class="mb-4 block text-sm font-medium text-gray-900"
-                        >
-                            3. How likely are you to recommend this app to a
-                            friend or colleague?
-                        </label>
-                        <LikertScale
-                            v-model="form.recommendationLikelihood"
-                            left-label="Very unlikely"
-                            right-label="Very likely"
-                            :disabled="!isEditing || form.processing"
-                        />
-                        <p
-                            v-if="form.errors.recommendationLikelihood"
-                            class="mt-2 text-sm text-red-600"
-                        >
-                            {{ form.errors.recommendationLikelihood }}
-                        </p>
-                    </div>
-
-                    <!-- Question 4: Suggestions -->
-                    <div class="mt-16">
-                        <FormField
-                            id="suggestions"
-                            label="4. What's one thing you'd change or improve about the app?"
-                            type="textarea"
-                            v-model="form.suggestions"
-                            :error="form.errors.suggestions"
-                            :disabled="!isEditing || form.processing"
-                            placeholder="Mention any steps you found confusing or features you'd like to see next."
-                            :rows="5"
-                        />
-                    </div>
-
-                    <!-- Question 5: Desired Features -->
-                    <div class="mt-16">
-                        <label
-                            class="mb-4 block text-sm font-medium text-gray-900"
-                        >
-                            5. Which features would you most want to see added
-                            next?
-                            <span class="font-normal text-gray-600"
-                                >(Select all that apply)</span
-                            >
-                        </label>
-                        <FormCheckboxGroup
-                            v-model="form.desiredFeatures"
-                            v-model:other-value="form.desiredFeaturesOther"
-                            :options="featureOptions"
-                            :disabled="!isEditing || form.processing"
-                            :error="form.errors.desiredFeatures"
-                        />
-                    </div>
-
-                    <!-- Submit Buttons -->
-                    <div
-                        v-if="isEditing"
-                        class="flex items-center justify-end gap-3"
+                <!-- Question 2: Usefulness -->
+                <div class="mt-16">
+                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                        2. How useful was the app for improving your prompt?
+                    </label>
+                    <LikertScale
+                        v-model="form.usefulness"
+                        left-label="Not useful"
+                        right-label="Extremely useful"
+                        :disabled="!isEditing || form.processing"
+                    />
+                    <p
+                        v-if="form.errors.usefulness"
+                        class="mt-2 text-sm text-red-600"
                     >
-                        <ButtonSecondary
-                            type="button"
-                            @click="
-                                () => {
-                                    isEditing = false;
-                                    form.reset();
-                                    form.clearErrors();
-                                }
-                            "
-                            :disabled="form.processing"
+                        {{ form.errors.usefulness }}
+                    </p>
+                </div>
+
+                <!-- Question 3: Recommendation Likelihood -->
+                <div class="mt-16">
+                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                        3. How likely are you to recommend this app to a friend
+                        or colleague?
+                    </label>
+                    <LikertScale
+                        v-model="form.recommendationLikelihood"
+                        left-label="Very unlikely"
+                        right-label="Very likely"
+                        :disabled="!isEditing || form.processing"
+                    />
+                    <p
+                        v-if="form.errors.recommendationLikelihood"
+                        class="mt-2 text-sm text-red-600"
+                    >
+                        {{ form.errors.recommendationLikelihood }}
+                    </p>
+                </div>
+
+                <!-- Question 4: Suggestions -->
+                <div class="mt-16">
+                    <FormField
+                        id="suggestions"
+                        label="4. What's one thing you'd change or improve about the app?"
+                        type="textarea"
+                        v-model="form.suggestions"
+                        :error="form.errors.suggestions"
+                        :disabled="!isEditing || form.processing"
+                        placeholder="Mention any steps you found confusing or features you'd like to see next."
+                        :rows="5"
+                    />
+                </div>
+
+                <!-- Question 5: Desired Features -->
+                <div class="mt-16">
+                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                        5. Which features would you most want to see added next?
+                        <span class="font-normal text-gray-600"
+                            >(Select all that apply)</span
                         >
-                            Cancel
-                        </ButtonSecondary>
-                        <ButtonPrimary
-                            type="submit"
-                            :disabled="form.processing"
-                            :loading="form.processing"
-                        >
-                            Update Feedback
-                        </ButtonPrimary>
-                    </div>
-                </form>
-            </Card>
-        </div>
-    </div>
+                    </label>
+                    <FormCheckboxGroup
+                        v-model="form.desiredFeatures"
+                        v-model:other-value="form.desiredFeaturesOther"
+                        :options="featureOptions"
+                        :disabled="!isEditing || form.processing"
+                        :error="form.errors.desiredFeatures"
+                    />
+                </div>
+
+                <!-- Submit Buttons -->
+                <div
+                    v-if="isEditing"
+                    class="flex items-center justify-end gap-3"
+                >
+                    <ButtonSecondary
+                        type="button"
+                        @click="
+                            () => {
+                                isEditing = false;
+                                form.reset();
+                                form.clearErrors();
+                            }
+                        "
+                        :disabled="form.processing"
+                    >
+                        Cancel
+                    </ButtonSecondary>
+                    <ButtonPrimary
+                        type="submit"
+                        :disabled="form.processing"
+                        :loading="form.processing"
+                    >
+                        Update Feedback
+                    </ButtonPrimary>
+                </div>
+            </form>
+        </Card>
+    </ContainerPage>
 </template>
