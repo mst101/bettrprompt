@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
@@ -261,24 +262,19 @@ watch(
 <template>
     <Head title="Optimised Prompt" />
 
-    <header class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Prompt Optimiser
-                </h2>
-                <Link
-                    :href="route('prompt-optimizer.index')"
-                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                >
-                    Create New
-                </Link>
-            </div>
-        </div>
-    </header>
+    <HeaderPage title="Prompt Optimiser">
+        <template #actions>
+            <Link
+                :href="route('prompt-optimizer.index')"
+                class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+            >
+                Create New
+            </Link>
+        </template>
+    </HeaderPage>
 
     <div class="py-12">
-        <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <!-- Tabs for completed runs with optional sections -->
             <div
                 v-if="

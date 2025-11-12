@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
@@ -37,16 +38,10 @@ const clearTaskDescription = () => {
 <template>
     <Head title="Prompt Optimiser" />
 
-    <header class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                Prompt Optimiser
-            </h2>
-        </div>
-    </header>
+    <HeaderPage title="Prompt Optimiser" />
 
     <div class="py-12">
-        <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
                 <div class="p-6">
                     <!-- Warning message if no personality type -->

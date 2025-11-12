@@ -104,9 +104,11 @@ const formatDate = (dateString: string) => {
 
     <header class="bg-white shadow-sm">
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                Your Feedback
-            </h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
+                    Your Feedback
+                </h2>
+            </div>
         </div>
     </header>
 

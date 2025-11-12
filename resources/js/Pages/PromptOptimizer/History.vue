@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
@@ -150,21 +151,16 @@ onMounted(() => {
 <template>
     <Head title="Prompt History" />
 
-    <header class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div class="items-centre flex justify-between">
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Prompt History
-                </h2>
-                <Link
-                    :href="route('prompt-optimizer.index')"
-                    class="items-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                >
-                    Create New
-                </Link>
-            </div>
-        </div>
-    </header>
+    <HeaderPage title="Prompt History">
+        <template #actions>
+            <Link
+                :href="route('prompt-optimizer.index')"
+                class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+            >
+                Create New
+            </Link>
+        </template>
+    </HeaderPage>
 
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -503,7 +499,7 @@ onMounted(() => {
                             <Link
                                 v-if="promptRuns.meta.prevPageUrl"
                                 :href="promptRuns.meta.prevPageUrl"
-                                class="items-centre relative inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                             >
                                 Previous
                             </Link>
@@ -523,7 +519,7 @@ onMounted(() => {
                             <Link
                                 v-if="promptRuns.meta.nextPageUrl"
                                 :href="promptRuns.meta.nextPageUrl"
-                                class="items-centre relative inline-flex rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                             >
                                 Next
                             </Link>
@@ -651,12 +647,12 @@ onMounted(() => {
                                     <Link
                                         v-if="promptRuns.meta.prevPageUrl"
                                         :href="promptRuns.meta.prevPageUrl"
-                                        class="items-centre relative inline-flex rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                        class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     >
                                         Previous
                                     </Link>
                                     <span
-                                        class="items-centre relative inline-flex border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                        class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                                     >
                                         Page
                                         {{ promptRuns.meta.currentPage }}
@@ -666,7 +662,7 @@ onMounted(() => {
                                     <Link
                                         v-if="promptRuns.meta.nextPageUrl"
                                         :href="promptRuns.meta.nextPageUrl"
-                                        class="items-centre relative inline-flex rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                        class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     >
                                         Next
                                     </Link>

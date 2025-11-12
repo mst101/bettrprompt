@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
 import FormField from '@/Components/FormField.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import LikertScale from '@/Components/LikertScale.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -71,13 +72,7 @@ const submit = () => {
 <template>
     <Head title="Feedback" />
 
-    <header class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                Feedback
-            </h2>
-        </div>
-    </header>
+    <HeaderPage title="Feedback" />
 
     <div class="py-12">
         <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
