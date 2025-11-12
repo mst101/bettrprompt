@@ -65,7 +65,7 @@ function updateValue(event: Event): void {
             :required="required"
             :disabled="disabled"
             :autocomplete="autocomplete"
-            class="form-input mt-1 block w-full rounded-md border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             :class="{ 'bg-gray-50': disabled }"
             @input="updateValue"
             @blur="$emit('blur', $event)"
@@ -79,17 +79,11 @@ function updateValue(event: Event): void {
 </template>
 
 <style scoped>
-/* Default text colour for inputs, can be overridden by utility classes */
-.form-input {
-    color: black;
-}
-
-/* Override browser autofill styles to inherit text colour from component classes */
+/* Override browser autofill background to maintain white background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-text-fill-color: inherit !important;
-    transition: all 5000s ease-in-out 0s;
+    transition: background-color 5000s ease-in-out 0s;
 }
 </style>
