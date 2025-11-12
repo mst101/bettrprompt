@@ -4,7 +4,6 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkHeader from '@/Components/LinkHeader.vue';
-import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
@@ -195,7 +194,7 @@ useRealtimeUpdates(
     { only: ['promptRun', 'currentQuestion', 'progress'] },
 );
 
-// Tab navigation for completed runs
+// Tab navigation for completed runs and question answering
 const activeTab = ref('prompt');
 
 const hasRelatedRuns = computed(
@@ -211,6 +210,18 @@ const hasAnsweredQuestions = computed(
         props.promptRun.clarifyingAnswers &&
         props.promptRun.clarifyingAnswers.length > 0 &&
         props.promptRun.workflowStage === 'completed',
+);
+
+const isAnsweringQuestions = computed(
+    () =>
+        props.promptRun.workflowStage === 'framework_selected' ||
+        props.promptRun.workflowStage === 'answering_questions',
+);
+
+const hasFrameworkQuestions = computed(
+    () =>
+        props.promptRun.frameworkQuestions &&
+        props.promptRun.frameworkQuestions.length > 0,
 );
 
 const tabs = computed<Tab[]>(() => {
@@ -232,6 +243,7 @@ const tabs = computed<Tab[]>(() => {
         icon: 'squares-2x2',
     });
 
+    // Framework tab (shown when framework is selected)
     if (props.promptRun.selectedFramework) {
         allTabs.push({
             id: 'framework',
@@ -240,6 +252,7 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
+    // Questions tab for completed runs with answered questions
     if (hasAnsweredQuestions.value) {
         allTabs.push({
             id: 'questions',
@@ -249,15 +262,41 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
+    // Questions tab for runs in progress (answering questions)
+    if (isAnsweringQuestions.value && hasFrameworkQuestions.value) {
+        allTabs.push({
+            id: 'questions',
+            label: 'Clarifying Questions',
+            icon: 'question-mark-circle',
+            badge: props.promptRun.frameworkQuestions?.length || undefined,
+        });
+    }
+
+    // Related Runs tab (shown when there are parent or children)
+    if (hasRelatedRuns.value) {
+        allTabs.push({
+            id: 'related',
+            label: 'Related Runs',
+            icon: 'arrow-path',
+        });
+    }
+
     return allTabs;
 });
 
-// Reset to prompt tab when navigating between prompt runs
+// Set default active tab based on workflow stage
 watch(
     () => props.promptRun.id,
     () => {
-        activeTab.value = 'prompt';
+        if (isAnsweringQuestions.value) {
+            activeTab.value = 'questions';
+        } else if (props.promptRun.optimizedPrompt) {
+            activeTab.value = 'prompt';
+        } else {
+            activeTab.value = 'task';
+        }
     },
+    { immediate: true },
 );
 </script>
 
@@ -273,9 +312,13 @@ watch(
     </HeaderPage>
 
     <ContainerPage>
-        <!-- Tabs for completed runs with optional sections -->
+        <!-- Tabs for completed runs and question answering stage -->
         <div
-            v-if="promptRun.workflowStage === 'completed' && tabs.length > 1"
+            v-if="
+                (promptRun.workflowStage === 'completed' ||
+                    isAnsweringQuestions) &&
+                tabs.length > 1
+            "
             class="mb-6"
         >
             <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
@@ -348,7 +391,30 @@ watch(
 
                     <!-- Questions Tab -->
                     <div v-show="activeTab === 'questions'">
+                        <!-- Question Answering Interface (for in-progress runs) -->
+                        <QuestionAnsweringForm
+                            v-if="
+                                isAnsweringQuestions &&
+                                currentQuestion &&
+                                !showAllQuestions
+                            "
+                            :question="currentQuestion"
+                            v-model:answer="answerForm.answer"
+                            :current-question-number="progress.answered + 1"
+                            :total-questions="progress.total"
+                            :is-submitting="isSubmitting"
+                            :has-error="!!answerForm.errors.answer"
+                            :error-message="answerForm.errors.answer"
+                            :show-all="showAllQuestions"
+                            @submit="submitAnswer"
+                            @skip="skipQuestion"
+                            @clear="clearAnswer"
+                            @toggle-show-all="toggleShowAll"
+                        />
+
+                        <!-- All Questions View (for completed runs) -->
                         <div
+                            v-else-if="promptRun.workflowStage === 'completed'"
                             class="overflow-hidden rounded-lg bg-white shadow-xs"
                         >
                             <div class="p-6">
@@ -461,6 +527,15 @@ watch(
                             </div>
                         </div>
                     </div>
+
+                    <!-- Related Runs Tab -->
+                    <div v-show="activeTab === 'related'">
+                        <RelatedPromptRuns
+                            v-if="hasRelatedRuns"
+                            :parent="promptRun.parent"
+                            :children="promptRun.children"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -513,43 +588,6 @@ watch(
                 class="mb-6"
             />
         </template>
-
-        <!-- Question Answering Interface -->
-        <QuestionAnsweringForm
-            v-if="
-                (promptRun.workflowStage === 'framework_selected' ||
-                    promptRun.workflowStage === 'answering_questions') &&
-                currentQuestion &&
-                !showAllQuestions
-            "
-            :question="currentQuestion"
-            v-model:answer="answerForm.answer"
-            :current-question-number="progress.answered + 1"
-            :total-questions="progress.total"
-            :is-submitting="isSubmitting"
-            :has-error="!!answerForm.errors.answer"
-            :error-message="answerForm.errors.answer"
-            :show-all="showAllQuestions"
-            @submit="submitAnswer"
-            @skip="skipQuestion"
-            @clear="clearAnswer"
-            @toggle-show-all="toggleShowAll"
-            class="mb-6"
-        />
-
-        <!-- Show All Questions Mode -->
-        <AllQuestions
-            v-if="
-                (promptRun.workflowStage === 'framework_selected' ||
-                    promptRun.workflowStage === 'answering_questions') &&
-                showAllQuestions &&
-                promptRun.frameworkQuestions
-            "
-            :prompt-run="promptRun"
-            :progress="progress"
-            @toggle-show-all="toggleShowAll"
-            class="mb-6"
-        />
 
         <!-- Generating Prompt Loading State -->
         <LoadingStateCard
