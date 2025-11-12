@@ -677,8 +677,8 @@ class PromptOptimizerController extends Controller
         $sortDirection = $request->query('sort_direction', 'desc');
 
         // Get per-page parameter (default 10, allowed: 1-100)
-        $perPage = $request->query('per_page', 10);
-        $perPage = is_numeric($perPage) ? (int) $perPage : 10;
+        $perPage = $request->query('per_page', 6);
+        $perPage = is_numeric($perPage) ? (int) $perPage : 6;
         $perPage = max(1, min(100, $perPage)); // Clamp between 1 and 100
 
         // Validate sort column
@@ -834,7 +834,11 @@ class PromptOptimizerController extends Controller
 
         try {
             // Create the child prompt run record with same framework but new answers
-            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $clarifyingAnswers) {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $parentPromptRun,
+                $clarifyingAnswers
+            ) {
                 return PromptRun::create([
                     'user_id' => $user->id,
                     'parent_id' => $parentPromptRun->id,

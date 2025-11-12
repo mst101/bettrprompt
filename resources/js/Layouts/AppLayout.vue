@@ -125,7 +125,7 @@ provide('openRegisterModal', openRegister);
                                 </NavLink>
                                 <NavLink
                                     :href="route('feedback.create')"
-                                    :active="route().current('feedback.create')"
+                                    :active="route().current('feedback.*')"
                                 >
                                     Feedback
                                 </NavLink>
@@ -273,9 +273,7 @@ provide('openRegisterModal', openRegister);
 
                                     <ResponsiveNavLink
                                         :href="route('feedback.create')"
-                                        :active="
-                                            route().current('feedback.create')
-                                        "
+                                        :active="route().current('feedback.*')"
                                         @click="
                                             showingNavigationDropdown = false
                                         "
