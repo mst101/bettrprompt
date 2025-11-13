@@ -2,3 +2,4 @@
 
 export * from './PromptRunResource';
 export * from './UserResource';
+export * from './VisitorResource';

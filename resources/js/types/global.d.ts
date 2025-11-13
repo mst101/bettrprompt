@@ -15,6 +15,24 @@ declare global {
             | 'connecting'
             | 'disconnected'
             | 'failed';
+        FS?: {
+            (
+                method: 'trackEvent',
+                eventData: {
+                    name: string;
+                    properties: Record<string, any>;
+                },
+            ): void;
+            identify(
+                uid: string | number,
+                customVars?: Record<string, any>,
+            ): void;
+            setUserVars(customVars: Record<string, any>): void;
+            event(eventName: string, properties?: Record<string, any>): void;
+            anonymize(): void;
+            shutdown(): void;
+            restart(): void;
+        };
     }
 
     var route: typeof ziggyRoute;
