@@ -619,4 +619,13 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentcolor);
     }
+
+    /* Override forms plugin checkbox backgrounds to work with color inversion */
+    input[type='checkbox'] {
+        background-color: var(--color-white);
+    }
+
+    input[type='checkbox']:checked {
+        background-color: var(--color-indigo-600);
+    }
 }

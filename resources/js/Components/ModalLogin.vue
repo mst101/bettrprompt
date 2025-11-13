@@ -87,13 +87,18 @@ const close = () => {
         <template #footer-links>
             <div class="flex items-center gap-4">
                 <ButtonText
+                    id="forgot-password"
                     type="button"
                     @click="emit('switchToForgotPassword')"
                 >
                     Forgot password?
                 </ButtonText>
 
-                <ButtonText type="button" @click="emit('switchToRegister')">
+                <ButtonText
+                    id="switch-to-register"
+                    type="button"
+                    @click="emit('switchToRegister')"
+                >
                     Need an account?
                 </ButtonText>
             </div>
