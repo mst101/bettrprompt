@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const buttonClasses = computed(() => {
     const base =
-        'text-sm font-normal rounded-md p-1 transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
+        'cursor-pointer text-sm font-normal rounded-md p-1 transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
 
     const variants = {
         primary: 'text-indigo-600 hover:text-indigo-800 focus:ring-indigo-500',

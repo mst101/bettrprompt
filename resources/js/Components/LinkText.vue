@@ -11,7 +11,7 @@ defineProps<Props>();
 <template>
     <Link
         :href="href"
-        class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+        class="rounded-md p-1 text-sm text-indigo-600 transition hover:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-gray-100 focus:outline-hidden"
     >
         <slot />
     </Link>

@@ -87,35 +87,26 @@ onUnmounted(() => {
                 v-for="tab in tabs"
                 :key="tab.id"
                 @click="selectTab(tab.id)"
+                :tabindex="activeTab === tab.id ? -1 : 0"
                 :class="[
                     activeTab === tab.id
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                        ? 'border-indigo-500 text-indigo-600 hover:text-indigo-600 focus:text-indigo-600'
+                        : 'border-transparent text-gray-500 group-hover:text-gray-700 hover:border-gray-300',
                     'group inline-flex shrink-0 snap-start items-center border-b-2 px-1 py-3 text-sm font-medium transition-colors',
-                    'focus:rounded-t-md focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden',
+                    'hover:text-gray-700 focus:rounded-t-md focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden',
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"
             >
                 <DynamicIcon
                     v-if="tab.icon"
                     :name="tab.icon"
-                    :class="[
-                        activeTab === tab.id
-                            ? 'text-indigo-500'
-                            : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-2 -ml-0.5 h-5 w-5 transition-colors',
-                    ]"
+                    class="mr-2 -ml-0.5 h-5 w-5 transition-colors"
                     aria-hidden="true"
                 />
                 <span>{{ tab.label }}</span>
                 <span
                     v-if="tab.badge"
-                    :class="[
-                        activeTab === tab.id
-                            ? 'bg-indigo-100 text-indigo-600'
-                            : 'bg-gray-100 text-gray-900',
-                        'ml-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium',
-                    ]"
+                    class="ml-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
                 >
                     {{ tab.badge }}
                 </span>

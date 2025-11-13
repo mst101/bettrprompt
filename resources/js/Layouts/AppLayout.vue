@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
+import ButtonHamburger from '@/Components/ButtonHamburger.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
@@ -76,7 +77,7 @@ provide('openRegisterModal', openRegister);
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col bg-gray-100">
+    <div class="flex min-h-screen flex-col bg-gray-100 dark:bg-gray-200">
         <div class="flex flex-1 flex-col">
             <nav class="border-b border-gray-100 bg-white">
                 <!-- Primary Navigation Menu -->
@@ -149,7 +150,7 @@ provide('openRegisterModal', openRegister);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{
@@ -195,27 +196,15 @@ provide('openRegisterModal', openRegister);
 
                         <!-- Hamburger (Mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
-                            <ButtonDarkMode class="mr-4 size-10 shrink-0 p-2" />
+                            <ButtonDarkMode />
 
-                            <button
+                            <ButtonHamburger
+                                :is-open="showingNavigationDropdown"
                                 @click="
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-hidden"
-                                aria-label="Toggle navigation menu"
-                            >
-                                <DynamicIcon
-                                    v-if="!showingNavigationDropdown"
-                                    name="bars-3"
-                                    class="h-6 w-6"
-                                />
-                                <DynamicIcon
-                                    v-else
-                                    name="x-mark"
-                                    class="h-6 w-6"
-                                />
-                            </button>
+                            />
                         </div>
                     </div>
                 </div>

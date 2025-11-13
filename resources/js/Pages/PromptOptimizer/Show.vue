@@ -3,7 +3,7 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
-import LinkHeader from '@/Components/LinkHeader.vue';
+import LinkButton from '@/Components/LinkButton.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
@@ -315,9 +315,12 @@ watch(
 
     <HeaderPage title="Prompt Optimiser">
         <template #actions>
-            <LinkHeader :href="route('prompt-optimizer.index')">
+            <LinkButton
+                :href="route('prompt-optimizer.index')"
+                variant="primary"
+            >
                 Create New
-            </LinkHeader>
+            </LinkButton>
         </template>
     </HeaderPage>
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import ButtonText from '@/Components/ButtonText.vue';
 import { ref } from 'vue';
 import CookieSettings from './CookieSettings.vue';
+import LinkText from './LinkText.vue';
 
 const showCookieSettings = ref(false);
 
@@ -28,31 +29,16 @@ const closeCookieSettings = () => {
 
                 <!-- Links -->
                 <div class="flex flex-wrap justify-center gap-6">
-                    <Link
-                        :href="route('terms')"
-                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    >
-                        Terms of Use
-                    </Link>
-                    <Link
-                        :href="route('privacy')"
-                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    >
-                        Privacy Policy
-                    </Link>
-                    <Link
-                        :href="route('cookies')"
-                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    >
-                        Cookie Policy
-                    </Link>
-                    <button
+                    <LinkText :href="route('terms')">Terms of Use</LinkText>
+                    <LinkText :href="route('privacy')">Privacy Policy</LinkText>
+                    <LinkText :href="route('cookies')">Cookie Policy</LinkText>
+                    <ButtonText
+                        id="cookie-settings"
                         @click="openCookieSettings"
                         type="button"
-                        class="rounded-md p-1 text-sm text-gray-600 transition hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     >
                         Cookie Settings
-                    </button>
+                    </ButtonText>
                 </div>
             </div>
         </div>

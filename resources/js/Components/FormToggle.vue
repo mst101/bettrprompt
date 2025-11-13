@@ -17,7 +17,7 @@ const toggle = () => {
 
 <template>
     <div
-        class="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 p-3"
+        class="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 p-3 focus:ring-offset-gray-100"
     >
         <span v-if="label" class="text-sm font-medium text-gray-700">
             {{ label }}

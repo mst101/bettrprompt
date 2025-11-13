@@ -2,15 +2,15 @@
 import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
-import LinkHeader from '@/Components/LinkHeader.vue';
+import LinkButton from '@/Components/LinkButton.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import TableHeaderSortable from '@/Components/TableHeaderSortable.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, onMounted, ref, watch } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -103,6 +103,11 @@ const changePerPage = () => {
         return;
     }
 
+    // Only navigate if the value has actually changed
+    if (perPage === props.filters.per_page) {
+        return;
+    }
+
     // Save to localStorage
     perPageStorage.value = perPage;
 
@@ -124,6 +129,11 @@ const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
 
+// Focus management for pagination buttons
+const handlePaginationClick = (direction: 'prev' | 'next') => {
+    sessionStorage.setItem('pagination_focus', direction);
+};
+
 // On mount, if the per_page from server doesn't match localStorage, update it
 onMounted(() => {
     const storedPerPage = perPageStorage.value;
@@ -142,6 +152,27 @@ onMounted(() => {
             },
         );
     }
+
+    // Restore focus to pagination button if it was clicked
+    const lastClickedButton = sessionStorage.getItem('pagination_focus');
+    if (lastClickedButton) {
+        sessionStorage.removeItem('pagination_focus');
+        // Use setTimeout to ensure page is fully loaded and stable before focusing
+        nextTick(() => {
+            // Try desktop button first, then mobile
+            let button = document.getElementById(
+                `pagination-${lastClickedButton}`,
+            );
+            if (!button) {
+                button = document.getElementById(
+                    `pagination-${lastClickedButton}-mobile`,
+                );
+            }
+            if (button) {
+                button.focus();
+            }
+        });
+    }
 });
 </script>
 
@@ -150,9 +181,12 @@ onMounted(() => {
 
     <HeaderPage title="Prompt History">
         <template #actions>
-            <LinkHeader :href="route('prompt-optimizer.index')">
+            <LinkButton
+                :href="route('prompt-optimizer.index')"
+                variant="primary"
+            >
                 Create New
-            </LinkHeader>
+            </LinkButton>
         </template>
     </HeaderPage>
 
@@ -179,7 +213,7 @@ onMounted(() => {
                             <tr>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-600 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="personality_type"
@@ -192,7 +226,7 @@ onMounted(() => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-600 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="task_description"
@@ -205,7 +239,7 @@ onMounted(() => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase lg:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="selected_framework"
@@ -218,7 +252,7 @@ onMounted(() => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="status"
@@ -231,7 +265,7 @@ onMounted(() => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="created_at"
@@ -248,7 +282,8 @@ onMounted(() => {
                             <tr
                                 v-for="promptRun in promptRuns.data"
                                 :key="promptRun.id"
-                                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-100"
+                                class="cursor-pointer rounded-md hover:bg-gray-50 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 dark:hover:bg-gray-100"
+                                tabindex="0"
                                 @click="
                                     $inertia.visit(
                                         route(
@@ -309,13 +344,14 @@ onMounted(() => {
                     class="mt-4 grid grid-cols-3 items-center gap-2 px-4 sm:hidden"
                 >
                     <div class="flex justify-start">
-                        <Link
+                        <LinkButton
                             v-if="promptRuns.meta.prevPageUrl"
+                            id="pagination-prev-mobile"
                             :href="promptRuns.meta.prevPageUrl"
-                            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            @click="handlePaginationClick('prev')"
                         >
                             Previous
-                        </Link>
+                        </LinkButton>
                     </div>
 
                     <p
@@ -329,13 +365,14 @@ onMounted(() => {
                     </p>
 
                     <div class="flex justify-end">
-                        <Link
+                        <LinkButton
                             v-if="promptRuns.meta.nextPageUrl"
+                            id="pagination-next-mobile"
                             :href="promptRuns.meta.nextPageUrl"
-                            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            @click="handlePaginationClick('next')"
                         >
                             Next
-                        </Link>
+                        </LinkButton>
                     </div>
                 </div>
 
@@ -448,13 +485,15 @@ onMounted(() => {
                                 class="isolate inline-flex -space-x-px rounded-md shadow-xs"
                                 aria-label="Pagination"
                             >
-                                <Link
+                                <LinkButton
                                     v-if="promptRuns.meta.prevPageUrl"
+                                    id="pagination-prev"
                                     :href="promptRuns.meta.prevPageUrl"
-                                    class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                    variant="rounded-left"
+                                    @click="handlePaginationClick('prev')"
                                 >
                                     Previous
-                                </Link>
+                                </LinkButton>
                                 <span
                                     class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
                                 >
@@ -463,13 +502,15 @@ onMounted(() => {
                                     of
                                     {{ promptRuns.meta.lastPage }}
                                 </span>
-                                <Link
+                                <LinkButton
                                     v-if="promptRuns.meta.nextPageUrl"
+                                    id="pagination-next"
                                     :href="promptRuns.meta.nextPageUrl"
-                                    class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                    variant="rounded-right"
+                                    @click="handlePaginationClick('next')"
                                 >
                                     Next
-                                </Link>
+                                </LinkButton>
                             </nav>
                         </div>
                     </div>

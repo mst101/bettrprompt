@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import FormToggle from '@/Components/FormToggle.vue';
+import LinkText from '@/Components/LinkText.vue';
 import Modal from '@/Components/Modal.vue';
 import { useCookieConsent } from '@/Composables/useCookieConsent';
 import { COOKIE_CATEGORIES, type CookiePreferences } from '@/constants/cookies';
-import { Link } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 interface Props {
@@ -80,12 +82,9 @@ const analyticsEnabled = computed({
                     <p class="mt-1 text-sm text-gray-600">
                         Manage your cookie preferences. You can enable or
                         disable different types of cookies below.
-                        <Link
-                            :href="route('cookies')"
-                            class="text-indigo-600 hover:text-indigo-800"
-                        >
+                        <LinkText :href="route('cookies')">
                             Learn more about our cookies
-                        </Link>
+                        </LinkText>
                     </p>
                 </div>
             </div>
@@ -155,27 +154,15 @@ const analyticsEnabled = computed({
 
             <!-- Action Buttons -->
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button
-                    @click="handleRejectAll"
-                    type="button"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
-                >
+                <ButtonSecondary @click="handleRejectAll" type="button">
                     Reject All
-                </button>
-                <button
-                    @click="handleSave"
-                    type="button"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-xs transition hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
-                >
+                </ButtonSecondary>
+                <ButtonSecondary @click="handleSave" type="button">
                     Save Preferences
-                </button>
-                <button
-                    @click="handleAcceptAll"
-                    type="button"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
-                >
+                </ButtonSecondary>
+                <ButtonPrimary @click="handleAcceptAll" type="button">
                     Accept All
-                </button>
+                </ButtonPrimary>
             </div>
         </div>
     </Modal>

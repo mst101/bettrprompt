@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ButtonMode from '@/Components/ButtonMode.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useThemeStore } from '@/stores/themeStore';
 import { computed } from 'vue';
@@ -11,12 +10,12 @@ const title = computed(() => `Switch to ${otherMode.value} mode`);
 </script>
 
 <template>
-    <ButtonMode
-        class="cursor-pointer rounded-md fill-current text-gray-600 hover:bg-gray-100 hover:text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none active:text-black"
+    <button
         type="button"
+        class="mr-4 size-10 shrink-0 cursor-pointer rounded-md fill-current p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden active:text-black"
         :title="title"
         @click="themeStore.toggleTheme()"
     >
         <DynamicIcon :name="isDark ? 'moon' : 'sun'" />
-    </ButtonMode>
+    </button>
 </template>
