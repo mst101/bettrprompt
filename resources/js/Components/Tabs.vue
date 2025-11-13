@@ -80,7 +80,7 @@ onUnmounted(() => {
         <!-- Scrollable tabs container -->
         <nav
             ref="navRef"
-            class="scrollbar-hide -mb-px flex snap-x snap-mandatory space-x-8 overflow-x-auto scroll-smooth py-1"
+            class="scrollbar-hide -mb-px flex snap-x snap-mandatory space-x-8 overflow-x-auto scroll-smooth p-1"
             aria-label="Tabs"
         >
             <button
