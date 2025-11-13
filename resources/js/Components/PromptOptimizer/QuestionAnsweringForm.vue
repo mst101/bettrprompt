@@ -3,6 +3,7 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed } from 'vue';
@@ -112,24 +113,26 @@ const textareaClasses = computed(() => {
                 :textarea-class="textareaClasses"
             >
                 <template #actions>
+                    <button
+                        v-if="answer"
+                        type="button"
+                        @click="emit('clear')"
+                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
+                        title="Clear text"
+                        :disabled="isSubmitting"
+                    >
+                        <DynamicIcon
+                            name="trash"
+                            class="h-5 w-5 text-gray-600"
+                        />
+                        <span>Clear</span>
+                    </button>
                     <ButtonVoiceInput
                         @transcription="handleTranscription"
                         :disabled="isSubmitting"
                     />
                 </template>
             </FormTextareaWithActions>
-
-            <!-- Clear Button -->
-            <div v-if="answer" class="mt-3 flex justify-end">
-                <button
-                    @click="emit('clear')"
-                    type="button"
-                    class="text-sm text-gray-500 hover:text-gray-700"
-                    :disabled="isSubmitting"
-                >
-                    Clear
-                </button>
-            </div>
 
             <!-- Action Buttons -->
             <div class="flex justify-between gap-3">
