@@ -353,3 +353,89 @@ test('webhook does not broadcast on non milestone stages', function () {
     Event::assertNotDispatched(FrameworkSelected::class);
     Event::assertNotDispatched(PromptOptimizationCompleted::class);
 });
+
+test('webhook updates personality approach field', function () {
+    $user = User::factory()->create();
+    $promptRun = PromptRun::factory()->create([
+        'user_id' => $user->id,
+        'workflow_stage' => 'submitted',
+        'personality_approach' => null,
+    ]);
+
+    $response = webhookPost([
+        'prompt_run_id' => $promptRun->id,
+        'workflow_stage' => 'framework_selected',
+        'selected_framework' => 'Brainstorming',
+        'framework_reasoning' => 'Amplifies your creative strengths',
+        'personality_approach' => 'amplify',
+        'framework_questions' => [
+            'What ideas do you want to explore?',
+        ],
+    ]);
+
+    $response->assertOk();
+
+    $promptRun->refresh();
+    expect($promptRun->personality_approach)->toBe('amplify')
+        ->and($promptRun->selected_framework)->toBe('Brainstorming');
+});
+
+test('webhook accepts counterbalance personality approach', function () {
+    $user = User::factory()->create();
+    $promptRun = PromptRun::factory()->create([
+        'user_id' => $user->id,
+        'workflow_stage' => 'submitted',
+    ]);
+
+    $response = webhookPost([
+        'prompt_run_id' => $promptRun->id,
+        'workflow_stage' => 'framework_selected',
+        'selected_framework' => 'SMART Goals',
+        'personality_approach' => 'counterbalance',
+        'framework_questions' => ['What is your goal?'],
+    ]);
+
+    $response->assertOk();
+
+    $promptRun->refresh();
+    expect($promptRun->personality_approach)->toBe('counterbalance');
+});
+
+test('webhook accepts null personality approach', function () {
+    $user = User::factory()->create();
+    $promptRun = PromptRun::factory()->create([
+        'user_id' => $user->id,
+        'workflow_stage' => 'submitted',
+    ]);
+
+    $response = webhookPost([
+        'prompt_run_id' => $promptRun->id,
+        'workflow_stage' => 'framework_selected',
+        'selected_framework' => 'CRISPE',
+        'personality_approach' => null,
+        'framework_questions' => ['What is the context?'],
+    ]);
+
+    $response->assertOk();
+
+    $promptRun->refresh();
+    expect($promptRun->personality_approach)->toBeNull();
+});
+
+test('webhook validates personality approach enum values', function () {
+    $user = User::factory()->create();
+    $promptRun = PromptRun::factory()->create(['user_id' => $user->id]);
+
+    $response = webhookPost([
+        'prompt_run_id' => $promptRun->id,
+        'workflow_stage' => 'framework_selected',
+        'personality_approach' => 'invalid_approach',
+    ]);
+
+    $response->assertStatus(422);
+    $response->assertJson([
+        'success' => false,
+        'error' => 'Invalid payload',
+    ]);
+    $response->assertJsonStructure(['details' => ['personality_approach']]);
+});

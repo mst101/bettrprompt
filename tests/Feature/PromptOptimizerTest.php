@@ -390,3 +390,262 @@ test('completed prompt run displays optimized prompt', function () {
         ->where('promptRun.workflowStage', 'completed')
     );
 });
+
+test('store saves personality approach from framework selector', function () {
+    $this->actingAs($this->user);
+
+    // Mock N8nClient to return personality approach
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'Brainstorming',
+                    'framework_reasoning' => 'Suitable for creative tasks',
+                    'personality_approach' => 'amplify',
+                    'framework_questions' => [
+                        'What creative ideas do you want to explore?',
+                    ],
+                ],
+            ]);
+    });
+
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Lead a team brainstorming session for new product ideas',
+    ]);
+
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('prompt_runs', [
+        'user_id' => $this->user->id,
+        'personality_approach' => 'amplify',
+        'selected_framework' => 'Brainstorming',
+    ]);
+});
+
+test('store saves counterbalance personality approach', function () {
+    $this->actingAs($this->user);
+
+    // Mock N8nClient to return counterbalance approach
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'SMART Goals',
+                    'framework_reasoning' => 'Provides structure for planning',
+                    'personality_approach' => 'counterbalance',
+                    'framework_questions' => [
+                        'What specific goal do you want to achieve?',
+                    ],
+                ],
+            ]);
+    });
+
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Create a detailed project plan with clear milestones',
+    ]);
+
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('prompt_runs', [
+        'user_id' => $this->user->id,
+        'personality_approach' => 'counterbalance',
+        'selected_framework' => 'SMART Goals',
+    ]);
+});
+
+test('show includes personality approach in response', function () {
+    $this->actingAs($this->user);
+
+    $promptRun = PromptRun::factory()->create([
+        'user_id' => $this->user->id,
+        'task_description' => 'Test task',
+        'personality_type' => 'INTJ',
+        'selected_framework' => 'SMART Goals',
+        'personality_approach' => 'amplify',
+        'workflow_stage' => 'framework_selected',
+    ]);
+
+    $response = $this->get(route('prompt-optimizer.show', $promptRun));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->where('promptRun.personalityApproach', 'amplify')
+        ->where('promptRun.selectedFramework', 'SMART Goals')
+    );
+});
+
+test('personality approach can be null for users without personality type', function () {
+    $this->actingAs($this->user);
+
+    // Mock N8nClient to return no personality approach
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'CRISPE',
+                    'framework_reasoning' => 'Generic task-based selection',
+                    'personality_approach' => null,
+                    'framework_questions' => [
+                        'What is the context?',
+                    ],
+                ],
+            ]);
+    });
+
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Help me write a professional email to my team',
+    ]);
+
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('prompt_runs', [
+        'user_id' => $this->user->id,
+        'personality_approach' => null,
+        'selected_framework' => 'CRISPE',
+    ]);
+});
+
+test('user without personality type can create prompt run', function () {
+    // Create user without personality type
+    $userWithoutPersonality = User::factory()->create([
+        'personality_type' => null,
+        'trait_percentages' => null,
+    ]);
+
+    $this->actingAs($userWithoutPersonality);
+
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->with('/webhook/framework-selector', \Mockery::on(function ($data) {
+                // Should not include personality_type or trait_percentages
+                return ! isset($data['personality_type']) &&
+                    ! isset($data['trait_percentages']);
+            }))
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'CRISPE',
+                    'framework_reasoning' => 'Task-based framework selection',
+                    'personality_approach' => null,
+                    'framework_questions' => [
+                        'What is the context?',
+                    ],
+                ],
+            ]);
+    });
+
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Help me write a professional email',
+    ]);
+
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('prompt_runs', [
+        'user_id' => $userWithoutPersonality->id,
+        'personality_type' => null,
+        'personality_approach' => null,
+    ]);
+});
+
+test('user without personality type receives framework selection', function () {
+    $userWithoutPersonality = User::factory()->create([
+        'personality_type' => null,
+        'trait_percentages' => null,
+    ]);
+
+    $this->actingAs($userWithoutPersonality);
+
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'SMART Goals',
+                    'framework_reasoning' => 'Suitable for structured planning tasks',
+                    'personality_approach' => null,
+                    'framework_questions' => [
+                        'What specific goal do you want to achieve?',
+                        'How will you measure success?',
+                    ],
+                ],
+            ]);
+    });
+
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Create a quarterly sales target plan',
+    ]);
+
+    $response->assertRedirect();
+
+    // Should still get framework selection and questions
+    $promptRun = PromptRun::where('user_id', $userWithoutPersonality->id)->first();
+    expect($promptRun)->not->toBeNull()
+        ->and($promptRun->selected_framework)->toBe('SMART Goals')
+        ->and($promptRun->framework_questions)->toHaveCount(2);
+});
+
+test('user without personality type can complete full flow', function () {
+    $userWithoutPersonality = User::factory()->create([
+        'personality_type' => null,
+        'trait_percentages' => null,
+    ]);
+
+    $this->actingAs($userWithoutPersonality);
+
+    // Mock framework selector
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->with('/webhook/framework-selector', \Mockery::any())
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'selected_framework' => 'CRISPE',
+                    'framework_reasoning' => 'Generic framework',
+                    'personality_approach' => null,
+                    'framework_questions' => ['What is the context?'],
+                ],
+            ]);
+
+        // Mock final optimizer
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->with('/webhook/final-prompt-optimizer', \Mockery::on(function ($data) {
+                // Should not include personality fields
+                return ! isset($data['personality_type']) &&
+                    ! isset($data['personality_approach']);
+            }))
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'optimized_prompt' => 'Your optimised prompt without personality customisation',
+                ],
+            ]);
+    });
+
+    // Create prompt run
+    $response = $this->post(route('prompt-optimizer.store'), [
+        'task_description' => 'Write a business proposal',
+    ]);
+
+    $promptRun = PromptRun::where('user_id', $userWithoutPersonality->id)->first();
+
+    // Answer the question
+    $response = $this->post(route('prompt-optimizer.answer', $promptRun), [
+        'answer' => 'The context is...',
+    ]);
+
+    $response->assertRedirect();
+
+    $promptRun->refresh();
+    expect($promptRun->optimized_prompt)->not->toBeNull()
+        ->and($promptRun->status)->toBe('completed');
+});
