@@ -85,3 +85,35 @@ export interface FormTextareaProps extends BaseFormFieldProps {
     /** Custom CSS classes to apply to the textarea element */
     textareaClass?: string;
 }
+
+/**
+ * Props for FormRadio component
+ */
+export interface FormRadioProps {
+    /** Unique identifier for the form field */
+    id: string;
+
+    /** Current selected value */
+    modelValue?: string | number | boolean;
+
+    /** Value for this radio option */
+    value: string | number | boolean;
+
+    /** Name attribute (groups radio buttons together) */
+    name: string;
+
+    /** Label text displayed for the radio button */
+    label?: string;
+
+    /** Whether the field is disabled */
+    disabled?: boolean;
+
+    /** Error message to display */
+    error?: string;
+
+    /** Help text displayed below the field */
+    helpText?: string;
+
+    /** Whether the field is required */
+    required?: boolean;
+}

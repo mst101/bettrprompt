@@ -22,14 +22,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const buttonClasses = computed(() => {
     const base =
-        'inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
+        'border inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
 
     const variants = {
         primary:
-            'border border-transparent bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 focus:ring-indigo-500',
+            'border-transparent bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 focus:ring-indigo-500',
         secondary:
-            'border border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-indigo-500',
-        danger: 'border border-transparent bg-red-600 text-white shadow-xs hover:bg-red-700 focus:ring-red-500',
+            'border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-indigo-500',
+        danger: 'border-transparent bg-red-600 text-white shadow-xs hover:bg-red-700 focus:ring-red-500',
     };
 
     const sizes = {

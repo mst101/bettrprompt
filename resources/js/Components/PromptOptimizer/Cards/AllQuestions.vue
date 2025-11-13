@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonText from '@/Components/ButtonText.vue';
 import Card from '@/Components/Card.vue';
 import type { PromptRunResource } from '@/types';
 
@@ -36,13 +37,14 @@ const isSkipped = (index: number, answers: (string | null)[] | null) => {
                     <span class="text-sm font-medium text-gray-700"
                         >All Questions</span
                     >
-                    <button
+                    <ButtonText
+                        id="toggle-question-view"
                         @click="emit('toggle-show-all')"
                         type="button"
-                        class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+                        :underline="true"
                     >
                         (one-at-a-time)
-                    </button>
+                    </ButtonText>
                 </div>
                 <span class="text-sm text-gray-500"
                     >{{ progress.answered }} of

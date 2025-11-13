@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormInput from '@/Components/FormInput.vue';
+import FormRadio from '@/Components/FormRadio.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
@@ -118,32 +120,22 @@ const submit = () => {
                         :required="true"
                     />
                     <div class="mt-2 flex gap-6">
-                        <label class="flex items-center">
-                            <input
-                                v-model="identity"
-                                type="radio"
-                                name="identity"
-                                value="A"
-                                required
-                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span class="ml-2 text-sm text-gray-700"
-                                >Assertive (A)</span
-                            >
-                        </label>
-                        <label class="flex items-center">
-                            <input
-                                v-model="identity"
-                                type="radio"
-                                name="identity"
-                                value="T"
-                                required
-                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span class="ml-2 text-sm text-gray-700"
-                                >Turbulent (T)</span
-                            >
-                        </label>
+                        <FormRadio
+                            id="identity-assertive"
+                            v-model="identity"
+                            name="identity"
+                            value="A"
+                            label="Assertive (A)"
+                            :required="true"
+                        />
+                        <FormRadio
+                            id="identity-turbulent"
+                            v-model="identity"
+                            name="identity"
+                            value="T"
+                            label="Turbulent (T)"
+                            :required="true"
+                        />
                     </div>
                 </div>
 
@@ -160,14 +152,14 @@ const submit = () => {
 
             <!-- Optional Trait Percentages -->
             <div>
-                <button
+                <ButtonText
+                    id="toggle-trait-percentages"
                     type="button"
                     @click="showTraitPercentages = !showTraitPercentages"
-                    class="text-sm text-indigo-600 hover:text-indigo-800"
                 >
                     {{ showTraitPercentages ? '− Hide' : '+ Add' }}
                     Trait Percentages (Optional)
-                </button>
+                </ButtonText>
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                     <p class="text-sm text-gray-600">
