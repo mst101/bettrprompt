@@ -62,7 +62,14 @@ const iconComponent = computed(() => {
             render: () => h('div', { class: 'size-5 rounded-sm bg-gray-200' }),
         },
         delay: 0, // Show loading immediately
-        timeout: 10000, // Timeout after 10 seconds (increased for e2e tests)
+        timeout: 3000, // Timeout after 3 seconds
+        onError(error) {
+            // Suppress timeout errors in test/prod to prevent noise
+            if (import.meta.env.MODE !== 'development') {
+                return;
+            }
+            console.error(`Failed to load icon "${props.name}":`, error);
+        },
     });
 });
 </script>
