@@ -80,7 +80,7 @@ onUnmounted(() => {
         <!-- Scrollable tabs container -->
         <nav
             ref="navRef"
-            class="scrollbar-hide -mb-px flex snap-x snap-mandatory space-x-8 overflow-x-auto scroll-smooth"
+            class="scrollbar-hide -mb-px flex snap-x snap-mandatory space-x-8 overflow-x-auto scroll-smooth py-1"
             aria-label="Tabs"
         >
             <button
@@ -91,7 +91,7 @@ onUnmounted(() => {
                     activeTab === tab.id
                         ? 'border-indigo-500 text-indigo-600'
                         : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                    'group inline-flex shrink-0 snap-start items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
+                    'group inline-flex shrink-0 snap-start items-center border-b-2 px-1 py-3 text-sm font-medium transition-colors',
                     'focus:rounded-t-md focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden',
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"
