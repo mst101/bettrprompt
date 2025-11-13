@@ -14,6 +14,7 @@ class PromptRun extends Model
 
     protected $fillable = [
         'user_id',
+        'visitor_id',
         'parent_id',
         'personality_type',
         'trait_percentages',
@@ -44,6 +45,11 @@ class PromptRun extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function visitor(): BelongsTo
+    {
+        return $this->belongsTo(Visitor::class);
     }
 
     public function parent(): BelongsTo
