@@ -239,16 +239,47 @@ class PromptOptimizerController extends Controller
         $validated = $request->validated();
 
         try {
-            // Get current answers and append new one
+            // Get current answers
             $answers = $promptRun->clarifying_answers ?? [];
+            $currentAnswerCount = count($answers);
+            $currentQuestionIndex = $currentAnswerCount; // Index where we'll add this answer
+
+            // Check if we have future answers stored in session (from going back)
+            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+            $futureAnswers = session()->get($sessionKey, []);
+
+            // Add the current answer
             $answers[] = $validated['answer'];
+
+            // If we had future answers, check if we should restore any
+            // (This happens when user goes back, changes an answer, and moves forward)
+            foreach ($futureAnswers as $index => $futureAnswer) {
+                // Only restore future answers that are after the current question
+                if ($index > $currentQuestionIndex && ! isset($answers[$index])) {
+                    $answers[$index] = $futureAnswer;
+                }
+            }
+
+            // If we restored future answers, we may have gaps - fill them
+            // Actually, let's not fill gaps, just keep the array sparse for now
+            // Convert back to sequential array
+            ksort($answers);
+            $answers = array_values($answers);
+
+            // Clear used future answer from session
+            if (isset($futureAnswers[$currentQuestionIndex + 1])) {
+                // We're about to show the next question, which might have a future answer
+                // Keep it in session for now
+            }
 
             // Log the answer submission
             Log::info('Submitting Answer', [
                 'prompt_run_id' => $promptRun->id,
-                'current_answers_count' => count($promptRun->clarifying_answers ?? []),
+                'current_answers_count' => $currentAnswerCount,
+                'current_question_index' => $currentQuestionIndex,
                 'new_answer' => $validated['answer'],
                 'total_after' => count($answers),
+                'restored_future_answers' => count($futureAnswers) > 0,
             ]);
 
             // Update the prompt run with retry logic
@@ -269,6 +300,9 @@ class PromptOptimizerController extends Controller
 
             // Check if all questions have been answered
             if ($promptRun->hasAnsweredAllQuestions()) {
+                // Clear future answers from session as we've completed all questions
+                session()->forget("prompt_run_{$promptRun->id}_future_answers");
+
                 // Trigger final prompt optimization
                 return $this->triggerFinalOptimization($promptRun);
             }
@@ -312,13 +346,32 @@ class PromptOptimizerController extends Controller
         }
 
         try {
-            // Get current answers and append null for skipped question
+            // Get current answers
             $answers = $promptRun->clarifying_answers ?? [];
+            $currentQuestionIndex = count($answers);
+
+            // Check if we have future answers stored in session (from going back)
+            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+            $futureAnswers = session()->get($sessionKey, []);
+
+            // Add null for skipped question
             $answers[] = null;
+
+            // If we had future answers, restore them
+            foreach ($futureAnswers as $index => $futureAnswer) {
+                if ($index > $currentQuestionIndex && ! isset($answers[$index])) {
+                    $answers[$index] = $futureAnswer;
+                }
+            }
+
+            // Convert back to sequential array
+            ksort($answers);
+            $answers = array_values($answers);
 
             Log::info('Skipping question', [
                 'prompt_run_id' => $promptRun->id,
-                'question_number' => count($answers),
+                'question_number' => $currentQuestionIndex + 1,
+                'restored_future_answers' => count($futureAnswers) > 0,
             ]);
 
             // Update the prompt run with retry logic
@@ -334,6 +387,9 @@ class PromptOptimizerController extends Controller
 
             // Check if all questions have been processed
             if ($promptRun->hasAnsweredAllQuestions()) {
+                // Clear future answers from session as we've completed all questions
+                session()->forget("prompt_run_{$promptRun->id}_future_answers");
+
                 // Trigger final prompt optimization
                 return $this->triggerFinalOptimization($promptRun);
             }
@@ -383,14 +439,24 @@ class PromptOptimizerController extends Controller
         }
 
         try {
-            // Don't remove the last answer - keep it so user can edit it
-            // Just remove it from the array to go back one question
-            $previousAnswer = array_pop($answers);
+            // Store all future answers in session before removing them
+            // This allows us to restore them when user navigates forward again
+            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+            $futureAnswers = session()->get($sessionKey, []);
+
+            // Remove the last answer and store it
+            $removedAnswer = array_pop($answers);
+            if ($removedAnswer !== null) {
+                // Store at the index it was removed from
+                $futureAnswers[count($answers)] = $removedAnswer;
+                session()->put($sessionKey, $futureAnswers);
+            }
 
             Log::info('Going back to previous question', [
                 'prompt_run_id' => $promptRun->id,
                 'new_answer_count' => count($answers),
-                'kept_answer' => $previousAnswer !== null,
+                'kept_answer' => $removedAnswer !== null,
+                'future_answers_count' => count($futureAnswers),
             ]);
 
             // Update the prompt run with retry logic
@@ -405,7 +471,7 @@ class PromptOptimizerController extends Controller
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
                 ->with('success', 'Returned to previous question.')
-                ->with('previous_answer', $previousAnswer);
+                ->with('previous_answer', $removedAnswer);
 
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Database error going back to previous question', [
