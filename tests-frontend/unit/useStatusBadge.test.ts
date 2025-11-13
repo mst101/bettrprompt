@@ -14,7 +14,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('processing');
 
-        expect(config.label).toBe('Processing');
+        expect(config.label).toBe('Clarifying Questions');
         expect(config.colorClass).toBe('bg-yellow-100 text-yellow-800');
     });
 

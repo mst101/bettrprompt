@@ -18,7 +18,7 @@ describe('StatusBadge', () => {
             props: { status: 'processing' },
         });
 
-        expect(wrapper.text()).toBe('Processing');
+        expect(wrapper.text()).toBe('Clarifying Questions');
         expect(wrapper.classes()).toContain('bg-yellow-100');
         expect(wrapper.classes()).toContain('text-yellow-800');
     });

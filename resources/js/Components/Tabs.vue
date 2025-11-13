@@ -106,7 +106,12 @@ onUnmounted(() => {
                 <span>{{ tab.label }}</span>
                 <span
                     v-if="tab.badge"
-                    class="ml-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
+                    :class="[
+                        'ml-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium',
+                        activeTab === tab.id
+                            ? 'bg-indigo-100 text-indigo-600'
+                            : 'bg-gray-100 text-gray-900',
+                    ]"
                 >
                     {{ tab.badge }}
                 </span>

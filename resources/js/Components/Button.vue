@@ -35,8 +35,7 @@ const buttonClasses = computed(() => {
     const sizes = {
         sm: 'rounded-md px-3 py-1.5 text-sm',
         md: 'rounded-md px-4 py-2 text-sm',
-        lg: 'rounded-md px-6 py-3',
-        xl: 'rounded-lg px-8 py-4',
+        lg: 'rounded-md px-6 py-3 text-base',
     };
 
     return [base, variants[props.variant], sizes[props.size]].join(' ');
