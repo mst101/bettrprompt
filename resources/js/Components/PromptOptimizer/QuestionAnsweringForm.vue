@@ -111,6 +111,7 @@ const textareaClasses = computed(() => {
                 placeholder="Type your answer here (or enter via speech)..."
                 :rows="4"
                 :textarea-class="textareaClasses"
+                autofocus
             >
                 <template #actions>
                     <button
