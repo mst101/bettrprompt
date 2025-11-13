@@ -6,7 +6,7 @@ import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
-import { computed } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     question: string;
@@ -33,6 +33,23 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const { appendText } = useTextAppend();
+const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
+    null,
+);
+
+// Focus textarea when question changes
+watch(
+    () => props.question,
+    () => {
+        nextTick(() => {
+            // Find the textarea element within the component
+            const textarea = textareaRef.value?.$el?.querySelector('textarea');
+            if (textarea) {
+                textarea.focus();
+            }
+        });
+    },
+);
 
 const handleTranscription = (text: string) => {
     const newAnswer = appendText(props.answer, text);
@@ -105,6 +122,7 @@ const textareaClasses = computed(() => {
             <!-- Answer Input -->
             <FormTextareaWithActions
                 id="answer"
+                ref="textareaRef"
                 :model-value="answer"
                 label="Your Answer"
                 :disabled="isSubmitting"
