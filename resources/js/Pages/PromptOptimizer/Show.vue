@@ -19,7 +19,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
@@ -27,6 +27,12 @@ const props = defineProps<Props>();
 defineOptions({
     layout: AppLayout,
 });
+
+const page = usePage<{
+    flash: {
+        previous_answer?: string | null;
+    };
+}>();
 
 interface Progress {
     answered: number;
@@ -143,6 +149,24 @@ const {
     clearAnswer,
 } = usePromptAnswering(props.promptRun.id);
 
+// Get the current answer if it exists (for going back or pre-population)
+const getCurrentAnswer = (): string | null => {
+    // First check if we have a previousAnswer from going back (via flash)
+    const flashPreviousAnswer = page.props.flash.previous_answer;
+    if (flashPreviousAnswer !== undefined && flashPreviousAnswer !== null) {
+        return flashPreviousAnswer;
+    }
+
+    // Otherwise check clarifyingAnswers array
+    if (!props.promptRun.clarifyingAnswers) return null;
+
+    // Current question index is progress.answered (0-based)
+    const currentIndex = props.progress.answered;
+    const answer = props.promptRun.clarifyingAnswers[currentIndex];
+
+    return answer ?? null;
+};
+
 // Pre-populate answer if similar question exists in parent
 const findSimilarAnswer = (currentQuestion: string): string | null => {
     if (!props.promptRun.parent) return null;
@@ -165,10 +189,20 @@ const findSimilarAnswer = (currentQuestion: string): string | null => {
 watch(
     () => props.currentQuestion,
     (newQuestion) => {
-        if (newQuestion && !answerForm.answer) {
-            const similarAnswer = findSimilarAnswer(newQuestion);
-            if (similarAnswer) {
-                answerForm.answer = similarAnswer;
+        if (newQuestion) {
+            // First check if we have a current answer (e.g., when going back)
+            const currentAnswer = getCurrentAnswer();
+            if (currentAnswer) {
+                answerForm.answer = currentAnswer;
+                return;
+            }
+
+            // Otherwise, try to find a similar answer from parent
+            if (!answerForm.answer) {
+                const similarAnswer = findSimilarAnswer(newQuestion);
+                if (similarAnswer) {
+                    answerForm.answer = similarAnswer;
+                }
             }
         }
     },

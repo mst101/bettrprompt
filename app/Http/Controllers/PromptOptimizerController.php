@@ -362,7 +362,7 @@ class PromptOptimizerController extends Controller
     }
 
     /**
-     * Go back to the previous question by removing the last answer
+     * Go back to the previous question (keeps the last answer to allow editing)
      */
     public function goBackToPreviousQuestion(PromptRun $promptRun)
     {
@@ -383,12 +383,14 @@ class PromptOptimizerController extends Controller
         }
 
         try {
-            // Remove the last answer
-            array_pop($answers);
+            // Don't remove the last answer - keep it so user can edit it
+            // Just remove it from the array to go back one question
+            $previousAnswer = array_pop($answers);
 
             Log::info('Going back to previous question', [
                 'prompt_run_id' => $promptRun->id,
                 'new_answer_count' => count($answers),
+                'kept_answer' => $previousAnswer !== null,
             ]);
 
             // Update the prompt run with retry logic
@@ -399,10 +401,11 @@ class PromptOptimizerController extends Controller
                 ]);
             });
 
-            // Redirect back to show page
+            // Redirect back to show page with the removed answer to pre-populate
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
-                ->with('success', 'Returned to previous question.');
+                ->with('success', 'Returned to previous question.')
+                ->with('previous_answer', $previousAnswer);
 
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Database error going back to previous question', [
