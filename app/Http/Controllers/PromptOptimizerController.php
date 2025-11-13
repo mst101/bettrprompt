@@ -35,12 +35,14 @@ class PromptOptimizerController extends Controller
     {
         $validated = $request->validated();
         $user = auth()->user();
+        $visitorId = $request->cookie('visitor_id');
 
         try {
             // Create the prompt run record using personality from user profile (if available)
-            $promptRun = DatabaseService::retryOnDeadlock(function () use ($user, $validated) {
+            $promptRun = DatabaseService::retryOnDeadlock(function () use ($user, $visitorId, $validated) {
                 return PromptRun::create([
                     'user_id' => $user->id,
+                    'visitor_id' => $visitorId,
                     'personality_type' => $user->personality_type ?? null,
                     'trait_percentages' => $user->trait_percentages ?? null,
                     'task_description' => $validated['task_description'],
