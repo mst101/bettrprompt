@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/prompt-optimizer/{promptRun}/skip',
         [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
         ->name('prompt-optimizer.skip');
+    Route::post('/prompt-optimizer/{promptRun}/go-back',
+        [\App\Http\Controllers\PromptOptimizerController::class, 'goBackToPreviousQuestion'])
+        ->name('prompt-optimizer.go-back');
     Route::post('/prompt-optimizer/{promptRun}/retry',
         [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
         ->name('prompt-optimizer.retry');

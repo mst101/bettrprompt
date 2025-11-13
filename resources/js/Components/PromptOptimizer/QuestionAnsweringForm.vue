@@ -14,6 +14,7 @@ interface Props {
     currentQuestionNumber: number;
     totalQuestions: number;
     isSubmitting: boolean;
+    canGoBack?: boolean;
     hasError?: boolean;
     errorMessage?: string;
     showAll?: boolean;
@@ -23,6 +24,7 @@ interface Emits {
     (e: 'update:answer', value: string): void;
     (e: 'submit'): void;
     (e: 'skip'): void;
+    (e: 'go-back'): void;
     (e: 'clear'): void;
     (e: 'toggle-show-all'): void;
 }
@@ -136,14 +138,25 @@ const textareaClasses = computed(() => {
             </FormTextareaWithActions>
 
             <!-- Action Buttons -->
-            <div class="flex justify-between gap-3">
-                <ButtonSecondary
-                    data-testid="skip-question-button"
-                    :disabled="isSubmitting"
-                    @click="emit('skip')"
-                >
-                    Skip Question
-                </ButtonSecondary>
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex gap-3">
+                    <ButtonSecondary
+                        v-if="canGoBack"
+                        data-testid="back-button"
+                        :disabled="isSubmitting"
+                        @click="emit('go-back')"
+                    >
+                        <DynamicIcon name="arrow-left" class="mr-2 h-4 w-4" />
+                        Back
+                    </ButtonSecondary>
+                    <ButtonSecondary
+                        data-testid="skip-question-button"
+                        :disabled="isSubmitting"
+                        @click="emit('skip')"
+                    >
+                        Skip Question
+                    </ButtonSecondary>
+                </div>
 
                 <ButtonPrimary
                     type="button"

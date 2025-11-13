@@ -5,7 +5,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 type MessageType = 'success' | 'warning' | 'error';
 
 interface Props {
-    message?: string;
+    message: string;
     type?: MessageType;
     autoDismiss?: boolean;
     dismissDelay?: number;
@@ -100,7 +100,7 @@ const typeConfig = computed(() => {
         <div
             v-if="message && show"
             ref="messageElement"
-            class="fixed top-20 right-4 left-4 z-50 mx-auto max-w-xl sm:right-8 sm:left-auto"
+            class="fixed top-20 right-0 left-0 z-50 mx-auto w-full max-w-6xl"
         >
             <div
                 class="rounded-md border p-4 shadow-lg"

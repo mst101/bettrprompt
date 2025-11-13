@@ -65,11 +65,26 @@ export function usePromptAnswering(promptRunId: number) {
         answerForm.answer = '';
     };
 
+    const goBackToPreviousQuestion = () => {
+        isSubmitting.value = true;
+        router.post(
+            route('prompt-optimizer.go-back', promptRunId),
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => {
+                    isSubmitting.value = false;
+                },
+            },
+        );
+    };
+
     return {
         answerForm,
         isSubmitting,
         submitAnswer,
         skipQuestion,
+        goBackToPreviousQuestion,
         handleTranscription,
         clearAnswer,
     };

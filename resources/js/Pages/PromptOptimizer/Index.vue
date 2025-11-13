@@ -79,7 +79,7 @@ const clearTaskDescription = () => {
                     </div>
                 </div>
 
-                <p class="mb-6 text-gray-600">
+                <p class="mb-6 max-w-4xl text-gray-600">
                     Create optimised AI prompts using expert frameworks.
                     <span v-if="hasPersonalityType">
                         Prompts will be customised to your personality type and
@@ -91,7 +91,7 @@ const clearTaskDescription = () => {
                     </span>
                 </p>
 
-                <form class="space-y-6" @submit.prevent="submit">
+                <form class="max-w-4xl space-y-6" @submit.prevent="submit">
                     <!-- Task Description -->
                     <FormTextareaWithActions
                         id="taskDescription"

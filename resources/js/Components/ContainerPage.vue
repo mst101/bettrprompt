@@ -11,7 +11,7 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <div class="py-12">
+    <div class="sm:py-12">
         <div
             class="mx-auto sm:px-6 lg:px-8"
             :class="[

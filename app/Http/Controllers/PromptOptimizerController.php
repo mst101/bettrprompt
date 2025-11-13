@@ -362,6 +362,67 @@ class PromptOptimizerController extends Controller
     }
 
     /**
+     * Go back to the previous question by removing the last answer
+     */
+    public function goBackToPreviousQuestion(PromptRun $promptRun)
+    {
+        // Authorise that the user can update this prompt run
+        if ($promptRun->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot go back at this stage.');
+        }
+
+        // Check if there are any answers to go back from
+        $answers = $promptRun->clarifying_answers ?? [];
+        if (empty($answers)) {
+            return back()->with('error', 'No previous answers to go back to.');
+        }
+
+        try {
+            // Remove the last answer
+            array_pop($answers);
+
+            Log::info('Going back to previous question', [
+                'prompt_run_id' => $promptRun->id,
+                'new_answer_count' => count($answers),
+            ]);
+
+            // Update the prompt run with retry logic
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => count($answers) === 0 ? 'framework_selected' : 'answering_questions',
+                ]);
+            });
+
+            // Redirect back to show page
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('success', 'Returned to previous question.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error going back to previous question', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to go back. Please try again.');
+
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error going back to previous question', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'An error occurred. Please try again.');
+        }
+    }
+
+    /**
      * Trigger the final prompt optimization workflow
      */
     protected function triggerFinalOptimization(PromptRun $promptRun)

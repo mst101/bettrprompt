@@ -134,8 +134,14 @@ const toggleShowAll = () => {
 };
 
 // Question answering composable with pre-population from parent
-const { answerForm, isSubmitting, submitAnswer, skipQuestion, clearAnswer } =
-    usePromptAnswering(props.promptRun.id);
+const {
+    answerForm,
+    isSubmitting,
+    submitAnswer,
+    skipQuestion,
+    goBackToPreviousQuestion,
+    clearAnswer,
+} = usePromptAnswering(props.promptRun.id);
 
 // Pre-populate answer if similar question exists in parent
 const findSimilarAnswer = (currentQuestion: string): string | null => {
@@ -339,7 +345,7 @@ watch(
                     <Tabs v-model="activeTab" :tabs="tabs" />
                 </div>
 
-                <div class="p-6">
+                <div class="max-w-4xl">
                     <!-- Optimised Prompt Tab -->
                     <div v-show="activeTab === 'prompt'">
                         <OptimizedPrompt
@@ -416,11 +422,13 @@ watch(
                             :current-question-number="progress.answered + 1"
                             :total-questions="progress.total"
                             :is-submitting="isSubmitting"
+                            :can-go-back="progress.answered > 0"
                             :has-error="!!answerForm.errors.answer"
                             :error-message="answerForm.errors.answer"
                             :show-all="showAllQuestions"
                             @submit="submitAnswer"
                             @skip="skipQuestion"
+                            @go-back="goBackToPreviousQuestion"
                             @clear="clearAnswer"
                             @toggle-show-all="toggleShowAll"
                         />
