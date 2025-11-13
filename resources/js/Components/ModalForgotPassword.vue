@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
 import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -67,13 +68,13 @@ const close = () => {
         </template>
 
         <template #footer-links>
-            <button
+            <ButtonText
+                id="switch-to-login"
                 type="button"
                 @click="emit('switchToLogin')"
-                class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
             >
                 Back to log in
-            </button>
+            </ButtonText>
         </template>
 
         <template #submit-button>

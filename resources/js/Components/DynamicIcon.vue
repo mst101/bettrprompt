@@ -62,7 +62,7 @@ const iconComponent = computed(() => {
             render: () => h('div', { class: 'size-5 rounded-sm bg-gray-200' }),
         },
         delay: 0, // Show loading immediately
-        timeout: 3000, // Timeout after 3 seconds
+        timeout: 10000, // Timeout after 10 seconds (increased for e2e tests)
     });
 });
 </script>

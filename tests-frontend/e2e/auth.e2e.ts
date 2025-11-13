@@ -45,7 +45,7 @@ test.describe('Authentication', () => {
         // Check if Google Sign-In button exists
         // This is a flexible test - it won't fail if the button isn't there
         const googleButton = page.getByRole('button', { name: /google/i });
-        const googleButtonExists = (await googleButton.count()) > 0;
+        await googleButton.count(); // Check if button exists
 
         // Just verify the page loaded successfully
         expect(page.url()).toBeTruthy();
@@ -73,7 +73,8 @@ test.describe('Authentication', () => {
         await expect(page.getByLabel(/confirm password/i)).toBeVisible();
 
         // Also verify other register fields are present
-        await expect(page.getByLabel(/^name$/i)).toBeVisible();
+        // Note: Required fields have an asterisk, so we match "Name" or "Name *"
+        await expect(page.getByLabel(/^name/i)).toBeVisible();
 
         // Verify it's NOT the login modal by checking the submit button text
         const registerSubmitButton = page.getByRole('button', {
