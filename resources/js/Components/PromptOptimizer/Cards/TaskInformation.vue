@@ -23,8 +23,8 @@ const emit = defineEmits<{
             <ButtonSecondary
                 v-if="showEditButton"
                 type="button"
-                @click="emit('edit')"
                 class="inline-flex items-center gap-1"
+                @click="emit('edit')"
             >
                 <DynamicIcon name="edit" class="h-4 w-4" />
                 Edit Task

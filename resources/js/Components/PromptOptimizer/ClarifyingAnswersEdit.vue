@@ -36,8 +36,8 @@ defineProps<Props>();
             <div class="ml-8">
                 <FormTextarea
                     :id="`answer-${index}`"
-                    label=""
                     v-model="form.clarifying_answers[index]"
+                    label=""
                     :rows="3"
                     :error="
                         (form.errors as Record<string, string>)[

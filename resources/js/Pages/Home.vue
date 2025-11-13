@@ -7,14 +7,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { inject, onMounted } from 'vue';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 const props = defineProps<{
     isReturningVisitor: boolean;
     modal?: 'login' | 'register';
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 
 // Access the modal controls from AppLayout
 const openLoginModal = inject<() => void>('openLoginModal');
@@ -73,16 +73,16 @@ onMounted(() => {
                         <!-- Returning visitor -->
                         <ButtonSecondary
                             v-if="isReturningVisitor"
-                            @click="openLoginModal?.()"
                             size="lg"
+                            @click="openLoginModal?.()"
                         >
                             Welcome back! Log in to continue
                         </ButtonSecondary>
                         <!-- New visitor -->
                         <ButtonPrimary
                             v-else
-                            @click="openRegisterModal?.()"
                             size="lg"
+                            @click="openRegisterModal?.()"
                         >
                             Get Started for Free
                         </ButtonPrimary>

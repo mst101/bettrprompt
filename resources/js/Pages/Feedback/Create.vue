@@ -88,7 +88,7 @@ const submit = () => {
                 </p>
             </div>
 
-            <form @submit.prevent="submit" class="space-y-8">
+            <form class="space-y-8" @submit.prevent="submit">
                 <!-- Question 1: Experience Level -->
                 <div class="mt-8">
                     <label class="mb-4 block text-sm font-medium text-gray-900">
@@ -152,8 +152,8 @@ const submit = () => {
                 <div class="mt-16">
                     <FormTextarea
                         id="suggestions"
-                        label="4. What's one thing you'd change or improve about the app?"
                         v-model="form.suggestions"
+                        label="4. What's one thing you'd change or improve about the app?"
                         :error="form.errors.suggestions"
                         :disabled="form.processing"
                         placeholder="Mention any steps you found confusing or features you'd like to see next."
@@ -182,10 +182,10 @@ const submit = () => {
                 <div class="flex items-center justify-end gap-3">
                     <ButtonSecondary
                         type="button"
+                        :disabled="form.processing"
                         @click="
                             $inertia.visit(route('prompt-optimizer.history'))
                         "
-                        :disabled="form.processing"
                     >
                         Cancel
                     </ButtonSecondary>

@@ -3,10 +3,6 @@ import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormSelectProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
-defineOptions({
-    inheritAttrs: false,
-});
-
 const props = withDefaults(defineProps<FormSelectProps>(), {
     modelValue: '',
     error: '',
@@ -21,6 +17,10 @@ const props = withDefaults(defineProps<FormSelectProps>(), {
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string | number): void;
 }>();
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 const select = ref<Nullable<HTMLSelectElement>>(null);
 
@@ -40,8 +40,8 @@ onMounted(() => {
         :help-text="props.helpText"
     >
         <select
-            ref="select"
             :id="props.id"
+            ref="select"
             :value="props.modelValue"
             :required="props.required"
             :disabled="props.disabled"

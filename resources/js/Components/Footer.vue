@@ -34,8 +34,8 @@ const closeCookieSettings = () => {
                     <LinkText :href="route('cookies')">Cookie Policy</LinkText>
                     <ButtonText
                         id="cookie-settings"
-                        @click="openCookieSettings"
                         type="button"
+                        @click="openCookieSettings"
                     >
                         Cookie Settings
                     </ButtonText>

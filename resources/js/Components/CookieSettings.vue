@@ -72,7 +72,7 @@ const analyticsEnabled = computed({
 </script>
 
 <template>
-    <Modal :show="show" @close="emit('close')" max-width="2xl">
+    <Modal :show="show" max-width="2xl" @close="emit('close')">
         <div class="p-6">
             <div class="flex items-start justify-between">
                 <div>
@@ -154,13 +154,13 @@ const analyticsEnabled = computed({
 
             <!-- Action Buttons -->
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <ButtonSecondary @click="handleRejectAll" type="button">
+                <ButtonSecondary type="button" @click="handleRejectAll">
                     Reject All
                 </ButtonSecondary>
-                <ButtonSecondary @click="handleSave" type="button">
+                <ButtonSecondary type="button" @click="handleSave">
                     Save Preferences
                 </ButtonSecondary>
-                <ButtonPrimary @click="handleAcceptAll" type="button">
+                <ButtonPrimary type="button" @click="handleAcceptAll">
                     Accept All
                 </ButtonPrimary>
             </div>

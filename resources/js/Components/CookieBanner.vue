@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import LinkText from '@/Components/LinkText.vue';
 import { useCookieConsent } from '@/Composables/useCookieConsent';
-import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import CookieSettings from './CookieSettings.vue';
 
@@ -50,38 +52,35 @@ const closeSettings = () => {
                                     experience and analyse website traffic. By
                                     clicking "Accept All", you agree to our use
                                     of cookies.
-                                    <Link
-                                        :href="route('cookies')"
-                                        class="underline hover:text-white"
-                                    >
+                                    <LinkText :href="route('cookies')">
                                         Read our Cookie Policy
-                                    </Link>
+                                    </LinkText>
                                 </p>
                             </div>
                             <div
                                 class="mt-6 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0"
                             >
-                                <button
-                                    @click="rejectAll"
+                                <ButtonSecondary
+                                    class="focus:ring-offset-gray-900"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
+                                    @click="rejectAll"
                                 >
                                     Reject All
-                                </button>
-                                <button
-                                    @click="openSettings"
+                                </ButtonSecondary>
+                                <ButtonSecondary
+                                    class="focus:ring-offset-gray-900"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-gray-600 bg-gray-800 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
+                                    @click="openSettings"
                                 >
                                     Customise
-                                </button>
-                                <button
-                                    @click="acceptAll"
+                                </ButtonSecondary>
+                                <ButtonPrimary
+                                    class="focus:ring-offset-gray-900"
                                     type="button"
-                                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 focus:outline-hidden"
+                                    @click="acceptAll"
                                 >
                                     Accept All
-                                </button>
+                                </ButtonPrimary>
                             </div>
                         </div>
                     </div>

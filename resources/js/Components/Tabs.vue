@@ -86,7 +86,6 @@ onUnmounted(() => {
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
-                @click="selectTab(tab.id)"
                 :tabindex="activeTab === tab.id ? -1 : 0"
                 :class="[
                     activeTab === tab.id
@@ -96,6 +95,7 @@ onUnmounted(() => {
                     'hover:text-gray-700 focus:rounded-t-md focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden',
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"
+                @click="selectTab(tab.id)"
             >
                 <DynamicIcon
                     v-if="tab.icon"

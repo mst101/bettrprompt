@@ -82,9 +82,9 @@ const showOtherInput = computed(() => {
                     type="checkbox"
                     :value="option.value"
                     :checked="isChecked(option.value)"
-                    @change="toggleOption(option.value)"
                     :disabled="disabled"
                     class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    @change="toggleOption(option.value)"
                 />
                 <div class="flex-1">
                     <div class="text-sm font-medium text-gray-900">
@@ -117,12 +117,6 @@ const showOtherInput = computed(() => {
                     id="other-text"
                     ref="otherTextarea"
                     :value="otherValue"
-                    @input="
-                        emit(
-                            'update:otherValue',
-                            ($event.target as HTMLTextAreaElement).value,
-                        )
-                    "
                     :disabled="disabled"
                     placeholder="Describe the feature you'd like to see..."
                     rows="3"
@@ -131,6 +125,12 @@ const showOtherInput = computed(() => {
                     :class="{
                         'cursor-not-allowed opacity-50': disabled,
                     }"
+                    @input="
+                        emit(
+                            'update:otherValue',
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
+                    "
                 />
                 <div class="mt-1 text-right text-xs text-gray-500">
                     {{ otherValue.length }} / 500 characters

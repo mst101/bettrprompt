@@ -12,6 +12,8 @@ import type { Paginated, PromptRunResource } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
+const props = defineProps<Props>();
+
 defineOptions({
     layout: AppLayout,
 });
@@ -24,8 +26,6 @@ interface Props {
         per_page: number;
     };
 }
-
-const props = defineProps<Props>();
 
 const truncate = (text: string | null | undefined, length: number = 100) => {
     if (!text) return '';
@@ -418,12 +418,12 @@ onMounted(() => {
                             <input
                                 id="per-page"
                                 v-model="perPageInput"
-                                @blur="changePerPage"
-                                @keydown.enter="changePerPage"
                                 type="number"
                                 min="1"
                                 max="100"
                                 class="w-16 rounded-md border-gray-300 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                @blur="changePerPage"
+                                @keydown.enter="changePerPage"
                             />
                             <span class="text-sm text-gray-700">per page</span>
                         </div>
@@ -468,12 +468,12 @@ onMounted(() => {
                             <input
                                 id="per-page-desktop"
                                 v-model="perPageInput"
-                                @blur="changePerPage"
-                                @keydown.enter="changePerPage"
                                 type="number"
                                 min="1"
                                 max="100"
                                 class="w-16 rounded-md border-gray-300 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                @blur="changePerPage"
+                                @keydown.enter="changePerPage"
                             />
                             <span class="text-sm text-gray-700">per page</span>
                         </div>

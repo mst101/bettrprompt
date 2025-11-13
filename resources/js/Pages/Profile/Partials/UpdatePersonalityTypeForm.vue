@@ -6,6 +6,7 @@ import FormInput from '@/Components/FormInput.vue';
 import FormRadio from '@/Components/FormRadio.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import LinkButton from '@/Components/LinkButton.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -98,13 +99,13 @@ const submit = () => {
             </p>
         </header>
 
-        <form @submit.prevent="submit" class="mt-6 space-y-6">
+        <form class="mt-6 space-y-6" @submit.prevent="submit">
             <!-- Personality Type Selection -->
             <div class="space-y-4">
                 <FormSelect
                     id="personalityBase"
-                    label="Personality Type"
                     v-model="personalityBase"
+                    label="Personality Type"
                     :options="personalityTypeOptions"
                     :error="form.errors.personalityType"
                     placeholder="Select your personality type"
@@ -170,9 +171,9 @@ const submit = () => {
                     <div class="grid grid-cols-2 gap-4">
                         <FormInput
                             id="mind"
+                            v-model="form.traitPercentages.mind"
                             type="number"
                             label="Mind (Introversion/Extraversion)"
-                            v-model="form.traitPercentages.mind"
                             :min="0"
                             :max="100"
                             placeholder="%"
@@ -181,9 +182,9 @@ const submit = () => {
 
                         <FormInput
                             id="energy"
+                            v-model="form.traitPercentages.energy"
                             type="number"
                             label="Energy (Intuitive/Observant)"
-                            v-model="form.traitPercentages.energy"
                             :min="0"
                             :max="100"
                             placeholder="%"
@@ -192,9 +193,9 @@ const submit = () => {
 
                         <FormInput
                             id="nature"
+                            v-model="form.traitPercentages.nature"
                             type="number"
                             label="Nature (Thinking/Feeling)"
-                            v-model="form.traitPercentages.nature"
                             :min="0"
                             :max="100"
                             placeholder="%"
@@ -203,9 +204,9 @@ const submit = () => {
 
                         <FormInput
                             id="tactics"
+                            v-model="form.traitPercentages.tactics"
                             type="number"
                             label="Tactics (Judging/Prospecting)"
-                            v-model="form.traitPercentages.tactics"
                             :min="0"
                             :max="100"
                             placeholder="%"
@@ -215,9 +216,9 @@ const submit = () => {
                         <div class="col-span-2">
                             <FormInput
                                 id="identityPercent"
+                                v-model="form.traitPercentages.identity"
                                 type="number"
                                 label="Identity (Assertive/Turbulent)"
-                                v-model="form.traitPercentages.identity"
                                 :min="0"
                                 :max="100"
                                 placeholder="%"
@@ -244,15 +245,14 @@ const submit = () => {
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <Link
+                    <LinkButton
                         v-if="showTaskCta"
                         ref="taskCtaButton"
                         :href="route('prompt-optimizer.index')"
-                        class="inline-flex items-center gap-2 rounded-md border border-transparent bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                     >
                         Enter your Task
                         <DynamicIcon name="arrow-right" class="h-4 w-4" />
-                    </Link>
+                    </LinkButton>
                 </Transition>
             </div>
         </form>

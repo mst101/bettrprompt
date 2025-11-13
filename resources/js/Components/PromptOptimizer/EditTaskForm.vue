@@ -43,7 +43,7 @@ const submit = () => {
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="space-y-4">
+    <form class="space-y-4" @submit.prevent="submit">
         <FormTextarea
             id="task_description"
             v-model="form.task_description"
@@ -61,8 +61,8 @@ const submit = () => {
             <div class="flex gap-3">
                 <ButtonSecondary
                     type="button"
-                    @click="emit('cancel')"
                     :disabled="form.processing"
+                    @click="emit('cancel')"
                 >
                     Cancel
                 </ButtonSecondary>

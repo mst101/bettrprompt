@@ -4,13 +4,13 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 const props = defineProps<{
     status?: string;
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 
 const form = useForm({});
 
@@ -33,8 +33,8 @@ const verificationLinkSent = computed(
     </div>
 
     <div
-        class="mb-4 text-sm font-medium text-green-600"
         v-if="verificationLinkSent"
+        class="mb-4 text-sm font-medium text-green-600"
     >
         A new verification link has been sent to the email address you provided
         during registration.

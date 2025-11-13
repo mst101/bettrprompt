@@ -50,10 +50,10 @@ const toggleAll = (totalQuestions: number) => {
                 </h3>
                 <div class="flex items-center gap-2">
                     <button
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                         @click="
                             toggleAll(promptRun.frameworkQuestions?.length ?? 0)
                         "
-                        class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                     >
                         {{
                             allExpanded(
@@ -64,8 +64,8 @@ const toggleAll = (totalQuestions: number) => {
                         }}
                     </button>
                     <button
-                        @click="emit('edit')"
                         class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                        @click="emit('edit')"
                     >
                         <DynamicIcon name="edit" class="h-4 w-4" />
                         Edit Answers
@@ -80,9 +80,6 @@ const toggleAll = (totalQuestions: number) => {
                     class="border-b border-gray-200 pb-3 last:border-b-0"
                 >
                     <div
-                        @click="toggleQuestion(index)"
-                        @keydown.enter="toggleQuestion(index)"
-                        @keydown.space.prevent="toggleQuestion(index)"
                         role="button"
                         tabindex="0"
                         class="flex w-full cursor-pointer items-start justify-between rounded-md p-1 text-left focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
@@ -92,6 +89,9 @@ const toggleAll = (totalQuestions: number) => {
                                 : `Show question ${index + 1}`
                         "
                         :aria-expanded="expandedQuestions.has(index)"
+                        @click="toggleQuestion(index)"
+                        @keydown.enter="toggleQuestion(index)"
+                        @keydown.space.prevent="toggleQuestion(index)"
                     >
                         <div class="flex-1">
                             <div class="flex items-start">

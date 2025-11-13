@@ -4,14 +4,14 @@ import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 const props = defineProps<{
     email: string;
     token: string;
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 
 const form = useForm({
     token: props.token,

@@ -73,7 +73,6 @@ const selectOption = (value: number) => {
                 v-for="(value, index) in options"
                 :key="value"
                 type="button"
-                @click="selectOption(value)"
                 :disabled="disabled"
                 :class="[
                     getCircleSize(index),
@@ -86,6 +85,7 @@ const selectOption = (value: number) => {
                 ]"
                 :aria-label="`Select option ${value}`"
                 :aria-pressed="modelValue === value"
+                @click="selectOption(value)"
             ></button>
         </div>
 

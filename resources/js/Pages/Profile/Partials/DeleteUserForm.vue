@@ -67,8 +67,8 @@ const closeModal = () => {
                 <div class="mt-6">
                     <FormInput
                         id="password"
-                        label="Password"
                         v-model="form.password"
+                        label="Password"
                         type="password"
                         :error="form.errors.password"
                         placeholder="Password"

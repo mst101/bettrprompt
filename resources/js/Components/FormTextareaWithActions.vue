@@ -2,10 +2,6 @@
 import type { FormTextareaProps } from '@/types';
 import { computed } from 'vue';
 
-defineOptions({
-    inheritAttrs: false,
-});
-
 const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
     rows: 3,
@@ -21,6 +17,10 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 const textareaClasses = computed(() => {
     if (props.textareaClass) {

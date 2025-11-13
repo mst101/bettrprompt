@@ -107,6 +107,7 @@ const close = () => {
 
         <template #submit-button>
             <ButtonPrimary
+                class="ml-4 whitespace-nowrap"
                 type="submit"
                 :disabled="form.processing"
                 :loading="form.processing"

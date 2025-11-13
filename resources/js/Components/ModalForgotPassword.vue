@@ -57,9 +57,9 @@ const close = () => {
         <template #fields>
             <FormInput
                 id="forgot-password-email"
+                v-model="form.email"
                 label="Email"
                 type="email"
-                v-model="form.email"
                 :error="form.errors.email"
                 required
                 autofocus

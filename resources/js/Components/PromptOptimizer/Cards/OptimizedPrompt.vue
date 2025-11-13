@@ -76,8 +76,8 @@ const saveEdits = () => {
                 <div v-if="!isEditing" class="flex gap-2">
                     <ButtonSecondary
                         type="button"
-                        @click="startEditing"
                         data-testid="edit-prompt-button"
+                        @click="startEditing"
                     >
                         <svg
                             class="mr-2 h-4 w-4"
@@ -156,15 +156,15 @@ const saveEdits = () => {
                 <div class="flex items-center justify-end gap-3">
                     <ButtonSecondary
                         type="button"
-                        @click="cancelEditing"
                         data-testid="cancel-edit-button"
+                        @click="cancelEditing"
                     >
                         Cancel
                     </ButtonSecondary>
                     <ButtonPrimary
                         type="button"
-                        @click="saveEdits"
                         data-testid="save-edit-button"
+                        @click="saveEdits"
                     >
                         Save Changes
                     </ButtonPrimary>

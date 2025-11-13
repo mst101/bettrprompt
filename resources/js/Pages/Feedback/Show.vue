@@ -11,6 +11,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+const props = defineProps<Props>();
+
 defineOptions({
     layout: AppLayout,
 });
@@ -29,8 +31,6 @@ interface FeedbackData {
 interface Props {
     feedback: FeedbackData;
 }
-
-const props = defineProps<Props>();
 
 const isEditing = ref(false);
 
@@ -131,7 +131,7 @@ const formatDate = (dateString: string) => {
                 </p>
             </div>
 
-            <form @submit.prevent="submit" class="space-y-8">
+            <form class="space-y-8" @submit.prevent="submit">
                 <!-- Question 1: Experience Level -->
                 <div class="mt-8">
                     <label class="mb-4 block text-sm font-medium text-gray-900">
@@ -195,8 +195,8 @@ const formatDate = (dateString: string) => {
                 <div class="mt-16">
                     <FormTextarea
                         id="suggestions"
-                        label="4. What's one thing you'd change or improve about the app?"
                         v-model="form.suggestions"
+                        label="4. What's one thing you'd change or improve about the app?"
                         :error="form.errors.suggestions"
                         :disabled="!isEditing || form.processing"
                         placeholder="Mention any steps you found confusing or features you'd like to see next."
@@ -228,6 +228,7 @@ const formatDate = (dateString: string) => {
                 >
                     <ButtonSecondary
                         type="button"
+                        :disabled="form.processing"
                         @click="
                             () => {
                                 isEditing = false;
@@ -235,7 +236,6 @@ const formatDate = (dateString: string) => {
                                 form.clearErrors();
                             }
                         "
-                        :disabled="form.processing"
                     >
                         Cancel
                     </ButtonSecondary>

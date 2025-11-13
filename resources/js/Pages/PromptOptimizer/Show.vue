@@ -22,6 +22,8 @@ import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
+const props = defineProps<Props>();
+
 defineOptions({
     layout: AppLayout,
 });
@@ -36,8 +38,6 @@ interface Props {
     currentQuestion: string | null;
     progress: Progress;
 }
-
-const props = defineProps<Props>();
 
 const getPersonalityTypeName = (type: string | null) => {
     if (!type) return '';
@@ -356,8 +356,8 @@ watch(
                             v-if="!isEditingTask"
                             :prompt-run="promptRun"
                             :show-edit-button="true"
-                            @edit="startEditingTask"
                             class="mb-6"
+                            @edit="startEditingTask"
                         />
 
                         <div
@@ -411,8 +411,8 @@ watch(
                                 currentQuestion &&
                                 !showAllQuestions
                             "
-                            :question="currentQuestion"
                             v-model:answer="answerForm.answer"
+                            :question="currentQuestion"
                             :current-question-number="progress.answered + 1"
                             :total-questions="progress.total"
                             :is-submitting="isSubmitting"
@@ -453,19 +453,19 @@ watch(
                                     <div v-else class="flex items-center gap-2">
                                         <ButtonSecondary
                                             type="button"
-                                            @click="cancelEditingAnswers"
                                             :disabled="
                                                 answersEditForm.processing
                                             "
+                                            @click="cancelEditingAnswers"
                                         >
                                             Cancel
                                         </ButtonSecondary>
                                         <ButtonPrimary
                                             type="button"
-                                            @click="submitEditedAnswers"
                                             :loading="
                                                 answersEditForm.processing
                                             "
+                                            @click="submitEditedAnswers"
                                         >
                                             Optimise Prompt with Edited Answers
                                         </ButtonPrimary>
@@ -569,8 +569,8 @@ watch(
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
-                @edit="startEditingTask"
                 class="mb-6"
+                @edit="startEditingTask"
             />
 
             <!-- Edit Task Form -->

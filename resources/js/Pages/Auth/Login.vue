@@ -5,14 +5,14 @@ import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 defineProps<{
     canResetPassword?: boolean;
     status?: string;
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 
 const form = useForm({
     email: '',
@@ -39,9 +39,9 @@ const submit = () => {
     <form @submit.prevent="submit">
         <FormInput
             id="email"
+            v-model="form.email"
             label="Email"
             type="email"
-            v-model="form.email"
             :error="form.errors.email"
             required
             autofocus
@@ -50,9 +50,9 @@ const submit = () => {
 
         <FormInput
             id="password"
+            v-model="form.password"
             label="Password"
             type="password"
-            v-model="form.password"
             :error="form.errors.password"
             class="mt-4"
             required
@@ -61,7 +61,7 @@ const submit = () => {
 
         <div class="mt-4 block">
             <label class="flex items-center">
-                <Checkbox name="remember" v-model:checked="form.remember" />
+                <Checkbox v-model:checked="form.remember" name="remember" />
                 <span class="ms-2 text-sm text-gray-600">Remember me</span>
             </label>
         </div>

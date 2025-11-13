@@ -3,10 +3,6 @@ import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormInputProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
-defineOptions({
-    inheritAttrs: false,
-});
-
 const props = withDefaults(defineProps<FormInputProps>(), {
     modelValue: '',
     type: 'text',
@@ -25,6 +21,10 @@ const emit = defineEmits<{
     (e: 'blur', event: FocusEvent): void;
     (e: 'focus', event: FocusEvent): void;
 }>();
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 const input = ref<Nullable<HTMLInputElement>>(null);
 

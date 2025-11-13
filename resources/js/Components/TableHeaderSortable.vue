@@ -27,8 +27,8 @@ const isSorted = (): boolean => {
 
 <template>
     <button
-        @click="emit('sort', column)"
         class="group inline-flex items-center gap-1 rounded p-1 hover:text-gray-700 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden"
+        @click="emit('sort', column)"
     >
         <slot />
         <span class="flex flex-col">

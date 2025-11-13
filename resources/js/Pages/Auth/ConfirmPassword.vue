@@ -32,9 +32,9 @@ const submit = () => {
     <form @submit.prevent="submit">
         <FormInput
             id="password"
+            v-model="form.password"
             label="Password"
             type="password"
-            v-model="form.password"
             :error="form.errors.password"
             required
             autocomplete="current-password"

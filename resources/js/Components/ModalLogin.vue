@@ -56,9 +56,9 @@ const close = () => {
         <template #fields>
             <FormInput
                 id="login-email"
+                v-model="form.email"
                 label="Email"
                 type="email"
-                v-model="form.email"
                 :error="form.errors.email"
                 required
                 autofocus
@@ -67,9 +67,9 @@ const close = () => {
 
             <FormInput
                 id="login-password"
+                v-model="form.password"
                 label="Password"
                 type="password"
-                v-model="form.password"
                 :error="form.errors.password"
                 class="mt-4"
                 required
@@ -78,14 +78,14 @@ const close = () => {
 
             <div class="mt-4 block">
                 <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
+                    <Checkbox v-model:checked="form.remember" name="remember" />
                     <span class="ms-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
         </template>
 
         <template #footer-links>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center">
                 <ButtonText
                     id="forgot-password"
                     type="button"
@@ -109,6 +109,7 @@ const close = () => {
                 type="submit"
                 :disabled="form.processing"
                 :loading="form.processing"
+                class="ml-4 whitespace-nowrap"
             >
                 Log in
             </ButtonPrimary>

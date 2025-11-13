@@ -22,7 +22,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
-    <Modal :show="show" @close="handleClose" max-width="md">
+    <Modal :show="show" max-width="md" @close="handleClose">
         <div class="relative p-6">
             <ButtonClose @close="handleClose" />
 
@@ -49,8 +49,8 @@ const handleSubmit = () => {
 
             <!-- Form content -->
             <form
-                @submit.prevent="handleSubmit"
                 :class="showGoogleDivider ? '' : 'mt-6'"
+                @submit.prevent="handleSubmit"
             >
                 <slot name="fields" />
 

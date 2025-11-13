@@ -51,7 +51,6 @@ const toggleRecording = async () => {
     <div class="relative">
         <button
             type="button"
-            @click="toggleRecording"
             :disabled="isProcessing || disabled"
             class="rounded-md text-xs tracking-wider uppercase hover:text-indigo-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             :class="[
@@ -66,6 +65,7 @@ const toggleRecording = async () => {
                     ? 'Stop recording'
                     : 'Click to record using your microphone'
             "
+            @click="toggleRecording"
         >
             <DynamicIcon
                 v-if="!isProcessing"

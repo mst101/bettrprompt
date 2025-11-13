@@ -29,14 +29,14 @@ const form = useForm({
         </header>
 
         <form
-            @submit.prevent="form.patch(route('profile.update'))"
             class="mt-6 space-y-6"
+            @submit.prevent="form.patch(route('profile.update'))"
         >
             <FormInput
                 id="name"
+                v-model="form.name"
                 label="Name"
                 type="text"
-                v-model="form.name"
                 :error="form.errors.name"
                 required
                 autocomplete="name"
@@ -44,9 +44,9 @@ const form = useForm({
 
             <FormInput
                 id="email"
+                v-model="form.email"
                 label="Email"
                 type="email"
-                v-model="form.email"
                 :error="form.errors.email"
                 required
                 autocomplete="username"

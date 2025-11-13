@@ -8,15 +8,15 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdatePersonalityTypeForm from './Partials/UpdatePersonalityTypeForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
     personalityTypes: Record<string, string>;
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 </script>
 
 <template>

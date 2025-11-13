@@ -4,13 +4,13 @@ import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
-defineOptions({
-    layout: AppLayout,
-});
-
 defineProps<{
     status?: string;
 }>();
+
+defineOptions({
+    layout: AppLayout,
+});
 
 const form = useForm({
     email: '',
@@ -37,9 +37,9 @@ const submit = () => {
     <form @submit.prevent="submit">
         <FormInput
             id="email"
+            v-model="form.email"
             label="Email"
             type="email"
-            v-model="form.email"
             :error="form.errors.email"
             required
             autofocus

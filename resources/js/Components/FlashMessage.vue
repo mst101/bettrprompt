@@ -123,7 +123,6 @@ const typeConfig = computed(() => {
                         </p>
                     </div>
                     <button
-                        @click="show = false"
                         type="button"
                         class="ml-3 inline-flex shrink-0 rounded-md p-1.5"
                         :class="[
@@ -132,6 +131,7 @@ const typeConfig = computed(() => {
                             typeConfig.hoverColor,
                             `focus:ring-2 ${typeConfig.ringColor} focus:ring-offset-2 focus:ring-offset-${typeConfig.bgColor} focus:outline-hidden`,
                         ]"
+                        @click="show = false"
                     >
                         <DynamicIcon name="x-mark" class="h-5 w-5" />
                     </button>

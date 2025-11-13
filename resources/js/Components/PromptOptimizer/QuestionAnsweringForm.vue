@@ -73,9 +73,9 @@ const textareaClasses = computed(() => {
                             {{ totalQuestions }}</span
                         >
                         <button
-                            @click="emit('toggle-show-all')"
                             type="button"
                             class="text-indigo-600 hover:text-indigo-800 hover:underline"
+                            @click="emit('toggle-show-all')"
                         >
                             {{ showAll ? '(one-at-a-time)' : '(show all)' }}
                         </button>
@@ -104,7 +104,6 @@ const textareaClasses = computed(() => {
             <FormTextareaWithActions
                 id="answer"
                 :model-value="answer"
-                @update:model-value="emit('update:answer', $event)"
                 label="Your Answer"
                 :disabled="isSubmitting"
                 :error="hasError && errorMessage ? errorMessage : ''"
@@ -112,15 +111,16 @@ const textareaClasses = computed(() => {
                 :rows="4"
                 :textarea-class="textareaClasses"
                 autofocus
+                @update:model-value="emit('update:answer', $event)"
             >
                 <template #actions>
                     <button
                         v-if="answer"
                         type="button"
-                        @click="emit('clear')"
                         class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
                         title="Clear text"
                         :disabled="isSubmitting"
+                        @click="emit('clear')"
                     >
                         <DynamicIcon
                             name="trash"
@@ -129,8 +129,8 @@ const textareaClasses = computed(() => {
                         <span>Clear</span>
                     </button>
                     <ButtonVoiceInput
-                        @transcription="handleTranscription"
                         :disabled="isSubmitting"
+                        @transcription="handleTranscription"
                     />
                 </template>
             </FormTextareaWithActions>
@@ -139,8 +139,8 @@ const textareaClasses = computed(() => {
             <div class="flex justify-between gap-3">
                 <ButtonSecondary
                     data-testid="skip-question-button"
-                    @click="emit('skip')"
                     :disabled="isSubmitting"
+                    @click="emit('skip')"
                 >
                     Skip Question
                 </ButtonSecondary>
@@ -148,9 +148,9 @@ const textareaClasses = computed(() => {
                 <ButtonPrimary
                     type="button"
                     data-testid="submit-answer-button"
-                    @click="emit('submit')"
                     :disabled="!answer.trim() || isSubmitting"
                     :loading="isSubmitting"
+                    @click="emit('submit')"
                 >
                     Submit Answer
                 </ButtonPrimary>

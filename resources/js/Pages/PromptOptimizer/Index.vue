@@ -91,7 +91,7 @@ const clearTaskDescription = () => {
                     </span>
                 </p>
 
-                <form @submit.prevent="submit" class="space-y-6">
+                <form class="space-y-6" @submit.prevent="submit">
                     <!-- Task Description -->
                     <FormTextareaWithActions
                         id="taskDescription"
@@ -108,9 +108,9 @@ const clearTaskDescription = () => {
                             <button
                                 v-if="form.taskDescription"
                                 type="button"
-                                @click="clearTaskDescription"
                                 class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
                                 title="Clear text"
+                                @click="clearTaskDescription"
                             >
                                 <DynamicIcon
                                     name="trash"

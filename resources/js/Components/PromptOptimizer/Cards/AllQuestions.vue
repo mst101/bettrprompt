@@ -39,9 +39,9 @@ const isSkipped = (index: number, answers: (string | null)[] | null) => {
                     >
                     <ButtonText
                         id="toggle-question-view"
-                        @click="emit('toggle-show-all')"
                         type="button"
                         :underline="true"
+                        @click="emit('toggle-show-all')"
                     >
                         (one-at-a-time)
                     </ButtonText>
