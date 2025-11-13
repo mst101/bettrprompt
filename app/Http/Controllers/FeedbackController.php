@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFeedbackRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -48,28 +48,18 @@ class FeedbackController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreFeedbackRequest $request)
     {
-        $validated = $request->validate([
-            'experienceLevel' => ['required', 'integer', 'min:1', 'max:7'],
-            'usefulness' => ['required', 'integer', 'min:1', 'max:7'],
-            'recommendationLikelihood' => ['required', 'integer', 'min:1', 'max:7'],
-            'suggestions' => ['nullable', 'string', 'max:5000'],
-            'desiredFeatures' => ['required', 'array', 'min:1'],
-            'desiredFeatures.*' => [
-                'string', 'in:templates,compare,api-integration,collaboration,model-specific,other',
-            ],
-            'desiredFeaturesOther' => ['required_if:desiredFeatures.*,other', 'nullable', 'string', 'max:500'],
-        ]);
+        $validated = $request->validated();
 
         DB::table('feedback')->insert([
             'user_id' => auth()->id(),
-            'experience_level' => $validated['experienceLevel'],
+            'experience_level' => $validated['experience_level'],
             'usefulness' => $validated['usefulness'],
-            'recommendation_likelihood' => $validated['recommendationLikelihood'],
+            'recommendation_likelihood' => $validated['recommendation_likelihood'],
             'suggestions' => $validated['suggestions'] ?? null,
-            'desired_features' => json_encode($validated['desiredFeatures']),
-            'desired_features_other' => $validated['desiredFeaturesOther'] ?? null,
+            'desired_features' => json_encode($validated['desired_features']),
+            'desired_features_other' => $validated['desired_features_other'] ?? null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -78,29 +68,19 @@ class FeedbackController extends Controller
             ->with('success', 'Thank you for your feedback!');
     }
 
-    public function update(Request $request)
+    public function update(StoreFeedbackRequest $request)
     {
-        $validated = $request->validate([
-            'experienceLevel' => ['required', 'integer', 'min:1', 'max:7'],
-            'usefulness' => ['required', 'integer', 'min:1', 'max:7'],
-            'recommendationLikelihood' => ['required', 'integer', 'min:1', 'max:7'],
-            'suggestions' => ['nullable', 'string', 'max:5000'],
-            'desiredFeatures' => ['required', 'array', 'min:1'],
-            'desiredFeatures.*' => [
-                'string', 'in:templates,compare,api-integration,collaboration,model-specific,other',
-            ],
-            'desiredFeaturesOther' => ['required_if:desiredFeatures.*,other', 'nullable', 'string', 'max:500'],
-        ]);
+        $validated = $request->validated();
 
         DB::table('feedback')
             ->where('user_id', auth()->id())
             ->update([
-                'experience_level' => $validated['experienceLevel'],
+                'experience_level' => $validated['experience_level'],
                 'usefulness' => $validated['usefulness'],
-                'recommendation_likelihood' => $validated['recommendationLikelihood'],
+                'recommendation_likelihood' => $validated['recommendation_likelihood'],
                 'suggestions' => $validated['suggestions'] ?? null,
-                'desired_features' => json_encode($validated['desiredFeatures']),
-                'desired_features_other' => $validated['desiredFeaturesOther'] ?? null,
+                'desired_features' => json_encode($validated['desired_features']),
+                'desired_features_other' => $validated['desired_features_other'] ?? null,
                 'updated_at' => now(),
             ]);
 

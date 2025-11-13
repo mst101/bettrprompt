@@ -2,6 +2,7 @@
 import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import ButtonGoogleSignIn from '@/Components/ButtonGoogleSignIn.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
@@ -85,21 +86,16 @@ const close = () => {
 
         <template #footer-links>
             <div class="flex items-center gap-4">
-                <button
+                <ButtonText
                     type="button"
                     @click="emit('switchToForgotPassword')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                 >
                     Forgot password?
-                </button>
+                </ButtonText>
 
-                <button
-                    type="button"
-                    @click="emit('switchToRegister')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
-                >
+                <ButtonText type="button" @click="emit('switchToRegister')">
                     Need an account?
-                </button>
+                </ButtonText>
             </div>
         </template>
 

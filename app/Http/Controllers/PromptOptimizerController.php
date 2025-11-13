@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AnswerQuestionRequest;
+use App\Http\Requests\CreateChildPromptRunRequest;
 use App\Http\Requests\StorePromptRunRequest;
+use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
 use App\Services\DatabaseService;
@@ -827,7 +829,7 @@ class PromptOptimizerController extends Controller
     /**
      * Create a child prompt run from edited clarifying answers
      */
-    public function createChildFromAnswers(Request $request, PromptRun $parentPromptRun)
+    public function createChildFromAnswers(CreateChildPromptRunRequest $request, PromptRun $parentPromptRun)
     {
         // Authorise that the user can create a child of this prompt run
         if ($parentPromptRun->user_id !== auth()->id()) {
@@ -839,10 +841,7 @@ class PromptOptimizerController extends Controller
             return back()->with('error', 'Parent prompt run does not have framework questions.');
         }
 
-        $validated = $request->validate([
-            'clarifying_answers' => 'required|array',
-            'clarifying_answers.*' => 'nullable|string|max:5000',
-        ]);
+        $validated = $request->validated();
 
         // Convert empty strings to null for consistency
         $clarifyingAnswers = array_map(
@@ -959,7 +958,7 @@ class PromptOptimizerController extends Controller
     /**
      * Update the optimised prompt text
      */
-    public function updateOptimizedPrompt(Request $request, PromptRun $promptRun)
+    public function updateOptimizedPrompt(UpdateOptimizedPromptRequest $request, PromptRun $promptRun)
     {
         // Authorise that the user can update this prompt run
         if ($promptRun->user_id !== auth()->id()) {
@@ -971,9 +970,7 @@ class PromptOptimizerController extends Controller
             return back()->with('error', 'Can only edit completed prompt runs.');
         }
 
-        $validated = $request->validate([
-            'optimized_prompt' => 'required|string|max:50000',
-        ]);
+        $validated = $request->validated();
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated) {

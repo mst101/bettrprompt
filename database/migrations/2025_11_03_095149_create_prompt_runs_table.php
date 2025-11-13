@@ -14,13 +14,20 @@ return new class extends Migration
         Schema::create('prompt_runs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('prompt_runs')->onDelete('cascade');
             $table->string('personality_type', 6)->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->text('task_description');
+            $table->string('selected_framework')->nullable();
+            $table->text('framework_reasoning')->nullable();
+            $table->string('personality_approach')->nullable();
+            $table->json('framework_questions')->nullable();
+            $table->json('clarifying_answers')->nullable();
             $table->text('optimized_prompt')->nullable();
             $table->json('n8n_request_payload')->nullable();
             $table->json('n8n_response_payload')->nullable();
             $table->string('status')->default('pending'); // pending, processing, completed, failed
+            $table->string('workflow_stage')->default('submitted');
             $table->text('error_message')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
