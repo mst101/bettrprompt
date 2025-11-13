@@ -298,6 +298,16 @@ watch(
     },
     { immediate: true },
 );
+
+// Switch to prompt tab when optimized prompt is returned
+watch(
+    () => props.promptRun.optimizedPrompt,
+    (newPrompt) => {
+        if (newPrompt) {
+            activeTab.value = 'prompt';
+        }
+    },
+);
 </script>
 
 <template>
