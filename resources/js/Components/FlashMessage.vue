@@ -14,7 +14,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     type: 'success',
     autoDismiss: true,
-    dismissDelay: 5000,
+    dismissDelay: 3000,
 });
 
 const show = ref(!!props.message);
@@ -91,8 +91,8 @@ const typeConfig = computed(() => {
 <template>
     <Transition
         enter-active-class="transition ease-out duration-300"
-        enter-from-class="opacity-0 translate-y-2"
-        enter-to-class="opacity-100 translate-y-0"
+        enter-from-class="opacity-0 translate-x-2"
+        enter-to-class="opacity-100 translate-x-0"
         leave-active-class="transition ease-in duration-200"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
@@ -100,13 +100,13 @@ const typeConfig = computed(() => {
         <div
             v-if="message && show"
             ref="messageElement"
-            class="fixed top-20 right-0 left-0 z-50 mx-auto w-full max-w-6xl"
+            class="fixed right-4 bottom-4 z-50 w-full max-w-md"
         >
             <div
                 class="rounded-md border p-4 shadow-lg"
                 :class="[typeConfig.bgColor, typeConfig.borderColor]"
             >
-                <div class="flex items-center justify-center">
+                <div class="flex items-center">
                     <div class="shrink-0">
                         <DynamicIcon
                             :name="typeConfig.icon"

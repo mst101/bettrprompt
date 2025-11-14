@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'info' | 'danger';
 
 interface Props {
     id: string;
@@ -12,7 +12,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    id: undefined,
     variant: 'primary',
     disabled: false,
     type: 'button',
@@ -21,11 +20,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const buttonClasses = computed(() => {
     const base =
-        'cursor-pointer text-sm font-normal rounded-md p-1 transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
+        'underline underline-offset-3 cursor-pointer text-sm font-normal rounded-md p-1 transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
 
     const variants = {
         primary: 'text-indigo-600 hover:text-indigo-800 focus:ring-indigo-500',
         secondary: 'text-gray-600 hover:text-gray-800 focus:ring-gray-500',
+        info: 'text-blue-600 hover:text-blue-800 focus:ring-blue-500',
         danger: 'text-red-600 hover:text-red-800 focus:ring-red-500',
     };
 

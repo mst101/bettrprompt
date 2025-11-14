@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
     <div>
-        <label :for="props.id" class="block text-sm font-medium text-gray-700">
+        <label :for="props.id" class="block text-sm font-medium">
             {{ props.label }}
             <span v-if="props.required" class="text-red-500">*</span>
         </label>

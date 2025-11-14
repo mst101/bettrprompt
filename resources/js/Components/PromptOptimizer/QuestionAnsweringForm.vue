@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
+import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -91,13 +93,14 @@ const textareaClasses = computed(() => {
                             >Question {{ currentQuestionNumber }} of
                             {{ totalQuestions }}</span
                         >
-                        <button
+                        <ButtonText
+                            id="show-all-questions"
                             type="button"
                             class="text-indigo-600 hover:text-indigo-800 hover:underline"
                             @click="emit('toggle-show-all')"
                         >
                             {{ showAll ? '(one-at-a-time)' : '(show all)' }}
-                        </button>
+                        </ButtonText>
                     </div>
                     <span class="text-gray-500"
                         >{{ Math.round(progressPercent) }}% complete</span
@@ -134,20 +137,7 @@ const textareaClasses = computed(() => {
                 @update:model-value="emit('update:answer', $event)"
             >
                 <template #actions>
-                    <button
-                        v-if="answer"
-                        type="button"
-                        class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
-                        title="Clear text"
-                        :disabled="isSubmitting"
-                        @click="emit('clear')"
-                    >
-                        <DynamicIcon
-                            name="trash"
-                            class="h-5 w-5 text-gray-600"
-                        />
-                        <span>Clear</span>
-                    </button>
+                    <ButtonTrash v-if="answer" :disabled="isSubmitting" />
                     <ButtonVoiceInput
                         :disabled="isSubmitting"
                         @transcription="handleTranscription"

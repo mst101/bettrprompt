@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import ButtonText from '@/Components/ButtonText.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormInput from '@/Components/FormInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
+import LinkText from '@/Components/LinkText.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 interface Props {
@@ -97,12 +100,9 @@ const savePersonalityType = () => {
                                 <p v-if="user">
                                     For personalised prompts tailored to your
                                     communication style,
-                                    <Link
-                                        :href="route('profile.edit')"
-                                        class="font-medium underline hover:text-blue-600"
-                                    >
+                                    <LinkText :href="route('profile.edit')">
                                         add your personality type
-                                    </Link>
+                                    </LinkText>
                                     to your profile. Otherwise, we'll select the
                                     best framework based purely on your task.
                                 </p>
@@ -115,31 +115,27 @@ const savePersonalityType = () => {
                                         select the best framework based purely
                                         on your task.
                                     </p>
-                                    <button
+                                    <ButtonText
                                         v-if="!showPersonalityForm"
+                                        id="add-personality-type"
                                         type="button"
-                                        class="font-medium underline hover:text-blue-600"
+                                        variant="info"
                                         @click="showPersonalityForm = true"
                                     >
                                         Add personality type
-                                    </button>
+                                    </ButtonText>
                                     <div v-else class="mt-3 space-y-3">
                                         <div>
-                                            <label
-                                                for="visitor-personality-type"
-                                                class="block text-sm font-medium text-blue-900"
-                                            >
-                                                Personality Type (e.g., INTJ-T)
-                                            </label>
-                                            <input
+                                            <FormInput
                                                 id="visitor-personality-type"
                                                 v-model="
                                                     personalityForm.personality_type
                                                 "
+                                                class="max-w-xs text-blue-900"
+                                                label="Personality Type (e.g., INTJ-T)"
                                                 type="text"
                                                 placeholder="XXXX-X"
                                                 maxlength="6"
-                                                class="mt-1 block w-full max-w-xs rounded-md border-blue-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                                             />
                                             <p
                                                 v-if="
