@@ -11,6 +11,7 @@ import { computed, ref, watch } from 'vue';
 interface Props {
     promptRun: PromptRunResource;
     currentQuestion?: string | null;
+    currentQuestionAnswer?: string | null;
     progress?: { answered: number; total: number };
 }
 
@@ -115,6 +116,16 @@ const getCurrentAnswer = (): string | null => {
     // First check local state (most recent user input)
     if (localAnswers.value.has(currentIndex)) {
         return localAnswers.value.get(currentIndex) ?? null;
+    }
+
+    // Then check if we have currentQuestionAnswer from backend (future answer from session)
+    if (
+        props.currentQuestionAnswer !== undefined &&
+        props.currentQuestionAnswer !== null
+    ) {
+        // Store it in local state too
+        localAnswers.value.set(currentIndex, props.currentQuestionAnswer);
+        return props.currentQuestionAnswer;
     }
 
     // Then check if we have a previousAnswer from going back (via flash)

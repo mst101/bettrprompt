@@ -284,10 +284,17 @@ class PromptOptimizerController extends Controller
         // Load parent and children relationships
         $promptRun->load(['parent', 'children']);
 
+        // Check if there's a future answer for the current question
+        $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+        $futureAnswers = session()->get($sessionKey, []);
+        $currentQuestionIndex = $promptRun->getAnsweredQuestionsCount();
+        $currentQuestionAnswer = $futureAnswers[$currentQuestionIndex] ?? null;
+
         //        dd(PromptRunResource::make($promptRun)->resolve());
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $promptRun->getCurrentQuestion(),
+            'currentQuestionAnswer' => $currentQuestionAnswer,
             'progress' => [
                 'answered' => $promptRun->getAnsweredQuestionsCount(),
                 'total' => $promptRun->getTotalQuestionsCount(),
@@ -323,16 +330,8 @@ class PromptOptimizerController extends Controller
             // Add the current answer
             $answers[] = $validated['answer'];
 
-            // Restore the immediate next answer if it exists in session
-            // This allows users to go back, edit a previous answer, and continue
-            // without losing their subsequent answers
-            $nextQuestionIndex = $currentQuestionIndex + 1;
-            if (isset($futureAnswers[$nextQuestionIndex])) {
-                $answers[$nextQuestionIndex] = $futureAnswers[$nextQuestionIndex];
-                // Remove it from future answers since we've restored it
-                unset($futureAnswers[$nextQuestionIndex]);
-                session()->put($sessionKey, $futureAnswers);
-            }
+            // Don't restore future answers to the database - keep them in session
+            // The frontend will handle displaying them when the user reaches those questions
 
             // Log the answer submission
             Log::info('Submitting Answer', [
@@ -417,16 +416,8 @@ class PromptOptimizerController extends Controller
             // Add null for skipped question
             $answers[] = null;
 
-            // Restore the immediate next answer if it exists in session
-            // This allows users to go back, edit/skip a previous answer, and continue
-            // without losing their subsequent answers
-            $nextQuestionIndex = $currentQuestionIndex + 1;
-            if (isset($futureAnswers[$nextQuestionIndex])) {
-                $answers[$nextQuestionIndex] = $futureAnswers[$nextQuestionIndex];
-                // Remove it from future answers since we've restored it
-                unset($futureAnswers[$nextQuestionIndex]);
-                session()->put($sessionKey, $futureAnswers);
-            }
+            // Don't restore future answers to the database - keep them in session
+            // The frontend will handle displaying them when the user reaches those questions
 
             Log::info('Skipping question', [
                 'prompt_run_id' => $promptRun->id,

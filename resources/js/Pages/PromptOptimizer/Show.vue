@@ -30,6 +30,7 @@ interface Progress {
 interface Props {
     promptRun: PromptRunResource;
     currentQuestion: string | null;
+    currentQuestionAnswer?: string | null;
     progress: Progress;
 }
 
@@ -236,6 +237,7 @@ watch(
                 v-show="activeTab === 'questions'"
                 :prompt-run="promptRun"
                 :current-question="currentQuestion"
+                :current-question-answer="currentQuestionAnswer"
                 :progress="progress"
             />
         </div>
