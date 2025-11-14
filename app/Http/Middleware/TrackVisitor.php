@@ -17,16 +17,27 @@ class TrackVisitor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
-
         $visitorId = $request->cookie('visitor_id');
+        $isNewVisitor = false;
 
         if ($visitorId) {
             // Existing visitor - update their record
             $this->updateVisitor($visitorId);
         } else {
-            // New visitor - create record and set cookie
+            // New visitor - create record BEFORE processing request
             $visitorId = $this->createVisitor($request);
+            $isNewVisitor = true;
+        }
+
+        // Make visitor_id available to the request (merge into cookies for this request)
+        // This allows controllers to read the visitor_id even for new visitors
+        $request->cookies->set('visitor_id', $visitorId);
+
+        // Process the request
+        $response = $next($request);
+
+        // Set cookie for new visitors (cookie will be sent with response)
+        if ($isNewVisitor) {
             $cookie = cookie(
                 'visitor_id',
                 $visitorId,
