@@ -9,7 +9,6 @@ import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import ClarifyingAnswersEdit from '@/Components/PromptOptimizer/ClarifyingAnswersEdit.vue';
-import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
@@ -387,35 +386,17 @@ watch(
                 />
 
                 <!-- Your Task Tab -->
+                <TaskInformation
+                    v-show="activeTab === 'task'"
+                    :prompt-run="promptRun"
+                    :show-edit-button="true"
+                    :is-editing="isEditingTask"
+                    class="mb-6 px-6"
+                    @edit="startEditingTask"
+                    @cancel="cancelEditingTask"
+                />
+
                 <div v-show="activeTab === 'task'">
-                    <TaskInformation
-                        v-if="!isEditingTask"
-                        :prompt-run="promptRun"
-                        :show-edit-button="true"
-                        class="mb-6 px-6"
-                        @edit="startEditingTask"
-                    />
-
-                    <div
-                        v-else
-                        class="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
-                    >
-                        <div class="p-6">
-                            <h3
-                                class="mb-4 text-lg font-semibold text-gray-900"
-                            >
-                                Edit Task & Create New Optimisation
-                            </h3>
-                            <EditTaskForm
-                                :prompt-run-id="promptRun.id"
-                                :initial-task-description="
-                                    promptRun.taskDescription
-                                "
-                                @cancel="cancelEditingTask"
-                            />
-                        </div>
-                    </div>
-
                     <RelatedPromptRuns
                         v-if="hasRelatedRuns"
                         :parent="promptRun.parent"
@@ -590,30 +571,14 @@ watch(
 
             <!-- Input Information -->
             <TaskInformation
-                v-if="!isEditingTask"
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
+                :is-editing="isEditingTask"
                 class="mb-6"
                 @edit="startEditingTask"
+                @cancel="cancelEditingTask"
             />
-
-            <!-- Edit Task Form -->
-            <div
-                v-else
-                class="mb-6 overflow-hidden bg-white shadow-xs sm:rounded-lg"
-            >
-                <div class="p-6">
-                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                        Edit Task & Create New Optimisation
-                    </h3>
-                    <EditTaskForm
-                        :prompt-run-id="promptRun.id"
-                        :initial-task-description="promptRun.taskDescription"
-                        @cancel="cancelEditingTask"
-                    />
-                </div>
-            </div>
 
             <!-- Framework Selection Info -->
             <FrameworkSelection

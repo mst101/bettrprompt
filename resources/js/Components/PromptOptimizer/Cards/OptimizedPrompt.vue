@@ -62,7 +62,10 @@ const saveEdits = () => {
                     </h3>
                 </div>
 
-                <div v-if="!isEditing" class="flex justify-between gap-2">
+                <div
+                    v-if="!isEditing"
+                    class="flex w-full justify-between gap-2"
+                >
                     <ButtonSecondary
                         type="button"
                         data-testid="edit-prompt-button"
