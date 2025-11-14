@@ -7,7 +7,14 @@ import HeaderPage from '@/Components/HeaderPage.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+interface Props {
+    visitorPersonalityType?: string | null;
+    visitorTraitPercentages?: Record<string, number> | null;
+}
+
+const props = defineProps<Props>();
 
 defineOptions({
     layout: AppLayout,
@@ -15,8 +22,17 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
-const hasPersonalityType = computed(() => !!user.value?.personalityType);
+const hasPersonalityType = computed(() => {
+    // Authenticated users check their user profile
+    if (user.value) {
+        return !!user.value?.personalityType;
+    }
+    // Visitors check props passed from controller
+    return !!props.visitorPersonalityType;
+});
 const hasTask = computed(() => form.taskDescription.length >= 10);
+
+const showPersonalityForm = ref(false);
 
 const form = useForm({
     taskDescription: '',
@@ -34,6 +50,21 @@ const handleTranscription = (text: string) => {
 
 const clearTaskDescription = () => {
     form.taskDescription = '';
+};
+
+// Visitor personality form
+const personalityForm = useForm({
+    personality_type: props.visitorPersonalityType || '',
+    trait_percentages: props.visitorTraitPercentages || null,
+});
+
+const savePersonalityType = () => {
+    personalityForm.patch(route('visitor.personality.update'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            showPersonalityForm.value = false;
+        },
+    });
 };
 </script>
 
@@ -59,10 +90,11 @@ const clearTaskDescription = () => {
                         </div>
                         <div class="ml-3">
                             <h3 class="text-sm font-medium text-blue-800">
-                                Get personalised prompts
+                                Get personalised prompts (optional)
                             </h3>
                             <div class="mt-2 text-sm text-blue-700">
-                                <p>
+                                <!-- Authenticated user -->
+                                <p v-if="user">
                                     For personalised prompts tailored to your
                                     communication style,
                                     <Link
@@ -74,6 +106,77 @@ const clearTaskDescription = () => {
                                     to your profile. Otherwise, we'll select the
                                     best framework based purely on your task.
                                 </p>
+                                <!-- Visitor -->
+                                <div v-else>
+                                    <p class="mb-2">
+                                        For personalised prompts tailored to
+                                        your communication style, add your
+                                        16personalities type. Otherwise, we'll
+                                        select the best framework based purely
+                                        on your task.
+                                    </p>
+                                    <button
+                                        v-if="!showPersonalityForm"
+                                        type="button"
+                                        class="font-medium underline hover:text-blue-600"
+                                        @click="showPersonalityForm = true"
+                                    >
+                                        Add personality type
+                                    </button>
+                                    <div v-else class="mt-3 space-y-3">
+                                        <div>
+                                            <label
+                                                for="visitor-personality-type"
+                                                class="block text-sm font-medium text-blue-900"
+                                            >
+                                                Personality Type (e.g., INTJ-T)
+                                            </label>
+                                            <input
+                                                id="visitor-personality-type"
+                                                v-model="
+                                                    personalityForm.personality_type
+                                                "
+                                                type="text"
+                                                placeholder="XXXX-X"
+                                                maxlength="6"
+                                                class="mt-1 block w-full max-w-xs rounded-md border-blue-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
+                                            />
+                                            <p
+                                                v-if="
+                                                    personalityForm.errors
+                                                        .personality_type
+                                                "
+                                                class="mt-1 text-sm text-red-600"
+                                            >
+                                                {{
+                                                    personalityForm.errors
+                                                        .personality_type
+                                                }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                :disabled="
+                                                    personalityForm.processing
+                                                "
+                                                class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                                                @click="savePersonalityType"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="rounded-md px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100"
+                                                @click="
+                                                    showPersonalityForm = false
+                                                "
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
