@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormSelect from '@/Components/FormSelect.vue';
+import type { SelectOption } from '@/types';
 import { computed } from 'vue';
 
 export interface Tab {
@@ -25,6 +27,19 @@ const activeTab = computed({
     set: (value: string) => emit('update:modelValue', value),
 });
 
+const selectOptions = computed<SelectOption[]>(() => {
+    return props.tabs.map((tab) => {
+        let label = tab.label;
+        if (tab.badge) {
+            label += ` (${tab.badge})`;
+        }
+        return {
+            value: tab.id,
+            label,
+        };
+    });
+});
+
 const selectTab = (tabId: string) => {
     activeTab.value = tabId;
 };
@@ -32,21 +47,16 @@ const selectTab = (tabId: string) => {
 
 <template>
     <div class="border-b border-gray-200">
-        <!-- Mobile: Dropdown -->
+        <!-- Mobile: Dropdown (note: native select cannot display icons) -->
         <div class="sm:hidden">
-            <label for="tabs" class="sr-only">Select a tab</label>
-            <select
+            <FormSelect
                 id="tabs"
-                name="tabs"
-                :value="activeTab"
-                class="block w-full rounded-md border-gray-300 py-2 pr-10 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-hidden sm:text-sm"
-                @change="selectTab(($event.target as HTMLSelectElement).value)"
-            >
-                <option v-for="tab in tabs" :key="tab.id" :value="tab.id">
-                    {{ tab.label }}
-                    <span v-if="tab.badge"> ({{ tab.badge }})</span>
-                </option>
-            </select>
+                v-model="activeTab"
+                label="Navigate tabs"
+                :options="selectOptions"
+                :show-placeholder="false"
+                class="[&_label]:sr-only"
+            />
         </div>
 
         <!-- Desktop: Horizontal Tabs (sm: and above) -->
