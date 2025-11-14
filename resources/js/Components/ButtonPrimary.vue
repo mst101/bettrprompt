@@ -16,6 +16,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
     <Button
+        class="text-xs tracking-wider uppercase"
         variant="primary"
         :disabled="disabled"
         :type="type"

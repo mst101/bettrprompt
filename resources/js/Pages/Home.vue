@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import FeatureCard from '@/Components/FeatureCard.vue';
+import LinkButton from '@/Components/LinkButton.vue';
 import StepCard from '@/Components/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 defineOptions({
     layout: AppLayout,
@@ -41,16 +42,17 @@ defineOptions({
 
                 <!-- CTA Buttons -->
                 <div class="mt-10 flex flex-col items-center gap-4">
-                    <Link
+                    <LinkButton
+                        variant="primary"
+                        class="text-lg uppercase"
                         :href="route('prompt-optimizer.index')"
-                        class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                     >
                         {{
                             $page.props.auth?.user
                                 ? 'Try It Now'
                                 : 'Get Started for Free'
                         }}
-                    </Link>
+                    </LinkButton>
                 </div>
             </div>
 

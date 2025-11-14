@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
@@ -7,6 +9,7 @@ import FormInput from '@/Components/FormInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkText from '@/Components/LinkText.vue';
+import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
@@ -151,25 +154,23 @@ const savePersonalityType = () => {
                                             </p>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <button
+                                            <ButtonPrimary
                                                 type="button"
                                                 :disabled="
                                                     personalityForm.processing
                                                 "
-                                                class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
                                                 @click="savePersonalityType"
                                             >
                                                 Save
-                                            </button>
-                                            <button
+                                            </ButtonPrimary>
+                                            <ButtonSecondary
                                                 type="button"
-                                                class="rounded-md px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100"
                                                 @click="
                                                     showPersonalityForm = false
                                                 "
                                             >
                                                 Cancel
-                                            </button>
+                                            </ButtonSecondary>
                                         </div>
                                     </div>
                                 </div>
@@ -204,19 +205,10 @@ const savePersonalityType = () => {
                         placeholder="Describe what you're trying to accomplish..."
                     >
                         <template #actions>
-                            <button
+                            <ButtonTrash
                                 v-if="form.taskDescription"
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50"
-                                title="Clear text"
                                 @click="clearTaskDescription"
-                            >
-                                <DynamicIcon
-                                    name="trash"
-                                    class="h-5 w-5 text-gray-600"
-                                />
-                                <span>Clear</span>
-                            </button>
+                            />
                             <ButtonVoiceInput
                                 @transcription="handleTranscription"
                             />
@@ -225,14 +217,13 @@ const savePersonalityType = () => {
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end">
-                        <button
+                        <ButtonPrimary
                             type="submit"
                             :disabled="form.processing || !hasTask"
-                            class="justify-centre inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium tracking-wide text-white uppercase shadow-xs hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <span v-if="form.processing">Processing...</span>
                             <span v-else>Optimise Prompt</span>
-                        </button>
+                        </ButtonPrimary>
                     </div>
                 </form>
             </div>
