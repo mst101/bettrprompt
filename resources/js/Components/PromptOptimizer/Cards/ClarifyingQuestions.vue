@@ -3,39 +3,150 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ClarifyingAnswersEdit from '@/Components/PromptOptimizer/ClarifyingAnswersEdit.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
+import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import type { PromptRunResource } from '@/types';
-import type { InertiaForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
     currentQuestion?: string | null;
     progress?: { answered: number; total: number };
-    isEditing?: boolean;
-    editForm?: InertiaForm<{ clarifying_answers: string[] }>;
-    // Question answering props
-    answerForm?: InertiaForm<{ answer: string }>;
-    isSubmitting?: boolean;
-    showAllQuestions?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    isEditing: false,
-    isSubmitting: false,
-    showAllQuestions: false,
+const props = defineProps<Props>();
+
+const page = usePage<{
+    flash: {
+        previous_answer?: string | null;
+    };
+}>();
+
+// Edit mode state for clarifying answers
+const isEditingAnswers = ref(false);
+
+// Initialize form for editing answers (convert nulls to empty strings)
+const initialAnswers =
+    props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
+
+const answersEditForm = useForm({
+    clarifying_answers: initialAnswers,
 });
 
-const emit = defineEmits<{
-    (e: 'edit'): void;
-    (e: 'cancel'): void;
-    (e: 'submit'): void;
-    // Question answering events
-    (e: 'submit-answer'): void;
-    (e: 'skip-question'): void;
-    (e: 'go-back'): void;
-    (e: 'clear-answer'): void;
-    (e: 'toggle-show-all'): void;
-}>();
+const startEditingAnswers = () => {
+    isEditingAnswers.value = true;
+    // Reset form to current values when starting edit
+    answersEditForm.clarifying_answers =
+        props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
+};
+
+const cancelEditingAnswers = () => {
+    isEditingAnswers.value = false;
+    answersEditForm.reset();
+    answersEditForm.clearErrors();
+};
+
+const submitEditedAnswers = () => {
+    answersEditForm.post(
+        route('prompt-optimizer.create-child-from-answers', {
+            parentPromptRun: props.promptRun.id,
+        }),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditingAnswers.value = false;
+                // Redirect happens automatically via controller
+            },
+        },
+    );
+};
+
+// Show all questions mode
+const showAllQuestions = ref(false);
+
+const toggleShowAll = () => {
+    showAllQuestions.value = !showAllQuestions.value;
+};
+
+// Question answering composable with pre-population from parent
+const {
+    answerForm,
+    isSubmitting,
+    submitAnswer,
+    skipQuestion,
+    goBackToPreviousQuestion,
+    clearAnswer,
+} = usePromptAnswering(props.promptRun.id);
+
+// Get the current answer if it exists (for going back or pre-population)
+const getCurrentAnswer = (): string | null => {
+    // First check if we have a previousAnswer from going back (via flash)
+    const flashPreviousAnswer = page.props.flash.previous_answer;
+    if (flashPreviousAnswer !== undefined && flashPreviousAnswer !== null) {
+        return flashPreviousAnswer;
+    }
+
+    // Otherwise check clarifyingAnswers array
+    if (!props.promptRun.clarifyingAnswers || !props.progress) return null;
+
+    // Current question index is progress.answered (0-based)
+    const currentIndex = props.progress.answered;
+    const answer = props.promptRun.clarifyingAnswers[currentIndex];
+
+    return answer ?? null;
+};
+
+// Pre-populate answer if similar question exists in parent
+const findSimilarAnswer = (currentQuestion: string): string | null => {
+    if (!props.promptRun.parent) return null;
+
+    const parentQuestions = props.promptRun.parent.frameworkQuestions;
+    const parentAnswers = props.promptRun.parent.clarifyingAnswers;
+
+    if (!parentQuestions || !parentAnswers) return null;
+
+    // Find exact match or similar question
+    const index = parentQuestions.findIndex((q) => q === currentQuestion);
+    if (index !== -1 && parentAnswers[index]) {
+        return parentAnswers[index];
+    }
+
+    return null;
+};
+
+// Watch for current question changes and pre-populate if available
+watch(
+    () => props.currentQuestion,
+    (newQuestion) => {
+        if (newQuestion) {
+            // First check if we have a current answer (e.g., when going back)
+            const currentAnswer = getCurrentAnswer();
+            if (currentAnswer) {
+                answerForm.answer = currentAnswer;
+                return;
+            }
+
+            // Otherwise, try to find a similar answer from parent
+            if (!answerForm.answer) {
+                const similarAnswer = findSimilarAnswer(newQuestion);
+                if (similarAnswer) {
+                    answerForm.answer = similarAnswer;
+                }
+            }
+        }
+    },
+    { immediate: true },
+);
+
+// Reset edit mode when navigating to different prompt run
+watch(
+    () => props.promptRun.id,
+    () => {
+        isEditingAnswers.value = false;
+        answersEditForm.reset();
+        answersEditForm.clearErrors();
+    },
+);
 
 const isAnsweringQuestions = computed(
     () =>
@@ -50,14 +161,8 @@ const isCompleted = computed(
 
 <template>
     <!-- Question Answering Interface (for in-progress runs) -->
-    <!-- eslint-disable vue/no-mutating-props -->
     <QuestionAnsweringForm
-        v-if="
-            isAnsweringQuestions &&
-            currentQuestion &&
-            !showAllQuestions &&
-            answerForm
-        "
+        v-if="isAnsweringQuestions && currentQuestion && !showAllQuestions"
         v-model:answer="answerForm.answer"
         :question="currentQuestion"
         :current-question-number="progress ? progress.answered + 1 : 0"
@@ -67,11 +172,11 @@ const isCompleted = computed(
         :has-error="!!answerForm.errors.answer"
         :error-message="answerForm.errors.answer"
         :show-all="showAllQuestions"
-        @submit="emit('submit-answer')"
-        @skip="emit('skip-question')"
-        @go-back="emit('go-back')"
-        @clear="emit('clear-answer')"
-        @toggle-show-all="emit('toggle-show-all')"
+        @submit="submitAnswer"
+        @skip="skipQuestion"
+        @go-back="goBackToPreviousQuestion"
+        @clear="clearAnswer"
+        @toggle-show-all="toggleShowAll"
     />
 
     <!-- All Questions View (for completed runs) -->
@@ -84,23 +189,23 @@ const isCompleted = computed(
                 <h3 class="text-lg font-semibold text-gray-900">
                     Clarifying Questions
                 </h3>
-                <div v-if="!isEditing" class="flex items-center gap-2">
-                    <ButtonSecondary type="button" @click="emit('edit')">
+                <div v-if="!isEditingAnswers" class="flex items-center gap-2">
+                    <ButtonSecondary type="button" @click="startEditingAnswers">
                         Edit Answers
                     </ButtonSecondary>
                 </div>
                 <div v-else class="flex items-center gap-2">
                     <ButtonSecondary
                         type="button"
-                        :disabled="editForm?.processing"
-                        @click="emit('cancel')"
+                        :disabled="answersEditForm.processing"
+                        @click="cancelEditingAnswers"
                     >
                         Cancel
                     </ButtonSecondary>
                     <ButtonPrimary
                         type="button"
-                        :loading="editForm?.processing"
-                        @click="emit('submit')"
+                        :loading="answersEditForm.processing"
+                        @click="submitEditedAnswers"
                     >
                         Optimise Prompt with Edited Answers
                     </ButtonPrimary>
@@ -108,9 +213,9 @@ const isCompleted = computed(
             </div>
 
             <ClarifyingAnswersEdit
-                v-if="isEditing && editForm"
+                v-if="isEditingAnswers"
                 :prompt-run="promptRun"
-                :form="editForm"
+                :form="answersEditForm"
             />
 
             <div v-else class="space-y-3">

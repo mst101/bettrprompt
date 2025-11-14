@@ -10,12 +10,11 @@ import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
-import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
@@ -23,12 +22,6 @@ const props = defineProps<Props>();
 defineOptions({
     layout: AppLayout,
 });
-
-const page = usePage<{
-    flash: {
-        previous_answer?: string | null;
-    };
-}>();
 
 interface Progress {
     answered: number;
@@ -78,131 +71,12 @@ const cancelEditingTask = () => {
     isEditingTask.value = false;
 };
 
-// Edit mode state for clarifying answers
-const isEditingAnswers = ref(false);
-
-// Initialize form for editing answers (convert nulls to empty strings)
-const initialAnswers =
-    props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
-
-const answersEditForm = useForm({
-    clarifying_answers: initialAnswers,
-});
-
-const startEditingAnswers = () => {
-    isEditingAnswers.value = true;
-    // Reset form to current values when starting edit
-    answersEditForm.clarifying_answers =
-        props.promptRun.clarifyingAnswers?.map((answer) => answer ?? '') ?? [];
-};
-
-const cancelEditingAnswers = () => {
-    isEditingAnswers.value = false;
-    answersEditForm.reset();
-    answersEditForm.clearErrors();
-};
-
-const submitEditedAnswers = () => {
-    answersEditForm.post(
-        route('prompt-optimizer.create-child-from-answers', {
-            parentPromptRun: props.promptRun.id,
-        }),
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                isEditingAnswers.value = false;
-                // Redirect happens automatically via controller
-            },
-        },
-    );
-};
-
-// Reset edit modes when navigating to different prompt run
+// Reset edit mode when navigating to different prompt run
 watch(
     () => props.promptRun.id,
     () => {
         isEditingTask.value = false;
-        isEditingAnswers.value = false;
-        answersEditForm.reset();
-        answersEditForm.clearErrors();
     },
-);
-
-// Show all questions mode
-const showAllQuestions = ref(false);
-
-const toggleShowAll = () => {
-    showAllQuestions.value = !showAllQuestions.value;
-};
-
-// Question answering composable with pre-population from parent
-const {
-    answerForm,
-    isSubmitting,
-    submitAnswer,
-    skipQuestion,
-    goBackToPreviousQuestion,
-    clearAnswer,
-} = usePromptAnswering(props.promptRun.id);
-
-// Get the current answer if it exists (for going back or pre-population)
-const getCurrentAnswer = (): string | null => {
-    // First check if we have a previousAnswer from going back (via flash)
-    const flashPreviousAnswer = page.props.flash.previous_answer;
-    if (flashPreviousAnswer !== undefined && flashPreviousAnswer !== null) {
-        return flashPreviousAnswer;
-    }
-
-    // Otherwise check clarifyingAnswers array
-    if (!props.promptRun.clarifyingAnswers) return null;
-
-    // Current question index is progress.answered (0-based)
-    const currentIndex = props.progress.answered;
-    const answer = props.promptRun.clarifyingAnswers[currentIndex];
-
-    return answer ?? null;
-};
-
-// Pre-populate answer if similar question exists in parent
-const findSimilarAnswer = (currentQuestion: string): string | null => {
-    if (!props.promptRun.parent) return null;
-
-    const parentQuestions = props.promptRun.parent.frameworkQuestions;
-    const parentAnswers = props.promptRun.parent.clarifyingAnswers;
-
-    if (!parentQuestions || !parentAnswers) return null;
-
-    // Find exact match or similar question
-    const index = parentQuestions.findIndex((q) => q === currentQuestion);
-    if (index !== -1 && parentAnswers[index]) {
-        return parentAnswers[index];
-    }
-
-    return null;
-};
-
-// Watch for current question changes and pre-populate if available
-watch(
-    () => props.currentQuestion,
-    (newQuestion) => {
-        if (newQuestion) {
-            // First check if we have a current answer (e.g., when going back)
-            const currentAnswer = getCurrentAnswer();
-            if (currentAnswer) {
-                answerForm.answer = currentAnswer;
-                return;
-            }
-
-            // Otherwise, try to find a similar answer from parent
-            if (!answerForm.answer) {
-                const similarAnswer = findSimilarAnswer(newQuestion);
-                if (similarAnswer) {
-                    answerForm.answer = similarAnswer;
-                }
-            }
-        }
-    },
-    { immediate: true },
 );
 
 // Save edited optimised prompt
@@ -411,19 +285,6 @@ watch(
                     :prompt-run="promptRun"
                     :current-question="currentQuestion"
                     :progress="progress"
-                    :is-editing="isEditingAnswers"
-                    :edit-form="answersEditForm"
-                    :answer-form="answerForm"
-                    :is-submitting="isSubmitting"
-                    :show-all-questions="showAllQuestions"
-                    @edit="startEditingAnswers"
-                    @cancel="cancelEditingAnswers"
-                    @submit="submitEditedAnswers"
-                    @submit-answer="submitAnswer"
-                    @skip-question="skipQuestion"
-                    @go-back="goBackToPreviousQuestion"
-                    @clear-answer="clearAnswer"
-                    @toggle-show-all="toggleShowAll"
                 />
 
                 <!-- Related Runs Tab -->
