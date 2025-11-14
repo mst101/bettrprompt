@@ -147,15 +147,6 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
-    // Related Runs tab (shown when there are parent or children)
-    if (hasRelatedRuns.value) {
-        allTabs.push({
-            id: 'related',
-            label: 'Related Runs',
-            icon: 'arrow-path',
-        });
-    }
-
     return allTabs;
 });
 

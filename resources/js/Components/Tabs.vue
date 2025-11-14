@@ -76,7 +76,7 @@ const selectTab = (tabId: string) => {
                     :class="[
                         activeTab === tab.id
                             ? 'text-indigo-500'
-                            : 'text-gray-400 group-hover:text-gray-500',
+                            : 'text-gray-400 group-hover:text-gray-600',
                         'mr-2 -ml-0.5 h-5 w-5',
                     ]"
                     aria-hidden="true"
