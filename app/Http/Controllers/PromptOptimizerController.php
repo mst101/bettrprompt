@@ -290,6 +290,13 @@ class PromptOptimizerController extends Controller
         $currentQuestionIndex = $promptRun->getAnsweredQuestionsCount();
         $currentQuestionAnswer = $futureAnswers[$currentQuestionIndex] ?? null;
 
+        Log::info('Showing prompt run', [
+            'prompt_run_id' => $promptRun->id,
+            'current_question_index' => $currentQuestionIndex,
+            'future_answers' => $futureAnswers,
+            'current_question_answer' => $currentQuestionAnswer,
+        ]);
+
         //        dd(PromptRunResource::make($promptRun)->resolve());
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
