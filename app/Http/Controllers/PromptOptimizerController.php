@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\FrameworkSelected;
+use App\Events\PromptOptimizationCompleted;
 use App\Http\Requests\AnswerQuestionRequest;
 use App\Http\Requests\CreateChildPromptRunRequest;
 use App\Http\Requests\StorePromptRunRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
+use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\N8nClient;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Throwable;
 
 class PromptOptimizerController extends Controller
 {
@@ -46,7 +52,7 @@ class PromptOptimizerController extends Controller
         // Fall back to visitor personality
         $visitorId = $this->getVisitorId($request);
         if ($visitorId) {
-            $visitor = \App\Models\Visitor::find($visitorId);
+            $visitor = Visitor::find($visitorId);
             if ($visitor) {
                 return [
                     'personality_type' => $visitor->personality_type,
@@ -106,7 +112,12 @@ class PromptOptimizerController extends Controller
 
         try {
             // Create the prompt run record using personality from user or visitor
-            $promptRun = DatabaseService::retryOnDeadlock(function () use ($userId, $visitorId, $validated, $personalityData) {
+            $promptRun = DatabaseService::retryOnDeadlock(function () use (
+                $userId,
+                $visitorId,
+                $validated,
+                $personalityData
+            ) {
                 return PromptRun::create([
                     'user_id' => $userId,
                     'visitor_id' => $visitorId,
@@ -165,7 +176,7 @@ class PromptOptimizerController extends Controller
                     ]);
                 });
 
-                // Refresh the model to ensure we have latest data
+                // Refresh the model to ensure we have the latest data
                 $promptRun->refresh();
 
                 // Log what was saved
@@ -178,8 +189,8 @@ class PromptOptimizerController extends Controller
 
                 // Broadcast framework selected event
                 try {
-                    event(new \App\Events\FrameworkSelected($promptRun));
-                } catch (\Exception $e) {
+                    event(new FrameworkSelected($promptRun));
+                } catch (Exception $e) {
                     Log::error('Failed to broadcast FrameworkSelected event', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
@@ -213,7 +224,7 @@ class PromptOptimizerController extends Controller
 
                 return back()->with('error', 'Failed to select framework. Please try again.');
             }
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error in prompt run creation', [
                 'user_id' => $userId,
                 'visitor_id' => $visitorId,
@@ -232,7 +243,7 @@ class PromptOptimizerController extends Controller
                             'completed_at' => now(),
                         ]);
                     });
-                } catch (\Exception $updateError) {
+                } catch (Exception $updateError) {
                     Log::error('Failed to mark prompt run as failed', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $updateError->getMessage(),
@@ -242,7 +253,7 @@ class PromptOptimizerController extends Controller
 
             return back()->with('error', 'A database error occurred. Please try again.');
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error in prompt run creation', [
                 'user_id' => $userId,
                 'visitor_id' => $visitorId,
@@ -261,7 +272,7 @@ class PromptOptimizerController extends Controller
                             'completed_at' => now(),
                         ]);
                     });
-                } catch (\Exception $updateError) {
+                } catch (Exception $updateError) {
                     Log::error('Failed to mark prompt run as failed', [
                         'prompt_run_id' => $promptRun->id ?? 'unknown',
                         'error' => $updateError->getMessage(),
@@ -371,9 +382,9 @@ class PromptOptimizerController extends Controller
             // More questions to answer - redirect back to show page
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
-                ->with('success', 'Answer saved. Next question:');
+                ->with('success', 'Answer saved.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error saving answer', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -381,7 +392,7 @@ class PromptOptimizerController extends Controller
 
             return back()->with('error', 'Failed to save answer. Please try again.');
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error saving answer', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -448,9 +459,9 @@ class PromptOptimizerController extends Controller
             // More questions to process - redirect back to show page
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
-                ->with('success', 'Question skipped. Next question:');
+                ->with('success', 'Question skipped.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error skipping question', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -458,7 +469,7 @@ class PromptOptimizerController extends Controller
 
             return back()->with('error', 'Failed to skip question. Please try again.');
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error skipping question', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -519,10 +530,9 @@ class PromptOptimizerController extends Controller
             // Redirect back to show page with the removed answer to pre-populate
             return redirect()
                 ->route('prompt-optimizer.show', $promptRun)
-                ->with('success', 'Returned to previous question.')
                 ->with('previous_answer', $removedAnswer);
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error going back to previous question', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -530,7 +540,7 @@ class PromptOptimizerController extends Controller
 
             return back()->with('error', 'Failed to go back. Please try again.');
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error going back to previous question', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -601,8 +611,8 @@ class PromptOptimizerController extends Controller
 
                 // Broadcast completion event
                 try {
-                    event(new \App\Events\PromptOptimizationCompleted($promptRun));
-                } catch (\Exception $e) {
+                    event(new PromptOptimizationCompleted($promptRun));
+                } catch (Exception $e) {
                     Log::error('Failed to broadcast PromptOptimizationCompleted event', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
@@ -638,7 +648,7 @@ class PromptOptimizerController extends Controller
                     ->route('prompt-optimizer.show', $promptRun)
                     ->with('error', 'Failed to generate optimised prompt. Please try again.');
             }
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Database error in final prompt optimization', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -654,7 +664,7 @@ class PromptOptimizerController extends Controller
                         'completed_at' => now(),
                     ]);
                 });
-            } catch (\Exception $updateError) {
+            } catch (Exception $updateError) {
                 Log::error('Failed to mark prompt run as failed', [
                     'prompt_run_id' => $promptRun->id,
                     'error' => $updateError->getMessage(),
@@ -665,7 +675,7 @@ class PromptOptimizerController extends Controller
                 ->route('prompt-optimizer.show', $promptRun)
                 ->with('error', 'A database error occurred. Please try again.');
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error in final prompt optimization', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -682,7 +692,7 @@ class PromptOptimizerController extends Controller
                         'completed_at' => now(),
                     ]);
                 });
-            } catch (\Exception $updateError) {
+            } catch (Exception $updateError) {
                 Log::error('Failed to mark prompt run as failed', [
                     'prompt_run_id' => $promptRun->id,
                     'error' => $updateError->getMessage(),
@@ -762,8 +772,8 @@ class PromptOptimizerController extends Controller
 
                     // Broadcast framework selected event
                     try {
-                        event(new \App\Events\FrameworkSelected($promptRun));
-                    } catch (\Exception $e) {
+                        event(new FrameworkSelected($promptRun));
+                    } catch (Exception $e) {
                         Log::error('Failed to broadcast FrameworkSelected event on retry', [
                             'prompt_run_id' => $promptRun->id,
                             'error' => $e->getMessage(),
@@ -796,7 +806,7 @@ class PromptOptimizerController extends Controller
                         ->route('prompt-optimizer.show', $promptRun)
                         ->with('error', 'Retry failed. '.$errorMessage);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 Log::error('Database error during retry', [
                     'prompt_run_id' => $promptRun->id,
                     'error' => $e->getMessage(),
@@ -811,7 +821,7 @@ class PromptOptimizerController extends Controller
                             'error_message' => 'Database error occurred during retry',
                         ]);
                     });
-                } catch (\Exception $updateError) {
+                } catch (Exception $updateError) {
                     Log::error('Failed to mark prompt run as failed during retry', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $updateError->getMessage(),
@@ -822,7 +832,7 @@ class PromptOptimizerController extends Controller
                     ->route('prompt-optimizer.show', $promptRun)
                     ->with('error', 'A database error occurred whilst retrying.');
 
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Log::error('Unexpected error during retry', [
                     'prompt_run_id' => $promptRun->id,
                     'error' => $e->getMessage(),
@@ -838,7 +848,7 @@ class PromptOptimizerController extends Controller
                             'error_message' => $e->getMessage(),
                         ]);
                     });
-                } catch (\Exception $updateError) {
+                } catch (Exception $updateError) {
                     Log::error('Failed to mark prompt run as failed during retry', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $updateError->getMessage(),
@@ -890,7 +900,7 @@ class PromptOptimizerController extends Controller
         $user = auth()->user();
 
         // Find visitor record linked to this user (if they converted from visitor)
-        $visitor = \App\Models\Visitor::where('user_id', $user->id)->first();
+        $visitor = Visitor::where('user_id', $user->id)->first();
 
         $promptRuns = PromptRun::where(function ($query) use ($user, $visitor) {
             $query->where('user_id', $user->id);
@@ -932,7 +942,12 @@ class PromptOptimizerController extends Controller
             $visitorId = $parentPromptRun->visitor_id ?? $request->cookie('visitor_id');
 
             // Create the child prompt run record
-            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $validated, $visitorId) {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $parentPromptRun,
+                $validated,
+                $visitorId
+            ) {
                 return PromptRun::create([
                     'visitor_id' => $visitorId,
                     'user_id' => $user->id,
@@ -986,7 +1001,7 @@ class PromptOptimizerController extends Controller
                     ]);
                 });
 
-                // Refresh the model to ensure we have latest data
+                // Refresh the model to ensure we have the latest data
                 $childPromptRun->refresh();
 
                 return redirect()
@@ -1005,7 +1020,7 @@ class PromptOptimizerController extends Controller
                 return back()
                     ->with('error', 'Failed to select framework. Please try again.');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to create child prompt run', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
                 'error' => $e->getMessage(),
@@ -1137,7 +1152,7 @@ class PromptOptimizerController extends Controller
                 return back()
                     ->with('error', 'Failed to generate optimised prompt. Please try again.');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to create child from edited answers', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
                 'error' => $e->getMessage(),
@@ -1176,7 +1191,7 @@ class PromptOptimizerController extends Controller
             ]);
 
             return back()->with('success', 'Prompt updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update optimised prompt', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -1202,7 +1217,7 @@ class PromptOptimizerController extends Controller
             return back()->with('error', 'No visitor session found.');
         }
 
-        $visitor = \App\Models\Visitor::find($visitorId);
+        $visitor = Visitor::find($visitorId);
 
         if (! $visitor) {
             return back()->with('error', 'Visitor record not found.');
@@ -1215,7 +1230,7 @@ class PromptOptimizerController extends Controller
             ]);
 
             return back()->with('success', 'Personality type saved!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update visitor personality', [
                 'visitor_id' => $visitorId,
                 'error' => $e->getMessage(),

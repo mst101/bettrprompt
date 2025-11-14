@@ -8,7 +8,6 @@ export interface Tab {
     id: string;
     label: string;
     icon?: string;
-    badge?: string | number;
 }
 
 interface Props {
@@ -29,13 +28,9 @@ const activeTab = computed({
 
 const selectOptions = computed<SelectOption[]>(() => {
     return props.tabs.map((tab) => {
-        let label = tab.label;
-        if (tab.badge) {
-            label += ` (${tab.badge})`;
-        }
         return {
             value: tab.id,
-            label,
+            label: tab.label,
         };
     });
 });
@@ -87,17 +82,6 @@ const selectTab = (tabId: string) => {
                     aria-hidden="true"
                 />
                 <span>{{ tab.label }}</span>
-                <span
-                    v-if="tab.badge"
-                    :class="[
-                        'ml-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium',
-                        activeTab === tab.id
-                            ? 'bg-indigo-100 text-indigo-600'
-                            : 'bg-gray-100 text-gray-900',
-                    ]"
-                >
-                    {{ tab.badge }}
-                </span>
             </button>
         </nav>
     </div>

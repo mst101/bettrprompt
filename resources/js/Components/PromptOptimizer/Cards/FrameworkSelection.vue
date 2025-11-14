@@ -53,6 +53,7 @@ const getApproachColor = (approach: string | null | undefined): string => {
                 </div>
                 <div
                     v-if="personalityApproach"
+                    class="hidden"
                     :class="[
                         'rounded-full px-3 py-1 text-sm font-medium',
                         getApproachColor(personalityApproach),

@@ -135,7 +135,6 @@ const tabs = computed<Tab[]>(() => {
             id: 'questions',
             label: 'Questions',
             icon: 'question-mark-circle',
-            badge: props.promptRun.frameworkQuestions?.length || undefined,
         });
     }
 
@@ -145,7 +144,6 @@ const tabs = computed<Tab[]>(() => {
             id: 'questions',
             label: 'Clarifying Questions',
             icon: 'question-mark-circle',
-            badge: props.promptRun.frameworkQuestions?.length || undefined,
         });
     }
 
