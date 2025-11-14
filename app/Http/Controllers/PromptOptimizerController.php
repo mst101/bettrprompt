@@ -928,9 +928,13 @@ class PromptOptimizerController extends Controller
         $user = auth()->user();
 
         try {
+            // Get visitor_id from parent or request cookie
+            $visitorId = $parentPromptRun->visitor_id ?? $request->cookie('visitor_id');
+
             // Create the child prompt run record
-            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $validated) {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use ($user, $parentPromptRun, $validated, $visitorId) {
                 return PromptRun::create([
+                    'visitor_id' => $visitorId,
                     'user_id' => $user->id,
                     'parent_id' => $parentPromptRun->id,
                     'personality_type' => $user->personality_type ?? null,
@@ -1037,13 +1041,18 @@ class PromptOptimizerController extends Controller
         $user = auth()->user();
 
         try {
+            // Get visitor_id from parent or request cookie
+            $visitorId = $parentPromptRun->visitor_id ?? $request->cookie('visitor_id');
+
             // Create the child prompt run record with same framework but new answers
             $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
                 $user,
                 $parentPromptRun,
-                $clarifyingAnswers
+                $clarifyingAnswers,
+                $visitorId
             ) {
                 return PromptRun::create([
+                    'visitor_id' => $visitorId,
                     'user_id' => $user->id,
                     'parent_id' => $parentPromptRun->id,
                     'personality_type' => $user->personality_type ?? null,

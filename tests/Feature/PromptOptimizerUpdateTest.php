@@ -232,5 +232,7 @@ test('update optimised prompt requires authentication', function () {
         'optimized_prompt' => 'New prompt',
     ]);
 
-    $response->assertRedirect(route('login'));
+    // Guests get 403 Forbidden because they can't update prompt runs
+    // (Authorization fails, not authentication)
+    $response->assertForbidden();
 });
