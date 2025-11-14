@@ -9,7 +9,6 @@ import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptR
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
-import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
@@ -407,41 +406,25 @@ watch(
                 />
 
                 <!-- Clarifying Questions -->
-                <div v-show="activeTab === 'questions'">
-                    <!-- Question Answering Interface (for in-progress runs) -->
-                    <QuestionAnsweringForm
-                        v-if="
-                            isAnsweringQuestions &&
-                            currentQuestion &&
-                            !showAllQuestions
-                        "
-                        v-model:answer="answerForm.answer"
-                        :question="currentQuestion"
-                        :current-question-number="progress.answered + 1"
-                        :total-questions="progress.total"
-                        :is-submitting="isSubmitting"
-                        :can-go-back="progress.answered > 0"
-                        :has-error="!!answerForm.errors.answer"
-                        :error-message="answerForm.errors.answer"
-                        :show-all="showAllQuestions"
-                        @submit="submitAnswer"
-                        @skip="skipQuestion"
-                        @go-back="goBackToPreviousQuestion"
-                        @clear="clearAnswer"
-                        @toggle-show-all="toggleShowAll"
-                    />
-
-                    <!-- All Questions View (for completed runs) -->
-                    <ClarifyingQuestions
-                        v-else-if="promptRun.workflowStage === 'completed'"
-                        :prompt-run="promptRun"
-                        :is-editing="isEditingAnswers"
-                        :edit-form="answersEditForm"
-                        @edit="startEditingAnswers"
-                        @cancel="cancelEditingAnswers"
-                        @submit="submitEditedAnswers"
-                    />
-                </div>
+                <ClarifyingQuestions
+                    v-show="activeTab === 'questions'"
+                    :prompt-run="promptRun"
+                    :current-question="currentQuestion"
+                    :progress="progress"
+                    :is-editing="isEditingAnswers"
+                    :edit-form="answersEditForm"
+                    :answer-form="answerForm"
+                    :is-submitting="isSubmitting"
+                    :show-all-questions="showAllQuestions"
+                    @edit="startEditingAnswers"
+                    @cancel="cancelEditingAnswers"
+                    @submit="submitEditedAnswers"
+                    @submit-answer="submitAnswer"
+                    @skip-question="skipQuestion"
+                    @go-back="goBackToPreviousQuestion"
+                    @clear-answer="clearAnswer"
+                    @toggle-show-all="toggleShowAll"
+                />
 
                 <!-- Related Runs Tab -->
                 <div v-show="activeTab === 'related'">
