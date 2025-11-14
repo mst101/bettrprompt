@@ -277,6 +277,26 @@ class ResourceTypeScriptInterfaceExtractor
             }
         }
 
+        // Special handling for foreign keys - check if related model uses UUIDs
+        if ($model !== null && Str::endsWith($attributeName, '_id') && $attributeName !== 'id') {
+            $relationshipName = Str::camel(Str::beforeLast($attributeName, '_id'));
+
+            if (method_exists($model, $relationshipName)) {
+                try {
+                    $relation = $model->$relationshipName();
+                    if (method_exists($relation, 'getRelated')) {
+                        $relatedModel = $relation->getRelated();
+                        $relatedUsesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($relatedModel));
+                        if ($relatedUsesUuids) {
+                            return 'string | null';
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Relationship method might fail, continue with default logic
+                }
+            }
+        }
+
         if (strpos($attributeValue, 'integer') !== false || strpos($attributeValue, '->id') !== false) {
             // If we detected model uses UUIDs above, this won't be reached for 'id' field
             // But for other fields ending in _id, still return number

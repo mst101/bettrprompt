@@ -488,22 +488,43 @@ class ResourceTemplate
 
             // Check if the attribute name suggests it's an ID
             if (in_array($name, $idFields) || Str::endsWith($name, '_id')) {
-                // Special case: check if this is the primary key and model uses UUIDs
-                if ($name === 'id' && class_exists($this->modelClass)) {
+                $baseType = 'number'; // Default
+
+                if (class_exists($this->modelClass)) {
                     try {
                         $model = new $this->modelClass;
-                        $usesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($model));
-                        if ($usesUuids) {
-                            $baseType = 'string';
-                        } else {
-                            $baseType = 'number';
+
+                        // Check if this is the primary key and model uses UUIDs
+                        if ($name === 'id') {
+                            $usesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($model));
+                            if ($usesUuids) {
+                                $baseType = 'string';
+                            }
+                        }
+                        // Check if this is a foreign key referencing a model with UUIDs
+                        elseif (Str::endsWith($name, '_id')) {
+                            // Try to find a relationship method for this foreign key
+                            // e.g., visitor_id -> visitor()
+                            $relationshipName = Str::camel(Str::beforeLast($name, '_id'));
+
+                            if (method_exists($model, $relationshipName)) {
+                                try {
+                                    $relation = $model->$relationshipName();
+                                    if (method_exists($relation, 'getRelated')) {
+                                        $relatedModel = $relation->getRelated();
+                                        $relatedUsesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($relatedModel));
+                                        if ($relatedUsesUuids) {
+                                            $baseType = 'string';
+                                        }
+                                    }
+                                } catch (\Exception $e) {
+                                    // Relationship method might fail, keep default
+                                }
+                            }
                         }
                     } catch (\Exception $e) {
-                        // If we can't instantiate the model, default to number
-                        $baseType = 'number';
+                        // If we can't instantiate the model, keep default
                     }
-                } else {
-                    $baseType = 'number';
                 }
             }
 

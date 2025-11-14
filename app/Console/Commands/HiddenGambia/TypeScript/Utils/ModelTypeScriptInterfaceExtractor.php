@@ -246,6 +246,24 @@ class ModelTypeScriptInterfaceExtractor
 
         // Check if this is a foreign key (ends with _id)
         if (Str::endsWith($attribute, '_id')) {
+            // Try to find the related model to check if it uses UUIDs
+            $relationshipName = Str::camel(Str::beforeLast($attribute, '_id'));
+
+            if (method_exists($model, $relationshipName)) {
+                try {
+                    $relation = $model->$relationshipName();
+                    if (method_exists($relation, 'getRelated')) {
+                        $relatedModel = $relation->getRelated();
+                        $relatedUsesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($relatedModel));
+                        if ($relatedUsesUuids) {
+                            return 'string | null';
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Relationship method might fail, continue with default
+                }
+            }
+
             return 'number | null';
         }
 

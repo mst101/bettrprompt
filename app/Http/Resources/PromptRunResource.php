@@ -10,13 +10,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
- * import type { N8nResponsePayload } from '@/types/n8n';
- *
  * interface PromptRun {
  *   readonly id: number;
  *   readonly userId: number | null;
+ *   readonly visitorId: string;
  *   readonly parentId: number | null;
- *   readonly personalityType: string;
+ *   readonly personalityType: string | null;
  *   readonly traitPercentages: Array<unknown> | null;
  *   readonly taskDescription: string;
  *   readonly selectedFramework: string | null;
@@ -25,8 +24,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
- *   readonly n8nRequestPayload: Record<string, unknown> | null;
- *   readonly n8nResponsePayload: N8nResponsePayload | null;
+ *   readonly n8nRequestPayload: Array<unknown> | null;
+ *   readonly n8nResponsePayload: string | null;
  *   readonly status: string;
  *   readonly workflowStage: string;
  *   readonly errorMessage: string | null;
@@ -36,8 +35,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  *   // Relationships
  *   readonly user?: UserResource | null;
+ *   readonly visitor?: VisitorResource | null;
  *   readonly parent?: PromptRunResource | null;
- *   readonly children?: PromptRunResource[];
+ *   readonly children?: readonly PromptRunResource[];
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -53,6 +53,7 @@ class PromptRunResource extends JsonResource
         return [
             'id' => $this->id,
             'userId' => $this->user_id,
+            'visitorId' => $this->visitor_id,
             'parentId' => $this->parent_id,
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
@@ -74,14 +75,17 @@ class PromptRunResource extends JsonResource
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {
-                return $this->user ? (new UserResource($this->user))->resolve() : null;
+                return $this->user ? new UserResource($this->user) : null;
+            }),
+            'visitor' => $this->whenLoaded('visitor', function () {
+                return $this->visitor ? new VisitorResource($this->visitor) : null;
             }),
             'parent' => $this->whenLoaded('parent', function () {
-                return $this->parent ? (new PromptRunResource($this->parent))->resolve() : null;
+                return $this->parent ? new PromptRunResource($this->parent) : null;
             }),
             'children' => $this->whenLoaded('children', function () {
-                return $this->children->map(fn ($child) => (new PromptRunResource($child))->resolve())->values()->all();
-            }),
+                return $this->children ? PromptRunResource::collection($this->children) : [];
+            }, []),
         ];
     }
 }
