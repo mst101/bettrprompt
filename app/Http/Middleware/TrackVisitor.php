@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackVisitor
@@ -72,19 +71,16 @@ class TrackVisitor
      */
     protected function createVisitor(Request $request): string
     {
-        $visitorId = (string) Str::uuid();
-
         Log::info('Creating visitor record', [
-            'visitor_id' => $visitorId,
             'url' => $request->fullUrl(),
         ]);
 
         try {
             // Create visitor in a separate transaction that commits immediately
             // This ensures the visitor persists even if the main request fails
-            DB::transaction(function () use ($visitorId, $request) {
-                Visitor::create([
-                    'id' => $visitorId,
+            $visitor = DB::transaction(function () use ($request) {
+                return Visitor::create([
+                    // Don't set 'id' - let HasUuids trait generate it
                     'utm_source' => $request->query('utm_source'),
                     'utm_medium' => $request->query('utm_medium'),
                     'utm_campaign' => $request->query('utm_campaign'),
@@ -99,16 +95,17 @@ class TrackVisitor
                     'visit_count' => 1,
                 ]);
             });
+
+            $visitorId = (string) $visitor->id;
             Log::info('Visitor record created successfully', ['visitor_id' => $visitorId]);
+
+            return $visitorId;
         } catch (\Exception $e) {
             Log::error('Failed to create visitor record', [
-                'visitor_id' => $visitorId,
                 'error' => $e->getMessage(),
             ]);
             throw $e;
         }
-
-        return $visitorId;
     }
 
     /**
