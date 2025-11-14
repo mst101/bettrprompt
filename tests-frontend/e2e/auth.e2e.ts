@@ -140,7 +140,7 @@ test.describe('Protected Routes', () => {
         expect(url).toContain('/prompt-optimizer');
 
         // Should see the prompt optimizer form
-        const taskInput = page.getByLabel(/what.*task.*help/i);
+        const taskInput = page.getByLabel(/task description/i);
         await expect(taskInput).toBeVisible();
     });
 });

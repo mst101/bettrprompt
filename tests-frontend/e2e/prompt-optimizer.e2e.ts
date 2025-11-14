@@ -12,7 +12,7 @@ test.describe('Prompt Optimizer - Unauthenticated', () => {
         expect(url).toContain('/prompt-optimizer');
 
         // Should see the task input form
-        const taskInput = page.getByLabel(/what.*task.*help/i);
+        const taskInput = page.getByLabel(/task description/i);
         await expect(taskInput).toBeVisible();
     });
 });
@@ -29,7 +29,7 @@ test.describe('Prompt Optimizer - Basic Flow', () => {
         expect(url).toContain('/prompt-optimizer');
 
         // Should see the task input form
-        const taskInput = page.getByLabel(/what.*task.*help/i);
+        const taskInput = page.getByLabel(/task description/i);
         await expect(taskInput).toBeVisible();
 
         // Should see submit button
