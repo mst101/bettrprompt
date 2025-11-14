@@ -52,7 +52,7 @@ const selectTab = (tabId: string) => {
             <FormSelect
                 id="tabs"
                 v-model="activeTab"
-                label="Navigate tabs"
+                label=""
                 :options="selectOptions"
                 :show-placeholder="false"
                 class="[&_label]:sr-only"

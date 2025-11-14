@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/ButtonHamburger.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
@@ -15,6 +14,7 @@ import ModalLogin from '@/Components/ModalLogin.vue';
 import ModalRegister from '@/Components/ModalRegister.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, provide, ref } from 'vue';
 
@@ -91,7 +91,7 @@ provide('openRegisterModal', openRegister);
                                     class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     @click="showingNavigationDropdown = false"
                                 >
-                                    <ApplicationLogo
+                                    <SvgLogo
                                         class="block h-10 w-auto fill-current text-indigo-600"
                                     />
                                     <span

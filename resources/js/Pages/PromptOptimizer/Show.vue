@@ -396,7 +396,7 @@ watch(
                             v-if="!isEditingTask"
                             :prompt-run="promptRun"
                             :show-edit-button="true"
-                            class="mb-6"
+                            class="mb-6 px-6"
                             @edit="startEditingTask"
                         />
 

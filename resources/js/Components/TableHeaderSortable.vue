@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SvgChevronDown from '@/Components/Svg/SvgChevronDown.vue';
-import SvgChevronUp from '@/Components/Svg/SvgChevronUp.vue';
+import SvgChevronDown from '@/Icons/SvgChevronDown.vue';
+import SvgChevronUp from '@/Icons/SvgChevronUp.vue';
 
 interface Props {
     /** The column identifier to sort by */
