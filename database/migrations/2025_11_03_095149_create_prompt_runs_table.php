@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('prompt_runs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->uuid('visitor_id')->nullable()->index();
+            $table->foreign('visitor_id')->references('id')->on('visitors')->onDelete('set null');
             $table->foreignId('parent_id')->nullable()->constrained('prompt_runs')->onDelete('cascade');
             $table->string('personality_type', 6)->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
             $table->json('trait_percentages')->nullable(); // Store trait percentages

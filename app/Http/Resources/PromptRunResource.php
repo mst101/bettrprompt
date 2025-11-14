@@ -10,6 +10,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
+ * import type { N8nResponsePayload } from '@/types/n8n';
+ *
  * interface PromptRun {
  *   readonly id: number;
  *   readonly userId: number | null;
@@ -24,8 +26,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
- *   readonly n8nRequestPayload: Array<unknown> | null;
- *   readonly n8nResponsePayload: string | null;
+ *   readonly n8nRequestPayload: Record<string, unknown> | null;
+ *   readonly n8nResponsePayload: N8nResponsePayload | null;
  *   readonly status: string;
  *   readonly workflowStage: string;
  *   readonly errorMessage: string | null;
@@ -81,11 +83,11 @@ class PromptRunResource extends JsonResource
                 return $this->visitor ? new VisitorResource($this->visitor) : null;
             }),
             'parent' => $this->whenLoaded('parent', function () {
-                return $this->parent ? new PromptRunResource($this->parent) : null;
+                return $this->parent ? (new PromptRunResource($this->parent))->resolve() : null;
             }),
             'children' => $this->whenLoaded('children', function () {
-                return $this->children ? PromptRunResource::collection($this->children) : [];
-            }, []),
+                return $this->children->map(fn ($child) => (new PromptRunResource($child))->resolve())->values()->all();
+            }),
         ];
     }
 }
