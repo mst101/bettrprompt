@@ -48,6 +48,14 @@ class RegisteredUserController extends Controller
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             if ($visitor && ! $visitor->user_id) {
+                // Copy personality data from visitor to user
+                if ($visitor->personality_type) {
+                    $user->update([
+                        'personality_type' => $visitor->personality_type,
+                        'trait_percentages' => $visitor->trait_percentages,
+                    ]);
+                }
+
                 // Update visitor record
                 $visitor->update([
                     'user_id' => $user->id,
@@ -59,10 +67,11 @@ class RegisteredUserController extends Controller
                     ->whereNull('user_id')
                     ->update(['user_id' => $user->id]);
 
-                Log::info('Guest prompt runs claimed on registration', [
+                Log::info('Guest converted to user on registration', [
                     'user_id' => $user->id,
                     'visitor_id' => $visitorId,
-                    'claimed_count' => $claimedCount,
+                    'claimed_prompt_runs' => $claimedCount,
+                    'copied_personality' => (bool) $visitor->personality_type,
                 ]);
             }
         }
