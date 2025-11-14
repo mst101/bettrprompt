@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed } from 'vue';
 
 export interface Tab {
     id: string;
@@ -28,71 +28,39 @@ const activeTab = computed({
 const selectTab = (tabId: string) => {
     activeTab.value = tabId;
 };
-
-// Scroll shadow indicators
-const navRef = ref<HTMLElement | null>(null);
-const showLeftShadow = ref(false);
-const showRightShadow = ref(false);
-
-const updateScrollShadows = () => {
-    if (!navRef.value) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = navRef.value;
-
-    // Show left shadow if scrolled right
-    showLeftShadow.value = scrollLeft > 0;
-
-    // Show right shadow if not scrolled to the end
-    showRightShadow.value = scrollLeft < scrollWidth - clientWidth - 1;
-};
-
-onMounted(() => {
-    if (navRef.value) {
-        navRef.value.addEventListener('scroll', updateScrollShadows);
-        // Initial check
-        updateScrollShadows();
-
-        // Check again after a short delay (in case of dynamic content)
-        setTimeout(updateScrollShadows, 100);
-    }
-
-    // Also update on window resize
-    window.addEventListener('resize', updateScrollShadows);
-});
-
-onUnmounted(() => {
-    if (navRef.value) {
-        navRef.value.removeEventListener('scroll', updateScrollShadows);
-    }
-    window.removeEventListener('resize', updateScrollShadows);
-});
 </script>
 
 <template>
-    <div class="relative border-b border-gray-200">
-        <!-- Left shadow indicator -->
-        <div
-            class="pointer-events-none absolute top-0 left-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent opacity-0 transition-opacity"
-            :class="{ 'opacity-100': showLeftShadow }"
-            aria-hidden="true"
-        ></div>
+    <div class="border-b border-gray-200">
+        <!-- Mobile: Dropdown -->
+        <div class="sm:hidden">
+            <label for="tabs" class="sr-only">Select a tab</label>
+            <select
+                id="tabs"
+                name="tabs"
+                :value="activeTab"
+                class="block w-full rounded-md border-gray-300 py-2 pr-10 pl-3 text-base focus:border-indigo-500 focus:ring-indigo-500 focus:outline-hidden sm:text-sm"
+                @change="selectTab(($event.target as HTMLSelectElement).value)"
+            >
+                <option v-for="tab in tabs" :key="tab.id" :value="tab.id">
+                    {{ tab.label }}
+                    <span v-if="tab.badge"> ({{ tab.badge }})</span>
+                </option>
+            </select>
+        </div>
 
-        <!-- Scrollable tabs container -->
-        <nav
-            ref="navRef"
-            class="scrollbar-hide -mb-px flex snap-x snap-mandatory space-x-8 overflow-x-auto scroll-smooth p-1"
-            aria-label="Tabs"
-        >
+        <!-- Desktop: Horizontal Tabs (sm: and above) -->
+        <nav class="-mb-px hidden flex-wrap gap-x-8 sm:flex" aria-label="Tabs">
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
                 :tabindex="activeTab === tab.id ? -1 : 0"
                 :class="[
                     activeTab === tab.id
-                        ? 'border-indigo-500 text-indigo-600 hover:text-indigo-600 focus:text-indigo-600'
-                        : 'border-transparent text-gray-500 group-hover:text-gray-700 hover:border-gray-300',
-                    'group inline-flex shrink-0 snap-start items-center border-b-2 px-1 py-3 text-sm font-medium transition-colors',
-                    'hover:text-gray-700 focus:rounded-t-md focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden',
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                    'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
+                    'focus:rounded-t-md focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden',
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"
                 @click="selectTab(tab.id)"
@@ -100,7 +68,12 @@ onUnmounted(() => {
                 <DynamicIcon
                     v-if="tab.icon"
                     :name="tab.icon"
-                    class="mr-2 -ml-0.5 h-5 w-5 transition-colors"
+                    :class="[
+                        activeTab === tab.id
+                            ? 'text-indigo-500'
+                            : 'text-gray-400 group-hover:text-gray-500',
+                        'mr-2 -ml-0.5 h-5 w-5',
+                    ]"
                     aria-hidden="true"
                 />
                 <span>{{ tab.label }}</span>
@@ -117,12 +90,5 @@ onUnmounted(() => {
                 </span>
             </button>
         </nav>
-
-        <!-- Right shadow indicator -->
-        <div
-            class="pointer-events-none absolute top-0 right-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent opacity-0 transition-opacity"
-            :class="{ 'opacity-100': showRightShadow }"
-            aria-hidden="true"
-        ></div>
     </div>
 </template>
