@@ -14,7 +14,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
@@ -59,40 +59,6 @@ const errorResponse = computed((): N8nErrorResponse | null => {
     }
     return null;
 });
-
-// Edit mode state for task description
-const isEditingTask = ref(false);
-
-const startEditingTask = () => {
-    isEditingTask.value = true;
-};
-
-const cancelEditingTask = () => {
-    isEditingTask.value = false;
-};
-
-// Reset edit mode when navigating to different prompt run
-watch(
-    () => props.promptRun.id,
-    () => {
-        isEditingTask.value = false;
-    },
-);
-
-// Save edited optimised prompt
-const saveOptimizedPrompt = (editedPrompt: string) => {
-    router.patch(
-        route('prompt-optimizer.update-prompt', {
-            promptRun: props.promptRun.id,
-        }),
-        {
-            optimized_prompt: editedPrompt,
-        },
-        {
-            preserveScroll: true,
-        },
-    );
-};
 
 // Real-time updates composable
 useRealtimeUpdates(
@@ -254,7 +220,6 @@ watch(
                     v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
                     :optimized-prompt="promptRun.optimizedPrompt"
                     :prompt-run-id="promptRun.id"
-                    @save="saveOptimizedPrompt"
                 />
 
                 <TaskInformation
@@ -262,10 +227,7 @@ watch(
                     :prompt-run="promptRun"
                     :show-edit-button="true"
                     :has-related-runs="hasRelatedRuns"
-                    :is-editing="isEditingTask"
                     class="mb-6 px-6"
-                    @edit="startEditingTask"
-                    @cancel="cancelEditingTask"
                 />
 
                 <FrameworkSelection
@@ -286,15 +248,6 @@ watch(
                     :current-question="currentQuestion"
                     :progress="progress"
                 />
-
-                <!-- Related Runs Tab -->
-                <div v-show="activeTab === 'related'">
-                    <RelatedPromptRuns
-                        v-if="hasRelatedRuns"
-                        :parent="promptRun.parent"
-                        :children="promptRun.children"
-                    />
-                </div>
             </div>
         </div>
 
@@ -314,10 +267,7 @@ watch(
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
                 :has-related-runs="hasRelatedRuns"
-                :is-editing="isEditingTask"
                 class="mb-6"
-                @edit="startEditingTask"
-                @cancel="cancelEditingTask"
             />
 
             <!-- Framework Selection Info -->

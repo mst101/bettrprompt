@@ -4,24 +4,36 @@ import DynamicIcon from '@/Components/DynamicIcon.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import type { PromptRunResource } from '@/types';
+import { ref, watch } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
     showEditButton?: boolean;
     hasRelatedRuns?: boolean;
-    isEditing?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     showEditButton: false,
     hasRelatedRuns: false,
-    isEditing: false,
 });
 
-const emit = defineEmits<{
-    (e: 'edit'): void;
-    (e: 'cancel'): void;
-}>();
+const isEditing = ref(false);
+
+const startEditing = () => {
+    isEditing.value = true;
+};
+
+const cancelEditing = () => {
+    isEditing.value = false;
+};
+
+// Reset edit mode when navigating to different prompt run
+watch(
+    () => props.promptRun.id,
+    () => {
+        isEditing.value = false;
+    },
+);
 </script>
 
 <template>
@@ -33,7 +45,7 @@ const emit = defineEmits<{
                     v-if="showEditButton"
                     type="button"
                     class="inline-flex items-center gap-1"
-                    @click="emit('edit')"
+                    @click="startEditing"
                 >
                     <DynamicIcon name="edit" class="h-4 w-4" />
                     Edit Task
@@ -60,7 +72,7 @@ const emit = defineEmits<{
                 <EditTaskForm
                     :prompt-run-id="promptRun.id"
                     :initial-task-description="promptRun.taskDescription"
-                    @cancel="emit('cancel')"
+                    @cancel="cancelEditing"
                 />
             </div>
         </div>

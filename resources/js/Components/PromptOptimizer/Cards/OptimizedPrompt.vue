@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
+import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 interface Props {
@@ -12,10 +13,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const emit = defineEmits<{
-    (e: 'save', editedPrompt: string): void;
-}>();
 
 const copied = ref(false);
 const isEditing = ref(false);
@@ -44,8 +41,20 @@ const cancelEditing = () => {
 };
 
 const saveEdits = () => {
-    emit('save', editedPrompt.value);
-    isEditing.value = false;
+    router.patch(
+        route('prompt-optimizer.update-prompt', {
+            promptRun: props.promptRunId,
+        }),
+        {
+            optimized_prompt: editedPrompt.value,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditing.value = false;
+            },
+        },
+    );
 };
 </script>
 
