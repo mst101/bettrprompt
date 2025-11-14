@@ -39,6 +39,51 @@ Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallba
 Route::get('/dashboard', [\App\Http\Controllers\PromptOptimizerController::class, 'index'])
     ->name('dashboard');
 
+// Prompt Optimizer routes (no authentication required)
+Route::get('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'index'])
+    ->name('prompt-optimizer.index');
+Route::post('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'store'])
+    ->name('prompt-optimizer.store');
+Route::patch('/visitor/personality', [\App\Http\Controllers\PromptOptimizerController::class, 'updateVisitorPersonality'])
+    ->name('visitor.personality.update');
+Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
+    ->name('prompt-optimizer.show');
+Route::post('/prompt-optimizer/{promptRun}/answer',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
+    ->name('prompt-optimizer.answer');
+Route::post('/prompt-optimizer/{promptRun}/skip',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
+    ->name('prompt-optimizer.skip');
+Route::post('/prompt-optimizer/{promptRun}/go-back',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'goBackToPreviousQuestion'])
+    ->name('prompt-optimizer.go-back');
+Route::post('/prompt-optimizer/{promptRun}/retry',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
+    ->name('prompt-optimizer.retry');
+Route::post('/prompt-optimizer/{parentPromptRun}/create-child',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'createChild'])
+    ->name('prompt-optimizer.create-child');
+Route::post('/prompt-optimizer/{parentPromptRun}/create-child-from-answers',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'createChildFromAnswers'])
+    ->name('prompt-optimizer.create-child-from-answers');
+Route::patch('/prompt-optimizer/{promptRun}/update-prompt',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'updateOptimizedPrompt'])
+    ->name('prompt-optimizer.update-prompt');
+
+// Feedback routes (no authentication required)
+Route::get('/feedback/create', [FeedbackController::class, 'create'])
+    ->name('feedback.create');
+Route::get('/feedback', [FeedbackController::class, 'show'])
+    ->name('feedback.show');
+Route::post('/feedback', [FeedbackController::class, 'store'])
+    ->name('feedback.store');
+Route::put('/feedback', [FeedbackController::class, 'update'])
+    ->name('feedback.update');
+
+// Voice transcription endpoint (no authentication required)
+Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
+    ->middleware('throttle:30,1');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -46,50 +91,9 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Prompt Optimizer routes
-    Route::get('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'index'])
-        ->name('prompt-optimizer.index');
-    Route::post('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'store'])
-        ->name('prompt-optimizer.store');
-    Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
-        ->name('prompt-optimizer.show');
-    Route::post('/prompt-optimizer/{promptRun}/answer',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
-        ->name('prompt-optimizer.answer');
-    Route::post('/prompt-optimizer/{promptRun}/skip',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
-        ->name('prompt-optimizer.skip');
-    Route::post('/prompt-optimizer/{promptRun}/go-back',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'goBackToPreviousQuestion'])
-        ->name('prompt-optimizer.go-back');
-    Route::post('/prompt-optimizer/{promptRun}/retry',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
-        ->name('prompt-optimizer.retry');
-    Route::post('/prompt-optimizer/{parentPromptRun}/create-child',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'createChild'])
-        ->name('prompt-optimizer.create-child');
-    Route::post('/prompt-optimizer/{parentPromptRun}/create-child-from-answers',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'createChildFromAnswers'])
-        ->name('prompt-optimizer.create-child-from-answers');
-    Route::patch('/prompt-optimizer/{promptRun}/update-prompt',
-        [\App\Http\Controllers\PromptOptimizerController::class, 'updateOptimizedPrompt'])
-        ->name('prompt-optimizer.update-prompt');
+    // Prompt Optimizer history (requires authentication)
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
-
-    // Feedback routes
-    Route::get('/feedback/create', [FeedbackController::class, 'create'])
-        ->name('feedback.create');
-    Route::get('/feedback', [FeedbackController::class, 'show'])
-        ->name('feedback.show');
-    Route::post('/feedback', [FeedbackController::class, 'store'])
-        ->name('feedback.store');
-    Route::put('/feedback', [FeedbackController::class, 'update'])
-        ->name('feedback.update');
-
-    // Voice transcription endpoint (requires session authentication)
-    Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
-        ->middleware('throttle:30,1');
 });
 
 require __DIR__.'/auth.php';

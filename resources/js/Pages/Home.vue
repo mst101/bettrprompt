@@ -1,32 +1,11 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import FeatureCard from '@/Components/FeatureCard.vue';
 import StepCard from '@/Components/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { inject, onMounted } from 'vue';
-
-const props = defineProps<{
-    isReturningVisitor: boolean;
-    modal?: 'login' | 'register';
-}>();
 
 defineOptions({
     layout: AppLayout,
-});
-
-// Access the modal controls from AppLayout
-const openLoginModal = inject<() => void>('openLoginModal');
-const openRegisterModal = inject<() => void>('openRegisterModal');
-
-// Open modal based on query parameter
-onMounted(() => {
-    if (props.modal === 'login' && openLoginModal) {
-        openLoginModal();
-    } else if (props.modal === 'register' && openRegisterModal) {
-        openRegisterModal();
-    }
 });
 </script>
 
@@ -61,32 +40,23 @@ onMounted(() => {
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="mt-10 flex justify-center gap-4">
+                <div class="mt-10 flex flex-col items-center gap-4">
                     <Link
-                        v-if="$page.props.auth?.user"
                         :href="route('prompt-optimizer.index')"
                         class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs transition hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                     >
-                        Try It Now
+                        {{
+                            $page.props.auth?.user
+                                ? 'Try It Now'
+                                : 'Get Started for Free'
+                        }}
                     </Link>
-                    <template v-else>
-                        <!-- Returning visitor -->
-                        <ButtonSecondary
-                            v-if="isReturningVisitor"
-                            size="lg"
-                            @click="openLoginModal?.()"
-                        >
-                            Welcome back! Log in to continue
-                        </ButtonSecondary>
-                        <!-- New visitor -->
-                        <ButtonPrimary
-                            v-else
-                            size="lg"
-                            @click="openRegisterModal?.()"
-                        >
-                            Get Started for Free
-                        </ButtonPrimary>
-                    </template>
+                    <p
+                        v-if="!$page.props.auth?.user"
+                        class="text-sm text-gray-500"
+                    >
+                        No account required
+                    </p>
                 </div>
             </div>
 

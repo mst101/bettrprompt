@@ -34,6 +34,10 @@ return new class extends Migration
             $table->integer('visit_count')->default(1);
             $table->timestamp('converted_at')->nullable(); // When user_id was set
 
+            // Personality data (before conversion to user)
+            $table->string('personality_type', 6)->nullable();
+            $table->json('trait_percentages')->nullable();
+
             $table->timestamps();
 
             // Indexes for performance

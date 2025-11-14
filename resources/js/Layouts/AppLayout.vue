@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/ButtonHamburger.vue';
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -187,10 +186,6 @@ provide('openRegisterModal', openRegister);
                                 <ButtonSecondary @click="openLogin">
                                     Log in
                                 </ButtonSecondary>
-
-                                <ButtonPrimary @click="openRegister">
-                                    Get Started
-                                </ButtonPrimary>
                             </nav>
                         </div>
 
@@ -316,15 +311,6 @@ provide('openRegisterModal', openRegister);
                                         "
                                     >
                                         Log in
-                                    </button>
-                                    <button
-                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
-                                        @click="
-                                            openRegister();
-                                            showingNavigationDropdown = false;
-                                        "
-                                    >
-                                        Get Started
                                     </button>
                                 </div>
                             </template>

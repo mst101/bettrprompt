@@ -31,6 +31,8 @@ class Visitor extends Model
         'last_visit_at',
         'visit_count',
         'converted_at',
+        'personality_type',
+        'trait_percentages',
     ];
 
     /**
@@ -45,6 +47,7 @@ class Visitor extends Model
             'last_visit_at' => 'datetime',
             'converted_at' => 'datetime',
             'visit_count' => 'integer',
+            'trait_percentages' => 'array',
         ];
     }
 

@@ -21,11 +21,77 @@ class PromptOptimizerController extends Controller
     ) {}
 
     /**
+     * Get the current visitor ID from cookie
+     */
+    protected function getVisitorId(Request $request): ?string
+    {
+        return $request->cookie('visitor_id');
+    }
+
+    /**
+     * Get personality data for current user or visitor
+     */
+    protected function getPersonalityData(Request $request): array
+    {
+        // Authenticated users take priority
+        if (auth()->check()) {
+            $user = auth()->user();
+
+            return [
+                'personality_type' => $user->personality_type,
+                'trait_percentages' => $user->trait_percentages,
+            ];
+        }
+
+        // Fall back to visitor personality
+        $visitorId = $this->getVisitorId($request);
+        if ($visitorId) {
+            $visitor = \App\Models\Visitor::find($visitorId);
+            if ($visitor) {
+                return [
+                    'personality_type' => $visitor->personality_type,
+                    'trait_percentages' => $visitor->trait_percentages,
+                ];
+            }
+        }
+
+        return [
+            'personality_type' => null,
+            'trait_percentages' => null,
+        ];
+    }
+
+    /**
+     * Authorise that the current user/visitor can access this prompt run
+     */
+    protected function authorizePromptRun(PromptRun $promptRun, Request $request): void
+    {
+        // Check if authenticated user owns this prompt run
+        if (auth()->check() && $promptRun->user_id === auth()->id()) {
+            return;
+        }
+
+        // Check if visitor owns this prompt run
+        $visitorId = $this->getVisitorId($request);
+        if ($visitorId && $promptRun->visitor_id === $visitorId) {
+            return;
+        }
+
+        // No match - unauthorised
+        abort(403);
+    }
+
+    /**
      * Display the prompt optimizer form
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('PromptOptimizer/Index');
+        $personalityData = $this->getPersonalityData($request);
+
+        return Inertia::render('PromptOptimizer/Index', [
+            'visitorPersonalityType' => $personalityData['personality_type'],
+            'visitorTraitPercentages' => $personalityData['trait_percentages'],
+        ]);
     }
 
     /**
@@ -34,17 +100,18 @@ class PromptOptimizerController extends Controller
     public function store(StorePromptRunRequest $request)
     {
         $validated = $request->validated();
-        $user = auth()->user();
-        $visitorId = $request->cookie('visitor_id');
+        $userId = auth()->id();
+        $visitorId = $this->getVisitorId($request);
+        $personalityData = $this->getPersonalityData($request);
 
         try {
-            // Create the prompt run record using personality from user profile (if available)
-            $promptRun = DatabaseService::retryOnDeadlock(function () use ($user, $visitorId, $validated) {
+            // Create the prompt run record using personality from user or visitor
+            $promptRun = DatabaseService::retryOnDeadlock(function () use ($userId, $visitorId, $validated, $personalityData) {
                 return PromptRun::create([
-                    'user_id' => $user->id,
+                    'user_id' => $userId,
                     'visitor_id' => $visitorId,
-                    'personality_type' => $user->personality_type ?? null,
-                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'personality_type' => $personalityData['personality_type'],
+                    'trait_percentages' => $personalityData['trait_percentages'],
                     'task_description' => $validated['task_description'],
                     'status' => 'processing',
                     'workflow_stage' => 'submitted',
@@ -58,9 +125,9 @@ class PromptOptimizerController extends Controller
                 'task_description' => $validated['task_description'],
             ];
 
-            if ($user->personality_type) {
-                $payload['personality_type'] = $user->personality_type;
-                $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            if ($personalityData['personality_type']) {
+                $payload['personality_type'] = $personalityData['personality_type'];
+                $payload['trait_percentages'] = $personalityData['trait_percentages'];
             }
 
             // Store the request payload
@@ -148,7 +215,8 @@ class PromptOptimizerController extends Controller
             }
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Database error in prompt run creation', [
-                'user_id' => $user->id,
+                'user_id' => $userId,
+                'visitor_id' => $visitorId,
                 'task_description' => $validated['task_description'],
                 'error' => $e->getMessage(),
             ]);
@@ -176,7 +244,8 @@ class PromptOptimizerController extends Controller
 
         } catch (\Throwable $e) {
             Log::error('Unexpected error in prompt run creation', [
-                'user_id' => $user->id,
+                'user_id' => $userId,
+                'visitor_id' => $visitorId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -207,12 +276,10 @@ class PromptOptimizerController extends Controller
     /**
      * Display the optimised prompt result
      */
-    public function show(PromptRun $promptRun)
+    public function show(PromptRun $promptRun, Request $request)
     {
-        // Authorise that the user can view this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can view this prompt run
+        $this->authorizePromptRun($promptRun, $request);
 
         // Load parent and children relationships
         $promptRun->load(['parent', 'children']);
@@ -233,6 +300,9 @@ class PromptOptimizerController extends Controller
      */
     public function answerQuestion(AnswerQuestionRequest $request, PromptRun $promptRun)
     {
+        // Authorise that the user/visitor can update this prompt run
+        $this->authorizePromptRun($promptRun, $request);
+
         // Validate that we're in the correct workflow stage
         if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
             return back()->with('error', 'Cannot answer questions at this stage.');
@@ -335,12 +405,10 @@ class PromptOptimizerController extends Controller
     /**
      * Skip a clarifying question
      */
-    public function skipQuestion(PromptRun $promptRun)
+    public function skipQuestion(PromptRun $promptRun, Request $request)
     {
-        // Authorise that the user can update this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can update this prompt run
+        $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
         if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
@@ -422,12 +490,10 @@ class PromptOptimizerController extends Controller
     /**
      * Go back to the previous question (keeps the last answer to allow editing)
      */
-    public function goBackToPreviousQuestion(PromptRun $promptRun)
+    public function goBackToPreviousQuestion(PromptRun $promptRun, Request $request)
     {
-        // Authorise that the user can update this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can update this prompt run
+        $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
         if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
@@ -651,12 +717,10 @@ class PromptOptimizerController extends Controller
     /**
      * Retry a failed prompt run
      */
-    public function retry(PromptRun $promptRun)
+    public function retry(PromptRun $promptRun, Request $request)
     {
-        // Authorise that the user can retry this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can retry this prompt run
+        $this->authorizePromptRun($promptRun, $request);
 
         // Only allow retry for failed runs
         if ($promptRun->status !== 'failed') {
@@ -841,7 +905,19 @@ class PromptOptimizerController extends Controller
             $sortDirection = 'desc';
         }
 
-        $promptRuns = PromptRun::where('user_id', auth()->id())
+        // Get prompt runs for current user, including those created as visitor
+        $user = auth()->user();
+
+        // Find visitor record linked to this user (if they converted from visitor)
+        $visitor = \App\Models\Visitor::where('user_id', $user->id)->first();
+
+        $promptRuns = PromptRun::where(function ($query) use ($user, $visitor) {
+            $query->where('user_id', $user->id);
+            if ($visitor) {
+                // Include prompts created when they were a visitor
+                $query->orWhere('visitor_id', $visitor->id);
+            }
+        })
             ->orderBy($sortBy, $sortDirection)
             ->paginate($perPage)
             ->withQueryString();
@@ -861,10 +937,8 @@ class PromptOptimizerController extends Controller
      */
     public function createChild(Request $request, PromptRun $parentPromptRun)
     {
-        // Authorise that the user can create a child of this prompt run
-        if ($parentPromptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can create a child of this prompt run
+        $this->authorizePromptRun($parentPromptRun, $request);
 
         $validated = $request->validate([
             'task_description' => 'required|string|max:5000',
@@ -963,10 +1037,8 @@ class PromptOptimizerController extends Controller
      */
     public function createChildFromAnswers(CreateChildPromptRunRequest $request, PromptRun $parentPromptRun)
     {
-        // Authorise that the user can create a child of this prompt run
-        if ($parentPromptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can create a child of this prompt run
+        $this->authorizePromptRun($parentPromptRun, $request);
 
         // Validate that parent has framework questions
         if (! $parentPromptRun->framework_questions || empty($parentPromptRun->framework_questions)) {
@@ -1092,10 +1164,8 @@ class PromptOptimizerController extends Controller
      */
     public function updateOptimizedPrompt(UpdateOptimizedPromptRequest $request, PromptRun $promptRun)
     {
-        // Authorise that the user can update this prompt run
-        if ($promptRun->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Authorise that the user/visitor can update this prompt run
+        $this->authorizePromptRun($promptRun, $request);
 
         // Validate that the prompt run is completed
         if ($promptRun->workflow_stage !== 'completed') {
@@ -1123,6 +1193,45 @@ class PromptOptimizerController extends Controller
             ]);
 
             return back()->with('error', 'Failed to update prompt. Please try again.');
+        }
+    }
+
+    /**
+     * Update visitor personality type (for guests)
+     */
+    public function updateVisitorPersonality(Request $request)
+    {
+        $validated = $request->validate([
+            'personality_type' => 'required|string|size:6',
+            'trait_percentages' => 'nullable|array',
+        ]);
+
+        $visitorId = $this->getVisitorId($request);
+
+        if (! $visitorId) {
+            return back()->with('error', 'No visitor session found.');
+        }
+
+        $visitor = \App\Models\Visitor::find($visitorId);
+
+        if (! $visitor) {
+            return back()->with('error', 'Visitor record not found.');
+        }
+
+        try {
+            $visitor->update([
+                'personality_type' => $validated['personality_type'],
+                'trait_percentages' => $validated['trait_percentages'] ?? null,
+            ]);
+
+            return back()->with('success', 'Personality type saved!');
+        } catch (\Exception $e) {
+            Log::error('Failed to update visitor personality', [
+                'visitor_id' => $visitorId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to save personality type. Please try again.');
         }
     }
 }
