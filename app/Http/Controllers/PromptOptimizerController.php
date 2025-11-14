@@ -323,10 +323,16 @@ class PromptOptimizerController extends Controller
             // Add the current answer
             $answers[] = $validated['answer'];
 
-            // Don't automatically restore future answers - user should re-answer questions
-            // sequentially after going back. This provides a more intuitive flow.
-            // Future answers remain in session in case we want to implement
-            // "restore previous answers" functionality in the future.
+            // Restore the immediate next answer if it exists in session
+            // This allows users to go back, edit a previous answer, and continue
+            // without losing their subsequent answers
+            $nextQuestionIndex = $currentQuestionIndex + 1;
+            if (isset($futureAnswers[$nextQuestionIndex])) {
+                $answers[$nextQuestionIndex] = $futureAnswers[$nextQuestionIndex];
+                // Remove it from future answers since we've restored it
+                unset($futureAnswers[$nextQuestionIndex]);
+                session()->put($sessionKey, $futureAnswers);
+            }
 
             // Log the answer submission
             Log::info('Submitting Answer', [
@@ -411,8 +417,16 @@ class PromptOptimizerController extends Controller
             // Add null for skipped question
             $answers[] = null;
 
-            // Don't automatically restore future answers - user should re-answer questions
-            // sequentially after going back. This provides a more intuitive flow.
+            // Restore the immediate next answer if it exists in session
+            // This allows users to go back, edit/skip a previous answer, and continue
+            // without losing their subsequent answers
+            $nextQuestionIndex = $currentQuestionIndex + 1;
+            if (isset($futureAnswers[$nextQuestionIndex])) {
+                $answers[$nextQuestionIndex] = $futureAnswers[$nextQuestionIndex];
+                // Remove it from future answers since we've restored it
+                unset($futureAnswers[$nextQuestionIndex]);
+                session()->put($sessionKey, $futureAnswers);
+            }
 
             Log::info('Skipping question', [
                 'prompt_run_id' => $promptRun->id,
