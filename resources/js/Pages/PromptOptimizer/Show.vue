@@ -386,7 +386,6 @@ watch(
                     @save="saveOptimizedPrompt"
                 />
 
-                <!-- Your Task Tab -->
                 <TaskInformation
                     v-show="activeTab === 'task'"
                     :prompt-run="promptRun"
@@ -398,18 +397,16 @@ watch(
                     @cancel="cancelEditingTask"
                 />
 
-                <!-- Framework Tab -->
-                <div v-show="activeTab === 'framework'">
-                    <FrameworkSelection
-                        v-if="
-                            promptRun.selectedFramework &&
-                            promptRun.frameworkReasoning
-                        "
-                        :framework="promptRun.selectedFramework"
-                        :reasoning="promptRun.frameworkReasoning"
-                        :personality-approach="promptRun.personalityApproach"
-                    />
-                </div>
+                <FrameworkSelection
+                    v-if="
+                        activeTab === 'framework' &&
+                        promptRun.selectedFramework &&
+                        promptRun.frameworkReasoning
+                    "
+                    :framework="promptRun.selectedFramework"
+                    :reasoning="promptRun.frameworkReasoning"
+                    :personality-approach="promptRun.personalityApproach"
+                />
 
                 <!-- Questions Tab -->
                 <div v-show="activeTab === 'questions'">
