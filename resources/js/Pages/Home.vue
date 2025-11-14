@@ -51,12 +51,6 @@ defineOptions({
                                 : 'Get Started for Free'
                         }}
                     </Link>
-                    <p
-                        v-if="!$page.props.auth?.user"
-                        class="text-sm text-gray-500"
-                    >
-                        No account required
-                    </p>
                 </div>
             </div>
 

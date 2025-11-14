@@ -38,7 +38,7 @@ class TrackVisitor
                 false,
                 'lax' // sameSite
             );
-            $response->withCookie($cookie);
+            $response = $response->withCookie($cookie);
         }
 
         return $response;
