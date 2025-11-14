@@ -488,7 +488,23 @@ class ResourceTemplate
 
             // Check if the attribute name suggests it's an ID
             if (in_array($name, $idFields) || Str::endsWith($name, '_id')) {
-                $baseType = 'number';
+                // Special case: check if this is the primary key and model uses UUIDs
+                if ($name === 'id' && class_exists($this->modelClass)) {
+                    try {
+                        $model = new $this->modelClass;
+                        $usesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($model));
+                        if ($usesUuids) {
+                            $baseType = 'string';
+                        } else {
+                            $baseType = 'number';
+                        }
+                    } catch (\Exception $e) {
+                        // If we can't instantiate the model, default to number
+                        $baseType = 'number';
+                    }
+                } else {
+                    $baseType = 'number';
+                }
             }
 
             // Check if the attribute name suggests it's a boolean

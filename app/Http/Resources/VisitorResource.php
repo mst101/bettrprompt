@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * TypeScript interface:
  * ```typescript
  * interface Visitor {
- *   readonly id: number;
+ *   readonly id: string;
  *   readonly userId: number | null;
  *   readonly utmSource: string | null;
  *   readonly utmMedium: string | null;

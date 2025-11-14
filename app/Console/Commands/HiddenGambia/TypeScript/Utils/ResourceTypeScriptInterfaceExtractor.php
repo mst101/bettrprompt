@@ -128,7 +128,7 @@ class ResourceTypeScriptInterfaceExtractor
         }
 
         if ($transformMethod) {
-            $properties = $this->extractPropertiesFromMethod($transformMethod);
+            $properties = $this->extractPropertiesFromMethod($transformMethod, $resourceClass);
         }
 
         return $properties;
@@ -173,11 +173,28 @@ class ResourceTypeScriptInterfaceExtractor
      * Extract properties from a transform method.
      *
      * @param  \ReflectionMethod  $method  The transform method
+     * @param  string  $resourceClass  Fully qualified class name of the resource
      * @return array Properties with their types
      */
-    private function extractPropertiesFromMethod(\ReflectionMethod $method): array
+    private function extractPropertiesFromMethod(\ReflectionMethod $method, string $resourceClass): array
     {
         $properties = [];
+
+        // Try to get the underlying model from the resource
+        $model = null;
+        try {
+            $resourceReflection = new \ReflectionClass($resourceClass);
+            $docComment = $resourceReflection->getDocComment();
+            if ($docComment && preg_match('/@see\s+\\\\App\\\\Models\\\\(\w+)/', $docComment, $matches)) {
+                $modelName = $matches[1];
+                $modelClass = "\\App\\Models\\{$modelName}";
+                if (class_exists($modelClass)) {
+                    $model = new $modelClass;
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore errors, model is optional
+        }
 
         // Get the method's source code
         $filename = $method->getFileName();
@@ -192,7 +209,7 @@ class ResourceTypeScriptInterfaceExtractor
             foreach ($attrMatches as $match) {
                 $attributeName = $match[1];
                 $attributeValue = $match[2];
-                $properties[$attributeName] = $this->inferTypeFromAttribute($attributeValue);
+                $properties[$attributeName] = $this->inferTypeFromAttribute($attributeValue, $attributeName, $model);
             }
         }
 
@@ -246,11 +263,23 @@ class ResourceTypeScriptInterfaceExtractor
      * Infer TypeScript type from PHP attribute.
      *
      * @param  string  $attributeValue  PHP attribute value
+     * @param  string  $attributeName  The attribute name (e.g., 'id', 'userId')
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model  The underlying model (if available)
      * @return string TypeScript type
      */
-    private function inferTypeFromAttribute(string $attributeValue): string
+    private function inferTypeFromAttribute(string $attributeValue, string $attributeName = '', $model = null): string
     {
+        // Special handling for 'id' field - check if model uses UUIDs
+        if ($attributeName === 'id' && $model !== null) {
+            $usesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($model));
+            if ($usesUuids) {
+                return 'string';
+            }
+        }
+
         if (strpos($attributeValue, 'integer') !== false || strpos($attributeValue, '->id') !== false) {
+            // If we detected model uses UUIDs above, this won't be reached for 'id' field
+            // But for other fields ending in _id, still return number
             return 'number';
         }
 

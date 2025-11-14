@@ -62,7 +62,9 @@ class ModelTypeScriptInterfaceExtractor
         $properties = [];
 
         // Add primary key
-        $properties[$model->getKeyName()] = 'number';
+        // Check if model uses UUIDs
+        $usesUuids = in_array('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($model));
+        $properties[$model->getKeyName()] = $usesUuids ? 'string' : 'number';
 
         // Add timestamps if the model uses them
         if ($model->usesTimestamps()) {
