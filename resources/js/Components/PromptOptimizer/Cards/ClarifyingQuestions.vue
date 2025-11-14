@@ -178,7 +178,10 @@ watch(
                 progress: props.progress,
             });
 
-            // First check if we have a current answer (e.g., when going back)
+            // Clear the form first to prevent previous answer from showing
+            answerForm.answer = '';
+
+            // Then check if we have a current answer (e.g., when going back)
             const currentAnswer = getCurrentAnswer();
             console.log('Got current answer:', currentAnswer);
             if (currentAnswer) {
@@ -188,11 +191,9 @@ watch(
             }
 
             // Otherwise, try to find a similar answer from parent
-            if (!answerForm.answer) {
-                const similarAnswer = findSimilarAnswer(newQuestion);
-                if (similarAnswer) {
-                    answerForm.answer = similarAnswer;
-                }
+            const similarAnswer = findSimilarAnswer(newQuestion);
+            if (similarAnswer) {
+                answerForm.answer = similarAnswer;
             }
         }
     },
