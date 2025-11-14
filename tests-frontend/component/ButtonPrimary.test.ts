@@ -76,7 +76,9 @@ describe('ButtonPrimary', () => {
             },
         });
 
-        expect(wrapper.find('svg').exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'DynamicIcon' }).exists()).toBe(
+            true,
+        );
         expect(wrapper.find('button').attributes('disabled')).toBeDefined();
     });
 });

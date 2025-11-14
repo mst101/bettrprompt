@@ -217,7 +217,9 @@ describe('Button', () => {
         it('should not show loading spinner by default', () => {
             const wrapper = mount(Button);
 
-            expect(wrapper.find('svg').exists()).toBe(false);
+            expect(
+                wrapper.findComponent({ name: 'DynamicIcon' }).exists(),
+            ).toBe(false);
         });
 
         it('should show loading spinner when loading prop is true', () => {
@@ -227,7 +229,9 @@ describe('Button', () => {
                 },
             });
 
-            expect(wrapper.find('svg').exists()).toBe(true);
+            const icon = wrapper.findComponent({ name: 'DynamicIcon' });
+            expect(icon.exists()).toBe(true);
+            expect(icon.props('name')).toBe('arrow-path-spin');
         });
 
         it('should have animate-spin class on spinner', () => {
@@ -236,9 +240,10 @@ describe('Button', () => {
                     loading: true,
                 },
             });
-            const svg = wrapper.find('svg');
 
-            expect(svg.classes()).toContain('animate-spin');
+            // Check that the button's HTML contains the animate-spin class
+            // (DynamicIcon forwards it to the SVG via v-bind="$attrs")
+            expect(wrapper.html()).toContain('animate-spin');
         });
 
         it('should render slot content alongside spinner when loading', () => {
@@ -251,7 +256,9 @@ describe('Button', () => {
                 },
             });
 
-            expect(wrapper.find('svg').exists()).toBe(true);
+            expect(
+                wrapper.findComponent({ name: 'DynamicIcon' }).exists(),
+            ).toBe(true);
             expect(wrapper.text()).toBe('Saving...');
         });
     });

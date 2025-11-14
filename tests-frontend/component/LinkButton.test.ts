@@ -121,7 +121,7 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('border');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-sm');
+        expect(link.classes()).toContain('text-xs');
         expect(link.classes()).toContain('font-medium');
     });
 
@@ -138,7 +138,7 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('items-center');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-sm');
+        expect(link.classes()).toContain('text-xs');
         expect(link.classes()).toContain('font-medium');
     });
 

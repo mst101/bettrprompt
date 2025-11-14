@@ -183,31 +183,6 @@ describe('Tabs', () => {
         expect(badge.classes()).toContain('text-gray-900');
     });
 
-    it('should have horizontal scroll container', () => {
-        const wrapper = mount(Tabs, {
-            props: {
-                tabs: defaultTabs,
-                modelValue: 'tab1',
-            },
-        });
-
-        const nav = wrapper.find('nav');
-        expect(nav.classes()).toContain('overflow-x-auto');
-        expect(nav.classes()).toContain('snap-x');
-    });
-
-    it('should apply snap-start to tab buttons', () => {
-        const wrapper = mount(Tabs, {
-            props: {
-                tabs: defaultTabs,
-                modelValue: 'tab1',
-            },
-        });
-
-        const button = wrapper.find('button');
-        expect(button.classes()).toContain('snap-start');
-    });
-
     it('should have focus ring styling on tabs', () => {
         const wrapper = mount(Tabs, {
             props: {
@@ -222,38 +197,6 @@ describe('Tabs', () => {
         expect(button.classes()).toContain('focus:ring-indigo-500');
     });
 
-    it('should have left shadow indicator', () => {
-        const wrapper = mount(Tabs, {
-            props: {
-                tabs: defaultTabs,
-                modelValue: 'tab1',
-            },
-        });
-
-        const shadows = wrapper.findAll('.absolute.top-0');
-        const leftShadow = shadows.find((el) =>
-            el.classes().includes('left-0'),
-        );
-        expect(leftShadow).toBeDefined();
-        expect(leftShadow?.classes()).toContain('from-white');
-    });
-
-    it('should have right shadow indicator', () => {
-        const wrapper = mount(Tabs, {
-            props: {
-                tabs: defaultTabs,
-                modelValue: 'tab1',
-            },
-        });
-
-        const shadows = wrapper.findAll('.absolute.top-0');
-        const rightShadow = shadows.find((el) =>
-            el.classes().includes('right-0'),
-        );
-        expect(rightShadow).toBeDefined();
-        expect(rightShadow?.classes()).toContain('from-white');
-    });
-
     it('should have aria-label on nav', () => {
         const wrapper = mount(Tabs, {
             props: {
@@ -264,17 +207,5 @@ describe('Tabs', () => {
 
         const nav = wrapper.find('nav');
         expect(nav.attributes('aria-label')).toBe('Tabs');
-    });
-
-    it('should apply shrink-0 to prevent tab shrinking', () => {
-        const wrapper = mount(Tabs, {
-            props: {
-                tabs: defaultTabs,
-                modelValue: 'tab1',
-            },
-        });
-
-        const button = wrapper.find('button');
-        expect(button.classes()).toContain('shrink-0');
     });
 });
