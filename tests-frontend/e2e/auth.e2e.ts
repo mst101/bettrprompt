@@ -126,19 +126,21 @@ test.describe('Protected Routes', () => {
         expect(isRedirected).toBeTruthy();
     });
 
-    test('should redirect unauthenticated users from prompt optimizer', async ({
+    test('should allow unauthenticated users to access prompt optimizer', async ({
         page,
     }) => {
-        // Try to access the prompt optimizer without authentication
+        // Unauthenticated users can now use the prompt optimizer
         await page.goto('/prompt-optimizer');
 
-        // Wait for any redirects
+        // Wait for page to load
         await page.waitForLoadState('networkidle');
 
-        // Should be redirected to login or home
+        // Should NOT be redirected - should stay on prompt optimizer
         const url = page.url();
-        const isRedirected = url.includes('login') || url === '/';
+        expect(url).toContain('/prompt-optimizer');
 
-        expect(isRedirected).toBeTruthy();
+        // Should see the prompt optimizer form
+        const taskInput = page.getByLabel(/what.*task.*help/i);
+        await expect(taskInput).toBeVisible();
     });
 });

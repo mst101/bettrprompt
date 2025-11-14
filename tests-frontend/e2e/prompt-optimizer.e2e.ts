@@ -1,39 +1,51 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Prompt Optimizer - Unauthenticated', () => {
-    test('should redirect to home when not logged in', async ({ page }) => {
+    test('should allow access to prompt optimizer when not logged in', async ({
+        page,
+    }) => {
         await page.goto('/prompt-optimizer');
         await page.waitForLoadState('networkidle');
 
-        // Should be redirected to home or login
+        // Should stay on prompt optimizer page - no redirect
         const url = page.url();
-        expect(url).toMatch(/\/((\?modal=login)|login)?$/);
+        expect(url).toContain('/prompt-optimizer');
+
+        // Should see the task input form
+        const taskInput = page.getByLabel(/what.*task.*help/i);
+        await expect(taskInput).toBeVisible();
     });
 });
 
-test.describe('Prompt Optimizer - Authenticated Flow', () => {
-    // Note: These tests require authentication setup
-    // For now, they check that the pages are accessible (will redirect to login)
-
+test.describe('Prompt Optimizer - Basic Flow', () => {
     test('should show prompt optimizer index page structure', async ({
         page,
     }) => {
         await page.goto('/prompt-optimizer');
         await page.waitForLoadState('networkidle');
 
-        // If redirected to login, that's expected behaviour for unauthenticated users
+        // Should stay on prompt optimizer - no auth required
         const url = page.url();
-        const isLoginPage = url.includes('login') || url === '/';
+        expect(url).toContain('/prompt-optimizer');
 
-        // This is a placeholder - with auth, we'd check for the prompt input form
-        expect(isLoginPage).toBeTruthy();
+        // Should see the task input form
+        const taskInput = page.getByLabel(/what.*task.*help/i);
+        await expect(taskInput).toBeVisible();
+
+        // Should see submit button
+        const submitButton = page.getByRole('button', {
+            name: /optimise.*prompt/i,
+        });
+        await expect(submitButton).toBeVisible();
     });
 
-    test('should show prompt optimizer history page', async ({ page }) => {
+    test('should show prompt optimizer history page for authenticated users', async ({
+        page,
+    }) => {
         await page.goto('/prompt-optimizer-history');
         await page.waitForLoadState('networkidle');
 
-        // Should redirect to login for unauthenticated users
+        // History requires authentication - should redirect to login
         const url = page.url();
         const isLoginPage = url.includes('login') || url === '/';
 
@@ -43,7 +55,7 @@ test.describe('Prompt Optimizer - Authenticated Flow', () => {
 
 // These tests will work once we have authentication helpers
 test.describe.skip('Prompt Optimizer - Full Journey (requires auth)', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async () => {
         // TODO: Add authentication helper
         // await authenticateUser(page);
     });
