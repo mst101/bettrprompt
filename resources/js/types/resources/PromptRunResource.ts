@@ -14,6 +14,7 @@ export interface PromptRunResource {
     readonly taskDescription: string;
     readonly selectedFramework: string | null;
     readonly frameworkReasoning: string | null;
+    readonly personalityApproach: string | null;
     readonly frameworkQuestions: Array<unknown> | null;
     readonly clarifyingAnswers: Array<unknown> | null;
     readonly optimizedPrompt: string | null;

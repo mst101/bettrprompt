@@ -4,3 +4,4 @@ export * from './DatabaseNotification';
 export * from './PersonalAccessToken';
 export * from './PromptRun';
 export * from './User';
+export * from './Visitor';
