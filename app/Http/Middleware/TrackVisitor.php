@@ -29,9 +29,23 @@ class TrackVisitor
         ]);
 
         if ($visitorId) {
-            // Existing visitor - update their record
-            Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
-            $this->updateVisitor($visitorId);
+            // Check if visitor exists in database
+            $visitorExists = Visitor::where('id', $visitorId)->exists();
+
+            if ($visitorExists) {
+                // Existing visitor - update their record
+                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
+                $this->updateVisitor($visitorId);
+            } else {
+                // Cookie exists but visitor not in DB (e.g., database was cleared)
+                // Create new visitor with new ID
+                Log::info('Visitor cookie exists but not in database, creating new visitor', [
+                    'old_visitor_id' => $visitorId,
+                ]);
+                $visitorId = $this->createVisitor($request);
+                $isNewVisitor = true;
+                Log::info('Created new visitor to replace missing one', ['visitor_id' => $visitorId]);
+            }
         } else {
             // New visitor - create record BEFORE processing request
             $visitorId = $this->createVisitor($request);
