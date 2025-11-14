@@ -238,8 +238,9 @@ const activeTab = ref('prompt');
 
 const hasRelatedRuns = computed(
     () =>
-        props.promptRun.parent ||
-        (props.promptRun.children && props.promptRun.children.length > 0),
+        !!props.promptRun.parent ||
+        (props.promptRun.children && props.promptRun.children.length > 0) ||
+        false,
 );
 
 const hasAnsweredQuestions = computed(
@@ -390,19 +391,12 @@ watch(
                     v-show="activeTab === 'task'"
                     :prompt-run="promptRun"
                     :show-edit-button="true"
+                    :has-related-runs="hasRelatedRuns"
                     :is-editing="isEditingTask"
                     class="mb-6 px-6"
                     @edit="startEditingTask"
                     @cancel="cancelEditingTask"
                 />
-
-                <div v-show="activeTab === 'task'">
-                    <RelatedPromptRuns
-                        v-if="hasRelatedRuns"
-                        :parent="promptRun.parent"
-                        :children="promptRun.children"
-                    />
-                </div>
 
                 <!-- Framework Tab -->
                 <div v-show="activeTab === 'framework'">
@@ -574,6 +568,7 @@ watch(
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
+                :has-related-runs="hasRelatedRuns"
                 :is-editing="isEditingTask"
                 class="mb-6"
                 @edit="startEditingTask"
