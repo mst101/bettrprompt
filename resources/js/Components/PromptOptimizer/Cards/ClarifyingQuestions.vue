@@ -68,32 +68,74 @@ const toggleShowAll = () => {
     showAllQuestions.value = !showAllQuestions.value;
 };
 
+// Local state to track all answers (preserves them when navigating)
+const localAnswers = ref<Map<number, string>>(new Map());
+
 // Question answering composable with pre-population from parent
 const {
     answerForm,
     isSubmitting,
-    submitAnswer,
-    skipQuestion,
-    goBackToPreviousQuestion,
+    submitAnswer: originalSubmitAnswer,
+    skipQuestion: originalSkipQuestion,
+    goBackToPreviousQuestion: originalGoBack,
     clearAnswer,
 } = usePromptAnswering(props.promptRun.id);
 
+// Wrap submitAnswer to save to local state first
+const submitAnswer = () => {
+    if (props.progress) {
+        const currentIndex = props.progress.answered;
+        localAnswers.value.set(currentIndex, answerForm.answer);
+    }
+    originalSubmitAnswer();
+};
+
+// Wrap skipQuestion to track in local state
+const skipQuestion = () => {
+    if (props.progress) {
+        const currentIndex = props.progress.answered;
+        localAnswers.value.set(currentIndex, ''); // Empty string for skipped
+    }
+    originalSkipQuestion();
+};
+
+// Wrap goBack - keep answer in local state when going back
+const goBackToPreviousQuestion = () => {
+    // Local state is preserved, so the answer will be available
+    // when the user returns to this question
+    originalGoBack();
+};
+
 // Get the current answer if it exists (for going back or pre-population)
 const getCurrentAnswer = (): string | null => {
-    // First check if we have a previousAnswer from going back (via flash)
+    if (!props.progress) return null;
+
+    const currentIndex = props.progress.answered;
+
+    // First check local state (most recent user input)
+    if (localAnswers.value.has(currentIndex)) {
+        return localAnswers.value.get(currentIndex) ?? null;
+    }
+
+    // Then check if we have a previousAnswer from going back (via flash)
     const flashPreviousAnswer = page.props.flash.previous_answer;
     if (flashPreviousAnswer !== undefined && flashPreviousAnswer !== null) {
+        // Store it in local state too
+        localAnswers.value.set(currentIndex, flashPreviousAnswer);
         return flashPreviousAnswer;
     }
 
-    // Otherwise check clarifyingAnswers array
-    if (!props.promptRun.clarifyingAnswers || !props.progress) return null;
+    // Otherwise check clarifyingAnswers array from database
+    if (props.promptRun.clarifyingAnswers) {
+        const answer = props.promptRun.clarifyingAnswers[currentIndex];
+        if (answer !== null && answer !== undefined) {
+            // Store it in local state
+            localAnswers.value.set(currentIndex, answer);
+            return answer;
+        }
+    }
 
-    // Current question index is progress.answered (0-based)
-    const currentIndex = props.progress.answered;
-    const answer = props.promptRun.clarifyingAnswers[currentIndex];
-
-    return answer ?? null;
+    return null;
 };
 
 // Pre-populate answer if similar question exists in parent
@@ -138,13 +180,15 @@ watch(
     { immediate: true },
 );
 
-// Reset edit mode when navigating to different prompt run
+// Reset edit mode and local answers when navigating to different prompt run
 watch(
     () => props.promptRun.id,
     () => {
         isEditingAnswers.value = false;
         answersEditForm.reset();
         answersEditForm.clearErrors();
+        // Clear local answers when switching to a different prompt run
+        localAnswers.value.clear();
     },
 );
 
