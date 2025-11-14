@@ -169,12 +169,20 @@ const findSimilarAnswer = (currentQuestion: string): string | null => {
 
 // Watch for current question changes and pre-populate if available
 watch(
-    () => props.currentQuestion,
-    (newQuestion) => {
+    [() => props.currentQuestion, () => props.currentQuestionAnswer],
+    ([newQuestion, newAnswer]) => {
         if (newQuestion) {
+            console.log('Question or answer changed:', {
+                question: newQuestion,
+                currentQuestionAnswer: newAnswer,
+                progress: props.progress,
+            });
+
             // First check if we have a current answer (e.g., when going back)
             const currentAnswer = getCurrentAnswer();
+            console.log('Got current answer:', currentAnswer);
             if (currentAnswer) {
+                console.log('Setting answer to:', currentAnswer);
                 answerForm.answer = currentAnswer;
                 return;
             }

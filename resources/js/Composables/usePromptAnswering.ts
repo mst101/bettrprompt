@@ -30,7 +30,9 @@ export function usePromptAnswering(promptRunId: number) {
         answerForm.post(route('prompt-optimizer.answer', promptRunId), {
             preserveScroll: true,
             onSuccess: () => {
-                answerForm.reset();
+                console.log('Answer submitted successfully');
+                // Don't reset the form here - the watcher will set the correct answer
+                // for the next question based on currentQuestionAnswer prop
                 isSubmitting.value = false;
             },
             onError: () => {
