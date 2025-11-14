@@ -323,26 +323,10 @@ class PromptOptimizerController extends Controller
             // Add the current answer
             $answers[] = $validated['answer'];
 
-            // If we had future answers, check if we should restore any
-            // (This happens when user goes back, changes an answer, and moves forward)
-            foreach ($futureAnswers as $index => $futureAnswer) {
-                // Only restore future answers that are after the current question
-                if ($index > $currentQuestionIndex && ! isset($answers[$index])) {
-                    $answers[$index] = $futureAnswer;
-                }
-            }
-
-            // If we restored future answers, we may have gaps - fill them
-            // Actually, let's not fill gaps, just keep the array sparse for now
-            // Convert back to sequential array
-            ksort($answers);
-            $answers = array_values($answers);
-
-            // Clear used future answer from session
-            if (isset($futureAnswers[$currentQuestionIndex + 1])) {
-                // We're about to show the next question, which might have a future answer
-                // Keep it in session for now
-            }
+            // Don't automatically restore future answers - user should re-answer questions
+            // sequentially after going back. This provides a more intuitive flow.
+            // Future answers remain in session in case we want to implement
+            // "restore previous answers" functionality in the future.
 
             // Log the answer submission
             Log::info('Submitting Answer', [
@@ -427,16 +411,8 @@ class PromptOptimizerController extends Controller
             // Add null for skipped question
             $answers[] = null;
 
-            // If we had future answers, restore them
-            foreach ($futureAnswers as $index => $futureAnswer) {
-                if ($index > $currentQuestionIndex && ! isset($answers[$index])) {
-                    $answers[$index] = $futureAnswer;
-                }
-            }
-
-            // Convert back to sequential array
-            ksort($answers);
-            $answers = array_values($answers);
+            // Don't automatically restore future answers - user should re-answer questions
+            // sequentially after going back. This provides a more intuitive flow.
 
             Log::info('Skipping question', [
                 'prompt_run_id' => $promptRun->id,
