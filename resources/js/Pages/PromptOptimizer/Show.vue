@@ -5,7 +5,6 @@ import LinkButton from '@/Components/LinkButton.vue';
 import ClarifyingQuestions from '@/Components/PromptOptimizer/Cards/ClarifyingQuestions.vue';
 import FrameworkSelection from '@/Components/PromptOptimizer/Cards/FrameworkSelection.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
-import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
@@ -202,85 +201,44 @@ watch(
     </HeaderPage>
 
     <ContainerPage>
-        <!-- Tabs for completed runs and question answering stage -->
         <div
-            v-if="
-                (promptRun.workflowStage === 'completed' ||
-                    isAnsweringQuestions) &&
-                tabs.length > 1
-            "
-            class="mb-6"
+            class="mb-6 max-w-4xl overflow-hidden bg-white shadow-xs sm:rounded-lg"
         >
-            <div
-                class="max-w-4xl overflow-hidden bg-white shadow-xs sm:rounded-lg"
-            >
-                <Tabs v-model="activeTab" :tabs="tabs" />
+            <Tabs v-model="activeTab" :tabs="tabs" />
 
-                <OptimizedPrompt
-                    v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
-                    :optimized-prompt="promptRun.optimizedPrompt"
-                    :prompt-run-id="promptRun.id"
-                />
-
-                <TaskInformation
-                    v-show="activeTab === 'task'"
-                    :prompt-run="promptRun"
-                    :show-edit-button="true"
-                    :has-related-runs="hasRelatedRuns"
-                    class="mb-6 px-6"
-                />
-
-                <FrameworkSelection
-                    v-if="
-                        activeTab === 'framework' &&
-                        promptRun.selectedFramework &&
-                        promptRun.frameworkReasoning
-                    "
-                    :framework="promptRun.selectedFramework"
-                    :reasoning="promptRun.frameworkReasoning"
-                    :personality-approach="promptRun.personalityApproach"
-                />
-
-                <!-- Clarifying Questions -->
-                <ClarifyingQuestions
-                    v-show="activeTab === 'questions'"
-                    :prompt-run="promptRun"
-                    :current-question="currentQuestion"
-                    :progress="progress"
-                />
-            </div>
-        </div>
-
-        <!-- Non-completed or single-section runs: show original layout -->
-        <template v-else>
-            <!-- Related Prompt Runs -->
-            <RelatedPromptRuns
-                v-if="hasRelatedRuns"
-                :parent="promptRun.parent"
-                :children="promptRun.children"
-                class="mb-6"
+            <OptimizedPrompt
+                v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
+                :optimized-prompt="promptRun.optimizedPrompt"
+                :prompt-run-id="promptRun.id"
             />
 
-            <!-- Input Information -->
             <TaskInformation
+                v-show="activeTab === 'task'"
                 :prompt-run="promptRun"
                 :personality-type-label="personalityTypeLabel"
                 :show-edit-button="promptRun.status === 'completed'"
                 :has-related-runs="hasRelatedRuns"
-                class="mb-6"
+                class="mb-6 px-6"
             />
 
-            <!-- Framework Selection Info -->
             <FrameworkSelection
                 v-if="
-                    promptRun.selectedFramework && promptRun.frameworkReasoning
+                    activeTab === 'framework' &&
+                    promptRun.selectedFramework &&
+                    promptRun.frameworkReasoning
                 "
                 :framework="promptRun.selectedFramework"
                 :reasoning="promptRun.frameworkReasoning"
                 :personality-approach="promptRun.personalityApproach"
-                class="mb-6"
             />
-        </template>
+
+            <ClarifyingQuestions
+                v-show="activeTab === 'questions'"
+                :prompt-run="promptRun"
+                :current-question="currentQuestion"
+                :progress="progress"
+            />
+        </div>
 
         <!-- Generating Prompt Loading State -->
         <LoadingStateCard
