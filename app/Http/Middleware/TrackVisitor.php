@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Visitor;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,7 +39,7 @@ class TrackVisitor
 
         // Set cookie for new visitors (cookie will be sent with response)
         if ($isNewVisitor) {
-            $cookie = cookie(
+            Cookie::queue(
                 'visitor_id',
                 $visitorId,
                 1051200, // 2 years in minutes
@@ -49,7 +50,6 @@ class TrackVisitor
                 false,
                 'lax' // sameSite
             );
-            $response = $response->withCookie($cookie);
         }
 
         return $response;
