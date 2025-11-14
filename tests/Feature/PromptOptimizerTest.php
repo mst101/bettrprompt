@@ -2,6 +2,7 @@
 
 use App\Models\PromptRun;
 use App\Models\User;
+use App\Models\Visitor;
 use App\Services\N8nClient;
 
 beforeEach(function () {
@@ -28,10 +29,12 @@ test('index displays form for authenticated users', function () {
     );
 });
 
-test('index redirects guests to login', function () {
+test('index allows guests to access prompt optimizer', function () {
     $response = $this->get(route('prompt-optimizer.index'));
 
-    $response->assertRedirect(route('login'));
+    // Guests can now access prompt optimizer
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page->component('PromptOptimizer/Index'));
 });
 
 test('store validates task description required', function () {
@@ -335,12 +338,27 @@ test('skip question records null answer', function () {
         ->and($promptRun->clarifying_answers[0])->toBeNull();
 });
 
-test('guests cannot access prompt optimizer', function () {
+test('guests can create prompt runs as visitors', function () {
+    // Mock N8nClient to return success
+    $this->mock(N8nClient::class, function ($mock) {
+        $mock->shouldReceive('triggerWebhook')
+            ->once()
+            ->andReturn([
+                'success' => true,
+            ]);
+    });
+
+    // Create a visitor first (simulating middleware)
+    $visitor = Visitor::factory()->create();
+    $this->withCookie('visitor_id', (string) $visitor->id);
+
     $response = $this->post(route('prompt-optimizer.store'), [
-        'task_description' => 'Test task',
+        'task_description' => 'Test task for visitor',
     ]);
 
-    $response->assertRedirect(route('login'));
+    // Should create successfully and redirect to show page
+    $response->assertRedirect();
+    expect(PromptRun::where('visitor_id', $visitor->id)->count())->toBe(1);
 });
 
 test('user cannot view other users prompt runs', function () {

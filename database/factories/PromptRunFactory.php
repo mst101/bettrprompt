@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\PromptRun;
 use App\Models\User;
+use App\Models\Visitor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,6 +22,7 @@ class PromptRunFactory extends Factory
     public function definition(): array
     {
         return [
+            'visitor_id' => Visitor::factory(),
             'user_id' => User::factory(),
             'personality_type' => fake()->randomElement(['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP']),
             'trait_percentages' => [

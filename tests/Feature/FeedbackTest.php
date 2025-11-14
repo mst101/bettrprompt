@@ -221,30 +221,19 @@ test('update feedback validates required fields', function () {
     $response->assertSessionHasErrors(['experience_level', 'usefulness', 'recommendation_likelihood', 'desired_features']);
 });
 
-test('feedback routes require authentication', function () {
+test('feedback routes are accessible to guests', function () {
     auth()->logout();
 
+    // Guests can access feedback create page
     $response = $this->get(route('feedback.create'));
-    $response->assertRedirect(route('login'));
+    $response->assertOk();
 
+    // Guests can access feedback show page (will redirect to create if no feedback)
     $response = $this->get(route('feedback.show'));
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect(route('feedback.create'));
 
-    $response = $this->post(route('feedback.store'), [
-        'experience_level' => 2,
-        'usefulness' => 4,
-        'recommendation_likelihood' => 6,
-        'desired_features' => ['templates'],
-    ]);
-    $response->assertRedirect(route('login'));
-
-    $response = $this->put(route('feedback.update'), [
-        'experience_level' => 4,
-        'usefulness' => 5,
-        'recommendation_likelihood' => 6,
-        'desired_features' => ['templates'],
-    ]);
-    $response->assertRedirect(route('login'));
+    // Note: Actual storing of feedback is tested in other tests
+    // This just verifies routes are accessible without auth
 });
 
 test('users can only see their own feedback', function () {
