@@ -36,8 +36,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly updatedAt: string;
  *
  *   // Relationships
+ *   readonly visitor?: VisitorResource;
  *   readonly user?: UserResource | null;
- *   readonly visitor?: VisitorResource | null;
  *   readonly parent?: PromptRunResource | null;
  *   readonly children?: readonly PromptRunResource[];
  * }

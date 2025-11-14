@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('prompt_runs', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('visitor_id')->nullable()->constrained('visitors')->onDelete('set null');
+            $table->foreignUuid('visitor_id')->constrained('visitors')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('prompt_runs')->onDelete('cascade');
             $table->string('personality_type',

@@ -31,8 +31,8 @@ export interface PromptRunResource {
     readonly completedAt: string | null;
     readonly createdAt: string;
     readonly updatedAt: string;
+    readonly visitor?: VisitorResource;
     readonly user?: UserResource | null;
-    readonly visitor?: VisitorResource | null;
     readonly parent?: PromptRunResource | null;
     readonly children?: readonly PromptRunResource[];
 }

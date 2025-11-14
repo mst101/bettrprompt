@@ -27,8 +27,8 @@ export interface PromptRun {
     readonly workflowStage: string | null;
     readonly errorMessage: string | null;
     readonly completedAt: string;
-    readonly user: User | null;
     readonly visitor: Visitor | null;
+    readonly user: User | null;
     readonly parent: PromptRun | null;
     readonly children: PromptRun[] | null;
 }
