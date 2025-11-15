@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormInputProps, Nullable } from '@/types';
 import { onMounted, ref } from 'vue';
 
@@ -46,14 +45,12 @@ function updateValue(event: Event): void {
 </script>
 
 <template>
-    <FormFieldWrapper
-        :id="id"
-        :label="label"
-        :error="error"
-        :required="required"
-        :help-text="helpText"
-        v-bind="$attrs"
-    >
+    <div>
+        <label :for="id" class="block text-sm font-medium text-black">
+            {{ label }}
+            <span v-if="required" class="text-red-500">*</span>
+        </label>
+
         <input
             :id="id"
             ref="input"
@@ -65,6 +62,7 @@ function updateValue(event: Event): void {
             :required="required"
             :disabled="disabled"
             :autocomplete="autocomplete"
+            v-bind="$attrs"
             class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             :class="{ 'bg-gray-50': disabled }"
             @input="updateValue"
@@ -72,10 +70,16 @@ function updateValue(event: Event): void {
             @focus="$emit('focus', $event)"
         />
 
-        <template #help>
-            <slot name="help" />
-        </template>
-    </FormFieldWrapper>
+        <p v-if="helpText" class="mt-1 text-xs text-gray-500">
+            {{ helpText }}
+        </p>
+
+        <slot name="help" />
+
+        <p v-if="error" class="mt-1 text-sm text-red-600">
+            {{ error }}
+        </p>
+    </div>
 </template>
 
 <style scoped>

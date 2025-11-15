@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FormFieldWrapper from '@/Components/FormFieldWrapper.vue';
 import type { FormTextareaProps } from '@/types';
 import { computed } from 'vue';
 
@@ -35,13 +34,16 @@ const textareaClasses = computed(() => {
 </script>
 
 <template>
-    <FormFieldWrapper
-        :id="props.id"
-        :label="props.label"
-        :error="props.error"
-        :required="props.required"
-        :help-text="props.helpText"
-    >
+    <div>
+        <label
+            v-if="props.label"
+            :for="props.id"
+            class="block text-sm font-medium text-black"
+        >
+            {{ props.label }}
+            <span v-if="props.required" class="text-red-500">*</span>
+        </label>
+
         <textarea
             :id="props.id"
             :value="props.modelValue"
@@ -60,5 +62,13 @@ const textareaClasses = computed(() => {
                 )
             "
         />
-    </FormFieldWrapper>
+
+        <p v-if="props.helpText" class="mt-1 text-xs text-gray-500">
+            {{ props.helpText }}
+        </p>
+
+        <p v-if="props.error" class="mt-1 text-sm text-red-600">
+            {{ props.error }}
+        </p>
+    </div>
 </template>
