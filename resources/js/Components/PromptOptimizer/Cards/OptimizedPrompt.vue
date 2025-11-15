@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIProviderLinks from '@/Components/AIProviders/AIProviderLinks.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
@@ -73,7 +74,7 @@ const saveEdits = () => {
 
                 <div
                     v-if="!isEditing"
-                    class="flex w-full justify-between gap-2"
+                    class="flex w-full justify-between gap-2 sm:w-auto"
                 >
                     <ButtonSecondary
                         type="button"
@@ -97,11 +98,19 @@ const saveEdits = () => {
                 </div>
             </div>
 
+            <!-- AI Provider Links -->
+            <div
+                v-if="!isEditing"
+                class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+            >
+                <AIProviderLinks :prompt="optimizedPrompt" />
+            </div>
+
             <!-- View Mode -->
             <div
                 v-if="!isEditing"
                 data-testid="optimized-prompt-text"
-                class="rounded-lg bg-gray-50 p-6 font-mono text-sm leading-relaxed text-gray-800"
+                class="rounded-lg bg-gray-50 py-4 font-mono text-sm leading-relaxed text-gray-800 sm:p-6"
             >
                 <pre class="wrap-break-word whitespace-pre-wrap">{{
                     optimizedPrompt

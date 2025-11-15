@@ -76,7 +76,7 @@ provide('openRegisterModal', openRegister);
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col bg-gray-100 dark:bg-gray-200">
+    <div class="flex min-h-screen flex-col bg-gray-100">
         <div class="flex flex-1 flex-col">
             <nav class="border-b border-gray-100 bg-white">
                 <!-- Primary Navigation Menu -->
