@@ -46,7 +46,9 @@ const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 const showForgotPasswordModal = ref(false);
 const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
-const firstMobileNavLink = ref<HTMLElement | null>(null);
+const firstMobileNavLink = ref<InstanceType<typeof ResponsiveNavLink> | null>(
+    null,
+);
 const firstGuestMobileButton = ref<HTMLButtonElement | null>(null);
 
 // Close dropdown on navigation

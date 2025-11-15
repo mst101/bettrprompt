@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     href: string;
@@ -20,10 +20,23 @@ const classes = computed(() =>
 const handleClick = () => {
     emit('click');
 };
+
+// Expose the link element for parent components to focus
+const linkRef = ref<InstanceType<typeof Link> | null>(null);
+
+const focus = () => {
+    // Access the underlying anchor element from the Inertia Link component
+    const anchorElement = linkRef.value?.$el as HTMLAnchorElement | undefined;
+    anchorElement?.focus();
+};
+
+defineExpose({
+    focus,
+});
 </script>
 
 <template>
-    <Link :href="href" :class="classes" @click="handleClick">
+    <Link ref="linkRef" :href="href" :class="classes" @click="handleClick">
         <slot />
     </Link>
 </template>
