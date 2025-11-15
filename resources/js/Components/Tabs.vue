@@ -50,7 +50,7 @@ const selectTab = (tabId: string) => {
                 label="Menu"
                 :options="selectOptions"
                 :show-placeholder="false"
-                class="[&_label]:sr-only"
+                :label-sr-only="true"
             />
         </div>
 

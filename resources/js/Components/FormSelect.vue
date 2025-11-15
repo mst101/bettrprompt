@@ -7,6 +7,7 @@ const props = withDefaults(defineProps<FormSelectProps>(), {
     error: '',
     required: false,
     disabled: false,
+    labelSrOnly: false,
     placeholder: 'Please select...',
     showPlaceholder: true,
     helpText: '',
@@ -32,7 +33,11 @@ onMounted(() => {
 
 <template>
     <div>
-        <label :for="props.id" class="block text-sm font-medium text-black">
+        <label
+            :for="props.id"
+            class="block text-sm font-medium text-black"
+            :class="props.labelSrOnly ? '' : 'sr-only'"
+        >
             {{ props.label }}
             <span v-if="props.required" class="text-red-500">*</span>
         </label>

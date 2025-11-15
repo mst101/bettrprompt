@@ -15,7 +15,15 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, provide, ref } from 'vue';
+import {
+    computed,
+    nextTick,
+    onMounted,
+    onUnmounted,
+    provide,
+    ref,
+    watch,
+} from 'vue';
 
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
@@ -38,6 +46,8 @@ const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 const showForgotPasswordModal = ref(false);
 const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
+const firstMobileNavLink = ref<HTMLElement | null>(null);
+const firstGuestMobileButton = ref<HTMLButtonElement | null>(null);
 
 // Close dropdown on navigation
 const closeDropdownOnNavigate = () => {
@@ -73,6 +83,19 @@ const openForgotPassword = () => {
 // Provide modal controls to child components
 provide('openLoginModal', openLogin);
 provide('openRegisterModal', openRegister);
+
+// Focus management for mobile navigation
+watch(showingNavigationDropdown, async (isOpen) => {
+    if (isOpen) {
+        await nextTick();
+        // Focus the first interactive element in the mobile navigation
+        if (isAuthenticated.value) {
+            firstMobileNavLink.value?.focus();
+        } else {
+            firstGuestMobileButton.value?.focus();
+        }
+    }
+});
 </script>
 
 <template>
@@ -222,6 +245,7 @@ provide('openRegisterModal', openRegister);
                             <template v-if="isAuthenticated">
                                 <div class="space-y-1 pt-2 pb-3">
                                     <ResponsiveNavLink
+                                        ref="firstMobileNavLink"
                                         :href="route('prompt-optimizer.index')"
                                         :active="
                                             route().current(
@@ -304,6 +328,7 @@ provide('openRegisterModal', openRegister);
                             <template v-else>
                                 <div class="space-y-1 pt-2 pb-3">
                                     <button
+                                        ref="firstGuestMobileButton"
                                         class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
                                         @click="
                                             openLogin();
