@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormTextarea from '@/Components/FormTextarea.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import EditTaskForm from '@/Components/PromptOptimizer/EditTaskForm.vue';
 import type { PromptRunResource } from '@/types';
@@ -52,11 +53,13 @@ watch(
                 </ButtonSecondary>
             </div>
 
-            <textarea
-                :value="promptRun.taskDescription"
-                disabled
-                class="block w-full rounded-md border-gray-300 bg-gray-50 text-sm text-gray-900 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-100"
-                rows="8"
+            <FormTextarea
+                id="task-description"
+                :model-value="promptRun.taskDescription"
+                label=""
+                :disabled="true"
+                :rows="8"
+                textarea-class="block w-full rounded-md border-gray-300 bg-gray-50 text-sm text-gray-900 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-100"
             />
         </div>
 

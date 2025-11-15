@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormTextarea from '@/Components/FormTextarea.vue';
 import { computed, nextTick, ref } from 'vue';
 
 interface Option {
@@ -25,7 +26,7 @@ const emit = defineEmits<{
     (e: 'update:otherValue', value: string): void;
 }>();
 
-const otherTextarea = ref<HTMLTextAreaElement | null>(null);
+const otherTextarea = ref<InstanceType<typeof FormTextarea> | null>(null);
 
 const isChecked = (value: string) => {
     return props.modelValue.includes(value);
@@ -54,7 +55,10 @@ const toggleOption = async (value: string) => {
         await nextTick();
         // Wait for transition to complete
         setTimeout(() => {
-            otherTextarea.value?.focus();
+            // Find the textarea element within the FormTextarea component
+            const textarea =
+                otherTextarea.value?.$el?.querySelector('textarea');
+            textarea?.focus();
         }, 250);
     }
 };
@@ -107,30 +111,16 @@ const showOtherInput = computed(() => {
             leave-to-class="opacity-0 -translate-y-2"
         >
             <div v-if="showOtherInput" class="mt-4">
-                <label
-                    for="other-text"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Please describe the feature you'd like
-                </label>
-                <textarea
+                <FormTextarea
                     id="other-text"
                     ref="otherTextarea"
-                    :value="otherValue"
+                    :model-value="otherValue"
+                    label="Please describe the feature you'd like"
                     :disabled="disabled"
                     placeholder="Describe the feature you'd like to see..."
-                    rows="3"
-                    maxlength="500"
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    :class="{
-                        'cursor-not-allowed opacity-50': disabled,
-                    }"
-                    @input="
-                        emit(
-                            'update:otherValue',
-                            ($event.target as HTMLTextAreaElement).value,
-                        )
-                    "
+                    :rows="3"
+                    :maxlength="500"
+                    @update:model-value="emit('update:otherValue', $event)"
                 />
                 <div class="mt-1 text-right text-xs text-gray-500">
                     {{ otherValue.length }} / 500 characters

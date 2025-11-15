@@ -60,7 +60,9 @@ const handleTranscription = (text: string) => {
 
 const progressPercent = computed(() => {
     if (props.totalQuestions === 0) return 0;
-    return (props.currentQuestionNumber / props.totalQuestions) * 100;
+    // Calculate based on completed questions (current question number - 1)
+    const answeredCount = props.currentQuestionNumber - 1;
+    return (answeredCount / props.totalQuestions) * 100;
 });
 
 const textareaClasses = computed(() => {

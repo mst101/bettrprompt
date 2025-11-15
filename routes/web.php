@@ -51,6 +51,9 @@ Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimiz
 Route::post('/prompt-optimizer/{promptRun}/answer',
     [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
     ->name('prompt-optimizer.answer');
+Route::post('/prompt-optimizer/{promptRun}/submit-all-answers',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'submitAllAnswers'])
+    ->name('prompt-optimizer.submit-all-answers');
 Route::post('/prompt-optimizer/{promptRun}/skip',
     [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
     ->name('prompt-optimizer.skip');

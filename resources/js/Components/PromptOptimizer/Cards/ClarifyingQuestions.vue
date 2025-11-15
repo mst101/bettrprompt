@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import AllQuestions from '@/Components/PromptOptimizer/Cards/AllQuestions.vue';
 import ClarifyingAnswersEdit from '@/Components/PromptOptimizer/ClarifyingAnswersEdit.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
 import { usePromptAnswering } from '@/Composables/usePromptAnswering';
 import type { PromptRunResource } from '@/types';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 interface Props {
@@ -72,6 +73,9 @@ const toggleShowAll = () => {
 // Local state to track all answers (preserves them when navigating)
 const localAnswers = ref<Map<number, string>>(new Map());
 
+// State for bulk submission
+const isBulkSubmitting = ref(false);
+
 // Question answering composable with pre-population from parent
 const {
     answerForm,
@@ -105,6 +109,40 @@ const goBackToPreviousQuestion = () => {
     // Local state is preserved, so the answer will be available
     // when the user returns to this question
     originalGoBack();
+};
+
+// Update answer in local state (for bulk editing)
+const updateBulkAnswer = (index: number, value: string) => {
+    localAnswers.value.set(index, value);
+};
+
+// Submit all answers at once
+const submitAllAnswers = () => {
+    if (!props.progress) return;
+
+    // Build array of all answers (preserving nulls for skipped questions)
+    const allAnswers: (string | null)[] = [];
+    for (let i = 0; i < props.progress.total; i++) {
+        const answer = localAnswers.value.get(i);
+        if (answer !== undefined && answer.trim()) {
+            allAnswers.push(answer);
+        } else {
+            allAnswers.push(null); // Skip this question
+        }
+    }
+
+    // Submit all answers via a POST request
+    isBulkSubmitting.value = true;
+    router.post(
+        route('prompt-optimizer.submit-all-answers', props.promptRun.id),
+        { answers: allAnswers },
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                isBulkSubmitting.value = false;
+            },
+        },
+    );
 };
 
 // Get the current answer if it exists (for going back or pre-population)
@@ -233,6 +271,19 @@ const isCompleted = computed(
         @go-back="goBackToPreviousQuestion"
         @clear="clearAnswer"
         @toggle-show-all="toggleShowAll"
+    />
+
+    <!-- All Questions View (for in-progress runs when show all is enabled) -->
+    <AllQuestions
+        v-else-if="isAnsweringQuestions && showAllQuestions"
+        :prompt-run="promptRun"
+        :progress="progress ?? { answered: 0, total: 0 }"
+        :editable="true"
+        :answers="localAnswers"
+        :is-submitting="isBulkSubmitting"
+        @toggle-show-all="toggleShowAll"
+        @update:answer="updateBulkAnswer"
+        @submit-all="submitAllAnswers"
     />
 
     <!-- All Questions View (for completed runs) -->

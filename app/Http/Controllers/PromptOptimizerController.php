@@ -403,6 +403,80 @@ class PromptOptimizerController extends Controller
     }
 
     /**
+     * Submit all answers at once
+     */
+    public function submitAllAnswers(Request $request, PromptRun $promptRun)
+    {
+        // Authorise that the user/visitor can update this prompt run
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'framework_selected' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot answer questions at this stage.');
+        }
+
+        // Validate the answers array
+        $validated = $request->validate([
+            'answers' => ['required', 'array'],
+            'answers.*' => ['nullable', 'string'],
+        ]);
+
+        try {
+            // Clear any future answers from session
+            session()->forget("prompt_run_{$promptRun->id}_future_answers");
+
+            // Log the bulk answer submission
+            Log::info('Submitting All Answers', [
+                'prompt_run_id' => $promptRun->id,
+                'total_answers' => count($validated['answers']),
+                'non_null_answers' => count(array_filter($validated['answers'], fn ($a) => $a !== null)),
+            ]);
+
+            // Update the prompt run with retry logic
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated) {
+                $promptRun->update([
+                    'clarifying_answers' => $validated['answers'],
+                    'workflow_stage' => 'answering_questions',
+                ]);
+            });
+
+            // Refresh and log what was saved
+            $promptRun->refresh();
+            Log::info('Saved All Answers', [
+                'prompt_run_id' => $promptRun->id,
+                'saved_answers_count' => count($promptRun->clarifying_answers ?? []),
+            ]);
+
+            // Check if all questions have been answered
+            if ($promptRun->hasAnsweredAllQuestions()) {
+                // Trigger final prompt optimisation
+                return $this->triggerFinalOptimization($promptRun);
+            }
+
+            // More questions to answer - redirect back to show page
+            return redirect()
+                ->route('prompt-optimizer.show', $promptRun)
+                ->with('success', 'Answers saved.');
+
+        } catch (QueryException $e) {
+            Log::error('Database error saving all answers', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to save answers. Please try again.');
+
+        } catch (Throwable $e) {
+            Log::error('Unexpected error saving all answers', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'An error occurred. Please try again.');
+        }
+    }
+
+    /**
      * Skip a clarifying question
      */
     public function skipQuestion(PromptRun $promptRun, Request $request)

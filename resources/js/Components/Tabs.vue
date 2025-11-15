@@ -42,12 +42,12 @@ const selectTab = (tabId: string) => {
 
 <template>
     <div class="border-b border-gray-200 px-6 pt-6">
-        <!-- Mobile: Dropdown (note: native select cannot display icons) -->
+        <!-- Mobile: Dropdown -->
         <div class="sm:hidden">
             <FormSelect
                 id="tabs"
                 v-model="activeTab"
-                label=""
+                label="Menu"
                 :options="selectOptions"
                 :show-placeholder="false"
                 class="[&_label]:sr-only"
