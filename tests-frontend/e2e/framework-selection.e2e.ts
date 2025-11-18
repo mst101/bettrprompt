@@ -142,17 +142,37 @@ test.describe('Framework Selection Analysis', () => {
             const submitButton = page.getByRole('button', {
                 name: /optimise.*prompt/i,
             });
-            await submitButton.click();
 
-            // Wait for navigation to show page
-            await page.waitForLoadState('networkidle');
+            // Wait for form submission and navigation
+            try {
+                await Promise.all([
+                    page.waitForURL(/\/prompt-optimizer\/\d+/, {
+                        timeout: 10000,
+                    }),
+                    submitButton.click(),
+                ]);
+            } catch (error) {
+                // Log debugging info if navigation fails
+                console.error(
+                    `\n[${personalityType.code}] Navigation failed:`,
+                    error,
+                );
+                console.error('Current URL:', page.url());
+
+                // Check for validation errors
+                const errorMessages = await page
+                    .locator('.text-red-600, .text-red-500')
+                    .allTextContents();
+                if (errorMessages.length > 0) {
+                    console.error('Validation errors:', errorMessages);
+                }
+
+                throw error;
+            }
 
             // Wait for framework selection (may take time for AI processing)
             // Allow up to 60 seconds for n8n workflow to complete
             await page.waitForTimeout(2000);
-
-            // Check if we're on the show page
-            expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
 
             // Wait for framework to be selected
             // We'll check periodically for up to 60 seconds
@@ -251,11 +271,12 @@ test.describe('Framework Selection - Quick Verification', () => {
         const submitButton = page.getByRole('button', {
             name: /optimise.*prompt/i,
         });
-        await submitButton.click();
 
-        // Verify navigation
-        await page.waitForLoadState('networkidle');
-        expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+        // Wait for navigation
+        await Promise.all([
+            page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 }),
+            submitButton.click(),
+        ]);
 
         // Verify we can see status
         await page.waitForTimeout(1000);
