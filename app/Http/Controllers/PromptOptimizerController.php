@@ -1301,8 +1301,8 @@ class PromptOptimizerController extends Controller
     public function updateVisitorPersonality(Request $request)
     {
         $validated = $request->validate([
-            'personality_type' => 'required|string|size:6',
-            'trait_percentages' => 'nullable|array',
+            'personalityType' => 'required|string|size:6',
+            'traitPercentages' => 'nullable|array',
         ]);
 
         $visitorId = $this->getVisitorId($request);
@@ -1319,8 +1319,8 @@ class PromptOptimizerController extends Controller
 
         try {
             $visitor->update([
-                'personality_type' => $validated['personality_type'],
-                'trait_percentages' => $validated['trait_percentages'] ?? null,
+                'personality_type' => $validated['personalityType'],
+                'trait_percentages' => $validated['traitPercentages'] ?? null,
             ]);
 
             return back()->with('success', 'Personality type saved!');

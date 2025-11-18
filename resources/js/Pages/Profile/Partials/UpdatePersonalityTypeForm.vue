@@ -49,7 +49,6 @@ const form = useForm({
     name: user.value?.name || '',
     email: user.value?.email || '',
     personalityType: fullPersonalityType.value,
-    personality_type: fullPersonalityType.value, // For visitor mode
     traitPercentages: (user.value?.traitPercentages ||
         props.visitorTraitPercentages || {
             mind: null,
@@ -62,22 +61,8 @@ const form = useForm({
         energy: number | null;
         nature: number | null;
         tactics: number | null;
-        identity: null;
-    },
-    trait_percentages: (user.value?.traitPercentages ||
-        props.visitorTraitPercentages || {
-            mind: null,
-            energy: null,
-            nature: null,
-            tactics: null,
-            identity: null,
-        }) as {
-        mind: number | null;
-        energy: number | null;
-        nature: number | null;
-        tactics: number | null;
         identity: number | null;
-    }, // For visitor mode
+    },
 });
 
 // Persist the CTA only after a successful save in this session
@@ -96,17 +81,7 @@ const personalityTypeOptions = computed(() => {
 // Update form when personality type changes
 watch(fullPersonalityType, (newValue) => {
     form.personalityType = newValue;
-    form.personality_type = newValue; // For visitor mode
 });
-
-// Sync trait percentages between the two forms
-watch(
-    () => form.traitPercentages,
-    (newValue) => {
-        form.trait_percentages = { ...newValue };
-    },
-    { deep: true },
-);
 
 const submit = () => {
     const routeName = props.visitorMode
@@ -153,7 +128,7 @@ const submit = () => {
                     label="Personality Type"
                     :options="personalityTypeOptions"
                     :error="form.errors.personalityType"
-                    placeholder="Select your personality type"
+                    placeholder="Your personality type"
                     :autofocus="true"
                     :required="true"
                 />

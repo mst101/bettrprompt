@@ -34,13 +34,15 @@ export default defineConfigWithVueTs(
 
             // Ordering rules (auto-fixable)
             'vue/attributes-order': 'error',
-            'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+            'vue/block-order': [
+                'error',
+                { order: ['script', 'template', 'style'] },
+            ],
             'vue/define-macros-order': 'error',
             'vue/padding-line-between-blocks': 'warn',
 
             // Style consistency
             'vue/component-api-style': ['error', ['script-setup']],
-            'vue/max-attributes-per-line': ['warn', { singleline: 3, multiline: 1 }],
             'vue/first-attribute-linebreak': 'warn',
         },
     },

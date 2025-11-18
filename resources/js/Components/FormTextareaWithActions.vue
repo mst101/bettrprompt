@@ -31,10 +31,14 @@ defineOptions({
                 :for="props.id"
                 class="block text-sm font-medium text-gray-700"
             >
-                {{ props.label }}
-                <span v-if="props.required" class="text-red-500">*</span>
+                <span class="whitespace-nowrap"
+                    >{{ props.label }}
+                    <span v-if="props.required" class="text-red-500"
+                        >*</span
+                    ></span
+                >
             </label>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-4">
                 <slot name="actions" />
             </div>
         </div>
