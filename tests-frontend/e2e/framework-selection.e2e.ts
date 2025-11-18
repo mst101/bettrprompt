@@ -68,14 +68,19 @@ test.describe('Framework Selection Analysis', () => {
             await page.goto('/prompt-optimizer');
             await page.waitForLoadState('networkidle');
 
-            // Update personality type
-            // First, check if personality form is already visible or needs to be expanded
-            const personalityHeading = page.getByText(/personality type/i);
-            await expect(personalityHeading).toBeVisible();
+            // For authenticated users, need to go to profile to set personality type
+            // Navigate to profile edit page
+            await page.goto('/profile');
+            await page.waitForLoadState('networkidle');
 
-            // Look for personality type selector
-            const personalitySelect = page.getByLabel(/personality type/i);
-            await expect(personalitySelect).toBeVisible();
+            // Look for personality type selector in the profile page
+            const personalitySelect = page
+                .getByLabel(/personality type/i)
+                .first();
+            await personalitySelect.waitFor({
+                state: 'visible',
+                timeout: 5000,
+            });
 
             // Select the personality type
             await personalitySelect.selectOption(personalityType.code);
@@ -88,14 +93,18 @@ test.describe('Framework Selection Analysis', () => {
                 await traitInputs.nth(i).fill('50');
             }
 
-            // Save personality type
+            // Save personality type (button text is just "Save" on profile page)
             const savePersonalityButton = page.getByRole('button', {
-                name: /save personality/i,
+                name: /^save$/i,
             });
             await savePersonalityButton.click();
 
-            // Wait for save to complete
+            // Wait for save to complete and success message
             await page.waitForTimeout(1000);
+
+            // Navigate back to prompt optimiser
+            await page.goto('/prompt-optimizer');
+            await page.waitForLoadState('networkidle');
 
             // Fill in task description
             const taskInput = page.getByLabel(/task description/i);
@@ -163,11 +172,13 @@ test.describe('Framework Selection - Quick Verification', () => {
         await seedTestUser();
         await loginAsTestUser(page);
 
-        await page.goto('/prompt-optimizer');
+        // Go to profile to set personality type
+        await page.goto('/profile');
         await page.waitForLoadState('networkidle');
 
         // Set personality type to INTJ-A
-        const personalitySelect = page.getByLabel(/personality type/i);
+        const personalitySelect = page.getByLabel(/personality type/i).first();
+        await personalitySelect.waitFor({ state: 'visible', timeout: 5000 });
         await personalitySelect.selectOption('INTJ-A');
 
         // Set trait percentages
@@ -179,10 +190,14 @@ test.describe('Framework Selection - Quick Verification', () => {
 
         // Save personality
         const saveButton = page.getByRole('button', {
-            name: /save personality/i,
+            name: /^save$/i,
         });
         await saveButton.click();
         await page.waitForTimeout(1000);
+
+        // Go to prompt optimiser
+        await page.goto('/prompt-optimizer');
+        await page.waitForLoadState('networkidle');
 
         // Fill task
         const taskInput = page.getByLabel(/task description/i);
