@@ -250,13 +250,16 @@ test.describe('Framework Selection Analysis', () => {
 
                     if (frameworkFound) {
                         console.log(`  ✓ Framework selected after ${elapsed}s`);
+                        console.log(`  Tabs found: [${allTabs.join(', ')}]`);
                         break;
                     }
 
-                    // Debug logging every check (for now)
-                    console.log(
-                        `  [${elapsed}s] Tabs: [${allTabs.join(', ')}] | Processing: ${hasProcessingIndicator} | Generating: ${hasGeneratingIndicator}`,
-                    );
+                    // Debug logging every 6 seconds
+                    if (elapsed % 6 === 0 || elapsed === 3) {
+                        console.log(
+                            `  [${elapsed}s] Tabs: [${allTabs.join(', ')}] | Processing: ${hasProcessingIndicator} | Generating: ${hasGeneratingIndicator}`,
+                        );
+                    }
 
                     // Wait before checking again
                     await page.waitForTimeout(pollInterval);
@@ -272,6 +275,9 @@ test.describe('Framework Selection Analysis', () => {
                 }
 
                 console.log(`  URL: ${page.url()}`);
+                console.log(
+                    `[${personalityType.code}] Test completed, moving to next personality type\n`,
+                );
             },
         );
     }
