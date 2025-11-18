@@ -220,9 +220,11 @@ test.describe('Framework Selection Analysis', () => {
                     await page.waitForLoadState('networkidle');
 
                     // Check for all tabs on the page
+                    // Tabs are buttons in a nav with aria-label="Tabs"
                     const allTabs = await page
-                        .locator('[role="tab"]')
+                        .locator('nav[aria-label="Tabs"] button')
                         .allTextContents();
+
                     const hasFrameworkTab = allTabs.some((text) =>
                         /framework/i.test(text),
                     );
