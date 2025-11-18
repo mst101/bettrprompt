@@ -30,10 +30,7 @@ defineEmits<{
                         </p>
                     </div>
                 </div>
-                <ButtonPrimary
-                    class="shrink-0 bg-white text-indigo-600 hover:bg-indigo-50"
-                    @click="$emit('register')"
-                >
+                <ButtonPrimary class="shrink-0" @click="$emit('register')">
                     Create Free Account
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>

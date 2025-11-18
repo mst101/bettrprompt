@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\UserResource;
+use App\Models\PromptRun;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -31,6 +32,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Check if visitor has completed prompts (for banner display)
+        $visitorHasCompletedPrompts = false;
+        if (! $request->user()) {
+            $visitorId = $request->cookie('visitor_id');
+            if ($visitorId) {
+                $visitorHasCompletedPrompts = PromptRun::where('visitor_id', $visitorId)
+                    ->where('status', 'completed')
+                    ->exists();
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -46,6 +58,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'previous_answer' => fn () => $request->session()->get('previous_answer'),
             ],
+            'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
         ];
     }
 }

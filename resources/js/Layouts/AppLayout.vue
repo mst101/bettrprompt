@@ -13,6 +13,7 @@ import ModalLogin from '@/Components/ModalLogin.vue';
 import ModalRegister from '@/Components/ModalRegister.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -25,8 +26,16 @@ import {
     watch,
 } from 'vue';
 
-const page = usePage();
+const page = usePage<{
+    auth?: { user?: unknown };
+    visitorHasCompletedPrompts?: boolean;
+}>();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
+
+// Show visitor banner if they've completed a prompt
+const showVisitorBanner = computed(
+    () => !isAuthenticated.value && page.props.visitorHasCompletedPrompts,
+);
 
 // Flash messages
 const flashMessage = computed(() => {
@@ -410,5 +419,8 @@ watch(showingNavigationDropdown, async (isOpen) => {
             :message="flashMessage.message"
             :type="flashMessage.type"
         />
+
+        <!-- Visitor Limit Banner -->
+        <VisitorLimitBanner v-if="showVisitorBanner" @register="openRegister" />
     </div>
 </template>

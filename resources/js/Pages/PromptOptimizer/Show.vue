@@ -9,13 +9,12 @@ import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.
 import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
-import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
-import { Head, usePage } from '@inertiajs/vue3';
-import { computed, inject, ref, watch } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -33,7 +32,6 @@ interface Props {
     currentQuestion: string | null;
     currentQuestionAnswer?: string | null;
     progress: Progress;
-    visitorHasCompletedPrompts?: boolean;
 }
 
 const getPersonalityTypeName = (type: string | null) => {
@@ -51,18 +49,6 @@ const getFullPersonalityType = (type: string | null) => {
 
 const personalityTypeLabel = computed(() =>
     getFullPersonalityType(props.promptRun.personalityType),
-);
-
-const page = usePage();
-const user = computed(() => page.props.auth?.user);
-const openRegisterModal = inject<() => void>('openRegisterModal');
-
-// Show banner if visitor has completed prompt
-const showVisitorBanner = computed(
-    () =>
-        !user.value &&
-        props.visitorHasCompletedPrompts &&
-        props.promptRun.status === 'completed',
 );
 
 // Type guard for n8nResponsePayload
@@ -299,10 +285,4 @@ const handleProceedToQuestions = async () => {
             state="selecting-framework"
         />
     </ContainerPage>
-
-    <!-- Visitor Limit Banner -->
-    <VisitorLimitBanner
-        v-if="showVisitorBanner"
-        @register="openRegisterModal?.()"
-    />
 </template>
