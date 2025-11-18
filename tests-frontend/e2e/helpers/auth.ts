@@ -17,30 +17,48 @@ export const TEST_USER: TestUser = {
 };
 
 /**
- * Log in as test user via the API/session
- * This bypasses the UI login flow for faster test setup
+ * Log in as test user via the login modal
  */
 export async function loginAsTestUser(page: Page): Promise<void> {
     // Navigate to login page with modal parameter
     await page.goto('/?modal=login');
     await page.waitForLoadState('networkidle');
 
-    // Fill in login form
-    const emailInput = page.getByLabel(/^email/i);
-    const passwordInput = page.getByLabel(/^password/i);
+    // Wait for modal to appear and animation to complete
+    await page.waitForTimeout(500);
 
+    // Wait for email input to be visible (confirms modal is open)
+    const emailInput = page.getByLabel(/^email/i).first();
+    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
+
+    // Fill in login form
     await emailInput.fill(TEST_USER.email);
+
+    const passwordInput = page.getByLabel(/^password/i).first();
     await passwordInput.fill(TEST_USER.password);
 
-    // Submit the form
-    const loginButton = page.getByRole('button', { name: /^log in$/i }).first();
-    await loginButton.click();
+    // Submit the form by clicking the submit button
+    const loginButton = page
+        .getByRole('button', { name: /^log in$/i, exact: false })
+        .first();
+    await loginButton.waitFor({ state: 'visible', timeout: 5000 });
 
-    // Wait for navigation to complete
-    await page.waitForLoadState('networkidle');
+    // Click and wait for navigation
+    await Promise.all([
+        page.waitForLoadState('networkidle'),
+        loginButton.click(),
+    ]);
 
-    // Verify we're logged in by checking for user menu or navigation
+    // Additional wait for authentication to complete
     await page.waitForTimeout(1000);
+
+    // Verify we're logged in by checking URL changed
+    const currentUrl = page.url();
+    if (currentUrl.includes('modal=login')) {
+        throw new Error(
+            'Login failed - still on login page. Check credentials or form validation.',
+        );
+    }
 }
 
 /**
