@@ -113,10 +113,17 @@ test.describe('Framework Selection Analysis', () => {
                 await traitInputs.nth(i).fill('50');
             }
 
-            // Save personality type (button text is just "Save" on profile page)
-            const savePersonalityButton = page.getByRole('button', {
-                name: /^save$/i,
+            // Save personality type
+            // Target the Save button in the personality type section specifically
+            const personalitySection = page.locator('section').filter({
+                hasText: /your personality type/i,
             });
+            const savePersonalityButton = personalitySection.getByRole(
+                'button',
+                {
+                    name: /^save$/i,
+                },
+            );
             await savePersonalityButton.click();
 
             // Wait for save to complete and success message
@@ -223,7 +230,10 @@ test.describe('Framework Selection - Quick Verification', () => {
         }
 
         // Save personality
-        const saveButton = page.getByRole('button', {
+        const personalitySection = page.locator('section').filter({
+            hasText: /your personality type/i,
+        });
+        const saveButton = personalitySection.getByRole('button', {
             name: /^save$/i,
         });
         await saveButton.click();
