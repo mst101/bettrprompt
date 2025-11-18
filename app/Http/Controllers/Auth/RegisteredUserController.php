@@ -78,6 +78,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Redirect to history page if visitor had completed prompts, otherwise to dashboard
+        if ($visitorId && $claimedCount > 0) {
+            return redirect(route('prompt-optimizer.history', absolute: false));
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

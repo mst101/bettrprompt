@@ -96,7 +96,10 @@ const {
     skipQuestion: originalSkipQuestion,
     goBackToPreviousQuestion: originalGoBack,
     clearAnswer,
-} = usePromptAnswering(props.promptRun.id);
+} = usePromptAnswering(props.promptRun.id, () => {
+    // Focus textarea after navigation
+    questionFormRef.value?.focus();
+});
 
 // Wrap submitAnswer to save to local state first
 const submitAnswer = () => {

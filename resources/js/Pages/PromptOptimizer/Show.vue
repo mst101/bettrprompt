@@ -151,12 +151,19 @@ const tabs = computed<Tab[]>(() => {
 });
 
 // Determine if user should proceed to questions
-const shouldShowProceedButton = computed(
-    () =>
-        props.promptRun.workflowStage === 'framework_selected' &&
-        (!props.promptRun.clarifyingAnswers ||
-            props.promptRun.clarifyingAnswers.length === 0),
-);
+const shouldShowProceedButton = computed(() => {
+    if (props.promptRun.workflowStage !== 'framework_selected') {
+        return false;
+    }
+
+    // Show button unless ALL questions have been answered
+    const totalQuestions = props.promptRun.frameworkQuestions?.length || 0;
+    const answeredQuestions =
+        props.promptRun.clarifyingAnswers?.filter((a) => a !== null).length ||
+        0;
+
+    return answeredQuestions < totalQuestions;
+});
 
 // Set default active tab based on workflow stage
 watch(

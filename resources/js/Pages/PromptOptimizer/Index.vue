@@ -239,11 +239,6 @@ watch(
                                 <ButtonPrimary @click="openRegisterModal?.()">
                                     Create Free Account
                                 </ButtonPrimary>
-                                <ButtonSecondary
-                                    :href="route('prompt-optimizer.history')"
-                                >
-                                    View History
-                                </ButtonSecondary>
                             </div>
                         </div>
                     </div>

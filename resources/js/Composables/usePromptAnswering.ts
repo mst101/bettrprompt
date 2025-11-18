@@ -1,10 +1,11 @@
 import { router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 /**
  * Composable for handling prompt optimization question answering
  *
  * @param promptRunId - The ID of the prompt run
+ * @param onNavigate - Optional callback to focus textarea after navigation
  *
  * @example
  * const {
@@ -14,9 +15,12 @@ import { ref } from 'vue';
  *     skipQuestion,
  *     handleTranscription,
  *     clearAnswer
- * } = usePromptAnswering(props.promptRun.id);
+ * } = usePromptAnswering(props.promptRun.id, () => textareaRef.value?.focus());
  */
-export function usePromptAnswering(promptRunId: number) {
+export function usePromptAnswering(
+    promptRunId: number,
+    onNavigate?: () => void,
+) {
     const isSubmitting = ref(false);
 
     const answerForm = useForm({
@@ -29,10 +33,12 @@ export function usePromptAnswering(promptRunId: number) {
         isSubmitting.value = true;
         answerForm.post(route('prompt-optimizer.answer', promptRunId), {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: async () => {
                 // Don't reset the form here - the watcher will set the correct answer
                 // for the next question based on currentQuestionAnswer prop
                 isSubmitting.value = false;
+                await nextTick();
+                onNavigate?.();
             },
             onError: () => {
                 isSubmitting.value = false;
@@ -47,8 +53,10 @@ export function usePromptAnswering(promptRunId: number) {
             {},
             {
                 preserveScroll: true,
-                onFinish: () => {
+                onFinish: async () => {
                     isSubmitting.value = false;
+                    await nextTick();
+                    onNavigate?.();
                 },
             },
         );
@@ -73,8 +81,10 @@ export function usePromptAnswering(promptRunId: number) {
             {},
             {
                 preserveScroll: true,
-                onFinish: () => {
+                onFinish: async () => {
                     isSubmitting.value = false;
+                    await nextTick();
+                    onNavigate?.();
                 },
             },
         );

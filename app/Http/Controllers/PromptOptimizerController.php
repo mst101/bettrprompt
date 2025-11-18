@@ -220,7 +220,7 @@ class PromptOptimizerController extends Controller
                 // Redirect to show page where questions will be displayed
                 return redirect()
                     ->route('prompt-optimizer.show', $promptRun)
-                    ->with('success', 'Framework selected! Please answer the following questions.');
+                    ->with('success', 'Framework selected! Please answer the clarifying questions.');
             } else {
                 // Handle n8n error
                 $errorMessage = $response['error'] ?? 'Framework selector workflow failed';
@@ -876,7 +876,7 @@ class PromptOptimizerController extends Controller
 
                     return redirect()
                         ->route('prompt-optimizer.show', $promptRun)
-                        ->with('success', 'Framework selected! Please answer the following questions.');
+                        ->with('success', 'Framework selected! Please answer the clarifying questions.');
                 } else {
                     // Handle n8n error
                     $errorMessage = $response['error'] ?? 'Framework selector workflow failed';
