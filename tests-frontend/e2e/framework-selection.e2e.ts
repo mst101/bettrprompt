@@ -219,38 +219,42 @@ test.describe('Framework Selection Analysis', () => {
                     await page.reload();
                     await page.waitForLoadState('networkidle');
 
-                    // Check multiple indicators that framework has been selected:
-                    // 1. Framework tab exists in navigation
-                    const frameworkTab = page.getByRole('tab', {
-                        name: /framework/i,
-                    });
-                    const hasFrameworkTab = await frameworkTab
-                        .count()
-                        .then((c) => c > 0)
-                        .catch(() => false);
+                    // Check for all tabs on the page
+                    const allTabs = await page
+                        .locator('[role="tab"]')
+                        .allTextContents();
+                    const hasFrameworkTab = allTabs.some((text) =>
+                        /framework/i.test(text),
+                    );
 
-                    // 2. Check if we're not on the "submitted" workflow stage anymore
+                    // Check workflow stage indicators
                     const hasProcessingIndicator = await page
                         .getByText(/selecting optimal framework/i)
                         .isVisible()
                         .catch(() => false);
 
-                    frameworkFound = hasFrameworkTab && !hasProcessingIndicator;
+                    // Check for loading states
+                    const hasGeneratingIndicator = await page
+                        .getByText(/generating.*prompt/i)
+                        .isVisible()
+                        .catch(() => false);
+
+                    frameworkFound =
+                        hasFrameworkTab &&
+                        !hasProcessingIndicator &&
+                        !hasGeneratingIndicator;
+
+                    const elapsed = Math.round((Date.now() - startTime) / 1000);
 
                     if (frameworkFound) {
-                        console.log(
-                            `  ✓ Framework selected after ${Math.round((Date.now() - startTime) / 1000)}s`,
-                        );
+                        console.log(`  ✓ Framework selected after ${elapsed}s`);
                         break;
                     }
 
-                    // Debug logging every 15 seconds
-                    const elapsed = Math.round((Date.now() - startTime) / 1000);
-                    if (elapsed % 15 === 0 && elapsed > 0) {
-                        console.log(
-                            `  ... still waiting (${elapsed}s) - hasTab: ${hasFrameworkTab}, isProcessing: ${hasProcessingIndicator}`,
-                        );
-                    }
+                    // Debug logging every check (for now)
+                    console.log(
+                        `  [${elapsed}s] Tabs: [${allTabs.join(', ')}] | Processing: ${hasProcessingIndicator} | Generating: ${hasGeneratingIndicator}`,
+                    );
 
                     // Wait before checking again
                     await page.waitForTimeout(pollInterval);
