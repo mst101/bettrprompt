@@ -38,9 +38,10 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     await passwordInput.fill(TEST_USER.password);
 
     // Submit the form by clicking the submit button
-    const loginButton = page
-        .getByRole('button', { name: /^log in$/i, exact: false })
-        .first();
+    // Find the submit button within the modal dialog (type="submit")
+    const loginButton = page.locator('button[type="submit"]', {
+        hasText: /log in/i,
+    });
     await loginButton.waitFor({ state: 'visible', timeout: 5000 });
 
     // Click and wait for navigation
