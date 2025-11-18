@@ -56,14 +56,6 @@ const closeDropdownOnNavigate = () => {
     userDropdown.value?.close();
 };
 
-onMounted(() => {
-    router.on('start', closeDropdownOnNavigate);
-});
-
-onUnmounted(() => {
-    router.off('start', closeDropdownOnNavigate);
-});
-
 const openLogin = () => {
     showRegisterModal.value = false;
     showForgotPasswordModal.value = false;
@@ -81,6 +73,24 @@ const openForgotPassword = () => {
     showRegisterModal.value = false;
     showForgotPasswordModal.value = true;
 };
+
+onMounted(() => {
+    router.on('start', closeDropdownOnNavigate);
+
+    // Handle modal query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const modalParam = urlParams.get('modal');
+
+    if (modalParam === 'login') {
+        openLogin();
+    } else if (modalParam === 'register') {
+        openRegister();
+    }
+});
+
+onUnmounted(() => {
+    router.off('start', closeDropdownOnNavigate);
+});
 
 // Provide modal controls to child components
 provide('openLoginModal', openLogin);
