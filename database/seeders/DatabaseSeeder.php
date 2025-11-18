@@ -22,5 +22,9 @@ class DatabaseSeeder extends Seeder
         //            'email' => 'info@hiddengambia.com',
         //            'password' => bcrypt('voodoo90'),
         //        ]);
+
+        $this->call([
+            TestUserSeeder::class,
+        ]);
     }
 }
