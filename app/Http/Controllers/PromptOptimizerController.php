@@ -113,10 +113,22 @@ class PromptOptimizerController extends Controller
             'ESFP' => 'Entertainer',
         ];
 
+        // Check if visitor has already completed a prompt (limit to 1 for non-authenticated)
+        $visitorHasCompletedPrompts = false;
+        if (! $request->user()) {
+            $visitorId = $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitorHasCompletedPrompts = PromptRun::where('visitor_id', $visitorId)
+                    ->where('status', 'completed')
+                    ->exists();
+            }
+        }
+
         return Inertia::render('PromptOptimizer/Index', [
             'visitorPersonalityType' => $personalityData['personality_type'],
             'visitorTraitPercentages' => $personalityData['trait_percentages'],
             'personalityTypes' => $personalityTypes,
+            'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
         ]);
     }
 
@@ -321,6 +333,17 @@ class PromptOptimizerController extends Controller
         $currentQuestionIndex = $promptRun->getAnsweredQuestionsCount();
         $currentQuestionAnswer = $futureAnswers[$currentQuestionIndex] ?? null;
 
+        // Check if visitor has completed prompts (for banner display)
+        $visitorHasCompletedPrompts = false;
+        if (! $request->user()) {
+            $visitorId = $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitorHasCompletedPrompts = PromptRun::where('visitor_id', $visitorId)
+                    ->where('status', 'completed')
+                    ->exists();
+            }
+        }
+
         //        dd(PromptRunResource::make($promptRun)->resolve());
         return Inertia::render('PromptOptimizer/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
@@ -330,6 +353,7 @@ class PromptOptimizerController extends Controller
                 'answered' => $promptRun->getAnsweredQuestionsCount(),
                 'total' => $promptRun->getTotalQuestionsCount(),
             ],
+            'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
         ]);
     }
 

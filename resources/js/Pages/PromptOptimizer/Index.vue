@@ -13,15 +13,18 @@ import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 
 interface Props {
     visitorPersonalityType?: string | null;
     visitorTraitPercentages?: Record<string, number> | null;
     personalityTypes: Record<string, string>;
+    visitorHasCompletedPrompts?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    visitorHasCompletedPrompts: false,
+});
 
 defineOptions({
     layout: AppLayout,
@@ -29,6 +32,7 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+const openRegisterModal = inject<() => void>('openRegisterModal');
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile
     if (user.value) {
@@ -211,54 +215,92 @@ watch(
                     </div>
                 </div>
 
-                <p class="mb-6 max-w-4xl text-gray-600">
-                    Create optimised AI prompts using expert frameworks.
-                    <span v-if="hasPersonalityType">
-                        Prompts will be customised to your personality type and
-                        task requirements.
-                    </span>
-                    <span v-else>
-                        Prompts will be optimised for your specific task
-                        requirements.
-                    </span>
-                </p>
-
-                <form class="max-w-4xl space-y-6" @submit.prevent="submit">
-                    <!-- Task Description -->
-                    <FormTextareaWithActions
-                        id="taskDescription"
-                        ref="taskDescriptionTextarea"
-                        v-model="form.taskDescription"
-                        label="Task Description"
-                        :error="form.errors.taskDescription"
-                        help-text="Minimum 10 characters. Be specific about your goals and requirements."
-                        required
-                        autofocus
-                        :rows="6"
-                        placeholder="Describe what you're trying to accomplish..."
-                    >
-                        <template #actions>
-                            <ButtonTrash
-                                v-if="form.taskDescription"
-                                @click="clearTaskDescription"
-                            />
-                            <ButtonVoiceInput
-                                @transcription="handleTranscription"
-                            />
-                        </template>
-                    </FormTextareaWithActions>
-
-                    <!-- Submit Button -->
-                    <div class="flex items-center justify-end">
-                        <ButtonPrimary
-                            type="submit"
-                            :disabled="form.processing || !hasTask"
-                        >
-                            <span v-if="form.processing">Processing...</span>
-                            <span v-else>Optimise Prompt</span>
-                        </ButtonPrimary>
+                <!-- Visitor limit message -->
+                <div
+                    v-if="!user && visitorHasCompletedPrompts"
+                    class="mb-6 rounded-lg border-2 border-indigo-200 bg-indigo-50 p-6"
+                >
+                    <div class="flex items-start gap-3">
+                        <DynamicIcon
+                            name="information-circle"
+                            class="mt-0.5 h-6 w-6 shrink-0 text-indigo-600"
+                        />
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-indigo-900">
+                                You've reached your visitor limit
+                            </h3>
+                            <p class="mt-2 text-gray-700">
+                                You've already created an optimised prompt as a
+                                visitor. To create more prompts, save your work,
+                                and iterate on existing ones, you'll need to
+                                create a free account.
+                            </p>
+                            <div class="mt-4 flex gap-3">
+                                <ButtonPrimary @click="openRegisterModal?.()">
+                                    Create Free Account
+                                </ButtonPrimary>
+                                <ButtonSecondary
+                                    :href="route('prompt-optimizer.history')"
+                                >
+                                    View History
+                                </ButtonSecondary>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                </div>
+
+                <template v-else>
+                    <p class="mb-6 max-w-4xl text-gray-600">
+                        Create optimised AI prompts using expert frameworks.
+                        <span v-if="hasPersonalityType">
+                            Prompts will be customised to your personality type
+                            and task requirements.
+                        </span>
+                        <span v-else>
+                            Prompts will be optimised for your specific task
+                            requirements.
+                        </span>
+                    </p>
+
+                    <form class="max-w-4xl space-y-6" @submit.prevent="submit">
+                        <!-- Task Description -->
+                        <FormTextareaWithActions
+                            id="taskDescription"
+                            ref="taskDescriptionTextarea"
+                            v-model="form.taskDescription"
+                            label="Task Description"
+                            :error="form.errors.taskDescription"
+                            help-text="Minimum 10 characters. Be specific about your goals and requirements."
+                            required
+                            autofocus
+                            :rows="6"
+                            placeholder="Describe what you're trying to accomplish..."
+                        >
+                            <template #actions>
+                                <ButtonTrash
+                                    v-if="form.taskDescription"
+                                    @click="clearTaskDescription"
+                                />
+                                <ButtonVoiceInput
+                                    @transcription="handleTranscription"
+                                />
+                            </template>
+                        </FormTextareaWithActions>
+
+                        <!-- Submit Button -->
+                        <div class="flex items-center justify-end">
+                            <ButtonPrimary
+                                type="submit"
+                                :disabled="form.processing || !hasTask"
+                            >
+                                <span v-if="form.processing"
+                                    >Processing...</span
+                                >
+                                <span v-else>Optimise Prompt</span>
+                            </ButtonPrimary>
+                        </div>
+                    </form>
+                </template>
             </div>
         </div>
     </ContainerPage>

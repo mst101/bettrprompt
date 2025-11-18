@@ -70,6 +70,18 @@ const toggleShowAll = () => {
     showAllQuestions.value = !showAllQuestions.value;
 };
 
+// Ref to question answering form for focus management
+const questionFormRef = ref<InstanceType<typeof QuestionAnsweringForm> | null>(
+    null,
+);
+
+// Focus method exposed to parent
+const focus = () => {
+    questionFormRef.value?.focus();
+};
+
+defineExpose({ focus });
+
 // Local state to track all answers (preserves them when navigating)
 const localAnswers = ref<Map<number, string>>(new Map());
 
@@ -257,6 +269,7 @@ const isCompleted = computed(
     <!-- Question Answering Interface (for in-progress runs) -->
     <QuestionAnsweringForm
         v-if="isAnsweringQuestions && currentQuestion && !showAllQuestions"
+        ref="questionFormRef"
         v-model:answer="answerForm.answer"
         :question="currentQuestion"
         :current-question-number="progress ? progress.answered + 1 : 0"

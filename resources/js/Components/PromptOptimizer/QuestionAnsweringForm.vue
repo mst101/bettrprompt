@@ -39,17 +39,20 @@ const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
     null,
 );
 
+// Focus method exposed to parent
+const focus = () => {
+    nextTick(() => {
+        textareaRef.value?.focus();
+    });
+};
+
+defineExpose({ focus });
+
 // Focus textarea when question changes
 watch(
     () => props.question,
     () => {
-        nextTick(() => {
-            // Find the textarea element within the component
-            const textarea = textareaRef.value?.$el?.querySelector('textarea');
-            if (textarea) {
-                textarea.focus();
-            }
-        });
+        focus();
     },
 );
 
