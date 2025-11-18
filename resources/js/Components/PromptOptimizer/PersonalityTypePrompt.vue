@@ -1,0 +1,131 @@
+<script setup lang="ts">
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
+import LinkText from '@/Components/LinkText.vue';
+import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
+import { ref } from 'vue';
+
+interface Props {
+    hasPersonalityType: boolean;
+    isAuthenticated: boolean;
+    visitorPersonalityType?: string | null;
+    visitorTraitPercentages?: Record<string, number> | null;
+    personalityTypes: Record<string, string>;
+}
+
+defineProps<Props>();
+
+const emit = defineEmits<{
+    (e: 'saved'): void;
+}>();
+
+const showPersonalityForm = ref(false);
+
+const handlePersonalitySaved = () => {
+    showPersonalityForm.value = false;
+    emit('saved');
+};
+</script>
+
+<template>
+    <!-- Info message if no personality type -->
+    <div
+        v-if="!hasPersonalityType"
+        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
+    >
+        <div class="flex">
+            <div class="shrink-0">
+                <DynamicIcon
+                    name="information-circle"
+                    class="h-5 w-5 text-indigo-400"
+                />
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-indigo-800">
+                    Get personalised prompts (optional)
+                </h3>
+                <div class="mt-2 text-sm text-indigo-700">
+                    <!-- Authenticated user -->
+                    <p v-if="isAuthenticated">
+                        For personalised prompts tailored to your communication
+                        style,
+                        <LinkText :href="route('profile.edit')">
+                            add your personality type
+                        </LinkText>
+                        to your profile. Otherwise, we'll select the best
+                        framework based purely on your task.
+                    </p>
+                    <!-- Visitor -->
+                    <div v-else>
+                        <p class="mb-2">
+                            For personalised prompts tailored to your
+                            communication style, add your 16personalities type.
+                            Otherwise, we'll select the best framework based
+                            purely on your task.
+                        </p>
+                        <ButtonText
+                            v-if="!showPersonalityForm"
+                            id="add-personality-type"
+                            type="button"
+                            class="-m-1"
+                            @click="showPersonalityForm = true"
+                        >
+                            Add personality type
+                        </ButtonText>
+                        <div v-else class="mt-3">
+                            <UpdatePersonalityTypeForm
+                                :personality-types="personalityTypes"
+                                :visitor-mode="true"
+                                :visitor-personality-type="
+                                    visitorPersonalityType
+                                "
+                                :visitor-trait-percentages="
+                                    visitorTraitPercentages
+                                "
+                                @saved="handlePersonalitySaved"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Display visitor personality type if set -->
+    <div
+        v-else-if="!isAuthenticated && visitorPersonalityType"
+        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
+    >
+        <div class="flex items-start justify-between">
+            <div class="flex flex-1 items-center">
+                <div class="flex-1">
+                    <div class="flex items-center justify-between gap-4">
+                        <h3 class="text-sm font-medium text-indigo-800">
+                            Personality Type:
+                            <span class="whitespace-nowrap">{{
+                                visitorPersonalityType
+                            }}</span>
+                        </h3>
+                        <ButtonSecondary
+                            id="edit-personality-type"
+                            type="button"
+                            @click="showPersonalityForm = !showPersonalityForm"
+                        >
+                            {{ showPersonalityForm ? 'Cancel' : 'Edit' }}
+                        </ButtonSecondary>
+                    </div>
+                    <div v-if="showPersonalityForm" class="mt-2">
+                        <UpdatePersonalityTypeForm
+                            :personality-types="personalityTypes"
+                            :visitor-mode="true"
+                            :visitor-personality-type="visitorPersonalityType"
+                            :visitor-trait-percentages="visitorTraitPercentages"
+                            @saved="handlePersonalitySaved"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

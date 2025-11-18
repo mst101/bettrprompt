@@ -68,8 +68,8 @@ test.describe('Framework Selection Analysis', () => {
                 await loginAsTestUser(page);
 
                 // Navigate to prompt optimiser
-                await page.goto('/prompt-optimizer');
-                await page.waitForLoadState('networkidle');
+                // await page.goto('/prompt-optimizer');
+                // await page.waitForLoadState('networkidle');
 
                 // For authenticated users, need to go to profile to set personality type
                 // Navigate to profile edit page
