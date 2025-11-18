@@ -21,8 +21,9 @@ test.describe('Authentication', () => {
         // Wait for the login modal content to appear
         // Note: The dialog element gets 'open' attribute immediately, but content
         // transitions in over 300ms. We wait for actual content visibility.
-        await expect(page.getByLabel(/email/i)).toBeVisible();
-        await expect(page.getByLabel(/password/i)).toBeVisible();
+        // Use pattern that handles asterisk for required fields
+        await expect(page.getByLabel(/^email/i)).toBeVisible();
+        await expect(page.getByLabel(/^password/i)).toBeVisible();
     });
 
     test('should navigate to home page', async ({ page }) => {
@@ -52,12 +53,27 @@ test.describe('Authentication', () => {
     });
 
     test('should allow navigation to register from login', async ({ page }) => {
-        // Open login modal
-        await page.goto('/?modal=login');
+        // Navigate to home page
+        await page.goto('/');
         await page.waitForLoadState('networkidle');
 
+        // Dismiss cookie banner if it appears
+        const acceptButton = page.getByRole('button', { name: /accept all/i });
+        if (await acceptButton.isVisible().catch(() => false)) {
+            await acceptButton.click();
+            await page.waitForTimeout(300);
+        }
+
+        // Click the login button to open the modal
+        const loginButton = page
+            .getByRole('button', { name: /^log in$/i })
+            .first();
+        await expect(loginButton).toBeVisible();
+        await loginButton.click();
+
         // Wait for login modal content to appear
-        await expect(page.getByLabel(/email/i)).toBeVisible();
+        // Use getByLabel with a pattern that handles the asterisk for required fields
+        await expect(page.getByLabel(/^email/i)).toBeVisible();
 
         // Look for the "Need an account?" button in the login modal
         const switchToRegisterButton = page.getByRole('button', {
@@ -70,10 +86,10 @@ test.describe('Authentication', () => {
 
         // Verify the register modal opened (check for register-specific field)
         // "Confirm Password" is unique to the register modal
-        await expect(page.getByLabel(/confirm password/i)).toBeVisible();
+        // Use pattern that handles asterisk for required fields
+        await expect(page.getByLabel(/^confirm password/i)).toBeVisible();
 
         // Also verify other register fields are present
-        // Note: Required fields have an asterisk, so we match "Name" or "Name *"
         await expect(page.getByLabel(/^name/i)).toBeVisible();
 
         // Verify it's NOT the login modal by checking the submit button text
@@ -92,8 +108,9 @@ test.describe('Authentication', () => {
         await page.waitForTimeout(500);
 
         // Look for email and password inputs within the modal
-        const emailInput = page.getByLabel(/email/i).first();
-        const passwordInput = page.getByLabel(/password/i).first();
+        // Use pattern that handles asterisk for required fields
+        const emailInput = page.getByLabel(/^email/i).first();
+        const passwordInput = page.getByLabel(/^password/i).first();
 
         // Check if login form is visible
         if (await emailInput.isVisible().catch(() => false)) {
