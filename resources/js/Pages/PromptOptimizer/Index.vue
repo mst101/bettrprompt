@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FormInput from '@/Components/FormInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkText from '@/Components/LinkText.vue';
 import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 interface Props {
     visitorPersonalityType?: string | null;
     visitorTraitPercentages?: Record<string, number> | null;
+    personalityTypes: Record<string, string>;
 }
 
 const props = defineProps<Props>();
@@ -58,19 +58,9 @@ const clearTaskDescription = () => {
     form.taskDescription = '';
 };
 
-// Visitor personality form
-const personalityForm = useForm({
-    personality_type: props.visitorPersonalityType || '',
-    trait_percentages: props.visitorTraitPercentages || null,
-});
-
-const savePersonalityType = () => {
-    personalityForm.patch(route('visitor.personality.update'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            showPersonalityForm.value = false;
-        },
-    });
+// Handle personality form save
+const handlePersonalitySaved = () => {
+    showPersonalityForm.value = false;
 };
 </script>
 
@@ -127,51 +117,20 @@ const savePersonalityType = () => {
                                     >
                                         Add personality type
                                     </ButtonText>
-                                    <div v-else class="mt-3 space-y-3">
-                                        <div>
-                                            <FormInput
-                                                id="visitor-personality-type"
-                                                v-model="
-                                                    personalityForm.personality_type
-                                                "
-                                                class="max-w-xs text-blue-900"
-                                                label="Personality Type (e.g., INTJ-T)"
-                                                type="text"
-                                                placeholder="XXXX-X"
-                                                maxlength="6"
-                                            />
-                                            <p
-                                                v-if="
-                                                    personalityForm.errors
-                                                        .personality_type
-                                                "
-                                                class="mt-1 text-sm text-red-600"
-                                            >
-                                                {{
-                                                    personalityForm.errors
-                                                        .personality_type
-                                                }}
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <ButtonPrimary
-                                                type="button"
-                                                :disabled="
-                                                    personalityForm.processing
-                                                "
-                                                @click="savePersonalityType"
-                                            >
-                                                Save
-                                            </ButtonPrimary>
-                                            <ButtonSecondary
-                                                type="button"
-                                                @click="
-                                                    showPersonalityForm = false
-                                                "
-                                            >
-                                                Cancel
-                                            </ButtonSecondary>
-                                        </div>
+                                    <div v-else class="mt-3">
+                                        <UpdatePersonalityTypeForm
+                                            :personality-types="
+                                                personalityTypes
+                                            "
+                                            :visitor-mode="true"
+                                            :visitor-personality-type="
+                                                visitorPersonalityType
+                                            "
+                                            :visitor-trait-percentages="
+                                                visitorTraitPercentages
+                                            "
+                                            @saved="handlePersonalitySaved"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -185,83 +144,53 @@ const savePersonalityType = () => {
                     class="mb-6 rounded-md border border-green-200 bg-green-50 p-4"
                 >
                     <div class="flex items-start justify-between">
-                        <div class="flex">
-                            <div class="shrink-0">
-                                <DynamicIcon
-                                    name="check-circle"
-                                    class="h-5 w-5 text-green-400"
-                                />
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-green-800">
-                                    Personality Type Set
-                                </h3>
-                                <div
-                                    v-if="!showPersonalityForm"
-                                    class="mt-2 text-sm text-green-700"
-                                >
-                                    <p class="mb-1">
-                                        Your personality type:
-                                        <strong class="font-semibold">{{
-                                            visitorPersonalityType
-                                        }}</strong>
-                                    </p>
-                                    <ButtonText
-                                        id="edit-personality-type"
-                                        type="button"
-                                        variant="success"
-                                        @click="showPersonalityForm = true"
-                                    >
-                                        Edit personality type
-                                    </ButtonText>
+                        <div class="flex-1">
+                            <div class="flex">
+                                <div class="shrink-0">
+                                    <DynamicIcon
+                                        name="check-circle"
+                                        class="h-5 w-5 text-green-400"
+                                    />
                                 </div>
-                                <div v-else class="mt-3 space-y-3">
-                                    <div>
-                                        <FormInput
-                                            id="visitor-personality-type-edit"
-                                            v-model="
-                                                personalityForm.personality_type
-                                            "
-                                            class="max-w-xs text-green-900"
-                                            label="Personality Type (e.g., INTJ-T)"
-                                            type="text"
-                                            placeholder="XXXX-X"
-                                            maxlength="6"
-                                        />
-                                        <p
-                                            v-if="
-                                                personalityForm.errors
-                                                    .personality_type
-                                            "
-                                            class="mt-1 text-sm text-red-600"
-                                        >
-                                            {{
-                                                personalityForm.errors
-                                                    .personality_type
-                                            }}
+                                <div class="ml-3 flex-1">
+                                    <h3
+                                        class="text-sm font-medium text-green-800"
+                                    >
+                                        Personality Type
+                                    </h3>
+                                    <div
+                                        v-if="!showPersonalityForm"
+                                        class="mt-2 text-sm text-green-700"
+                                    >
+                                        <p class="mb-1">
+                                            Your personality type:
+                                            <strong class="font-semibold">{{
+                                                visitorPersonalityType
+                                            }}</strong>
                                         </p>
+                                        <ButtonText
+                                            id="edit-personality-type"
+                                            type="button"
+                                            variant="success"
+                                            @click="showPersonalityForm = true"
+                                        >
+                                            Edit personality type
+                                        </ButtonText>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <ButtonPrimary
-                                            type="button"
-                                            :disabled="
-                                                personalityForm.processing
+                                    <div v-else class="mt-3">
+                                        <UpdatePersonalityTypeForm
+                                            :personality-types="
+                                                personalityTypes
                                             "
-                                            @click="savePersonalityType"
-                                        >
-                                            Save
-                                        </ButtonPrimary>
-                                        <ButtonSecondary
-                                            type="button"
-                                            @click="
-                                                showPersonalityForm = false;
-                                                personalityForm.personality_type =
-                                                    visitorPersonalityType ||
-                                                    '';
+                                            :visitor-mode="true"
+                                            :visitor-personality-type="
+                                                visitorPersonalityType
                                             "
-                                        >
-                                            Cancel
-                                        </ButtonSecondary>
+                                            :visitor-trait-percentages="
+                                                visitorTraitPercentages
+                                            "
+                                            @saved="handlePersonalitySaved"
+                                        />
                                     </div>
                                 </div>
                             </div>

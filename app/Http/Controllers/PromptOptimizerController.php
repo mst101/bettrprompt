@@ -97,6 +97,7 @@ class PromptOptimizerController extends Controller
         return Inertia::render('PromptOptimizer/Index', [
             'visitorPersonalityType' => $personalityData['personality_type'],
             'visitorTraitPercentages' => $personalityData['trait_percentages'],
+            'personalityTypes' => PersonalityType::getPersonalityTypes(),
         ]);
     }
 

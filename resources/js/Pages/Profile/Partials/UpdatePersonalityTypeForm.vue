@@ -12,15 +12,27 @@ import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     personalityTypes: Record<string, string>;
+    visitorMode?: boolean;
+    visitorPersonalityType?: string | null;
+    visitorTraitPercentages?: Record<string, number> | null;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    visitorMode: false,
+    visitorPersonalityType: null,
+    visitorTraitPercentages: null,
+});
 
+const emit = defineEmits<{
+    (e: 'saved'): void;
+}>();
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 
-// Load from user data or fallback to local storage
-const savedPersonalityType = user.value?.personalityType;
+// Load from user data or visitor props
+const savedPersonalityType = props.visitorMode
+    ? props.visitorPersonalityType
+    : user.value?.personalityType;
 const parts = savedPersonalityType?.split('-') || ['', ''];
 const personalityBase = ref(parts[0] || '');
 const identity = ref<'A' | 'T' | ''>((parts[1] as 'A' | 'T' | '') || '');
@@ -37,19 +49,35 @@ const form = useForm({
     name: user.value?.name || '',
     email: user.value?.email || '',
     personalityType: fullPersonalityType.value,
-    traitPercentages: (user.value?.traitPercentages || {
-        mind: null,
-        energy: null,
-        nature: null,
-        tactics: null,
-        identity: null,
-    }) as {
+    personality_type: fullPersonalityType.value, // For visitor mode
+    traitPercentages: (user.value?.traitPercentages ||
+        props.visitorTraitPercentages || {
+            mind: null,
+            energy: null,
+            nature: null,
+            tactics: null,
+            identity: null,
+        }) as {
+        mind: number | null;
+        energy: number | null;
+        nature: number | null;
+        tactics: number | null;
+        identity: null;
+    },
+    trait_percentages: (user.value?.traitPercentages ||
+        props.visitorTraitPercentages || {
+            mind: null,
+            energy: null,
+            nature: null,
+            tactics: null,
+            identity: null,
+        }) as {
         mind: number | null;
         energy: number | null;
         nature: number | null;
         tactics: number | null;
         identity: number | null;
-    },
+    }, // For visitor mode
 });
 
 // Persist the CTA only after a successful save in this session
@@ -68,19 +96,36 @@ const personalityTypeOptions = computed(() => {
 // Update form when personality type changes
 watch(fullPersonalityType, (newValue) => {
     form.personalityType = newValue;
+    form.personality_type = newValue; // For visitor mode
 });
 
+// Sync trait percentages between the two forms
+watch(
+    () => form.traitPercentages,
+    (newValue) => {
+        form.trait_percentages = { ...newValue };
+    },
+    { deep: true },
+);
+
 const submit = () => {
-    form.patch(route('profile.personality.update'), {
+    const routeName = props.visitorMode
+        ? 'visitor.personality.update'
+        : 'profile.personality.update';
+
+    form.patch(route(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
-            // Show CTA after saving
-            showTaskCta.value = true;
-            // Focus the button after it appears
-            await nextTick();
-            // Get the underlying DOM element from the Link component
-            const linkElement = taskCtaButton.value?.$el as HTMLElement;
-            linkElement?.focus();
+            emit('saved');
+            if (!props.visitorMode) {
+                // Show CTA after saving (only for authenticated users)
+                showTaskCta.value = true;
+                // Focus the button after it appears
+                await nextTick();
+                // Get the underlying DOM element from the Link component
+                const linkElement = taskCtaButton.value?.$el as HTMLElement;
+                linkElement?.focus();
+            }
         },
     });
 };
