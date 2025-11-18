@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FormTextarea from '@/Components/FormTextarea.vue';
 import type { FormTextareaProps } from '@/types';
+import { ref } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
@@ -21,6 +22,14 @@ const emit = defineEmits<{
 defineOptions({
     inheritAttrs: false,
 });
+
+const formTextarea = ref<InstanceType<typeof FormTextarea> | null>(null);
+
+const focus = () => {
+    formTextarea.value?.focus();
+};
+
+defineExpose({ focus });
 </script>
 
 <template>
@@ -45,6 +54,7 @@ defineOptions({
 
         <FormTextarea
             :id="props.id"
+            ref="formTextarea"
             :model-value="props.modelValue"
             :rows="props.rows"
             :placeholder="props.placeholder"

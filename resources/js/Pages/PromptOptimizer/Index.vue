@@ -13,7 +13,7 @@ import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     visitorPersonalityType?: string | null;
@@ -40,6 +40,9 @@ const hasPersonalityType = computed(() => {
 const hasTask = computed(() => form.taskDescription.length >= 10);
 
 const showPersonalityForm = ref(false);
+const taskDescriptionTextarea = ref<InstanceType<
+    typeof FormTextareaWithActions
+> | null>(null);
 
 const form = useForm({
     taskDescription: '',
@@ -60,18 +63,23 @@ const clearTaskDescription = () => {
 };
 
 // Handle personality form save
-const handlePersonalitySaved = () => {
+const handlePersonalitySaved = async () => {
     showPersonalityForm.value = false;
+    // Focus the task description textarea after closing the form
+    await nextTick();
+    taskDescriptionTextarea.value?.focus();
 };
 
 // Watch for visitor personality type changes and close form
 // This handles the case when a visitor submits for the first time
 watch(
     () => props.visitorPersonalityType,
-    (newValue, oldValue) => {
-        // If personality type changes from null to a value, close the form
+    async (newValue, oldValue) => {
+        // If personality type changes from null to a value, close the form and focus textarea
         if (oldValue === null && newValue !== null) {
             showPersonalityForm.value = false;
+            await nextTick();
+            taskDescriptionTextarea.value?.focus();
         }
     },
 );
@@ -219,6 +227,7 @@ watch(
                     <!-- Task Description -->
                     <FormTextareaWithActions
                         id="taskDescription"
+                        ref="taskDescriptionTextarea"
                         v-model="form.taskDescription"
                         label="Task Description"
                         :error="form.errors.taskDescription"

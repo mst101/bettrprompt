@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormTextareaProps } from '@/types';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
@@ -31,6 +31,14 @@ const textareaClasses = computed(() => {
         { 'cursor-not-allowed opacity-50': props.disabled },
     ];
 });
+
+const textarea = ref<HTMLTextAreaElement | null>(null);
+
+const focus = () => {
+    textarea.value?.focus();
+};
+
+defineExpose({ focus });
 </script>
 
 <template>
@@ -46,6 +54,7 @@ const textareaClasses = computed(() => {
 
         <textarea
             :id="props.id"
+            ref="textarea"
             :value="props.modelValue"
             :rows="props.rows"
             :placeholder="props.placeholder"
