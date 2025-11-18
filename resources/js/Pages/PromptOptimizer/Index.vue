@@ -179,6 +179,96 @@ const savePersonalityType = () => {
                     </div>
                 </div>
 
+                <!-- Display visitor personality type if set -->
+                <div
+                    v-else-if="!user && visitorPersonalityType"
+                    class="mb-6 rounded-md border border-green-200 bg-green-50 p-4"
+                >
+                    <div class="flex items-start justify-between">
+                        <div class="flex">
+                            <div class="shrink-0">
+                                <DynamicIcon
+                                    name="check-circle"
+                                    class="h-5 w-5 text-green-400"
+                                />
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-green-800">
+                                    Personality Type Set
+                                </h3>
+                                <div
+                                    v-if="!showPersonalityForm"
+                                    class="mt-2 text-sm text-green-700"
+                                >
+                                    <p class="mb-1">
+                                        Your personality type:
+                                        <strong class="font-semibold">{{
+                                            visitorPersonalityType
+                                        }}</strong>
+                                    </p>
+                                    <ButtonText
+                                        id="edit-personality-type"
+                                        type="button"
+                                        variant="success"
+                                        @click="showPersonalityForm = true"
+                                    >
+                                        Edit personality type
+                                    </ButtonText>
+                                </div>
+                                <div v-else class="mt-3 space-y-3">
+                                    <div>
+                                        <FormInput
+                                            id="visitor-personality-type-edit"
+                                            v-model="
+                                                personalityForm.personality_type
+                                            "
+                                            class="max-w-xs text-green-900"
+                                            label="Personality Type (e.g., INTJ-T)"
+                                            type="text"
+                                            placeholder="XXXX-X"
+                                            maxlength="6"
+                                        />
+                                        <p
+                                            v-if="
+                                                personalityForm.errors
+                                                    .personality_type
+                                            "
+                                            class="mt-1 text-sm text-red-600"
+                                        >
+                                            {{
+                                                personalityForm.errors
+                                                    .personality_type
+                                            }}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <ButtonPrimary
+                                            type="button"
+                                            :disabled="
+                                                personalityForm.processing
+                                            "
+                                            @click="savePersonalityType"
+                                        >
+                                            Save
+                                        </ButtonPrimary>
+                                        <ButtonSecondary
+                                            type="button"
+                                            @click="
+                                                showPersonalityForm = false;
+                                                personalityForm.personality_type =
+                                                    visitorPersonalityType ||
+                                                    '';
+                                            "
+                                        >
+                                            Cancel
+                                        </ButtonSecondary>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <p class="mb-6 max-w-4xl text-gray-600">
                     Create optimised AI prompts using expert frameworks.
                     <span v-if="hasPersonalityType">
