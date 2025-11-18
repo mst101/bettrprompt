@@ -94,10 +94,29 @@ class PromptOptimizerController extends Controller
     {
         $personalityData = $this->getPersonalityData($request);
 
+        $personalityTypes = [
+            'INTJ' => 'Architect',
+            'INTP' => 'Logician',
+            'ENTJ' => 'Commander',
+            'ENTP' => 'Debater',
+            'INFJ' => 'Advocate',
+            'INFP' => 'Mediator',
+            'ENFJ' => 'Protagonist',
+            'ENFP' => 'Campaigner',
+            'ISTJ' => 'Logistician',
+            'ISFJ' => 'Defender',
+            'ESTJ' => 'Executive',
+            'ESFJ' => 'Consul',
+            'ISTP' => 'Virtuoso',
+            'ISFP' => 'Adventurer',
+            'ESTP' => 'Entrepreneur',
+            'ESFP' => 'Entertainer',
+        ];
+
         return Inertia::render('PromptOptimizer/Index', [
             'visitorPersonalityType' => $personalityData['personality_type'],
             'visitorTraitPercentages' => $personalityData['trait_percentages'],
-            'personalityTypes' => PersonalityType::getPersonalityTypes(),
+            'personalityTypes' => $personalityTypes,
         ]);
     }
 
