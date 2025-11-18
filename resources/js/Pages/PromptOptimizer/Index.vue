@@ -63,6 +63,18 @@ const clearTaskDescription = () => {
 const handlePersonalitySaved = () => {
     showPersonalityForm.value = false;
 };
+
+// Watch for visitor personality type changes and close form
+// This handles the case when a visitor submits for the first time
+watch(
+    () => props.visitorPersonalityType,
+    (newValue, oldValue) => {
+        // If personality type changes from null to a value, close the form
+        if (oldValue === null && newValue !== null) {
+            showPersonalityForm.value = false;
+        }
+    },
+);
 </script>
 
 <template>
