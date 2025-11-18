@@ -215,13 +215,27 @@ test.describe('Framework Selection Analysis', () => {
                     !frameworkFound &&
                     Date.now() - startTime < maxWaitTime
                 ) {
-                    // Check if framework tab is visible
+                    // Reload page to get latest state from backend
+                    await page.reload();
+                    await page.waitForLoadState('networkidle');
+
+                    // Check multiple indicators that framework has been selected:
+                    // 1. Framework tab exists in navigation
                     const frameworkTab = page.getByRole('tab', {
                         name: /framework/i,
                     });
-                    frameworkFound = await frameworkTab
+                    const hasFrameworkTab = await frameworkTab
+                        .count()
+                        .then((c) => c > 0)
+                        .catch(() => false);
+
+                    // 2. Check if we're not on the "submitted" workflow stage anymore
+                    const hasProcessingIndicator = await page
+                        .getByText(/selecting optimal framework/i)
                         .isVisible()
                         .catch(() => false);
+
+                    frameworkFound = hasFrameworkTab && !hasProcessingIndicator;
 
                     if (frameworkFound) {
                         console.log(
@@ -230,12 +244,16 @@ test.describe('Framework Selection Analysis', () => {
                         break;
                     }
 
+                    // Debug logging every 15 seconds
+                    const elapsed = Math.round((Date.now() - startTime) / 1000);
+                    if (elapsed % 15 === 0 && elapsed > 0) {
+                        console.log(
+                            `  ... still waiting (${elapsed}s) - hasTab: ${hasFrameworkTab}, isProcessing: ${hasProcessingIndicator}`,
+                        );
+                    }
+
                     // Wait before checking again
                     await page.waitForTimeout(pollInterval);
-
-                    // Reload page to get latest state
-                    await page.reload();
-                    await page.waitForLoadState('networkidle');
                 }
 
                 if (!frameworkFound) {
