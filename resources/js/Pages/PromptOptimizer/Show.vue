@@ -150,11 +150,26 @@ const tabs = computed<Tab[]>(() => {
     return allTabs;
 });
 
+// Determine if user should proceed to questions
+const shouldShowProceedButton = computed(
+    () =>
+        props.promptRun.workflowStage === 'framework_selected' &&
+        (!props.promptRun.clarifyingAnswers ||
+            props.promptRun.clarifyingAnswers.length === 0),
+);
+
 // Set default active tab based on workflow stage
 watch(
     () => props.promptRun.id,
     () => {
-        if (isAnsweringQuestions.value) {
+        if (
+            props.promptRun.workflowStage === 'framework_selected' &&
+            shouldShowProceedButton.value
+        ) {
+            // Show framework tab when framework is just selected
+            activeTab.value = 'framework';
+        } else if (isAnsweringQuestions.value) {
+            // Show questions tab when actively answering
             activeTab.value = 'questions';
         } else if (props.promptRun.optimizedPrompt) {
             activeTab.value = 'prompt';
@@ -174,6 +189,11 @@ watch(
         }
     },
 );
+
+// Handle proceed to questions button
+const handleProceedToQuestions = () => {
+    activeTab.value = 'questions';
+};
 </script>
 
 <template>
@@ -220,6 +240,8 @@ watch(
                 :framework="promptRun.selectedFramework"
                 :reasoning="promptRun.frameworkReasoning"
                 :personality-approach="promptRun.personalityApproach"
+                :show-proceed-button="shouldShowProceedButton"
+                @proceed="handleProceedToQuestions"
             />
 
             <ClarifyingQuestions

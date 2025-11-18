@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 
@@ -6,9 +7,16 @@ interface Props {
     framework: string;
     reasoning: string;
     personalityApproach?: string | null;
+    showProceedButton?: boolean;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+    showProceedButton: false,
+});
+
+const emit = defineEmits<{
+    (e: 'proceed'): void;
+}>();
 
 const getApproachLabel = (approach: string | null | undefined): string => {
     if (!approach) return '';
@@ -83,6 +91,13 @@ const getApproachColor = (approach: string | null | undefined): string => {
                 >
                     {{ reasoning }}
                 </p>
+            </div>
+
+            <div v-if="showProceedButton" class="flex justify-end pt-2">
+                <ButtonPrimary @click="emit('proceed')">
+                    Answer Clarifying Questions
+                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
+                </ButtonPrimary>
             </div>
         </div>
     </Card>
