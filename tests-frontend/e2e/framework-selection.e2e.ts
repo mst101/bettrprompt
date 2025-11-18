@@ -61,7 +61,7 @@ test.describe('Framework Selection Analysis', () => {
         test(
             `should select framework for ${personalityType.name} (${personalityType.code})`,
             {
-                timeout: 120000, // 2 minutes per test (includes AI processing)
+                timeout: 90000, // 1.5 minutes per test (includes 45s wait for framework)
             },
             async ({ page }) => {
                 // Login as test user
@@ -200,21 +200,22 @@ test.describe('Framework Selection Analysis', () => {
                     throw error;
                 }
 
-                // Wait for framework selection (may take time for AI processing)
-                // Allow up to 60 seconds for n8n workflow to complete
-                await page.waitForTimeout(2000);
-
-                // Wait for framework to be selected
-                // We'll check periodically for up to 60 seconds
+                // Check if framework has been selected
+                // Poll for framework tab appearance, but don't block forever
                 let frameworkFound = false;
-                let attempts = 0;
-                const maxAttempts = 30; // 30 attempts * 2 seconds = 60 seconds
+                const maxWaitTime = 45000; // Wait up to 45 seconds for framework
+                const pollInterval = 3000; // Check every 3 seconds
+                const startTime = Date.now();
 
-                while (!frameworkFound && attempts < maxAttempts) {
-                    await page.reload();
-                    await page.waitForLoadState('networkidle');
+                console.log(
+                    `\n[${personalityType.code}] Waiting for framework selection...`,
+                );
 
-                    // Look for framework tab or framework name
+                while (
+                    !frameworkFound &&
+                    Date.now() - startTime < maxWaitTime
+                ) {
+                    // Check if framework tab is visible
                     const frameworkTab = page.getByRole('tab', {
                         name: /framework/i,
                     });
@@ -222,23 +223,31 @@ test.describe('Framework Selection Analysis', () => {
                         .isVisible()
                         .catch(() => false);
 
-                    if (!frameworkFound) {
-                        attempts++;
-                        await page.waitForTimeout(2000);
+                    if (frameworkFound) {
+                        console.log(
+                            `  ✓ Framework selected after ${Math.round((Date.now() - startTime) / 1000)}s`,
+                        );
+                        break;
                     }
+
+                    // Wait before checking again
+                    await page.waitForTimeout(pollInterval);
+
+                    // Reload page to get latest state
+                    await page.reload();
+                    await page.waitForLoadState('networkidle');
                 }
 
-                // Log result for analysis
-                console.log(
-                    `\n[${personalityType.code}] Framework selection test completed`,
-                );
-                console.log(`  URL: ${page.url()}`);
-                console.log(
-                    `  Framework found: ${frameworkFound ? 'Yes' : 'No (may still be processing)'}`,
-                );
+                if (!frameworkFound) {
+                    console.log(
+                        `  ⚠ Framework not selected within ${maxWaitTime / 1000}s, moving to next test`,
+                    );
+                    console.log(
+                        `  Check prompt run ID ${page.url().match(/\d+$/)?.[0]} later in database`,
+                    );
+                }
 
-                // Note: We don't assert framework was found because AI processing may take longer
-                // The data is persisted for manual analysis in the database
+                console.log(`  URL: ${page.url()}`);
             },
         );
     }
@@ -249,7 +258,7 @@ test.describe('Framework Selection - Quick Verification', () => {
     test(
         'should persist prompt run for test user',
         {
-            timeout: 120000, // 2 minutes
+            timeout: 60000, // 1 minute
         },
         async ({ page }) => {
             await seedTestUser();
