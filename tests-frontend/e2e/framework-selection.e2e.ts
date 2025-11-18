@@ -82,8 +82,28 @@ test.describe('Framework Selection Analysis', () => {
                 timeout: 5000,
             });
 
-            // Select the personality type
-            await personalitySelect.selectOption(personalityType.code);
+            // Extract base type (e.g., "INTJ") and identity (e.g., "A")
+            const [baseType, identityType] = personalityType.code.split('-');
+
+            // Select the base personality type (e.g., "INTJ")
+            await personalitySelect.selectOption(baseType);
+
+            // Wait for identity radio buttons to appear
+            await page.waitForTimeout(300);
+
+            // Select identity (Assertive or Turbulent)
+            const identityRadio =
+                identityType === 'A'
+                    ? page.getByLabel(/assertive.*\(a\)/i)
+                    : page.getByLabel(/turbulent.*\(t\)/i);
+            await identityRadio.click();
+
+            // Expand trait percentages section
+            const toggleTraitsButton = page.getByRole('button', {
+                name: /\+ add.*trait percentages/i,
+            });
+            await toggleTraitsButton.click();
+            await page.waitForTimeout(300);
 
             // Set default trait percentages (50% for each trait)
             const traitInputs = page.locator('input[type="number"]');
@@ -179,7 +199,21 @@ test.describe('Framework Selection - Quick Verification', () => {
         // Set personality type to INTJ-A
         const personalitySelect = page.getByLabel(/personality type/i).first();
         await personalitySelect.waitFor({ state: 'visible', timeout: 5000 });
-        await personalitySelect.selectOption('INTJ-A');
+        await personalitySelect.selectOption('INTJ');
+
+        // Wait for identity radio to appear
+        await page.waitForTimeout(300);
+
+        // Select Assertive
+        const assertiveRadio = page.getByLabel(/assertive.*\(a\)/i);
+        await assertiveRadio.click();
+
+        // Expand trait percentages
+        const toggleTraitsButton = page.getByRole('button', {
+            name: /\+ add.*trait percentages/i,
+        });
+        await toggleTraitsButton.click();
+        await page.waitForTimeout(300);
 
         // Set trait percentages
         const traitInputs = page.locator('input[type="number"]');
