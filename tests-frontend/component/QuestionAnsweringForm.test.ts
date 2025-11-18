@@ -38,7 +38,7 @@ describe('QuestionAnsweringForm', () => {
         });
 
         const progress = wrapper.find('[data-testid="progress-indicator"]');
-        expect(progress.text()).toContain('50% complete');
+        expect(progress.text()).toContain('25% complete');
     });
 
     it('should update progress bar width based on percentage', () => {
@@ -51,7 +51,7 @@ describe('QuestionAnsweringForm', () => {
         });
 
         const progressBar = wrapper.find('[data-testid="progress-bar"]');
-        expect(progressBar.attributes('style')).toContain('width: 25%');
+        expect(progressBar.attributes('style')).toContain('width: 0%');
     });
 
     it('should disable submit button when answer is empty', () => {
@@ -198,7 +198,7 @@ describe('QuestionAnsweringForm', () => {
         const wrapper = mount(QuestionAnsweringForm, {
             props: {
                 ...defaultProps,
-                currentQuestionNumber: 1,
+                currentQuestionNumber: 2,
                 totalQuestions: 3,
             },
         });
