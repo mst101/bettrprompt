@@ -120,9 +120,11 @@ watch(showingNavigationDropdown, async (isOpen) => {
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col bg-gray-100">
+    <div
+        class="flex min-h-screen flex-col bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
+    >
         <div class="flex flex-1 flex-col">
-            <nav class="border-b border-gray-100 bg-white">
+            <nav class="bg-white shadow-xs shadow-indigo-50">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">

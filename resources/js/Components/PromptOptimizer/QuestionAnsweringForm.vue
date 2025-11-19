@@ -67,24 +67,6 @@ const progressPercent = computed(() => {
     const answeredCount = props.currentQuestionNumber - 1;
     return (answeredCount / props.totalQuestions) * 100;
 });
-
-const textareaClasses = computed(() => {
-    const baseClasses =
-        'mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm';
-    const conditionalClasses = [];
-
-    if (props.isSubmitting) {
-        conditionalClasses.push('cursor-not-allowed opacity-50');
-    }
-
-    if (props.hasError) {
-        conditionalClasses.push(
-            'border-red-300 focus:border-red-500 focus:ring-red-500',
-        );
-    }
-
-    return [baseClasses, ...conditionalClasses].join(' ');
-});
 </script>
 
 <template>
@@ -133,11 +115,11 @@ const textareaClasses = computed(() => {
                 ref="textareaRef"
                 :model-value="answer"
                 label="Your Answer"
-                :disabled="isSubmitting"
+                :is-submitting="isSubmitting"
                 :error="hasError && errorMessage ? errorMessage : ''"
                 placeholder="Type your answer here (or enter via speech)..."
                 :rows="4"
-                :textarea-class="textareaClasses"
+                textarea-class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 autofocus
                 @update:model-value="emit('update:answer', $event)"
             >

@@ -225,9 +225,7 @@ const handleProceedToQuestions = async () => {
     </HeaderPage>
 
     <ContainerPage>
-        <div
-            class="mb-6 max-w-4xl overflow-hidden bg-white shadow-xs sm:rounded-lg"
-        >
+        <div class="mb-6 max-w-4xl shadow-xs sm:rounded-lg">
             <Tabs v-model="activeTab" :tabs="tabs" />
 
             <OptimizedPrompt

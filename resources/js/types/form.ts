@@ -82,6 +82,9 @@ export interface FormTextareaProps extends BaseFormFieldProps {
     /** Maximum character length */
     maxlength?: number;
 
+    /** Whether the field is in a submitting state */
+    isSubmitting?: boolean;
+
     /** Custom CSS classes to apply to the textarea element */
     textareaClass?: string;
 }

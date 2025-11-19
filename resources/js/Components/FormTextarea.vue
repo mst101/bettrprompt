@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
     disabled: false,
     helpText: '',
     autofocus: false,
+    isSubmitting: false,
     textareaClass: '',
 });
 
@@ -27,8 +28,15 @@ const textareaClasses = computed(() => {
         return props.textareaClass;
     }
     return [
-        'mt-2 block w-full text-black rounded-md border-indigo-300 bg-indigo-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm',
-        { 'cursor-not-allowed opacity-50': props.disabled },
+        'mt-2 block w-full text-black rounded-md border-indigo-100 bg-white inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500 sm:text-sm',
+        {
+            'cursor-not-allowed opacity-50':
+                props.disabled || props.isSubmitting,
+        },
+        {
+            'border-red-300 focus:border-red-500 focus:ring-red-500':
+                !!props.error,
+        },
     ];
 });
 

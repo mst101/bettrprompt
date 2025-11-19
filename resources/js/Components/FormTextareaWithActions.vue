@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
     disabled: false,
     helpText: '',
     autofocus: false,
+    isSubmitting: false,
     textareaClass: '',
 });
 
@@ -63,6 +64,7 @@ defineExpose({ focus });
             :autofocus="props.autofocus"
             :error="props.error"
             :help-text="props.helpText"
+            :is-submitting="props.isSubmitting"
             :textarea-class="props.textareaClass"
             label=""
             @update:model-value="emit('update:modelValue', $event)"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import PersonalityTypePrompt from '@/Components/PromptOptimizer/PersonalityTypePrompt.vue';
@@ -85,35 +86,38 @@ watch(
     <HeaderPage title="Prompt Optimiser" />
 
     <ContainerPage>
-        <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
-            <div class="max-w-4xl px-6 sm:p-6">
-                <PersonalityTypePrompt
-                    :has-personality-type="hasPersonalityType"
-                    :is-authenticated="!!user"
-                    :visitor-personality-type="visitorPersonalityType"
-                    :visitor-trait-percentages="visitorTraitPercentages"
-                    :personality-types="personalityTypes"
-                    @saved="handlePersonalitySaved"
-                />
+        <!--        <div-->
+        <!--            class="max-w-4xl overflow-hidden bg-white text-gray-600 shadow-lg ring-1 ring-gray-100 sm:rounded-lg dark:bg-indigo-50"-->
+        <!--        >-->
+        <Card>
+            <!--            <div class="px-6 sm:p-6">-->
+            <PersonalityTypePrompt
+                :has-personality-type="hasPersonalityType"
+                :is-authenticated="!!user"
+                :visitor-personality-type="visitorPersonalityType"
+                :visitor-trait-percentages="visitorTraitPercentages"
+                :personality-types="personalityTypes"
+                @saved="handlePersonalitySaved"
+            />
 
-                <VisitorLimitBanner
-                    v-if="!user && visitorHasCompletedPrompts"
-                    @register="openRegisterModal"
-                />
+            <VisitorLimitBanner
+                v-if="!user && visitorHasCompletedPrompts"
+                @register="openRegisterModal"
+            />
 
-                <TaskDescriptionForm
-                    v-else
-                    ref="taskDescriptionFormRef"
-                    :has-personality-type="hasPersonalityType"
-                    :form="form"
-                    @submit="submit"
-                    @transcription="handleTranscription"
-                    @clear="clearTaskDescription"
-                    @update:task-description="
-                        (value) => (form.taskDescription = value)
-                    "
-                />
-            </div>
-        </div>
+            <TaskDescriptionForm
+                v-else
+                ref="taskDescriptionFormRef"
+                :has-personality-type="hasPersonalityType"
+                :form="form"
+                @submit="submit"
+                @transcription="handleTranscription"
+                @clear="clearTaskDescription"
+                @update:task-description="
+                    (value) => (form.taskDescription = value)
+                "
+            />
+            <!--            </div>-->
+        </Card>
     </ContainerPage>
 </template>

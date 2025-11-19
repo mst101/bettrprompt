@@ -11,7 +11,9 @@ defineProps<{
 </script>
 
 <template>
-    <div class="rounded-lg bg-white p-6 shadow-xs ring-1 ring-gray-100">
+    <div
+        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:bg-indigo-50"
+    >
         <div class="flex items-center gap-4">
             <div
                 :class="[
@@ -30,6 +32,6 @@ defineProps<{
                 </h3>
             </div>
         </div>
-        <p class="mt-4 text-sm text-gray-600" v-html="description"></p>
+        <p class="mt-4 text-sm" v-html="description"></p>
     </div>
 </template>

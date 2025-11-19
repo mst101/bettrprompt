@@ -13,7 +13,7 @@ defineOptions({
 <template>
     <Head title="Welcome to AI Buddy" />
 
-    <div class="bg-linear-to-br from-indigo-50 via-white to-purple-50">
+    <div class="">
         <!-- Hero Section -->
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
             <div class="text-center">

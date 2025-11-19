@@ -43,4 +43,7 @@ a) amplifies their personality type
 b) counterbalances their personality type
 c) a mixture of both
 
-Then create a new n8n workflow that 
+Then create a new n8n workflow that
+
+- Prevent people from using multiple simple emails e.g. user+1@gmail.com
+- 
