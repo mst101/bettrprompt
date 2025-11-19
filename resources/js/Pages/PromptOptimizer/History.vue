@@ -6,9 +6,10 @@ import LinkButton from '@/Components/LinkButton.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import TableHeaderSortable from '@/Components/TableHeaderSortable.vue';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
-import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/types';
+import { formatDate, truncateText } from '@/utils/formatters';
+import { getFullPersonalityType } from '@/utils/personalityTypes';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
@@ -26,35 +27,6 @@ interface Props {
         per_page: number;
     };
 }
-
-const truncate = (text: string | null | undefined, length: number = 100) => {
-    if (!text) return '';
-    if (text.length <= length) return text;
-    return text.substring(0, length) + '...';
-};
-
-const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
-
-const getPersonalityTypeName = (type: string | null) => {
-    if (!type) return '';
-    // Extract base type without -A/-T suffix
-    const baseType = type.split('-')[0] as keyof typeof PERSONALITY_TYPE_NAMES;
-    return PERSONALITY_TYPE_NAMES[baseType] || '';
-};
-
-const getFullPersonalityType = (type: string | null) => {
-    if (!type) return '';
-    const name = getPersonalityTypeName(type);
-    return name ? `${name} (${type})` : type;
-};
 
 const sortBy = (column: string) => {
     const currentSortBy = props.filters.sort_by;
@@ -307,7 +279,10 @@ onMounted(() => {
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     {{
-                                        truncate(promptRun.taskDescription, 80)
+                                        truncateText(
+                                            promptRun.taskDescription,
+                                            80,
+                                        )
                                     }}
                                 </td>
                                 <td

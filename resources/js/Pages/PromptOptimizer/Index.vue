@@ -4,7 +4,7 @@ import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import PersonalityTypePrompt from '@/Components/PromptOptimizer/PersonalityTypePrompt.vue';
 import TaskDescriptionForm from '@/Components/PromptOptimizer/TaskDescriptionForm.vue';
-import VisitorLimitBanner from '@/Components/PromptOptimizer/VisitorLimitBanner.vue';
+import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
@@ -102,6 +102,7 @@ watch(
 
             <VisitorLimitBanner
                 v-if="!user && visitorHasCompletedPrompts"
+                variant="inline"
                 @register="openRegisterModal"
             />
 

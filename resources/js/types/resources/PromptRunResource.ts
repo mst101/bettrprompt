@@ -9,19 +9,25 @@ import type {
     VisitorResource,
 } from '@/types';
 
+/**
+ * Trait percentages for personality type
+ * Maps trait names to their percentage values (0-100)
+ */
+export type TraitPercentages = Record<string, number>;
+
 export interface PromptRunResource {
     readonly id: number;
     readonly userId: number | null;
     readonly visitorId: string;
     readonly parentId: number | null;
     readonly personalityType: string | null;
-    readonly traitPercentages: Array<unknown> | null;
+    readonly traitPercentages: TraitPercentages | null;
     readonly taskDescription: string;
     readonly selectedFramework: string | null;
     readonly frameworkReasoning: string | null;
     readonly personalityApproach: string | null;
-    readonly frameworkQuestions: Array<unknown> | null;
-    readonly clarifyingAnswers: Array<unknown> | null;
+    readonly frameworkQuestions: string[] | null;
+    readonly clarifyingAnswers: (string | null)[] | null;
     readonly optimizedPrompt: string | null;
     readonly n8nRequestPayload: Record<string, unknown> | null;
     readonly n8nResponsePayload: N8nResponsePayload | null;

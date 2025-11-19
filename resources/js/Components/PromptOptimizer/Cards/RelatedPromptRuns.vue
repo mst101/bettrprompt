@@ -3,6 +3,7 @@ import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import type { PromptRunResource } from '@/types';
+import { truncateText } from '@/utils/formatters';
 import { Link } from '@inertiajs/vue3';
 
 interface Props {
@@ -15,11 +16,6 @@ const props = defineProps<Props>();
 const hasRelations =
     (props.parent && props.parent.id) ||
     (props.children && props.children.length > 0);
-
-const truncateText = (text: string, maxLength: number = 60) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-};
 </script>
 
 <template>

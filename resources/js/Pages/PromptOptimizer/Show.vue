@@ -10,9 +10,9 @@ import ErrorDisplay from '@/Components/PromptOptimizer/ErrorDisplay.vue';
 import LoadingStateCard from '@/Components/PromptOptimizer/LoadingStateCard.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
-import { PERSONALITY_TYPE_NAMES } from '@/constants/workflow';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
+import { getFullPersonalityType } from '@/utils/personalityTypes';
 import { Head } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -33,19 +33,6 @@ interface Props {
     currentQuestionAnswer?: string | null;
     progress: Progress;
 }
-
-const getPersonalityTypeName = (type: string | null) => {
-    if (!type) return '';
-    // Extract base type without -A/-T suffix
-    const baseType = type.split('-')[0] as keyof typeof PERSONALITY_TYPE_NAMES;
-    return PERSONALITY_TYPE_NAMES[baseType] || '';
-};
-
-const getFullPersonalityType = (type: string | null) => {
-    if (!type) return '';
-    const name = getPersonalityTypeName(type);
-    return name ? `${name} (${type})` : type;
-};
 
 const personalityTypeLabel = computed(() =>
     getFullPersonalityType(props.promptRun.personalityType),

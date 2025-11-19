@@ -2,13 +2,23 @@
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 
+interface Props {
+    variant?: 'fixed' | 'inline';
+}
+
+withDefaults(defineProps<Props>(), {
+    variant: 'fixed',
+});
+
 defineEmits<{
     (e: 'register'): void;
 }>();
 </script>
 
 <template>
+    <!-- Fixed bottom banner variant -->
     <div
+        v-if="variant === 'fixed'"
         class="fixed right-0 bottom-0 left-0 z-50 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
     >
         <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -34,6 +44,34 @@ defineEmits<{
                     Create Free Account
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inline card variant -->
+    <div
+        v-else
+        class="mb-6 rounded-lg border-2 border-indigo-200 bg-indigo-50 p-6"
+    >
+        <div class="flex items-start gap-3">
+            <DynamicIcon
+                name="information-circle"
+                class="mt-0.5 h-6 w-6 shrink-0 text-indigo-600"
+            />
+            <div class="flex-1">
+                <h3 class="text-lg font-semibold text-indigo-900">
+                    You've reached your visitor limit
+                </h3>
+                <p class="mt-2 text-gray-700">
+                    You've already created an optimised prompt as a visitor. To
+                    create more prompts, save your work, and iterate on existing
+                    ones, you'll need to create a free account.
+                </p>
+                <div class="mt-4 flex gap-3">
+                    <ButtonPrimary @click="$emit('register')">
+                        Create Free Account
+                    </ButtonPrimary>
+                </div>
             </div>
         </div>
     </div>
