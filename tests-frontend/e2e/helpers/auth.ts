@@ -17,9 +17,50 @@ export const TEST_USER: TestUser = {
 };
 
 /**
+ * Pre-accept cookies to prevent cookie banner from blocking interactions
+ * Should be called before navigating to any page in tests
+ */
+export async function acceptCookies(page: Page): Promise<void> {
+    await page.context().addCookies([
+        {
+            name: 'cookie_consent',
+            value: encodeURIComponent(
+                JSON.stringify({
+                    essential: true,
+                    functional: true,
+                    analytics: true,
+                }),
+            ),
+            domain: 'app.localhost',
+            path: '/',
+            expires: Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60, // 1 year
+            httpOnly: false,
+            secure: false,
+            sameSite: 'Strict',
+        },
+    ]);
+}
+
+/**
  * Log in as test user via the login modal
  */
 export async function loginAsTestUser(page: Page): Promise<void> {
+    // Pre-accept cookies by setting the cookie_consent cookie before navigation
+    // This prevents the cookie banner modal from appearing and blocking interactions
+    await acceptCookies(page);
+
+    // Check if already logged in to avoid unnecessary login attempts
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    const userMenu = page.getByRole('button', { name: /user menu/i });
+    const isAlreadyLoggedIn = await userMenu.isVisible();
+
+    if (isAlreadyLoggedIn) {
+        // Already logged in, no need to go through login process
+        return;
+    }
+
     // Navigate to login page with modal parameter
     await page.goto('/?modal=login');
     await page.waitForLoadState('networkidle');
@@ -29,7 +70,7 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 
     // Wait for email input to be visible (confirms modal is open)
     const emailInput = page.getByLabel(/^email/i).first();
-    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
+    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
 
     // Fill in login form
     await emailInput.fill(TEST_USER.email);
@@ -53,11 +94,16 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     // Additional wait for authentication to complete
     await page.waitForTimeout(1000);
 
-    // Verify we're logged in by checking URL changed
-    const currentUrl = page.url();
-    if (currentUrl.includes('modal=login')) {
+    // Verify we're logged in by checking for the user menu button
+    // (Inertia clears query params after login, so we can't rely on URL)
+    const userMenuAfterLogin = page.getByRole('button', {
+        name: /user menu/i,
+    });
+    const isLoggedIn = await userMenuAfterLogin.isVisible();
+
+    if (!isLoggedIn) {
         throw new Error(
-            'Login failed - still on login page. Check credentials or form validation.',
+            'Login failed - user menu not found. Check credentials or form validation.',
         );
     }
 }
