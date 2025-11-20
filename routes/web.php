@@ -99,4 +99,20 @@ Route::middleware('auth')->group(function () {
         ->name('prompt-optimizer.history');
 });
 
+// Admin routes (requires authentication and admin role)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('dashboard');
+
+    // Users
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+
+    // Tasks
+    Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/show', [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show');
+
+    // Prompt Runs
+    Route::get('/prompt-runs/{promptRun}', [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
+});
+
 require __DIR__.'/auth.php';

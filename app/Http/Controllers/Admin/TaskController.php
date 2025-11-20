@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\PromptRun;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class TaskController extends Controller
+{
+    /**
+     * Display a listing of tasks (unique task descriptions)
+     */
+    public function index(Request $request): Response
+    {
+        $tasksQuery = PromptRun::select('task_description', DB::raw('COUNT(*) as runs_count'))
+            ->whereNotNull('task_description')
+            ->groupBy('task_description')
+            ->orderByDesc('runs_count');
+
+        if ($request->search) {
+            $tasksQuery->where('task_description', 'like', "%{$request->search}%");
+        }
+
+        $tasks = $tasksQuery->paginate(20)->withQueryString();
+
+        return Inertia::render('Admin/Tasks/Index', [
+            'tasks' => $tasks,
+            'filters' => $request->only('search'),
+        ]);
+    }
+
+    /**
+     * Display prompt runs for a specific task
+     */
+    public function show(Request $request): Response
+    {
+        $taskDescription = $request->query('task');
+
+        if (! $taskDescription) {
+            abort(404, 'Task not found');
+        }
+
+        $promptRuns = PromptRun::with(['user', 'visitor'])
+            ->where('task_description', $taskDescription)
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return Inertia::render('Admin/Tasks/Show', [
+            'task_description' => $taskDescription,
+            'prompt_runs' => $promptRuns,
+        ]);
+    }
+
+    /**
+     * Display details of a specific prompt run
+     */
+    public function promptRun(PromptRun $promptRun): Response
+    {
+        $promptRun->load(['user', 'visitor', 'children']);
+
+        return Inertia::render('Admin/PromptRuns/Show', [
+            'prompt_run' => $promptRun,
+        ]);
+    }
+}

@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\TrackVisitor::class,
         ]);
 
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+        ]);
+
         // Trust all proxies for local development (Caddy reverse proxy)
         $middleware->trustProxies(at: '*');
     })

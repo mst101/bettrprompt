@@ -25,6 +25,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     tactics: number | null;
  *     identity: number | null;
  *   } | null;
+ *   readonly isAdmin: boolean;
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -46,6 +47,7 @@ class UserResource extends JsonResource
             'emailVerifiedAt' => $this->email_verified_at?->format('Y-m-d H:i:s'),
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
+            'isAdmin' => $this->is_admin ?? false,
         ];
     }
 }
