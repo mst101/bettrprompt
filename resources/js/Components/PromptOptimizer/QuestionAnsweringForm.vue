@@ -93,7 +93,9 @@ const progressPercent = computed(() => {
                         >{{ Math.round(progressPercent) }}% complete</span
                     >
                 </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
+                <div
+                    class="mt-2 h-2 overflow-hidden rounded-full bg-indigo-100"
+                >
                     <div
                         data-testid="progress-bar"
                         class="h-full bg-indigo-600 transition-all duration-300"
@@ -119,7 +121,6 @@ const progressPercent = computed(() => {
                 :error="hasError && errorMessage ? errorMessage : ''"
                 placeholder="Type your answer here (or enter via speech)..."
                 :rows="4"
-                textarea-class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 autofocus
                 @update:model-value="emit('update:answer', $event)"
             >

@@ -74,8 +74,8 @@ describe('FrameworkSelection', () => {
         );
         expect(badge.exists()).toBe(true);
         expect(badge.text()).toBe('Counterbalance');
-        expect(badge.classes()).toContain('bg-blue-100');
-        expect(badge.classes()).toContain('text-blue-800');
+        expect(badge.classes()).toContain('bg-pink-100');
+        expect(badge.classes()).toContain('text-pink-800');
     });
 
     it('should display amplify approach description', () => {
@@ -86,7 +86,7 @@ describe('FrameworkSelection', () => {
             },
         });
 
-        const approachSection = wrapper.find('.bg-blue-50');
+        const approachSection = wrapper.find('.bg-pink-50');
         expect(approachSection.exists()).toBe(true);
         expect(approachSection.text()).toContain('Personality Approach');
         expect(approachSection.text()).toContain(
@@ -102,7 +102,7 @@ describe('FrameworkSelection', () => {
             },
         });
 
-        const approachSection = wrapper.find('.bg-blue-50');
+        const approachSection = wrapper.find('.bg-pink-50');
         expect(approachSection.exists()).toBe(true);
         expect(approachSection.text()).toContain(
             'Providing structure to compensate for potential blind spots',
@@ -117,7 +117,7 @@ describe('FrameworkSelection', () => {
             },
         });
 
-        const approachSection = wrapper.find('.bg-blue-50');
+        const approachSection = wrapper.find('.bg-pink-50');
         expect(approachSection.exists()).toBe(false);
     });
 

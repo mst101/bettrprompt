@@ -37,7 +37,7 @@ const getApproachColor = (approach: string | null | undefined): string => {
     if (!approach) return 'bg-gray-100 text-gray-700';
     return approach === 'amplify'
         ? 'bg-green-100 text-green-800'
-        : 'bg-blue-100 text-blue-800';
+        : 'bg-pink-100 text-pink-800';
 };
 </script>
 
@@ -72,11 +72,11 @@ const getApproachColor = (approach: string | null | undefined): string => {
                 </div>
             </div>
 
-            <div v-if="personalityApproach" class="rounded-lg bg-blue-50 p-4">
-                <p class="text-sm font-medium text-blue-900">
+            <div v-if="personalityApproach" class="rounded-lg bg-pink-50 p-4">
+                <p class="text-sm font-medium text-pink-900">
                     Personality Approach
                 </p>
-                <p class="mt-1 text-sm text-blue-800">
+                <p class="mt-1 text-sm text-pink-800">
                     {{ getApproachDescription(personalityApproach) }}
                 </p>
             </div>

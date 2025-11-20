@@ -53,8 +53,13 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
+    // Wait a bit for any dynamic content to load
+    await page.waitForTimeout(500);
+
     const userMenu = page.getByRole('button', { name: /user menu/i });
-    const isAlreadyLoggedIn = await userMenu.isVisible();
+    const isAlreadyLoggedIn = await userMenu
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
 
     if (isAlreadyLoggedIn) {
         // Already logged in, no need to go through login process
@@ -92,18 +97,36 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     ]);
 
     // Additional wait for authentication to complete
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
 
     // Verify we're logged in by checking for the user menu button
     // (Inertia clears query params after login, so we can't rely on URL)
     const userMenuAfterLogin = page.getByRole('button', {
         name: /user menu/i,
     });
-    const isLoggedIn = await userMenuAfterLogin.isVisible();
+
+    // Retry logic for user menu visibility
+    let isLoggedIn = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        isLoggedIn = await userMenuAfterLogin
+            .isVisible({ timeout: 2000 })
+            .catch(() => false);
+
+        if (isLoggedIn) {
+            break;
+        }
+
+        // If not visible, reload and check again
+        if (attempt < 2) {
+            await page.reload();
+            await page.waitForLoadState('networkidle');
+            await page.waitForTimeout(1000);
+        }
+    }
 
     if (!isLoggedIn) {
         throw new Error(
-            'Login failed - user menu not found. Check credentials or form validation.',
+            'Login failed - user menu not found after 3 attempts. Check credentials or form validation.',
         );
     }
 }
