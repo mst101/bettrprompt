@@ -83,4 +83,16 @@ class Visitor extends Model
     {
         return $this->visit_count > 1;
     }
+
+    /**
+     * Determine if the visitor has completed at least one prompt run.
+     */
+    public function hasCompletedPrompts(): bool
+    {
+        return $this->promptRuns()
+            ->where('status', 'completed')
+            ->where('workflow_stage', 'completed')
+            ->whereNotNull('optimized_prompt')
+            ->exists();
+    }
 }

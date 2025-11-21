@@ -154,8 +154,9 @@ const copyToClipboard = async () => {
                         <p class="mt-1">
                             Friends who sign up using your link can trial the
                             service until <strong>15th December 2025</strong>.
-                            Share via email, WhatsApp, or any messaging
-                            platform!
+                            Share via email, WhatsApp, or any other direct
+                            messaging platform, but please don't post publicly
+                            as this is still a trial service.
                         </p>
                     </div>
                 </div>

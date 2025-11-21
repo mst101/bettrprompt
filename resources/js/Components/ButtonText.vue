@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-type ButtonVariant = 'primary' | 'secondary' | 'info' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'info' | 'danger' | 'warning';
 
 interface Props {
     id: string;
@@ -27,6 +27,7 @@ const buttonClasses = computed(() => {
         secondary: 'text-gray-600 hover:text-gray-800 focus:ring-gray-500',
         info: 'text-blue-600 hover:text-blue-800 focus:ring-blue-500',
         danger: 'text-red-600 hover:text-red-800 focus:ring-red-500',
+        warning: 'text-amber-600 hover:text-amber-800 focus:ring-amber-500',
     };
 
     const underlineClass = props.underline ? 'hover:underline' : '';

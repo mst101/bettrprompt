@@ -1031,6 +1031,14 @@ class PromptOptimizerController extends Controller
 
         $user = auth()->user();
 
+        // If user is not logged in (guest), check if they've already completed a prompt
+        if (! $user && $parentPromptRun->visitor_id) {
+            $visitor = Visitor::find($parentPromptRun->visitor_id);
+            if ($visitor && $visitor->hasCompletedPrompts()) {
+                return back()->with('error', 'Please create a free account to iterate on existing prompts. Registration takes just a few seconds!');
+            }
+        }
+
         try {
             // Get visitor_id from parent or request cookie
             $visitorId = $parentPromptRun->visitor_id ?? $request->cookie('visitor_id');
@@ -1148,6 +1156,14 @@ class PromptOptimizerController extends Controller
         );
 
         $user = auth()->user();
+
+        // If user is not logged in (guest), check if they've already completed a prompt
+        if (! $user && $parentPromptRun->visitor_id) {
+            $visitor = Visitor::find($parentPromptRun->visitor_id);
+            if ($visitor && $visitor->hasCompletedPrompts()) {
+                return back()->with('error', 'Please create a free account to iterate on existing prompts. Registration takes just a few seconds!');
+            }
+        }
 
         try {
             // Get visitor_id from parent or request cookie

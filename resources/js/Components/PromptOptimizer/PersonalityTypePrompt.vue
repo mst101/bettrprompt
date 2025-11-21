@@ -32,20 +32,20 @@ const handlePersonalitySaved = () => {
     <!-- Info message if no personality type -->
     <div
         v-if="!hasPersonalityType"
-        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
+        class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
     >
         <div class="flex">
             <div class="shrink-0">
                 <DynamicIcon
                     name="information-circle"
-                    class="h-5 w-5 text-indigo-400"
+                    class="h-5 w-5 text-amber-400"
                 />
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-indigo-800">
+                <h3 class="text-sm font-medium text-amber-800">
                     Get personalised prompts (optional)
                 </h3>
-                <div class="mt-2 text-sm text-indigo-700">
+                <div class="mt-2 text-sm text-amber-700">
                     <!-- Authenticated user -->
                     <p v-if="isAuthenticated">
                         For personalised prompts tailored to your communication
@@ -68,6 +68,7 @@ const handlePersonalitySaved = () => {
                             v-if="!showPersonalityForm"
                             id="add-personality-type"
                             type="button"
+                            variant="warning"
                             class="-m-1"
                             @click="showPersonalityForm = true"
                         >
@@ -95,13 +96,13 @@ const handlePersonalitySaved = () => {
     <!-- Display visitor personality type if set -->
     <div
         v-else-if="!isAuthenticated && visitorPersonalityType"
-        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
+        class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
     >
         <div class="flex items-start justify-between">
             <div class="flex flex-1 items-center">
                 <div class="flex-1">
                     <div class="flex items-center justify-between gap-4">
-                        <h3 class="text-sm font-medium text-indigo-800">
+                        <h3 class="text-sm font-medium text-amber-800">
                             Personality Type:
                             <span class="whitespace-nowrap">{{
                                 visitorPersonalityType
