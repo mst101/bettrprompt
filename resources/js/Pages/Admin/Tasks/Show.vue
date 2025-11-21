@@ -105,18 +105,17 @@ const getStatusColor = (status: string): string => {
                                     >
                                         Created
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Actions
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr
+                                <Link
                                     v-for="run in props.prompt_runs.data"
                                     :key="run.id"
-                                    class="hover:bg-gray-50"
+                                    :href="
+                                        route('admin.prompt-runs.show', run.id)
+                                    "
+                                    as="tr"
+                                    class="cursor-pointer transition hover:bg-gray-50"
                                 >
                                     <td
                                         class="px-6 py-4 text-sm font-medium text-gray-900"
@@ -169,25 +168,10 @@ const getStatusColor = (status: string): string => {
                                             ).toLocaleString()
                                         }}
                                     </td>
-                                    <td
-                                        class="px-6 py-4 text-right text-sm font-medium"
-                                    >
-                                        <Link
-                                            :href="
-                                                route(
-                                                    'admin.prompt-runs.show',
-                                                    run.id,
-                                                )
-                                            "
-                                            class="text-indigo-600 hover:text-indigo-900"
-                                        >
-                                            View Details →
-                                        </Link>
-                                    </td>
-                                </tr>
+                                </Link>
                                 <tr v-if="props.prompt_runs.data.length === 0">
                                     <td
-                                        colspan="7"
+                                        colspan="6"
                                         class="px-6 py-4 text-center text-sm text-gray-500"
                                     >
                                         No prompt runs found

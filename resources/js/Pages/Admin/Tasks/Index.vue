@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormInput from '@/Components/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
@@ -66,11 +67,13 @@ watch(search, debouncedSearch);
                             name="search"
                             class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
                         />
-                        <input
+                        <FormInput
+                            id="search-tasks"
                             v-model="search"
+                            class="pl-12"
+                            label=""
                             type="text"
                             placeholder="Search tasks..."
-                            class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         />
                     </div>
                 </Card>
@@ -91,18 +94,19 @@ watch(search, debouncedSearch);
                                     >
                                         Runs
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Actions
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr
+                                <Link
                                     v-for="task in props.tasks.data"
                                     :key="task.task_description"
-                                    class="hover:bg-gray-50"
+                                    :href="
+                                        route('admin.tasks.show', {
+                                            taskId: task.task_id,
+                                        })
+                                    "
+                                    as="tr"
+                                    class="cursor-pointer transition hover:bg-gray-50"
                                 >
                                     <td class="px-6 py-4 text-sm text-gray-900">
                                         {{ task.task_description }}
@@ -114,27 +118,13 @@ watch(search, debouncedSearch);
                                             {{ task.runs_count }}
                                         </span>
                                     </td>
-                                    <td
-                                        class="px-6 py-4 text-right text-sm font-medium"
-                                    >
-                                        <Link
-                                            :href="
-                                                route('admin.tasks.show', {
-                                                    taskId: task.task_id,
-                                                })
-                                            "
-                                            class="text-indigo-600 hover:text-indigo-900"
-                                        >
-                                            View Runs →
-                                        </Link>
-                                    </td>
-                                </tr>
+                                </Link>
                                 <tr
                                     v-if="props.tasks.data.length === 0"
                                     class="hover:bg-gray-50"
                                 >
                                     <td
-                                        colspan="3"
+                                        colspan="2"
                                         class="px-6 py-4 text-center text-sm text-gray-500"
                                     >
                                         No tasks found
