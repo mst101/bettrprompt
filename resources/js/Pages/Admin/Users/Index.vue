@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormInput from '@/Components/FormInput.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
@@ -46,19 +48,16 @@ watch(search, debouncedSearch);
 <template>
     <Head title="Admin - Users" />
     <AppLayout>
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Users
-                </h2>
+        <HeaderPage title="Users">
+            <template #actions>
                 <Link
                     :href="route('admin.dashboard')"
                     class="text-sm text-gray-600 hover:text-gray-900"
                 >
                     ← Back to Dashboard
                 </Link>
-            </div>
-        </template>
+            </template>
+        </HeaderPage>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -68,8 +67,10 @@ watch(search, debouncedSearch);
                             name="search"
                             class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
                         />
-                        <input
+                        <FormInput
+                            id="task-search"
                             v-model="search"
+                            label=""
                             type="text"
                             placeholder="Search users..."
                             class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10"

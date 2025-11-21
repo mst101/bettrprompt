@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -20,11 +21,7 @@ const props = defineProps<Props>();
     <Head title="Admin Dashboard" />
 
     <AppLayout>
-        <template #header>
-            <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                Admin Dashboard
-            </h2>
-        </template>
+        <HeaderPage title="Admin Dashboard" />
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

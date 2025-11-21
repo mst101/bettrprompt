@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -23,19 +24,16 @@ const props = defineProps<Props>();
 <template>
     <Head :title="`Admin - User: ${props.user.name}`" />
     <AppLayout>
-        <template #header>
-            <div class="space-y-2">
+        <HeaderPage title="User Details">
+            <template #actions>
                 <Link
                     :href="route('admin.users.index')"
                     class="text-sm text-gray-600 hover:text-gray-900"
                 >
                     ← Back to Users
                 </Link>
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    User Details
-                </h2>
-            </div>
-        </template>
+            </template>
+        </HeaderPage>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

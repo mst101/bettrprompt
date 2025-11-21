@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 
@@ -61,19 +62,16 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     />
 
     <AppLayout>
-        <template #header>
-            <div class="space-y-2">
+        <HeaderPage title="Prompt Runs for Task">
+            <template #actions>
                 <Link
                     :href="route('admin.tasks.index')"
                     class="text-sm text-gray-600 hover:text-gray-900"
                 >
                     ← Back to Tasks
                 </Link>
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Prompt Runs for Task
-                </h2>
-            </div>
-        </template>
+            </template>
+        </HeaderPage>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

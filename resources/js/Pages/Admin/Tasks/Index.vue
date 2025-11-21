@@ -2,6 +2,7 @@
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormInput from '@/Components/FormInput.vue';
+import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
@@ -44,19 +45,16 @@ watch(search, debouncedSearch);
     <Head title="Admin - Tasks" />
 
     <AppLayout>
-        <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl leading-tight font-semibold text-gray-800">
-                    Tasks
-                </h2>
+        <HeaderPage title="Tasks">
+            <template #actions>
                 <Link
                     :href="route('admin.dashboard')"
                     class="text-sm text-gray-600 hover:text-gray-900"
                 >
                     ← Back to Dashboard
                 </Link>
-            </div>
-        </template>
+            </template>
+        </HeaderPage>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
