@@ -109,7 +109,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Tasks
     Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/show', [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show');
+    Route::get('/tasks/{taskId}', [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
 
     // Prompt Runs
     Route::get('/prompt-runs/{promptRun}', [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');

@@ -26,11 +26,37 @@ import {
     watch,
 } from 'vue';
 
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    isAdmin: boolean;
+}
+
 const page = usePage<{
-    auth?: { user?: unknown };
+    auth?: { user?: User };
     visitorHasCompletedPrompts?: boolean;
 }>();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
+const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
+
+// Determine logo destination based on admin status and current route
+const logoDestination = computed(() => {
+    const currentRoute = route().current() || '';
+
+    // If admin user and on admin pages, go to main site
+    if (isAdmin.value && currentRoute.startsWith('admin.')) {
+        return route('prompt-optimizer.index');
+    }
+
+    // If admin user and on main site, go to admin dashboard
+    if (isAdmin.value) {
+        return route('admin.dashboard');
+    }
+
+    // Non-admin users always go to home/main site
+    return route('home');
+});
 
 // Show visitor banner if they've completed a prompt
 const showVisitorBanner = computed(
@@ -139,7 +165,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link
-                                    :href="route('home')"
+                                    :href="logoDestination"
                                     class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                     @click="showingNavigationDropdown = false"
                                 >

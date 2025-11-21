@@ -27,6 +27,13 @@ class TaskController extends Controller
 
         $tasks = $tasksQuery->paginate(20)->withQueryString();
 
+        // Add a sequential task_id to each task for URL routing
+        $tasks->getCollection()->transform(function ($task, $index) use ($tasks) {
+            $task->task_id = (($tasks->currentPage() - 1) * $tasks->perPage()) + $index + 1;
+
+            return $task;
+        });
+
         return Inertia::render('Admin/Tasks/Index', [
             'tasks' => $tasks,
             'filters' => $request->only('search'),
@@ -36,13 +43,23 @@ class TaskController extends Controller
     /**
      * Display prompt runs for a specific task
      */
-    public function show(Request $request): Response
+    public function show(int $taskId): Response
     {
-        $taskDescription = $request->query('task');
+        // Get all unique tasks ordered by runs count (same as index)
+        $tasks = PromptRun::select('task_description', DB::raw('COUNT(*) as runs_count'))
+            ->whereNotNull('task_description')
+            ->groupBy('task_description')
+            ->orderByDesc('runs_count')
+            ->get();
 
-        if (! $taskDescription) {
+        // Get the task at the specified index (taskId is 1-based)
+        $taskIndex = $taskId - 1;
+
+        if ($taskIndex < 0 || $taskIndex >= $tasks->count()) {
             abort(404, 'Task not found');
         }
+
+        $taskDescription = $tasks[$taskIndex]->task_description;
 
         $promptRuns = PromptRun::with(['user', 'visitor'])
             ->where('task_description', $taskDescription)

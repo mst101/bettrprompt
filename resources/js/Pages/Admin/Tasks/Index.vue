@@ -7,6 +7,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
 interface Task {
+    task_id: number;
     task_description: string;
     runs_count: number;
 }
@@ -119,7 +120,7 @@ watch(search, debouncedSearch);
                                         <Link
                                             :href="
                                                 route('admin.tasks.show', {
-                                                    task: task.task_description,
+                                                    taskId: task.task_id,
                                                 })
                                             "
                                             class="text-indigo-600 hover:text-indigo-900"
