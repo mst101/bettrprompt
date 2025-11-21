@@ -1052,10 +1052,10 @@ class PromptOptimizerController extends Controller
             ) {
                 return PromptRun::create([
                     'visitor_id' => $visitorId,
-                    'user_id' => $user->id,
+                    'user_id' => $user?->id,
                     'parent_id' => $parentPromptRun->id,
-                    'personality_type' => $user->personality_type ?? null,
-                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
+                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
                     'task_description' => $validated['task_description'],
                     'status' => 'processing',
                     'workflow_stage' => 'submitted',
@@ -1069,9 +1069,13 @@ class PromptOptimizerController extends Controller
                 'task_description' => $validated['task_description'],
             ];
 
-            if ($user->personality_type) {
+            if ($user?->personality_type) {
                 $payload['personality_type'] = $user->personality_type;
                 $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            } elseif ($parentPromptRun->personality_type) {
+                // Fall back to parent's personality type for guests
+                $payload['personality_type'] = $parentPromptRun->personality_type;
+                $payload['trait_percentages'] = $parentPromptRun->trait_percentages ?? null;
             }
 
             // Store the request payload
@@ -1178,10 +1182,10 @@ class PromptOptimizerController extends Controller
             ) {
                 return PromptRun::create([
                     'visitor_id' => $visitorId,
-                    'user_id' => $user->id,
+                    'user_id' => $user?->id,
                     'parent_id' => $parentPromptRun->id,
-                    'personality_type' => $user->personality_type ?? null,
-                    'trait_percentages' => $user->trait_percentages ?? null,
+                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
+                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
                     'task_description' => $parentPromptRun->task_description,
                     'selected_framework' => $parentPromptRun->selected_framework,
                     'framework_reasoning' => $parentPromptRun->framework_reasoning,
@@ -1210,9 +1214,13 @@ class PromptOptimizerController extends Controller
             ];
 
             // Include personality data if available
-            if ($user->personality_type) {
+            if ($user?->personality_type) {
                 $payload['personality_type'] = $user->personality_type;
                 $payload['trait_percentages'] = $user->trait_percentages ?? null;
+            } elseif ($parentPromptRun->personality_type) {
+                // Fall back to parent's personality type for guests
+                $payload['personality_type'] = $parentPromptRun->personality_type;
+                $payload['trait_percentages'] = $parentPromptRun->trait_percentages ?? null;
             }
 
             // Store the request payload
