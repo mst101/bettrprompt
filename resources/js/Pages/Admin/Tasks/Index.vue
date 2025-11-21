@@ -193,8 +193,9 @@ watch(search, debouncedSearch);
                                 >
                                     <Link
                                         v-for="link in props.tasks.links"
+                                        v-show="link.url"
                                         :key="link.label"
-                                        :href="link.url"
+                                        :href="link.url || '#'"
                                         :class="[
                                             link.active
                                                 ? 'z-10 bg-indigo-600 text-white'
