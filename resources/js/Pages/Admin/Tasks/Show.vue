@@ -47,12 +47,24 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
 
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
-        window.open(route('admin.prompt-runs.show', runId), '_blank');
+        globalThis.window.open(
+            route('admin.prompt-runs.show', runId),
+            '_blank',
+        );
         return;
     }
 
     // Normal left click - use Inertia navigation
     router.visit(route('admin.prompt-runs.show', runId));
+};
+
+const handleMiddleClick = (event: MouseEvent, runId: number): void => {
+    if (event.button === 1) {
+        globalThis.window.open(
+            route('admin.prompt-runs.show', runId),
+            '_blank',
+        );
+    }
 };
 </script>
 
@@ -125,39 +137,29 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
                                 <tr
                                     v-for="run in props.prompt_runs.data"
                                     :key="run.id"
-                                    class="group relative cursor-pointer transition hover:bg-gray-50"
+                                    class="group cursor-pointer transition hover:bg-gray-50"
                                     @click="handleRowClick($event, run.id)"
                                     @auxclick.prevent="
-                                        $event.button === 1 &&
-                                        window.open(
-                                            route(
-                                                'admin.prompt-runs.show',
-                                                run.id,
-                                            ),
-                                            '_blank',
-                                        )
+                                        handleMiddleClick($event, run.id)
                                     "
                                 >
-                                    <!-- Hidden link for right-click context menu -->
-                                    <Link
-                                        :href="
-                                            route(
-                                                'admin.prompt-runs.show',
-                                                run.id,
-                                            )
-                                        "
-                                        class="absolute inset-0 z-0"
-                                        tabindex="-1"
-                                        aria-hidden="true"
-                                    />
                                     <td
-                                        class="relative z-10 px-6 py-4 text-sm font-medium text-gray-900"
+                                        class="px-6 py-4 text-sm font-medium text-gray-900"
                                     >
-                                        #{{ run.id }}
+                                        <Link
+                                            :href="
+                                                route(
+                                                    'admin.prompt-runs.show',
+                                                    run.id,
+                                                )
+                                            "
+                                            class="block"
+                                            @click.prevent
+                                        >
+                                            #{{ run.id }}
+                                        </Link>
                                     </td>
-                                    <td
-                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
-                                    >
+                                    <td class="px-6 py-4 text-sm text-gray-900">
                                         <div v-if="run.user">
                                             <div class="font-medium">
                                                 {{ run.user.name }}
@@ -170,9 +172,7 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
                                             Guest
                                         </span>
                                     </td>
-                                    <td
-                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
-                                    >
+                                    <td class="px-6 py-4 text-sm text-gray-900">
                                         <span
                                             v-if="run.personality_type"
                                             class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
@@ -183,12 +183,10 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
                                             N/A
                                         </span>
                                     </td>
-                                    <td
-                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
-                                    >
+                                    <td class="px-6 py-4 text-sm text-gray-900">
                                         {{ run.selected_framework || 'N/A' }}
                                     </td>
-                                    <td class="relative z-10 px-6 py-4">
+                                    <td class="px-6 py-4">
                                         <span
                                             :class="[
                                                 'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
@@ -199,7 +197,7 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
                                         </span>
                                     </td>
                                     <td
-                                        class="relative z-10 px-6 py-4 text-sm whitespace-nowrap text-gray-500"
+                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
                                     >
                                         {{
                                             new Date(
