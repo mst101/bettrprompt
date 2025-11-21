@@ -1,0 +1,157 @@
+<script setup lang="ts">
+import Card from '@/Components/Card.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { useDebounceFn } from '@vueuse/core';
+import { ref, watch } from 'vue';
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    personality_type: string | null;
+    is_admin: boolean;
+    created_at: string;
+    visitors_count: number;
+}
+
+interface Props {
+    users: {
+        data: User[];
+        links: any[];
+        current_page: number;
+        last_page: number;
+    };
+    filters: {
+        search?: string;
+    };
+}
+
+const props = defineProps<Props>();
+const search = ref(props.filters.search || '');
+
+const debouncedSearch = useDebounceFn(() => {
+    router.get(
+        route('admin.users.index'),
+        { search: search.value },
+        { preserveState: true, replace: true },
+    );
+}, 300);
+
+watch(search, debouncedSearch);
+</script>
+
+<template>
+    <Head title="Admin - Users" />
+    <AppLayout>
+        <template #header>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl leading-tight font-semibold text-gray-800">
+                    Users
+                </h2>
+                <Link
+                    :href="route('admin.dashboard')"
+                    class="text-sm text-gray-600 hover:text-gray-900"
+                >
+                    ← Back to Dashboard
+                </Link>
+            </div>
+        </template>
+
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <Card class="mb-6">
+                    <div class="relative">
+                        <DynamicIcon
+                            name="search"
+                            class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+                        />
+                        <input
+                            v-model="search"
+                            type="text"
+                            placeholder="Search users..."
+                            class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10"
+                        />
+                    </div>
+                </Card>
+
+                <Card>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                >
+                                    Email
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                >
+                                    Visitors
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"
+                                >
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            <tr
+                                v-for="user in props.users.data"
+                                :key="user.id"
+                                class="hover:bg-gray-50"
+                            >
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div>
+                                            <div
+                                                class="font-medium text-gray-900"
+                                            >
+                                                {{ user.name }}
+                                            </div>
+                                            <div
+                                                v-if="user.is_admin"
+                                                class="text-xs text-indigo-600"
+                                            >
+                                                Administrator
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    {{ user.email }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold text-blue-800"
+                                    >
+                                        {{ user.visitors_count }}
+                                    </span>
+                                </td>
+                                <td
+                                    class="px-6 py-4 text-right text-sm font-medium"
+                                >
+                                    <Link
+                                        :href="
+                                            route('admin.users.show', user.id)
+                                        "
+                                        class="text-indigo-600 hover:text-indigo-900"
+                                    >
+                                        View →
+                                    </Link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Card>
+            </div>
+        </div>
+    </AppLayout>
+</template>
