@@ -65,6 +65,9 @@ const closeDropdownOnNavigate = () => {
     userDropdown.value?.close();
 };
 
+// Store the cleanup function returned by router.on
+let removeRouterListener: (() => void) | null = null;
+
 const openLogin = () => {
     showRegisterModal.value = false;
     showForgotPasswordModal.value = false;
@@ -84,7 +87,8 @@ const openForgotPassword = () => {
 };
 
 onMounted(() => {
-    router.on('start', closeDropdownOnNavigate);
+    // router.on returns a cleanup function
+    removeRouterListener = router.on('start', closeDropdownOnNavigate);
 
     // Handle modal query parameter
     const urlParams = new URLSearchParams(window.location.search);
@@ -98,7 +102,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    router.off('start', closeDropdownOnNavigate);
+    // Call the cleanup function to remove the listener
+    if (removeRouterListener) {
+        removeRouterListener();
+    }
 });
 
 // Provide modal controls to child components
