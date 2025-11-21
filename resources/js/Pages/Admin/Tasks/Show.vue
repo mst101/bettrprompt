@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 interface PromptRun {
     id: number;
@@ -36,6 +36,22 @@ const getStatusColor = (status: string): string => {
         failed: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
+};
+
+const handleRowClick = (event: MouseEvent, runId: number): void => {
+    // Allow default behavior for right-click and middle-click
+    if (event.button === 2 || event.button === 1) {
+        return;
+    }
+
+    // Allow Ctrl/Cmd + click to open in new tab
+    if (event.ctrlKey || event.metaKey) {
+        window.open(route('admin.prompt-runs.show', runId), '_blank');
+        return;
+    }
+
+    // Normal left click - use Inertia navigation
+    router.visit(route('admin.prompt-runs.show', runId));
 };
 </script>
 
@@ -108,21 +124,42 @@ const getStatusColor = (status: string): string => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <Link
+                                <tr
                                     v-for="run in props.prompt_runs.data"
                                     :key="run.id"
-                                    :href="
-                                        route('admin.prompt-runs.show', run.id)
+                                    class="group relative cursor-pointer transition hover:bg-gray-50"
+                                    @click="handleRowClick($event, run.id)"
+                                    @auxclick.prevent="
+                                        $event.button === 1 &&
+                                        window.open(
+                                            route(
+                                                'admin.prompt-runs.show',
+                                                run.id,
+                                            ),
+                                            '_blank',
+                                        )
                                     "
-                                    as="tr"
-                                    class="cursor-pointer transition hover:bg-gray-50"
                                 >
+                                    <!-- Hidden link for right-click context menu -->
+                                    <Link
+                                        :href="
+                                            route(
+                                                'admin.prompt-runs.show',
+                                                run.id,
+                                            )
+                                        "
+                                        class="absolute inset-0 z-0"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    />
                                     <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-900"
+                                        class="relative z-10 px-6 py-4 text-sm font-medium text-gray-900"
                                     >
                                         #{{ run.id }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                    <td
+                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
+                                    >
                                         <div v-if="run.user">
                                             <div class="font-medium">
                                                 {{ run.user.name }}
@@ -135,7 +172,9 @@ const getStatusColor = (status: string): string => {
                                             Guest
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                    <td
+                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
+                                    >
                                         <span
                                             v-if="run.personality_type"
                                             class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
@@ -146,10 +185,12 @@ const getStatusColor = (status: string): string => {
                                             N/A
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                    <td
+                                        class="relative z-10 px-6 py-4 text-sm text-gray-900"
+                                    >
                                         {{ run.selected_framework || 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="relative z-10 px-6 py-4">
                                         <span
                                             :class="[
                                                 'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
@@ -160,7 +201,7 @@ const getStatusColor = (status: string): string => {
                                         </span>
                                     </td>
                                     <td
-                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
+                                        class="relative z-10 px-6 py-4 text-sm whitespace-nowrap text-gray-500"
                                     >
                                         {{
                                             new Date(
@@ -168,7 +209,7 @@ const getStatusColor = (status: string): string => {
                                             ).toLocaleString()
                                         }}
                                     </td>
-                                </Link>
+                                </tr>
                                 <tr v-if="props.prompt_runs.data.length === 0">
                                     <td
                                         colspan="6"
