@@ -82,6 +82,10 @@ Route::post('/feedback', [FeedbackController::class, 'store'])
     ->name('feedback.store');
 Route::put('/feedback', [FeedbackController::class, 'update'])
     ->name('feedback.update');
+Route::get('/feedback/thank-you', [FeedbackController::class, 'thankYou'])
+    ->name('feedback.thank-you');
+Route::get('/feedback/download/{filename}', [FeedbackController::class, 'downloadPdf'])
+    ->name('feedback.download-pdf');
 
 // Voice transcription endpoint (no authentication required)
 Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])

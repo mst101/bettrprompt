@@ -26,6 +26,7 @@ class User extends Authenticatable
         'avatar',
         'personality_type',
         'trait_percentages',
+        'referral_code',
     ];
 
     /**
@@ -59,5 +60,32 @@ class User extends Authenticatable
     public function visitors(): HasMany
     {
         return $this->hasMany(Visitor::class);
+    }
+
+    /**
+     * Generate and set a unique referral code for this user
+     */
+    public function generateReferralCode(): string
+    {
+        do {
+            $code = strtoupper(substr(md5(uniqid($this->id, true)), 0, 8));
+        } while (self::where('referral_code', $code)->exists());
+
+        $this->referral_code = $code;
+        $this->save();
+
+        return $code;
+    }
+
+    /**
+     * Get or generate the referral code for this user
+     */
+    public function getReferralCode(): string
+    {
+        if (! $this->referral_code) {
+            return $this->generateReferralCode();
+        }
+
+        return $this->referral_code;
     }
 }

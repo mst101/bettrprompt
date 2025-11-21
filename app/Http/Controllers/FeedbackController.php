@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFeedbackRequest;
+use App\Services\PersonalityTypeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FeedbackController extends Controller
 {
@@ -64,8 +66,7 @@ class FeedbackController extends Controller
             'updated_at' => now(),
         ]);
 
-        return redirect()->route('prompt-optimizer.index')
-            ->with('success', 'Thank you for your feedback!');
+        return redirect()->route('feedback.thank-you');
     }
 
     public function update(StoreFeedbackRequest $request)
@@ -86,5 +87,52 @@ class FeedbackController extends Controller
 
         return redirect()->route('prompt-optimizer.index')
             ->with('success', 'Thank you for updating your feedback!');
+    }
+
+    public function thankYou(): Response
+    {
+        $user = auth()->user();
+        $personalityType = $user->personality_type;
+
+        // Get available PDFs for the user's personality type
+        $availablePdfs = PersonalityTypeService::getAvailablePdfs($personalityType);
+
+        // Get or generate referral code
+        $referralCode = $user->getReferralCode();
+        $referralUrl = route('register', ['ref' => $referralCode]);
+
+        return Inertia::render('Feedback/ThankYou', [
+            'personalityType' => $personalityType,
+            'personalityTypeName' => PersonalityTypeService::getFolderName($personalityType),
+            'availablePdfs' => $availablePdfs,
+            'referralUrl' => $referralUrl,
+        ]);
+    }
+
+    public function downloadPdf(string $filename): BinaryFileResponse|RedirectResponse
+    {
+        $user = auth()->user();
+        $personalityType = $user->personality_type;
+        $folderName = PersonalityTypeService::getFolderName($personalityType);
+
+        if (! $folderName) {
+            abort(404, 'Personality type not found');
+        }
+
+        $filePath = resource_path("pdf/{$folderName}/{$filename}");
+
+        if (! file_exists($filePath)) {
+            abort(404, 'PDF not found');
+        }
+
+        // Security check: ensure the file is actually in the user's personality type folder
+        $realPath = realpath($filePath);
+        $allowedPath = realpath(resource_path("pdf/{$folderName}"));
+
+        if (! str_starts_with($realPath, $allowedPath)) {
+            abort(403, 'Unauthorised access');
+        }
+
+        return response()->download($filePath);
     }
 }
