@@ -14,6 +14,7 @@ interface User {
     is_admin: boolean;
     created_at: string;
     visitors_count: number;
+    prompt_runs_count: number;
 }
 
 interface Props {
@@ -96,17 +97,19 @@ watch(search, debouncedSearch);
                                     Visitors
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                                 >
-                                    Actions
+                                    Prompt Runs
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
-                            <tr
+                            <Link
                                 v-for="user in props.users.data"
                                 :key="user.id"
-                                class="hover:bg-gray-50"
+                                :href="route('admin.users.show', user.id)"
+                                as="tr"
+                                class="cursor-pointer transition hover:bg-gray-50"
                             >
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
@@ -135,19 +138,14 @@ watch(search, debouncedSearch);
                                         {{ user.visitors_count }}
                                     </span>
                                 </td>
-                                <td
-                                    class="px-6 py-4 text-right text-sm font-medium"
-                                >
-                                    <Link
-                                        :href="
-                                            route('admin.users.show', user.id)
-                                        "
-                                        class="text-indigo-600 hover:text-indigo-900"
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800"
                                     >
-                                        View →
-                                    </Link>
+                                        {{ user.prompt_runs_count }}
+                                    </span>
                                 </td>
-                            </tr>
+                            </Link>
                         </tbody>
                     </table>
                 </Card>

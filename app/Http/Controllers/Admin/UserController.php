@@ -16,7 +16,12 @@ class UserController extends Controller
     public function index(Request $request): Response
     {
         $users = User::query()
-            ->withCount('visitors')
+            ->withCount([
+                'visitors',
+                'visitors as prompt_runs_count' => function ($query) {
+                    $query->join('prompt_runs', 'visitors.id', '=', 'prompt_runs.visitor_id');
+                },
+            ])
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
