@@ -1,7 +1,7 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
@@ -102,4 +102,22 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
+});
+
+// Global error handler for 419 Page Expired errors
+router.on('error', (event) => {
+    const response = event.detail?.response;
+
+    // Check if the error is a 419 (Page Expired / CSRF token mismatch)
+    if (response?.status === 419) {
+        console.warn('Session expired (419 error). Reloading page...');
+
+        // Show a user-friendly message before reloading
+        alert(
+            'Your session has expired. The page will reload to restore your session.',
+        );
+
+        // Reload the page to get a fresh CSRF token
+        window.location.reload();
+    }
 });

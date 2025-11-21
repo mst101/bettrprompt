@@ -34,14 +34,24 @@ return Application::configure(basePath: dirname(__DIR__))
                 return redirect('/')->with('status', 'Your session has expired. You have been logged out.');
             }
 
-            // For Inertia requests, return a user-friendly error
+            // For Inertia requests, return 419 with metadata (client will handle reload)
             if ($request->header('X-Inertia')) {
-                return back()->with('error',
-                    'Your session has expired. Please refresh the page and try again.');
+                return response()->json([
+                    'message' => 'Your session has expired. The page will reload automatically.',
+                    'errors' => [],
+                ], 419);
             }
 
-            // For regular requests
-            return redirect()->route('login')
-                ->with('error', 'Your session has expired. Please log in again.');
+            // For regular HTTP requests (forms without Inertia)
+            // Check if user is authenticated
+            if (auth()->check()) {
+                // Authenticated user - redirect to login
+                return redirect()->route('login')
+                    ->with('error', 'Your session has expired. Please log in again.');
+            } else {
+                // Guest user - redirect back with instructions to refresh
+                return back()
+                    ->with('error', 'Your session has expired. Please refresh the page and try again.');
+            }
         });
     })->create();
