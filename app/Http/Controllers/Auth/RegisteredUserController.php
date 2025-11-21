@@ -45,6 +45,8 @@ class RegisteredUserController extends Controller
 
         // Link visitor to newly registered user
         $visitorId = $request->cookie('visitor_id');
+        $claimedCount = 0;
+
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             if ($visitor && ! $visitor->user_id) {
@@ -79,7 +81,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         // Redirect to history page if visitor had completed prompts, otherwise to dashboard
-        if ($visitorId && $claimedCount > 0) {
+        if ($claimedCount > 0) {
             return redirect(route('prompt-optimizer.history', absolute: false));
         }
 
