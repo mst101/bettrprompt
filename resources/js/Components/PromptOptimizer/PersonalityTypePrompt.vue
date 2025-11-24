@@ -32,6 +32,7 @@ const handlePersonalitySaved = () => {
     <!-- Info message if no personality type -->
     <div
         v-if="!hasPersonalityType"
+        key="no-personality"
         class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
     >
         <div class="flex">
@@ -96,6 +97,7 @@ const handlePersonalitySaved = () => {
     <!-- Display visitor personality type if set -->
     <div
         v-else-if="!isAuthenticated && visitorPersonalityType"
+        key="has-personality"
         class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
     >
         <div class="flex items-start justify-between">
