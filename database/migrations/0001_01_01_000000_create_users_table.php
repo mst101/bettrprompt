@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('google_id')->nullable()->unique();
             $table->string('name');
             $table->string('email')->unique();
+            $table->boolean('is_admin')->default(false);
+            $table->string('referral_code', 10)->unique()->nullable();
+            $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->index('referred_by_user_id');
             $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();

@@ -33,6 +33,8 @@ return new class extends Migration
             $table->timestamp('last_visit_at');
             $table->integer('visit_count')->default(1);
             $table->timestamp('converted_at')->nullable(); // When user_id was set
+            $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->index('referred_by_user_id');
 
             // Personality data (before conversion to user)
             $table->string('personality_type', 6)->nullable();
