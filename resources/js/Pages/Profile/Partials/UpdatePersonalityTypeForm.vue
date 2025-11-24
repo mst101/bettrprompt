@@ -184,8 +184,9 @@ const submit = () => {
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                     <p class="text-sm text-gray-600">
-                        Enter your trait percentages from 16personalities.com
-                        (optional)
+                        Enter your trait percentages from 16personalities.com.
+                        Your percentages must be 50% or higher for the traits in
+                        your type code ({{ fullPersonalityType }}).
                     </p>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -194,7 +195,7 @@ const submit = () => {
                             v-model="form.traitPercentages.mind"
                             type="number"
                             label="Mind (Introversion/Extraversion)"
-                            :min="0"
+                            :min="50"
                             :max="100"
                             placeholder="%"
                             class="text-right placeholder:text-right"
@@ -205,7 +206,7 @@ const submit = () => {
                             v-model="form.traitPercentages.energy"
                             type="number"
                             label="Energy (Intuitive/Observant)"
-                            :min="0"
+                            :min="50"
                             :max="100"
                             placeholder="%"
                             class="text-right placeholder:text-right"
@@ -216,7 +217,7 @@ const submit = () => {
                             v-model="form.traitPercentages.nature"
                             type="number"
                             label="Nature (Thinking/Feeling)"
-                            :min="0"
+                            :min="50"
                             :max="100"
                             placeholder="%"
                             class="text-right placeholder:text-right"
@@ -227,7 +228,7 @@ const submit = () => {
                             v-model="form.traitPercentages.tactics"
                             type="number"
                             label="Tactics (Judging/Prospecting)"
-                            :min="0"
+                            :min="50"
                             :max="100"
                             placeholder="%"
                             class="text-right placeholder:text-right"
@@ -239,7 +240,7 @@ const submit = () => {
                                 v-model="form.traitPercentages.identity"
                                 type="number"
                                 label="Identity (Assertive/Turbulent)"
-                                :min="0"
+                                :min="50"
                                 :max="100"
                                 placeholder="%"
                                 class="text-right placeholder:text-right"
