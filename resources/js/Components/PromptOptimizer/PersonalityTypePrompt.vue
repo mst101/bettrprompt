@@ -4,7 +4,7 @@ import ButtonText from '@/Components/ButtonText.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import LinkText from '@/Components/LinkText.vue';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
@@ -14,7 +14,7 @@ interface Props {
     personalityTypes: Record<string, string>;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: 'saved'): void;
@@ -26,6 +26,18 @@ const handlePersonalitySaved = () => {
     showPersonalityForm.value = false;
     emit('saved');
 };
+
+// Watch for hasPersonalityType changes and reset form visibility
+// This ensures the form is hidden when transitioning from "no personality" to "has personality"
+watch(
+    () => props.hasPersonalityType,
+    (newValue, oldValue) => {
+        // When personality type is added (false -> true), hide the form
+        if (oldValue === false && newValue === true) {
+            showPersonalityForm.value = false;
+        }
+    },
+);
 </script>
 
 <template>
