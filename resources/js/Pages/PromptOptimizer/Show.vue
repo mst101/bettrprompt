@@ -13,7 +13,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { getFullPersonalityType } from '@/utils/personalityTypes';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
@@ -51,8 +51,18 @@ const errorResponse = computed((): N8nErrorResponse | null => {
 useRealtimeUpdates(
     `prompt-run.${props.promptRun.id}`,
     {
-        FrameworkSelected: () => {},
-        PromptOptimizationCompleted: () => {},
+        FrameworkSelected: () => {
+            // Reload page to show framework selection and questions
+            router.reload({
+                only: ['promptRun', 'currentQuestion', 'progress'],
+            });
+        },
+        PromptOptimizationCompleted: () => {
+            // Reload page to show completed prompt
+            router.reload({
+                only: ['promptRun', 'currentQuestion', 'progress'],
+            });
+        },
     },
     { only: ['promptRun', 'currentQuestion', 'progress'] },
 );
