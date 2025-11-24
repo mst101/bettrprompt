@@ -22,11 +22,11 @@ class UpdatePersonalityTypeRequest extends BaseFormRequest
         return [
             'personalityType' => ['nullable', 'string', 'max:6', 'regex:/^[A-Z]{4}-[AT]$/'],
             'traitPercentages' => ['nullable', 'array'],
-            'traitPercentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'traitPercentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'traitPercentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'traitPercentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'traitPercentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'traitPercentages.mind' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'traitPercentages.energy' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'traitPercentages.nature' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'traitPercentages.tactics' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'traitPercentages.identity' => ['nullable', 'integer', 'min:50', 'max:100'],
         ];
     }
 

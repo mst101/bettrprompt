@@ -21,10 +21,10 @@ test('user can update personality type', function () {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
-            'mind' => 25,
+            'mind' => 62,
             'energy' => 85,
             'nature' => 65,
-            'tactics' => 40,
+            'tactics' => 73,
             'identity' => 55,
         ],
     ]);
@@ -34,7 +34,7 @@ test('user can update personality type', function () {
 
     $this->user->refresh();
     expect($this->user->personality_type)->toBe('ENFP-T');
-    expect($this->user->trait_percentages['mind'])->toBe(25);
+    expect($this->user->trait_percentages['mind'])->toBe(62);
     expect($this->user->trait_percentages['energy'])->toBe(85);
 });
 
@@ -69,7 +69,7 @@ test('personality update validates trait percentages min', function () {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => 'INTJ-A',
         'traitPercentages' => [
-            'mind' => -10, // Below minimum (0)
+            'mind' => 49, // Below minimum (50)
             'energy' => 50,
             'nature' => 50,
             'tactics' => 50,
@@ -139,10 +139,10 @@ test('personality update requires authentication', function () {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
-            'mind' => 25,
+            'mind' => 62,
             'energy' => 85,
             'nature' => 65,
-            'tactics' => 40,
+            'tactics' => 73,
             'identity' => 55,
         ],
     ]);
@@ -227,10 +227,10 @@ test('personality type is stored with prompt runs', function () {
     $this->patch(route('profile.personality.update'), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
-            'mind' => 25,
+            'mind' => 62,
             'energy' => 85,
             'nature' => 65,
-            'tactics' => 40,
+            'tactics' => 73,
             'identity' => 55,
         ],
     ]);
@@ -240,7 +240,7 @@ test('personality type is stored with prompt runs', function () {
     // Verify the personality type can be accessed
     expect($this->user->personality_type)->toBe('ENFP-T');
     expect($this->user->trait_percentages)->toBeArray();
-    expect($this->user->trait_percentages['mind'])->toBe(25);
+    expect($this->user->trait_percentages['mind'])->toBe(62);
 });
 
 test('updating personality does not affect other user data', function () {
@@ -251,10 +251,10 @@ test('updating personality does not affect other user data', function () {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
-            'mind' => 25,
+            'mind' => 62,
             'energy' => 85,
             'nature' => 65,
-            'tactics' => 40,
+            'tactics' => 73,
             'identity' => 55,
         ],
     ]);
