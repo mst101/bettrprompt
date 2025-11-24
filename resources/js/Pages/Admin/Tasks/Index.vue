@@ -18,7 +18,7 @@ interface Task {
 interface Props {
     tasks: {
         data: Task[];
-        links: any[];
+        links: Array<Record<string, unknown>>;
         current_page: number;
         last_page: number;
     };

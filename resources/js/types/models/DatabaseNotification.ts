@@ -8,7 +8,7 @@ export interface DatabaseNotification {
     readonly type: string;
     readonly notifiableType: string;
     readonly notifiableId: number;
-    readonly data: any;
+    readonly data: unknown;
     readonly readAt: string | null;
     readonly createdAt: string;
     readonly updatedAt: string;

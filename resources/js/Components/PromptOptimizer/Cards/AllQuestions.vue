@@ -25,6 +25,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     editable: false,
+    answers: () => new Map(),
     isSubmitting: false,
 });
 

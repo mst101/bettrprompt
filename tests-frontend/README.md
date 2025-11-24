@@ -115,7 +115,7 @@ describe('useLocalStorage', () => {
 
     beforeEach(() => {
         localStorageMock = {};
-        global.localStorage = {
+        globalThis.localStorage = {
             getItem: vi.fn((key: string) => localStorageMock[key] || null),
             setItem: vi.fn((key: string, value: string) => {
                 localStorageMock[key] = value;
@@ -243,7 +243,6 @@ mockChannel.listen('EventName', (data) => {
 ### Browser APIs
 
 - **MediaRecorder**: Mock for audio recording tests
-- **SpeechRecognition**: Mock for voice input tests
 
 ### Helper Functions
 
@@ -253,7 +252,6 @@ Located in `tests/helpers/mount.ts`:
 - `createMockUser()` - Create mock user object
 - `createMockPromptRun()` - Create mock PromptRun object
 - `createMockMediaRecorder()` - Create mock MediaRecorder
-- `createMockSpeechRecognition()` - Create mock SpeechRecognition
 - `createMockEchoChannel()` - Create mock Laravel Echo channel
 - `flushPromises()` - Wait for all promises to resolve
 
@@ -281,13 +279,15 @@ Located in `tests/helpers/mount.ts`:
 
 We use a hybrid approach for selecting elements in E2E tests, prioritising resilience and maintainability:
 
-1. **Semantic Selectors (Preferred)**: Use Playwright's built-in semantic selectors for interactive and user-facing elements:
+1. **Semantic Selectors (Preferred)**: Use Playwright's built-in semantic selectors for interactive and user-facing
+   elements:
     - `getByRole('button', { name: /submit/i })` - For buttons, links, headings
     - `getByLabel(/your answer/i)` - For form fields with labels
     - `getByText(/welcome/i)` - For text content
     - `getByPlaceholder(/search/i)` - For inputs with placeholders
 
-2. **Test IDs (Escape Hatch)**: Use `data-testid` attributes for decorative or complex elements where semantic selectors are insufficient:
+2. **Test IDs (Escape Hatch)**: Use `data-testid` attributes for decorative or complex elements where semantic selectors
+   are insufficient:
     - `getByTestId('hero-gradient-text')` - For styled/decorative text
     - `getByTestId('status-badge')` - For status indicators
     - `getByTestId('progress-bar')` - For progress indicators

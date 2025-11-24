@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { config } from '@vue/test-utils';
 import { vi } from 'vitest';
 
@@ -111,7 +112,7 @@ vi.mock('laravel-echo', () => ({
 }));
 
 // Mock window.route() global helper (Ziggy)
-global.route = vi.fn((name: string, params?: any) => {
+globalThis.route = vi.fn((name: string, params?: any) => {
     if (params && typeof params === 'object') {
         const paramString = Object.values(params).join('/');
         return `/${name}/${paramString}`;
@@ -121,11 +122,11 @@ global.route = vi.fn((name: string, params?: any) => {
 
 // Configure Vue Test Utils global properties
 config.global.mocks = {
-    route: global.route,
+    route: globalThis.route,
 };
 
 // Mock browser APIs that happy-dom doesn't support
-global.MediaRecorder = vi.fn(() => ({
+globalThis.MediaRecorder = vi.fn(() => ({
     start: vi.fn(),
     stop: vi.fn(),
     pause: vi.fn(),
@@ -136,20 +137,3 @@ global.MediaRecorder = vi.fn(() => ({
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
 })) as any;
-
-// Mock SpeechRecognition API
-global.SpeechRecognition = vi.fn(() => ({
-    start: vi.fn(),
-    stop: vi.fn(),
-    abort: vi.fn(),
-    continuous: false,
-    interimResults: false,
-    lang: 'en-GB',
-    onresult: null,
-    onerror: null,
-    onend: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-})) as any;
-
-global.webkitSpeechRecognition = global.SpeechRecognition;

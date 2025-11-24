@@ -23,7 +23,7 @@ interface User {
 interface Props {
     users: {
         data: User[];
-        links: any[];
+        links: Array<Record<string, unknown>>;
         current_page: number;
         last_page: number;
     };

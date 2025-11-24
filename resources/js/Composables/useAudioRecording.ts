@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { onUnmounted, ref } from 'vue';
 
 export function useAudioRecording() {

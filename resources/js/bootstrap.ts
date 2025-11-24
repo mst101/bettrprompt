@@ -12,7 +12,7 @@ import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
 // Track connection state
-let echoInstance: Echo<any> | null = null;
+let echoInstance: Echo<unknown> | null = null;
 let connectionState: 'connected' | 'connecting' | 'disconnected' | 'failed' =
     'connecting';
 
@@ -58,7 +58,7 @@ function initializeEcho() {
             window.dispatchEvent(new CustomEvent('echo-failed'));
         });
 
-        pusher.connection.bind('error', (error: any) => {
+        pusher.connection.bind('error', (error: unknown) => {
             console.error('WebSocket error', error);
         });
 
@@ -89,7 +89,7 @@ window.getEchoConnectionState = () => {
 initializeEcho();
 
 // Export for use in components
-export function getEcho(): Echo<any> | null {
+export function getEcho(): Echo<unknown> | null {
     return echoInstance;
 }
 

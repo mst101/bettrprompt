@@ -11,6 +11,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+    personalityApproach: null,
     showProceedButton: false,
 });
 

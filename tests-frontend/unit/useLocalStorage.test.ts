@@ -10,7 +10,7 @@ describe('useLocalStorage', () => {
         localStorageMock = {};
 
         // Mock localStorage methods
-        global.localStorage = {
+        globalThis.localStorage = {
             getItem: vi.fn((key: string) => localStorageMock[key] || null),
             setItem: vi.fn((key: string, value: string) => {
                 localStorageMock[key] = value;

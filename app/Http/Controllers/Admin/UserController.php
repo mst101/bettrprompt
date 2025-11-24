@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -55,8 +56,8 @@ class UserController extends Controller
             ->count();
 
         return Inertia::render('Admin/Users/Show', [
-            'user' => $user,
-            'prompt_runs_count' => $promptRunsCount,
+            'user' => new UserResource($user),
+            'promptRunsCount' => $promptRunsCount,
         ]);
     }
 }

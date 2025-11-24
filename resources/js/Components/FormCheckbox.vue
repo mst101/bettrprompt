@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 interface Props {
     id: string;
-    modelValue?: boolean | any[];
+    modelValue?: boolean | unknown[];
     value?: string | number | boolean;
     label?: string;
     disabled?: boolean;
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean | any[]): void;
+    (e: 'update:modelValue', value: boolean | unknown[]): void;
 }>();
 
 const isChecked = computed({

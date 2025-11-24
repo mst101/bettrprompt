@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 
@@ -32,6 +33,7 @@ defineProps<{
                 </h3>
             </div>
         </div>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <p class="mt-4 text-sm" v-html="description"></p>
     </div>
 </template>

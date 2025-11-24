@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,8 +69,8 @@ class TaskController extends Controller
             ->withQueryString();
 
         return Inertia::render('Admin/Tasks/Show', [
-            'task_description' => $taskDescription,
-            'prompt_runs' => $promptRuns,
+            'taskDescription' => $taskDescription,
+            'promptRuns' => PromptRunResource::collection($promptRuns),
         ]);
     }
 
@@ -81,7 +82,7 @@ class TaskController extends Controller
         $promptRun->load(['user', 'visitor', 'children']);
 
         return Inertia::render('Admin/PromptRuns/Show', [
-            'prompt_run' => $promptRun,
+            'promptRun' => new PromptRunResource($promptRun),
         ]);
     }
 }

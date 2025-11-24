@@ -7,10 +7,10 @@ import { Head, Link, router } from '@inertiajs/vue3';
 
 interface PromptRun {
     id: number;
-    personality_type: string | null;
-    selected_framework: string | null;
+    personalityType: string | null;
+    selectedFramework: string | null;
     status: string;
-    created_at: string;
+    createdAt: string;
     user: {
         id: number;
         name: string;
@@ -19,12 +19,12 @@ interface PromptRun {
 }
 
 interface Props {
-    task_description: string;
-    prompt_runs: {
+    taskDescription: string;
+    promptRuns: {
         data: PromptRun[];
-        links: any[];
-        current_page: number;
-        last_page: number;
+        links: Array<Record<string, unknown>>;
+        currentPage: number;
+        lastPage: number;
     };
 }
 
@@ -71,7 +71,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
 
 <template>
     <Head
-        :title="`Admin - Task: ${props.task_description.substring(0, 50)}...`"
+        :title="`Admin - Task: ${props.taskDescription.substring(0, 50)}...`"
     />
 
     <AppLayout>
@@ -92,7 +92,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                 <h3 class="mb-2 font-semibold text-gray-900">
                     Task Description:
                 </h3>
-                <p class="text-gray-700">{{ props.task_description }}</p>
+                <p class="text-gray-700">{{ props.taskDescription }}</p>
             </Card>
 
             <!-- Prompt Runs List -->
@@ -135,7 +135,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
                             <tr
-                                v-for="run in props.prompt_runs.data"
+                                v-for="run in props.promptRuns.data"
                                 :key="run.id"
                                 class="group cursor-pointer transition hover:bg-gray-50"
                                 @click="handleRowClick($event, run.id)"
@@ -174,17 +174,17 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
                                     <span
-                                        v-if="run.personality_type"
+                                        v-if="run.personalityType"
                                         class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
                                     >
-                                        {{ run.personality_type }}
+                                        {{ run.personalityType }}
                                     </span>
                                     <span v-else class="text-gray-400">
                                         N/A
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
-                                    {{ run.selected_framework || 'N/A' }}
+                                    {{ run.selectedFramework || 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
@@ -200,13 +200,11 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
                                 >
                                     {{
-                                        new Date(
-                                            run.created_at,
-                                        ).toLocaleString()
+                                        new Date(run.createdAt).toLocaleString()
                                     }}
                                 </td>
                             </tr>
-                            <tr v-if="props.prompt_runs.data.length === 0">
+                            <tr v-if="props.promptRuns.data.length === 0">
                                 <td
                                     colspan="6"
                                     class="px-6 py-4 text-center text-sm text-gray-500"
@@ -220,18 +218,18 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
 
                 <!-- Pagination -->
                 <div
-                    v-if="props.prompt_runs.last_page > 1"
+                    v-if="props.promptRuns.lastPage > 1"
                     class="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6"
                 >
                     <div>
                         <p class="text-sm text-gray-700">
                             Page
                             <span class="font-medium">{{
-                                props.prompt_runs.current_page
+                                props.promptRuns.currentPage
                             }}</span>
                             of
                             <span class="font-medium">{{
-                                props.prompt_runs.last_page
+                                props.promptRuns.lastPage
                             }}</span>
                         </p>
                     </div>
@@ -240,7 +238,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                             class="isolate inline-flex -space-x-px rounded-md shadow-sm"
                         >
                             <Link
-                                v-for="link in props.prompt_runs.links"
+                                v-for="link in props.promptRuns.links"
                                 v-show="link.url"
                                 :key="link.label"
                                 :href="link.url || '#'"

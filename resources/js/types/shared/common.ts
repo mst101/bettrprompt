@@ -13,5 +13,5 @@ export interface WithSoftDeletes extends WithTimestamps {
 
 // JSON data structure for common fields
 export interface JsonData {
-    [key: string]: any;
+    [key: string]: unknown;
 }

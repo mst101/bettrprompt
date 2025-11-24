@@ -55,8 +55,20 @@ function setupVisitorTracking() {
 // Run visitor tracking setup
 setupVisitorTracking();
 
+type AuthUser = {
+    id: number;
+    email: string | null;
+    name: string | null;
+    personality_type: string | null;
+    created_at: string;
+};
+
+type FullStoryAuth = {
+    user?: AuthUser | null;
+} | null;
+
 // Fullstory visitor identification
-function identifyVisitorInFullstory(auth: any) {
+function identifyVisitorInFullstory(auth: FullStoryAuth) {
     if (!window.FS) {
         return;
     }

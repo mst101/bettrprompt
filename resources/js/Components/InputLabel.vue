@@ -5,6 +5,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+    value: '',
     required: false,
 });
 </script>

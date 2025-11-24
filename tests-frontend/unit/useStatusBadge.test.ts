@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useStatusBadge } from '@/Composables/useStatusBadge';
 import { describe, expect, it } from 'vitest';
 

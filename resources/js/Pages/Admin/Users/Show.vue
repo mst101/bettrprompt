@@ -9,14 +9,14 @@ interface User {
     id: number;
     name: string;
     email: string;
-    personality_type: string | null;
-    is_admin: boolean;
-    created_at: string;
+    personalityType: string | null;
+    isAdmin: boolean;
+    createdAt: string;
 }
 
 interface Props {
     user: User;
-    prompt_runs_count: number;
+    promptRunsCount: number;
 }
 
 const props = defineProps<Props>();
@@ -55,7 +55,7 @@ const props = defineProps<Props>();
                             {{ props.user.email }}
                         </p>
                     </div>
-                    <div v-if="props.user.personality_type">
+                    <div v-if="props.user.personalityType">
                         <label class="block text-sm font-medium text-gray-700">
                             Personality Type
                         </label>
@@ -63,7 +63,7 @@ const props = defineProps<Props>();
                             <span
                                 class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
                             >
-                                {{ props.user.personality_type }}
+                                {{ props.user.personalityType }}
                             </span>
                         </p>
                     </div>
@@ -75,12 +75,12 @@ const props = defineProps<Props>();
                             <span
                                 :class="[
                                     'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                    props.user.is_admin
+                                    props.user.isAdmin
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-gray-100 text-gray-800',
                                 ]"
                             >
-                                {{ props.user.is_admin ? 'Yes' : 'No' }}
+                                {{ props.user.isAdmin ? 'Yes' : 'No' }}
                             </span>
                         </p>
                     </div>
@@ -89,7 +89,7 @@ const props = defineProps<Props>();
                             Total Prompt Runs
                         </label>
                         <p class="mt-1 text-gray-900">
-                            {{ props.prompt_runs_count }}
+                            {{ props.promptRunsCount }}
                         </p>
                     </div>
                     <div>
@@ -99,7 +99,7 @@ const props = defineProps<Props>();
                         <p class="mt-1 text-gray-900">
                             {{
                                 new Date(
-                                    props.user.created_at,
+                                    props.user.createdAt,
                                 ).toLocaleDateString()
                             }}
                         </p>

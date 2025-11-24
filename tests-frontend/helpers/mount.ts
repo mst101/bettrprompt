@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, VueWrapper } from '@vue/test-utils';
 import { vi } from 'vitest';
 import type { Component } from 'vue';
@@ -136,27 +137,6 @@ export function createMockMediaRecorder() {
         onstop: null,
         onerror: null,
         state: 'inactive',
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-    };
-}
-
-/**
- * Create a mock SpeechRecognition instance
- */
-export function createMockSpeechRecognition() {
-    return {
-        start: vi.fn(),
-        stop: vi.fn(),
-        abort: vi.fn(),
-        continuous: false,
-        interimResults: false,
-        lang: 'en-GB',
-        onresult: null,
-        onerror: null,
-        onend: null,
-        onstart: null,
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
         dispatchEvent: vi.fn(),

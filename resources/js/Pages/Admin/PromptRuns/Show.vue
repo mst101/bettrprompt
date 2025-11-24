@@ -8,17 +8,17 @@ import { Head, Link } from '@inertiajs/vue3';
 
 interface PromptRun {
     id: number;
-    task_description: string;
-    personality_type: string | null;
-    selected_framework: string | null;
-    framework_reasoning: string | null;
-    framework_questions: string[] | null;
-    clarifying_answers: string[] | null;
-    optimized_prompt: string | null;
+    taskDescription: string;
+    personalityType: string | null;
+    selectedFramework: string | null;
+    frameworkReasoning: string | null;
+    frameworkQuestions: string[] | null;
+    clarifyingAnswers: string[] | null;
+    optimizedPrompt: string | null;
     status: string;
-    workflow_stage: string | null;
-    created_at: string;
-    completed_at: string | null;
+    workflowStage: string | null;
+    createdAt: string;
+    completedAt: string | null;
     user: {
         id: number;
         name: string;
@@ -27,7 +27,7 @@ interface PromptRun {
 }
 
 interface Props {
-    prompt_run: PromptRun;
+    promptRun: PromptRun;
 }
 
 const props = defineProps<Props>();
@@ -44,10 +44,10 @@ const getStatusColor = (status: string): string => {
 </script>
 
 <template>
-    <Head :title="`Admin - Prompt Run #${props.prompt_run.id}`" />
+    <Head :title="`Admin - Prompt Run #${props.promptRun.id}`" />
 
     <AppLayout>
-        <HeaderPage :title="`Prompt Run #${props.prompt_run.id}`">
+        <HeaderPage :title="`Prompt Run #${props.promptRun.id}`">
             <template #actions>
                 <Link
                     :href="route('admin.tasks.index')"
@@ -69,26 +69,26 @@ const getStatusColor = (status: string): string => {
                         <span
                             :class="[
                                 'mt-1 inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                getStatusColor(props.prompt_run.status),
+                                getStatusColor(props.promptRun.status),
                             ]"
                         >
-                            {{ props.prompt_run.status }}
+                            {{ props.promptRun.status }}
                         </span>
                     </div>
-                    <div v-if="props.prompt_run.user">
+                    <div v-if="props.promptRun.user">
                         <label class="block text-sm font-medium text-gray-700">
                             User
                         </label>
                         <div class="mt-1">
                             <div class="font-medium text-gray-900">
-                                {{ props.prompt_run.user.name }}
+                                {{ props.promptRun.user.name }}
                             </div>
                             <div class="text-sm text-gray-500">
-                                {{ props.prompt_run.user.email }}
+                                {{ props.promptRun.user.email }}
                             </div>
                         </div>
                     </div>
-                    <div v-if="props.prompt_run.personality_type">
+                    <div v-if="props.promptRun.personalityType">
                         <label class="block text-sm font-medium text-gray-700">
                             Personality Type
                         </label>
@@ -96,7 +96,7 @@ const getStatusColor = (status: string): string => {
                             <span
                                 class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
                             >
-                                {{ props.prompt_run.personality_type }}
+                                {{ props.promptRun.personalityType }}
                             </span>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ const getStatusColor = (status: string): string => {
                         <div class="mt-1 text-gray-900">
                             {{
                                 new Date(
-                                    props.prompt_run.created_at,
+                                    props.promptRun.createdAt,
                                 ).toLocaleString()
                             }}
                         </div>
@@ -121,12 +121,12 @@ const getStatusColor = (status: string): string => {
                     Task Description
                 </h3>
                 <p class="text-gray-700">
-                    {{ props.prompt_run.task_description }}
+                    {{ props.promptRun.taskDescription }}
                 </p>
             </Card>
 
             <!-- Framework Selection -->
-            <Card v-if="props.prompt_run.selected_framework">
+            <Card v-if="props.promptRun.selectedFramework">
                 <h3 class="mb-3 font-semibold text-gray-900">
                     Selected Framework
                 </h3>
@@ -135,15 +135,15 @@ const getStatusColor = (status: string): string => {
                         <span
                             class="inline-flex rounded-lg bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-800"
                         >
-                            {{ props.prompt_run.selected_framework }}
+                            {{ props.promptRun.selectedFramework }}
                         </span>
                     </div>
-                    <div v-if="props.prompt_run.framework_reasoning">
+                    <div v-if="props.promptRun.frameworkReasoning">
                         <label class="block text-sm font-medium text-gray-700">
                             Reasoning
                         </label>
                         <p class="mt-1 text-gray-700">
-                            {{ props.prompt_run.framework_reasoning }}
+                            {{ props.promptRun.frameworkReasoning }}
                         </p>
                     </div>
                 </div>
@@ -152,8 +152,8 @@ const getStatusColor = (status: string): string => {
             <!-- Clarifying Questions & Answers -->
             <Card
                 v-if="
-                    props.prompt_run.framework_questions &&
-                    props.prompt_run.framework_questions.length > 0
+                    props.promptRun.frameworkQuestions &&
+                    props.promptRun.frameworkQuestions.length > 0
                 "
             >
                 <h3 class="mb-4 font-semibold text-gray-900">
@@ -162,7 +162,7 @@ const getStatusColor = (status: string): string => {
                 <div class="space-y-4">
                     <div
                         v-for="(question, index) in props.prompt_run
-                            .framework_questions"
+                            .frameworkQuestions"
                         :key="index"
                         class="rounded-lg border border-gray-200 p-4"
                     >
@@ -185,8 +185,8 @@ const getStatusColor = (status: string): string => {
 
                         <div
                             v-if="
-                                props.prompt_run.clarifying_answers &&
-                                props.prompt_run.clarifying_answers[index]
+                                props.promptRun.clarifyingAnswers &&
+                                props.promptRun.clarifyingAnswers[index]
                             "
                             class="mt-3 ml-7 rounded-lg bg-gray-50 p-3"
                         >
@@ -203,7 +203,7 @@ const getStatusColor = (status: string): string => {
                                     </label>
                                     <p class="mt-1 text-gray-900">
                                         {{
-                                            props.prompt_run.clarifying_answers[
+                                            props.promptRun.clarifyingAnswers[
                                                 index
                                             ]
                                         }}
@@ -225,14 +225,14 @@ const getStatusColor = (status: string): string => {
             </Card>
 
             <!-- Optimised Prompt -->
-            <Card v-if="props.prompt_run.optimized_prompt">
+            <Card v-if="props.promptRun.optimizedPrompt">
                 <h3 class="mb-3 font-semibold text-gray-900">
                     Optimised Prompt
                 </h3>
                 <div class="rounded-lg bg-gray-50 p-4">
                     <pre
                         class="font-mono text-sm whitespace-pre-wrap text-gray-900"
-                        >{{ props.prompt_run.optimized_prompt }}</pre
+                        >{{ props.promptRun.optimizedPrompt }}</pre
                     >
                 </div>
             </Card>

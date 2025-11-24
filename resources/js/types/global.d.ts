@@ -7,8 +7,8 @@ import { PageProps as AppPageProps } from './';
 declare global {
     interface Window {
         axios: AxiosInstance;
-        Echo: Echo<any> | null;
-        Pusher: any;
+        Echo: Echo<unknown> | null;
+        Pusher: unknown;
         isEchoConnected: () => boolean;
         getEchoConnectionState: () =>
             | 'connected'
@@ -20,15 +20,18 @@ declare global {
                 method: 'trackEvent',
                 eventData: {
                     name: string;
-                    properties: Record<string, any>;
+                    properties: Record<string, unknown>;
                 },
             ): void;
             identify(
                 uid: string | number,
-                customVars?: Record<string, any>,
+                customVars?: Record<string, unknown>,
             ): void;
-            setUserVars(customVars: Record<string, any>): void;
-            event(eventName: string, properties?: Record<string, any>): void;
+            setUserVars(customVars: Record<string, unknown>): void;
+            event(
+                eventName: string,
+                properties?: Record<string, unknown>,
+            ): void;
             anonymize(): void;
             shutdown(): void;
             restart(): void;
