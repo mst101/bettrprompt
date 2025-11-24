@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Frontend**: Inertia.js with Vue 3 + TypeScript
 - **Database**: PostgreSQL
 - **Cache/Queue**: Redis
+- **Queue Manager**: Laravel Horizon
+- **WebSockets**: Laravel Reverb
 - **Workflow Automation**: n8n
 - **Styling**: Tailwind CSS v4
 - **Testing**: Pest (PHPUnit)
@@ -36,7 +38,8 @@ composer dev
 The `composer dev` command runs these processes concurrently:
 
 - `php artisan serve` - Laravel development server
-- `php artisan queue:listen --tries=1` - Queue worker
+- `php artisan horizon` - Queue manager with dashboard (visit `/horizon`)
+- `php artisan reverb:start` - WebSocket server for real-time updates
 - `php artisan pail --timeout=0` - Log viewer
 - `npm run dev` - Vite dev server with HMR
 
