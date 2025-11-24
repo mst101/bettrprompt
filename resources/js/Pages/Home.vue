@@ -128,9 +128,11 @@ defineOptions({
                             For Everyone in Between
                         </h3>
                         <p class="mt-4 text-gray-700">
-                            With 16 personality types and optional trait
-                            percentages, AI Buddy adapts to your unique blend.
-                            Not all INTJs think alike - and we know it.
+                            With optional trait percentages, AI Buddy calibrates
+                            prompts based on trait strength. A highly analytical
+                            INTJ (95% Thinking) gets different optimization than
+                            a balanced INTJ (55% Thinking) - because not all
+                            INTJs think alike.
                         </p>
                     </div>
                 </div>
