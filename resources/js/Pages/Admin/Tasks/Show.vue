@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -85,178 +86,176 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
             </template>
         </HeaderPage>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <!-- Task Description -->
-                <Card class="mb-6">
-                    <h3 class="mb-2 font-semibold text-gray-900">
-                        Task Description:
-                    </h3>
-                    <p class="text-gray-700">{{ props.task_description }}</p>
-                </Card>
+        <ContainerPage>
+            <!-- Task Description -->
+            <Card class="mb-6">
+                <h3 class="mb-2 font-semibold text-gray-900">
+                    Task Description:
+                </h3>
+                <p class="text-gray-700">{{ props.task_description }}</p>
+            </Card>
 
-                <!-- Prompt Runs List -->
-                <Card>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        ID
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        User
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Personality
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Framework
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Status
-                                    </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                    >
-                                        Created
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr
-                                    v-for="run in props.prompt_runs.data"
-                                    :key="run.id"
-                                    class="group cursor-pointer transition hover:bg-gray-50"
-                                    @click="handleRowClick($event, run.id)"
-                                    @auxclick.prevent="
-                                        handleMiddleClick($event, run.id)
-                                    "
+            <!-- Prompt Runs List -->
+            <Card>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                                 >
-                                    <td
-                                        class="px-6 py-4 text-sm font-medium text-gray-900"
-                                    >
-                                        <Link
-                                            :href="
-                                                route(
-                                                    'admin.prompt-runs.show',
-                                                    run.id,
-                                                )
-                                            "
-                                            class="block"
-                                            @click.prevent
-                                        >
-                                            #{{ run.id }}
-                                        </Link>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
-                                        <div v-if="run.user">
-                                            <div class="font-medium">
-                                                {{ run.user.name }}
-                                            </div>
-                                            <div class="text-gray-500">
-                                                {{ run.user.email }}
-                                            </div>
-                                        </div>
-                                        <span v-else class="text-gray-400">
-                                            Guest
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
-                                        <span
-                                            v-if="run.personality_type"
-                                            class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
-                                        >
-                                            {{ run.personality_type }}
-                                        </span>
-                                        <span v-else class="text-gray-400">
-                                            N/A
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">
-                                        {{ run.selected_framework || 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            :class="[
-                                                'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
-                                                getStatusColor(run.status),
-                                            ]"
-                                        >
-                                            {{ run.status }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
-                                    >
-                                        {{
-                                            new Date(
-                                                run.created_at,
-                                            ).toLocaleString()
-                                        }}
-                                    </td>
-                                </tr>
-                                <tr v-if="props.prompt_runs.data.length === 0">
-                                    <td
-                                        colspan="6"
-                                        class="px-6 py-4 text-center text-sm text-gray-500"
-                                    >
-                                        No prompt runs found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div
-                        v-if="props.prompt_runs.last_page > 1"
-                        class="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6"
-                    >
-                        <div>
-                            <p class="text-sm text-gray-700">
-                                Page
-                                <span class="font-medium">{{
-                                    props.prompt_runs.current_page
-                                }}</span>
-                                of
-                                <span class="font-medium">{{
-                                    props.prompt_runs.last_page
-                                }}</span>
-                            </p>
-                        </div>
-                        <div>
-                            <nav
-                                class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                    ID
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    User
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    Personality
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    Framework
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    Status
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    Created
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            <tr
+                                v-for="run in props.prompt_runs.data"
+                                :key="run.id"
+                                class="group cursor-pointer transition hover:bg-gray-50"
+                                @click="handleRowClick($event, run.id)"
+                                @auxclick.prevent="
+                                    handleMiddleClick($event, run.id)
+                                "
                             >
-                                <Link
-                                    v-for="link in props.prompt_runs.links"
-                                    v-show="link.url"
-                                    :key="link.label"
-                                    :href="link.url || '#'"
-                                    :class="[
-                                        link.active
-                                            ? 'z-10 bg-indigo-600 text-white'
-                                            : 'bg-white text-gray-700 hover:bg-gray-50',
-                                        'relative inline-flex items-center border border-gray-300 px-4 py-2 text-sm font-medium',
-                                    ]"
-                                    :text="link.label"
-                                />
-                            </nav>
-                        </div>
+                                <td
+                                    class="px-6 py-4 text-sm font-medium text-gray-900"
+                                >
+                                    <Link
+                                        :href="
+                                            route(
+                                                'admin.prompt-runs.show',
+                                                run.id,
+                                            )
+                                        "
+                                        class="block"
+                                        @click.prevent
+                                    >
+                                        #{{ run.id }}
+                                    </Link>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    <div v-if="run.user">
+                                        <div class="font-medium">
+                                            {{ run.user.name }}
+                                        </div>
+                                        <div class="text-gray-500">
+                                            {{ run.user.email }}
+                                        </div>
+                                    </div>
+                                    <span v-else class="text-gray-400">
+                                        Guest
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    <span
+                                        v-if="run.personality_type"
+                                        class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
+                                    >
+                                        {{ run.personality_type }}
+                                    </span>
+                                    <span v-else class="text-gray-400">
+                                        N/A
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    {{ run.selected_framework || 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        :class="[
+                                            'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
+                                            getStatusColor(run.status),
+                                        ]"
+                                    >
+                                        {{ run.status }}
+                                    </span>
+                                </td>
+                                <td
+                                    class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
+                                >
+                                    {{
+                                        new Date(
+                                            run.created_at,
+                                        ).toLocaleString()
+                                    }}
+                                </td>
+                            </tr>
+                            <tr v-if="props.prompt_runs.data.length === 0">
+                                <td
+                                    colspan="6"
+                                    class="px-6 py-4 text-center text-sm text-gray-500"
+                                >
+                                    No prompt runs found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                    v-if="props.prompt_runs.last_page > 1"
+                    class="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6"
+                >
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Page
+                            <span class="font-medium">{{
+                                props.prompt_runs.current_page
+                            }}</span>
+                            of
+                            <span class="font-medium">{{
+                                props.prompt_runs.last_page
+                            }}</span>
+                        </p>
                     </div>
-                </Card>
-            </div>
-        </div>
+                    <div>
+                        <nav
+                            class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                        >
+                            <Link
+                                v-for="link in props.prompt_runs.links"
+                                v-show="link.url"
+                                :key="link.label"
+                                :href="link.url || '#'"
+                                :class="[
+                                    link.active
+                                        ? 'z-10 bg-indigo-600 text-white'
+                                        : 'bg-white text-gray-700 hover:bg-gray-50',
+                                    'relative inline-flex items-center border border-gray-300 px-4 py-2 text-sm font-medium',
+                                ]"
+                                :text="link.label"
+                            />
+                        </nav>
+                    </div>
+                </div>
+            </Card>
+        </ContainerPage>
     </AppLayout>
 </template>

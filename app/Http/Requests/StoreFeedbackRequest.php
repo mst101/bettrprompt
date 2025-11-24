@@ -22,7 +22,7 @@ class StoreFeedbackRequest extends BaseFormRequest
         return [
             'experience_level' => ['required', 'integer', 'min:1', 'max:7'],
             'usefulness' => ['required', 'integer', 'min:1', 'max:7'],
-            'recommendation_likelihood' => ['required', 'integer', 'min:1', 'max:7'],
+            'usage_intent' => ['required', 'integer', 'min:1', 'max:7'],
             'suggestions' => ['nullable', 'string', 'max:5000'],
             'desired_features' => ['required', 'array', 'min:1'],
             'desired_features.*' => [

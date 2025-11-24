@@ -40,7 +40,7 @@ class FeedbackController extends Controller
             'feedback' => [
                 'experienceLevel' => $feedback->experience_level,
                 'usefulness' => $feedback->usefulness,
-                'recommendationLikelihood' => $feedback->recommendation_likelihood,
+                'usageIntent' => $feedback->usage_intent,
                 'suggestions' => $feedback->suggestions,
                 'desiredFeatures' => json_decode($feedback->desired_features, true),
                 'desiredFeaturesOther' => $feedback->desired_features_other,
@@ -58,7 +58,7 @@ class FeedbackController extends Controller
             'user_id' => auth()->id(),
             'experience_level' => $validated['experience_level'],
             'usefulness' => $validated['usefulness'],
-            'recommendation_likelihood' => $validated['recommendation_likelihood'],
+            'usage_intent' => $validated['usage_intent'],
             'suggestions' => $validated['suggestions'] ?? null,
             'desired_features' => json_encode($validated['desired_features']),
             'desired_features_other' => $validated['desired_features_other'] ?? null,
@@ -78,7 +78,7 @@ class FeedbackController extends Controller
             ->update([
                 'experience_level' => $validated['experience_level'],
                 'usefulness' => $validated['usefulness'],
-                'recommendation_likelihood' => $validated['recommendation_likelihood'],
+                'usage_intent' => $validated['usage_intent'],
                 'suggestions' => $validated['suggestions'] ?? null,
                 'desired_features' => json_encode($validated['desired_features']),
                 'desired_features_other' => $validated['desired_features_other'] ?? null,

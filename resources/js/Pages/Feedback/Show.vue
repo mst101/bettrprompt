@@ -20,7 +20,7 @@ defineOptions({
 interface FeedbackData {
     experienceLevel: number;
     usefulness: number;
-    recommendationLikelihood: number;
+    usageIntent: number;
     suggestions: string | null;
     desiredFeatures: string[];
     desiredFeaturesOther: string | null;
@@ -37,7 +37,7 @@ const isEditing = ref(false);
 const form = useForm({
     experienceLevel: props.feedback.experienceLevel,
     usefulness: props.feedback.usefulness,
-    recommendationLikelihood: props.feedback.recommendationLikelihood,
+    usageIntent: props.feedback.usageIntent,
     suggestions: props.feedback.suggestions || '',
     desiredFeatures: props.feedback.desiredFeatures || [],
     desiredFeaturesOther: props.feedback.desiredFeaturesOther || '',
@@ -171,23 +171,23 @@ const formatDate = (dateString: string) => {
                     </p>
                 </div>
 
-                <!-- Question 3: Recommendation Likelihood -->
+                <!-- Question 3: Usage Intent -->
                 <div class="mt-16">
                     <label class="mb-4 block text-sm font-medium text-gray-900">
-                        3. How likely are you to recommend this app to a friend
-                        or colleague?
+                        3. How likely are you to use this app the next time you
+                        need to work with an AI assistant?
                     </label>
                     <LikertScale
-                        v-model="form.recommendationLikelihood"
+                        v-model="form.usageIntent"
                         left-label="Very unlikely"
                         right-label="Very likely"
                         :disabled="!isEditing || form.processing"
                     />
                     <p
-                        v-if="form.errors.recommendationLikelihood"
+                        v-if="form.errors.usageIntent"
                         class="mt-2 text-sm text-red-600"
                     >
-                        {{ form.errors.recommendationLikelihood }}
+                        {{ form.errors.usageIntent }}
                     </p>
                 </div>
 

@@ -57,7 +57,7 @@ test.describe('Feedback - Unauthenticated Access', () => {
         ).toBeVisible();
 
         await expect(
-            page.getByText(/how likely are you to recommend this app/i),
+            page.getByText(/how likely are you to use this app the next time/i),
         ).toBeVisible();
 
         await expect(
@@ -145,7 +145,7 @@ test.describe.skip('Feedback - Form Validation', () => {
 
         // Question 3: Recommendation likelihood
         const recommendationRadios = page.locator(
-            'input[type="radio"][name="recommendationLikelihood"]',
+            'input[type="radio"][name="usageIntent"]',
         );
         await recommendationRadios.first().check();
 
@@ -182,7 +182,7 @@ test.describe.skip('Feedback - Form Validation', () => {
             .first()
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .first()
             .check();
 
@@ -237,7 +237,7 @@ test.describe.skip('Feedback - Submission Flow (requires auth)', () => {
 
         // Fill in Question 3: Recommendation likelihood
         const recommendationRadio = page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .nth(4); // Select middle-high option (5/7)
         await recommendationRadio.check();
 
@@ -295,7 +295,7 @@ test.describe.skip('Feedback - Submission Flow (requires auth)', () => {
             .first()
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .first()
             .check();
         await page.locator('input[type="checkbox"][value="templates"]').check();
@@ -345,7 +345,7 @@ test.describe.skip('Feedback - View Submitted Feedback (requires auth)', () => {
             .nth(4)
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .nth(5)
             .check();
 
@@ -413,7 +413,7 @@ test.describe.skip('Feedback - View Submitted Feedback (requires auth)', () => {
             .first()
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .first()
             .check();
         await page.locator('input[type="checkbox"][value="templates"]').check();
@@ -472,7 +472,7 @@ test.describe.skip('Feedback - Update Functionality (requires auth)', () => {
             .nth(3)
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .nth(4)
             .check();
         await page
@@ -711,7 +711,7 @@ test.describe('Feedback - Accessibility and UX', () => {
             .first()
             .check();
         await page
-            .locator('input[type="radio"][name="recommendationLikelihood"]')
+            .locator('input[type="radio"][name="usageIntent"]')
             .first()
             .check();
         await page.locator('input[type="checkbox"][value="templates"]').check();

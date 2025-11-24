@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormInput from '@/Components/FormInput.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
@@ -59,98 +60,94 @@ watch(search, debouncedSearch);
             </template>
         </HeaderPage>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <Card class="mb-6">
-                    <div class="relative">
-                        <DynamicIcon
-                            name="search"
-                            class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
-                        />
-                        <FormInput
-                            id="task-search"
-                            v-model="search"
-                            label=""
-                            type="text"
-                            placeholder="Search users..."
-                            class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10"
-                        />
-                    </div>
-                </Card>
+        <ContainerPage>
+            <Card class="mb-6">
+                <div class="relative">
+                    <DynamicIcon
+                        name="search"
+                        class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+                    />
+                    <FormInput
+                        id="task-search"
+                        v-model="search"
+                        label=""
+                        type="text"
+                        placeholder="Search users..."
+                        class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10"
+                    />
+                </div>
+            </Card>
 
-                <Card>
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-                                >
-                                    Name
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-                                >
-                                    Email
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-                                >
-                                    Visitors
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-                                >
-                                    Prompt Runs
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                            <Link
-                                v-for="user in props.users.data"
-                                :key="user.id"
-                                :href="route('admin.users.show', user.id)"
-                                as="tr"
-                                class="cursor-pointer transition hover:bg-gray-50"
+            <Card>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                             >
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div>
-                                            <div
-                                                class="font-medium text-gray-900"
-                                            >
-                                                {{ user.name }}
-                                            </div>
-                                            <div
-                                                v-if="user.is_admin"
-                                                class="text-xs text-indigo-600"
-                                            >
-                                                Administrator
-                                            </div>
+                                Name
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                            >
+                                Email
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                            >
+                                Visitors
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                            >
+                                Prompt Runs
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        <Link
+                            v-for="user in props.users.data"
+                            :key="user.id"
+                            :href="route('admin.users.show', user.id)"
+                            as="tr"
+                            class="cursor-pointer transition hover:bg-gray-50"
+                        >
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div>
+                                        <div class="font-medium text-gray-900">
+                                            {{ user.name }}
+                                        </div>
+                                        <div
+                                            v-if="user.is_admin"
+                                            class="text-xs text-indigo-600"
+                                        >
+                                            Administrator
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ user.email }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold text-blue-800"
-                                    >
-                                        {{ user.visitors_count }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800"
-                                    >
-                                        {{ user.prompt_runs_count }}
-                                    </span>
-                                </td>
-                            </Link>
-                        </tbody>
-                    </table>
-                </Card>
-            </div>
-        </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ user.email }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold text-blue-800"
+                                >
+                                    {{ user.visitors_count }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800"
+                                >
+                                    {{ user.prompt_runs_count }}
+                                </span>
+                            </td>
+                        </Link>
+                    </tbody>
+                </table>
+            </Card>
+        </ContainerPage>
     </AppLayout>
 </template>

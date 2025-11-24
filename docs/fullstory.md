@@ -249,7 +249,7 @@ FS.event('Personality Type Removed');
 FS.event('Feedback Submitted', {
   experienceLevel: number,
   usefulness: number,
-  recommendationLikelihood: number,
+  usageIntent: number, // Likelihood to use app again (not NPS)
   hasSuggestions: boolean,
   selectedFeatureCount: number
 });
