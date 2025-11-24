@@ -93,9 +93,21 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         // Verify we're on the show page
         expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
 
-        // Should see a status badge
-        const statusBadge = page.getByTestId('status-badge');
-        await expect(statusBadge).toBeVisible({ timeout: 5000 });
+        // Should see the page title
+        await expect(page).toHaveTitle(/Optimised Prompt/);
+
+        // Should see either the loading state or tabs (depending on timing)
+        const hasLoadingState = await page
+            .getByText(/selecting optimal framework/i)
+            .isVisible()
+            .catch(() => false);
+        const hasTabs = await page
+            .getByRole('navigation', { name: 'Tabs' })
+            .isVisible()
+            .catch(() => false);
+
+        // At least one should be visible
+        expect(hasLoadingState || hasTabs).toBe(true);
     });
 
     test('should wait for framework selection and see framework tab', async ({
