@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Models\Visitor;
 use Closure;
 use Illuminate\Http\Request;
@@ -90,9 +91,22 @@ class TrackVisitor
         ]);
 
         try {
+            // Look up referrer by referral code if present
+            $referredByUserId = null;
+            if ($referralCode = $request->query('ref')) {
+                $referrer = User::where('referral_code', $referralCode)->first();
+                if ($referrer) {
+                    $referredByUserId = $referrer->id;
+                    Log::info('Referral code found', [
+                        'referral_code' => $referralCode,
+                        'referrer_id' => $referredByUserId,
+                    ]);
+                }
+            }
+
             // Create visitor in a separate transaction that commits immediately
             // This ensures the visitor persists even if the main request fails
-            $visitor = DB::transaction(function () use ($request) {
+            $visitor = DB::transaction(function () use ($request, $referredByUserId) {
                 return Visitor::create([
                     // Don't set 'id' - let HasUuids trait generate it
                     'utm_source' => $request->query('utm_source'),
@@ -107,6 +121,7 @@ class TrackVisitor
                     'first_visit_at' => now(),
                     'last_visit_at' => now(),
                     'visit_count' => 1,
+                    'referred_by_user_id' => $referredByUserId,
                 ]);
             });
 

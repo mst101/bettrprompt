@@ -34,6 +34,7 @@ class Visitor extends Model
         'converted_at',
         'personality_type',
         'trait_percentages',
+        'referred_by_user_id',
     ];
 
     /**

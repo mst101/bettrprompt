@@ -27,6 +27,7 @@ class User extends Authenticatable
         'personality_type',
         'trait_percentages',
         'referral_code',
+        'referred_by_user_id',
     ];
 
     /**

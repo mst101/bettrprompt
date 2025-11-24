@@ -50,12 +50,17 @@ class RegisteredUserController extends Controller
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             if ($visitor && ! $visitor->user_id) {
-                // Copy personality data from visitor to user
+                // Copy personality data and referrer from visitor to user
+                $updates = [];
                 if ($visitor->personality_type) {
-                    $user->update([
-                        'personality_type' => $visitor->personality_type,
-                        'trait_percentages' => $visitor->trait_percentages,
-                    ]);
+                    $updates['personality_type'] = $visitor->personality_type;
+                    $updates['trait_percentages'] = $visitor->trait_percentages;
+                }
+                if ($visitor->referred_by_user_id) {
+                    $updates['referred_by_user_id'] = $visitor->referred_by_user_id;
+                }
+                if (! empty($updates)) {
+                    $user->update($updates);
                 }
 
                 // Update visitor record
@@ -74,6 +79,7 @@ class RegisteredUserController extends Controller
                     'visitor_id' => $visitorId,
                     'claimed_prompt_runs' => $claimedCount,
                     'copied_personality' => (bool) $visitor->personality_type,
+                    'copied_referrer' => (bool) $visitor->referred_by_user_id,
                 ]);
             }
         }
