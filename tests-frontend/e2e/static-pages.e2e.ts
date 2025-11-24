@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { acceptCookies } from './helpers/auth';
 
 /**
  * Static Pages E2E Tests
@@ -16,6 +17,11 @@ import { expect, test } from '@playwright/test';
  * - Accessibility features
  * - Cross-page navigation via footer links
  */
+
+// Accept cookies before each test to prevent cookie banner from blocking interactions
+test.beforeEach(async ({ page }) => {
+    await acceptCookies(page);
+});
 
 test.describe('Terms of Use Page', () => {
     test('should load the Terms page successfully', async ({ page }) => {
@@ -90,9 +96,11 @@ test.describe('Terms of Use Page', () => {
             window.scrollTo(0, document.body.scrollHeight),
         );
 
-        // Verify company information is displayed
-        await expect(page.getByText(/AI Buddy Ltd\./i)).toBeVisible();
-        await expect(page.getByText(/info@hiddengambia\.com/i)).toBeVisible();
+        // Verify company information is displayed (use .first() as text appears multiple times)
+        await expect(page.getByText(/AI Buddy Ltd\./i).first()).toBeVisible();
+        await expect(
+            page.getByText(/info@hiddengambia\.com/i).first(),
+        ).toBeVisible();
     });
 
     test('should have proper navigation elements', async ({ page }) => {
@@ -880,11 +888,11 @@ test.describe('Content Verification', () => {
                 window.scrollTo(0, document.body.scrollHeight),
             );
 
-            // Verify company name appears
-            await expect(page.getByText(companyName)).toBeVisible();
+            // Verify company name appears (use .first() as text appears multiple times)
+            await expect(page.getByText(companyName).first()).toBeVisible();
 
-            // Verify contact email appears
-            await expect(page.getByText(contactEmail)).toBeVisible();
+            // Verify contact email appears (use .first() as text appears multiple times)
+            await expect(page.getByText(contactEmail).first()).toBeVisible();
         }
     });
 
