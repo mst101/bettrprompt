@@ -80,7 +80,7 @@ test('store feedback creates new feedback record', function () {
         'desired_features_other' => 'Integration with other tools',
     ]);
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('feedback.thank-you'));
     $response->assertSessionHas('success', 'Thank you for your feedback!');
 
     $this->assertDatabaseHas('feedback', [
@@ -140,7 +140,7 @@ test('store feedback allows null suggestions', function () {
         'desired_features' => ['templates'],
     ]);
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('feedback.thank-you'));
     $response->assertSessionHas('success');
 
     $this->assertDatabaseHas('feedback', [
@@ -157,7 +157,7 @@ test('store feedback allows null desired features other', function () {
         'desired_features' => ['templates'],
     ]);
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('feedback.thank-you'));
     $response->assertSessionHas('success');
 
     $this->assertDatabaseHas('feedback', [

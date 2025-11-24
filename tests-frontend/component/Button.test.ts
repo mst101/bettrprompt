@@ -115,7 +115,7 @@ describe('Button', () => {
 
             expect(button.classes()).toContain('px-6');
             expect(button.classes()).toContain('py-3');
-            expect(button.classes()).toContain('text-base');
+            expect(button.classes()).toContain('text-sm');
         });
     });
 

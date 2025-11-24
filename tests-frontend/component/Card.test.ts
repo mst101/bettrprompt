@@ -10,7 +10,7 @@ describe('Card', () => {
         expect(card.exists()).toBe(true);
         expect(card.classes()).toContain('p-6');
         expect(card.classes()).toContain('bg-white');
-        expect(card.classes()).toContain('shadow-xs');
+        expect(card.classes()).toContain('shadow-lg');
     });
 
     it('should render with no padding', () => {

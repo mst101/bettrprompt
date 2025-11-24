@@ -66,7 +66,8 @@ class FeedbackController extends Controller
             'updated_at' => now(),
         ]);
 
-        return redirect()->route('feedback.thank-you');
+        return redirect()->route('feedback.thank-you')
+            ->with('success', 'Thank you for your feedback!');
     }
 
     public function update(StoreFeedbackRequest $request)

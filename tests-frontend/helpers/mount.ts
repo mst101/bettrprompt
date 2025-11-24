@@ -127,38 +127,38 @@ export function createMockPromptRun(
 /**
  * Create a mock MediaRecorder instance
  */
-export function createMockMediaRecorder() {
-    return {
-        start: vi.fn(),
-        stop: vi.fn(),
-        pause: vi.fn(),
-        resume: vi.fn(),
-        ondataavailable: null,
-        onstop: null,
-        onerror: null,
-        state: 'inactive',
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-    };
-}
+// export function createMockMediaRecorder() {
+//     return {
+//         start: vi.fn(),
+//         stop: vi.fn(),
+//         pause: vi.fn(),
+//         resume: vi.fn(),
+//         ondataavailable: null,
+//         onstop: null,
+//         onerror: null,
+//         state: 'inactive',
+//         addEventListener: vi.fn(),
+//         removeEventListener: vi.fn(),
+//         dispatchEvent: vi.fn(),
+//     };
+// }
 
 /**
  * Create a mock Laravel Echo channel
  */
-export function createMockEchoChannel() {
-    return {
-        listen: vi.fn(() => ({
-            listen: vi.fn(),
-            stopListening: vi.fn(),
-        })),
-        stopListening: vi.fn(),
-        subscribed: vi.fn(() => ({
-            listen: vi.fn(),
-            stopListening: vi.fn(),
-        })),
-    };
-}
+// export function createMockEchoChannel() {
+//     return {
+//         listen: vi.fn(() => ({
+//             listen: vi.fn(),
+//             stopListening: vi.fn(),
+//         })),
+//         stopListening: vi.fn(),
+//         subscribed: vi.fn(() => ({
+//             listen: vi.fn(),
+//             stopListening: vi.fn(),
+//         })),
+//     };
+// }
 
 /**
  * Wait for next tick and all promises to resolve

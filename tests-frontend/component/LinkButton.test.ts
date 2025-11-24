@@ -47,30 +47,32 @@ describe('LinkButton', () => {
         expect(wrapper.find('a').attributes('id')).toBe('my-link');
     });
 
-    it('should render default variant by default', () => {
+    it('should render primary variant by default', () => {
         const wrapper = mount(LinkButton, {
             props: defaultProps,
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('border-gray-300');
-        expect(link.classes()).toContain('bg-white');
-        expect(link.classes()).toContain('text-gray-500');
+        expect(link.classes()).toContain('bg-indigo-600');
+        expect(link.classes()).toContain('text-white');
     });
 
-    it('should render default variant with rounded-md', () => {
+    it('should render secondary variant', () => {
         const wrapper = mount(LinkButton, {
             props: {
                 ...defaultProps,
-                variant: 'default',
+                variant: 'secondary',
             },
         });
 
         const link = wrapper.find('a');
+        expect(link.classes()).toContain('border-gray-300');
+        expect(link.classes()).toContain('bg-white');
+        expect(link.classes()).toContain('text-gray-700');
         expect(link.classes()).toContain('rounded-md');
     });
 
-    it('should render primary variant', () => {
+    it('should render primary variant when explicitly set', () => {
         const wrapper = mount(LinkButton, {
             props: {
                 ...defaultProps,
@@ -84,33 +86,21 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('rounded-md');
     });
 
-    it('should render rounded-left variant', () => {
+    it('should render danger variant', () => {
         const wrapper = mount(LinkButton, {
             props: {
                 ...defaultProps,
-                variant: 'rounded-left',
+                variant: 'danger',
             },
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('rounded-l-md');
-        expect(link.classes()).not.toContain('rounded-md');
+        expect(link.classes()).toContain('bg-red-600');
+        expect(link.classes()).toContain('text-white');
+        expect(link.classes()).toContain('rounded-md');
     });
 
-    it('should render rounded-right variant', () => {
-        const wrapper = mount(LinkButton, {
-            props: {
-                ...defaultProps,
-                variant: 'rounded-right',
-            },
-        });
-
-        const link = wrapper.find('a');
-        expect(link.classes()).toContain('rounded-r-md');
-        expect(link.classes()).not.toContain('rounded-md');
-    });
-
-    it('should have base styling classes for default variant', () => {
+    it('should have base styling classes for primary variant', () => {
         const wrapper = mount(LinkButton, {
             props: defaultProps,
         });
@@ -121,15 +111,15 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('border');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-xs');
+        expect(link.classes()).toContain('text-sm');
         expect(link.classes()).toContain('font-medium');
     });
 
-    it('should have base styling classes for primary variant', () => {
+    it('should have base styling classes for secondary variant', () => {
         const wrapper = mount(LinkButton, {
             props: {
                 ...defaultProps,
-                variant: 'primary',
+                variant: 'secondary',
             },
         });
 
@@ -138,13 +128,16 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('items-center');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-xs');
+        expect(link.classes()).toContain('text-sm');
         expect(link.classes()).toContain('font-medium');
     });
 
-    it('should have hover styling for default variant', () => {
+    it('should have hover styling for secondary variant', () => {
         const wrapper = mount(LinkButton, {
-            props: defaultProps,
+            props: {
+                ...defaultProps,
+                variant: 'secondary',
+            },
         });
 
         const link = wrapper.find('a');
