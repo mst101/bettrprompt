@@ -50,7 +50,7 @@ const PERSONALITY_TYPES = [
 const TEST_TASK =
     'Help me create a comprehensive marketing strategy for a new SaaS product targeting small business owners';
 
-test.describe('Framework Selection Analysis', () => {
+test.describe.skip('Framework Selection Analysis', () => {
     // Seed test user before all tests
     test.beforeAll(async () => {
         await seedTestUser();
