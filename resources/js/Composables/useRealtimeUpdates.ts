@@ -151,21 +151,40 @@ export function useRealtimeUpdates(
         window.removeEventListener('echo-connected', handleEchoReconnect);
     };
 
-    onMounted(() => {
-        // Check if Echo is available and connected
-        if (!window.Echo || !window.isEchoConnected()) {
+    const trySetup = () => {
+        if (channel || !window.Echo) {
+            return;
+        }
+
+        if (!window.isEchoConnected()) {
             console.warn(
-                '[useRealtimeUpdates] Echo not available or not connected, using polling fallback',
+                '[useRealtimeUpdates] Echo not connected yet, waiting while polling',
             );
             startPolling();
             return;
         }
 
         setupEcho();
+    };
 
-        // Listen for Echo connection state changes
+    onMounted(() => {
+        // Always attach listeners so we can recover once Echo connects
         window.addEventListener('echo-disconnected', handleEchoDisconnect);
         window.addEventListener('echo-connected', handleEchoReconnect);
+
+        trySetup();
+
+        // If Echo is not ready at mount, keep trying when it becomes available
+        if (!channel) {
+            const echoCheck = window.setInterval(() => {
+                if (window.Echo) {
+                    trySetup();
+                    if (channel) {
+                        clearInterval(echoCheck);
+                    }
+                }
+            }, 1000);
+        }
     });
 
     onUnmounted(() => {

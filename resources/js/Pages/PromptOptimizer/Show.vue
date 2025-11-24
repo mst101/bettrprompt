@@ -14,7 +14,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import type { N8nErrorResponse, PromptRunResource } from '@/types';
 import { getFullPersonalityType } from '@/utils/personalityTypes';
 import { Head, router } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -53,12 +53,14 @@ useRealtimeUpdates(
     {
         FrameworkSelected: () => {
             // Reload page to show framework selection and questions
+            stopFallback();
             router.reload({
                 only: ['promptRun', 'currentQuestion', 'progress'],
             });
         },
         PromptOptimizationCompleted: () => {
             // Reload page to show completed prompt
+            stopFallback();
             router.reload({
                 only: ['promptRun', 'currentQuestion', 'progress'],
             });
@@ -97,6 +99,35 @@ const hasFrameworkQuestions = computed(
         props.promptRun.frameworkQuestions &&
         props.promptRun.frameworkQuestions.length > 0,
 );
+
+const isWaitingForFramework = computed(() => {
+    const stage = props.promptRun.workflowStage;
+    return (
+        !props.promptRun.selectedFramework &&
+        stage !== 'failed' &&
+        stage !== 'completed'
+    );
+});
+
+let fallbackInterval: number | null = null;
+
+const stopFallback = () => {
+    if (fallbackInterval) {
+        clearInterval(fallbackInterval);
+        fallbackInterval = null;
+    }
+};
+
+const startFallback = () => {
+    if (fallbackInterval) return;
+    // Reload just the prompt run pieces while waiting for events
+    fallbackInterval = window.setInterval(() => {
+        router.reload({
+            only: ['promptRun', 'currentQuestion', 'progress'],
+            preserveScroll: true,
+        });
+    }, 5000);
+};
 
 const tabs = computed<Tab[]>(() => {
     const allTabs: Tab[] = [];
@@ -162,23 +193,31 @@ const shouldShowProceedButton = computed(() => {
     return answeredQuestions < totalQuestions;
 });
 
+const setActiveTabForStage = () => {
+    if (
+        props.promptRun.workflowStage === 'framework_selected' &&
+        shouldShowProceedButton.value
+    ) {
+        activeTab.value = 'framework';
+    } else if (isAnsweringQuestions.value) {
+        activeTab.value = 'questions';
+    } else if (props.promptRun.optimizedPrompt) {
+        activeTab.value = 'prompt';
+    } else {
+        activeTab.value = 'task';
+    }
+};
+
 // Set default active tab based on workflow stage
 watch(
     () => props.promptRun.id,
     () => {
-        if (
-            props.promptRun.workflowStage === 'framework_selected' &&
-            shouldShowProceedButton.value
-        ) {
-            // Show framework tab when framework is just selected
-            activeTab.value = 'framework';
-        } else if (isAnsweringQuestions.value) {
-            // Show questions tab when actively answering
-            activeTab.value = 'questions';
-        } else if (props.promptRun.optimizedPrompt) {
-            activeTab.value = 'prompt';
+        setActiveTabForStage();
+
+        if (isWaitingForFramework.value) {
+            startFallback();
         } else {
-            activeTab.value = 'task';
+            stopFallback();
         }
     },
     { immediate: true },
@@ -191,6 +230,14 @@ watch(
         if (newPrompt) {
             activeTab.value = 'prompt';
         }
+        stopFallback();
+    },
+);
+
+watch(
+    () => props.promptRun.workflowStage,
+    () => {
+        setActiveTabForStage();
     },
 );
 
@@ -205,6 +252,16 @@ const handleProceedToQuestions = async () => {
     await nextTick();
     clarifyingQuestionsRef.value?.focus();
 };
+
+onMounted(() => {
+    if (isWaitingForFramework.value) {
+        startFallback();
+    }
+});
+
+onUnmounted(() => {
+    stopFallback();
+});
 </script>
 
 <template>
