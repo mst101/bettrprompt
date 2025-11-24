@@ -51,8 +51,6 @@ test.describe('Home Page', () => {
         // Wait a bit for any lazy-loaded content
         await page.waitForTimeout(1000);
 
-        // Check if there are feature cards on the page
-        const featureCards = page.locator('[class*="feature"]').first();
         // At least some content should be visible (this is a flexible check)
         await expect(page.locator('body')).toBeVisible();
     });

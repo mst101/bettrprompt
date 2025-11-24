@@ -89,9 +89,7 @@ vi.mock('laravel-echo', () => ({
         channel(name: string) {
             if (!this.channels.has(name)) {
                 this.channels.set(name, {
-                    listen: vi.fn((event: string, callback: Function) =>
-                        this.channels.get(name),
-                    ),
+                    listen: vi.fn(() => this.channels.get(name)),
                     stopListening: vi.fn(),
                 });
             }

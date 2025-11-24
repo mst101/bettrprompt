@@ -35,31 +35,7 @@ export function mountWithInertia(
     component: Component,
     options: MountInertiaOptions = {},
 ): VueWrapper {
-    const { props = {}, pageProps = {}, global = {} } = options;
-
-    // Mock usePage to return custom page props
-    const mockUsePage = vi.fn(() => ({
-        props: {
-            value: {
-                auth: pageProps.auth || {
-                    user: {
-                        id: 1,
-                        name: 'Test User',
-                        email: 'test@example.com',
-                    },
-                },
-                errors: pageProps.errors || {},
-                flash: pageProps.flash || {},
-                ...pageProps,
-            },
-        },
-        url: '/',
-        component: 'TestComponent',
-        version: '1',
-        scrollRegions: [],
-        rememberedState: {},
-        resolvedErrors: {},
-    }));
+    const { props = {}, global = {} } = options;
 
     return mount(component, {
         props,
@@ -192,12 +168,12 @@ export function createMockSpeechRecognition() {
  */
 export function createMockEchoChannel() {
     return {
-        listen: vi.fn((event: string, callback: Function) => ({
+        listen: vi.fn(() => ({
             listen: vi.fn(),
             stopListening: vi.fn(),
         })),
         stopListening: vi.fn(),
-        subscribed: vi.fn((callback: Function) => ({
+        subscribed: vi.fn(() => ({
             listen: vi.fn(),
             stopListening: vi.fn(),
         })),
