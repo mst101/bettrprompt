@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/vue3';
 
 interface Props {
     parent?: PromptRunResource | null;
-    children?: PromptRunResource[];
+    children?: readonly PromptRunResource[];
 }
 
 const props = defineProps<Props>();

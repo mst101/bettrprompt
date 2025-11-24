@@ -82,7 +82,7 @@ defineOptions({
                     <FeatureCard
                         icon="document"
                         title="Learn What Works for You"
-                        description="Track your prompts, compare results, and discover which approaches work best for your unique thinking style. Build a library of techniques that match how you naturally work."
+                        description="Track your prompts, compare results, and discover which approaches work best for your thinking style. Build a library of techniques that match how you naturally work."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />

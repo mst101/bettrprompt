@@ -112,17 +112,19 @@ vi.mock('laravel-echo', () => ({
 }));
 
 // Mock window.route() global helper (Ziggy)
-globalThis.route = vi.fn((name: string, params?: any) => {
+const mockRoute = vi.fn((name: string, params?: any) => {
     if (params && typeof params === 'object') {
         const paramString = Object.values(params).join('/');
         return `/${name}/${paramString}`;
     }
     return `/${name}`;
-});
+}) as unknown as typeof route;
+
+globalThis.route = mockRoute;
 
 // Configure Vue Test Utils global properties
 config.global.mocks = {
-    route: globalThis.route,
+    route: mockRoute,
 };
 
 // Mock browser APIs that happy-dom doesn't support
