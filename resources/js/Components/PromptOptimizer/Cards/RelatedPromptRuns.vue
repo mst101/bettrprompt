@@ -19,7 +19,7 @@ const hasRelations =
 </script>
 
 <template>
-    <Card v-if="hasRelations">
+    <Card v-if="hasRelations" class="mt-6">
         <h3 class="mb-4 text-lg font-semibold text-gray-900">
             Related Prompt Optimisations
         </h3>

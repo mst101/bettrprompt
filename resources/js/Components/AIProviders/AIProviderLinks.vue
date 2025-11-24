@@ -6,6 +6,7 @@ import LogoGemini from '@/Components/AIProviders/LogoGemini.vue';
 import LogoGrok from '@/Components/AIProviders/LogoGrok.vue';
 import LogoMetaAI from '@/Components/AIProviders/LogoMetaAI.vue';
 import LogoPerplexity from '@/Components/AIProviders/LogoPerplexity.vue';
+import Button from '@/Components/Button.vue';
 import { ref, type Component } from 'vue';
 
 interface Props {
@@ -105,12 +106,14 @@ const handleProviderClick = async (provider: AIProvider) => {
             </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-            <button
+            <Button
                 v-for="provider in providers"
                 :key="provider.name"
+                variant="secondary"
+                size="sm"
                 type="button"
                 :title="`Open ${provider.name} (prompt copied to clipboard)`"
-                class="group relative flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 transition-all hover:border-gray-300 hover:shadow-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
+                class="group relative !justify-start border-gray-200 px-3 py-2 hover:border-gray-300 hover:shadow-sm"
                 @click="handleProviderClick(provider)"
             >
                 <component :is="provider.logo" class="h-6 w-6" />
@@ -125,7 +128,7 @@ const handleProviderClick = async (provider: AIProvider) => {
                 >
                     ✓
                 </span>
-            </button>
+            </Button>
         </div>
         <p class="text-xs text-gray-500">
             Click any provider to copy your optimised prompt and open their chat
