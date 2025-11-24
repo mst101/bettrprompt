@@ -19,17 +19,27 @@ const props = withDefaults(defineProps<Props>(), {
 
 const show = ref(!!props.message);
 const messageElement = ref<HTMLElement | null>(null);
+let dismissTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const setupAutoDismiss = () => {
+    // Clear any existing timeout
+    if (dismissTimeout) {
+        clearTimeout(dismissTimeout);
+    }
+
+    if (props.message && props.autoDismiss) {
+        dismissTimeout = setTimeout(() => {
+            show.value = false;
+        }, props.dismissDelay);
+    }
+};
 
 watch(
     () => props.message,
     (newMessage) => {
         if (newMessage) {
             show.value = true;
-            if (props.autoDismiss) {
-                setTimeout(() => {
-                    show.value = false;
-                }, props.dismissDelay);
-            }
+            setupAutoDismiss();
         }
     },
 );
@@ -47,10 +57,16 @@ const handleClickOutside = (event: MouseEvent) => {
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
+    // Set up auto-dismiss on initial mount if message exists
+    setupAutoDismiss();
 });
 
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
+    // Clean up timeout to prevent memory leaks
+    if (dismissTimeout) {
+        clearTimeout(dismissTimeout);
+    }
 });
 
 const typeConfig = computed(() => {
