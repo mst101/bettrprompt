@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from '@/Components/Button.vue';
+import { useButtonClasses } from '@/Composables/useButtonClasses';
 import { Link } from '@inertiajs/vue3';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
@@ -12,17 +12,17 @@ interface Props {
     variant?: ButtonVariant;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     id: undefined,
     variant: 'primary',
     size: 'md',
 });
+
+const buttonClasses = useButtonClasses(props);
 </script>
 
 <template>
-    <Link :id="id" :href="href">
-        <Button :variant="variant" :size="size" type="button">
-            <slot />
-        </Button>
+    <Link :id="id" :href="href" :class="buttonClasses">
+        <slot />
     </Link>
 </template>
