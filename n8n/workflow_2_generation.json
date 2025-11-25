@@ -97,11 +97,11 @@
             "typeVersion": 3.4,
             "position": [1180, 300]
         },
-        {
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "={{ $json }}",
-                "options": {
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
                     "responseHeaders": {
                         "entries": [
                             {
@@ -148,11 +148,22 @@
             },
             "id": "respond-error",
             "name": "Respond Error",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [1420, 500]
-        }
-    ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1420, 500]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "merge-inputs",
+      "name": "Merge Inputs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [720, 300]
+    }
+  ],
   "connections": {
     "Webhook Trigger": {
       "main": [
@@ -176,7 +187,7 @@
       "main": [
         [
           {
-            "node": "Prepare Input",
+            "node": "Merge Inputs",
             "type": "main",
             "index": 0
           }
@@ -184,6 +195,17 @@
       ]
     },
     "Fetch Personality Calibration": {
+      "main": [
+        [
+          {
+            "node": "Merge Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Inputs": {
       "main": [
         [
           {
