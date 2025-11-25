@@ -158,14 +158,27 @@
       "main": [
         [
           {
-                        "node": "Fetch Prompt Templates",
-                        "type": "main",
-                        "index": 0
-                    },
-                    {
-                        "node": "Fetch Personality Calibration",
-                        "type": "main",
-                        "index": 0
+            "node": "Fetch Prompt Templates",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Personality Calibration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Prompt Templates": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -181,28 +194,6 @@
         ]
       ]
     },
-        "Fetch Prompt Templates": {
-            "main": [
-                [
-                    {
-                        "node": "Prepare Input",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Fetch Personality Calibration": {
-            "main": [
-                [
-                    {
-                        "node": "Prepare Input",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
     "Prepare Input": {
       "main": [
         [
@@ -225,29 +216,29 @@
         ]
       ]
     },
-        "Format Response": {
-            "main": [
-                [
-                    {
-                        "node": "Respond to Webhook",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Error Handler": {
-            "main": [
-                [
-                    {
-                        "node": "Respond Error",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        }
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
+    "Error Handler": {
+      "main": [
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
     "settings": {
         "executionOrder": "v1",
         "saveManualExecutions": true,
