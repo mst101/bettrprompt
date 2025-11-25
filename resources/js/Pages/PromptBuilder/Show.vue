@@ -332,13 +332,13 @@ const parsedPrompt = computed(() => {
                     :key="question.id"
                     class="border-grey-200 mb-4 rounded border p-4 last:mb-0"
                 >
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-2">
-                            <span
-                                class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
-                            >
-                                {{ index + 1 }}
-                            </span>
+                    <div class="flex items-start gap-2">
+                        <span
+                            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                        >
+                            {{ index + 1 }}
+                        </span>
+                        <div class="flex-1 space-y-2">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">
                                     {{ question.question }}
@@ -354,19 +354,23 @@ const parsedPrompt = computed(() => {
                                     {{ question.purpose }}
                                 </p>
                             </div>
+                            <textarea
+                                class="w-full rounded border border-gray-300 p-2 text-sm"
+                                :placeholder="
+                                    'Answer for question ' + (index + 1)
+                                "
+                                :value="answers[index] || ''"
+                                :disabled="isSubmitting"
+                                rows="3"
+                                @input="
+                                    (e: Event) => {
+                                        const target =
+                                            e.target as HTMLTextAreaElement;
+                                        answers[index] = target.value || null;
+                                    }
+                                "
+                            />
                         </div>
-                        <button
-                            class="text-sm text-indigo-600 underline"
-                            type="button"
-                            @click="
-                                () => {
-                                    showAllQuestions = false;
-                                    currentIndex = index;
-                                }
-                            "
-                        >
-                            Answer
-                        </button>
                     </div>
                 </div>
                 <div class="mt-4 text-right">
