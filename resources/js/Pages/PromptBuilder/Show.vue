@@ -93,7 +93,7 @@ const atLastQuestion = computed(
     () => currentIndex.value === questions.value.length - 1,
 );
 
-const noop = () => {};
+const showAllQuestions = ref(false);
 
 const goNext = () => {
     if (!atLastQuestion.value) {
@@ -309,20 +309,76 @@ const parsedPrompt = computed(() => {
                 {{ analysisData.question_rationale }}
             </p>
             <QuestionAnsweringForm
-                v-if="currentQuestion"
+                v-if="currentQuestion && !showAllQuestions"
                 v-model:answer="currentAnswer"
                 :question="currentQuestion.question"
                 :current-question-number="currentIndex + 1"
                 :total-questions="questions.length"
                 :is-submitting="isSubmitting"
                 :can-go-back="currentIndex > 0"
-                :show-all="false"
+                :show-all="showAllQuestions"
                 @submit="submitAnswer"
                 @skip="skipQuestion"
                 @go-back="goBack"
                 @clear="clearCurrentAnswer"
-                @toggle-show-all="noop"
+                @toggle-show-all="() => (showAllQuestions = !showAllQuestions)"
             />
+            <div
+                v-else
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <div
+                    v-for="(question, index) in questions"
+                    :key="question.id"
+                    class="border-grey-200 mb-4 rounded border p-4 last:mb-0"
+                >
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start gap-2">
+                            <span
+                                class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                            >
+                                {{ index + 1 }}
+                            </span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ question.question }}
+                                    <span
+                                        v-if="question.required"
+                                        class="ml-1 text-red-500"
+                                        title="Required"
+                                    >
+                                        *
+                                    </span>
+                                </p>
+                                <p class="text-grey-600 mt-1 text-sm">
+                                    {{ question.purpose }}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            class="text-sm text-indigo-600 underline"
+                            type="button"
+                            @click="
+                                () => {
+                                    showAllQuestions = false;
+                                    currentIndex = index;
+                                }
+                            "
+                        >
+                            Answer
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-4 text-right">
+                    <button
+                        class="text-sm text-indigo-600 underline"
+                        type="button"
+                        @click="() => (showAllQuestions = false)"
+                    >
+                        Back to one-at-a-time
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Alternative Frameworks -->
