@@ -200,7 +200,7 @@
           {
             "node": "Merge Inputs",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
