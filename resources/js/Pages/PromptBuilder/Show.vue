@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ContainerPage from '@/Components/ContainerPage.vue';
+import FormTextarea from '@/Components/FormTextarea.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -354,20 +355,16 @@ const parsedPrompt = computed(() => {
                                     {{ question.purpose }}
                                 </p>
                             </div>
-                            <textarea
-                                class="w-full rounded border border-gray-300 p-2 text-sm"
-                                :placeholder="
-                                    'Answer for question ' + (index + 1)
-                                "
-                                :value="answers[index] || ''"
+                            <FormTextarea
+                                :id="`bulk-answer-${index}`"
+                                :model-value="answers[index] || ''"
+                                :label="`Answer ${index + 1}`"
                                 :disabled="isSubmitting"
-                                rows="3"
-                                @input="
-                                    (e: Event) => {
-                                        const target =
-                                            e.target as HTMLTextAreaElement;
-                                        answers[index] = target.value || null;
-                                    }
+                                :rows="3"
+                                :placeholder="`Answer for question ${index + 1}`"
+                                @update:model-value="
+                                    (value: string) =>
+                                        (answers[index] = value || null)
                                 "
                             />
                         </div>
