@@ -23,11 +23,11 @@ class PromptBuilderAnalyseRequest extends BaseFormRequest
             'task_description' => ['required', 'string', 'min:10', 'max:5000'],
             'personality_type' => ['nullable', 'string', 'regex:/^[EI][NS][TF][JP]-[AT]$/'],
             'trait_percentages' => ['nullable', 'array'],
-            'trait_percentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'trait_percentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.mind' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'trait_percentages.energy' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'trait_percentages.nature' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'trait_percentages.tactics' => ['nullable', 'integer', 'min:50', 'max:100'],
+            'trait_percentages.identity' => ['nullable', 'integer', 'min:50', 'max:100'],
         ];
     }
 }

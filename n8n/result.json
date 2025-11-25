@@ -1,0 +1,65 @@
+{
+    "success": true,
+    "data": {
+        "optimised_prompt": "# Role\nYou are an expert in DIY construction and home office design with specific knowledge of garden office builds. Your expertise includes both breeze block and timber frame construction methods, insulation techniques, and design considerations for privacy and functionality.\n\n# Action\nCreate a comprehensive guide for building a well-insulated 4m x 4m work-from-home office in a garden setting. The guide should cover both breeze block and timber frame construction options, with logical decision points and technical specifications.\n\n# Steps\n1. Evaluate the pros and cons of breeze block vs. timber frame construction for this specific application\n2. Outline the planning and preparation phase (permits, site preparation, foundation options)\n3. Detail the construction process for both potential build methods\n4. Provide specific insulation requirements and techniques to ensure the space is well-insulated\n5. Address privacy concerns for the south-facing side that is overlooked by a neighbor\n6. Include electrical, networking, and HVAC considerations for a functional work space\n7. Suggest finishing touches that enhance functionality as a work environment\n8. Provide a realistic timeline to complete by summer 2026\n\n# Context\n- The builder has good DIY skills and can handle complex construction tasks\n- The office must be approximately 4m x 4m in size\n- The space must be well-insulated for year-round use\n- The south side is overlooked by a neighbor's house, creating privacy concerns\n- The project needs to be completed by summer 2026\n- This is a dedicated work-from-home space, so it needs appropriate amenities for productive work\n\n# Examples\nExample foundation for timber frame:\n- 100mm concrete slab on 150mm compacted hardcore with DPM\n- Alternative: Concrete pier foundations with treated timber bearers\n\nExample wall construction for breeze block:\n- 100mm breeze blocks with 50mm cavity and 100mm internal block\n- Cavity filled with rigid foam insulation\n- Internal walls finished with plasterboard and skim\n\n# Format\nProvide your response with these clearly labeled sections:\n\n1. **Construction Method Analysis** - Logical comparison of breeze block vs timber frame with recommendation based on factors like cost, insulation properties, DIY complexity, and durability\n\n2. **Planning & Preparation** - Including regulatory considerations, tools required, and site preparation\n\n3. **Step-by-Step Construction Guide** - Technical specifications and process for the recommended method (with key differences for the alternative method noted)\n\n4. **Insulation Strategy** - Detailed specifications to achieve excellent thermal performance\n\n5. **Privacy Solutions** - Options for the south-facing side\n\n6. **Electrical & Connectivity** - Requirements for a functional workspace\n\n7. **Project Timeline** - Realistic schedule to complete by summer 2026\n\n8. **Materials List & Budget Range** - Approximate quantities and costs\n\nInclude technical diagrams where helpful, and provide specific measurements, materials, and techniques throughout. Focus on practical implementation rather than theoretical concepts, with emphasis on logical decision points and technical accuracy.",
+        "metadata": {
+            "framework_used": {
+                "name": "RASCEF Framework",
+                "code": "RASCEF",
+                "components": [
+                    "Role",
+                    "Action",
+                    "Steps",
+                    "Context",
+                    "Examples",
+                    "Format"
+                ],
+                "explanation": "The RASCEF framework provides a structured approach for technical instructions, which is ideal for this DIY construction project. It establishes expertise, defines the specific action, breaks down the process into logical steps, provides essential context, includes concrete examples, and specifies the desired output format."
+            },
+            "personality_adjustments": [
+                {
+                    "trait": "High Thinking (65%)",
+                    "adjustment": "Emphasized logical analysis and technical specifications; structured the comparison of construction methods with objective criteria"
+                },
+                {
+                    "trait": "High Intuitive (65%)",
+                    "adjustment": "Included broader considerations like privacy solutions and future functionality rather than just basic construction steps"
+                },
+                {
+                    "trait": "High Prospecting (65%)",
+                    "adjustment": "Presented multiple options (breeze block vs timber) with decision points rather than a single prescribed solution"
+                },
+                {
+                    "trait": "High Assertive (65%)",
+                    "adjustment": "Used direct language with minimal hedging; focused on capabilities rather than limitations"
+                }
+            ],
+            "model_recommendations": [
+                {
+                    "rank": 1,
+                    "model": "GPT-4",
+                    "model_id": "gpt-4",
+                    "rationale": "Best for technical content with detailed specifications and potential for generating diagrams or technical illustrations that would be helpful for construction guidance"
+                },
+                {
+                    "rank": 2,
+                    "model": "Claude Opus 4.5",
+                    "model_id": "claude-opus-4-5-20250514",
+                    "rationale": "Strong alternative with excellent reasoning for comparing construction methods and explaining technical processes"
+                },
+                {
+                    "rank": 3,
+                    "model": "Claude Sonnet 4.5",
+                    "model_id": "claude-sonnet-4-5-20250514",
+                    "rationale": "Cost-effective option that can still handle the technical requirements while providing clear, structured guidance"
+                }
+            ],
+            "iteration_suggestions": [
+                "If you need more specific information about local building regulations, add your location to the prompt",
+                "If you want more focus on a particular aspect (e.g., insulation, electrical), specify this as a priority area",
+                "If you have a specific budget constraint, add this to get more tailored material recommendations"
+            ]
+        }
+    },
+    "error": null
+}
