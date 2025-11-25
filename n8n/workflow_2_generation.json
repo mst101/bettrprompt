@@ -203,28 +203,28 @@
                 ]
             ]
         },
-        "Prepare Input": {
-            "main": [
-                [
-                    {
-                        "node": "Claude Generation",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Claude Generation": {
-            "main": [
-                [
-                    {
-                        "node": "Format Response",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
+    "Prepare Input": {
+      "main": [
+        [
+          {
+            "node": "Call Anthropic API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Anthropic API": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
         "Format Response": {
             "main": [
                 [
