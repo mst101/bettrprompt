@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
+import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import axios from 'axios';
+import { computed, ref } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -62,6 +64,104 @@ const taskDescription = computed(
     () => props.analysis.original_input.task_description,
 );
 const analysisData = computed(() => props.analysis.data);
+
+const questions = computed(
+    () => props.analysis.data?.clarifying_questions || [],
+);
+
+const answers = ref<(string | null)[]>(
+    Array.from({ length: questions.value.length }, () => null),
+);
+const currentIndex = ref(0);
+const isSubmitting = ref(false);
+const generationResult = ref<unknown | null>(null);
+const submitError = ref<string | null>(null);
+
+const currentQuestion = computed(() => questions.value[currentIndex.value]);
+const currentAnswer = computed({
+    get: () => answers.value[currentIndex.value] || '',
+    set: (value: string) => {
+        answers.value[currentIndex.value] = value || null;
+    },
+});
+
+const clearCurrentAnswer = () => {
+    answers.value[currentIndex.value] = null;
+};
+
+const atLastQuestion = computed(
+    () => currentIndex.value === questions.value.length - 1,
+);
+
+const noop = () => {};
+
+const goNext = () => {
+    if (!atLastQuestion.value) {
+        currentIndex.value += 1;
+    }
+};
+
+const goBack = () => {
+    if (currentIndex.value > 0) {
+        currentIndex.value -= 1;
+    }
+};
+
+const skipQuestion = () => {
+    answers.value[currentIndex.value] = null;
+    goNext();
+};
+
+const submitAnswer = () => {
+    answers.value[currentIndex.value] = currentAnswer.value.trim()
+        ? currentAnswer.value
+        : null;
+
+    if (atLastQuestion.value) {
+        submitAllAnswers();
+    } else {
+        goNext();
+    }
+};
+
+const submitAllAnswers = async () => {
+    isSubmitting.value = true;
+    submitError.value = null;
+
+    try {
+        const payload = {
+            task_classification: analysisData.value.task_classification,
+            selected_framework: analysisData.value.selected_framework,
+            alternative_frameworks: analysisData.value.alternative_frameworks,
+            personality_tier: analysisData.value.personality_tier,
+            personality_adjustments_preview:
+                analysisData.value.personality_adjustments_preview,
+            original_task_description:
+                props.analysis.original_input.task_description,
+            personality_type: props.analysis.original_input.personality_type,
+            trait_percentages: props.analysis.original_input.trait_percentages,
+            question_answers: answers.value,
+        };
+
+        const response = await axios.post(
+            route('prompt-builder.generate'),
+            payload,
+        );
+
+        generationResult.value = response.data;
+    } catch (error: unknown) {
+        const axiosError = error as {
+            response?: { data?: { error?: string } };
+            message?: string;
+        };
+        submitError.value =
+            axiosError?.response?.data?.error ||
+            axiosError?.message ||
+            'Failed to generate prompt';
+    } finally {
+        isSubmitting.value = false;
+    }
+};
 </script>
 
 <template>
@@ -172,30 +272,21 @@ const analysisData = computed(() => props.analysis.data);
             <p class="text-grey-600 mb-4 text-sm">
                 {{ analysisData.question_rationale }}
             </p>
-            <div class="space-y-4">
-                <div
-                    v-for="question in analysisData.clarifying_questions"
-                    :key="question.id"
-                    class="border-grey-200 bg-grey-50 rounded-lg border p-4"
-                >
-                    <div class="mb-2 flex items-start justify-between">
-                        <h3 class="text-grey-900 font-medium">
-                            {{ question.question }}
-                            <span
-                                v-if="question.required"
-                                class="ml-1 text-red-500"
-                                title="Required"
-                            >
-                                *
-                            </span>
-                        </h3>
-                    </div>
-                    <p class="text-grey-600 text-sm">
-                        <span class="font-medium">Purpose:</span>
-                        {{ question.purpose }}
-                    </p>
-                </div>
-            </div>
+            <QuestionAnsweringForm
+                v-if="currentQuestion"
+                v-model:answer="currentAnswer"
+                :question="currentQuestion.question"
+                :current-question-number="currentIndex + 1"
+                :total-questions="questions.length"
+                :is-submitting="isSubmitting"
+                :can-go-back="currentIndex > 0"
+                :show-all="false"
+                @submit="submitAnswer"
+                @skip="skipQuestion"
+                @go-back="goBack"
+                @clear="clearCurrentAnswer"
+                @toggle-show-all="noop"
+            />
         </div>
 
         <!-- Alternative Frameworks -->
@@ -220,6 +311,22 @@ const analysisData = computed(() => props.analysis.data);
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div
+            v-if="generationResult"
+            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
+        >
+            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
+                Generated Prompt
+            </h2>
+            <pre class="text-grey-900 whitespace-pre-wrap">{{
+                JSON.stringify(generationResult, null, 2)
+            }}</pre>
+        </div>
+
+        <div v-if="submitError" class="text-red-600">
+            {{ submitError }}
         </div>
     </ContainerPage>
 </template>
