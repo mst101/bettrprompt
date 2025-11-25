@@ -53,43 +53,38 @@
             "typeVersion": 3.4,
             "position": [700, 300]
         },
-        {
-            "parameters": {
-                "resource": "chat",
-                "model": {
-                    "__rl": true,
-                    "value": "claude-3-5-sonnet-20240620",
-                    "mode": "list"
-                },
-                "options": {
-                    "maxTokensToSample": 8192,
-                    "temperature": 0.3
-                },
-                "messages": {
-                    "values": [
-                        {
-                            "role": "system",
-                            "content": "=You are an expert prompt engineering assistant. Your task is to construct an optimised prompt using the selected framework, incorporating the user's answers to clarifying questions, and applying appropriate personality-based adjustments.\n\nYou have access to two reference documents:\n\n## PROMPT TEMPLATES\n{{ $json.reference_docs.prompt_templates }}\n\n## PERSONALITY CALIBRATION\n{{ $json.reference_docs.personality_calibration }}\n\n---\n\n## YOUR TASK\n\n1. **Construct the optimised prompt** using the selected framework's template structure\n2. **Incorporate all user information** from their task description and question answers\n3. **Apply personality adjustments** to language, structure, and format (if personality data exists)\n4. **Generate model recommendations** based on task type and requirements\n5. **Provide iteration suggestions** for refining the prompt if needed\n\n## IMPORTANT RULES\n\n- The optimised prompt should be COMPLETE and ready for copy/paste into an AI model\n- If personality_tier is \"none\", use neutral language and skip personality adjustments\n- Include ALL relevant information from the user's answers\n- Make the prompt specific, not generic\n- Ensure constraints are clearly stated\n- The prompt should be self-contained (the AI receiving it shouldn't need additional context)\n\n## OUTPUT FORMAT\n\nYou MUST respond with valid JSON in exactly this structure:\n\n```json\n{\n  \"optimised_prompt\": \"The complete prompt text, ready for copy/paste. Use \\n for line breaks within the prompt.\",\n  \"metadata\": {\n    \"framework_used\": {\n      \"name\": \"Framework Name\",\n      \"code\": \"FRAMEWORK_CODE\",\n      \"components\": [\"Component1\", \"Component2\"],\n      \"explanation\": \"Why this framework was selected and how it was applied\"\n    },\n    \"personality_adjustments\": [\n      {\n        \"trait\": \"Trait description (e.g., High Thinking 84%)\",\n        \"adjustment\": \"What was adjusted based on this trait\"\n      }\n    ],\n    \"model_recommendations\": [\n      {\n        \"rank\": 1,\n        \"model\": \"Model Display Name\",\n        \"model_id\": \"model-api-identifier\",\n        \"rationale\": \"Why this model is recommended\"\n      },\n      {\n        \"rank\": 2,\n        \"model\": \"Second Choice\",\n        \"model_id\": \"model-api-identifier\",\n        \"rationale\": \"Why this is the second choice\"\n      },\n      {\n        \"rank\": 3,\n        \"model\": \"Budget Option\",\n        \"model_id\": \"model-api-identifier\",\n        \"rationale\": \"Cost-effective alternative\"\n      }\n    ],\n    \"iteration_suggestions\": [\n      \"Suggestion for refining if output isn't quite right\",\n      \"Another suggestion for a different angle\"\n    ]\n  }\n}\n```\n\nDo not include any text outside the JSON structure. Do not use markdown code blocks."
-                        },
-                        {
-                            "role": "user",
-                            "content": "=Generate an optimised prompt using the following information:\n\n## TASK CLASSIFICATION (from Workflow 1)\n{{ JSON.stringify($json.workflow1_data.task_classification, null, 2) }}\n\n## SELECTED FRAMEWORK\n{{ JSON.stringify($json.workflow1_data.selected_framework, null, 2) }}\n\n## PERSONALITY TIER\n{{ $json.workflow1_data.personality_tier }}\n\n## PERSONALITY ADJUSTMENTS TO APPLY\n{{ JSON.stringify($json.workflow1_data.personality_adjustments_preview, null, 2) }}\n\n---\n\n## ORIGINAL TASK DESCRIPTION\n{{ $json.user_input.task_description }}\n\n## PERSONALITY DATA\n{{ $json.user_input.personality_type ? 'Type: ' + $json.user_input.personality_type + ($json.user_input.trait_percentages ? '\\nPercentages: ' + JSON.stringify($json.user_input.trait_percentages) : '') : 'None provided - use neutral defaults' }}\n\n## USER'S ANSWERS TO CLARIFYING QUESTIONS\n{{ JSON.stringify($json.question_answers, null, 2) }}\n\n---\n\nNow construct the optimised prompt incorporating all this information."
-                        }
-                    ]
-                }
-            },
-            "id": "claude-generation",
-            "name": "Claude Generation",
-            "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-            "typeVersion": 1.2,
-            "position": [940, 300],
-            "credentials": {
-                "anthropicApi": {
-                    "id": "ANTHROPIC_CREDENTIAL_ID",
-                    "name": "Anthropic API"
-                }
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
             }
+          ]
         },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: 'claude-3-5-sonnet-20240620',\n  max_tokens: 8192,\n  temperature: 0.3,\n  system: `You are an expert prompt engineering assistant. Your task is to construct an optimised prompt using the selected framework, incorporating the user's answers to clarifying questions, and applying appropriate personality-based adjustments.\\n\\nYou have access to two reference documents:\\n\\n## PROMPT TEMPLATES\\n${$json.reference_docs.prompt_templates}\\n\\n## PERSONALITY CALIBRATION\\n${$json.reference_docs.personality_calibration}\\n\\n---\\n\\n## YOUR TASK\\n\\n1. **Construct the optimised prompt** using the selected framework's template structure\\n2. **Incorporate all user information** from their task description and question answers\\n3. **Apply personality adjustments** to language, structure, and format (if personality data exists)\\n4. **Generate model recommendations** based on task type and requirements\\n5. **Provide iteration suggestions** for refining the prompt if needed\\n\\n## IMPORTANT RULES\\n\\n- The optimised prompt should be COMPLETE and ready for copy/paste into an AI model\\n- If personality_tier is \"none\", use neutral language and skip personality adjustments\\n- Include ALL relevant information from the user's answers\\n- Make the prompt specific, not generic\\n- Ensure constraints are clearly stated\\n- The prompt should be self-contained (the AI receiving it shouldn't need additional context)\\n\\n## OUTPUT FORMAT\\n\\nYou MUST respond with valid JSON in exactly this structure:\\n\\n{\\n  \"optimised_prompt\": \"The complete prompt text, ready for copy/paste. Use \\\\n for line breaks within the prompt.\",\\n  \"metadata\": {\\n    \"framework_used\": {\\n      \"name\": \"Framework Name\",\\n      \"code\": \"FRAMEWORK_CODE\",\\n      \"components\": [\"Component1\", \"Component2\"],\\n      \"explanation\": \"Why this framework was selected and how it was applied\"\\n    },\\n    \"personality_adjustments\": [\\n      {\\n        \"trait\": \"Trait description (e.g., High Thinking 84%)\",\\n        \"adjustment\": \"What was adjusted based on this trait\"\\n      }\\n    ],\\n    \"model_recommendations\": [\\n      {\\n        \"rank\": 1,\\n        \"model\": \"Model Display Name\",\\n        \"model_id\": \"model-api-identifier\",\\n        \"rationale\": \"Why this model is recommended\"\\n      },\\n      {\\n        \"rank\": 2,\\n        \"model\": \"Second Choice\",\\n        \"model_id\": \"model-api-identifier\",\\n        \"rationale\": \"Why this is the second choice\"\\n      },\\n      {\\n        \"rank\": 3,\\n        \"model\": \"Budget Option\",\\n        \"model_id\": \"model-api-identifier\",\\n        \"rationale\": \"Cost-effective alternative\"\\n      }\\n    ],\\n    \"iteration_suggestions\": [\\n      \"Suggestion for refining if output isn't quite right\",\\n      \"Another suggestion for a different angle\"\\n    ]\\n  }\\n}\\n\\nDo not include any text outside the JSON structure. Do not use markdown code blocks.`,\n  messages: [\n    {\n      role: 'user',\n      content: `Generate an optimised prompt using the following information:\\n\\n## TASK CLASSIFICATION (from Workflow 1)\\n${JSON.stringify($json.workflow1_data.task_classification, null, 2)}\\n\\n## SELECTED FRAMEWORK\\n${JSON.stringify($json.workflow1_data.selected_framework, null, 2)}\\n\\n## PERSONALITY TIER\\n${$json.workflow1_data.personality_tier}\\n\\n## PERSONALITY ADJUSTMENTS TO APPLY\\n${JSON.stringify($json.workflow1_data.personality_adjustments_preview, null, 2)}\\n\\n---\\n\\n## ORIGINAL TASK DESCRIPTION\\n${$json.user_input.task_description}\\n\\n## PERSONALITY DATA\\n${$json.user_input.personality_type ? 'Type: ' + $json.user_input.personality_type + ($json.user_input.trait_percentages ? '\\nPercentages: ' + JSON.stringify($json.user_input.trait_percentages) : '') : 'None provided - use neutral defaults'}\\n\\n## USER'S ANSWERS TO CLARIFYING QUESTIONS\\n${JSON.stringify($json.question_answers, null, 2)}\\n\\n---\\n\\nNow construct the optimised prompt incorporating all this information.`\n    }\n  ]\n}) }}",
+        "options": {}
+      },
+      "id": "claude-generation",
+      "name": "Call Anthropic API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YOUR_ANTHROPIC_HEADER_AUTH_ID",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
         {
             "parameters": {
                 "mode": "raw",
@@ -158,11 +153,11 @@
             "position": [1420, 500]
         }
     ],
-    "connections": {
-        "Webhook Trigger": {
-            "main": [
-                [
-                    {
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
                         "node": "Fetch Prompt Templates",
                         "type": "main",
                         "index": 0
@@ -171,10 +166,21 @@
                         "node": "Fetch Personality Calibration",
                         "type": "main",
                         "index": 0
-                    }
-                ]
-            ]
-        },
+          }
+        ]
+      ]
+    },
+    "Fetch Personality Calibration": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
         "Fetch Prompt Templates": {
             "main": [
                 [
