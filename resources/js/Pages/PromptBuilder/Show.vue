@@ -162,6 +162,42 @@ const submitAllAnswers = async () => {
         isSubmitting.value = false;
     }
 };
+
+const parsedPrompt = computed(() => {
+    const result = generationResult.value as {
+        data?: {
+            optimised_prompt?: string;
+            metadata?: {
+                framework_used?: {
+                    name?: string;
+                    code?: string;
+                    components?: string[];
+                    explanation?: string;
+                };
+                personality_adjustments?: {
+                    trait?: string;
+                    adjustment?: string;
+                }[];
+                model_recommendations?: {
+                    rank?: number;
+                    model?: string;
+                    model_id?: string;
+                    rationale?: string;
+                }[];
+                iteration_suggestions?: string[];
+            };
+        };
+    } | null;
+
+    return {
+        prompt: result?.data?.optimised_prompt || null,
+        framework: result?.data?.metadata?.framework_used || null,
+        adjustments: result?.data?.metadata?.personality_adjustments || [],
+        recommendations:
+            result?.data?.metadata?.model_recommendations || ([] as []),
+        suggestions: result?.data?.metadata?.iteration_suggestions || [],
+    };
+});
 </script>
 
 <template>
@@ -313,16 +349,109 @@ const submitAllAnswers = async () => {
             </div>
         </div>
 
-        <div
-            v-if="generationResult"
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Generated Prompt
-            </h2>
-            <pre class="text-grey-900 whitespace-pre-wrap">{{
-                JSON.stringify(generationResult, null, 2)
-            }}</pre>
+        <div v-if="generationResult" class="space-y-6">
+            <div
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <h2 class="text-grey-900 mb-3 text-lg font-semibold">
+                    Generated Prompt
+                </h2>
+                <p
+                    v-if="parsedPrompt.prompt"
+                    class="text-grey-900 whitespace-pre-wrap"
+                >
+                    {{ parsedPrompt.prompt }}
+                </p>
+                <p v-else class="text-grey-600 text-sm">
+                    No prompt text returned.
+                </p>
+            </div>
+
+            <div
+                v-if="parsedPrompt.framework"
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <h3 class="text-grey-900 mb-2 text-lg font-semibold">
+                    Framework Used
+                </h3>
+                <p class="text-grey-900 font-medium">
+                    {{ parsedPrompt.framework.name }}
+                    ({{ parsedPrompt.framework.code }})
+                </p>
+                <p class="text-grey-700 mt-2">
+                    {{ parsedPrompt.framework.explanation }}
+                </p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <span
+                        v-for="component in parsedPrompt.framework.components"
+                        :key="component"
+                        class="rounded-full bg-indigo-50 px-3 py-1 text-sm text-indigo-800"
+                    >
+                        {{ component }}
+                    </span>
+                </div>
+            </div>
+
+            <div
+                v-if="parsedPrompt.adjustments.length"
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <h3 class="text-grey-900 mb-2 text-lg font-semibold">
+                    Personality Adjustments
+                </h3>
+                <ul class="text-grey-900 list-disc space-y-2 pl-5">
+                    <li
+                        v-for="(adj, index) in parsedPrompt.adjustments"
+                        :key="index"
+                    >
+                        <span class="font-medium">{{ adj.trait }}:</span>
+                        {{ adj.adjustment }}
+                    </li>
+                </ul>
+            </div>
+
+            <div
+                v-if="parsedPrompt.recommendations.length"
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <h3 class="text-grey-900 mb-2 text-lg font-semibold">
+                    Model Recommendations
+                </h3>
+                <div class="space-y-2">
+                    <div
+                        v-for="rec in parsedPrompt.recommendations"
+                        :key="rec.model_id || rec.model"
+                        class="border-grey-100 rounded border p-3"
+                    >
+                        <p class="text-grey-900 font-medium">
+                            #{{ rec.rank }} — {{ rec.model }}
+                            <span class="text-grey-600 text-sm">
+                                ({{ rec.model_id }})
+                            </span>
+                        </p>
+                        <p class="text-grey-700 mt-1 text-sm">
+                            {{ rec.rationale }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                v-if="parsedPrompt.suggestions.length"
+                class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
+            >
+                <h3 class="text-grey-900 mb-2 text-lg font-semibold">
+                    Iteration Suggestions
+                </h3>
+                <ul class="text-grey-900 list-disc space-y-1 pl-5">
+                    <li
+                        v-for="(suggestion, index) in parsedPrompt.suggestions"
+                        :key="index"
+                    >
+                        {{ suggestion }}
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div v-if="submitError" class="text-red-600">
