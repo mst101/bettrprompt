@@ -8,7 +8,11 @@ import { defineExpose, ref } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
-    form: InertiaForm<{ taskDescription: string }>;
+    form: InertiaForm<{
+        taskDescription: string;
+        personalityType?: string | null;
+        traitPercentages?: Record<string, unknown> | null;
+    }>;
 }
 
 defineProps<Props>();
