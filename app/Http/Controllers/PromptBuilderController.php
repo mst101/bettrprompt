@@ -108,6 +108,11 @@ class PromptBuilderController extends Controller
             'original_task_description' => 'required|string',
             'personality_type' => 'nullable|string',
             'trait_percentages' => 'nullable|array',
+            'trait_percentages.mind' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.energy' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.nature' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.tactics' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trait_percentages.identity' => ['nullable', 'integer', 'min:0', 'max:100'],
             'question_answers' => 'required|array',
         ]);
 
