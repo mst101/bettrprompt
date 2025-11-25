@@ -35,6 +35,7 @@ return [
         ],
     ],
     'n8n' => [
+        'base_url' => env('N8N_BASE_URL'),
         'url' => env('N8N_INTERNAL_URL', 'http://n8n:5678'),
         'username' => env('N8N_BASIC_AUTH_USER'),
         'password' => env('N8N_BASIC_AUTH_PASSWORD'),

@@ -66,11 +66,36 @@ class PromptBuilderController extends Controller
             $validated['trait_percentages'] ?? null
         );
 
-        return response()->json($result);
+        // Check if the analysis was successful
+        if (! $result['success']) {
+            return back()->with('error', $result['error']['message'] ?? 'Failed to analyse task');
+        }
+
+        // Store the analysis result in session and redirect to questions page
+        session(['prompt_analysis' => $result]);
+
+        return redirect()->route('prompt-builder.questions');
     }
 
     /**
-     * Step 2: Generate the optimised prompt
+     * Step 2: Display clarifying questions
+     */
+    public function questions()
+    {
+        $analysis = session('prompt_analysis');
+
+        if (! $analysis) {
+            return redirect()->route('prompt-builder')
+                ->with('error', 'Please start by analysing your task.');
+        }
+
+        return Inertia::render('PromptBuilder/Show', [
+            'analysis' => $analysis,
+        ]);
+    }
+
+    /**
+     * Step 3: Generate the optimised prompt
      */
     public function generate(Request $request)
     {

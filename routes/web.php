@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\VoiceTranscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,7 +45,8 @@ Route::get('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController
     ->name('prompt-optimizer.index');
 Route::post('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'store'])
     ->name('prompt-optimizer.store');
-Route::patch('/visitor/personality', [\App\Http\Controllers\PromptOptimizerController::class, 'updateVisitorPersonality'])
+Route::patch('/visitor/personality',
+    [\App\Http\Controllers\PromptOptimizerController::class, 'updateVisitorPersonality'])
     ->name('visitor.personality.update');
 Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
     ->name('prompt-optimizer.show');
@@ -113,10 +115,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Tasks
     Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/{taskId}', [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
+    Route::get('/tasks/{taskId}',
+        [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
 
     // Prompt Runs
-    Route::get('/prompt-runs/{promptRun}', [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
+    Route::get('/prompt-runs/{promptRun}',
+        [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
 });
 
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
+        ->name('prompt-builder');
+    Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
+        ->name('prompt-builder.analyse');
+    Route::get('/prompt-builder/questions', [PromptBuilderController::class, 'questions'])
+        ->name('prompt-builder.questions');
+    Route::post('/prompt-builder/generate', [PromptBuilderController::class, 'generate'])
+        ->name('prompt-builder.generate');
+});

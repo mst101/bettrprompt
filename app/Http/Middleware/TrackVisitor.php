@@ -23,11 +23,11 @@ class TrackVisitor
         $visitorId = $request->cookie('visitor_id');
         $isNewVisitor = false;
 
-        Log::info('TrackVisitor middleware executing', [
-            'has_cookie' => $visitorId !== null,
-            'cookie_value' => $visitorId,
-            'url' => $request->fullUrl(),
-        ]);
+        //        Log::info('TrackVisitor middleware executing', [
+        //            'has_cookie' => $visitorId !== null,
+        //            'cookie_value' => $visitorId,
+        //            'url' => $request->fullUrl(),
+        //        ]);
 
         if ($visitorId) {
             // Check if visitor exists in database
@@ -35,36 +35,36 @@ class TrackVisitor
 
             if ($visitorExists) {
                 // Existing visitor - update their record
-                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
+                //                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
                 $this->updateVisitor($visitorId);
             } else {
                 // Cookie exists but visitor not in DB (e.g., database was cleared)
                 // Create new visitor with new ID
-                Log::info('Visitor cookie exists but not in database, creating new visitor', [
-                    'old_visitor_id' => $visitorId,
-                ]);
+                //                Log::info('Visitor cookie exists but not in database, creating new visitor', [
+                //                    'old_visitor_id' => $visitorId,
+                //                ]);
                 $visitorId = $this->createVisitor($request);
                 $isNewVisitor = true;
-                Log::info('Created new visitor to replace missing one', ['visitor_id' => $visitorId]);
+                //                Log::info('Created new visitor to replace missing one', ['visitor_id' => $visitorId]);
             }
         } else {
             // New visitor - create record BEFORE processing request
             $visitorId = $this->createVisitor($request);
             $isNewVisitor = true;
-            Log::info('Created new visitor', ['visitor_id' => $visitorId]);
+            //            Log::info('Created new visitor', ['visitor_id' => $visitorId]);
         }
 
         // Make visitor_id available to the request (merge into cookies for this request)
         // This allows controllers to read the visitor_id even for new visitors
         $request->cookies->set('visitor_id', $visitorId);
-        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
+        //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
         // Process the request
         $response = $next($request);
 
         // Set cookie for new visitors (cookie will be sent with response)
         if ($isNewVisitor) {
-            Log::info('Queueing visitor_id cookie', ['visitor_id' => $visitorId]);
+            //            Log::info('Queueing visitor_id cookie', ['visitor_id' => $visitorId]);
             Cookie::queue(
                 'visitor_id',
                 $visitorId,
@@ -86,9 +86,9 @@ class TrackVisitor
      */
     protected function createVisitor(Request $request): string
     {
-        Log::info('Creating visitor record', [
-            'url' => $request->fullUrl(),
-        ]);
+        //        Log::info('Creating visitor record', [
+        //            'url' => $request->fullUrl(),
+        //        ]);
 
         try {
             // Look up referrer by referral code if present
@@ -97,10 +97,10 @@ class TrackVisitor
                 $referrer = User::where('referral_code', $referralCode)->first();
                 if ($referrer) {
                     $referredByUserId = $referrer->id;
-                    Log::info('Referral code found', [
-                        'referral_code' => $referralCode,
-                        'referrer_id' => $referredByUserId,
-                    ]);
+                    //                    Log::info('Referral code found', [
+                    //                        'referral_code' => $referralCode,
+                    //                        'referrer_id' => $referredByUserId,
+                    //                    ]);
                 }
             }
 
@@ -126,13 +126,13 @@ class TrackVisitor
             });
 
             $visitorId = (string) $visitor->id;
-            Log::info('Visitor record created successfully', ['visitor_id' => $visitorId]);
+            //            Log::info('Visitor record created successfully', ['visitor_id' => $visitorId]);
 
             return $visitorId;
         } catch (\Exception $e) {
-            Log::error('Failed to create visitor record', [
-                'error' => $e->getMessage(),
-            ]);
+            //            Log::error('Failed to create visitor record', [
+            //                'error' => $e->getMessage(),
+            //            ]);
             throw $e;
         }
     }

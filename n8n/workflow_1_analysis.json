@@ -1,0 +1,291 @@
+{
+  "name": "Prompt Framework - Analysis & Questions",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/n8n/webhook/analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "prompt-analysis-webhook"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/framework-taxonomy",
+        "options": {}
+      },
+      "id": "fetch-framework-taxonomy",
+      "name": "Fetch Framework Taxonomy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 160],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration",
+        "options": {}
+      },
+      "id": "fetch-personality-calibration",
+      "name": "Fetch Personality Calibration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/question-bank",
+        "options": {}
+      },
+      "id": "fetch-question-bank",
+      "name": "Fetch Question Bank",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 440],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"user_input\": {\n    \"task_description\": {{ JSON.stringify($('Webhook Trigger').item.json.body.task_description) }},\n    \"personality_type\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_type || null) }},\n    \"trait_percentages\": {{ JSON.stringify($('Webhook Trigger').item.json.body.trait_percentages || null) }}\n  },\n  \"reference_docs\": {\n    \"framework_taxonomy\": {{ JSON.stringify($('Fetch Framework Taxonomy').item.json.content) }},\n    \"personality_calibration\": {{ JSON.stringify($('Fetch Personality Calibration').item.json.content) }},\n    \"question_bank\": {{ JSON.stringify($('Fetch Question Bank').item.json.content) }}\n  },\n  \"has_personality_data\": {{ $('Webhook Trigger').item.json.body.personality_type ? true : false }}\n}",
+        "options": {}
+      },
+      "id": "prepare-input",
+      "name": "Prepare Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250514",
+          "mode": "list"
+        },
+        "options": {
+          "maxTokensToSample": 4096,
+          "temperature": 0.3
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are an expert prompt engineering assistant. Your task is to analyse user requests, classify them into task categories, select the most appropriate prompt framework, and generate tailored clarifying questions.\n\nYou have access to three reference documents:\n\n## FRAMEWORK TAXONOMY\n{{ $json.reference_docs.framework_taxonomy }}\n\n## PERSONALITY CALIBRATION\n{{ $json.reference_docs.personality_calibration }}\n\n## QUESTION BANK\n{{ $json.reference_docs.question_bank }}\n\n---\n\n## YOUR TASK\n\n1. **Classify the user's task** into a primary category (and secondary if applicable) from the taxonomy\n2. **Select the most appropriate framework** for the task\n3. **Generate clarifying questions** tailored to the task and personality (if provided)\n4. **Apply personality calibration** to question phrasing and quantity (if personality data provided)\n\n## IMPORTANT RULES\n\n- If NO personality data is provided, skip all personality-based adjustments and use neutral defaults\n- Always explain your classification reasoning\n- Select questions that are essential for generating a high-quality prompt\n- Sequence questions logically (context → goals → constraints → specifics)\n- Respect the question quantity guidelines based on task complexity\n\n## OUTPUT FORMAT\n\nYou MUST respond with valid JSON in exactly this structure:\n\n```json\n{\n  \"task_classification\": {\n    \"primary_category\": \"CATEGORY_CODE\",\n    \"secondary_category\": \"CATEGORY_CODE or null\",\n    \"complexity\": \"simple | moderate | complex\",\n    \"classification_reasoning\": \"Brief explanation\"\n  },\n  \"selected_framework\": {\n    \"name\": \"Framework Name\",\n    \"code\": \"FRAMEWORK_CODE\",\n    \"components\": [\"Component1\", \"Component2\"],\n    \"rationale\": \"Why this framework is best for this task\"\n  },\n  \"alternative_frameworks\": [\n    {\n      \"name\": \"Alternative Name\",\n      \"code\": \"ALT_CODE\",\n      \"when_to_use_instead\": \"Condition\"\n    }\n  ],\n  \"personality_tier\": \"full | partial | none\",\n  \"personality_adjustments_preview\": [\n    \"Adjustment 1 that will be applied\",\n    \"Adjustment 2 that will be applied\"\n  ],\n  \"clarifying_questions\": [\n    {\n      \"id\": \"Q1\",\n      \"question\": \"The question text\",\n      \"purpose\": \"Why this question matters\",\n      \"required\": true\n    }\n  ],\n  \"question_rationale\": \"Brief explanation of question selection\"\n}\n```\n\nDo not include any text outside the JSON structure. Do not use markdown code blocks."
+            },
+            {
+              "role": "user",
+              "content": "=Analyse this task and generate clarifying questions:\n\n**Task Description:**\n{{ $json.user_input.task_description }}\n\n**Personality Data:**\n{{ $json.has_personality_data ? 'Type: ' + $json.user_input.personality_type + ($json.user_input.trait_percentages ? '\\nPercentages: ' + JSON.stringify($json.user_input.trait_percentages) : '\\nPercentages: Not provided (use 65% default for each trait)') : 'No personality data provided. Use neutral defaults and skip personality-based adjustments.' }}"
+            }
+          ]
+        }
+      },
+      "id": "claude-analysis",
+      "name": "Claude Analysis",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [940, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "ANTHROPIC_CREDENTIAL_ID",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"data\": {{ $json.message.content }},\n  \"original_input\": {\n    \"task_description\": {{ JSON.stringify($('Prepare Input').item.json.user_input.task_description) }},\n    \"personality_type\": {{ JSON.stringify($('Prepare Input').item.json.user_input.personality_type) }},\n    \"trait_percentages\": {{ JSON.stringify($('Prepare Input').item.json.user_input.trait_percentages) }}\n  },\n  \"error\": null\n}",
+        "options": {}
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1180, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"data\": null,\n  \"error\": {\n    \"message\": \"An error occurred during analysis\",\n    \"details\": {{ JSON.stringify($json) }}\n  }\n}",
+        "options": {}
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1180, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1420, 500]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Framework Taxonomy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Personality Calibration",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Question Bank",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Framework Taxonomy": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Personality Calibration": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Question Bank": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Input": {
+      "main": [
+        [
+          {
+            "node": "Claude Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Analysis": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Handler": {
+      "main": [
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "prompt-framework",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

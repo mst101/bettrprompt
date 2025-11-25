@@ -2,6 +2,7 @@
 
 use App\Events\FrameworkSelected;
 use App\Events\PromptOptimizationCompleted;
+use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
@@ -186,3 +187,10 @@ Route::post('/restore-visitor', function (Request $request) {
 
     return response()->json(['restored' => false], 404);
 })->middleware('throttle:10,1');
+
+Route::prefix('reference')->group(function () {
+    Route::get('framework-taxonomy', [ReferenceController::class, 'frameworkTaxonomy']);
+    Route::get('personality-calibration', [ReferenceController::class, 'personalityCalibration']);
+    Route::get('question-bank', [ReferenceController::class, 'questionBank']);
+    Route::get('prompt-templates', [ReferenceController::class, 'promptTemplates']);
+});
