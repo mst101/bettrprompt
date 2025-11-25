@@ -1,58 +1,70 @@
 {
-    "name": "Prompt Framework - Prompt Generation",
-    "nodes": [
-        {
-            "parameters": {
-                "httpMethod": "POST",
-                "path": "api/n8n/webhook/generate",
-                "responseMode": "responseNode",
-                "options": {}
-            },
-            "id": "webhook-trigger",
-            "name": "Webhook Trigger",
-            "type": "n8n-nodes-base.webhook",
-            "typeVersion": 2,
-            "position": [240, 300],
-            "webhookId": "prompt-generation-webhook"
-        },
-        {
-            "parameters": {
-                "method": "GET",
-                "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/prompt-templates",
-                "options": {}
-            },
-            "id": "fetch-prompt-templates",
-            "name": "Fetch Prompt Templates",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.2,
-            "position": [460, 200],
-            "alwaysOutputData": true
-        },
-        {
-            "parameters": {
-                "method": "GET",
-                "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration",
-                "options": {}
-            },
-            "id": "fetch-personality-calibration",
-            "name": "Fetch Personality Calibration",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.2,
-            "position": [460, 400],
-            "alwaysOutputData": true
-        },
-        {
-            "parameters": {
-                "mode": "raw",
-                "jsonOutput": "={\n  \"workflow1_data\": {\n    \"task_classification\": {{ JSON.stringify($('Webhook Trigger').item.json.body.task_classification) }},\n    \"selected_framework\": {{ JSON.stringify($('Webhook Trigger').item.json.body.selected_framework) }},\n    \"alternative_frameworks\": {{ JSON.stringify($('Webhook Trigger').item.json.body.alternative_frameworks || []) }},\n    \"personality_tier\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_tier) }},\n    \"personality_adjustments_preview\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_adjustments_preview || []) }}\n  },\n  \"user_input\": {\n    \"task_description\": {{ JSON.stringify($('Webhook Trigger').item.json.body.original_task_description) }},\n    \"personality_type\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_type || null) }},\n    \"trait_percentages\": {{ JSON.stringify($('Webhook Trigger').item.json.body.trait_percentages || null) }}\n  },\n  \"question_answers\": {{ JSON.stringify($('Webhook Trigger').item.json.body.question_answers) }},\n  \"reference_docs\": {\n    \"prompt_templates\": {{ JSON.stringify($('Fetch Prompt Templates').item.json.content) }},\n    \"personality_calibration\": {{ JSON.stringify($('Fetch Personality Calibration').item.json.content) }}\n  }\n}",
-                "options": {}
-            },
-            "id": "prepare-input",
-            "name": "Prepare Input",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [700, 300]
-        },
+  "name": "Prompt Framework - Prompt Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/n8n/webhook/generate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "prompt-generation-webhook"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/prompt-templates",
+        "options": {}
+      },
+      "id": "fetch-prompt-templates",
+      "name": "Fetch Prompt Templates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration",
+        "options": {}
+      },
+      "id": "fetch-personality-calibration",
+      "name": "Fetch Personality Calibration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        400
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "\n={\n  \"workflow1_data\": {\n    \"task_classification\": {{ JSON.stringify($('Webhook Trigger').item.json.body.task_classification) }},\n    \"selected_framework\": {{ JSON.stringify($('Webhook Trigger').item.json.body.selected_framework) }},\n    \"alternative_frameworks\": {{ JSON.stringify($('Webhook Trigger').item.json.body.alternative_frameworks || []) }},\n    \"personality_tier\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_tier) }},\n    \"personality_adjustments_preview\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_adjustments_preview || []) }}\n  },\n  \"user_input\": {\n    \"task_description\": {{ JSON.stringify($('Webhook Trigger').item.json.body.original_task_description) }},\n    \"personality_type\": {{ JSON.stringify($('Webhook Trigger').item.json.body.personality_type || null) }},\n    \"trait_percentages\": {{ JSON.stringify($('Webhook Trigger').item.json.body.trait_percentages || null) }}\n  },\n  \"question_answers\": {{ JSON.stringify($('Webhook Trigger').item.json.body.question_answers) }},\n  \"reference_docs\": {\n    \"prompt_templates\": {{ JSON.stringify($('Fetch Prompt Templates').item.json.content) }},\n    \"personality_calibration\": {{ JSON.stringify($('Fetch Personality Calibration').item.json.content) }}\n  }\n}\n",
+        "options": {}
+      },
+      "id": "prepare-input",
+      "name": "Prepare Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        300
+      ]
+    },
     {
       "parameters": {
         "method": "POST",
@@ -77,7 +89,10 @@
       "name": "Call Anthropic API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [940, 300],
+      "position": [
+        940,
+        300
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "YOUR_ANTHROPIC_HEADER_AUTH_ID",
@@ -85,72 +100,84 @@
         }
       }
     },
-        {
-            "parameters": {
-                "mode": "raw",
-                "jsonOutput": "={\n  \"success\": true,\n  \"data\": {{ $json.message.content }},\n  \"error\": null\n}",
-                "options": {}
-            },
-            "id": "format-response",
-            "name": "Format Response",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [1180, 300]
-        },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"data\": {{ $json.message.content }},\n  \"error\": null\n}",
+        "options": {}
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        300
+      ]
+    },
     {
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ $json }}",
         "options": {
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Content-Type",
-                                "value": "application/json"
-                            }
-                        ]
-                    }
-                }
-            },
-            "id": "respond-webhook",
-            "name": "Respond to Webhook",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [1420, 300]
-        },
-        {
-            "parameters": {
-                "mode": "raw",
-                "jsonOutput": "={\n  \"success\": false,\n  \"data\": null,\n  \"error\": {\n    \"message\": \"An error occurred during prompt generation\",\n    \"details\": {{ JSON.stringify($json) }}\n  }\n}",
-                "options": {}
-            },
-            "id": "error-handler",
-            "name": "Error Handler",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [1180, 500]
-        },
-        {
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "={{ $json }}",
-                "options": {
-                    "responseCode": 500,
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Content-Type",
-                                "value": "application/json"
-                            }
-                        ]
-                    }
-                }
-            },
-            "id": "respond-error",
-            "name": "Respond Error",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1420, 500]
+      "position": [
+        1420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"data\": null,\n  \"error\": {\n    \"message\": \"An error occurred during prompt generation\",\n    \"details\": {{ JSON.stringify($json) }}\n  }\n}",
+        "options": {}
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1420,
+        500
+      ]
     },
     {
       "parameters": {
@@ -161,7 +188,10 @@
       "name": "Merge Inputs",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
-      "position": [720, 300]
+      "position": [
+        720,
+        300
+      ]
     }
   ],
   "connections": {
@@ -261,21 +291,21 @@
       ]
     }
   },
-    "settings": {
-        "executionOrder": "v1",
-        "saveManualExecutions": true,
-        "callerPolicy": "workflowsFromSameOwner",
-        "errorWorkflow": ""
-    },
-    "staticData": null,
-    "tags": [
-        {
-            "name": "prompt-framework",
-            "createdAt": "2024-01-01T00:00:00.000Z",
-            "updatedAt": "2024-01-01T00:00:00.000Z"
-        }
-    ],
-    "triggerCount": 1,
-    "updatedAt": "2024-01-01T00:00:00.000Z",
-    "versionId": "1"
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "prompt-framework",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
 }
