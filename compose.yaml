@@ -133,6 +133,8 @@ services:
             # optional hardening/noise reduction
             - N8N_DIAGNOSTICS_ENABLED=${N8N_DIAGNOSTICS_ENABLED}
             - N8N_VERSION_NOTIFICATIONS_ENABLED=${N8N_VERSION_NOTIFICATIONS_ENABLED}
+            # Internal Laravel base URL for n8n HTTP nodes
+            - LARAVEL_BASE_URL=${LARAVEL_BASE_URL_INTERNAL:-http://caddy}
         volumes:
             - n8n_data:/home/node/.n8n
         depends_on:
