@@ -223,7 +223,7 @@ const tabs = computed<Tab[]>(() => {
     return allTabs;
 });
 
-const activeTab = ref<string>('questions'); // Start on questions tab
+const activeTab = ref<string>('task'); // Start on Your Task tab
 </script>
 
 <template>
@@ -243,48 +243,37 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                 class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
             >
                 <!-- Your Task Tab -->
-                <div v-if="activeTab === 'task'">
-                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
-                        Your Task
-                    </h2>
-                    <TaskInformation :prompt-run="promptRun" />
-                </div>
+                <TaskInformation
+                    v-if="activeTab === 'task'"
+                    :prompt-run="promptRun"
+                />
 
                 <!-- Classification Tab -->
-                <div v-if="activeTab === 'classification'">
-                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
-                        Task Classification
-                    </h2>
-                    <TaskClassification
-                        v-if="promptRun.taskClassification"
-                        :classification="promptRun.taskClassification"
-                    />
-                </div>
+                <TaskClassification
+                    v-if="
+                        activeTab === 'classification' &&
+                        promptRun.taskClassification
+                    "
+                    :classification="promptRun.taskClassification"
+                />
 
                 <!-- Framework Tab -->
-                <div v-if="activeTab === 'framework'">
-                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
-                        Selected Framework
-                    </h2>
-                    <SelectedFramework
-                        v-if="promptRun.selectedFrameworkDetails"
-                        :framework="promptRun.selectedFrameworkDetails"
-                    />
-                </div>
+                <SelectedFramework
+                    v-if="
+                        activeTab === 'framework' &&
+                        promptRun.selectedFrameworkDetails
+                    "
+                    :framework="promptRun.selectedFrameworkDetails"
+                />
 
                 <!-- Personality Tab -->
-                <div v-if="activeTab === 'personality'">
-                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
-                        Personality Adjustments
-                    </h2>
-                    <PersonalityAdjustments
-                        v-if="promptRun.personalityTier"
-                        :tier="promptRun.personalityTier"
-                        :adjustments="
-                            promptRun.personalityAdjustmentsPreview || []
-                        "
-                    />
-                </div>
+                <PersonalityAdjustments
+                    v-if="
+                        activeTab === 'personality' && promptRun.personalityTier
+                    "
+                    :tier="promptRun.personalityTier"
+                    :adjustments="promptRun.personalityAdjustmentsPreview || []"
+                />
 
                 <!-- Questions Tab -->
                 <div v-if="activeTab === 'questions'">
@@ -385,15 +374,13 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                 </div>
 
                 <!-- Alternatives Tab -->
-                <div v-if="activeTab === 'alternatives'">
-                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
-                        Alternative Frameworks
-                    </h2>
-                    <AlternativeFrameworks
-                        v-if="promptRun.alternativeFrameworks"
-                        :frameworks="promptRun.alternativeFrameworks"
-                    />
-                </div>
+                <AlternativeFrameworks
+                    v-if="
+                        activeTab === 'alternatives' &&
+                        promptRun.alternativeFrameworks
+                    "
+                    :frameworks="promptRun.alternativeFrameworks"
+                />
             </div>
         </div>
 
