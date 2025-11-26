@@ -193,10 +193,10 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     Prompt Optimiser
                                 </NavLink>
                                 <NavLink
-                                    :href="route('prompt-optimizer.history')"
+                                    :href="route('prompt-builder.history')"
                                     :active="
                                         route().current(
-                                            'prompt-optimizer.history',
+                                            'prompt-builder.history',
                                         )
                                     "
                                 >
@@ -314,12 +314,10 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="
-                                            route('prompt-optimizer.history')
-                                        "
+                                        :href="route('prompt-builder.history')"
                                         :active="
                                             route().current(
-                                                'prompt-optimizer.history',
+                                                'prompt-builder.history',
                                             )
                                         "
                                         @click="

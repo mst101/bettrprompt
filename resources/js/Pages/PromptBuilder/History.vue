@@ -256,7 +256,7 @@ onMounted(() => {
                                 @click="
                                     $inertia.visit(
                                         route(
-                                            'prompt-optimizer.show',
+                                            'prompt-builder.show',
                                             promptRun.id,
                                         ),
                                     )

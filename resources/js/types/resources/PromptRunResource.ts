@@ -37,6 +37,15 @@ export interface PromptRunResource {
     readonly completedAt: string | null;
     readonly createdAt: string;
     readonly updatedAt: string;
+    // Prompt Builder specific fields
+    readonly taskClassification: Record<string, unknown> | null;
+    readonly selectedFrameworkDetails: Record<string, unknown> | null;
+    readonly alternativeFrameworks: Record<string, unknown>[] | null;
+    readonly personalityTier: string | null;
+    readonly personalityAdjustmentsPreview: string[] | null;
+    readonly questionRationale: string | null;
+    readonly generationMetadata: Record<string, unknown> | null;
+    // Relationships
     readonly visitor?: VisitorResource;
     readonly user?: UserResource | null;
     readonly parent?: PromptRunResource | null;
