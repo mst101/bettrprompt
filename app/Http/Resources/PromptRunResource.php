@@ -75,6 +75,15 @@ class PromptRunResource extends JsonResource
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
 
+            // Prompt Builder specific fields
+            'taskClassification' => $this->task_classification,
+            'selectedFrameworkDetails' => $this->selected_framework_details,
+            'alternativeFrameworks' => $this->alternative_frameworks,
+            'personalityTier' => $this->personality_tier,
+            'personalityAdjustmentsPreview' => $this->personality_adjustments_preview,
+            'questionRationale' => $this->question_rationale,
+            'generationMetadata' => $this->generation_metadata,
+
             // Relationships
             'user' => $this->whenLoaded('user', function () {
                 return $this->user ? new UserResource($this->user) : null;

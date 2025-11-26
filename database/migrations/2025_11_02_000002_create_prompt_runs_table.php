@@ -32,6 +32,16 @@ return new class extends Migration
             $table->string('workflow_stage')->default('submitted');
             $table->text('error_message')->nullable();
             $table->timestamp('completed_at')->nullable();
+
+            // Prompt Builder specific fields (from workflow 1 analysis)
+            $table->json('task_classification')->nullable(); // {primary_category, secondary_category, complexity, classification_reasoning}
+            $table->json('selected_framework_details')->nullable(); // {name, code, components[], rationale}
+            $table->json('alternative_frameworks')->nullable(); // [{name, code, when_to_use_instead}]
+            $table->string('personality_tier')->nullable(); // full, partial, none
+            $table->json('personality_adjustments_preview')->nullable(); // string[]
+            $table->text('question_rationale')->nullable(); // Why these questions were chosen
+            $table->json('generation_metadata')->nullable(); // Metadata from workflow 2
+
             $table->timestamps();
         });
     }

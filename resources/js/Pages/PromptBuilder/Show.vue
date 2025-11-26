@@ -9,7 +9,8 @@ import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassificat
 import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringForm.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import type { PromptRunResource } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 
@@ -26,53 +27,14 @@ interface ClarifyingQuestion {
     required: boolean;
 }
 
-interface AnalysisData {
-    task_classification: {
-        primary_category: string;
-        secondary_category: string | null;
-        complexity: string;
-        classification_reasoning: string;
-    };
-    selected_framework: {
-        name: string;
-        code: string;
-        components: string[];
-        rationale: string;
-    };
-    alternative_frameworks: Array<{
-        name: string;
-        code: string;
-        when_to_use_instead: string;
-    }>;
-    personality_tier: 'full' | 'partial' | 'none';
-    personality_adjustments_preview: string[];
-    clarifying_questions: ClarifyingQuestion[];
-    question_rationale: string;
-}
-
 interface Props {
-    analysis: {
-        success: boolean;
-        data: AnalysisData;
-        original_input: {
-            task_description: string;
-            personality_type: string | null;
-            trait_percentages: Record<string, number> | null;
-        };
-        error: {
-            message: string;
-            details: string;
-        } | null;
-    };
+    promptRun: PromptRunResource;
 }
 
-const taskDescription = computed(
-    () => props.analysis.original_input.task_description,
-);
-const analysisData = computed(() => props.analysis.data);
+const taskDescription = computed(() => props.promptRun.taskDescription);
 
-const questions = computed(
-    () => props.analysis.data?.clarifying_questions || [],
+const questions = computed<ClarifyingQuestion[]>(
+    () => (props.promptRun.frameworkQuestions as ClarifyingQuestion[]) || [],
 );
 
 const answers = ref<(string | null)[]>(
@@ -140,33 +102,24 @@ const submitAllAnswers = async () => {
     submitError.value = null;
 
     try {
-        const payload = {
-            task_classification: analysisData.value.task_classification,
-            selected_framework: analysisData.value.selected_framework,
-            alternative_frameworks: analysisData.value.alternative_frameworks,
-            personality_tier: analysisData.value.personality_tier,
-            personality_adjustments_preview:
-                analysisData.value.personality_adjustments_preview,
-            original_task_description:
-                props.analysis.original_input.task_description,
-            personality_type: props.analysis.original_input.personality_type,
-            trait_percentages: props.analysis.original_input.trait_percentages,
-            question_answers: answers.value,
-        };
-
         const response = await axios.post(
-            route('prompt-builder.generate'),
-            payload,
+            route('prompt-builder.generate', props.promptRun.id),
+            {
+                question_answers: answers.value,
+            },
         );
 
         generationResult.value = response.data;
+
+        // Reload the prompt run to show updated data
+        router.reload({ only: ['promptRun'] });
     } catch (error: unknown) {
         const axiosError = error as {
-            response?: { data?: { error?: string } };
+            response?: { data?: { error?: { message?: string } } };
             message?: string;
         };
         submitError.value =
-            axiosError?.response?.data?.error ||
+            axiosError?.response?.data?.error?.message ||
             axiosError?.message ||
             'Failed to generate prompt';
     } finally {

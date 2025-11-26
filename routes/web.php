@@ -130,8 +130,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('prompt-builder.index');
     Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
         ->name('prompt-builder.analyse');
-    Route::get('/prompt-builder/questions', [PromptBuilderController::class, 'questions'])
-        ->name('prompt-builder.questions');
-    Route::post('/prompt-builder/generate', [PromptBuilderController::class, 'generate'])
+    Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
+        ->name('prompt-builder.show');
+    Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
         ->name('prompt-builder.generate');
+    Route::get('/prompt-builder-history', [PromptBuilderController::class, 'history'])
+        ->name('prompt-builder.history');
 });

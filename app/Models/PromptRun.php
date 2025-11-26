@@ -31,6 +31,14 @@ class PromptRun extends Model
         'workflow_stage',
         'error_message',
         'completed_at',
+        // Prompt Builder specific fields
+        'task_classification',
+        'selected_framework_details',
+        'alternative_frameworks',
+        'personality_tier',
+        'personality_adjustments_preview',
+        'question_rationale',
+        'generation_metadata',
     ];
 
     protected $casts = [
@@ -40,6 +48,12 @@ class PromptRun extends Model
         'n8n_request_payload' => 'array',
         'n8n_response_payload' => N8nResponsePayload::class,
         'completed_at' => 'datetime',
+        // Prompt Builder specific casts
+        'task_classification' => 'array',
+        'selected_framework_details' => 'array',
+        'alternative_frameworks' => 'array',
+        'personality_adjustments_preview' => 'array',
+        'generation_metadata' => 'array',
     ];
 
     public function visitor(): BelongsTo
