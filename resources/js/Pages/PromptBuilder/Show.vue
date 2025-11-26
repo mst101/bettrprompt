@@ -7,6 +7,7 @@ import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/Personality
 import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
 import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringForm.vue';
+import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PromptRunResource } from '@/types';
@@ -166,6 +167,12 @@ const parsedPrompt = computed(() => {
 // Define tabs
 const tabs = computed<Tab[]>(() => {
     const allTabs: Tab[] = [
+        // Your Task tab (always shown first)
+        {
+            id: 'task',
+            label: 'Your Task',
+            icon: 'squares-2x2',
+        },
         {
             id: 'classification',
             label: 'Classification',
@@ -235,6 +242,14 @@ const activeTab = ref<string>('questions'); // Start on questions tab
             <div
                 class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
             >
+                <!-- Your Task Tab -->
+                <div v-if="activeTab === 'task'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Your Task
+                    </h2>
+                    <TaskInformation :prompt-run="promptRun" />
+                </div>
+
                 <!-- Classification Tab -->
                 <div v-if="activeTab === 'classification'">
                     <h2 class="text-grey-900 mb-4 text-lg font-semibold">
