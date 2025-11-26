@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Card from '@/Components/Card.vue';
+
 interface Props {
     tier: 'full' | 'partial' | 'none';
     adjustments: string[];
@@ -8,7 +10,7 @@ defineProps<Props>();
 </script>
 
 <template>
-    <div class="space-y-4">
+    <Card class="space-y-4">
         <div>
             <h3 class="text-grey-700 mb-2 text-sm font-medium">
                 Adjustment Level
@@ -45,5 +47,5 @@ defineProps<Props>();
                 </li>
             </ul>
         </div>
-    </div>
+    </Card>
 </template>

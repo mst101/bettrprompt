@@ -229,38 +229,29 @@ watch(
             />
 
             <!-- Classification Tab -->
-            <Card
+            <TaskClassification
                 v-if="
                     activeTab === 'classification' &&
                     promptRun.taskClassification
                 "
-            >
-                <TaskClassification
-                    :classification="promptRun.taskClassification as any"
-                />
-            </Card>
+                :classification="promptRun.taskClassification as any"
+            />
 
             <!-- Framework Tab -->
-            <Card
+            <SelectedFramework
                 v-if="
                     activeTab === 'framework' &&
                     promptRun.selectedFrameworkDetails
                 "
-            >
-                <SelectedFramework
-                    :framework="promptRun.selectedFrameworkDetails as any"
-                />
-            </Card>
+                :framework="promptRun.selectedFrameworkDetails as any"
+            />
 
             <!-- Personality Tab -->
-            <Card
+            <PersonalityAdjustments
                 v-if="activeTab === 'personality' && promptRun.personalityTier"
-            >
-                <PersonalityAdjustments
-                    :tier="promptRun.personalityTier as any"
-                    :adjustments="promptRun.personalityAdjustmentsPreview || []"
-                />
-            </Card>
+                :tier="promptRun.personalityTier as any"
+                :adjustments="promptRun.personalityAdjustmentsPreview || []"
+            />
 
             <!-- Questions Tab -->
             <Card v-if="activeTab === 'questions'">
@@ -361,16 +352,13 @@ watch(
             </Card>
 
             <!-- Alternatives Tab -->
-            <Card
+            <AlternativeFrameworks
                 v-if="
                     activeTab === 'alternatives' &&
                     promptRun.alternativeFrameworks
                 "
-            >
-                <AlternativeFrameworks
-                    :frameworks="promptRun.alternativeFrameworks as any"
-                />
-            </Card>
+                :frameworks="promptRun.alternativeFrameworks as any"
+            />
         </div>
 
         <!-- Error Display -->

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Card from '@/Components/Card.vue';
+
 interface Props {
     framework: {
         name: string;
@@ -12,7 +14,7 @@ defineProps<Props>();
 </script>
 
 <template>
-    <div class="space-y-4">
+    <Card class="space-y-4">
         <div>
             <h3 class="text-grey-700 mb-2 text-sm font-medium">Framework</h3>
             <div class="bg-grey-50 rounded-lg p-3">
@@ -46,5 +48,5 @@ defineProps<Props>();
                 </p>
             </div>
         </div>
-    </div>
+    </Card>
 </template>

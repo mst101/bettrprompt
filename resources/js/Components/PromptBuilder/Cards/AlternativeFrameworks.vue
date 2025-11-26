@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Card from '@/Components/Card.vue';
+
 interface Framework {
     name: string;
     code: string;
@@ -13,7 +15,7 @@ defineProps<Props>();
 </script>
 
 <template>
-    <div v-if="frameworks.length > 0" class="space-y-3">
+    <Card v-if="frameworks.length > 0" class="space-y-3">
         <div
             v-for="framework in frameworks"
             :key="framework.code"
@@ -36,8 +38,10 @@ defineProps<Props>();
                 </p>
             </div>
         </div>
-    </div>
-    <div v-else class="text-grey-500 text-center">
-        No alternative frameworks suggested
-    </div>
+    </Card>
+    <Card v-else>
+        <div class="text-grey-500 text-center">
+            No alternative frameworks suggested
+        </div>
+    </Card>
 </template>
