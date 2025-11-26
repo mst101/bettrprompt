@@ -179,7 +179,10 @@ const tabs = computed<Tab[]>(() => {
     ];
 
     // Add personality tab if tier is not 'none'
-    if (analysisData.value.personality_tier !== 'none') {
+    if (
+        props.promptRun.personalityTier &&
+        props.promptRun.personalityTier !== 'none'
+    ) {
         allTabs.push({
             id: 'personality',
             label: 'Personality',
@@ -199,7 +202,10 @@ const tabs = computed<Tab[]>(() => {
     });
 
     // Add alternatives tab if there are any
-    if (analysisData.value.alternative_frameworks.length > 0) {
+    if (
+        props.promptRun.alternativeFrameworks &&
+        props.promptRun.alternativeFrameworks.length > 0
+    ) {
         allTabs.push({
             id: 'alternatives',
             label: 'Alternatives',
@@ -235,7 +241,8 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                         Task Classification
                     </h2>
                     <TaskClassification
-                        :classification="analysisData.task_classification"
+                        v-if="promptRun.taskClassification"
+                        :classification="promptRun.taskClassification"
                     />
                 </div>
 
@@ -245,7 +252,8 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                         Selected Framework
                     </h2>
                     <SelectedFramework
-                        :framework="analysisData.selected_framework"
+                        v-if="promptRun.selectedFrameworkDetails"
+                        :framework="promptRun.selectedFrameworkDetails"
                     />
                 </div>
 
@@ -255,9 +263,10 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                         Personality Adjustments
                     </h2>
                     <PersonalityAdjustments
-                        :tier="analysisData.personality_tier"
+                        v-if="promptRun.personalityTier"
+                        :tier="promptRun.personalityTier"
                         :adjustments="
-                            analysisData.personality_adjustments_preview
+                            promptRun.personalityAdjustmentsPreview || []
                         "
                     />
                 </div>
@@ -267,8 +276,11 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                     <h2 class="text-grey-900 mb-4 text-lg font-semibold">
                         Clarifying Questions
                     </h2>
-                    <p class="text-grey-600 mb-4 text-sm">
-                        {{ analysisData.question_rationale }}
+                    <p
+                        v-if="promptRun.questionRationale"
+                        class="text-grey-600 mb-4 text-sm"
+                    >
+                        {{ promptRun.questionRationale }}
                     </p>
 
                     <!-- One-at-a-time Question Form -->
@@ -363,7 +375,8 @@ const activeTab = ref<string>('questions'); // Start on questions tab
                         Alternative Frameworks
                     </h2>
                     <AlternativeFrameworks
-                        :frameworks="analysisData.alternative_frameworks"
+                        v-if="promptRun.alternativeFrameworks"
+                        :frameworks="promptRun.alternativeFrameworks"
                     />
                 </div>
             </div>
