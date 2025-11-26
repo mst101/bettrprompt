@@ -2,7 +2,12 @@
 import ContainerPage from '@/Components/ContainerPage.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
-import QuestionAnsweringForm from '@/Components/PromptOptimizer/QuestionAnsweringForm.vue';
+import AlternativeFrameworks from '@/Components/PromptBuilder/Cards/AlternativeFrameworks.vue';
+import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
+import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
+import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
+import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringForm.vue';
+import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -93,6 +98,11 @@ const clearCurrentAnswer = () => {
 const atLastQuestion = computed(
     () => currentIndex.value === questions.value.length - 1,
 );
+
+const progress = computed(() => ({
+    answered: answers.value.filter((a) => a !== null).length,
+    total: questions.value.length,
+}));
 
 const showAllQuestions = ref(false);
 
@@ -199,214 +209,215 @@ const parsedPrompt = computed(() => {
         suggestions: result?.data?.metadata?.iteration_suggestions || [],
     };
 });
+
+// Define tabs
+const tabs = computed<Tab[]>(() => {
+    const allTabs: Tab[] = [
+        {
+            id: 'classification',
+            label: 'Classification',
+            icon: 'tag',
+        },
+        {
+            id: 'framework',
+            label: 'Framework',
+            icon: 'cube',
+        },
+    ];
+
+    // Add personality tab if tier is not 'none'
+    if (analysisData.value.personality_tier !== 'none') {
+        allTabs.push({
+            id: 'personality',
+            label: 'Personality',
+            icon: 'user',
+        });
+    }
+
+    // Add questions tab
+    allTabs.push({
+        id: 'questions',
+        label: 'Questions',
+        icon: 'question-mark-circle',
+        badge:
+            progress.value.total > 0
+                ? `${progress.value.answered}/${progress.value.total}`
+                : undefined,
+    });
+
+    // Add alternatives tab if there are any
+    if (analysisData.value.alternative_frameworks.length > 0) {
+        allTabs.push({
+            id: 'alternatives',
+            label: 'Alternatives',
+            icon: 'arrows-right-left',
+        });
+    }
+
+    return allTabs;
+});
+
+const activeTab = ref<string>('questions'); // Start on questions tab
 </script>
 
 <template>
     <Head title="Prompt Analysis" />
 
+    <HeaderPage title="Prompt Builder">
+        <template #description> Analysis for: {{ taskDescription }} </template>
+    </HeaderPage>
+
     <ContainerPage>
-        <HeaderPage
-            title="Prompt Analysis Results"
-            :description="`Analysis for: ${taskDescription}`"
-        />
+        <div class="mb-6 max-w-4xl">
+            <!-- Tabs Navigation -->
+            <Tabs v-model="activeTab" :tabs="tabs" />
 
-        <!-- Task Classification -->
-        <div
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Task Classification
-            </h2>
-            <div class="space-y-2">
-                <div>
-                    <span class="text-grey-700 font-medium">Category:</span>
-                    <span class="text-grey-900 ml-2">
-                        {{ analysisData.task_classification.primary_category }}
-                    </span>
-                </div>
-                <div>
-                    <span class="text-grey-700 font-medium">Complexity:</span>
-                    <span class="text-grey-900 ml-2 capitalize">
-                        {{ analysisData.task_classification.complexity }}
-                    </span>
-                </div>
-                <div>
-                    <span class="text-grey-700 font-medium">Reasoning:</span>
-                    <p class="text-grey-900 mt-1">
-                        {{
-                            analysisData.task_classification
-                                .classification_reasoning
-                        }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Selected Framework -->
-        <div
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Selected Framework
-            </h2>
-            <div class="space-y-2">
-                <div>
-                    <span class="text-grey-700 font-medium">Framework:</span>
-                    <span class="text-grey-900 ml-2">
-                        {{ analysisData.selected_framework.name }}
-                        ({{ analysisData.selected_framework.code }})
-                    </span>
-                </div>
-                <div>
-                    <span class="text-grey-700 font-medium">Components:</span>
-                    <div class="mt-1 flex flex-wrap gap-2">
-                        <span
-                            v-for="component in analysisData.selected_framework
-                                .components"
-                            :key="component"
-                            class="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
-                        >
-                            {{ component }}
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <span class="text-grey-700 font-medium">Rationale:</span>
-                    <p class="text-grey-900 mt-1">
-                        {{ analysisData.selected_framework.rationale }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Personality Adjustments -->
-        <div
-            v-if="analysisData.personality_tier !== 'none'"
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Personality Adjustments ({{ analysisData.personality_tier }})
-            </h2>
-            <ul class="text-grey-900 list-inside list-disc space-y-1">
-                <li
-                    v-for="(
-                        adjustment, index
-                    ) in analysisData.personality_adjustments_preview"
-                    :key="index"
-                >
-                    {{ adjustment }}
-                </li>
-            </ul>
-        </div>
-
-        <!-- Clarifying Questions -->
-        <div
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Clarifying Questions
-            </h2>
-            <p class="text-grey-600 mb-4 text-sm">
-                {{ analysisData.question_rationale }}
-            </p>
-            <QuestionAnsweringForm
-                v-if="currentQuestion && !showAllQuestions"
-                v-model:answer="currentAnswer"
-                :question="currentQuestion.question"
-                :current-question-number="currentIndex + 1"
-                :total-questions="questions.length"
-                :is-submitting="isSubmitting"
-                :can-go-back="currentIndex > 0"
-                :show-all="showAllQuestions"
-                @submit="submitAnswer"
-                @skip="skipQuestion"
-                @go-back="goBack"
-                @clear="clearCurrentAnswer"
-                @toggle-show-all="() => (showAllQuestions = !showAllQuestions)"
-            />
+            <!-- Tab Content Container -->
             <div
-                v-else
                 class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
             >
-                <div
-                    v-for="(question, index) in questions"
-                    :key="question.id"
-                    class="border-grey-200 mb-4 rounded border p-4 last:mb-0"
-                >
-                    <div class="flex items-start gap-2">
-                        <span
-                            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                <!-- Classification Tab -->
+                <div v-if="activeTab === 'classification'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Task Classification
+                    </h2>
+                    <TaskClassification
+                        :classification="analysisData.task_classification"
+                    />
+                </div>
+
+                <!-- Framework Tab -->
+                <div v-if="activeTab === 'framework'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Selected Framework
+                    </h2>
+                    <SelectedFramework
+                        :framework="analysisData.selected_framework"
+                    />
+                </div>
+
+                <!-- Personality Tab -->
+                <div v-if="activeTab === 'personality'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Personality Adjustments
+                    </h2>
+                    <PersonalityAdjustments
+                        :tier="analysisData.personality_tier"
+                        :adjustments="
+                            analysisData.personality_adjustments_preview
+                        "
+                    />
+                </div>
+
+                <!-- Questions Tab -->
+                <div v-if="activeTab === 'questions'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Clarifying Questions
+                    </h2>
+                    <p class="text-grey-600 mb-4 text-sm">
+                        {{ analysisData.question_rationale }}
+                    </p>
+
+                    <!-- One-at-a-time Question Form -->
+                    <QuestionAnsweringForm
+                        v-if="currentQuestion && !showAllQuestions"
+                        v-model:answer="currentAnswer"
+                        :question="currentQuestion.question"
+                        :current-question-number="currentIndex + 1"
+                        :total-questions="questions.length"
+                        :is-submitting="isSubmitting"
+                        :can-go-back="currentIndex > 0"
+                        :show-all="showAllQuestions"
+                        @submit="submitAnswer"
+                        @skip="skipQuestion"
+                        @go-back="goBack"
+                        @clear="clearCurrentAnswer"
+                        @toggle-show-all="
+                            () => (showAllQuestions = !showAllQuestions)
+                        "
+                    />
+
+                    <!-- Bulk Answer Mode -->
+                    <div v-else class="space-y-4">
+                        <div
+                            v-for="(question, index) in questions"
+                            :key="question.id"
+                            class="border-grey-200 rounded border p-4"
                         >
-                            {{ index + 1 }}
-                        </span>
-                        <div class="flex-1 space-y-2">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">
-                                    {{ question.question }}
-                                    <span
-                                        v-if="question.required"
-                                        class="ml-1 text-red-500"
-                                        title="Required"
-                                    >
-                                        *
-                                    </span>
-                                </p>
-                                <p class="text-grey-600 mt-1 text-sm">
-                                    {{ question.purpose }}
-                                </p>
+                            <div class="flex items-start gap-2">
+                                <span
+                                    class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-800"
+                                >
+                                    {{ index + 1 }}
+                                </span>
+                                <div class="flex-1 space-y-2">
+                                    <div>
+                                        <p
+                                            class="text-sm font-medium text-gray-900"
+                                        >
+                                            {{ question.question }}
+                                            <span
+                                                v-if="question.required"
+                                                class="ml-1 text-red-500"
+                                                title="Required"
+                                            >
+                                                *
+                                            </span>
+                                        </p>
+                                        <p class="text-grey-600 mt-1 text-sm">
+                                            {{ question.purpose }}
+                                        </p>
+                                    </div>
+                                    <FormTextarea
+                                        :id="`bulk-answer-${index}`"
+                                        :model-value="answers[index] || ''"
+                                        :label="`Answer ${index + 1}`"
+                                        :disabled="isSubmitting"
+                                        :rows="3"
+                                        :placeholder="`Answer for question ${index + 1}`"
+                                        @update:model-value="
+                                            (value: string) =>
+                                                (answers[index] = value || null)
+                                        "
+                                    />
+                                </div>
                             </div>
-                            <FormTextarea
-                                :id="`bulk-answer-${index}`"
-                                :model-value="answers[index] || ''"
-                                :label="`Answer ${index + 1}`"
+                        </div>
+                        <div class="flex justify-between">
+                            <button
+                                class="text-sm text-indigo-600 underline"
+                                type="button"
+                                @click="() => (showAllQuestions = false)"
+                            >
+                                Back to one-at-a-time
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
                                 :disabled="isSubmitting"
-                                :rows="3"
-                                :placeholder="`Answer for question ${index + 1}`"
-                                @update:model-value="
-                                    (value: string) =>
-                                        (answers[index] = value || null)
-                                "
-                            />
+                                @click="submitAllAnswers"
+                            >
+                                <span v-if="isSubmitting">Submitting...</span>
+                                <span v-else>Submit All Answers</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 text-right">
-                    <button
-                        class="text-sm text-indigo-600 underline"
-                        type="button"
-                        @click="() => (showAllQuestions = false)"
-                    >
-                        Back to one-at-a-time
-                    </button>
+
+                <!-- Alternatives Tab -->
+                <div v-if="activeTab === 'alternatives'">
+                    <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                        Alternative Frameworks
+                    </h2>
+                    <AlternativeFrameworks
+                        :frameworks="analysisData.alternative_frameworks"
+                    />
                 </div>
             </div>
         </div>
 
-        <!-- Alternative Frameworks -->
-        <div
-            v-if="analysisData.alternative_frameworks.length > 0"
-            class="border-grey-200 mb-6 rounded-lg border bg-white p-6 shadow-sm"
-        >
-            <h2 class="text-grey-900 mb-3 text-lg font-semibold">
-                Alternative Frameworks
-            </h2>
-            <div class="space-y-3">
-                <div
-                    v-for="framework in analysisData.alternative_frameworks"
-                    :key="framework.code"
-                    class="border-grey-200 bg-grey-50 rounded border p-3"
-                >
-                    <div class="text-grey-900 font-medium">
-                        {{ framework.name }} ({{ framework.code }})
-                    </div>
-                    <div class="text-grey-600 mt-1 text-sm">
-                        When to use: {{ framework.when_to_use_instead }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="generationResult" class="space-y-6">
+        <!-- Generation Result -->
+        <div v-if="generationResult" class="mb-6 space-y-6">
             <div
                 class="border-grey-200 rounded-lg border bg-white p-6 shadow-sm"
             >
@@ -511,7 +522,8 @@ const parsedPrompt = computed(() => {
             </div>
         </div>
 
-        <div v-if="submitError" class="text-red-600">
+        <!-- Error Display -->
+        <div v-if="submitError" class="rounded-lg bg-red-50 p-4 text-red-600">
             {{ submitError }}
         </div>
     </ContainerPage>

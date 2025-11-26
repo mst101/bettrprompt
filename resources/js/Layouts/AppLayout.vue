@@ -46,7 +46,7 @@ const logoDestination = computed(() => {
 
     // If admin user and on admin pages, go to main site
     if (isAdmin.value && currentRoute.startsWith('admin.')) {
-        return route('prompt-optimizer.index');
+        return route('prompt-builder.index');
     }
 
     // If admin user and on main site, go to admin dashboard
@@ -185,11 +185,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:items-center"
                             >
                                 <NavLink
-                                    :href="route('prompt-optimizer.index')"
+                                    :href="route('prompt-builder.index')"
                                     :active="
-                                        route().current(
-                                            'prompt-optimizer.index',
-                                        )
+                                        route().current('prompt-builder.index')
                                     "
                                 >
                                     Prompt Optimiser
@@ -302,10 +300,10 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 <div class="space-y-1 pt-2 pb-3">
                                     <ResponsiveNavLink
                                         ref="firstMobileNavLink"
-                                        :href="route('prompt-optimizer.index')"
+                                        :href="route('prompt-builder.index')"
                                         :active="
                                             route().current(
-                                                'prompt-optimizer.index',
+                                                'prompt-builder.index',
                                             )
                                         "
                                         @click="

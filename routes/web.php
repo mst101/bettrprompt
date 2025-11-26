@@ -127,7 +127,7 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
-        ->name('prompt-builder');
+        ->name('prompt-builder.index');
     Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
         ->name('prompt-builder.analyse');
     Route::get('/prompt-builder/questions', [PromptBuilderController::class, 'questions'])
