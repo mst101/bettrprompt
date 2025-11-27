@@ -12,8 +12,7 @@ class PromptFrameworkService
     public function __construct()
     {
         // Prefer internal service URL when available (e.g., Sail n8n container)
-        $this->n8nBaseUrl = config('services.n8n.url')
-            ?? config('services.n8n.base_url');
+        $this->n8nBaseUrl = config('services.n8n.base_url');
     }
 
     /**
@@ -31,7 +30,8 @@ class PromptFrameworkService
         ];
 
         try {
-            $response = Http::post("{$this->n8nBaseUrl}/webhook/prompt-builder-workflow-1", $payload);
+            $response = Http::timeout(60)
+                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
 
             if ($response->successful()) {
                 return $response->json();
@@ -87,7 +87,8 @@ class PromptFrameworkService
         ];
 
         try {
-            $response = Http::post("{$this->n8nBaseUrl}/webhook/prompt-builder-workflow-2", $payload);
+            $response = Http::timeout(90)
+                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $payload);
 
             if ($response->successful()) {
                 return $response->json();
