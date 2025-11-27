@@ -11,9 +11,8 @@ class PromptFrameworkService
 
     public function __construct()
     {
-        // Prefer internal service URL when available (e.g., Sail n8n container)
-        $this->n8nBaseUrl = config('services.n8n.url')
-            ?? config('services.n8n.base_url');
+        // Always use the internal service URL to avoid HTTPS/host routing issues
+        $this->n8nBaseUrl = config('services.n8n.url', env('N8N_INTERNAL_URL', 'http://n8n:5678'));
     }
 
     /**
