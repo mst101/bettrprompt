@@ -10,30 +10,36 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
- * import type { N8nResponsePayload } from '@/types/n8n';
- *
  * interface PromptRun {
  *   readonly id: number;
  *   readonly userId: number | null;
  *   readonly visitorId: string;
  *   readonly parentId: number | null;
  *   readonly personalityType: string | null;
- *   readonly traitPercentages: Array<unknown> | null;
+ *   readonly traitPercentages: Record<string, number> | null;
  *   readonly taskDescription: string;
- *   readonly selectedFramework: string | null;
- *   readonly frameworkReasoning: string | null;
- *   readonly personalityApproach: string | null;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
- *   readonly n8nRequestPayload: Record<string, unknown> | null;
- *   readonly n8nResponsePayload: N8nResponsePayload | null;
  *   readonly status: string;
  *   readonly workflowStage: string;
  *   readonly errorMessage: string | null;
  *   readonly completedAt: string | null;
  *   readonly createdAt: string;
  *   readonly updatedAt: string;
+ *
+ *   // Prompt Builder specific fields
+ *   readonly taskClassification: Record<string, unknown> | null;
+ *   readonly cognitiveRequirements: Record<string, unknown> | null;
+ *   readonly selectedFramework: Record<string, unknown> | null;
+ *   readonly alternativeFrameworks: Array<unknown> | null;
+ *   readonly personalityTier: string | null;
+ *   readonly taskTraitAlignment: Record<string, unknown> | null;
+ *   readonly personalityAdjustmentsPreview: Array<string> | null;
+ *   readonly questionRationale: string | null;
+ *   readonly generationMetadata: Record<string, unknown> | null;
+ *   readonly analysisApiUsage: Record<string, unknown> | null;
+ *   readonly generationApiUsage: Record<string, unknown> | null;
  *
  *   // Relationships
  *   readonly visitor?: VisitorResource;
@@ -60,14 +66,9 @@ class PromptRunResource extends JsonResource
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
             'taskDescription' => $this->task_description,
-            'selectedFramework' => $this->selected_framework,
-            'frameworkReasoning' => $this->framework_reasoning,
-            'personalityApproach' => $this->personality_approach,
             'frameworkQuestions' => $this->framework_questions,
             'clarifyingAnswers' => $this->clarifying_answers,
             'optimizedPrompt' => $this->optimized_prompt,
-            'n8nRequestPayload' => $this->n8n_request_payload,
-            'n8nResponsePayload' => $this->n8n_response_payload,
             'status' => $this->status,
             'workflowStage' => $this->workflow_stage,
             'errorMessage' => $this->error_message,
@@ -77,12 +78,16 @@ class PromptRunResource extends JsonResource
 
             // Prompt Builder specific fields
             'taskClassification' => $this->task_classification,
-            'selectedFrameworkDetails' => $this->selected_framework_details,
+            'cognitiveRequirements' => $this->cognitive_requirements,
+            'selectedFramework' => $this->selected_framework,
             'alternativeFrameworks' => $this->alternative_frameworks,
             'personalityTier' => $this->personality_tier,
+            'taskTraitAlignment' => $this->task_trait_alignment,
             'personalityAdjustmentsPreview' => $this->personality_adjustments_preview,
             'questionRationale' => $this->question_rationale,
             'generationMetadata' => $this->generation_metadata,
+            'analysisApiUsage' => $this->analysis_api_usage,
+            'generationApiUsage' => $this->generation_api_usage,
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {

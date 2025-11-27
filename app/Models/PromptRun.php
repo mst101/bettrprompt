@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\N8nResponsePayload;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,41 +18,42 @@ class PromptRun extends Model
         'personality_type',
         'trait_percentages',
         'task_description',
-        'selected_framework',
-        'framework_reasoning',
-        'personality_approach',
         'framework_questions',
         'clarifying_answers',
         'optimized_prompt',
-        'n8n_request_payload',
-        'n8n_response_payload',
         'status',
         'workflow_stage',
         'error_message',
         'completed_at',
         // Prompt Builder specific fields
         'task_classification',
-        'selected_framework_details',
+        'cognitive_requirements',
+        'selected_framework',
         'alternative_frameworks',
         'personality_tier',
+        'task_trait_alignment',
         'personality_adjustments_preview',
         'question_rationale',
         'generation_metadata',
+        'analysis_api_usage',
+        'generation_api_usage',
     ];
 
     protected $casts = [
         'trait_percentages' => 'array',
         'framework_questions' => 'array',
         'clarifying_answers' => 'array',
-        'n8n_request_payload' => 'array',
-        'n8n_response_payload' => N8nResponsePayload::class,
         'completed_at' => 'datetime',
         // Prompt Builder specific casts
         'task_classification' => 'array',
-        'selected_framework_details' => 'array',
+        'cognitive_requirements' => 'array',
+        'selected_framework' => 'array',
         'alternative_frameworks' => 'array',
+        'task_trait_alignment' => 'array',
         'personality_adjustments_preview' => 'array',
         'generation_metadata' => 'array',
+        'analysis_api_usage' => 'array',
+        'generation_api_usage' => 'array',
     ];
 
     public function visitor(): BelongsTo

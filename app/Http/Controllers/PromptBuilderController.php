@@ -91,9 +91,11 @@ class PromptBuilderController extends Controller
                     'workflow_stage' => 'analysis_complete',
                     // Prompt Builder specific fields from analysis result
                     'task_classification' => $result['data']['task_classification'] ?? null,
-                    'selected_framework_details' => $result['data']['selected_framework'] ?? null,
+                    'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
+                    'selected_framework' => $result['data']['selected_framework'] ?? null,
                     'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
                     'personality_tier' => $result['data']['personality_tier'] ?? 'none',
+                    'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
                     'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
                     'question_rationale' => $result['data']['question_rationale'] ?? null,
                     'framework_questions' => $result['data']['clarifying_questions'] ?? [],
@@ -164,14 +166,14 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
-            // Call the generation workflow with NEW task-trait alignment parameters
+            // Call the generation workflow with task-trait alignment parameters
             $result = $this->promptService->generatePrompt(
                 $promptRun->task_classification,
-                $promptRun->task_classification['cognitive_requirements'] ?? [], // NEW: cognitive requirements
-                $promptRun->selected_framework_details,
+                $promptRun->cognitive_requirements ?? [],
+                $promptRun->selected_framework,
                 $promptRun->alternative_frameworks ?? [],
                 $promptRun->personality_tier,
-                $promptRun->task_classification['task_trait_alignment'] ?? [], // NEW: task-trait alignment
+                $promptRun->task_trait_alignment ?? [],
                 $promptRun->personality_adjustments_preview ?? [],
                 $promptRun->task_description,
                 $promptRun->personality_type,

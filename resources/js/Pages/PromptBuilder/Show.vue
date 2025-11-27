@@ -239,11 +239,8 @@ watch(
 
             <!-- Framework Tab -->
             <SelectedFramework
-                v-if="
-                    activeTab === 'framework' &&
-                    promptRun.selectedFrameworkDetails
-                "
-                :framework="promptRun.selectedFrameworkDetails as any"
+                v-if="activeTab === 'framework' && promptRun.selectedFramework"
+                :framework="promptRun.selectedFramework as any"
             />
 
             <!-- Personality Tab -->
