@@ -16,23 +16,26 @@ defineProps<Props>();
 
 <template>
     <Card v-if="frameworks.length > 0" class="space-y-3">
+        <h2 class="mb-4 text-lg font-semibold text-gray-900">
+            Alternative Frameworks
+        </h2>
         <div
             v-for="framework in frameworks"
             :key="framework.code"
-            class="border-grey-200 bg-grey-50 rounded-lg border p-4"
+            class="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
             <div class="mb-2 flex items-start justify-between">
                 <div>
-                    <h3 class="text-grey-900 font-medium">
+                    <h3 class="font-medium text-gray-900">
                         {{ framework.name }}
                     </h3>
-                    <span class="text-grey-600 text-sm">
+                    <span class="text-sm text-gray-600">
                         {{ framework.code }}
                     </span>
                 </div>
             </div>
             <div class="mt-2">
-                <p class="text-grey-700 text-sm">
+                <p class="text-sm text-gray-700">
                     <span class="font-medium">When to use:</span>
                     {{ framework.when_to_use_instead }}
                 </p>
@@ -40,7 +43,7 @@ defineProps<Props>();
         </div>
     </Card>
     <Card v-else>
-        <div class="text-grey-500 text-center">
+        <div class="text-center text-gray-500">
             No alternative frameworks suggested
         </div>
     </Card>

@@ -49,10 +49,10 @@ const handleToggleShowAll = () => {
         <!-- Progress Bar -->
         <div class="mb-4">
             <div class="mb-2 flex items-center justify-between">
-                <span class="text-grey-700 text-sm font-medium">
+                <span class="text-sm font-medium text-gray-700">
                     Question {{ currentQuestionNumber }} of {{ totalQuestions }}
                 </span>
-                <span class="text-grey-600 text-sm">
+                <span class="text-sm text-gray-600">
                     {{
                         Math.round(
                             (currentQuestionNumber / totalQuestions) * 100,
@@ -60,7 +60,7 @@ const handleToggleShowAll = () => {
                     }}% complete
                 </span>
             </div>
-            <div class="bg-grey-200 h-2 w-full overflow-hidden rounded-full">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
                 <div
                     class="h-full rounded-full bg-blue-600 transition-all duration-300"
                     :style="{
@@ -71,8 +71,8 @@ const handleToggleShowAll = () => {
         </div>
 
         <!-- Question -->
-        <div class="bg-grey-50 rounded-lg p-4">
-            <h3 class="text-grey-900 mb-2 text-lg font-medium">
+        <div class="rounded-lg bg-gray-50 p-4">
+            <h3 class="mb-2 text-lg font-medium text-gray-900">
                 {{ question }}
             </h3>
         </div>
@@ -94,7 +94,7 @@ const handleToggleShowAll = () => {
                 <button
                     v-if="canGoBack"
                     type="button"
-                    class="border-grey-300 text-grey-700 hover:bg-grey-50 rounded-lg border bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
+                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                     :disabled="isSubmitting"
                     @click="handleGoBack"
                 >
@@ -102,7 +102,7 @@ const handleToggleShowAll = () => {
                 </button>
                 <button
                     type="button"
-                    class="border-grey-300 text-grey-700 hover:bg-grey-50 rounded-lg border bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
+                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                     :disabled="isSubmitting || !answer"
                     @click="handleClear"
                 >
@@ -113,7 +113,7 @@ const handleToggleShowAll = () => {
             <div class="flex gap-2">
                 <button
                     type="button"
-                    class="border-grey-300 text-grey-700 hover:bg-grey-50 rounded-lg border bg-white px-4 py-2 text-sm font-medium disabled:opacity-50"
+                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                     :disabled="isSubmitting"
                     @click="handleSkip"
                 >

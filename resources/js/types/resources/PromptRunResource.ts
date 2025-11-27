@@ -37,7 +37,10 @@ export interface PromptRunResource {
     readonly taskTraitAlignment: Record<string, unknown> | null;
     readonly personalityAdjustmentsPreview: string[] | null;
     readonly questionRationale: string | null;
-    readonly generationMetadata: Record<string, unknown> | null;
+    readonly frameworkUsed: Record<string, unknown> | null;
+    readonly personalityAdjustmentsSummary: string[] | null;
+    readonly modelRecommendations: Record<string, unknown>[] | null;
+    readonly iterationSuggestions: string[] | null;
     readonly analysisApiUsage: Record<string, unknown> | null;
     readonly generationApiUsage: Record<string, unknown> | null;
     // Relationships

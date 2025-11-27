@@ -34,7 +34,10 @@ class PromptRun extends Model
         'task_trait_alignment',
         'personality_adjustments_preview',
         'question_rationale',
-        'generation_metadata',
+        'framework_used',
+        'personality_adjustments_summary',
+        'model_recommendations',
+        'iteration_suggestions',
         'analysis_api_usage',
         'generation_api_usage',
     ];
@@ -51,7 +54,10 @@ class PromptRun extends Model
         'alternative_frameworks' => 'array',
         'task_trait_alignment' => 'array',
         'personality_adjustments_preview' => 'array',
-        'generation_metadata' => 'array',
+        'framework_used' => 'array',
+        'personality_adjustments_summary' => 'array',
+        'model_recommendations' => 'array',
+        'iteration_suggestions' => 'array',
         'analysis_api_usage' => 'array',
         'generation_api_usage' => 'array',
     ];

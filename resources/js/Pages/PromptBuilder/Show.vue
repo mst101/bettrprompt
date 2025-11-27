@@ -5,9 +5,14 @@ import FormTextarea from '@/Components/FormTextarea.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 import AlternativeFrameworks from '@/Components/PromptBuilder/Cards/AlternativeFrameworks.vue';
+import ApiUsage from '@/Components/PromptBuilder/Cards/ApiUsage.vue';
+import CognitiveRequirements from '@/Components/PromptBuilder/Cards/CognitiveRequirements.vue';
 import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
+import PersonalityAdjustmentsSummary from '@/Components/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
+import Recommendations from '@/Components/PromptBuilder/Cards/Recommendations.vue';
 import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
+import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignment.vue';
 import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringForm.vue';
 import OptimizedPrompt from '@/Components/PromptOptimizer/Cards/OptimizedPrompt.vue';
 import TaskInformation from '@/Components/PromptOptimizer/Cards/TaskInformation.vue';
@@ -122,15 +127,6 @@ const submitAllAnswers = async () => {
 const tabs = computed<Tab[]>(() => {
     const allTabs: Tab[] = [];
 
-    // Optimised Prompt tab (first, only for completed runs with prompt)
-    if (props.promptRun.optimizedPrompt) {
-        allTabs.push({
-            id: 'prompt',
-            label: 'Optimised Prompt',
-            icon: 'sparkles',
-        });
-    }
-
     // Your Task tab (always shown)
     allTabs.push({
         id: 'task',
@@ -162,6 +158,34 @@ const tabs = computed<Tab[]>(() => {
         id: 'questions',
         label: 'Questions',
         icon: 'question-mark-circle',
+    });
+
+    // Optimised Prompt tab (only for completed runs with prompt)
+    if (props.promptRun.optimizedPrompt) {
+        allTabs.push({
+            id: 'prompt',
+            label: 'Optimised Prompt',
+            icon: 'sparkles',
+        });
+    }
+
+    // Recommendations tab (only shown when model recommendations exist)
+    if (
+        props.promptRun.modelRecommendations ||
+        props.promptRun.iterationSuggestions
+    ) {
+        allTabs.push({
+            id: 'recommendations',
+            label: 'Recommendations',
+            icon: 'light-bulb',
+        });
+    }
+
+    // API Usage tab (always shown for transparency)
+    allTabs.push({
+        id: 'api-usage',
+        label: 'API Usage',
+        icon: 'chart-bar',
     });
 
     return allTabs;
@@ -204,10 +228,14 @@ watch(
 
             <!-- Your Task Tab -->
             <div v-if="activeTab === 'task'" class="space-y-4">
-                <TaskInformation :prompt-run="promptRun" class="px-6" />
+                <TaskInformation :prompt-run="promptRun" />
                 <TaskClassification
                     v-if="promptRun.taskClassification"
                     :classification="promptRun.taskClassification as any"
+                />
+                <CognitiveRequirements
+                    v-if="promptRun.cognitiveRequirements"
+                    :requirements="promptRun.cognitiveRequirements as any"
                 />
             </div>
 
@@ -224,20 +252,32 @@ watch(
             </div>
 
             <!-- Personality Tab -->
-            <PersonalityAdjustments
-                v-if="activeTab === 'personality' && promptRun.personalityTier"
-                :tier="promptRun.personalityTier as any"
-                :adjustments="promptRun.personalityAdjustmentsPreview || []"
-            />
+            <div v-if="activeTab === 'personality'" class="space-y-4">
+                <TaskTraitAlignment
+                    v-if="promptRun.taskTraitAlignment"
+                    :alignment="promptRun.taskTraitAlignment as any"
+                />
+                <PersonalityAdjustments
+                    v-if="promptRun.personalityTier"
+                    :tier="promptRun.personalityTier as any"
+                    :adjustments="promptRun.personalityAdjustmentsPreview || []"
+                />
+                <PersonalityAdjustmentsSummary
+                    v-if="promptRun.personalityAdjustmentsSummary"
+                    :adjustments="
+                        promptRun.personalityAdjustmentsSummary as any
+                    "
+                />
+            </div>
 
             <!-- Questions Tab -->
             <Card v-if="activeTab === 'questions'">
-                <h2 class="text-grey-900 mb-4 text-lg font-semibold">
+                <h2 class="mb-4 text-lg font-semibold text-gray-900">
                     Clarifying Questions
                 </h2>
                 <p
                     v-if="promptRun.questionRationale"
-                    class="text-grey-600 mb-4 text-sm"
+                    class="mb-4 text-sm text-gray-600"
                 >
                     {{ promptRun.questionRationale }}
                 </p>
@@ -266,7 +306,7 @@ watch(
                     <div
                         v-for="(question, index) in questions"
                         :key="question.id"
-                        class="border-grey-200 rounded border p-4"
+                        class="rounded border border-gray-200 p-4"
                     >
                         <div class="flex items-start gap-2">
                             <span
@@ -288,7 +328,7 @@ watch(
                                             *
                                         </span>
                                     </p>
-                                    <p class="text-grey-600 mt-1 text-sm">
+                                    <p class="mt-1 text-sm text-gray-600">
                                         {{ question.purpose }}
                                     </p>
                                 </div>
@@ -327,6 +367,20 @@ watch(
                     </div>
                 </div>
             </Card>
+
+            <!-- Recommendations Tab -->
+            <Recommendations
+                v-if="activeTab === 'recommendations'"
+                :model-recommendations="promptRun.modelRecommendations as any"
+                :iteration-suggestions="promptRun.iterationSuggestions as any"
+            />
+
+            <!-- API Usage Tab -->
+            <ApiUsage
+                v-if="activeTab === 'api-usage'"
+                :analysis-usage="promptRun.analysisApiUsage as any"
+                :generation-usage="promptRun.generationApiUsage as any"
+            />
         </div>
 
         <!-- Error Display -->

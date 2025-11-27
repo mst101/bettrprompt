@@ -39,7 +39,10 @@ return new class extends Migration
             $table->text('question_rationale')->nullable(); // Why these questions were chosen
 
             // Prompt Builder specific fields (from workflow 2 generation)
-            $table->json('generation_metadata')->nullable(); // Metadata from workflow 2
+            $table->json('framework_used')->nullable(); // {name, code, components[], explanation}
+            $table->json('personality_adjustments_summary')->nullable(); // string[] of adjustment descriptions
+            $table->json('model_recommendations')->nullable(); // [{rank, model, model_id, rationale}]
+            $table->json('iteration_suggestions')->nullable(); // string[] of suggestions for improving the prompt
 
             // API usage tracking
             $table->json('analysis_api_usage')->nullable(); // {model, input_tokens, output_tokens} from workflow 1

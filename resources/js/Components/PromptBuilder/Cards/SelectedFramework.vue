@@ -16,19 +16,21 @@ defineProps<Props>();
 <template>
     <Card class="space-y-4">
         <div>
-            <h3 class="text-grey-700 mb-2 text-sm font-medium">Framework</h3>
-            <div class="bg-grey-50 rounded-lg p-3">
-                <span class="text-grey-900">
+            <h2 class="mb-4 text-lg font-semibold text-gray-900">
+                Selected Framework
+            </h2>
+            <div class="rounded-lg bg-gray-50 p-3">
+                <span class="text-gray-900">
                     {{ framework.name }}
                 </span>
-                <span class="text-grey-600 ml-2 text-sm">
+                <span class="ml-2 text-sm text-gray-600">
                     ({{ framework.code }})
                 </span>
             </div>
         </div>
 
         <div>
-            <h3 class="text-grey-700 mb-2 text-sm font-medium">Components</h3>
+            <h3 class="mb-2 text-sm font-medium text-gray-700">Components</h3>
             <div class="flex flex-wrap gap-2">
                 <span
                     v-for="component in framework.components"
@@ -41,9 +43,9 @@ defineProps<Props>();
         </div>
 
         <div>
-            <h3 class="text-grey-700 mb-2 text-sm font-medium">Rationale</h3>
-            <div class="bg-grey-50 rounded-lg p-3">
-                <p class="text-grey-900">
+            <h3 class="mb-2 text-sm font-medium text-gray-700">Rationale</h3>
+            <div class="rounded-lg bg-gray-50 p-3">
+                <p class="text-gray-900">
                     {{ framework.rationale }}
                 </p>
             </div>

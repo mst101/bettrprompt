@@ -198,7 +198,10 @@ class PromptBuilderController extends Controller
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
                 $promptRun->update([
                     'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
-                    'generation_metadata' => $result['data']['metadata'] ?? null,
+                    'framework_used' => $result['data']['framework_used'] ?? null,
+                    'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
+                    'model_recommendations' => $result['data']['model_recommendations'] ?? null,
+                    'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
                     'generation_api_usage' => $result['api_usage'] ?? null,
                     'status' => 'completed',
                     'workflow_stage' => 'completed',

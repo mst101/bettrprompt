@@ -37,7 +37,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly taskTraitAlignment: Record<string, unknown> | null;
  *   readonly personalityAdjustmentsPreview: Array<string> | null;
  *   readonly questionRationale: string | null;
- *   readonly generationMetadata: Record<string, unknown> | null;
+ *   readonly frameworkUsed: Record<string, unknown> | null;
+ *   readonly personalityAdjustmentsSummary: Array<string> | null;
+ *   readonly modelRecommendations: Array<unknown> | null;
+ *   readonly iterationSuggestions: Array<string> | null;
  *   readonly analysisApiUsage: Record<string, unknown> | null;
  *   readonly generationApiUsage: Record<string, unknown> | null;
  *
@@ -85,7 +88,10 @@ class PromptRunResource extends JsonResource
             'taskTraitAlignment' => $this->task_trait_alignment,
             'personalityAdjustmentsPreview' => $this->personality_adjustments_preview,
             'questionRationale' => $this->question_rationale,
-            'generationMetadata' => $this->generation_metadata,
+            'frameworkUsed' => $this->framework_used,
+            'personalityAdjustmentsSummary' => $this->personality_adjustments_summary,
+            'modelRecommendations' => $this->model_recommendations,
+            'iterationSuggestions' => $this->iteration_suggestions,
             'analysisApiUsage' => $this->analysis_api_usage,
             'generationApiUsage' => $this->generation_api_usage,
 

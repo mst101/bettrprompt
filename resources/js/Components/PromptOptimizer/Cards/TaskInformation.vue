@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
 import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
@@ -38,7 +39,9 @@ watch(
 </script>
 
 <template>
-    <div>
+    <Card>
+        <h2 class="text-lg font-semibold text-gray-900">Your Task</h2>
+
         <!-- View Mode -->
         <div v-if="!isEditing" class="space-y-4">
             <div class="flex items-center justify-end">
@@ -58,7 +61,7 @@ watch(
                 :model-value="promptRun.taskDescription"
                 label=""
                 :disabled="true"
-                :rows="8"
+                :rows="4"
                 textarea-class="block w-full rounded-md border-gray-300 bg-gray-50 text-sm text-gray-900 shadow-xs focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-100"
             />
         </div>
@@ -85,5 +88,5 @@ watch(
             :parent="promptRun.parent"
             :children="promptRun.children"
         />
-    </div>
+    </Card>
 </template>

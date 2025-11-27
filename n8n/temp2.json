@@ -1,26 +1,93 @@
-[
-    {
-        "id": "PE1",
-        "question": "Who specifically is the target audience for this message (your wife)?",
-        "purpose": "Clarify the intended recipient to ensure the communication is tailored appropriately.",
-        "required": true
+{
+    "framework_used": {
+        "name": "COAST Framework",
+        "code": "COAST",
+        "components": [
+            "Challenge",
+            "Objective",
+            "Actions",
+            "Strategy",
+            "Tactics"
+        ],
+        "explanation": "COAST framework provides a structured approach to developing a comprehensive strategy for expressing love, balancing analytical planning (aligned with INTP traits) with emotional considerations (needed counterbalance)."
     },
-    {
-        "id": "PE2",
-        "question": "What is your current relationship with your wife, and what is her typical response when you express your love?",
-        "purpose": "Understand the starting point and context to craft an effective persuasive message.",
-        "required": true
+    "task_trait_alignment": {
+        "amplified": [
+            {
+                "trait": "High T (84%)",
+                "requirement_aligned": "Structured Approach",
+                "how_applied": "Used logical categorization and framework-based thinking to organize love expressions in a way that appeals to analytical thinking"
+            },
+            {
+                "trait": "High N (64%)",
+                "requirement_aligned": "Conceptual Understanding",
+                "how_applied": "Included request for conceptual frameworks (like love languages) to provide theoretical context for practical actions"
+            }
+        ],
+        "counterbalanced": [
+            {
+                "trait": "High T (84%)",
+                "requirement_opposed": "Emotional Expression",
+                "reason": "Task fundamentally requires emotional connection that High T users might naturally approach too logically",
+                "injections_added": [
+                    "Focus on the emotional impact of gestures, not just their practical value",
+                    "Express appreciation for specific qualities about her, not just general statements",
+                    "Consider how different expressions of love will make her feel",
+                    "Incorporate personal, heartfelt elements that go beyond logical demonstrations"
+                ]
+            },
+            {
+                "trait": "High A (84%)",
+                "requirement_opposed": "Vulnerability",
+                "reason": "Expressing love often requires emotional vulnerability that highly assertive personalities might find challenging",
+                "injections_added": [
+                    "Include guidance on personalizing these ideas to my wife's preferences",
+                    "How to deliver it in a way that feels emotionally connected",
+                    "Include both verbal and non-verbal expressions of love"
+                ]
+            }
+        ],
+        "neutral": [
+            {
+                "trait": "High I (65%)",
+                "reason": "Introversion doesn't significantly impact the ability to express love, though it might influence preference for certain expressions"
+            },
+            {
+                "trait": "Borderline P (57%)",
+                "reason": "With only slight preference for perceiving, no strong adjustment needed for structure vs. flexibility"
+            }
+        ]
     },
-    {
-        "id": "PE5",
-        "question": "What matters most to your wife, and how can you align your message with her values and priorities?",
-        "purpose": "Identify the most compelling way to connect with your wife's motivations and make the message resonate.",
-        "required": true
-    },
-    {
-        "id": "PE3",
-        "question": "What concerns or objections might your wife have about your expression of love, and how can you preemptively address them?",
-        "purpose": "Anticipate potential resistance or doubts to craft a more persuasive and compelling message.",
-        "required": false
-    }
-]
+    "personality_adjustments_summary": [
+        "AMPLIFIED: T-strength used for logical structure and frameworks to understand love expressions",
+        "AMPLIFIED: N-strength leveraged for conceptual understanding of love languages and patterns",
+        "COUNTERBALANCED: T-tendency with explicit requirements for emotional connection and impact",
+        "COUNTERBALANCED: A-tendency with guidance for personalization and vulnerability"
+    ],
+    "model_recommendations": [
+        {
+            "rank": 1,
+            "model": "Claude Opus 4.5",
+            "model_id": "claude-opus-4-5-20250514",
+            "rationale": "Best for nuanced relationship advice that balances logical frameworks with emotional intelligence. Excels at following complex counterbalance instructions for emotional content."
+        },
+        {
+            "rank": 2,
+            "model": "GPT-4",
+            "model_id": "gpt-4",
+            "rationale": "Strong alternative capable of balancing analytical frameworks with emotional intelligence for relationship advice"
+        },
+        {
+            "rank": 3,
+            "model": "Claude Sonnet 4.5",
+            "model_id": "claude-sonnet-4-5-20250514",
+            "rationale": "Cost-effective option that handles the emotional counterbalancing well enough for this task"
+        }
+    ],
+    "iteration_suggestions": [
+        "If responses are too theoretical, strengthen the requirement for specific, actionable examples",
+        "If suggestions don't feel authentic to INTP personality, add more emphasis on expressions that align with analytical thinking",
+        "Consider adding information about your wife's preferences or love language if known",
+        "If you want more focus on a specific type of expression (gifts, words, acts, etc.), specify that in a follow-up"
+    ]
+}

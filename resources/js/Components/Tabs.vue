@@ -41,7 +41,7 @@ const selectTab = (tabId: string) => {
 </script>
 
 <template>
-    <div class="px-6">
+    <div class="">
         <!-- Mobile: Dropdown -->
         <div class="sm:hidden">
             <FormSelect
