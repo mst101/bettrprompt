@@ -2,7 +2,7 @@
     {
         "success": true,
         "data": {
-            "optimised_prompt": "You are a strategic advisor with expertise in personal expression and social dynamics.\n\n[CONTEXT]\nI am an INTP-A personality type who wants to demonstrate patriotism to my friends in a way that aligns with my values and personality. I want authentic ways to express patriotism that will resonate with both myself and my social circle.\n\n[CHALLENGE]\nI want to express patriotism to my friends in a way that feels authentic to me as an analytical, independent thinker while still being recognizable as patriotic to others.\n\n[OBJECTIVE]\nDevelop a strategic approach to expressing patriotism that:\n- Aligns with my analytical, logical nature (INTP)\n- Feels authentic rather than performative\n- Is recognizable to others as patriotic\n- Allows for thoughtful expression rather than emotional displays\n- Can be adapted based on different social contexts\n\n[IMPORTANT CONSIDERATIONS]\n- Consider the emotional and social dimensions of patriotism, not just intellectual concepts\n- Acknowledge that patriotism can be expressed through critical thinking and civic engagement\n- Include approaches that connect personal values with collective identity\n- Balance independent thinking with shared cultural expressions\n\n[ACTIONS]\nProvide specific, actionable ways to express patriotism, organized by category:\n1. Intellectual expressions (e.g., understanding history, constitutional principles)\n2. Civic engagement opportunities\n3. Social expressions with friends\n4. Personal habits and choices\n5. Digital/online expressions\n\nFor each suggestion, include:\n- The specific action\n- Why it demonstrates patriotism\n- How it aligns with an analytical personality\n- Any nuances to consider\n\n[STRATEGY]\nDevelop an overall approach that leverages my analytical strengths while addressing the social and emotional aspects of patriotic expression. Consider both short-term expressions and longer-term engagement.\n\n[TACTICS]\nProvide specific implementation advice for the most promising 2-3 approaches, including:\n- How to introduce these expressions naturally in social settings\n- How to frame my approach to patriotism when discussing with friends\n- How to respond to potential misunderstandings\n\n[CONSTRAINTS]\n- Suggestions should feel authentic to an analytical personality, not forced or purely emotional\n- Approaches should be socially appropriate and considerate of diverse perspectives\n- Focus on substantive expressions rather than superficial displays\n\n[OUTPUT SPECIFICATION]\nProvide a comprehensive, logically structured response that includes:\n1. A brief analysis of different dimensions of patriotism (conceptual framework)\n2. Specific, actionable suggestions organized by category\n3. Strategic approach for authentic expression\n4. Tactical implementation guidance\n5. Considerations for different social contexts\n\nUse logical structure, clear categorization, and evidence-based reasoning throughout. Include both immediate actions and longer-term approaches.\n\n[QUALITY CRITERIA]\nThe response should:\n- Demonstrate depth of thinking about what patriotism means beyond surface-level displays\n- Include specific, concrete examples rather than just abstract concepts\n- Consider the social and emotional impact of different expressions of patriotism\n- Balance analytical approach with social awareness\n- Provide actionable guidance that feels authentic to an INTP personality",
+            "optimised_prompt": "You are a thoughtful relationship advisor with expertise in meaningful expressions of love and appreciation. Your approach balances logical structure with emotional intelligence.\n\n[CONTEXT]\nI'm an INTP-A personality type looking to show my wife that I love her. I want to express my feelings in a way that is both meaningful to her and authentic to who I am.\n\n[IMPORTANT REQUIREMENTS]\nWhile I value logical approaches, I need to ensure my expression of love connects emotionally with my wife. Please help me:\n- Focus on the emotional impact of gestures, not just their practical value\n- Express appreciation for specific qualities about her, not just general statements\n- Consider how different expressions of love will make her feel\n- Incorporate personal, heartfelt elements that go beyond logical demonstrations\n\n[CHALLENGE]\nI want to show my wife that I love her in ways that are meaningful to her while remaining authentic to myself.\n\n[OBJECTIVE]\nTo develop thoughtful, personalized expressions of love that:\n- Clearly communicate my feelings\n- Make my wife feel genuinely appreciated and valued\n- Strengthen our emotional connection\n- Feel natural coming from me (INTP personality)\n\n[ACTIONS]\nPlease provide:\n1. A framework for understanding different expressions of love (e.g., love languages)\n2. Specific, actionable ideas categorized by type (words, acts, gifts, time, etc.)\n3. Guidance on personalizing these ideas to my wife's preferences\n4. Suggestions for expressing love in ways that feel authentic to my analytical nature\n\n[STRATEGY]\nDevelop a balanced approach that leverages my natural strengths while ensuring emotional resonance.\n\n[TACTICS]\nFor each suggestion, include:\n- The specific action or expression\n- Why it might be meaningful to her\n- How to personalize it based on her preferences\n- How to deliver it in a way that feels emotionally connected\n\n[CONSTRAINTS]\n- Suggestions should be authentic to who I am\n- Ideas should range from simple daily gestures to more significant expressions\n- Include both verbal and non-verbal expressions of love\n\n[OUTPUT SPECIFICATION]\nProvide a structured, logical response with clear categories and specific examples. Include both the conceptual framework and concrete, actionable suggestions. For each category of expression, include at least 3-4 specific ideas.\n\n[QUALITY CRITERIA]\nThe response should:\n- Balance analytical approach with emotional warmth\n- Include specific, actionable suggestions, not just concepts\n- Explicitly address the emotional impact of each suggestion\n- Provide guidance that feels authentic for an INTP personality\n- Include both spontaneous gestures and planned expressions of love",
             "metadata": {
                 "framework_used": {
                     "name": "COAST Framework",
@@ -14,95 +14,91 @@
                         "Strategy",
                         "Tactics"
                     ],
-                    "explanation": "COAST framework was selected because it provides a strategic approach to a personal expression challenge, allowing for both conceptual analysis and practical implementation. It accommodates both the analytical needs of the user and the social dimensions of the task."
+                    "explanation": "COAST framework provides a structured approach to developing a comprehensive strategy for expressing love, balancing analytical planning (aligned with INTP traits) with emotional considerations (needed counterbalance)."
                 },
                 "task_trait_alignment": {
                     "amplified": [
                         {
                             "trait": "High T (84%)",
-                            "requirement_aligned": "Analytical Approach",
-                            "how_applied": "Prompt emphasizes logical structure, conceptual frameworks, and evidence-based reasoning that aligns with the user's analytical thinking style"
+                            "requirement_aligned": "Structured Approach",
+                            "how_applied": "Used logical categorization and framework-based thinking to organize love expressions in a way that appeals to analytical thinking"
                         },
                         {
                             "trait": "High N (64%)",
                             "requirement_aligned": "Conceptual Understanding",
-                            "how_applied": "Prompt requests analysis of different dimensions of patriotism and conceptual frameworks, playing to the user's intuitive strengths"
-                        },
-                        {
-                            "trait": "High A (84%)",
-                            "requirement_aligned": "Independent Thinking",
-                            "how_applied": "Prompt emphasizes authentic expression that aligns with personal values rather than conforming to expectations"
+                            "how_applied": "Included request for conceptual frameworks (like love languages) to provide theoretical context for practical actions"
                         }
                     ],
                     "counterbalanced": [
                         {
                             "trait": "High T (84%)",
-                            "requirement_opposed": "Social/Emotional Awareness",
-                            "reason": "Expressing patriotism has significant social and emotional dimensions that a highly analytical person might overlook",
+                            "requirement_opposed": "Emotional Expression",
+                            "reason": "Task fundamentally requires emotional connection that High T users might naturally approach too logically",
                             "injections_added": [
-                                "Consider the emotional and social dimensions of patriotism, not just intellectual concepts",
-                                "Include approaches that connect personal values with collective identity",
-                                "Consider the social and emotional impact of different expressions of patriotism"
+                                "Focus on the emotional impact of gestures, not just their practical value",
+                                "Express appreciation for specific qualities about her, not just general statements",
+                                "Consider how different expressions of love will make her feel",
+                                "Incorporate personal, heartfelt elements that go beyond logical demonstrations"
                             ]
                         },
                         {
                             "trait": "High A (84%)",
-                            "requirement_opposed": "Social Adaptability",
-                            "reason": "High assertiveness might lead to overlooking how expressions are received by others",
+                            "requirement_opposed": "Vulnerability",
+                            "reason": "Expressing love often requires emotional vulnerability that highly assertive personalities might find challenging",
                             "injections_added": [
-                                "Balance independent thinking with shared cultural expressions",
-                                "How to introduce these expressions naturally in social settings",
-                                "How to respond to potential misunderstandings"
+                                "Include guidance on personalizing these ideas to my wife's preferences",
+                                "How to deliver it in a way that feels emotionally connected",
+                                "Include both verbal and non-verbal expressions of love"
                             ]
                         }
                     ],
                     "neutral": [
                         {
                             "trait": "High I (65%)",
-                            "reason": "Introversion is relevant but not critical to the task; the prompt accommodates this by focusing on authentic expression rather than extraverted displays"
+                            "reason": "Introversion doesn't significantly impact the ability to express love, though it might influence preference for certain expressions"
                         },
                         {
                             "trait": "Borderline P (57%)",
-                            "reason": "The tactics-judging dimension is near midline and not strongly relevant to this particular task"
+                            "reason": "With only slight preference for perceiving, no strong adjustment needed for structure vs. flexibility"
                         }
                     ]
                 },
                 "personality_adjustments_summary": [
-                    "AMPLIFIED: T-strength for logical structure and analytical approach to patriotism",
-                    "AMPLIFIED: N-strength for conceptual understanding of patriotism dimensions",
-                    "AMPLIFIED: A-strength for authentic, independent expression",
-                    "COUNTERBALANCED: T-tendency with explicit requirements to consider social/emotional dimensions",
-                    "COUNTERBALANCED: A-tendency with considerations for how expressions are received by others"
+                    "AMPLIFIED: T-strength used for logical structure and frameworks to understand love expressions",
+                    "AMPLIFIED: N-strength leveraged for conceptual understanding of love languages and patterns",
+                    "COUNTERBALANCED: T-tendency with explicit requirements for emotional connection and impact",
+                    "COUNTERBALANCED: A-tendency with guidance for personalization and vulnerability"
                 ],
                 "model_recommendations": [
                     {
                         "rank": 1,
                         "model": "Claude Opus 4.5",
                         "model_id": "claude-opus-4-5-20250514",
-                        "rationale": "Best for balancing analytical reasoning with social/emotional intelligence required for the counterbalancing. Can provide nuanced analysis of patriotism while addressing the social dimensions that need counterbalancing."
+                        "rationale": "Best for nuanced relationship advice that balances logical frameworks with emotional intelligence. Excels at following complex counterbalance instructions for emotional content."
                     },
                     {
                         "rank": 2,
-                        "model": "GPT-4o",
-                        "model_id": "gpt-4o",
-                        "rationale": "Strong reasoning capabilities and good balance of analytical and social understanding. Effective alternative that can handle the counterbalancing requirements."
+                        "model": "GPT-4",
+                        "model_id": "gpt-4",
+                        "rationale": "Strong alternative capable of balancing analytical frameworks with emotional intelligence for relationship advice"
                     },
                     {
                         "rank": 3,
                         "model": "Claude Sonnet 4.5",
                         "model_id": "claude-sonnet-4-5-20250514",
-                        "rationale": "More cost-effective option that still handles the counterbalancing well, though with potentially less nuance in the analysis of patriotism concepts."
+                        "rationale": "Cost-effective option that handles the emotional counterbalancing well enough for this task"
                     }
                 ],
                 "iteration_suggestions": [
-                    "If the response feels too abstract, add more requirements for specific, concrete examples of patriotic expression",
-                    "If the response overemphasizes social conformity, strengthen the authenticity requirements to better align with INTP independence",
-                    "If the response lacks practical implementation advice, request more detailed tactical guidance for social situations"
+                    "If responses are too theoretical, strengthen the requirement for specific, actionable examples",
+                    "If suggestions don't feel authentic to INTP personality, add more emphasis on expressions that align with analytical thinking",
+                    "Consider adding information about your wife's preferences or love language if known",
+                    "If you want more focus on a specific type of expression (gifts, words, acts, etc.), specify that in a follow-up"
                 ]
             }
         },
         "original_input": {
-            "original_task_description": "I want to show my friends that I am a patriot.",
+            "original_task_description": "I want to show my wife that I love her.",
             "personality_type": "INTP-A",
             "trait_percentages": {
                 "mind": 65,
@@ -113,12 +109,16 @@
             },
             "analysis_data": {},
             "question_answers": [
-                "People I meet at the gym, mostly males in their 50's.",
-                "They think I like foreigners more than Brits.",
-                "They think I should love my country more.",
-                "They are supporters of Nigel Farage and the REFORM party.",
-                "Respect me more."
+                "She is an ESTJ-T with the following trait percentages: 51%, 73%, 56%, 99%, 82%",
+                "We don't get along well, she thinks I am useless as she is the main earner. She rejects everything I say or suggest.",
+                "Our 9 year old daughter is what matters most to both of us.",
+                "I want her to treat me as an equal."
             ]
+        },
+        "api_usage": {
+            "model": "claude-3-7-sonnet-20250219",
+            "input_tokens": 14381,
+            "output_tokens": 1661
         },
         "error": null
     }
