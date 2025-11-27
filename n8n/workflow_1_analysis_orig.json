@@ -1,0 +1,292 @@
+{
+  "name": "Prompt Framework - Analysis & Questions v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/n8n/webhook/analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "prompt-analysis-webhook"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/framework-taxonomy",
+        "options": {}
+      },
+      "id": "fetch-framework-taxonomy",
+      "name": "Fetch Framework Taxonomy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 140]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration",
+        "options": {}
+      },
+      "id": "fetch-personality-calibration",
+      "name": "Fetch Personality Calibration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/question-bank",
+        "options": {}
+      },
+      "id": "fetch-question-bank",
+      "name": "Fetch Question Bank",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 460]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": []
+        },
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge1",
+      "name": "Merge 1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [680, 220]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": []
+        },
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge2",
+      "name": "Merge 2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect all data from the workflow\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst frameworkDoc = $('Fetch Framework Taxonomy').first().json;\nconst personalityDoc = $('Fetch Personality Calibration').first().json;\nconst questionDoc = $('Fetch Question Bank').first().json;\n\n// Build the combined prompt\nconst systemPrompt = `You are an expert prompt engineering assistant. Your task is to analyse user requests, classify them into task categories, identify cognitive requirements, select the most appropriate prompt framework, perform Task-Trait Alignment analysis, and generate tailored clarifying questions.\n\nYou have access to three reference documents:\n\n## FRAMEWORK TAXONOMY\n${frameworkDoc.content || 'Not available'}\n\n## PERSONALITY CALIBRATION\n${personalityDoc.content || 'Not available'}\n\n## QUESTION BANK\n${questionDoc.content || 'Not available'}\n\n---\n\n## YOUR TASK\n\n1. **Classify the user's task** into a primary category (and secondary if applicable) from the taxonomy\n2. **Identify cognitive requirements** for the task (from the Task Cognitive Requirements section)\n3. **Select the most appropriate framework** for the task\n4. **Perform Task-Trait Alignment analysis** (if personality data provided):\n   - Identify which traits ALIGN with task requirements → Mark for AMPLIFICATION\n   - Identify which traits OPPOSE task requirements → Mark for COUNTERBALANCING\n   - Identify which traits are UNRELATED → Mark as NEUTRAL\n5. **Generate clarifying questions** tailored to the task and personality (if provided)\n6. **Apply personality calibration** to question phrasing and quantity (if personality data provided)\n\n## TASK-TRAIT ALIGNMENT RULES\n\n- **AMPLIFY** traits that are assets: The prompt will leverage the user's natural strengths\n- **COUNTERBALANCE** traits that create blind spots: The prompt will inject explicit requirements the user might skip\n- **NEUTRAL** for traits unrelated to the task: No adjustment needed\n\nWhen a trait is marked for counterbalancing, specify the INJECTION - the explicit requirement that will be added to the prompt to cover the user's blind spot.\n\n## IMPORTANT RULES\n\n- If NO personality data is provided, skip Task-Trait Alignment and use neutral defaults\n- Always explain your classification reasoning\n- Select questions that are essential for generating a high-quality prompt\n- Sequence questions logically (context → goals → constraints → specifics)\n- Respect the question quantity guidelines based on task complexity\n\n## OUTPUT FORMAT\n\nYou MUST respond with valid JSON only (no markdown code blocks, no extra text). Use this exact structure:\n\n{\n  \"task_classification\": {\n    \"primary_category\": \"CATEGORY_CODE\",\n    \"secondary_category\": null,\n    \"complexity\": \"simple | moderate | complex\",\n    \"classification_reasoning\": \"Brief explanation\",\n    \"content_type\": \"For CREATION_CONTENT only, e.g. customer_email\"\n  },\n  \"cognitive_requirements\": {\n    \"primary\": [\"REQUIREMENT_CODE\", \"REQUIREMENT_CODE\"],\n    \"secondary\": [\"REQUIREMENT_CODE\"],\n    \"reasoning\": \"Why these requirements apply to this task\"\n  },\n  \"selected_framework\": {\n    \"name\": \"Framework Name\",\n    \"code\": \"FRAMEWORK_CODE\",\n    \"components\": [\"Component1\", \"Component2\"],\n    \"rationale\": \"Why this framework is best for this task\"\n  },\n  \"alternative_frameworks\": [\n    {\n      \"name\": \"Alternative Name\",\n      \"code\": \"ALT_CODE\",\n      \"when_to_use_instead\": \"Condition\"\n    }\n  ],\n  \"personality_tier\": \"full | partial | none\",\n  \"task_trait_alignment\": {\n    \"amplified\": [\n      {\n        \"trait\": \"High T (84%)\",\n        \"requirement_aligned\": \"OBJECTIVE\",\n        \"reason\": \"Why this trait helps with this task\"\n      }\n    ],\n    \"counterbalanced\": [\n      {\n        \"trait\": \"High T (84%)\",\n        \"requirement_opposed\": \"EMPATHY\",\n        \"reason\": \"Why this trait may create a blind spot\",\n        \"injection\": \"Specific requirement to add to the prompt\"\n      }\n    ],\n    \"neutral\": [\n      {\n        \"trait\": \"High I (65%)\",\n        \"reason\": \"Why this trait is not relevant to the task\"\n      }\n    ]\n  },\n  \"personality_adjustments_preview\": [\n    \"AMPLIFIED: Description of what will be leveraged\",\n    \"COUNTERBALANCED: Description of what will be injected\"\n  ],\n  \"clarifying_questions\": [\n    {\n      \"id\": \"Q1\",\n      \"question\": \"The question text\",\n      \"purpose\": \"Why this question matters\",\n      \"required\": true\n    }\n  ],\n  \"question_rationale\": \"Brief explanation of question selection\"\n}`;\n\nconst hasPersonality = !!webhookData.personality_type;\nlet personalityInfo = 'No personality data provided. Skip Task-Trait Alignment and use neutral defaults.';\n\nif (hasPersonality) {\n  personalityInfo = `Type: ${webhookData.personality_type}`;\n  if (webhookData.trait_percentages) {\n    personalityInfo += `\\nPercentages: ${JSON.stringify(webhookData.trait_percentages)}`;\n    personalityInfo += `\\n\\nPerform full Task-Trait Alignment analysis:`;\n    personalityInfo += `\\n- Check each trait against the task's cognitive requirements`;\n    personalityInfo += `\\n- Mark aligned traits for AMPLIFICATION`;\n    personalityInfo += `\\n- Mark opposed traits for COUNTERBALANCING (include specific injections)`;\n    personalityInfo += `\\n- Mark unrelated traits as NEUTRAL`;\n  } else {\n    personalityInfo += `\\nPercentages: Not provided (use 65% default for each trait)`;\n    personalityInfo += `\\nPerform Task-Trait Alignment with default percentages.`;\n  }\n}\n\nconst userMessage = `Analyse this task and generate clarifying questions:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}\n\n**Personality Data:**\n${personalityInfo}`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    userMessage,\n    originalInput: {\n      task_description: webhookData.task_description,\n      personality_type: webhookData.personality_type || null,\n      trait_percentages: webhookData.trait_percentages || null\n    }\n  }\n}];"
+      },
+      "id": "prepare-prompt",
+      "name": "Prepare Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userMessage }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "id": "basic-llm-chain",
+      "name": "Analyze Task",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-5-20250514",
+        "options": {
+          "maxTokensToSample": 4096,
+          "temperature": 0.3
+        }
+      },
+      "id": "anthropic-model",
+      "name": "Anthropic Claude",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [1320, 520],
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const llmResponse = $input.first().json;\nconst originalInput = $('Prepare Prompt').first().json.originalInput;\n\nlet analysisData;\ntry {\n  // The response might be in different formats depending on the node version\n  let content = llmResponse.text || llmResponse.response?.text || llmResponse;\n  \n  if (typeof content === 'string') {\n    // Remove any markdown code blocks if present\n    content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n    analysisData = JSON.parse(content);\n  } else if (typeof content === 'object') {\n    analysisData = content;\n  } else {\n    throw new Error('Unexpected response format');\n  }\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      original_input: originalInput,\n      error: {\n        message: 'Failed to parse LLM response',\n        details: e.message,\n        raw_response: llmResponse\n      }\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    data: analysisData,\n    original_input: originalInput,\n    error: null\n  }\n}];"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1760, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Framework Taxonomy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Personality Calibration",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Question Bank",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Framework Taxonomy": {
+      "main": [
+        [
+          {
+            "node": "Merge 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Personality Calibration": {
+      "main": [
+        [
+          {
+            "node": "Merge 1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge 1": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Question Bank": {
+      "main": [
+        [
+          {
+            "node": "Merge 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge 2": {
+      "main": [
+        [
+          {
+            "node": "Prepare Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt": {
+      "main": [
+        [
+          {
+            "node": "Analyze Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Task",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Task": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "4"
+}

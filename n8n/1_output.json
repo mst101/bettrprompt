@@ -1,0 +1,113 @@
+[
+    {
+        "success": true,
+        "data": {
+            "task_classification": {
+                "primary_category": "PERSUASION",
+                "secondary_category": null,
+                "complexity": "simple",
+                "classification_reasoning": "The primary intent is to persuade or convince the wife, which aligns with the Persuasion task category. There are no clear secondary aspects to this task."
+            },
+            "cognitive_requirements": {
+                "primary": ["EMPATHY", "WARM"],
+                "secondary": ["STRUCTURE"],
+                "reasoning": "Showing love to one's wife requires empathy, understanding her perspective, and communicating in a warm, relational tone. Some structure may also help ensure the message is clear and impactful."
+            },
+            "selected_framework": {
+                "name": "BAB Framework",
+                "code": "BAB",
+                "components": ["Before", "After", "Bridge"],
+                "rationale": "The BAB framework is well-suited for this task as it focuses on crafting a persuasive narrative that connects the current state (Before) to the desired state (After) through a transformative Bridge. This storytelling approach aligns with the need to communicate love and emotion effectively."
+            },
+            "alternative_frameworks": [
+                {
+                    "name": "CAR Framework",
+                    "code": "CAR",
+                    "when_to_use_instead": "If a more structured, results-focused narrative is needed."
+                },
+                {
+                    "name": "Challenge-Solution-Benefit Framework",
+                    "code": "CHALLENGE_SOLUTION_BENEFIT",
+                    "when_to_use_instead": "If the goal is to clearly demonstrate the value and benefits of showing love."
+                }
+            ],
+            "personality_tier": "full",
+            "task_trait_alignment": {
+                "amplified": [
+                    {
+                        "trait": "High N (64%)",
+                        "requirement_aligned": "EMPATHY",
+                        "reason": "High Intuition can help the user better understand their wife's perspective and emotional needs."
+                    }
+                ],
+                "counterbalanced": [
+                    {
+                        "trait": "High T (84%)",
+                        "requirement_opposed": "WARM",
+                        "reason": "High Thinking may lead the user to focus more on logic and efficiency rather than emotional expression.",
+                        "injection": "Prompt will require the user to open with a personal, relationship-affirming statement before delivering the message."
+                    },
+                    {
+                        "trait": "High A (84%)",
+                        "requirement_opposed": "WARM",
+                        "reason": "High Assertiveness could cause the message to come across as overly confident or dismissive of the emotional aspect.",
+                        "injection": "Prompt will instruct the user to use a gentle, empathetic tone throughout the message."
+                    }
+                ],
+                "neutral": [
+                    {
+                        "trait": "High I (65%)",
+                        "reason": "Introversion/Extraversion is not directly relevant to the content of the message."
+                    },
+                    {
+                        "trait": "High P (57%)",
+                        "reason": "The Judging/Perceiving trait is near the midline and does not require a strong adjustment for this task."
+                    }
+                ]
+            },
+            "personality_adjustments_preview": [
+                "AMPLIFIED: Leveraging N-strength to better understand wife's perspective",
+                "COUNTERBALANCED: Injecting warm, empathetic tone requirements to offset high T and A tendencies"
+            ],
+            "clarifying_questions": [
+                {
+                    "id": "U3",
+                    "question": "Who is the intended audience for this message (your wife)?",
+                    "purpose": "Ensure the message is tailored to the specific recipient.",
+                    "required": true
+                },
+                {
+                    "id": "PE5",
+                    "question": "What does your wife care about most that you could align your message with?",
+                    "purpose": "Identify the values and motivations to appeal to.",
+                    "required": true
+                },
+                {
+                    "id": "PE7",
+                    "question": "How would you describe your current relationship with your wife?",
+                    "purpose": "Understand the existing trust and rapport to build upon.",
+                    "required": true
+                },
+                {
+                    "id": "PE3",
+                    "question": "What concerns or objections might your wife have about your message?",
+                    "purpose": "Anticipate and address potential resistance.",
+                    "required": false
+                }
+            ],
+            "question_rationale": "The selected questions focus on understanding the audience (wife), identifying her values and motivations, assessing the current relationship context, and anticipating potential objections - all of which are important for crafting an effective persuasive message. The universal question about audience is essential, while the other Persuasion-specific questions provide valuable context."
+        },
+        "original_input": {
+            "task_description": "I want to show my wife that I love her.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
+            }
+        },
+        "error": null
+    }
+]

@@ -1,0 +1,97 @@
+{
+    "framework_used": {
+        "name": "COAST Framework",
+        "code": "COAST",
+        "components": [
+            "Challenge",
+            "Objective",
+            "Actions",
+            "Strategy",
+            "Tactics"
+        ],
+        "explanation": "COAST framework was selected because it provides a strategic approach to a personal expression challenge, allowing for both conceptual analysis and practical implementation. It accommodates both the analytical needs of the user and the social dimensions of the task."
+    },
+    "task_trait_alignment": {
+        "amplified": [
+            {
+                "trait": "High T (84%)",
+                "requirement_aligned": "Analytical Approach",
+                "how_applied": "Prompt emphasizes logical structure, conceptual frameworks, and evidence-based reasoning that aligns with the user's analytical thinking style"
+            },
+            {
+                "trait": "High N (64%)",
+                "requirement_aligned": "Conceptual Understanding",
+                "how_applied": "Prompt requests analysis of different dimensions of patriotism and conceptual frameworks, playing to the user's intuitive strengths"
+            },
+            {
+                "trait": "High A (84%)",
+                "requirement_aligned": "Independent Thinking",
+                "how_applied": "Prompt emphasizes authentic expression that aligns with personal values rather than conforming to expectations"
+            }
+        ],
+        "counterbalanced": [
+            {
+                "trait": "High T (84%)",
+                "requirement_opposed": "Social\/Emotional Awareness",
+                "reason": "Expressing patriotism has significant social and emotional dimensions that a highly analytical person might overlook",
+                "injections_added": [
+                    "Consider the emotional and social dimensions of patriotism, not just intellectual concepts",
+                    "Include approaches that connect personal values with collective identity",
+                    "Consider the social and emotional impact of different expressions of patriotism"
+                ]
+            },
+            {
+                "trait": "High A (84%)",
+                "requirement_opposed": "Social Adaptability",
+                "reason": "High assertiveness might lead to overlooking how expressions are received by others",
+                "injections_added": [
+                    "Balance independent thinking with shared cultural expressions",
+                    "How to introduce these expressions naturally in social settings",
+                    "How to respond to potential misunderstandings"
+                ]
+            }
+        ],
+        "neutral": [
+            {
+                "trait": "High I (65%)",
+                "reason": "Introversion is relevant but not critical to the task; the prompt accommodates this by focusing on authentic expression rather than extraverted displays"
+            },
+            {
+                "trait": "Borderline P (57%)",
+                "reason": "The tactics-judging dimension is near midline and not strongly relevant to this particular task"
+            }
+        ]
+    },
+    "personality_adjustments_summary": [
+        "AMPLIFIED: T-strength for logical structure and analytical approach to patriotism",
+        "AMPLIFIED: N-strength for conceptual understanding of patriotism dimensions",
+        "AMPLIFIED: A-strength for authentic, independent expression",
+        "COUNTERBALANCED: T-tendency with explicit requirements to consider social\/emotional dimensions",
+        "COUNTERBALANCED: A-tendency with considerations for how expressions are received by others"
+    ],
+    "model_recommendations": [
+        {
+            "rank": 1,
+            "model": "Claude Opus 4.5",
+            "model_id": "claude-opus-4-5-20250514",
+            "rationale": "Best for balancing analytical reasoning with social\/emotional intelligence required for the counterbalancing. Can provide nuanced analysis of patriotism while addressing the social dimensions that need counterbalancing."
+        },
+        {
+            "rank": 2,
+            "model": "GPT-4o",
+            "model_id": "gpt-4o",
+            "rationale": "Strong reasoning capabilities and good balance of analytical and social understanding. Effective alternative that can handle the counterbalancing requirements."
+        },
+        {
+            "rank": 3,
+            "model": "Claude Sonnet 4.5",
+            "model_id": "claude-sonnet-4-5-20250514",
+            "rationale": "More cost-effective option that still handles the counterbalancing well, though with potentially less nuance in the analysis of patriotism concepts."
+        }
+    ],
+    "iteration_suggestions": [
+        "If the response feels too abstract, add more requirements for specific, concrete examples of patriotic expression",
+        "If the response overemphasizes social conformity, strengthen the authenticity requirements to better align with INTP independence",
+        "If the response lacks practical implementation advice, request more detailed tactical guidance for social situations"
+    ]
+}

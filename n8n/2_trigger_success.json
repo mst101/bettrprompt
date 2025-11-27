@@ -1,0 +1,66 @@
+[
+    {
+        "headers": {
+            "host": "n8n:5678",
+            "user-agent": "GuzzleHttp/7",
+            "content-type": "application/json",
+            "content-length": "1828"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+            "task_classification": {
+                "primary_category": "DECISION",
+                "secondary_category": null,
+                "complexity": "moderate",
+                "classification_reasoning": "This task involves deciding on the best used car to purchase, which requires evaluating options and making a decision based on various criteria. The primary focus is on decision-making."
+            },
+            "selected_framework": {
+                "name": "Pros and Cons Analysis",
+                "code": "PROS_AND_CONS",
+                "components": [
+                    "Benefits list",
+                    "Drawbacks list",
+                    "Weighted evaluation"
+                ],
+                "rationale": "The Pros and Cons Analysis framework is well-suited for this task as it allows the user to systematically evaluate different car options based on the specified criteria (price, age, mileage, running costs) and make a balanced decision."
+            },
+            "alternative_frameworks": [
+                {
+                    "name": "RICE",
+                    "code": "RICE",
+                    "when_to_use_instead": "If the user needs to prioritize and quantify the importance of different car features."
+                },
+                {
+                    "name": "SMART",
+                    "code": "SMART",
+                    "when_to_use_instead": "If the user needs to set specific, measurable goals for the car purchase."
+                }
+            ],
+            "personality_tier": "full",
+            "personality_adjustments_preview": [
+                "High T (84%): Emphasis on quantifiable criteria and logical evaluation",
+                "High A (84%): Direct language, minimal hedging in recommendations",
+                "Moderate N (64%): Include some big-picture context around the car purchase"
+            ],
+            "original_task_description": "I am in Bromsgrove, UK and want to buy a small second hand car for no more than £6,000 that is not too old, reliable, has low mileage, and is cheap to run.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
+            },
+            "question_answers": [
+                "Toyoto Yaris, VW Polo",
+                "Reliability, low mileage, cheap to run and maintain.",
+                "£6000, a little flexible",
+                "1 month",
+                "Mostly for short trips, but I will drive between Bromsgrove and London twice a month."
+            ]
+        },
+        "webhookUrl": "https://n8n.localhost/webhook/api/n8n/webhook/generate",
+        "executionMode": "production"
+    }
+]

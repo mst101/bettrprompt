@@ -1,0 +1,125 @@
+[
+    {
+        "success": true,
+        "data": {
+            "optimised_prompt": "You are a strategic advisor with expertise in personal expression and social dynamics.\n\n[CONTEXT]\nI am an INTP-A personality type who wants to demonstrate patriotism to my friends in a way that aligns with my values and personality. I want authentic ways to express patriotism that will resonate with both myself and my social circle.\n\n[CHALLENGE]\nI want to express patriotism to my friends in a way that feels authentic to me as an analytical, independent thinker while still being recognizable as patriotic to others.\n\n[OBJECTIVE]\nDevelop a strategic approach to expressing patriotism that:\n- Aligns with my analytical, logical nature (INTP)\n- Feels authentic rather than performative\n- Is recognizable to others as patriotic\n- Allows for thoughtful expression rather than emotional displays\n- Can be adapted based on different social contexts\n\n[IMPORTANT CONSIDERATIONS]\n- Consider the emotional and social dimensions of patriotism, not just intellectual concepts\n- Acknowledge that patriotism can be expressed through critical thinking and civic engagement\n- Include approaches that connect personal values with collective identity\n- Balance independent thinking with shared cultural expressions\n\n[ACTIONS]\nProvide specific, actionable ways to express patriotism, organized by category:\n1. Intellectual expressions (e.g., understanding history, constitutional principles)\n2. Civic engagement opportunities\n3. Social expressions with friends\n4. Personal habits and choices\n5. Digital/online expressions\n\nFor each suggestion, include:\n- The specific action\n- Why it demonstrates patriotism\n- How it aligns with an analytical personality\n- Any nuances to consider\n\n[STRATEGY]\nDevelop an overall approach that leverages my analytical strengths while addressing the social and emotional aspects of patriotic expression. Consider both short-term expressions and longer-term engagement.\n\n[TACTICS]\nProvide specific implementation advice for the most promising 2-3 approaches, including:\n- How to introduce these expressions naturally in social settings\n- How to frame my approach to patriotism when discussing with friends\n- How to respond to potential misunderstandings\n\n[CONSTRAINTS]\n- Suggestions should feel authentic to an analytical personality, not forced or purely emotional\n- Approaches should be socially appropriate and considerate of diverse perspectives\n- Focus on substantive expressions rather than superficial displays\n\n[OUTPUT SPECIFICATION]\nProvide a comprehensive, logically structured response that includes:\n1. A brief analysis of different dimensions of patriotism (conceptual framework)\n2. Specific, actionable suggestions organized by category\n3. Strategic approach for authentic expression\n4. Tactical implementation guidance\n5. Considerations for different social contexts\n\nUse logical structure, clear categorization, and evidence-based reasoning throughout. Include both immediate actions and longer-term approaches.\n\n[QUALITY CRITERIA]\nThe response should:\n- Demonstrate depth of thinking about what patriotism means beyond surface-level displays\n- Include specific, concrete examples rather than just abstract concepts\n- Consider the social and emotional impact of different expressions of patriotism\n- Balance analytical approach with social awareness\n- Provide actionable guidance that feels authentic to an INTP personality",
+            "metadata": {
+                "framework_used": {
+                    "name": "COAST Framework",
+                    "code": "COAST",
+                    "components": [
+                        "Challenge",
+                        "Objective",
+                        "Actions",
+                        "Strategy",
+                        "Tactics"
+                    ],
+                    "explanation": "COAST framework was selected because it provides a strategic approach to a personal expression challenge, allowing for both conceptual analysis and practical implementation. It accommodates both the analytical needs of the user and the social dimensions of the task."
+                },
+                "task_trait_alignment": {
+                    "amplified": [
+                        {
+                            "trait": "High T (84%)",
+                            "requirement_aligned": "Analytical Approach",
+                            "how_applied": "Prompt emphasizes logical structure, conceptual frameworks, and evidence-based reasoning that aligns with the user's analytical thinking style"
+                        },
+                        {
+                            "trait": "High N (64%)",
+                            "requirement_aligned": "Conceptual Understanding",
+                            "how_applied": "Prompt requests analysis of different dimensions of patriotism and conceptual frameworks, playing to the user's intuitive strengths"
+                        },
+                        {
+                            "trait": "High A (84%)",
+                            "requirement_aligned": "Independent Thinking",
+                            "how_applied": "Prompt emphasizes authentic expression that aligns with personal values rather than conforming to expectations"
+                        }
+                    ],
+                    "counterbalanced": [
+                        {
+                            "trait": "High T (84%)",
+                            "requirement_opposed": "Social/Emotional Awareness",
+                            "reason": "Expressing patriotism has significant social and emotional dimensions that a highly analytical person might overlook",
+                            "injections_added": [
+                                "Consider the emotional and social dimensions of patriotism, not just intellectual concepts",
+                                "Include approaches that connect personal values with collective identity",
+                                "Consider the social and emotional impact of different expressions of patriotism"
+                            ]
+                        },
+                        {
+                            "trait": "High A (84%)",
+                            "requirement_opposed": "Social Adaptability",
+                            "reason": "High assertiveness might lead to overlooking how expressions are received by others",
+                            "injections_added": [
+                                "Balance independent thinking with shared cultural expressions",
+                                "How to introduce these expressions naturally in social settings",
+                                "How to respond to potential misunderstandings"
+                            ]
+                        }
+                    ],
+                    "neutral": [
+                        {
+                            "trait": "High I (65%)",
+                            "reason": "Introversion is relevant but not critical to the task; the prompt accommodates this by focusing on authentic expression rather than extraverted displays"
+                        },
+                        {
+                            "trait": "Borderline P (57%)",
+                            "reason": "The tactics-judging dimension is near midline and not strongly relevant to this particular task"
+                        }
+                    ]
+                },
+                "personality_adjustments_summary": [
+                    "AMPLIFIED: T-strength for logical structure and analytical approach to patriotism",
+                    "AMPLIFIED: N-strength for conceptual understanding of patriotism dimensions",
+                    "AMPLIFIED: A-strength for authentic, independent expression",
+                    "COUNTERBALANCED: T-tendency with explicit requirements to consider social/emotional dimensions",
+                    "COUNTERBALANCED: A-tendency with considerations for how expressions are received by others"
+                ],
+                "model_recommendations": [
+                    {
+                        "rank": 1,
+                        "model": "Claude Opus 4.5",
+                        "model_id": "claude-opus-4-5-20250514",
+                        "rationale": "Best for balancing analytical reasoning with social/emotional intelligence required for the counterbalancing. Can provide nuanced analysis of patriotism while addressing the social dimensions that need counterbalancing."
+                    },
+                    {
+                        "rank": 2,
+                        "model": "GPT-4o",
+                        "model_id": "gpt-4o",
+                        "rationale": "Strong reasoning capabilities and good balance of analytical and social understanding. Effective alternative that can handle the counterbalancing requirements."
+                    },
+                    {
+                        "rank": 3,
+                        "model": "Claude Sonnet 4.5",
+                        "model_id": "claude-sonnet-4-5-20250514",
+                        "rationale": "More cost-effective option that still handles the counterbalancing well, though with potentially less nuance in the analysis of patriotism concepts."
+                    }
+                ],
+                "iteration_suggestions": [
+                    "If the response feels too abstract, add more requirements for specific, concrete examples of patriotic expression",
+                    "If the response overemphasizes social conformity, strengthen the authenticity requirements to better align with INTP independence",
+                    "If the response lacks practical implementation advice, request more detailed tactical guidance for social situations"
+                ]
+            }
+        },
+        "original_input": {
+            "original_task_description": "I want to show my friends that I am a patriot.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
+            },
+            "analysis_data": {},
+            "question_answers": [
+                "People I meet at the gym, mostly males in their 50's.",
+                "They think I like foreigners more than Brits.",
+                "They think I should love my country more.",
+                "They are supporters of Nigel Farage and the REFORM party.",
+                "Respect me more."
+            ]
+        },
+        "error": null
+    }
+]

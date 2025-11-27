@@ -140,7 +140,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         return Inertia::render('PromptBuilder/Show', [
-            'promptRun' => new PromptRunResource($promptRun),
+            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
         ]);
     }
 
