@@ -138,13 +138,6 @@ const tabs = computed<Tab[]>(() => {
         icon: 'squares-2x2',
     });
 
-    // Classification tab
-    allTabs.push({
-        id: 'classification',
-        label: 'Classification',
-        icon: 'tag',
-    });
-
     // Framework tab
     allTabs.push({
         id: 'framework',
@@ -170,18 +163,6 @@ const tabs = computed<Tab[]>(() => {
         label: 'Questions',
         icon: 'question-mark-circle',
     });
-
-    // Add alternatives tab if there are any
-    if (
-        props.promptRun.alternativeFrameworks &&
-        props.promptRun.alternativeFrameworks.length > 0
-    ) {
-        allTabs.push({
-            id: 'alternatives',
-            label: 'Alternatives',
-            icon: 'arrows-right-left',
-        });
-    }
 
     return allTabs;
 });
@@ -222,26 +203,25 @@ watch(
             />
 
             <!-- Your Task Tab -->
-            <TaskInformation
-                v-if="activeTab === 'task'"
-                :prompt-run="promptRun"
-                class="px-6"
-            />
-
-            <!-- Classification Tab -->
-            <TaskClassification
-                v-if="
-                    activeTab === 'classification' &&
-                    promptRun.taskClassification
-                "
-                :classification="promptRun.taskClassification as any"
-            />
+            <div v-if="activeTab === 'task'" class="space-y-4">
+                <TaskInformation :prompt-run="promptRun" class="px-6" />
+                <TaskClassification
+                    v-if="promptRun.taskClassification"
+                    :classification="promptRun.taskClassification as any"
+                />
+            </div>
 
             <!-- Framework Tab -->
-            <SelectedFramework
-                v-if="activeTab === 'framework' && promptRun.selectedFramework"
-                :framework="promptRun.selectedFramework as any"
-            />
+            <div v-if="activeTab === 'framework'" class="space-y-4">
+                <SelectedFramework
+                    v-if="promptRun.selectedFramework"
+                    :framework="promptRun.selectedFramework as any"
+                />
+                <AlternativeFrameworks
+                    v-if="promptRun.alternativeFrameworks"
+                    :frameworks="promptRun.alternativeFrameworks as any"
+                />
+            </div>
 
             <!-- Personality Tab -->
             <PersonalityAdjustments
@@ -347,15 +327,6 @@ watch(
                     </div>
                 </div>
             </Card>
-
-            <!-- Alternatives Tab -->
-            <AlternativeFrameworks
-                v-if="
-                    activeTab === 'alternatives' &&
-                    promptRun.alternativeFrameworks
-                "
-                :frameworks="promptRun.alternativeFrameworks as any"
-            />
         </div>
 
         <!-- Error Display -->
