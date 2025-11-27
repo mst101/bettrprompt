@@ -21,6 +21,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'Mark Thompson',
             'email' => 'info@hiddengambia.com',
             'password' => bcrypt('voodoo90'),
+            'personality_type' => 'INTP-A',
+            'trait_percentages' => [
+                'mind' => 65,
+                'energy' => 64,
+                'nature' => 84,
+                'tactics' => 57,
+                'identity' => 84,
+            ],
             'is_admin' => true,
         ]);
 

@@ -99,6 +99,7 @@ class PromptBuilderController extends Controller
                     'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
                     'question_rationale' => $result['data']['question_rationale'] ?? null,
                     'framework_questions' => $result['data']['clarifying_questions'] ?? [],
+                    'analysis_api_usage' => $result['api_usage'] ?? null,
                 ]);
             });
 
@@ -198,6 +199,7 @@ class PromptBuilderController extends Controller
                 $promptRun->update([
                     'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
                     'generation_metadata' => $result['data']['metadata'] ?? null,
+                    'generation_api_usage' => $result['api_usage'] ?? null,
                     'status' => 'completed',
                     'workflow_stage' => 'completed',
                     'completed_at' => now(),

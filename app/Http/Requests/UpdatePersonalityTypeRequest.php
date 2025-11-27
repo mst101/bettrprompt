@@ -35,10 +35,28 @@ class UpdatePersonalityTypeRequest extends BaseFormRequest
      */
     protected function prepareForValidation(): void
     {
+        parent::prepareForValidation();
+
+        $traitPercentages = $this->traitPercentages;
+
+        // Normalise numeric strings to integers and drop empty arrays to null
+        if (is_array($traitPercentages)) {
+            $traitPercentages = collect($traitPercentages)
+                ->map(fn ($value) => is_numeric($value) ? (int) $value : $value)
+                ->filter(fn ($value) => ! is_null($value))
+                ->whenEmpty(fn () => null);
+
+            $traitPercentages = $traitPercentages instanceof \Illuminate\Support\Collection
+                ? $traitPercentages->all()
+                : $traitPercentages;
+        }
+
         // Convert camelCase to snake_case for database
         $this->merge([
+            'personalityType' => $this->personalityType,
             'personality_type' => $this->personalityType,
-            'trait_percentages' => $this->traitPercentages,
+            'traitPercentages' => $traitPercentages,
+            'trait_percentages' => $traitPercentages,
         ]);
     }
 }

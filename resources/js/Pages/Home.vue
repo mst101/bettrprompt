@@ -48,7 +48,7 @@ defineOptions({
                         variant="primary"
                         class="text-lg uppercase"
                         size="lg"
-                        :href="route('prompt-optimizer.index')"
+                        :href="route('prompt-builder.index')"
                     >
                         {{
                             $page.props.auth?.user

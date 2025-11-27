@@ -103,6 +103,9 @@ Route::middleware('auth')->group(function () {
     // Prompt Optimizer history (requires authentication)
     Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
         ->name('prompt-optimizer.history');
+
+    Route::get('/prompt-builder-history', [PromptBuilderController::class, 'history'])
+        ->name('prompt-builder.history');
 });
 
 // Admin routes (requires authentication and admin role)
@@ -125,15 +128,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 require __DIR__.'/auth.php';
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
-        ->name('prompt-builder.index');
-    Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
-        ->name('prompt-builder.analyse');
-    Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
-        ->name('prompt-builder.show');
-    Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
-        ->name('prompt-builder.generate');
-    Route::get('/prompt-builder-history', [PromptBuilderController::class, 'history'])
-        ->name('prompt-builder.history');
-});
+// Route::middleware(['auth'])->group(function () {
+Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
+    ->name('prompt-builder.index');
+Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
+    ->name('prompt-builder.analyse');
+Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
+    ->name('prompt-builder.show');
+Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
+    ->name('prompt-builder.generate');
+// });
