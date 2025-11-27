@@ -17,12 +17,12 @@ class PromptFrameworkService
     }
 
     /**
-     * Workflow 1: Analyse task and generate clarifying questions
+     * Step 1: Analyse task and get framework + questions
      */
     public function analyseTask(
         string $taskDescription,
-        ?string $personalityType = null,
-        ?array $traitPercentages = null
+        ?string $personalityType,
+        ?array $traitPercentages
     ): array {
         $payload = [
             'task_description' => $taskDescription,
@@ -31,8 +31,7 @@ class PromptFrameworkService
         ];
 
         try {
-            $response = Http::timeout(60)
-                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
+            $response = Http::post("{$this->n8nBaseUrl}/webhook/prompt-builder-workflow-1", $payload);
 
             if ($response->successful()) {
                 return $response->json();
@@ -58,13 +57,15 @@ class PromptFrameworkService
     }
 
     /**
-     * Workflow 2: Generate optimised prompt
+     * Step 2: Generate the optimised prompt
      */
     public function generatePrompt(
         array $taskClassification,
+        array $cognitiveRequirements,
         array $selectedFramework,
         array $alternativeFrameworks,
         string $personalityTier,
+        array $taskTraitAlignment,
         array $personalityAdjustmentsPreview,
         string $originalTaskDescription,
         ?string $personalityType,
@@ -73,9 +74,11 @@ class PromptFrameworkService
     ): array {
         $payload = [
             'task_classification' => $taskClassification,
+            'cognitive_requirements' => $cognitiveRequirements,
             'selected_framework' => $selectedFramework,
             'alternative_frameworks' => $alternativeFrameworks,
             'personality_tier' => $personalityTier,
+            'task_trait_alignment' => $taskTraitAlignment,
             'personality_adjustments_preview' => $personalityAdjustmentsPreview,
             'original_task_description' => $originalTaskDescription,
             'personality_type' => $personalityType,
@@ -84,8 +87,7 @@ class PromptFrameworkService
         ];
 
         try {
-            $response = Http::timeout(90)
-                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $payload);
+            $response = Http::post("{$this->n8nBaseUrl}/webhook/prompt-builder-workflow-2", $payload);
 
             if ($response->successful()) {
                 return $response->json();

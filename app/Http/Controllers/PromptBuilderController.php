@@ -11,7 +11,6 @@ use App\Services\PromptFrameworkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class PromptBuilderController extends Controller
 {
@@ -22,11 +21,6 @@ class PromptBuilderController extends Controller
     /**
      * Show the prompt builder page
      */
-    //    public function index(): Response
-    //    {
-    //        return Inertia::render('PromptBuilder/Index');
-    //    }
-
     public function index(Request $request)
     {
         $personalityData = $this->getPersonalityData($request);
@@ -146,7 +140,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         return Inertia::render('PromptBuilder/Show', [
-            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
+            'promptRun' => new PromptRunResource($promptRun),
         ]);
     }
 
@@ -170,12 +164,14 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
-            // Call the generation workflow
+            // Call the generation workflow with NEW task-trait alignment parameters
             $result = $this->promptService->generatePrompt(
                 $promptRun->task_classification,
+                $promptRun->task_classification['cognitive_requirements'] ?? [], // NEW: cognitive requirements
                 $promptRun->selected_framework_details,
                 $promptRun->alternative_frameworks ?? [],
                 $promptRun->personality_tier,
+                $promptRun->task_classification['task_trait_alignment'] ?? [], // NEW: task-trait alignment
                 $promptRun->personality_adjustments_preview ?? [],
                 $promptRun->task_description,
                 $promptRun->personality_type,
