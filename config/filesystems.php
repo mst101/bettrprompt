@@ -49,7 +49,7 @@ return [
 
         'reference_documents' => [
             'driver' => 'local',
-            'root' => storage_path('app/reference_documents'),
+            'root' => resource_path('reference_documents'),
             'throw' => false,
             'report' => false,
         ],
