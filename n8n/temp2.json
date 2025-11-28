@@ -1,54 +1,44 @@
 [
     {
-        "success": false,
-        "data": null,
-        "original_input": {
-            "original_task_description": "I want to show my wife that I love her.",
-            "personality_type": "INTP-A",
-            "trait_percentages": {
-                "mind": 65,
-                "energy": 64,
-                "nature": 84,
-                "tactics": 57,
-                "identity": 84
-            },
-            "analysis_data": {},
-            "question_answers": [
-                "My wife is an ESTJ-T with trait percentages of 51%, 73%, 56%, 99% and 82%.",
-                "She hates our relationship, she has no respect for me and frequently tells me she hates me. I think a lot of this is due to the fact I have no job at the moment and she is the bread winner. I am trying to set up a new business after my old one was stolen and destroyed, but it's taking time - and my wife is not very patient!",
-                "What matters most to both of us is our 9-year-old daughter whom we both love dearly. We do not want to split up for her sake.",
-                "Treat me as an equal and stop shouting at me, especially in the presence of our daughter."
-            ]
-        },
-        "api_usage": null,
-        "error": {
-            "message": "Failed to parse LLM response",
-            "details": "Bad control character in string literal in JSON at position 126 (line 2 column 125)",
-            "raw_response": {
-                "model": "claude-3-7-sonnet-20250219",
-                "id": "msg_01Jd2LrBd95a1FiwWL7C9QA4",
-                "type": "message",
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "{\n  \"optimised_prompt\": \"You are a relationship expression strategist with expertise in meaningful gestures and communication.\n\nCONTEXT\nI'm an INTP-A personality type looking to show my wife that I love her. I want to express my feelings in a way that will be meaningful to her.\n\nIMPORTANT REQUIREMENTS\n- Focus on the emotional impact of gestures, not just their logical value\n- Consider how each suggestion will make my wife feel, not just what it accomplishes\n- Include both verbal and non-verbal expressions of love\n- Suggest ways to communicate feelings directly, even if it feels uncomfortable\n- Balance thoughtful gestures with authentic emotional expression\n\nCHALLENGE\nI want to express my love for my wife in ways that she will genuinely appreciate and that will strengthen our relationship.\n\nOBJECTIVE\nTo develop a personalized approach to showing love that:\n- Clearly communicates my feelings\n- Resonates with my wife's preferences and love language\n- Creates meaningful moments of connection\n- Demonstrates consistent care, not just one-time gestures\n\nACTIONS\nProvide a range of actionable suggestions organized by:\n1. Daily expressions (small, consistent actions)\n2. Special occasions (more elaborate gestures)\n3. Verbal expressions (ways to communicate feelings directly)\n4. Quality time approaches (meaningful connection opportunities)\n\nSTRATEGY\nDevelop an approach that balances:\n- Analytical thoughtfulness (leveraging my natural strengths)\n- Emotional expressiveness (which may be outside my comfort zone)\n- Consistency and spontaneity\n- My authentic style with what will resonate with my wife\n\nTACTICS\nFor each suggestion, include:\n- A specific example of how to implement it\n- Why it's likely to be meaningful to her\n- How to personalize it based on her preferences\n- A note on the emotional impact it might have\n\nCONSTRAINTS\n- Suggestions should feel authentic to my personality, not forced\n- Include options that vary in time commitment and complexity\n- Consider both my comfort zone and areas for growth\n\nOUTPUT SPECIFICATION\nProvide a comprehensive, logically structured response with:\n1. A brief introduction on the importance of personalized expressions of love\n2. Categorized suggestions as outlined in the ACTIONS section\n3. Strategic considerations for long-term relationship nurturing\n4. Specific examples that can be implemented immediately\n5. A conclusion with principles for ongoing love expression\n\nQUALITY CRITERIA\nThe response should:\n- Be thoughtful and substantive, not filled with clichés\n- Include both logical and emotional dimensions of love expression\n- Provide specific, actionable suggestions, not just concepts\n- Acknowledge that expressing feelings directly may be challenging but is valuable\n- Balance analytical approach with emotional awareness\n- Consider my wife's perspective and emotional experience\",\n\n  \"metadata\": {\n    \"framework_used\": {\n      \"name\": \"COAST Framework\",\n      \"code\": \"COAST\",\n      \"components\": [\"Challenge\", \"Objective\", \"Actions\", \"Strategy\", \"Tactics\"],\n      \"explanation\": \"COAST framework was selected for this relationship task because it provides a strategic approach to expressing love, balancing analytical planning (which aligns with INTP strengths) while ensuring emotional elements aren't overlooked. It allows for both systematic thinking and emotional expression.\"\n    },\n\n    \"task_trait_alignment\": {\n      \"amplified\": [\n        {\n          \"trait\": \"High N (64%)\",\n          \"requirement_aligned\": \"Strategic Thinking\",\n          \"how_applied\": \"Prompt structured to leverage conceptual thinking by framing love expression as a strategic challenge with multiple dimensions and approaches\"\n        },\n        {\n          \"trait\": \"High A (84%)\",\n          \"requirement_aligned\": \"Confident Implementation\",\n          \"how_applied\": \"Prompt encourages decisive action while maintaining authenticity, playing to natural confidence\"\n        }\n      ],\n      \"counterbalanced\": [\n        {\n          \"trait\": \"High T (84%)\",\n          \"requirement_opposed\": \"Emotional Expression\",\n          \"reason\": \"Task requires emotional awareness and expression that High-T may naturally minimize\",\n          \"injections_added\": [\n            \"Focus on the emotional impact of gestures, not just their logical value\",\n            \"Consider how each suggestion will make my wife feel, not just what it accomplishes\",\n            \"Suggest ways to communicate feelings directly, even if it feels uncomfortable\",\n            \"Include both verbal and non-verbal expressions of love\"\n          ]\n        }\n      ],\n      \"neutral\": [\n        {\n          \"trait\": \"High I (65%)\",\n          \"reason\": \"Introversion is neither an advantage nor disadvantage for expressing love to a spouse\"\n        },\n        {\n          \"trait\": \"Borderline P (57%)\",\n          \"reason\": \"Near midline; no strong adjustment needed for this relationship task\"\n        }\n      ]\n    },\n\n    \"personality_adjustments_summary\": [\n      \"AMPLIFIED: N-strength for strategic approach to relationship expression\",\n      \"AMPLIFIED: A-strength for confident implementation of suggestions\",\n      \"COUNTERBALANCED: T-tendency with explicit requirements for emotional awareness and expression\",\n      \"NEUTRAL: I and borderline P traits not significantly adjusted\"\n    ],\n\n    \"model_recommendations\": [\n      {\n        \"rank\": 1,\n        \"model\": \"Claude Opus 4.5\",\n        \"model_id\": \"claude-opus-4-5-20250514\",\n        \"rationale\": \"Best for nuanced relationship advice that balances logical structure with emotional intelligence. Excels at following the counterbalance instructions for emotional expression while respecting the user's analytical nature.\"\n      },\n      {\n        \"rank\": 2,\n        \"model\": \"GPT-4o\",\n        \"model_id\": \"gpt-4o\",\n        \"rationale\": \"Strong alternative capable of balancing analytical framework with emotional intelligence needed for relationship advice\"\n      },\n      {\n        \"rank\": 3,\n        \"model\": \"Claude Sonnet 4.5\",\n        \"model_id\": \"claude-sonnet-4-5-20250514\",\n        \"rationale\": \"Cost-effective option that handles the emotional counterbalancing well while maintaining logical structure\"\n      }\n    ],\n\n    \"iteration_suggestions\": [\n      \"If suggestions feel too emotionally demanding, reduce some counterbalancing weight on High-T\",\n      \"If you want more specific ideas tailored to your wife, add details about her preferences and love language\",\n      \"To focus on a specific occasion or context, modify the CONSTRAINTS section with timing or situational details\"\n    ]\n  }\n}"
-                    }
-                ],
-                "stop_reason": "end_turn",
-                "stop_sequence": null,
-                "usage": {
-                    "input_tokens": 14381,
-                    "cache_creation_input_tokens": 0,
-                    "cache_read_input_tokens": 0,
-                    "cache_creation": {
-                        "ephemeral_5m_input_tokens": 0,
-                        "ephemeral_1h_input_tokens": 0
-                    },
-                    "output_tokens": 1501,
-                    "service_tier": "standard"
-                }
-            }
-        }
+        "id": "Q1",
+        "question": "What does your wife value most in how you show love? (e.g., quality time, words of affirmation, acts of service, physical affection, gifts)",
+        "purpose": "Ensure the expression aligns with what actually makes HER feel loved, not just what feels natural to you",
+        "required": true
+    },
+    {
+        "id": "Q2",
+        "question": "What specifically about your wife makes you love her? What qualities, moments, or characteristics stand out?",
+        "purpose": "Ground the expression in genuine, personal emotion rather than abstract sentiment",
+        "required": true
+    },
+    {
+        "id": "Q3",
+        "question": "How do you want her to feel after you express this? What emotion or sense should she have?",
+        "purpose": "Define the emotional outcome you're aiming for, ensuring the expression is designed with her experience in mind",
+        "required": true
+    },
+    {
+        "id": "Q4",
+        "question": "Is this expression meant to be private between you two, or would she appreciate public acknowledgment?",
+        "purpose": "Tailor the scope and setting to what resonates with her personality and preferences",
+        "required": true
+    },
+    {
+        "id": "Q5",
+        "question": "Do you want this to be a one-time gesture, an ongoing practice, or a combination?",
+        "purpose": "Clarify whether this is a single meaningful moment or the start of a pattern of demonstrating love",
+        "required": false
+    },
+    {
+        "id": "Q6",
+        "question": "Are there any constraints (time, budget, location) that should shape how you express this?",
+        "purpose": "Ensure the expression is realistic and achievable",
+        "required": false
+    },
+    {
+        "id": "Q7",
+        "question": "What would feel authentic and genuine to you, rather than forced or performative?",
+        "purpose": "Balance the need for emotional expression with your natural communication style",
+        "required": false
     }
 ]

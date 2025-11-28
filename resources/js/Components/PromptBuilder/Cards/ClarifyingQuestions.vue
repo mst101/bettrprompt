@@ -198,11 +198,17 @@ const submitEditedAnswers = () => {
 };
 
 const hasSubmittedAnswers = computed(() => {
-    const answersFromRun = props.promptRun.clarifyingAnswers;
-    return (
-        Array.isArray(answersFromRun) &&
-        answersFromRun.some((answer) => answer !== null && answer !== undefined)
-    );
+    // Only show "answered" view when ALL questions have been answered
+    const answersFromRun = props.promptRun.clarifyingAnswers ?? [];
+    const totalQuestions = questions.value.length;
+
+    // If we don't have the same number of answers as questions, we're still answering
+    if (answersFromRun.length < totalQuestions) {
+        return false;
+    }
+
+    // All questions answered (some may be null/skipped, but we've processed all)
+    return answersFromRun.length >= totalQuestions;
 });
 
 const shouldShowQuestionForm = computed(
