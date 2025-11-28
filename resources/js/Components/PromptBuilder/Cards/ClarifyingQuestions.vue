@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import ButtonText from '@/Components/ButtonText.vue';
 import Card from '@/Components/Card.vue';
 import type { ClarifyingQuestion } from '@/Components/PromptBuilder/Cards/clarifyingQuestion';
 import AnsweredList from '@/Components/PromptBuilder/Cards/ClarifyingQuestions/AnsweredList.vue';
@@ -210,26 +209,18 @@ const bulkSubmitLabel = computed(() =>
     <Card>
         <div class="space-y-6">
             <div class="flex items-start justify-between gap-4">
-                <div>
-                    <h2 class="text-lg font-semibold text-gray-900">
-                        Clarifying Questions
-                    </h2>
-                    <p
-                        v-if="promptRun.questionRationale"
-                        class="mt-1 text-sm text-gray-600"
-                    >
-                        {{ promptRun.questionRationale }}
-                    </p>
-                </div>
+                <h2 class="text-lg font-semibold text-gray-900">
+                    Clarifying Questions
+                </h2>
+
                 <div
                     v-if="hasQuestions"
                     class="flex flex-col items-end gap-2 text-right"
                 >
-                    <ButtonText
+                    <ButtonSecondary
                         v-if="!hasSubmittedAnswers"
                         id="show-all-questions"
                         type="button"
-                        class="text-indigo-600 hover:text-indigo-800"
                         :underline="true"
                         @click="showAllQuestions = !showAllQuestions"
                     >
@@ -238,16 +229,16 @@ const bulkSubmitLabel = computed(() =>
                                 ? 'One at a time'
                                 : 'Show all questions'
                         }}
-                    </ButtonText>
+                    </ButtonSecondary>
                     <div v-if="hasSubmittedAnswers">
-                        <ButtonPrimary
+                        <ButtonSecondary
                             v-if="!isEditingAnswers"
                             type="button"
                             :disabled="isSubmitting"
                             @click="startEditingAnswers"
                         >
                             Edit Answers
-                        </ButtonPrimary>
+                        </ButtonSecondary>
                         <div v-else class="flex items-center gap-2">
                             <ButtonSecondary
                                 type="button"
@@ -269,8 +260,12 @@ const bulkSubmitLabel = computed(() =>
                 </div>
             </div>
 
+            <p v-if="promptRun.questionRationale" class="text-sm text-gray-600">
+                {{ promptRun.questionRationale }}
+            </p>
+
             <AnsweredList
-                v-if="hasSubmittedAnswers"
+                v-if="hasSubmittedAnswers && !isEditingAnswers"
                 :questions="questions"
                 :answers="promptRun.clarifyingAnswers"
             />
