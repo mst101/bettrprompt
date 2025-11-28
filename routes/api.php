@@ -191,6 +191,7 @@ Route::post('/restore-visitor', function (Request $request) {
 Route::prefix('reference')->group(function () {
     Route::get('framework-taxonomy', [ReferenceController::class, 'frameworkTaxonomy']);
     Route::get('personality-calibration', [ReferenceController::class, 'personalityCalibration']);
+    Route::get('personality-calibration-smart/{types?}', [ReferenceController::class, 'personalityCalibrationSmart']);
     Route::get('question-bank', [ReferenceController::class, 'questionBank']);
     Route::get('prompt-templates', [ReferenceController::class, 'promptTemplates']);
     Route::get('framework-template/{code}', [ReferenceController::class, 'frameworkTemplate']);

@@ -23,6 +23,52 @@ class ReferenceController extends Controller
         return $this->getReference('personality_calibration.md');
     }
 
+    /**
+     * Get personality calibration optimized for specific types
+     * Returns core calibration + trait details only for mentioned personality types
+     */
+    public function personalityCalibrationSmart(string $types = ''): JsonResponse
+    {
+        $cacheKey = $types ? "personality_calibration_smart_{$types}" : 'personality_calibration_smart_core_only';
+
+        $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($types) {
+            $disk = Storage::disk('reference_documents');
+
+            if (! $disk->exists('personality_calibration_core.md')) {
+                return null;
+            }
+
+            $content = $disk->get('personality_calibration_core.md');
+
+            // If specific types requested and traits file exists, add relevant trait details
+            if ($types && $disk->exists('personality_traits_detailed.md')) {
+                $traitsContent = $disk->get('personality_traits_detailed.md');
+                $content .= "\n\n---\n\n## Relevant Trait Influence Matrices\n\n";
+                $content .= $traitsContent;
+            }
+
+            return [
+                'content' => $content,
+                'types_included' => $types ?: 'core_only',
+                'last_updated' => $disk->lastModified('personality_calibration_core.md'),
+            ];
+        });
+
+        if ($data === null) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Personality calibration document not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'content' => $data['content'],
+            'types_included' => $data['types_included'],
+            'last_updated' => date('c', $data['last_updated']),
+        ]);
+    }
+
     public function questionBank(): JsonResponse
     {
         return $this->getReference('question_bank.md');
