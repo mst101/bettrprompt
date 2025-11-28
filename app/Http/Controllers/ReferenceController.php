@@ -15,7 +15,7 @@ class ReferenceController extends Controller
 
     public function frameworkTaxonomy(): JsonResponse
     {
-        return $this->getReference('framework_taxonomy.md');
+        return $this->getReference('framework_taxonomy_compressed.md');
     }
 
     public function personalityCalibration(): JsonResponse
