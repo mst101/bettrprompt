@@ -44,9 +44,8 @@ watch(
 
         <!-- View Mode -->
         <div v-if="!isEditing" class="space-y-4">
-            <div class="flex items-center justify-end">
+            <div class="flex items-center justify-between">
                 <ButtonSecondary
-                    v-if="showEditButton"
                     type="button"
                     class="inline-flex items-center gap-1"
                     @click="startEditing"
