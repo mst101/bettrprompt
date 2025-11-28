@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import FormTextarea from '@/Components/FormTextarea.vue';
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
+import Card from '@/Components/Card.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
+import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
+import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
+import { useTextAppend } from '@/Composables/useTextAppend';
+import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     question: string;
@@ -7,142 +15,149 @@ interface Props {
     currentQuestionNumber: number;
     totalQuestions: number;
     isSubmitting: boolean;
-    canGoBack: boolean;
-    showAll: boolean;
+    canGoBack?: boolean;
+    showAll?: boolean;
 }
 
-interface Emits {
+const props = withDefaults(defineProps<Props>(), {
+    canGoBack: false,
+    showAll: false,
+});
+
+const emit = defineEmits<{
     (e: 'update:answer', value: string): void;
     (e: 'submit'): void;
     (e: 'skip'): void;
-    (e: 'goBack'): void;
+    (e: 'go-back'): void;
     (e: 'clear'): void;
-    (e: 'toggleShowAll'): void;
-}
+}>();
 
-defineProps<Props>();
-const emit = defineEmits<Emits>();
+const { appendText } = useTextAppend();
+const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
+    null,
+);
 
-const handleSubmit = () => {
-    emit('submit');
+const focus = () => {
+    nextTick(() => {
+        textareaRef.value?.focus();
+    });
 };
 
-const handleSkip = () => {
-    emit('skip');
-};
+defineExpose({ focus });
 
-const handleGoBack = () => {
-    emit('goBack');
-};
+watch(
+    () => props.question,
+    () => {
+        focus();
+    },
+);
 
-const handleClear = () => {
-    emit('clear');
-};
+const progressPercent = computed(() => {
+    if (props.totalQuestions === 0) return 0;
+    const answeredCount = props.currentQuestionNumber - 1;
+    return (answeredCount / props.totalQuestions) * 100;
+});
 
-const handleToggleShowAll = () => {
-    emit('toggleShowAll');
+const handleTranscription = (text: string) => {
+    const updated = appendText(props.answer, text);
+    emit('update:answer', updated);
 };
 </script>
 
 <template>
-    <div class="space-y-4">
-        <!-- Progress Bar -->
-        <div class="mb-4">
-            <div class="mb-2 flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700">
-                    Question {{ currentQuestionNumber }} of {{ totalQuestions }}
-                </span>
-                <span class="text-sm text-gray-600">
-                    {{
-                        Math.round(
-                            (currentQuestionNumber / totalQuestions) * 100,
-                        )
-                    }}% complete
+    <Card>
+        <div class="space-y-6">
+            <!-- Progress Bar -->
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-gray-700">
+                        Question {{ currentQuestionNumber }} of
+                        {{ totalQuestions }}
+                    </span>
+                </div>
+                <span class="text-gray-600">
+                    {{ Math.round(progressPercent) }}% complete
                 </span>
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-indigo-100">
                 <div
-                    class="h-full rounded-full bg-blue-600 transition-all duration-300"
-                    :style="{
-                        width: `${(currentQuestionNumber / totalQuestions) * 100}%`,
-                    }"
+                    class="h-full rounded-full bg-indigo-600 transition-all duration-300"
+                    :style="{ width: `${progressPercent}%` }"
                 />
             </div>
-        </div>
 
-        <!-- Question -->
-        <div class="rounded-lg bg-gray-50 p-4">
-            <h3 class="mb-2 text-lg font-medium text-gray-900">
-                {{ question }}
-            </h3>
-        </div>
-
-        <!-- Answer Input -->
-        <FormTextarea
-            id="answer"
-            :model-value="answer"
-            label="Your Answer"
-            :rows="6"
-            :disabled="isSubmitting"
-            placeholder="Type your answer here..."
-            @update:model-value="(value) => emit('update:answer', value)"
-        />
-
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex gap-2">
-                <button
-                    v-if="canGoBack"
-                    type="button"
-                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    :disabled="isSubmitting"
-                    @click="handleGoBack"
-                >
-                    Back
-                </button>
-                <button
-                    type="button"
-                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    :disabled="isSubmitting || !answer"
-                    @click="handleClear"
-                >
-                    Clear
-                </button>
+            <!-- Question -->
+            <div class="rounded-lg bg-indigo-50 p-4">
+                <h3 class="text-sm font-medium text-indigo-900">
+                    {{ question }}
+                </h3>
             </div>
 
-            <div class="flex gap-2">
-                <button
-                    type="button"
-                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    :disabled="isSubmitting"
-                    @click="handleSkip"
-                >
-                    Skip
-                </button>
-                <button
-                    type="button"
-                    class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-                    :disabled="isSubmitting || !answer.trim()"
-                    @click="handleSubmit"
-                >
-                    <span v-if="isSubmitting">Submitting...</span>
-                    <span v-else-if="currentQuestionNumber === totalQuestions">
-                        Submit All Answers
-                    </span>
-                    <span v-else>Next Question</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Toggle to show all questions -->
-        <div class="mt-4 text-center">
-            <button
-                type="button"
-                class="text-sm text-blue-600 underline hover:text-blue-700"
-                @click="handleToggleShowAll"
+            <!-- Answer Input -->
+            <FormTextareaWithActions
+                id="answer"
+                ref="textareaRef"
+                :model-value="answer"
+                label="Your Answer"
+                :rows="5"
+                :disabled="isSubmitting"
+                placeholder="Type your answer here or record a quick note..."
+                @update:model-value="(value) => emit('update:answer', value)"
             >
-                {{ showAll ? 'Back to one-at-a-time' : 'Show all questions' }}
-            </button>
+                <template #actions>
+                    <ButtonTrash
+                        v-if="answer"
+                        :disabled="isSubmitting"
+                        @click="emit('clear')"
+                    />
+                    <ButtonVoiceInput
+                        :disabled="isSubmitting"
+                        @transcription="handleTranscription"
+                    />
+                </template>
+            </FormTextareaWithActions>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-2">
+                    <ButtonSecondary
+                        v-if="canGoBack"
+                        type="button"
+                        :disabled="isSubmitting"
+                        @click="emit('go-back')"
+                    >
+                        <DynamicIcon name="arrow-left" class="mr-2 h-4 w-4" />
+                        Back
+                    </ButtonSecondary>
+                    <ButtonSecondary
+                        type="button"
+                        :disabled="isSubmitting || !answer"
+                        @click="emit('clear')"
+                    >
+                        Clear
+                    </ButtonSecondary>
+                    <ButtonSecondary
+                        type="button"
+                        :disabled="isSubmitting"
+                        @click="emit('skip')"
+                    >
+                        Skip Question
+                    </ButtonSecondary>
+                </div>
+
+                <ButtonPrimary
+                    type="button"
+                    :disabled="isSubmitting || !answer.trim()"
+                    :loading="isSubmitting"
+                    @click="emit('submit')"
+                >
+                    {{
+                        currentQuestionNumber === totalQuestions
+                            ? 'Submit All Answers'
+                            : 'Next Question'
+                    }}
+                </ButtonPrimary>
+            </div>
         </div>
-    </div>
+    </Card>
 </template>

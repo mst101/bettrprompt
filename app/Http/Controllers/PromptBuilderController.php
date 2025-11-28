@@ -237,6 +237,122 @@ class PromptBuilderController extends Controller
     }
 
     /**
+     * Create a child prompt run from edited clarifying answers
+     */
+    public function createChildFromAnswers(Request $request, PromptRun $parentPromptRun)
+    {
+        $this->authorizePromptRun($parentPromptRun, $request);
+
+        if (empty($parentPromptRun->framework_questions)) {
+            return back()->with('error', 'Parent prompt run does not have clarifying questions.');
+        }
+
+        $validated = $request->validate([
+            'clarifying_answers' => 'required|array',
+        ]);
+
+        $clarifyingAnswers = array_map(
+            fn ($answer) => ($answer === '' || $answer === null) ? null : $answer,
+            $validated['clarifying_answers'],
+        );
+
+        $user = auth()->user();
+        $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+
+        try {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $visitorId,
+                $parentPromptRun,
+                $clarifyingAnswers
+            ) {
+                return PromptRun::create([
+                    'visitor_id' => $visitorId,
+                    'user_id' => $user?->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
+                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
+                    'task_description' => $parentPromptRun->task_description,
+                    'task_classification' => $parentPromptRun->task_classification,
+                    'cognitive_requirements' => $parentPromptRun->cognitive_requirements,
+                    'selected_framework' => $parentPromptRun->selected_framework,
+                    'alternative_frameworks' => $parentPromptRun->alternative_frameworks,
+                    'personality_tier' => $parentPromptRun->personality_tier,
+                    'task_trait_alignment' => $parentPromptRun->task_trait_alignment,
+                    'personality_adjustments_preview' => $parentPromptRun->personality_adjustments_preview,
+                    'question_rationale' => $parentPromptRun->question_rationale,
+                    'framework_questions' => $parentPromptRun->framework_questions,
+                    'clarifying_answers' => $clarifyingAnswers,
+                    'status' => 'processing',
+                    'workflow_stage' => 'generating_prompt',
+                ]);
+            });
+
+            // Combine questions with answers for generation
+            $questions = $parentPromptRun->framework_questions ?? [];
+            $questionAnswers = [];
+
+            foreach ($questions as $index => $question) {
+                $questionAnswers[] = [
+                    'question' => is_array($question) ? ($question['question'] ?? '') : $question,
+                    'answer' => $clarifyingAnswers[$index] ?? '',
+                ];
+            }
+
+            $result = $this->promptService->generatePrompt(
+                $childPromptRun->task_classification,
+                $childPromptRun->cognitive_requirements ?? [],
+                $childPromptRun->selected_framework,
+                $childPromptRun->personality_tier,
+                $childPromptRun->task_trait_alignment ?? [],
+                $childPromptRun->personality_adjustments_preview ?? [],
+                $childPromptRun->task_description,
+                $childPromptRun->personality_type,
+                $childPromptRun->trait_percentages,
+                $questionAnswers
+            );
+
+            if (! $result['success']) {
+                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $result) {
+                    $childPromptRun->update([
+                        'status' => 'failed',
+                        'error_message' => $result['error']['message'] ?? 'Generation failed',
+                    ]);
+                });
+
+                return back()->with('error', 'Failed to generate prompt with edited answers.');
+            }
+
+            DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $result) {
+                $childPromptRun->update([
+                    'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
+                    'framework_used' => $result['data']['framework_used'] ?? null,
+                    'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
+                    'model_recommendations' => $result['data']['model_recommendations'] ?? null,
+                    'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
+                    'generation_api_usage' => $result['api_usage'] ?? null,
+                    'status' => 'completed',
+                    'workflow_stage' => 'completed',
+                    'completed_at' => now(),
+                ]);
+            });
+
+            return redirect()
+                ->route('prompt-builder.show', $childPromptRun)
+                ->with('success', 'Generating your optimised prompt with edited answers...');
+        } catch (\Exception $e) {
+            Log::error('Failed to create child prompt run for prompt builder', [
+                'parent_prompt_run_id' => $parentPromptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', 'An error occurred whilst creating the new prompt run. Please try again.');
+        }
+    }
+
+    /**
      * Get the current visitor ID from cookie
      */
     protected function getVisitorId(Request $request): ?string

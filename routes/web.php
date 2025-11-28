@@ -137,4 +137,6 @@ Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show
     ->name('prompt-builder.show');
 Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
     ->name('prompt-builder.generate');
+Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers', [PromptBuilderController::class, 'createChildFromAnswers'])
+    ->name('prompt-builder.create-child-from-answers');
 // });
