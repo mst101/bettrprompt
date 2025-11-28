@@ -8,6 +8,9 @@ export interface BaseFormFieldProps {
     /** Label text displayed for the field */
     label: string;
 
+    /** Render the label visually hidden but available to screen readers */
+    srOnlyLabel?: boolean;
+
     /** Error message to display */
     error?: string;
 

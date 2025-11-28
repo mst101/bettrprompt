@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Card from '@/Components/Card.vue';
 
 interface Props {
@@ -8,9 +9,16 @@ interface Props {
         components: string[];
         rationale: string;
     };
+    showProceedButton?: boolean;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+    showProceedButton: false,
+});
+
+const emit = defineEmits<{
+    proceed: [];
+}>();
 </script>
 
 <template>
@@ -49,6 +57,12 @@ defineProps<Props>();
                     {{ framework.rationale }}
                 </p>
             </div>
+        </div>
+
+        <div v-if="showProceedButton" class="flex justify-end pt-2">
+            <ButtonPrimary @click="emit('proceed')">
+                Proceed to Questions
+            </ButtonPrimary>
         </div>
     </Card>
 </template>

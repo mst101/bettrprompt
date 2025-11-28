@@ -46,7 +46,7 @@ const logoDestination = computed(() => {
 
     // If admin user and on admin pages, go to main site
     if (isAdmin.value && currentRoute.startsWith('admin.')) {
-        return route('prompt-builder.index');
+        return route('home');
     }
 
     // If admin user and on main site, go to admin dashboard

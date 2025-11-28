@@ -142,8 +142,29 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($promptRun, $request);
 
+        $promptRun->load(['parent', 'children']);
+
+        // Check if there's a future answer for the current question
+        $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+        $futureAnswers = session()->get($sessionKey, []);
+        $currentQuestionIndex = count($promptRun->clarifying_answers ?? []);
+        $currentQuestionAnswer = $futureAnswers[$currentQuestionIndex] ?? null;
+
+        // Get current question
+        $currentQuestion = null;
+        if ($promptRun->framework_questions && isset($promptRun->framework_questions[$currentQuestionIndex])) {
+            $question = $promptRun->framework_questions[$currentQuestionIndex];
+            $currentQuestion = is_array($question) ? ($question['question'] ?? null) : $question;
+        }
+
         return Inertia::render('PromptBuilder/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
+            'currentQuestion' => $currentQuestion,
+            'currentQuestionAnswer' => $currentQuestionAnswer,
+            'progress' => [
+                'answered' => count($promptRun->clarifying_answers ?? []),
+                'total' => count($promptRun->framework_questions ?? []),
+            ],
         ]);
     }
 
@@ -233,6 +254,249 @@ class PromptBuilderController extends Controller
                 'success' => false,
                 'error' => ['message' => 'Failed to generate prompt. Please try again.'],
             ], 500);
+        }
+    }
+
+    /**
+     * Submit an answer to a clarifying question (one-at-a-time mode)
+     */
+    public function answerQuestion(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot answer questions at this stage.');
+        }
+
+        $validated = $request->validate([
+            'answer' => 'nullable|string',
+        ]);
+
+        try {
+            // Get current answers
+            $answers = $promptRun->clarifying_answers ?? [];
+            $currentAnswerCount = count($answers);
+
+            // Check if we have future answers stored in session (from going back)
+            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+            $futureAnswers = session()->get($sessionKey, []);
+
+            // Add the current answer
+            $answers[] = $validated['answer'];
+
+            Log::info('Submitting Answer (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'current_answers_count' => $currentAnswerCount,
+                'new_answer' => $validated['answer'],
+                'total_after' => count($answers),
+            ]);
+
+            // Update the prompt run
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => 'answering_questions',
+                ]);
+            });
+
+            $promptRun->refresh();
+
+            // Check if all questions have been answered
+            if ($this->hasAnsweredAllQuestions($promptRun)) {
+                // Clear future answers from session
+                session()->forget($sessionKey);
+
+                // Trigger generation (redirect to questions tab with completion notice)
+                return redirect()
+                    ->route('prompt-builder.show', $promptRun)
+                    ->with('success', 'All questions answered. Ready to generate prompt!');
+            }
+
+            // More questions to answer
+            return redirect()
+                ->route('prompt-builder.show', $promptRun)
+                ->with('success', 'Answer saved.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to save answer (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to save answer. Please try again.');
+        }
+    }
+
+    /**
+     * Skip a clarifying question
+     */
+    public function skipQuestion(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot skip questions at this stage.');
+        }
+
+        try {
+            // Get current answers
+            $answers = $promptRun->clarifying_answers ?? [];
+
+            // Add null for skipped question
+            $answers[] = null;
+
+            Log::info('Skipping question (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'question_number' => count($answers),
+            ]);
+
+            // Update the prompt run
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => 'answering_questions',
+                ]);
+            });
+
+            $promptRun->refresh();
+
+            // Check if all questions have been processed
+            if ($this->hasAnsweredAllQuestions($promptRun)) {
+                return redirect()
+                    ->route('prompt-builder.show', $promptRun)
+                    ->with('success', 'All questions answered. Ready to generate prompt!');
+            }
+
+            return redirect()
+                ->route('prompt-builder.show', $promptRun)
+                ->with('success', 'Question skipped.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to skip question (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to skip question. Please try again.');
+        }
+    }
+
+    /**
+     * Go back to the previous question (keeps the answer for editing)
+     */
+    public function goBackToPreviousQuestion(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate that we're in the correct workflow stage
+        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
+            return back()->with('error', 'Cannot go back at this stage.');
+        }
+
+        // Check if there are any answers to go back from
+        $answers = $promptRun->clarifying_answers ?? [];
+        if (empty($answers)) {
+            return back()->with('error', 'No previous answers to go back to.');
+        }
+
+        try {
+            // Store future answers in session
+            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
+            $futureAnswers = session()->get($sessionKey, []);
+
+            // Remove the last answer and store it
+            $removedAnswer = array_pop($answers);
+            if ($removedAnswer !== null) {
+                // Store at the index it was removed from
+                $futureAnswers[count($answers)] = $removedAnswer;
+                session()->put($sessionKey, $futureAnswers);
+            }
+
+            Log::info('Going back to previous question (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'new_answer_count' => count($answers),
+            ]);
+
+            // Update the prompt run
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+                $promptRun->update([
+                    'clarifying_answers' => $answers,
+                    'workflow_stage' => count($answers) === 0 ? 'analysis_complete' : 'answering_questions',
+                ]);
+            });
+
+            return redirect()
+                ->route('prompt-builder.show', $promptRun)
+                ->with('previous_answer', $removedAnswer);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to go back (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to go back. Please try again.');
+        }
+    }
+
+    /**
+     * Check if all questions have been answered
+     */
+    protected function hasAnsweredAllQuestions(PromptRun $promptRun): bool
+    {
+        $totalQuestions = count($promptRun->framework_questions ?? []);
+        $answeredQuestions = count($promptRun->clarifying_answers ?? []);
+
+        return $answeredQuestions >= $totalQuestions;
+    }
+
+    /**
+     * Create a child prompt run from edited task description
+     */
+    public function createChild(Request $request, PromptRun $parentPromptRun)
+    {
+        $this->authorizePromptRun($parentPromptRun, $request);
+
+        $validated = $request->validate([
+            'task_description' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+        $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+
+        try {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $visitorId,
+                $parentPromptRun,
+                $validated
+            ) {
+                return PromptRun::create([
+                    'visitor_id' => $visitorId,
+                    'user_id' => $user?->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
+                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
+                    'task_description' => $validated['task_description'],
+                    'status' => 'processing',
+                    'workflow_stage' => 'submitted',
+                ]);
+            });
+
+            return redirect()
+                ->route('prompt-builder.show', $childPromptRun)
+                ->with('success', 'Starting a new prompt optimisation with your updated task.');
+        } catch (\Exception $e) {
+            Log::error('Failed to create child prompt run for prompt builder', [
+                'parent_prompt_run_id' => $parentPromptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', 'An error occurred whilst creating the new prompt run. Please try again.');
         }
     }
 
@@ -349,6 +613,160 @@ class PromptBuilderController extends Controller
 
             return back()
                 ->with('error', 'An error occurred whilst creating the new prompt run. Please try again.');
+        }
+    }
+
+    /**
+     * Retry a failed prompt run
+     */
+    public function retry(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Only allow retry for failed runs
+        if ($promptRun->status !== 'failed') {
+            return back()->with('error', 'Only failed runs can be retried.');
+        }
+
+        $workflowStage = $promptRun->workflow_stage;
+
+        try {
+            // Determine which stage failed and retry from there
+            if ($workflowStage === 'failed' || $workflowStage === 'submitted') {
+                // Analysis failed - retry from beginning
+                Log::info('Retrying analysis (PromptBuilder)', [
+                    'prompt_run_id' => $promptRun->id,
+                ]);
+
+                DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                    $promptRun->update([
+                        'status' => 'pending',
+                        'workflow_stage' => 'submitted',
+                        'error_message' => null,
+                        'completed_at' => null,
+                    ]);
+                });
+
+                // Re-run analysis
+                $result = $this->promptService->analyseTask(
+                    $promptRun->task_description,
+                    $promptRun->personality_type,
+                    $promptRun->trait_percentages
+                );
+
+                if (! $result['success']) {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'error_message' => $result['error']['message'] ?? 'Analysis failed',
+                        ]);
+                    });
+
+                    return back()->with('error', 'Retry failed. Please try again.');
+                }
+
+                // Update with analysis results
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
+                    $promptRun->update([
+                        'status' => 'pending',
+                        'workflow_stage' => 'analysis_complete',
+                        'task_classification' => $result['data']['task_classification'] ?? null,
+                        'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
+                        'selected_framework' => $result['data']['selected_framework'] ?? null,
+                        'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
+                        'personality_tier' => $result['data']['personality_tier'] ?? 'none',
+                        'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
+                        'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
+                        'question_rationale' => $result['data']['question_rationale'] ?? null,
+                        'framework_questions' => $result['data']['clarifying_questions'] ?? [],
+                        'analysis_api_usage' => $result['api_usage'] ?? null,
+                    ]);
+                });
+
+                return redirect()
+                    ->route('prompt-builder.show', $promptRun)
+                    ->with('success', 'Analysis completed successfully. You can now answer the questions.');
+
+            } elseif ($workflowStage === 'generating_prompt') {
+                // Generation failed - retry generation
+                Log::info('Retrying generation (PromptBuilder)', [
+                    'prompt_run_id' => $promptRun->id,
+                ]);
+
+                DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                    $promptRun->update([
+                        'status' => 'processing',
+                        'workflow_stage' => 'generating_prompt',
+                        'error_message' => null,
+                    ]);
+                });
+
+                // Combine questions with answers for generation
+                $questions = $promptRun->framework_questions ?? [];
+                $answers = $promptRun->clarifying_answers ?? [];
+                $questionAnswers = [];
+
+                foreach ($questions as $index => $question) {
+                    $questionAnswers[] = [
+                        'question' => is_array($question) ? ($question['question'] ?? '') : $question,
+                        'answer' => $answers[$index] ?? '',
+                    ];
+                }
+
+                $result = $this->promptService->generatePrompt(
+                    $promptRun->task_classification,
+                    $promptRun->cognitive_requirements ?? [],
+                    $promptRun->selected_framework,
+                    $promptRun->personality_tier,
+                    $promptRun->task_trait_alignment ?? [],
+                    $promptRun->personality_adjustments_preview ?? [],
+                    $promptRun->task_description,
+                    $promptRun->personality_type,
+                    $promptRun->trait_percentages,
+                    $questionAnswers
+                );
+
+                if (! $result['success']) {
+                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
+                        $promptRun->update([
+                            'status' => 'failed',
+                            'error_message' => $result['error']['message'] ?? 'Generation failed',
+                        ]);
+                    });
+
+                    return back()->with('error', 'Retry failed. Please try again.');
+                }
+
+                // Update with generation results
+                DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
+                    $promptRun->update([
+                        'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
+                        'framework_used' => $result['data']['framework_used'] ?? null,
+                        'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
+                        'model_recommendations' => $result['data']['model_recommendations'] ?? null,
+                        'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
+                        'generation_api_usage' => $result['api_usage'] ?? null,
+                        'status' => 'completed',
+                        'workflow_stage' => 'completed',
+                        'completed_at' => now(),
+                    ]);
+                });
+
+                return redirect()
+                    ->route('prompt-builder.show', $promptRun)
+                    ->with('success', 'Prompt generated successfully!');
+            }
+
+            return back()->with('error', 'Cannot retry from this stage.');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to retry (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'An error occurred whilst retrying. Please try again.');
         }
     }
 

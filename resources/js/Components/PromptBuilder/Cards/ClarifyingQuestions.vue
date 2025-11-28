@@ -38,9 +38,6 @@ const hasQuestions = computed(() => questions.value.length > 0);
 const currentQuestion = computed(
     () => questions.value[currentIndex.value] ?? null,
 );
-const atLastQuestion = computed(
-    () => currentIndex.value === questions.value.length - 1,
-);
 
 const currentAnswer = computed({
     get: () => answers.value[currentIndex.value] ?? '',
@@ -85,21 +82,33 @@ watch(
     { immediate: true },
 );
 
-const goNext = () => {
-    if (currentIndex.value < questions.value.length - 1) {
-        currentIndex.value += 1;
-    }
-};
-
 const goBack = () => {
-    if (currentIndex.value > 0) {
-        currentIndex.value -= 1;
-    }
+    // Persist go-back to backend
+    router.post(
+        route('prompt-builder.go-back', props.promptRun.id),
+        {},
+        {
+            preserveScroll: true,
+            onError: () => {
+                submitError.value = 'Failed to go back. Please try again.';
+            },
+        },
+    );
 };
 
 const skipQuestion = () => {
-    answers.value[currentIndex.value] = null;
-    goNext();
+    // Persist skip to backend
+    router.post(
+        route('prompt-builder.skip', props.promptRun.id),
+        {},
+        {
+            preserveScroll: true,
+            onError: () => {
+                submitError.value =
+                    'Failed to skip question. Please try again.';
+            },
+        },
+    );
 };
 
 const clearCurrentAnswer = () => {
@@ -107,13 +116,19 @@ const clearCurrentAnswer = () => {
 };
 
 const submitAnswer = () => {
-    answers.value[currentIndex.value] = normalizeAnswer(currentAnswer.value);
+    const answer = normalizeAnswer(currentAnswer.value);
 
-    if (atLastQuestion.value) {
-        submitAllAnswers();
-    } else {
-        goNext();
-    }
+    // Persist answer to backend
+    router.post(
+        route('prompt-builder.answer', props.promptRun.id),
+        { answer },
+        {
+            preserveScroll: true,
+            onError: () => {
+                submitError.value = 'Failed to save answer. Please try again.';
+            },
+        },
+    );
 };
 
 const startEditingAnswers = () => {
@@ -206,122 +221,116 @@ const bulkSubmitLabel = computed(() =>
 </script>
 
 <template>
-    <Card>
-        <div class="space-y-6">
-            <div class="flex items-start justify-between gap-4">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    Clarifying Questions
-                </h2>
+    <Card class="space-y-6">
+        <div class="flex items-start justify-between gap-4">
+            <h2 class="text-lg font-semibold text-gray-900">
+                Clarifying Questions
+            </h2>
 
-                <div
-                    v-if="hasQuestions"
-                    class="flex flex-col items-end gap-2 text-right"
+            <div
+                v-if="hasQuestions"
+                class="flex flex-col items-end gap-2 text-right"
+            >
+                <ButtonSecondary
+                    v-if="!hasSubmittedAnswers"
+                    id="show-all-questions"
+                    type="button"
+                    :underline="true"
+                    @click="showAllQuestions = !showAllQuestions"
                 >
+                    {{
+                        showAllQuestions
+                            ? 'One at a time'
+                            : 'Show all questions'
+                    }}
+                </ButtonSecondary>
+                <div v-if="hasSubmittedAnswers">
                     <ButtonSecondary
-                        v-if="!hasSubmittedAnswers"
-                        id="show-all-questions"
+                        v-if="!isEditingAnswers"
                         type="button"
-                        :underline="true"
-                        @click="showAllQuestions = !showAllQuestions"
+                        :disabled="isSubmitting"
+                        @click="startEditingAnswers"
                     >
-                        {{
-                            showAllQuestions
-                                ? 'One at a time'
-                                : 'Show all questions'
-                        }}
+                        Edit Answers
                     </ButtonSecondary>
-                    <div v-if="hasSubmittedAnswers">
+                    <div v-else class="flex items-center gap-2">
                         <ButtonSecondary
-                            v-if="!isEditingAnswers"
                             type="button"
                             :disabled="isSubmitting"
-                            @click="startEditingAnswers"
+                            @click="cancelEditingAnswers"
                         >
-                            Edit Answers
+                            Cancel
                         </ButtonSecondary>
-                        <div v-else class="flex items-center gap-2">
-                            <ButtonSecondary
-                                type="button"
-                                :disabled="isSubmitting"
-                                @click="cancelEditingAnswers"
-                            >
-                                Cancel
-                            </ButtonSecondary>
-                            <ButtonPrimary
-                                type="button"
-                                :disabled="isSubmitting"
-                                :loading="isSubmitting"
-                                @click="submitEditedAnswers"
-                            >
-                                Optimise Prompt with Edited Answers
-                            </ButtonPrimary>
-                        </div>
+                        <ButtonPrimary
+                            type="button"
+                            :disabled="isSubmitting"
+                            :loading="isSubmitting"
+                            @click="submitEditedAnswers"
+                        >
+                            Optimise Prompt with Edited Answers
+                        </ButtonPrimary>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <p v-if="promptRun.questionRationale" class="text-sm text-gray-600">
-                {{ promptRun.questionRationale }}
-            </p>
+        <p v-if="promptRun.questionRationale" class="text-sm text-gray-600">
+            {{ promptRun.questionRationale }}
+        </p>
 
-            <AnsweredList
-                v-if="hasSubmittedAnswers && !isEditingAnswers"
-                :questions="questions"
-                :answers="promptRun.clarifyingAnswers"
-            />
+        <AnsweredList
+            v-if="hasSubmittedAnswers && !isEditingAnswers"
+            :questions="questions"
+            :answers="promptRun.clarifyingAnswers"
+        />
 
-            <!-- One-at-a-time Question Form -->
-            <QuestionAnsweringForm
-                v-if="shouldShowQuestionForm"
-                v-model:answer="currentAnswer"
-                :question="currentQuestion.question"
-                :current-question-number="currentIndex + 1"
-                :total-questions="questions.length"
-                :is-submitting="isSubmitting"
-                :can-go-back="currentIndex > 0"
-                :show-all="showAllQuestions"
-                @submit="submitAnswer"
-                @skip="skipQuestion"
-                @go-back="goBack"
-                @clear="clearCurrentAnswer"
-                @toggle-show-all="showAllQuestions = !showAllQuestions"
-            />
+        <!-- One-at-a-time Question Form -->
+        <QuestionAnsweringForm
+            v-if="shouldShowQuestionForm"
+            v-model:answer="currentAnswer"
+            :question="currentQuestion.question"
+            :current-question-number="currentIndex + 1"
+            :total-questions="questions.length"
+            :is-submitting="isSubmitting"
+            :can-go-back="currentIndex > 0"
+            :show-all="showAllQuestions"
+            @submit="submitAnswer"
+            @skip="skipQuestion"
+            @go-back="goBack"
+            @clear="clearCurrentAnswer"
+            @toggle-show-all="showAllQuestions = !showAllQuestions"
+        />
 
-            <BulkQuestions
-                v-else-if="
-                    hasQuestions && (showAllQuestions || isEditingAnswers)
-                "
-                :questions="questions"
-                :answers="answers"
-                :is-submitting="isSubmitting"
-                :submit-label="bulkSubmitLabel"
-                :show-back="!isEditingAnswers"
-                :back-label="isEditingAnswers ? 'Cancel edit' : undefined"
-                @update:answer="
-                    (index: number, value: string) => (answers[index] = value)
-                "
-                @submit-all="
-                    isEditingAnswers
-                        ? submitEditedAnswers()
-                        : submitAllAnswers()
-                "
-                @back="
-                    isEditingAnswers
-                        ? cancelEditingAnswers()
-                        : (showAllQuestions = false)
-                "
-            />
+        <BulkQuestions
+            v-else-if="hasQuestions && (showAllQuestions || isEditingAnswers)"
+            :questions="questions"
+            :answers="answers"
+            :is-submitting="isSubmitting"
+            :submit-label="bulkSubmitLabel"
+            :show-back="!isEditingAnswers"
+            :back-label="isEditingAnswers ? 'Cancel edit' : undefined"
+            @update:answer="
+                (index: number, value: string) => (answers[index] = value)
+            "
+            @submit-all="
+                isEditingAnswers ? submitEditedAnswers() : submitAllAnswers()
+            "
+            @back="
+                isEditingAnswers
+                    ? cancelEditingAnswers()
+                    : (showAllQuestions = false)
+            "
+        />
 
-            <p v-else class="text-sm text-gray-600">
-                No clarifying questions were generated for this prompt.
-            </p>
+        <p v-else class="text-sm text-gray-600">
+            No clarifying questions were generated for this prompt.
+        </p>
 
-            <div
-                v-if="submitError"
-                class="rounded-md border border-red-100 bg-red-50 p-3 text-sm text-red-700"
-            >
-                {{ submitError }}
-            </div>
+        <div
+            v-if="submitError"
+            class="rounded-md border border-red-100 bg-red-50 p-3 text-sm text-red-700"
+        >
+            {{ submitError }}
         </div>
     </Card>
 </template>

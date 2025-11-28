@@ -14,10 +14,12 @@ import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramewor
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
 import TaskInformation from '@/Components/PromptBuilder/Cards/TaskInformation.vue';
 import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignment.vue';
+import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
+import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PromptRunResource } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
@@ -26,8 +28,16 @@ defineOptions({
     layout: AppLayout,
 });
 
+interface Progress {
+    answered: number;
+    total: number;
+}
+
 interface Props {
     promptRun: PromptRunResource;
+    currentQuestion?: string | null;
+    currentQuestionAnswer?: string | null;
+    progress?: Progress;
 }
 
 // Define tabs
@@ -67,15 +77,6 @@ const tabs = computed<Tab[]>(() => {
         icon: 'question-mark-circle',
     });
 
-    // Optimised Prompt tab (only for completed runs with prompt)
-    if (props.promptRun.optimizedPrompt) {
-        allTabs.push({
-            id: 'prompt',
-            label: 'Optimised Prompt',
-            icon: 'sparkles',
-        });
-    }
-
     // Recommendations tab (only shown when model recommendations exist)
     if (
         props.promptRun.modelRecommendations ||
@@ -95,10 +96,74 @@ const tabs = computed<Tab[]>(() => {
         icon: 'chart-bar',
     });
 
+    // Optimised Prompt tab (only for completed runs with prompt)
+    if (props.promptRun.optimizedPrompt) {
+        allTabs.push({
+            id: 'prompt',
+            label: 'Optimised Prompt',
+            icon: 'sparkles',
+        });
+    }
+
     return allTabs;
 });
 
 const activeTab = ref<string>('task'); // Start on Your Task tab
+
+const hasRelatedRuns = computed(
+    () =>
+        !!props.promptRun.parent ||
+        (props.promptRun.children && props.promptRun.children.length > 0) ||
+        false,
+);
+
+// Determine if user should proceed to questions
+const shouldShowProceedButton = computed(() => {
+    if (props.promptRun.workflowStage !== 'analysis_complete') {
+        return false;
+    }
+
+    // Show button unless ALL questions have been answered
+    const totalQuestions = props.promptRun.frameworkQuestions?.length || 0;
+    const answeredQuestions =
+        props.promptRun.clarifyingAnswers?.filter((a: unknown) => a !== null)
+            .length || 0;
+
+    return answeredQuestions < totalQuestions;
+});
+
+// Handle proceed to questions button
+const handleProceedToQuestions = async () => {
+    activeTab.value = 'questions';
+};
+
+// Real-time updates via Laravel Echo
+useRealtimeUpdates(
+    `prompt-run.${props.promptRun.id}`,
+    {
+        FrameworkSelected: () => {
+            // Reload page to show framework selection
+            router.reload({
+                only: ['promptRun'],
+                onSuccess: () => {
+                    // Switch to Framework tab after reload
+                    activeTab.value = 'framework';
+                },
+            });
+        },
+        PromptOptimizationCompleted: () => {
+            // Reload page to show completed prompt
+            router.reload({
+                only: ['promptRun'],
+                onSuccess: () => {
+                    // Switch to Optimised Prompt tab after reload
+                    activeTab.value = 'prompt';
+                },
+            });
+        },
+    },
+    { only: ['promptRun'] },
+);
 
 // Switch to prompt tab when optimized prompt is returned
 watch(
@@ -136,6 +201,11 @@ watch(
             <!-- Your Task Tab -->
             <div v-if="activeTab === 'task'" class="space-y-4">
                 <TaskInformation :prompt-run="promptRun" />
+                <RelatedPromptRuns
+                    v-if="hasRelatedRuns"
+                    :parent="promptRun.parent"
+                    :children="promptRun.children"
+                />
                 <TaskClassification
                     v-if="promptRun.taskClassification"
                     :classification="promptRun.taskClassification as any"
@@ -151,6 +221,8 @@ watch(
                 <SelectedFramework
                     v-if="promptRun.selectedFramework"
                     :framework="promptRun.selectedFramework as any"
+                    :show-proceed-button="shouldShowProceedButton"
+                    @proceed="handleProceedToQuestions"
                 />
                 <AlternativeFrameworks
                     v-if="promptRun.alternativeFrameworks"

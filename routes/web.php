@@ -135,8 +135,18 @@ Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse
     ->name('prompt-builder.analyse');
 Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
     ->name('prompt-builder.show');
+Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
+    ->name('prompt-builder.answer');
+Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])
+    ->name('prompt-builder.skip');
+Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
+    ->name('prompt-builder.go-back');
+Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
+    ->name('prompt-builder.retry');
 Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
     ->name('prompt-builder.generate');
 Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers', [PromptBuilderController::class, 'createChildFromAnswers'])
     ->name('prompt-builder.create-child-from-answers');
+Route::post('/prompt-builder/{parentPromptRun}/create-child', [PromptBuilderController::class, 'createChild'])
+    ->name('prompt-builder.create-child');
 // });

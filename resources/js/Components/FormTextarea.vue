@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
     autofocus: false,
     isSubmitting: false,
     textareaClass: '',
+    srOnlyLabel: false,
 });
 
 const emit = defineEmits<{
@@ -47,15 +48,15 @@ const focus = () => {
 };
 
 defineExpose({ focus });
+
+const labelClass = computed(() =>
+    props.srOnlyLabel ? 'sr-only' : 'block text-sm font-medium text-black',
+);
 </script>
 
 <template>
     <div>
-        <label
-            v-if="props.label"
-            :for="props.id"
-            class="block text-sm font-medium text-black"
-        >
+        <label v-if="props.label" :for="props.id" :class="labelClass">
             {{ props.label }}
             <span v-if="props.required" class="text-red-500">*</span>
         </label>
@@ -70,6 +71,7 @@ defineExpose({ focus });
             :disabled="props.disabled"
             :maxlength="props.maxlength"
             :autofocus="props.autofocus"
+            :aria-label="props.srOnlyLabel ? props.label : undefined"
             v-bind="$attrs"
             :class="textareaClasses"
             @input="
