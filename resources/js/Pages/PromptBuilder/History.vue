@@ -286,7 +286,8 @@ onMounted(() => {
                                     class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 lg:table-cell"
                                 >
                                     {{
-                                        promptRun.selectedFramework || '\u2014'
+                                        promptRun.selectedFramework.name ||
+                                        '\u2014'
                                     }}
                                 </td>
                                 <td

@@ -282,6 +282,43 @@ watch(
                     {{ promptRun.questionRationale }}
                 </p>
 
+                <!-- Display submitted answers if they exist -->
+                <div
+                    v-if="
+                        promptRun.clarifyingAnswers &&
+                        promptRun.clarifyingAnswers.length > 0
+                    "
+                    class="mb-6 space-y-4"
+                >
+                    <h3 class="text-base font-semibold text-gray-900">
+                        Your Answers
+                    </h3>
+                    <div
+                        v-for="(question, index) in questions"
+                        :key="`answer-${question.id}`"
+                        class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                    >
+                        <div class="flex items-start gap-2">
+                            <span
+                                class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-medium text-white"
+                            >
+                                {{ index + 1 }}
+                            </span>
+                            <div class="flex-1 space-y-2">
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ question.question }}
+                                </p>
+                                <p class="text-sm text-gray-700">
+                                    {{
+                                        promptRun.clarifyingAnswers[index] ||
+                                        '(Skipped)'
+                                    }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- One-at-a-time Question Form -->
                 <QuestionAnsweringForm
                     v-if="currentQuestion && !showAllQuestions"

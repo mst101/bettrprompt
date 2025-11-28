@@ -1,93 +1,54 @@
-{
-    "framework_used": {
-        "name": "COAST Framework",
-        "code": "COAST",
-        "components": [
-            "Challenge",
-            "Objective",
-            "Actions",
-            "Strategy",
-            "Tactics"
-        ],
-        "explanation": "COAST framework provides a structured approach to developing a comprehensive strategy for expressing love, balancing analytical planning (aligned with INTP traits) with emotional considerations (needed counterbalance)."
-    },
-    "task_trait_alignment": {
-        "amplified": [
-            {
-                "trait": "High T (84%)",
-                "requirement_aligned": "Structured Approach",
-                "how_applied": "Used logical categorization and framework-based thinking to organize love expressions in a way that appeals to analytical thinking"
+[
+    {
+        "success": false,
+        "data": null,
+        "original_input": {
+            "original_task_description": "I want to show my wife that I love her.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
             },
-            {
-                "trait": "High N (64%)",
-                "requirement_aligned": "Conceptual Understanding",
-                "how_applied": "Included request for conceptual frameworks (like love languages) to provide theoretical context for practical actions"
-            }
-        ],
-        "counterbalanced": [
-            {
-                "trait": "High T (84%)",
-                "requirement_opposed": "Emotional Expression",
-                "reason": "Task fundamentally requires emotional connection that High T users might naturally approach too logically",
-                "injections_added": [
-                    "Focus on the emotional impact of gestures, not just their practical value",
-                    "Express appreciation for specific qualities about her, not just general statements",
-                    "Consider how different expressions of love will make her feel",
-                    "Incorporate personal, heartfelt elements that go beyond logical demonstrations"
-                ]
-            },
-            {
-                "trait": "High A (84%)",
-                "requirement_opposed": "Vulnerability",
-                "reason": "Expressing love often requires emotional vulnerability that highly assertive personalities might find challenging",
-                "injections_added": [
-                    "Include guidance on personalizing these ideas to my wife's preferences",
-                    "How to deliver it in a way that feels emotionally connected",
-                    "Include both verbal and non-verbal expressions of love"
-                ]
-            }
-        ],
-        "neutral": [
-            {
-                "trait": "High I (65%)",
-                "reason": "Introversion doesn't significantly impact the ability to express love, though it might influence preference for certain expressions"
-            },
-            {
-                "trait": "Borderline P (57%)",
-                "reason": "With only slight preference for perceiving, no strong adjustment needed for structure vs. flexibility"
-            }
-        ]
-    },
-    "personality_adjustments_summary": [
-        "AMPLIFIED: T-strength used for logical structure and frameworks to understand love expressions",
-        "AMPLIFIED: N-strength leveraged for conceptual understanding of love languages and patterns",
-        "COUNTERBALANCED: T-tendency with explicit requirements for emotional connection and impact",
-        "COUNTERBALANCED: A-tendency with guidance for personalization and vulnerability"
-    ],
-    "model_recommendations": [
-        {
-            "rank": 1,
-            "model": "Claude Opus 4.5",
-            "model_id": "claude-opus-4-5-20250514",
-            "rationale": "Best for nuanced relationship advice that balances logical frameworks with emotional intelligence. Excels at following complex counterbalance instructions for emotional content."
+            "analysis_data": {},
+            "question_answers": [
+                "My wife is an ESTJ-T with trait percentages of 51%, 73%, 56%, 99% and 82%.",
+                "She hates our relationship, she has no respect for me and frequently tells me she hates me. I think a lot of this is due to the fact I have no job at the moment and she is the bread winner. I am trying to set up a new business after my old one was stolen and destroyed, but it's taking time - and my wife is not very patient!",
+                "What matters most to both of us is our 9-year-old daughter whom we both love dearly. We do not want to split up for her sake.",
+                "Treat me as an equal and stop shouting at me, especially in the presence of our daughter."
+            ]
         },
-        {
-            "rank": 2,
-            "model": "GPT-4",
-            "model_id": "gpt-4",
-            "rationale": "Strong alternative capable of balancing analytical frameworks with emotional intelligence for relationship advice"
-        },
-        {
-            "rank": 3,
-            "model": "Claude Sonnet 4.5",
-            "model_id": "claude-sonnet-4-5-20250514",
-            "rationale": "Cost-effective option that handles the emotional counterbalancing well enough for this task"
+        "api_usage": null,
+        "error": {
+            "message": "Failed to parse LLM response",
+            "details": "Bad control character in string literal in JSON at position 126 (line 2 column 125)",
+            "raw_response": {
+                "model": "claude-3-7-sonnet-20250219",
+                "id": "msg_01Jd2LrBd95a1FiwWL7C9QA4",
+                "type": "message",
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "{\n  \"optimised_prompt\": \"You are a relationship expression strategist with expertise in meaningful gestures and communication.\n\nCONTEXT\nI'm an INTP-A personality type looking to show my wife that I love her. I want to express my feelings in a way that will be meaningful to her.\n\nIMPORTANT REQUIREMENTS\n- Focus on the emotional impact of gestures, not just their logical value\n- Consider how each suggestion will make my wife feel, not just what it accomplishes\n- Include both verbal and non-verbal expressions of love\n- Suggest ways to communicate feelings directly, even if it feels uncomfortable\n- Balance thoughtful gestures with authentic emotional expression\n\nCHALLENGE\nI want to express my love for my wife in ways that she will genuinely appreciate and that will strengthen our relationship.\n\nOBJECTIVE\nTo develop a personalized approach to showing love that:\n- Clearly communicates my feelings\n- Resonates with my wife's preferences and love language\n- Creates meaningful moments of connection\n- Demonstrates consistent care, not just one-time gestures\n\nACTIONS\nProvide a range of actionable suggestions organized by:\n1. Daily expressions (small, consistent actions)\n2. Special occasions (more elaborate gestures)\n3. Verbal expressions (ways to communicate feelings directly)\n4. Quality time approaches (meaningful connection opportunities)\n\nSTRATEGY\nDevelop an approach that balances:\n- Analytical thoughtfulness (leveraging my natural strengths)\n- Emotional expressiveness (which may be outside my comfort zone)\n- Consistency and spontaneity\n- My authentic style with what will resonate with my wife\n\nTACTICS\nFor each suggestion, include:\n- A specific example of how to implement it\n- Why it's likely to be meaningful to her\n- How to personalize it based on her preferences\n- A note on the emotional impact it might have\n\nCONSTRAINTS\n- Suggestions should feel authentic to my personality, not forced\n- Include options that vary in time commitment and complexity\n- Consider both my comfort zone and areas for growth\n\nOUTPUT SPECIFICATION\nProvide a comprehensive, logically structured response with:\n1. A brief introduction on the importance of personalized expressions of love\n2. Categorized suggestions as outlined in the ACTIONS section\n3. Strategic considerations for long-term relationship nurturing\n4. Specific examples that can be implemented immediately\n5. A conclusion with principles for ongoing love expression\n\nQUALITY CRITERIA\nThe response should:\n- Be thoughtful and substantive, not filled with clichés\n- Include both logical and emotional dimensions of love expression\n- Provide specific, actionable suggestions, not just concepts\n- Acknowledge that expressing feelings directly may be challenging but is valuable\n- Balance analytical approach with emotional awareness\n- Consider my wife's perspective and emotional experience\",\n\n  \"metadata\": {\n    \"framework_used\": {\n      \"name\": \"COAST Framework\",\n      \"code\": \"COAST\",\n      \"components\": [\"Challenge\", \"Objective\", \"Actions\", \"Strategy\", \"Tactics\"],\n      \"explanation\": \"COAST framework was selected for this relationship task because it provides a strategic approach to expressing love, balancing analytical planning (which aligns with INTP strengths) while ensuring emotional elements aren't overlooked. It allows for both systematic thinking and emotional expression.\"\n    },\n\n    \"task_trait_alignment\": {\n      \"amplified\": [\n        {\n          \"trait\": \"High N (64%)\",\n          \"requirement_aligned\": \"Strategic Thinking\",\n          \"how_applied\": \"Prompt structured to leverage conceptual thinking by framing love expression as a strategic challenge with multiple dimensions and approaches\"\n        },\n        {\n          \"trait\": \"High A (84%)\",\n          \"requirement_aligned\": \"Confident Implementation\",\n          \"how_applied\": \"Prompt encourages decisive action while maintaining authenticity, playing to natural confidence\"\n        }\n      ],\n      \"counterbalanced\": [\n        {\n          \"trait\": \"High T (84%)\",\n          \"requirement_opposed\": \"Emotional Expression\",\n          \"reason\": \"Task requires emotional awareness and expression that High-T may naturally minimize\",\n          \"injections_added\": [\n            \"Focus on the emotional impact of gestures, not just their logical value\",\n            \"Consider how each suggestion will make my wife feel, not just what it accomplishes\",\n            \"Suggest ways to communicate feelings directly, even if it feels uncomfortable\",\n            \"Include both verbal and non-verbal expressions of love\"\n          ]\n        }\n      ],\n      \"neutral\": [\n        {\n          \"trait\": \"High I (65%)\",\n          \"reason\": \"Introversion is neither an advantage nor disadvantage for expressing love to a spouse\"\n        },\n        {\n          \"trait\": \"Borderline P (57%)\",\n          \"reason\": \"Near midline; no strong adjustment needed for this relationship task\"\n        }\n      ]\n    },\n\n    \"personality_adjustments_summary\": [\n      \"AMPLIFIED: N-strength for strategic approach to relationship expression\",\n      \"AMPLIFIED: A-strength for confident implementation of suggestions\",\n      \"COUNTERBALANCED: T-tendency with explicit requirements for emotional awareness and expression\",\n      \"NEUTRAL: I and borderline P traits not significantly adjusted\"\n    ],\n\n    \"model_recommendations\": [\n      {\n        \"rank\": 1,\n        \"model\": \"Claude Opus 4.5\",\n        \"model_id\": \"claude-opus-4-5-20250514\",\n        \"rationale\": \"Best for nuanced relationship advice that balances logical structure with emotional intelligence. Excels at following the counterbalance instructions for emotional expression while respecting the user's analytical nature.\"\n      },\n      {\n        \"rank\": 2,\n        \"model\": \"GPT-4o\",\n        \"model_id\": \"gpt-4o\",\n        \"rationale\": \"Strong alternative capable of balancing analytical framework with emotional intelligence needed for relationship advice\"\n      },\n      {\n        \"rank\": 3,\n        \"model\": \"Claude Sonnet 4.5\",\n        \"model_id\": \"claude-sonnet-4-5-20250514\",\n        \"rationale\": \"Cost-effective option that handles the emotional counterbalancing well while maintaining logical structure\"\n      }\n    ],\n\n    \"iteration_suggestions\": [\n      \"If suggestions feel too emotionally demanding, reduce some counterbalancing weight on High-T\",\n      \"If you want more specific ideas tailored to your wife, add details about her preferences and love language\",\n      \"To focus on a specific occasion or context, modify the CONSTRAINTS section with timing or situational details\"\n    ]\n  }\n}"
+                    }
+                ],
+                "stop_reason": "end_turn",
+                "stop_sequence": null,
+                "usage": {
+                    "input_tokens": 14381,
+                    "cache_creation_input_tokens": 0,
+                    "cache_read_input_tokens": 0,
+                    "cache_creation": {
+                        "ephemeral_5m_input_tokens": 0,
+                        "ephemeral_1h_input_tokens": 0
+                    },
+                    "output_tokens": 1501,
+                    "service_tier": "standard"
+                }
+            }
         }
-    ],
-    "iteration_suggestions": [
-        "If responses are too theoretical, strengthen the requirement for specific, actionable examples",
-        "If suggestions don't feel authentic to INTP personality, add more emphasis on expressions that align with analytical thinking",
-        "Consider adding information about your wife's preferences or love language if known",
-        "If you want more focus on a specific type of expression (gifts, words, acts, etc.), specify that in a follow-up"
-    ]
-}
+    }
+]

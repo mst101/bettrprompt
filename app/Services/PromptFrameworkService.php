@@ -73,13 +73,14 @@ class PromptFrameworkService
         array $questionAnswers
     ): array {
         $payload = [
-            'task_classification' => $taskClassification,
-            'cognitive_requirements' => $cognitiveRequirements,
-            'selected_framework' => $selectedFramework,
-            'alternative_frameworks' => $alternativeFrameworks,
-            'personality_tier' => $personalityTier,
-            'task_trait_alignment' => $taskTraitAlignment,
-            'personality_adjustments_preview' => $personalityAdjustmentsPreview,
+            'analysis_data' => [
+                'task_classification' => $taskClassification,
+                'cognitive_requirements' => $cognitiveRequirements,
+                'selected_framework' => $selectedFramework,
+                'alternative_frameworks' => $alternativeFrameworks,
+                'personality_tier' => $personalityTier,
+                'task_trait_alignment' => $taskTraitAlignment,
+            ],
             'original_task_description' => $originalTaskDescription,
             'personality_type' => $personalityType,
             'trait_percentages' => $traitPercentages,

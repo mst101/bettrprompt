@@ -6,99 +6,100 @@
                 "primary_category": "PERSUASION",
                 "secondary_category": null,
                 "complexity": "simple",
-                "classification_reasoning": "The primary intent is to persuade or convince the wife, which aligns with the Persuasion task category. There are no clear secondary aspects to this task."
+                "classification_reasoning": "The goal of showing love to one's wife is a persuasive task, as it requires convincing the recipient of the user's feelings.",
+                "content_type": null
             },
             "cognitive_requirements": {
                 "primary": ["EMPATHY", "WARM"],
-                "secondary": ["STRUCTURE"],
-                "reasoning": "Showing love to one's wife requires empathy, understanding her perspective, and communicating in a warm, relational tone. Some structure may also help ensure the message is clear and impactful."
+                "secondary": [],
+                "reasoning": "Showing love to one's wife requires empathy to understand her perspective and a warm, relational tone to effectively convey the user's feelings."
             },
             "selected_framework": {
                 "name": "BAB Framework",
                 "code": "BAB",
                 "components": ["Before", "After", "Bridge"],
-                "rationale": "The BAB framework is well-suited for this task as it focuses on crafting a persuasive narrative that connects the current state (Before) to the desired state (After) through a meaningful Bridge. This storytelling approach aligns with the need to communicate love and emotion effectively."
+                "rationale": "The BAB framework is well-suited for this task as it focuses on storytelling and transforming the current state (Before) to the desired state (After), bridging the gap with the user's message of love."
             },
             "alternative_frameworks": [
                 {
                     "name": "CAR Framework",
                     "code": "CAR",
-                    "when_to_use_instead": "If a more structured, results-focused approach is preferred over pure storytelling."
+                    "when_to_use_instead": "If the user wants to focus more on a specific narrative of the relationship context, action taken, and result."
                 },
                 {
                     "name": "Challenge-Solution-Benefit Framework",
-                    "code": "CHALLENGE-SOLUTION-BENEFIT",
-                    "when_to_use_instead": "If the goal is to clearly demonstrate the value and benefits of showing love to the wife."
+                    "code": "Challenge-Solution-Benefit",
+                    "when_to_use_instead": "If the user wants to frame the task as solving a challenge (lack of expressed love) and highlighting the benefits of the solution (showing love)."
                 }
             ],
             "personality_tier": "full",
             "task_trait_alignment": {
                 "amplified": [
                     {
-                        "trait": "High F (84%)",
+                        "trait": "High N (64%)",
                         "requirement_aligned": "EMPATHY",
-                        "reason": "The user's strong Feeling preference aligns well with the need for empathy and understanding their partner's perspective."
+                        "reason": "The user's intuitive nature can help them better understand their wife's perspective and emotional needs."
                     },
                     {
-                        "trait": "High E (65%)",
+                        "trait": "High F (84%)",
                         "requirement_aligned": "WARM",
-                        "reason": "The user's moderate Extraversion preference will help them communicate in a more warm, relational tone."
+                        "reason": "The user's strong feeling preference aligns well with the need for a warm, relational tone when expressing love."
                     }
                 ],
                 "counterbalanced": [
                     {
                         "trait": "High T (84%)",
-                        "requirement_opposed": "EMPATHY",
-                        "reason": "The user's strong Thinking preference may lead them to focus more on logic and facts rather than emotional considerations, which is opposed to the empathy requirement.",
-                        "injection": "Prompt will include explicit requirements to consider the wife's feelings and perspective, not just the user's own rationale."
+                        "requirement_opposed": "WARM",
+                        "reason": "The user's high thinking preference may lead them to approach this task in a more analytical or logical manner, rather than focusing on the emotional and relational aspects.",
+                        "injection": "Prompt the user to open with a personal acknowledgment and use relationship-affirming language throughout."
                     }
                 ],
                 "neutral": [
                     {
                         "trait": "High I (65%)",
-                        "reason": "The user's moderate Introversion preference is not directly relevant to the task of showing love to their wife."
-                    },
-                    {
-                        "trait": "High N (64%)",
-                        "reason": "The user's moderate Intuitive preference is not a significant factor in this task, which is more focused on emotional expression than strategic vision."
+                        "reason": "The user's introversion/extraversion preference is not directly relevant to the task of expressing love to their wife."
                     },
                     {
                         "trait": "High P (57%)",
-                        "reason": "The user's moderate Prospecting preference is not a major consideration for this task, which does not require extensive exploration or flexibility."
+                        "reason": "The user's moderate preference for perceiving versus judging is not a significant factor in this task."
+                    },
+                    {
+                        "trait": "High A (84%)",
+                        "reason": "The user's assertiveness is not a primary concern for this task of expressing love, as it is more focused on empathy and warmth."
                     }
                 ]
             },
             "personality_adjustments_preview": [
-                "AMPLIFIED: Leveraging the user's strong Feeling and moderate Extraversion preferences to foster an empathetic, warm, and relational tone.",
-                "COUNTERBALANCED: Injecting explicit requirements to consider the wife's emotional perspective, not just the user's own logical reasoning."
+                "AMPLIFIED: Leveraging the user's intuitive nature and feeling preference to better understand their wife's perspective and convey love in a warm, relational manner.",
+                "COUNTERBALANCED: Injecting requirements to open with a personal acknowledgment and use relationship-affirming language throughout, to counteract the user's high thinking preference which may lead to a more analytical approach."
             ],
             "clarifying_questions": [
                 {
-                    "id": "PE1",
-                    "question": "Who specifically is the target audience for this message (your wife)?",
-                    "purpose": "Clarify the intended recipient to ensure the communication is tailored appropriately.",
+                    "id": "U3",
+                    "question": "Who is the intended audience for this expression of love (your wife)?",
+                    "purpose": "Clarify the target recipient to ensure the message is tailored appropriately.",
                     "required": true
                 },
                 {
                     "id": "PE2",
-                    "question": "What is your current relationship with your wife, and what is her typical response when you express your love?",
-                    "purpose": "Understand the starting point and context to craft an effective persuasive message.",
+                    "question": "What is your wife's current perspective or beliefs about your love for her?",
+                    "purpose": "Understand the starting point to effectively bridge the gap and convince her of your love.",
                     "required": true
                 },
                 {
                     "id": "PE5",
-                    "question": "What matters most to your wife, and how can you align your message with her values and priorities?",
-                    "purpose": "Identify the most compelling way to connect with your wife's motivations and make the message resonate.",
+                    "question": "What matters most to your wife, and how can you align your message of love with her values and motivations?",
+                    "purpose": "Ensure the message resonates with what is important to the recipient.",
                     "required": true
                 },
                 {
-                    "id": "PE3",
-                    "question": "What concerns or objections might your wife have about your expression of love, and how can you preemptively address them?",
-                    "purpose": "Anticipate potential resistance or doubts to craft a more persuasive and compelling message.",
-                    "required": false
+                    "id": "PE7",
+                    "question": "What is your current relationship with your wife, and how does that affect the tone and approach you should take?",
+                    "purpose": "Tailor the persuasive message based on the existing trust and rapport with the recipient.",
+                    "required": true
                 }
             ],
-            "question_rationale": "The selected questions focus on understanding the target audience (your wife), the current relationship context, her values and priorities, and potential objections. This information is crucial for crafting a persuasive message that resonates emotionally and addresses any concerns. The questions are tailored to the Persuasion task category and leverage the user's personality traits to ensure the communication is empathetic, warm, and relational."
+            "question_rationale": "The selected questions focus on understanding the target audience (the user's wife), their current perspective, their values and motivations, and the relationship context. This information is essential for crafting a persuasive message that effectively conveys the user's love in a way that resonates with their wife."
         },
         "original_input": {
             "task_description": "I want to show my wife that I love her.",
@@ -111,6 +112,25 @@
                 "identity": 84
             }
         },
-        "error": null
+        "api_usage": {
+            "model": "claude-3-haiku-20240307",
+            "input_tokens": 21800,
+            "output_tokens": 1258
+        },
+        "error": null,
+        "trait_percentages": {
+            "mind": 65,
+            "energy": 64,
+            "nature": 84,
+            "tactics": 57,
+            "identity": 84
+        },
+        "trait_percentages2": {
+            "mind": 65,
+            "energy": 64,
+            "nature": 84,
+            "tactics": 57,
+            "identity": 84
+        }
     }
 ]

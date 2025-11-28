@@ -167,6 +167,18 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
+            // Combine questions with answers for workflow 2
+            $questions = $promptRun->framework_questions ?? [];
+            $answers = $validated['question_answers'];
+            $questionAnswers = [];
+
+            foreach ($questions as $index => $question) {
+                $questionAnswers[] = [
+                    'question' => $question['question'] ?? '',
+                    'answer' => $answers[$index] ?? '',
+                ];
+            }
+
             // Call the generation workflow with task-trait alignment parameters
             $result = $this->promptService->generatePrompt(
                 $promptRun->task_classification,
@@ -179,7 +191,7 @@ class PromptBuilderController extends Controller
                 $promptRun->task_description,
                 $promptRun->personality_type,
                 $promptRun->trait_percentages,
-                $validated['question_answers']
+                $questionAnswers
             );
 
             // Check if generation was successful

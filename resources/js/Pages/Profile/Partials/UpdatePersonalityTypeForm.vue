@@ -269,7 +269,7 @@ const submit = () => {
                     <LinkButton
                         v-if="showTaskCta"
                         ref="taskCtaButton"
-                        :href="route('prompt-optimizer.index')"
+                        :href="route('prompt-builder.index')"
                     >
                         Enter your Task
                         <DynamicIcon name="arrow-right" class="h-4 w-4" />
