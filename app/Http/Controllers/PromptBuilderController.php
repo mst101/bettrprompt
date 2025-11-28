@@ -184,7 +184,6 @@ class PromptBuilderController extends Controller
                 $promptRun->task_classification,
                 $promptRun->cognitive_requirements ?? [],
                 $promptRun->selected_framework,
-                $promptRun->alternative_frameworks ?? [],
                 $promptRun->personality_tier,
                 $promptRun->task_trait_alignment ?? [],
                 $promptRun->personality_adjustments_preview ?? [],
