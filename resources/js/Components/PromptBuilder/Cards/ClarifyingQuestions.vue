@@ -13,6 +13,7 @@ import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
     promptRun: PromptRunResource;
+    currentQuestionAnswer?: string | null;
 }>();
 
 const questions = computed<ClarifyingQuestion[]>(() => {
@@ -67,6 +68,15 @@ const hydrateAnswers = () => {
 
     const firstPending = answers.value.findIndex((answer) => answer === null);
     currentIndex.value = firstPending === -1 ? 0 : firstPending;
+
+    // If we have a currentQuestionAnswer from going back, set it
+    if (
+        props.currentQuestionAnswer !== undefined &&
+        props.currentQuestionAnswer !== null
+    ) {
+        answers.value[currentIndex.value] = props.currentQuestionAnswer;
+    }
+
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
     submitError.value = null;

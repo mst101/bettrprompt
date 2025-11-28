@@ -253,6 +253,7 @@ watch(
             <ClarifyingQuestions
                 v-if="activeTab === 'questions'"
                 :prompt-run="promptRun"
+                :current-question-answer="currentQuestionAnswer"
             />
 
             <!-- Recommendations Tab -->
