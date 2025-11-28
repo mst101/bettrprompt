@@ -34,7 +34,7 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration",
+        "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration-smart",
         "options": {}
       },
       "id": "68ecb0d2-6415-4b51-8421-f1684febbe7d",
