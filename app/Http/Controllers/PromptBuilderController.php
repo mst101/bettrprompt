@@ -144,11 +144,7 @@ class PromptBuilderController extends Controller
 
         $promptRun->load(['parent', 'children']);
 
-        // Check if there's a future answer for the current question
-        $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
-        $futureAnswers = session()->get($sessionKey, []);
-        $currentQuestionIndex = count($promptRun->clarifying_answers ?? []);
-        $currentQuestionAnswer = $futureAnswers[$currentQuestionIndex] ?? null;
+        $currentQuestionIndex = $promptRun->current_question_index ?? 0;
 
         // Get current question
         $currentQuestion = null;
@@ -157,12 +153,16 @@ class PromptBuilderController extends Controller
             $currentQuestion = is_array($question) ? ($question['question'] ?? null) : $question;
         }
 
+        // Get the current question's answer (if it exists from going back/forward)
+        $answers = $promptRun->clarifying_answers ?? [];
+        $currentQuestionAnswer = $answers[$currentQuestionIndex] ?? null;
+
         return Inertia::render('PromptBuilder/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $currentQuestion,
             'currentQuestionAnswer' => $currentQuestionAnswer,
             'progress' => [
-                'answered' => count($promptRun->clarifying_answers ?? []),
+                'answered' => $currentQuestionIndex,
                 'total' => count($promptRun->framework_questions ?? []),
             ],
         ]);
@@ -274,28 +274,27 @@ class PromptBuilderController extends Controller
         ]);
 
         try {
-            // Get current answers
+            $currentIndex = $promptRun->current_question_index ?? 0;
             $answers = $promptRun->clarifying_answers ?? [];
-            $currentAnswerCount = count($answers);
 
-            // Check if we have future answers stored in session (from going back)
-            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
-            $futureAnswers = session()->get($sessionKey, []);
+            // Set the answer at the current index
+            $answers[$currentIndex] = $validated['answer'];
 
-            // Add the current answer
-            $answers[] = $validated['answer'];
+            // Move to next question
+            $newIndex = $currentIndex + 1;
 
             Log::info('Submitting Answer (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
-                'current_answers_count' => $currentAnswerCount,
+                'question_index' => $currentIndex,
                 'new_answer' => $validated['answer'],
-                'total_after' => count($answers),
+                'new_index' => $newIndex,
             ]);
 
             // Update the prompt run
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $newIndex) {
                 $promptRun->update([
                     'clarifying_answers' => $answers,
+                    'current_question_index' => $newIndex,
                     'workflow_stage' => 'answering_questions',
                 ]);
             });
@@ -304,10 +303,6 @@ class PromptBuilderController extends Controller
 
             // Check if all questions have been answered
             if ($this->hasAnsweredAllQuestions($promptRun)) {
-                // Clear future answers from session
-                session()->forget($sessionKey);
-
-                // Trigger generation (redirect to questions tab with completion notice)
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
                     ->with('success', 'All questions answered. Ready to generate prompt!');
@@ -341,21 +336,27 @@ class PromptBuilderController extends Controller
         }
 
         try {
-            // Get current answers
+            // Get current position and answers
+            $currentIndex = $promptRun->current_question_index ?? 0;
             $answers = $promptRun->clarifying_answers ?? [];
 
-            // Add null for skipped question
-            $answers[] = null;
+            // Set null at current index (skipped)
+            $answers[$currentIndex] = null;
+
+            // Move to next question
+            $newIndex = $currentIndex + 1;
 
             Log::info('Skipping question (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
-                'question_number' => count($answers),
+                'question_index' => $currentIndex,
+                'new_index' => $newIndex,
             ]);
 
             // Update the prompt run
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $newIndex) {
                 $promptRun->update([
                     'clarifying_answers' => $answers,
+                    'current_question_index' => $newIndex,
                     'workflow_stage' => 'answering_questions',
                 ]);
             });
@@ -395,41 +396,32 @@ class PromptBuilderController extends Controller
             return back()->with('error', 'Cannot go back at this stage.');
         }
 
-        // Check if there are any answers to go back from
-        $answers = $promptRun->clarifying_answers ?? [];
-        if (empty($answers)) {
-            return back()->with('error', 'No previous answers to go back to.');
+        // Check if we can go back
+        $currentIndex = $promptRun->current_question_index ?? 0;
+        if ($currentIndex === 0) {
+            return back()->with('error', 'Already at first question.');
         }
 
         try {
-            // Store future answers in session
-            $sessionKey = "prompt_run_{$promptRun->id}_future_answers";
-            $futureAnswers = session()->get($sessionKey, []);
-
-            // Remove the last answer and store it
-            $removedAnswer = array_pop($answers);
-            if ($removedAnswer !== null) {
-                // Store at the index it was removed from
-                $futureAnswers[count($answers)] = $removedAnswer;
-                session()->put($sessionKey, $futureAnswers);
-            }
+            // Just decrement the index - don't remove any answers
+            $newIndex = $currentIndex - 1;
 
             Log::info('Going back to previous question (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
-                'new_answer_count' => count($answers),
+                'from_index' => $currentIndex,
+                'to_index' => $newIndex,
             ]);
 
             // Update the prompt run
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $newIndex) {
                 $promptRun->update([
-                    'clarifying_answers' => $answers,
-                    'workflow_stage' => count($answers) === 0 ? 'analysis_complete' : 'answering_questions',
+                    'current_question_index' => $newIndex,
+                    'workflow_stage' => $newIndex === 0 ? 'analysis_complete' : 'answering_questions',
                 ]);
             });
 
             return redirect()
-                ->route('prompt-builder.show', $promptRun)
-                ->with('previous_answer', $removedAnswer);
+                ->route('prompt-builder.show', $promptRun);
 
         } catch (\Exception $e) {
             Log::error('Failed to go back (PromptBuilder)', [
@@ -447,9 +439,9 @@ class PromptBuilderController extends Controller
     protected function hasAnsweredAllQuestions(PromptRun $promptRun): bool
     {
         $totalQuestions = count($promptRun->framework_questions ?? []);
-        $answeredQuestions = count($promptRun->clarifying_answers ?? []);
+        $currentIndex = $promptRun->current_question_index ?? 0;
 
-        return $answeredQuestions >= $totalQuestions;
+        return $currentIndex >= $totalQuestions;
     }
 
     /**

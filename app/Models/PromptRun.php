@@ -20,6 +20,7 @@ class PromptRun extends Model
         'task_description',
         'framework_questions',
         'clarifying_answers',
+        'current_question_index',
         'optimized_prompt',
         'status',
         'workflow_stage',
@@ -91,10 +92,9 @@ class PromptRun extends Model
             return null;
         }
 
-        $answers = $this->clarifying_answers ?? [];
-        $answeredCount = count($answers);
+        $currentIndex = $this->current_question_index ?? 0;
 
-        return $this->framework_questions[$answeredCount] ?? null;
+        return $this->framework_questions[$currentIndex] ?? null;
     }
 
     /**
@@ -107,9 +107,9 @@ class PromptRun extends Model
         }
 
         $totalQuestions = count($this->framework_questions);
-        $answeredQuestions = count($this->clarifying_answers ?? []);
+        $currentIndex = $this->current_question_index ?? 0;
 
-        return $answeredQuestions >= $totalQuestions;
+        return $currentIndex >= $totalQuestions;
     }
 
     /**
@@ -117,7 +117,7 @@ class PromptRun extends Model
      */
     public function getAnsweredQuestionsCount(): int
     {
-        return count($this->clarifying_answers ?? []);
+        return $this->current_question_index ?? 0;
     }
 
     /**
