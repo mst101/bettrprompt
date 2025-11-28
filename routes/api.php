@@ -193,4 +193,5 @@ Route::prefix('reference')->group(function () {
     Route::get('personality-calibration', [ReferenceController::class, 'personalityCalibration']);
     Route::get('question-bank', [ReferenceController::class, 'questionBank']);
     Route::get('prompt-templates', [ReferenceController::class, 'promptTemplates']);
+    Route::get('framework-template/{code}', [ReferenceController::class, 'frameworkTemplate']);
 });
