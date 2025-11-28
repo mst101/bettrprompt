@@ -88,21 +88,15 @@ class ReferenceController extends Controller
 
         $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($code) {
             $disk = Storage::disk('reference_documents');
+            $templatePath = "framework_templates/{$code}.md";
 
-            if (! $disk->exists('prompt_templates.md')) {
-                return null;
-            }
-
-            $content = $disk->get('prompt_templates.md');
-            $template = $this->extractFrameworkTemplate($content, $code);
-
-            if ($template === null) {
+            if (! $disk->exists($templatePath)) {
                 return null;
             }
 
             return [
-                'content' => $template,
-                'last_updated' => $disk->lastModified('prompt_templates.md'),
+                'content' => $disk->get($templatePath),
+                'last_updated' => $disk->lastModified($templatePath),
             ];
         });
 
@@ -150,57 +144,5 @@ class ReferenceController extends Controller
             'content' => $data['content'],
             'last_updated' => date('c', $data['last_updated']),
         ]);
-    }
-
-    /**
-     * Extract a specific framework template from the prompt_templates.md content
-     */
-    private function extractFrameworkTemplate(string $content, string $code): ?string
-    {
-        // Map framework codes to their template section names
-        $frameworkNames = [
-            'COAST' => 'COAST Framework Template',
-            'BAB' => 'BAB (Before-After-Bridge) Framework Template',
-            'CHAIN_OF_THOUGHT' => 'Chain of Thought Framework Template',
-            'SCAMPER' => 'SCAMPER Framework Template',
-            'RISE' => 'RISE Framework Template (Feedback)',
-            'CUSTOMER_COMMUNICATION' => 'Customer Communication Template (Content Creation)',
-        ];
-
-        if (! isset($frameworkNames[$code])) {
-            // If code not found in map, try to find it directly
-            $searchPattern = "### {$code} ";
-        } else {
-            $searchPattern = "### {$frameworkNames[$code]}";
-        }
-
-        // Find the start of this framework template
-        $startPos = strpos($content, $searchPattern);
-        if ($startPos === false) {
-            return null;
-        }
-
-        // Find the next ### heading (start of next template)
-        $nextHeadingPos = strpos($content, "\n### ", $startPos + 1);
-
-        // If no next heading found, take until the end
-        if ($nextHeadingPos === false) {
-            $template = substr($content, $startPos);
-        } else {
-            $template = substr($content, $startPos, $nextHeadingPos - $startPos);
-        }
-
-        // Also include the general guidance sections at the top
-        $guidanceEnd = strpos($content, '## Framework Templates');
-        if ($guidanceEnd === false) {
-            $guidanceEnd = strpos($content, '## Applying Task-Trait Alignment');
-        }
-
-        if ($guidanceEnd !== false) {
-            $guidance = substr($content, 0, $guidanceEnd);
-            $template = $guidance."\n\n".$template;
-        }
-
-        return trim($template);
     }
 }
