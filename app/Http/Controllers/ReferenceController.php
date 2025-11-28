@@ -163,7 +163,8 @@ class ReferenceController extends Controller
             'BAB' => 'BAB (Before-After-Bridge) Framework Template',
             'CHAIN_OF_THOUGHT' => 'Chain of Thought Framework Template',
             'SCAMPER' => 'SCAMPER Framework Template',
-            // Add more mappings as needed
+            'RISE' => 'RISE Framework Template (Feedback)',
+            'CUSTOMER_COMMUNICATION' => 'Customer Communication Template (Content Creation)',
         ];
 
         if (! isset($frameworkNames[$code])) {
