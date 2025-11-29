@@ -10,11 +10,11 @@ import OptimizedPrompt from '@/Components/PromptBuilder/Cards/OptimizedPrompt.vu
 import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
 import Recommendations from '@/Components/PromptBuilder/Cards/Recommendations.vue';
+import RelatedPromptRuns from '@/Components/PromptBuilder/Cards/RelatedPromptRuns.vue';
 import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
 import TaskInformation from '@/Components/PromptBuilder/Cards/TaskInformation.vue';
 import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignment.vue';
-import RelatedPromptRuns from '@/Components/PromptOptimizer/Cards/RelatedPromptRuns.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';

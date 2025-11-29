@@ -5,7 +5,7 @@ import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
-import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
+import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -129,13 +129,7 @@ const handleTranscription = (text: string) => {
                         <DynamicIcon name="arrow-left" class="mr-2 h-4 w-4" />
                         Back
                     </ButtonSecondary>
-                    <ButtonSecondary
-                        type="button"
-                        :disabled="isSubmitting || !answer"
-                        @click="emit('clear')"
-                    >
-                        Clear
-                    </ButtonSecondary>
+
                     <ButtonSecondary
                         type="button"
                         :disabled="isSubmitting"

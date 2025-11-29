@@ -13,7 +13,6 @@ import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
     promptRun: PromptRunResource;
-    currentQuestionAnswer?: string | null;
 }>();
 
 const questions = computed<ClarifyingQuestion[]>(() => {
@@ -30,6 +29,7 @@ const questions = computed<ClarifyingQuestion[]>(() => {
 
 const answers = ref<(string | null)[]>([]);
 const currentIndex = ref(0);
+const currentAnswerDraft = ref('');
 const showAllQuestions = ref(false);
 const isEditingAnswers = ref(false);
 const isSubmitting = ref(false);
@@ -39,15 +39,14 @@ const hasQuestions = computed(() => questions.value.length > 0);
 const currentQuestion = computed(
     () => questions.value[currentIndex.value] ?? null,
 );
+const atLastQuestion = computed(
+    () => currentIndex.value >= questions.value.length - 1,
+);
 
 const currentAnswer = computed({
-    get: () => answers.value[currentIndex.value] ?? '',
+    get: () => currentAnswerDraft.value,
     set: (value: string) => {
-        answers.value[currentIndex.value] = value?.trim()
-            ? value
-            : value === '' // Allow explicit clear
-              ? ''
-              : null;
+        currentAnswerDraft.value = value;
     },
 });
 
@@ -66,16 +65,21 @@ const hydrateAnswers = () => {
         );
     });
 
+    const nextIndexFromServer =
+        props.promptRun.currentQuestionIndex ?? answers.value.length;
     const firstPending = answers.value.findIndex((answer) => answer === null);
-    currentIndex.value = firstPending === -1 ? 0 : firstPending;
+    const startIndex =
+        firstPending === -1
+            ? Math.min(
+                  nextIndexFromServer,
+                  Math.max(questions.value.length - 1, 0),
+              )
+            : firstPending;
 
-    // If we have a currentQuestionAnswer from going back, set it
-    if (
-        props.currentQuestionAnswer !== undefined &&
-        props.currentQuestionAnswer !== null
-    ) {
-        answers.value[currentIndex.value] = props.currentQuestionAnswer;
-    }
+    currentIndex.value = Math.max(0, startIndex);
+
+    // Sync the draft with the current answer
+    currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
 
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
@@ -87,58 +91,81 @@ watch(
         props.promptRun.id,
         props.promptRun.frameworkQuestions,
         props.promptRun.clarifyingAnswers,
+        props.promptRun.currentQuestionIndex,
     ],
     hydrateAnswers,
     { immediate: true },
 );
 
 const goBack = () => {
-    // Persist go-back to backend
-    router.post(
-        route('prompt-builder.go-back', props.promptRun.id),
-        {},
-        {
-            preserveScroll: true,
-            onError: () => {
-                submitError.value = 'Failed to go back. Please try again.';
-            },
-        },
-    );
+    if (currentIndex.value > 0) {
+        currentIndex.value -= 1;
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+    }
 };
 
-const skipQuestion = () => {
-    // Persist skip to backend
-    router.post(
-        route('prompt-builder.skip', props.promptRun.id),
-        {},
-        {
-            preserveScroll: true,
-            onError: () => {
-                submitError.value =
-                    'Failed to skip question. Please try again.';
+const goNext = () => {
+    if (currentIndex.value < questions.value.length - 1) {
+        currentIndex.value += 1;
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+    }
+};
+
+const saveAnswer = async (index: number, value: string | null) => {
+    isSubmitting.value = true;
+    submitError.value = null;
+
+    try {
+        const response = await axios.post(
+            route('prompt-builder.answer', props.promptRun.id),
+            {
+                question_index: index,
+                answer: value,
             },
-        },
-    );
+        );
+
+        const updated =
+            (response.data?.clarifying_answers as (string | null)[]) ?? [];
+        answers.value = questions.value.map(
+            (_, idx) => normalizeAnswer(updated[idx]) ?? null,
+        );
+
+        // Update draft to match saved answer
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+    } catch (error: unknown) {
+        const axiosError = error as {
+            response?: { data?: { error?: { message?: string } } };
+            message?: string;
+        };
+
+        submitError.value =
+            axiosError?.response?.data?.error?.message ||
+            axiosError?.message ||
+            'Failed to save answer. Please try again.';
+        throw error;
+    } finally {
+        isSubmitting.value = false;
+    }
+};
+
+const skipQuestion = async () => {
+    await saveAnswer(currentIndex.value, null);
+    goNext();
 };
 
 const clearCurrentAnswer = () => {
-    answers.value[currentIndex.value] = '';
+    currentAnswerDraft.value = '';
 };
 
-const submitAnswer = () => {
+const submitAnswer = async () => {
     const answer = normalizeAnswer(currentAnswer.value);
+    await saveAnswer(currentIndex.value, answer);
 
-    // Persist answer to backend
-    router.post(
-        route('prompt-builder.answer', props.promptRun.id),
-        { answer },
-        {
-            preserveScroll: true,
-            onError: () => {
-                submitError.value = 'Failed to save answer. Please try again.';
-            },
-        },
-    );
+    if (atLastQuestion.value) {
+        submitAllAnswers();
+    } else {
+        goNext();
+    }
 };
 
 const startEditingAnswers = () => {
@@ -208,17 +235,11 @@ const submitEditedAnswers = () => {
 };
 
 const hasSubmittedAnswers = computed(() => {
-    // Only show "answered" view when ALL questions have been answered
-    const answersFromRun = props.promptRun.clarifyingAnswers ?? [];
-    const totalQuestions = questions.value.length;
-
-    // If we don't have the same number of answers as questions, we're still answering
-    if (answersFromRun.length < totalQuestions) {
-        return false;
-    }
-
-    // All questions answered (some may be null/skipped, but we've processed all)
-    return answersFromRun.length >= totalQuestions;
+    if (!questions.value.length) return false;
+    if (answers.value.length < questions.value.length) return false;
+    return answers.value.every(
+        (answer) => answer !== null && answer !== undefined,
+    );
 });
 
 const shouldShowQuestionForm = computed(
@@ -303,6 +324,7 @@ const bulkSubmitLabel = computed(() =>
         <!-- One-at-a-time Question Form -->
         <QuestionAnsweringForm
             v-if="shouldShowQuestionForm"
+            :key="`question-${currentIndex}`"
             v-model:answer="currentAnswer"
             :question="currentQuestion.question"
             :current-question-number="currentIndex + 1"

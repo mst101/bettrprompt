@@ -2,8 +2,8 @@
 import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
-import PersonalityTypePrompt from '@/Components/PromptOptimizer/PersonalityTypePrompt.vue';
-import TaskDescriptionForm from '@/Components/PromptOptimizer/TaskDescriptionForm.vue';
+import PersonalityTypePrompt from '@/Components/PromptBuilder/PersonalityTypePrompt.vue';
+import TaskDescriptionForm from '@/Components/PromptBuilder/TaskDescriptionForm.vue';
 import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';

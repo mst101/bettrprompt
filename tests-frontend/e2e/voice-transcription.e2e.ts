@@ -4,7 +4,7 @@ import { loginAsTestUser, seedTestUser } from './helpers/auth';
 /**
  * Voice Transcription E2E Tests
  *
- * Tests the voice input functionality on the /prompt-optimizer page.
+ * Tests the voice input functionality on the /prompt-builder page.
  * Route: POST /voice-transcription (throttled: 30 requests per minute)
  * Controller: App\Http\Controllers\VoiceTranscriptionController
  *
@@ -17,7 +17,7 @@ test.describe.skip('Voice Transcription - Button Visibility', () => {
     test('should display voice input button on prompt optimizer page', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // The voice button is within the task description form actions area
@@ -48,7 +48,7 @@ test.describe.skip('Voice Transcription - Button Visibility', () => {
     test('should show voice button with appropriate title attribute', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -65,7 +65,7 @@ test.describe.skip('Voice Transcription - Button Visibility', () => {
     test('voice button should be visible alongside task description textarea', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Task description should be visible
@@ -86,7 +86,7 @@ test.describe.skip('Voice Transcription - Button Visibility', () => {
 
 test.describe.skip('Voice Transcription - UI Interactions', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
     });
 
@@ -181,7 +181,7 @@ test.describe.skip('Voice Transcription - Cancel Recording', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -219,7 +219,7 @@ test.describe.skip('Voice Transcription - Cancel Recording', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -255,7 +255,7 @@ test.describe.skip('Voice Transcription - Error Handling', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -292,7 +292,7 @@ test.describe.skip('Voice Transcription - Error Handling', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -325,7 +325,7 @@ test.describe.skip('Voice Transcription - Error Handling', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -364,7 +364,7 @@ test.describe.skip('Voice Transcription - Error Handling', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -397,7 +397,7 @@ test.describe.skip('Voice Transcription - Processing State', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -443,7 +443,7 @@ test.describe.skip('Voice Transcription - Processing State', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -480,7 +480,7 @@ test.describe.skip('Voice Transcription - Processing State', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -519,7 +519,7 @@ test.describe.skip('Voice Transcription - Processing State', () => {
 
 test.describe.skip('Voice Transcription - Accessibility', () => {
     test('should have proper ARIA labels on voice button', async ({ page }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -537,7 +537,7 @@ test.describe.skip('Voice Transcription - Accessibility', () => {
     });
 
     test('should be keyboard accessible', async ({ page }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -570,7 +570,7 @@ test.describe.skip('Voice Transcription - Accessibility', () => {
         page,
         context,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -603,7 +603,7 @@ test.describe.skip('Voice Transcription - Accessibility', () => {
     test('should have sufficient colour contrast in all states', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const voiceButton = page.getByRole('button', { name: /record/i });
@@ -635,7 +635,7 @@ test.describe.skip('Voice Transcription - Route Throttling', () => {
         // Actual throttle testing would require making 30+ requests
         // which is impractical in e2e tests
 
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Verify voice input functionality exists
@@ -650,7 +650,7 @@ test.describe.skip('Voice Transcription - Route Throttling', () => {
 
 test.describe.skip('Voice Transcription - Integration with Form', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
     });
 
@@ -773,7 +773,7 @@ test.describe.skip(
 
         test.beforeEach(async ({ page }) => {
             await loginAsTestUser(page);
-            await page.goto('/prompt-optimizer');
+            await page.goto('/prompt-builder');
             await page.waitForLoadState('networkidle');
         });
 
@@ -833,7 +833,7 @@ test.describe.skip('Voice Transcription - Browser Compatibility Notes', () => {
         // This test documents that voice input requires MediaRecorder API
         // Older browsers may not support this feature
 
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Check if MediaRecorder is available

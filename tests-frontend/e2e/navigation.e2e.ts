@@ -17,7 +17,7 @@ test.describe('Site Navigation', () => {
 
             // Should navigate to prompt optimizer or login
             const url = page.url();
-            expect(url).toMatch(/\/(prompt-optimizer|login)/);
+            expect(url).toMatch(/\/(prompt-builder|login)/);
         }
     });
 

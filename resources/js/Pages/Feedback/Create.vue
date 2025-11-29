@@ -183,9 +183,7 @@ const submit = () => {
                     <ButtonSecondary
                         type="button"
                         :disabled="form.processing"
-                        @click="
-                            $inertia.visit(route('prompt-optimizer.history'))
-                        "
+                        @click="$inertia.visit(route('prompt-builder.history'))"
                     >
                         Cancel
                     </ButtonSecondary>

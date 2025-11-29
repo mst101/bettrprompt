@@ -2,37 +2,44 @@
 
 ## Overview
 
-The file `realtime-updates.e2e.ts` contains end-to-end tests for the real-time update functionality using Laravel Echo and WebSockets (Reverb).
+The file `realtime-updates.e2e.ts` contains end-to-end tests for the real-time update functionality using Laravel Echo
+and WebSockets (Reverb).
 
 ## What Real-time Updates Do
 
 The application uses WebSockets to push updates to the browser when background processes complete:
 
-1. **FrameworkSelected Event**: When n8n finishes selecting a framework, the browser receives an event and displays the Framework tab automatically
-2. **PromptOptimizationCompleted Event**: When the optimised prompt is ready, it appears without requiring a manual page refresh
+1. **FrameworkSelected Event**: When n8n finishes selecting a framework, the browser receives an event and displays the
+   Framework tab automatically
+2. **PromptOptimizationCompleted Event**: When the optimised prompt is ready, it appears without requiring a manual page
+   refresh
 
 ## Testing Challenges with WebSockets in Playwright
 
 Testing real-time WebSocket functionality in Playwright has several limitations:
 
 ### **Challenge 1: Real WebSocket Server Required**
+
 - Playwright runs in a real browser environment that expects actual WebSocket connections
 - You cannot easily mock WebSocket behaviour like you can with HTTP requests
 - The Reverb WebSocket server must be running and accessible
 
 ### **Challenge 2: Triggering Events**
+
 - Tests need a way to trigger server-side events (FrameworkSelected, PromptOptimizationCompleted)
 - Options include:
-  - Running actual n8n workflows (slow, requires full integration)
-  - Creating API endpoints to manually dispatch events (requires backend changes)
-  - Using Laravel's broadcasting system in tests (requires test infrastructure)
+    - Running actual n8n workflows (slow, requires full integration)
+    - Creating API endpoints to manually dispatch events (requires backend changes)
+    - Using Laravel's broadcasting system in tests (requires test infrastructure)
 
 ### **Challenge 3: Timing and Async Behaviour**
+
 - WebSocket events are asynchronous and may arrive at unpredictable times
 - Tests must handle scenarios where events arrive during test execution
 - Race conditions between test assertions and real-time updates
 
 ### **Challenge 4: Environment Differences**
+
 - Local development: WebSocket server may not be running
 - CI/CD: WebSocket infrastructure may be unavailable
 - Tests must be resilient to missing WebSocket connectivity
@@ -44,58 +51,59 @@ Given these challenges, our tests focus on what **can** be reliably tested in Pl
 ### ✅ **What We Test**
 
 1. **Echo Initialisation**
-   - Verify `window.Echo` is initialised on page load
-   - Check that connection state helpers exist (`isEchoConnected`, `getEchoConnectionState`)
-   - Verify Echo reports a valid connection state
+    - Verify `window.Echo` is initialised on page load
+    - Check that connection state helpers exist (`isEchoConnected`, `getEchoConnectionState`)
+    - Verify Echo reports a valid connection state
 
 2. **Channel Subscription Logic**
-   - Verify the `useRealtimeUpdates` composable is invoked
-   - Check that channels are subscribed to (via console logs)
-   - Confirm channel names are correct (`prompt-run.{id}`)
+    - Verify the `useRealtimeUpdates` composable is invoked
+    - Check that channels are subscribed to (via console logs)
+    - Confirm channel names are correct (`prompt-run.{id}`)
 
 3. **UI State Updates**
-   - Verify UI updates when data changes (regardless of update mechanism)
-   - Test that framework tab appears when framework is selected
-   - Test that optimised prompt displays when completed
-   - Check loading states during processing
+    - Verify UI updates when data changes (regardless of update mechanism)
+    - Test that framework tab appears when framework is selected
+    - Test that optimised prompt displays when completed
+    - Check loading states during processing
 
 4. **Fallback Behaviour**
-   - Verify polling fallback activates when WebSockets unavailable
-   - Test that manual page refresh works as fallback
-   - Ensure application remains functional without WebSockets
+    - Verify polling fallback activates when WebSockets unavailable
+    - Test that manual page refresh works as fallback
+    - Ensure application remains functional without WebSockets
 
 5. **Channel Cleanup**
-   - Verify channels are unsubscribed on navigation
-   - Check for memory leaks after multiple navigations
-   - Test event listener cleanup
+    - Verify channels are unsubscribed on navigation
+    - Check for memory leaks after multiple navigations
+    - Test event listener cleanup
 
 6. **Multi-tab Support**
-   - Verify multiple tabs can view the same prompt run
-   - Check initial state synchronisation (both show same data)
-   - Note: Real-time synchronisation across tabs requires event triggering
+    - Verify multiple tabs can view the same prompt run
+    - Check initial state synchronisation (both show same data)
+    - Note: Real-time synchronisation across tabs requires event triggering
 
 ### ❌ **What We Don't Test**
 
 1. **Actual WebSocket Event Transmission**
-   - Cannot reliably trigger server-side events in Playwright alone
-   - Cannot verify events propagate from server to client in isolation
-   - Requires integration with backend event dispatching
+    - Cannot reliably trigger server-side events in Playwright alone
+    - Cannot verify events propagate from server to client in isolation
+    - Requires integration with backend event dispatching
 
 2. **Real-time Synchronisation Between Tabs**
-   - Can verify both tabs show same initial state
-   - Cannot easily trigger events and verify both tabs update simultaneously
-   - Requires backend coordination to dispatch events during test
+    - Can verify both tabs show same initial state
+    - Cannot easily trigger events and verify both tabs update simultaneously
+    - Requires backend coordination to dispatch events during test
 
 3. **WebSocket Connection Recovery**
-   - Cannot reliably simulate network failures and recovery
-   - Cannot test reconnection logic under various failure scenarios
-   - Would require network manipulation tools
+    - Cannot reliably simulate network failures and recovery
+    - Cannot test reconnection logic under various failure scenarios
+    - Would require network manipulation tools
 
 ## Running the Tests
 
 ### Prerequisites
 
 For basic tests (Echo setup, UI state, fallback):
+
 ```bash
 # Start Laravel Sail (includes app and database)
 ./vendor/bin/sail up -d
@@ -105,6 +113,7 @@ composer dev
 ```
 
 For full integration tests (including event triggering):
+
 ```bash
 # Additionally start Reverb WebSocket server
 php artisan reverb:start
@@ -134,12 +143,14 @@ npx playwright test realtime-updates.e2e.ts --debug
 ### Expected Behaviour
 
 **When WebSocket Server is Running:**
+
 - Echo connection state: `connected`
 - Console logs show: "WebSocket connected"
 - Channel subscriptions succeed
 - Real-time updates may work (if n8n is integrated)
 
 **When WebSocket Server is Not Running:**
+
 - Echo connection state: `failed` or `disconnected`
 - Console logs show: "polling fallback"
 - Tests should still pass (fallback behaviour)
@@ -148,6 +159,7 @@ npx playwright test realtime-updates.e2e.ts --debug
 ### Test Philosophy
 
 These tests verify that:
+
 1. The client-side real-time infrastructure is correctly set up
 2. The application handles WebSocket availability gracefully
 3. The UI updates correctly regardless of update mechanism
@@ -209,7 +221,7 @@ test('should update UI when FrameworkSelected event is triggered', async ({ page
     const { id } = await createPromptRun(page);
 
     // Navigate to show page
-    await page.goto(`/prompt-optimizer/${id}`);
+    await page.goto(`/prompt-builder/${id}`);
 
     // Framework tab should not exist yet
     const frameworkTab = page.getByRole('button', { name: /framework/i });
@@ -242,12 +254,14 @@ test('should update UI when FrameworkSelected event is triggered', async ({ page
 **Symptom:** Echo state is `failed` or `disconnected`
 
 **Causes:**
+
 - Reverb server not running (`php artisan reverb:start`)
 - Port conflicts (check port 80/443 availability)
 - Firewall blocking WebSocket connections
 - SSL/TLS configuration issues
 
 **Solutions:**
+
 ```bash
 # Check Reverb is running
 ps aux | grep reverb
@@ -268,11 +282,13 @@ tail -f storage/logs/laravel.log
 **Symptom:** Console shows "polling fallback" even when Echo appears connected
 
 **Causes:**
+
 - Echo connects after composable initialises
 - Channel subscription fails
 - Event listeners not set up correctly
 
 **Debug:**
+
 ```javascript
 // In browser console
 console.log('Echo:', window.Echo);
@@ -288,12 +304,14 @@ window.Echo?.connector.channels
 **Symptom:** WebSocket connected but events don't trigger UI updates
 
 **Causes:**
+
 - Event not dispatched from backend
 - Channel name mismatch
 - Event class namespace incorrect
 - Reverb configuration issue
 
 **Debug:**
+
 1. Check backend dispatches event:
    ```php
    Log::info('Dispatching FrameworkSelected', ['prompt_run_id' => $promptRun->id]);
@@ -310,7 +328,8 @@ window.Echo?.connector.channels
 
 ## Future Improvements
 
-1. **Mock WebSocket Server**: Use a tool like `mock-socket` or `ws` to create a mock WebSocket server for deterministic testing
+1. **Mock WebSocket Server**: Use a tool like `mock-socket` or `ws` to create a mock WebSocket server for deterministic
+   testing
 
 2. **Backend Test Helpers**: Create Laravel test traits to dispatch events during Playwright tests
 
@@ -324,13 +343,14 @@ window.Echo?.connector.channels
 
 - **Composable**: `/home/mark/repos/personality/resources/js/Composables/useRealtimeUpdates.ts`
 - **Bootstrap**: `/home/mark/repos/personality/resources/js/bootstrap.ts`
-- **Show Page**: `/home/mark/repos/personality/resources/js/Pages/PromptOptimizer/Show.vue`
+- **Show Page**: `/home/mark/repos/personality/resources/js/Pages/PromptBuilder/Show.vue`
 - **Backend Events**: (Check Laravel `app/Events/` directory)
 - **Reverb Config**: `/home/mark/repos/personality/config/reverb.php`
 
 ## Summary
 
 The real-time updates tests verify that:
+
 - ✅ Client-side WebSocket infrastructure is correctly set up
 - ✅ Fallback mechanisms work when WebSockets unavailable
 - ✅ UI updates correctly when data changes

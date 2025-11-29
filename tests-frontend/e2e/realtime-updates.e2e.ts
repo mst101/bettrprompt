@@ -134,7 +134,7 @@ test.describe.skip('Real-time Updates - Channel Subscription', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -146,11 +146,11 @@ test.describe.skip('Real-time Updates - Channel Subscription', () => {
         await submitButton.click();
 
         // Wait for navigation to show page
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Extract the prompt run ID from the URL
         const url = page.url();
-        const match = url.match(/\/prompt-optimizer\/(\d+)/);
+        const match = url.match(/\/prompt-builder\/(\d+)/);
         expect(match).toBeTruthy();
 
         // const promptRunId = match![1];
@@ -188,7 +188,7 @@ test.describe.skip('Real-time Updates - Channel Subscription', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -199,7 +199,7 @@ test.describe.skip('Real-time Updates - Channel Subscription', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Capture console logs about polling
         const consoleMessages: string[] = [];
@@ -255,7 +255,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -266,7 +266,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Initially, framework tab might not be visible
         const frameworkTabInitial = page.getByRole('button', {
@@ -317,7 +317,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
         page,
     }) => {
         // Navigate to history to find a completed prompt (if any)
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Look for completed prompts
@@ -337,7 +337,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
                 .first();
             await completedRow.click();
 
-            await page.waitForURL(/\/prompt-optimizer\/\d+/);
+            await page.waitForURL(/\/prompt-builder\/\d+/);
             await page.waitForLoadState('networkidle');
 
             // Completed prompt should show optimised prompt tab
@@ -362,7 +362,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
 
     test('should show loading state whilst processing', async ({ page }) => {
         // Create a new prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -373,7 +373,7 @@ test.describe.skip('Real-time Updates - UI Updates on Data Change', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Should see a loading state initially
         const loadingCard = page.locator('[data-testid*="loading"]');
@@ -406,7 +406,7 @@ test.describe.skip('Real-time Updates - Event Handling', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -417,7 +417,7 @@ test.describe.skip('Real-time Updates - Event Handling', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Capture console logs
         const consoleMessages: string[] = [];
@@ -452,7 +452,7 @@ test.describe.skip('Real-time Updates - Event Handling', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -463,7 +463,7 @@ test.describe.skip('Real-time Updates - Event Handling', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Similar to FrameworkSelected, we verify the event handler setup
         // Full testing would require triggering the actual event
@@ -491,7 +491,7 @@ test.describe.skip('Real-time Updates - Channel Cleanup', () => {
         page,
     }) => {
         // Create and view a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -502,7 +502,7 @@ test.describe.skip('Real-time Updates - Channel Cleanup', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Capture console logs about channel cleanup
         const consoleMessages: string[] = [];
@@ -514,7 +514,7 @@ test.describe.skip('Real-time Updates - Channel Cleanup', () => {
         });
 
         // Navigate away
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Wait for cleanup to occur
@@ -534,7 +534,7 @@ test.describe.skip('Real-time Updates - Channel Cleanup', () => {
         // Navigate to prompt runs multiple times
         for (let i = 0; i < 3; i++) {
             // Create a prompt run
-            await page.goto('/prompt-optimizer');
+            await page.goto('/prompt-builder');
             await page.waitForLoadState('networkidle');
 
             const taskInput = page.getByLabel(/task description/i);
@@ -545,12 +545,12 @@ test.describe.skip('Real-time Updates - Channel Cleanup', () => {
             });
             await submitButton.click();
 
-            await page.waitForURL(/\/prompt-optimizer\/\d+/, {
+            await page.waitForURL(/\/prompt-builder\/\d+/, {
                 timeout: 10000,
             });
 
             // Navigate away
-            await page.goto('/prompt-optimizer-history');
+            await page.goto('/prompt-builder-history');
             await page.waitForLoadState('networkidle');
         }
 
@@ -581,7 +581,7 @@ test.describe.skip('Real-time Updates - Fallback Behaviour', () => {
         page,
     }) => {
         // Create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -592,7 +592,7 @@ test.describe.skip('Real-time Updates - Fallback Behaviour', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Manually refresh the page
         await page.reload();
@@ -623,7 +623,7 @@ test.describe.skip('Real-time Updates - Fallback Behaviour', () => {
         });
 
         // Application should still be usable
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Should see the form
@@ -679,7 +679,7 @@ test.describe.skip('Real-time Updates - Multiple Tabs (Informational)', () => {
             await loginAsTestUser(page2);
 
             // Create a prompt run on page 1
-            await page1.goto('/prompt-optimizer');
+            await page1.goto('/prompt-builder');
             await page1.waitForLoadState('networkidle');
 
             const taskInput = page1.getByLabel(/task description/i);
@@ -690,7 +690,7 @@ test.describe.skip('Real-time Updates - Multiple Tabs (Informational)', () => {
             });
             await submitButton.click();
 
-            await page1.waitForURL(/\/prompt-optimizer\/\d+/, {
+            await page1.waitForURL(/\/prompt-builder\/\d+/, {
                 timeout: 10000,
             });
 

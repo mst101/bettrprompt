@@ -2,17 +2,13 @@
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
-import ButtonTrash from '@/Components/PromptOptimizer/ButtonTrash.vue';
+import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import type { InertiaForm } from '@inertiajs/vue3';
 import { defineExpose, ref } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
-    form: InertiaForm<{
-        taskDescription: string;
-        personalityType?: string | null;
-        traitPercentages?: Record<string, unknown> | null;
-    }>;
+    form: InertiaForm<{ taskDescription: string }>;
 }
 
 defineProps<Props>();

@@ -70,7 +70,10 @@ class PromptRunResource extends JsonResource
             'traitPercentages' => $this->trait_percentages,
             'taskDescription' => $this->task_description,
             'frameworkQuestions' => $this->framework_questions,
-            'clarifyingAnswers' => $this->clarifying_answers,
+            'clarifyingAnswers' => $this->clarifying_answers
+                ? array_values($this->clarifying_answers)
+                : $this->clarifying_answers,
+            'currentQuestionIndex' => $this->current_question_index,
             'optimizedPrompt' => $this->optimized_prompt,
             'status' => $this->status,
             'workflowStage' => $this->workflow_stage,

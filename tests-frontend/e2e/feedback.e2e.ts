@@ -271,7 +271,7 @@ test.describe.skip('Feedback - Submission Flow (requires auth)', () => {
 
         // Should be redirected to prompt optimizer with success message
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
 
         // Should see success message
         const successMessage = page.getByText(/thank you for your feedback/i);
@@ -521,7 +521,7 @@ test.describe.skip('Feedback - Update Functionality (requires auth)', () => {
 
         // Should be redirected to prompt optimizer with success message
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
 
         await expect(
             page.getByText(/thank you for updating your feedback/i),
@@ -617,7 +617,7 @@ test.describe.skip('Feedback - Cancel Button Behaviour', () => {
 
         // Should be redirected to prompt optimizer history
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
     });
 });
 

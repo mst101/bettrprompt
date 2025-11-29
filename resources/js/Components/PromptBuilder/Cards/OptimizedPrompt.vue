@@ -43,7 +43,7 @@ const cancelEditing = () => {
 
 const saveEdits = () => {
     router.patch(
-        route('prompt-optimizer.update-prompt', {
+        route('prompt-builder.update-prompt', {
             promptRun: props.promptRunId,
         }),
         {

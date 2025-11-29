@@ -37,43 +37,8 @@ Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallba
 //    return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard', [\App\Http\Controllers\PromptOptimizerController::class, 'index'])
+Route::get('/dashboard', [PromptBuilderController::class, 'index'])
     ->name('dashboard');
-
-// Prompt Optimizer routes (no authentication required)
-Route::get('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'index'])
-    ->name('prompt-optimizer.index');
-Route::post('/prompt-optimizer', [\App\Http\Controllers\PromptOptimizerController::class, 'store'])
-    ->name('prompt-optimizer.store');
-Route::patch('/visitor/personality',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'updateVisitorPersonality'])
-    ->name('visitor.personality.update');
-Route::get('/prompt-optimizer/{promptRun}', [\App\Http\Controllers\PromptOptimizerController::class, 'show'])
-    ->name('prompt-optimizer.show');
-Route::post('/prompt-optimizer/{promptRun}/answer',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'answerQuestion'])
-    ->name('prompt-optimizer.answer');
-Route::post('/prompt-optimizer/{promptRun}/submit-all-answers',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'submitAllAnswers'])
-    ->name('prompt-optimizer.submit-all-answers');
-Route::post('/prompt-optimizer/{promptRun}/skip',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'skipQuestion'])
-    ->name('prompt-optimizer.skip');
-Route::post('/prompt-optimizer/{promptRun}/go-back',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'goBackToPreviousQuestion'])
-    ->name('prompt-optimizer.go-back');
-Route::post('/prompt-optimizer/{promptRun}/retry',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'retry'])
-    ->name('prompt-optimizer.retry');
-Route::post('/prompt-optimizer/{parentPromptRun}/create-child',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'createChild'])
-    ->name('prompt-optimizer.create-child');
-Route::post('/prompt-optimizer/{parentPromptRun}/create-child-from-answers',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'createChildFromAnswers'])
-    ->name('prompt-optimizer.create-child-from-answers');
-Route::patch('/prompt-optimizer/{promptRun}/update-prompt',
-    [\App\Http\Controllers\PromptOptimizerController::class, 'updateOptimizedPrompt'])
-    ->name('prompt-optimizer.update-prompt');
 
 // Feedback routes (no authentication required)
 Route::get('/feedback/create', [FeedbackController::class, 'create'])
@@ -100,10 +65,7 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Prompt Optimizer history (requires authentication)
-    Route::get('/prompt-optimizer-history', [\App\Http\Controllers\PromptOptimizerController::class, 'history'])
-        ->name('prompt-optimizer.history');
-
+    // Prompt Builder history (requires authentication)
     Route::get('/prompt-builder-history', [PromptBuilderController::class, 'history'])
         ->name('prompt-builder.history');
 });
@@ -149,4 +111,10 @@ Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers', [Prom
     ->name('prompt-builder.create-child-from-answers');
 Route::post('/prompt-builder/{parentPromptRun}/create-child', [PromptBuilderController::class, 'createChild'])
     ->name('prompt-builder.create-child');
+Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
+    ->name('prompt-builder.answer');
+Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])
+    ->name('prompt-builder.skip');
+Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
+    ->name('prompt-builder.update-prompt');
 // });

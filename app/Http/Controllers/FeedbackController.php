@@ -86,7 +86,7 @@ class FeedbackController extends Controller
                 'updated_at' => now(),
             ]);
 
-        return redirect()->route('prompt-optimizer.index')
+        return redirect()->route('prompt-builder.index')
             ->with('success', 'Thank you for updating your feedback!');
     }
 

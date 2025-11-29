@@ -75,7 +75,7 @@ class OAuthController extends Controller
                 'email' => $user->email,
             ]);
 
-            return redirect()->intended(route('prompt-optimizer.index'));
+            return redirect()->intended(route('prompt-builder.index'));
 
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             Log::warning('OAuth state validation failed', [

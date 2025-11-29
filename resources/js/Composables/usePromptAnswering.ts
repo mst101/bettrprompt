@@ -31,7 +31,7 @@ export function usePromptAnswering(
         if (!answerForm.answer.trim()) return;
 
         isSubmitting.value = true;
-        answerForm.post(route('prompt-optimizer.answer', promptRunId), {
+        answerForm.post(route('prompt-builder.answer', promptRunId), {
             preserveScroll: true,
             onSuccess: async () => {
                 // Don't reset the form here - the watcher will set the correct answer
@@ -49,7 +49,7 @@ export function usePromptAnswering(
     const skipQuestion = () => {
         isSubmitting.value = true;
         router.post(
-            route('prompt-optimizer.skip', promptRunId),
+            route('prompt-builder.skip', promptRunId),
             {},
             {
                 preserveScroll: true,
@@ -77,7 +77,7 @@ export function usePromptAnswering(
     const goBackToPreviousQuestion = () => {
         isSubmitting.value = true;
         router.post(
-            route('prompt-optimizer.go-back', promptRunId),
+            route('prompt-builder.go-back', promptRunId),
             {},
             {
                 preserveScroll: true,

@@ -84,11 +84,13 @@ class ReferenceController extends Controller
      */
     public function frameworkTemplate(string $code): JsonResponse
     {
-        $cacheKey = "framework_template_{$code}";
+        // Normalise code: uppercase and replace spaces with underscores
+        $normalisedCode = strtoupper(str_replace(' ', '_', $code));
+        $cacheKey = "framework_template_{$normalisedCode}";
 
-        $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($code) {
+        $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($normalisedCode) {
             $disk = Storage::disk('reference_documents');
-            $templatePath = "framework_templates/{$code}.md";
+            $templatePath = "framework_templates/{$normalisedCode}.md";
 
             if (! $disk->exists($templatePath)) {
                 return null;
@@ -110,7 +112,7 @@ class ReferenceController extends Controller
         return response()->json([
             'success' => true,
             'content' => $data['content'],
-            'framework_code' => $code,
+            'framework_code' => $normalisedCode,
             'last_updated' => date('c', $data['last_updated']),
         ]);
     }

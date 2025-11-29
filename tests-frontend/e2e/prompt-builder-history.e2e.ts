@@ -15,11 +15,11 @@ import { execAsync, seedPromptRuns } from './helpers/database';
  * - Responsive design
  */
 
-test.describe.skip('Prompt Optimiser History - Unauthenticated Access', () => {
+test.describe('Prompt Optimiser History - Unauthenticated Access', () => {
     test('should redirect to login when accessing history without authentication', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should redirect to home or login page
@@ -27,11 +27,11 @@ test.describe.skip('Prompt Optimiser History - Unauthenticated Access', () => {
         const isRedirected = url === '/' || url.includes('login');
 
         expect(isRedirected).toBeTruthy();
-        expect(url).not.toContain('/prompt-optimizer-history');
+        expect(url).not.toContain('/prompt-builder-history');
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Empty State', () => {
+test.describe('Prompt Optimiser History - Empty State', () => {
     test.beforeAll(async () => {
         // Seed the test user
         await seedTestUser();
@@ -48,7 +48,7 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
     });
 
     test('should display page heading when authenticated', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see the page heading
@@ -61,7 +61,7 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
     test('should show empty state message when no history exists', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see empty state message
@@ -74,12 +74,12 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
         });
         await expect(createLink).toBeVisible();
         expect(await createLink.getAttribute('href')).toContain(
-            '/prompt-optimizer',
+            '/prompt-builder',
         );
     });
 
     test('should show "Create New" button in header', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see "Create New" button
@@ -88,14 +88,14 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
         });
         await expect(createButton).toBeVisible();
         expect(await createButton.getAttribute('href')).toContain(
-            '/prompt-optimizer',
+            '/prompt-builder',
         );
     });
 
     test('should navigate to prompt optimiser when clicking empty state link', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click the create link in empty state
@@ -105,8 +105,8 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
         await createLink.click();
 
         // Should navigate to prompt optimiser
-        await page.waitForURL('/prompt-optimizer');
-        expect(page.url()).toContain('/prompt-optimizer');
+        await page.waitForURL('/prompt-builder');
+        expect(page.url()).toContain('/prompt-builder');
 
         // Should see the task input form
         const taskInput = page.getByLabel(/task description/i);
@@ -114,7 +114,7 @@ test.describe.skip('Prompt Optimiser History - Empty State', () => {
     });
 });
 
-test.describe.skip('Prompt Optimiser History - With Data', () => {
+test.describe('Prompt Optimiser History - With Data', () => {
     test.beforeAll(async () => {
         // Seed the test user and create prompt runs
         await seedTestUser();
@@ -127,7 +127,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 
     test('should display history table with prompt runs', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see the table
@@ -154,7 +154,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
         // Set viewport to desktop size
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see all column headers on desktop
@@ -176,7 +176,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 
     test('should show status badges for each prompt run', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see at least one status badge
@@ -189,7 +189,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 
     test('should display dates in British format', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Get first date cell
@@ -204,7 +204,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 
     test('should display personality types', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // At desktop size, should see personality types in dedicated column
@@ -220,7 +220,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 
     test('should truncate long task descriptions', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Task descriptions should be visible but may be truncated
@@ -235,7 +235,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     test('should show framework names or placeholder', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Framework column should exist on large screens
@@ -254,7 +254,7 @@ test.describe.skip('Prompt Optimiser History - With Data', () => {
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Sorting', () => {
+test.describe('Prompt Optimiser History - Sorting', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(10);
@@ -267,7 +267,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     test('should sort by created date (default descending)', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Created column should be sortable
@@ -283,7 +283,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     test('should toggle sort direction when clicking column header', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click task description header to sort
@@ -308,7 +308,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     });
 
     test('should sort by status', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Desktop size to see all columns
@@ -329,7 +329,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     test('should sort by personality type', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click personality type header
@@ -347,7 +347,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     test('should sort by framework', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click framework header
@@ -363,7 +363,7 @@ test.describe.skip('Prompt Optimiser History - Sorting', () => {
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Pagination', () => {
+test.describe('Prompt Optimiser History - Pagination', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(25); // Create enough for multiple pages
@@ -376,7 +376,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
     test('should display pagination controls when multiple pages exist', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         // Desktop size to see pagination
@@ -394,7 +394,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
     });
 
     test('should navigate to next page', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -412,7 +412,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
 
     test('should navigate to previous page', async ({ page }) => {
         // Start on page 2
-        await page.goto('/prompt-optimizer-history?per_page=10&page=2');
+        await page.goto('/prompt-builder-history?per_page=10&page=2');
         await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -433,7 +433,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
     });
 
     test('should allow changing items per page', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -462,7 +462,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
         // Mobile viewport
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         // Should see mobile "Page X of Y" text
@@ -478,7 +478,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
     });
 
     test('should validate per-page input constraints', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -496,7 +496,7 @@ test.describe.skip('Prompt Optimiser History - Pagination', () => {
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Navigation', () => {
+test.describe('Prompt Optimiser History - Navigation', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(5);
@@ -509,7 +509,7 @@ test.describe.skip('Prompt Optimiser History - Navigation', () => {
     test('should navigate to prompt details when clicking a row', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click the first row
@@ -517,8 +517,8 @@ test.describe.skip('Prompt Optimiser History - Navigation', () => {
         await firstRow.click();
 
         // Should navigate to prompt show page
-        await page.waitForURL(/\/prompt-optimizer\/\d+/);
-        expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+        await page.waitForURL(/\/prompt-builder\/\d+/);
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Should see the prompt details page
         const statusBadge = page.getByTestId('status-badge');
@@ -528,7 +528,7 @@ test.describe.skip('Prompt Optimiser History - Navigation', () => {
     test('should support keyboard navigation to prompt details', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Focus and press Enter on first row
@@ -537,14 +537,14 @@ test.describe.skip('Prompt Optimiser History - Navigation', () => {
         await firstRow.press('Enter');
 
         // Should navigate
-        await page.waitForURL(/\/prompt-optimizer\/\d+/);
-        expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+        await page.waitForURL(/\/prompt-builder\/\d+/);
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
     test('should navigate to create new prompt from header button', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Click Create New button in header
@@ -552,12 +552,12 @@ test.describe.skip('Prompt Optimiser History - Navigation', () => {
         await createButton.click();
 
         // Should navigate to prompt optimiser
-        await page.waitForURL('/prompt-optimizer');
-        expect(page.url()).toContain('/prompt-optimizer');
+        await page.waitForURL('/prompt-builder');
+        expect(page.url()).toContain('/prompt-builder');
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
+test.describe('Prompt Optimiser History - Responsive Design', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(5);
@@ -571,7 +571,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
         // Set mobile viewport
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Table should still be visible
@@ -590,7 +590,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
     test('should show status badge in mobile view', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Status badges should be visible on mobile (in the created date cell)
@@ -602,7 +602,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
     test('should show mobile per-page selector', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history?per_page=10');
+        await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
         // Mobile per-page input should be visible
@@ -617,7 +617,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
     test('should maintain clickable rows on mobile', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Rows should still be clickable
@@ -627,8 +627,8 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
         await firstRow.click();
 
         // Should navigate
-        await page.waitForURL(/\/prompt-optimizer\/\d+/);
-        expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+        await page.waitForURL(/\/prompt-builder\/\d+/);
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
     test('should display header and Create New button on mobile', async ({
@@ -636,7 +636,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
     }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Header should be visible
@@ -649,7 +649,7 @@ test.describe.skip('Prompt Optimiser History - Responsive Design', () => {
     });
 });
 
-test.describe.skip('Prompt Optimiser History - Edge Cases', () => {
+test.describe('Prompt Optimiser History - Edge Cases', () => {
     test.beforeAll(async () => {
         await seedTestUser();
     });
@@ -666,7 +666,7 @@ test.describe.skip('Prompt Optimiser History - Edge Cases', () => {
         await seedPromptRuns(2, 'processing');
         await seedPromptRuns(1, 'failed');
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see various status badges
@@ -683,7 +683,7 @@ test.describe.skip('Prompt Optimiser History - Edge Cases', () => {
         // Create runs without frameworks selected yet
         await seedPromptRuns(3, 'pending');
 
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -703,14 +703,14 @@ test.describe.skip('Prompt Optimiser History - Edge Cases', () => {
 
         // Navigate with specific sort and pagination
         await page.goto(
-            '/prompt-optimizer-history?sort_by=status&sort_direction=asc&per_page=5&page=2',
+            '/prompt-builder-history?sort_by=status&sort_direction=asc&per_page=5&page=2',
         );
         await page.waitForLoadState('networkidle');
 
         // Click on a prompt
         const firstRow = page.locator('tbody tr').first();
         await firstRow.click();
-        await page.waitForURL(/\/prompt-optimizer\/\d+/);
+        await page.waitForURL(/\/prompt-builder\/\d+/);
 
         // Go back
         await page.goBack();

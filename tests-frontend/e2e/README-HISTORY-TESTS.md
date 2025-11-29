@@ -4,7 +4,7 @@ Comprehensive end-to-end tests for the Prompt Optimiser History feature.
 
 ## Test File
 
-- `/home/mark/repos/personality/tests-frontend/e2e/prompt-optimizer-history.e2e.ts`
+- `/home/mark/repos/personality/tests-frontend/e2e/prompt-builder-history.e2e.ts`
 
 ## Coverage
 
@@ -123,16 +123,16 @@ Removes all prompt runs for the test user
 
 ```bash
 # Run all history tests
-npm run test:e2e tests-frontend/e2e/prompt-optimizer-history.e2e.ts
+npm run test:e2e tests-frontend/e2e/prompt-builder-history.e2e.ts
 
 # Run specific test group
-npm run test:e2e tests-frontend/e2e/prompt-optimizer-history.e2e.ts -g "Empty State"
+npm run test:e2e tests-frontend/e2e/prompt-builder-history.e2e.ts -g "Empty State"
 
 # Run in headed mode (see browser)
-npm run test:e2e tests-frontend/e2e/prompt-optimizer-history.e2e.ts -- --headed
+npm run test:e2e tests-frontend/e2e/prompt-builder-history.e2e.ts -- --headed
 
 # Run with debug
-npm run test:e2e tests-frontend/e2e/prompt-optimizer-history.e2e.ts -- --debug
+npm run test:e2e tests-frontend/e2e/prompt-builder-history.e2e.ts -- --debug
 ```
 
 ## Test Structure
@@ -154,7 +154,7 @@ test.describe('Feature Name', () => {
 
     test('should test specific behaviour', async ({ page }) => {
         // Arrange
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Act

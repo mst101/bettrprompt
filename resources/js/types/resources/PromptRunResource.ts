@@ -21,6 +21,7 @@ export interface PromptRunResource {
     readonly taskDescription: string;
     readonly frameworkQuestions: string[] | null;
     readonly clarifyingAnswers: (string | null)[] | null;
+    readonly currentQuestionIndex?: number | null;
     readonly optimizedPrompt: string | null;
     readonly status: string;
     readonly workflowStage: string;

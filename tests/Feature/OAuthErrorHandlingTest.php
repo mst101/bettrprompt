@@ -70,7 +70,7 @@ test('creates new user from oauth data', function () {
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('prompt-builder.index'));
 
     // Verify user was created
     $this->assertDatabaseHas('users', [
@@ -106,7 +106,7 @@ test('updates existing user with google id', function () {
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('prompt-builder.index'));
 
     // Verify user was updated with Google ID
     $existingUser->refresh();
@@ -141,7 +141,7 @@ test('finds existing user by google id', function () {
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('prompt-optimizer.index'));
+    $response->assertRedirect(route('prompt-builder.index'));
 
     // Verify user is authenticated as the existing user
     $this->assertAuthenticated();

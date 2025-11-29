@@ -88,7 +88,7 @@ class RegisteredUserController extends Controller
 
         // Redirect to history page if visitor had completed prompts, otherwise to dashboard
         if ($claimedCount > 0) {
-            return redirect(route('prompt-optimizer.history', absolute: false));
+            return redirect(route('prompt-builder.history', absolute: false));
         }
 
         return redirect(route('dashboard', absolute: false));

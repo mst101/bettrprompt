@@ -147,14 +147,14 @@ test.describe('Protected Routes', () => {
         page,
     }) => {
         // Unauthenticated users can now use the prompt optimizer
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
 
         // Wait for page to load
         await page.waitForLoadState('networkidle');
 
         // Should NOT be redirected - should stay on prompt optimizer
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
 
         // Should see the prompt optimizer form
         const taskInput = page.getByLabel(/task description/i);

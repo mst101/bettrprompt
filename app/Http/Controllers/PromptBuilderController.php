@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PromptBuilderAnalyseRequest;
+use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\PromptRunResource;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\PromptFrameworkService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -180,17 +182,23 @@ class PromptBuilderController extends Controller
         ]);
 
         try {
+            $answers = array_values(
+                array_map(
+                    fn ($answer) => ($answer === '' || $answer === null) ? null : $answer,
+                    $validated['question_answers']
+                )
+            );
+
             // Update the prompt run with answers
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
                 $promptRun->update([
-                    'clarifying_answers' => $validated['question_answers'],
+                    'clarifying_answers' => $answers,
                     'workflow_stage' => 'generating_prompt',
                 ]);
             });
 
             // Combine questions with answers for workflow 2
             $questions = $promptRun->framework_questions ?? [];
-            $answers = $validated['question_answers'];
             $questionAnswers = [];
 
             foreach ($questions as $index => $question) {
@@ -264,63 +272,14 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        // Validate that we're in the correct workflow stage
-        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
-            return back()->with('error', 'Cannot answer questions at this stage.');
-        }
-
         $validated = $request->validate([
+            'question_index' => 'required|integer|min:0',
             'answer' => 'nullable|string',
         ]);
 
-        try {
-            $currentIndex = $promptRun->current_question_index ?? 0;
-            $answers = $promptRun->clarifying_answers ?? [];
+        $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], $validated['answer']);
 
-            // Set the answer at the current index
-            $answers[$currentIndex] = $validated['answer'];
-
-            // Move to next question
-            $newIndex = $currentIndex + 1;
-
-            Log::info('Submitting Answer (PromptBuilder)', [
-                'prompt_run_id' => $promptRun->id,
-                'question_index' => $currentIndex,
-                'new_answer' => $validated['answer'],
-                'new_index' => $newIndex,
-            ]);
-
-            // Update the prompt run
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $newIndex) {
-                $promptRun->update([
-                    'clarifying_answers' => $answers,
-                    'current_question_index' => $newIndex,
-                    'workflow_stage' => 'answering_questions',
-                ]);
-            });
-
-            $promptRun->refresh();
-
-            // Check if all questions have been answered
-            if ($this->hasAnsweredAllQuestions($promptRun)) {
-                return redirect()
-                    ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'All questions answered. Ready to generate prompt!');
-            }
-
-            // More questions to answer
-            return redirect()
-                ->route('prompt-builder.show', $promptRun)
-                ->with('success', 'Answer saved.');
-
-        } catch (\Exception $e) {
-            Log::error('Failed to save answer (PromptBuilder)', [
-                'prompt_run_id' => $promptRun->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to save answer. Please try again.');
-        }
+        return response()->json(['clarifying_answers' => $answers]);
     }
 
     /**
@@ -330,58 +289,13 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        // Validate that we're in the correct workflow stage
-        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
-            return back()->with('error', 'Cannot skip questions at this stage.');
-        }
+        $validated = $request->validate([
+            'question_index' => 'required|integer|min:0',
+        ]);
 
-        try {
-            // Get current position and answers
-            $currentIndex = $promptRun->current_question_index ?? 0;
-            $answers = $promptRun->clarifying_answers ?? [];
+        $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], null);
 
-            // Set null at current index (skipped)
-            $answers[$currentIndex] = null;
-
-            // Move to next question
-            $newIndex = $currentIndex + 1;
-
-            Log::info('Skipping question (PromptBuilder)', [
-                'prompt_run_id' => $promptRun->id,
-                'question_index' => $currentIndex,
-                'new_index' => $newIndex,
-            ]);
-
-            // Update the prompt run
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $newIndex) {
-                $promptRun->update([
-                    'clarifying_answers' => $answers,
-                    'current_question_index' => $newIndex,
-                    'workflow_stage' => 'answering_questions',
-                ]);
-            });
-
-            $promptRun->refresh();
-
-            // Check if all questions have been processed
-            if ($this->hasAnsweredAllQuestions($promptRun)) {
-                return redirect()
-                    ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'All questions answered. Ready to generate prompt!');
-            }
-
-            return redirect()
-                ->route('prompt-builder.show', $promptRun)
-                ->with('success', 'Question skipped.');
-
-        } catch (\Exception $e) {
-            Log::error('Failed to skip question (PromptBuilder)', [
-                'prompt_run_id' => $promptRun->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return back()->with('error', 'Failed to skip question. Please try again.');
-        }
+        return response()->json(['clarifying_answers' => $answers]);
     }
 
     /**
@@ -439,9 +353,25 @@ class PromptBuilderController extends Controller
     protected function hasAnsweredAllQuestions(PromptRun $promptRun): bool
     {
         $totalQuestions = count($promptRun->framework_questions ?? []);
-        $currentIndex = $promptRun->current_question_index ?? 0;
+        $answers = Arr::wrap($promptRun->clarifying_answers ?? []);
+        $answers = array_values($answers);
 
-        return $currentIndex >= $totalQuestions;
+        if ($totalQuestions === 0) {
+            return true;
+        }
+
+        if (count($answers) < $totalQuestions) {
+            return false;
+        }
+
+        // Consider answered if every slot is non-null
+        foreach ($answers as $answer) {
+            if ($answer === null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -507,9 +437,11 @@ class PromptBuilderController extends Controller
             'clarifying_answers' => 'required|array',
         ]);
 
-        $clarifyingAnswers = array_map(
-            fn ($answer) => ($answer === '' || $answer === null) ? null : $answer,
-            $validated['clarifying_answers'],
+        $clarifyingAnswers = array_values(
+            array_map(
+                fn ($answer) => ($answer === '' || $answer === null) ? null : $answer,
+                $validated['clarifying_answers'],
+            )
         );
 
         $user = auth()->user();
@@ -804,6 +736,46 @@ class PromptBuilderController extends Controller
     }
 
     /**
+     * Normalise and persist a single clarifying answer
+     */
+    protected function saveClarifyingAnswer(PromptRun $promptRun, int $questionIndex, $answer): array
+    {
+        $questions = $promptRun->framework_questions ?? [];
+        $questionCount = count($questions);
+
+        if ($questionCount === 0) {
+            return [];
+        }
+
+        $index = max(0, min($questionIndex, $questionCount - 1));
+        $answers = Arr::wrap($promptRun->clarifying_answers ?? []);
+        $answers = array_values($answers);
+
+        // Pad answers to match question count
+        for ($i = 0; $i < $questionCount; $i++) {
+            if (! array_key_exists($i, $answers)) {
+                $answers[$i] = null;
+            }
+        }
+
+        $answers[$index] = $answer === null || $answer === '' ? null : $answer;
+        $answers = array_values($answers);
+
+        // After answering/skipping a question, move to the next one
+        $nextIndex = min($index + 1, $questionCount);
+
+        DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $nextIndex) {
+            $promptRun->update([
+                'clarifying_answers' => $answers,
+                'current_question_index' => $nextIndex,
+                'workflow_stage' => 'answering_questions',
+            ]);
+        });
+
+        return $answers;
+    }
+
+    /**
      * Display prompt builder history
      */
     public function history(Request $request)
@@ -854,5 +826,41 @@ class PromptBuilderController extends Controller
                 'per_page' => $perPage,
             ],
         ]);
+    }
+
+    /**
+     * Update the optimised prompt text
+     */
+    public function updateOptimizedPrompt(UpdateOptimizedPromptRequest $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate that the prompt run is completed
+        if ($promptRun->workflow_stage !== 'completed') {
+            return back()->with('error', 'Can only edit completed prompt runs.');
+        }
+
+        $validated = $request->validated();
+
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated) {
+                $promptRun->update([
+                    'optimized_prompt' => $validated['optimized_prompt'],
+                ]);
+            });
+
+            Log::info('Updated optimised prompt (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+            ]);
+
+            return back()->with('success', 'Prompt updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to update optimised prompt (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to update prompt. Please try again.');
+        }
     }
 }

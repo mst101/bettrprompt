@@ -1,17 +1,17 @@
 import { expect, test } from '@playwright/test';
 import { acceptCookies, loginAsTestUser, seedTestUser } from './helpers/auth';
 
-test.describe('Prompt Optimizer - Unauthenticated', () => {
+test.describe('Prompt Builder - Unauthenticated', () => {
     test('should allow access to prompt optimizer when not logged in', async ({
         page,
     }) => {
         await acceptCookies(page);
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Should stay on prompt optimizer page - no redirect
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
 
         // Should see the task input form
         const taskInput = page.getByLabel(/task description/i);
@@ -19,17 +19,17 @@ test.describe('Prompt Optimizer - Unauthenticated', () => {
     });
 });
 
-test.describe('Prompt Optimizer - Basic Flow', () => {
+test.describe('Prompt Builder - Basic Flow', () => {
     test('should show prompt optimizer index page structure', async ({
         page,
     }) => {
         await acceptCookies(page);
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Should stay on prompt optimizer - no auth required
         const url = page.url();
-        expect(url).toContain('/prompt-optimizer');
+        expect(url).toContain('/prompt-builder');
 
         // Should see the task input form
         const taskInput = page.getByLabel(/task description/i);
@@ -46,7 +46,7 @@ test.describe('Prompt Optimizer - Basic Flow', () => {
         page,
     }) => {
         await acceptCookies(page);
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // History requires authentication - should redirect to login
@@ -57,7 +57,7 @@ test.describe('Prompt Optimizer - Basic Flow', () => {
     });
 });
 
-test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
+test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test.beforeAll(async () => {
         // Seed the test user before running authenticated tests
         await seedTestUser();
@@ -71,8 +71,8 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
     test('should submit a prompt and navigate to show page', async ({
         page,
     }) => {
-        // Navigate to the prompt optimiser index
-        await page.goto('/prompt-optimizer');
+        // Navigate to the prompt builder index
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Fill in the task description
@@ -88,10 +88,10 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         await submitButton.click();
 
         // Wait for navigation to the show page
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Verify we're on the show page
-        expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Should see the page title
         await expect(page).toHaveTitle(/Optimised Prompt/);
@@ -113,8 +113,8 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
     test('should wait for framework selection and see framework tab', async ({
         page,
     }) => {
-        // Navigate to the prompt optimiser
-        await page.goto('/prompt-optimizer');
+        // Navigate to the prompt builder
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Submit a prompt
@@ -127,7 +127,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         await submitButton.click();
 
         // Wait for navigation
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Wait for the framework tab to appear (indicates framework was selected)
         // The framework tab only appears after n8n processes the request
@@ -151,7 +151,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
 
     test('should answer a clarifying question', async ({ page }) => {
         // First, create a prompt run
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -162,7 +162,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Wait for questions to appear (requires n8n to process)
         // Look for the answer textarea
@@ -212,7 +212,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
 
     test('should skip a question', async ({ page }) => {
         // Create a prompt run and navigate to questions
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -223,7 +223,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Wait for skip button to appear
         const skipButton = page.getByTestId('skip-question-button');
@@ -254,8 +254,8 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         // This could be done by creating one via API or seeding the database
         // For now, we'll test the UI elements that should appear
 
-        // Navigate to prompt optimiser history to find a completed prompt
-        await page.goto('/prompt-optimizer-history');
+        // Navigate to prompt builder history to find a completed prompt
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Look for any completed prompts in history
@@ -276,7 +276,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
             await completedRow.click();
 
             // Wait for navigation
-            await page.waitForURL(/\/prompt-optimizer\/\d+/);
+            await page.waitForURL(/\/prompt-builder\/\d+/);
 
             // Should see the optimised prompt display
             const optimisedPromptDisplay = page.getByTestId(
@@ -304,7 +304,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
 
     test('should copy optimised prompt to clipboard', async ({ page }) => {
         // Navigate to history and find a completed prompt
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         const completedBadge = page
@@ -322,7 +322,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
                 .locator('tr', { has: completedBadge })
                 .first();
             await completedRow.click();
-            await page.waitForURL(/\/prompt-optimizer\/\d+/);
+            await page.waitForURL(/\/prompt-builder\/\d+/);
 
             // Get the prompt text before copying
             const promptText = page.getByTestId('optimized-prompt-text');
@@ -356,7 +356,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         page,
     }) => {
         // Navigate to a completed prompt
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         const completedBadge = page
@@ -374,7 +374,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
                 .locator('tr', { has: completedBadge })
                 .first();
             await completedRow.click();
-            await page.waitForURL(/\/prompt-optimizer\/\d+/);
+            await page.waitForURL(/\/prompt-builder\/\d+/);
 
             // Click edit button
             const editButton = page.getByTestId('edit-prompt-button');
@@ -403,7 +403,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
     });
 
     test('should view prompt history', async ({ page }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Should see the heading
@@ -426,7 +426,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
     test('should navigate from history to a specific prompt', async ({
         page,
     }) => {
-        await page.goto('/prompt-optimizer-history');
+        await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
         // Look for any table rows (prompt entries)
@@ -439,8 +439,8 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
             await firstRow.click();
 
             // Should navigate to the prompt show page
-            await page.waitForURL(/\/prompt-optimizer\/\d+/);
-            expect(page.url()).toMatch(/\/prompt-optimizer\/\d+/);
+            await page.waitForURL(/\/prompt-builder\/\d+/);
+            expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
 
             // Should see the status badge on the show page
             const statusBadge = page.getByTestId('status-badge');
@@ -453,7 +453,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
     });
 
     test('should show voice input button when available', async ({ page }) => {
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Look for the voice input button within the form
@@ -476,7 +476,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
 
     test('should navigate back to index from show page', async ({ page }) => {
         // Create a prompt
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -488,7 +488,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         await submitButton.click();
 
         // Wait for navigation to show page
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Click "Create New" button
         const createNewButton = page.getByRole('link', {
@@ -498,8 +498,8 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         await createNewButton.click();
 
         // Should navigate back to index
-        await page.waitForURL('/prompt-optimizer');
-        expect(page.url()).toContain('/prompt-optimizer');
+        await page.waitForURL('/prompt-builder');
+        expect(page.url()).toContain('/prompt-builder');
 
         // Should see the task input form
         const taskInputAgain = page.getByLabel(/task description/i);
@@ -510,7 +510,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         page,
     }) => {
         // Create a prompt
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -521,7 +521,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Wait for progress indicator
         const progressIndicator = page.getByTestId('progress-indicator');
@@ -549,7 +549,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         const taskDescription =
             'Develop a comprehensive testing strategy for a React application';
 
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
@@ -560,7 +560,7 @@ test.describe('Prompt Optimiser - Full Journey (authenticated)', () => {
         });
         await submitButton.click();
 
-        await page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 });
+        await page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 });
 
         // Switch to "Your Task" tab
         const taskTab = page.getByRole('button', { name: /your task/i });

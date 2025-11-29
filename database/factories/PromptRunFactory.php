@@ -24,7 +24,9 @@ class PromptRunFactory extends Factory
         return [
             'visitor_id' => Visitor::factory(),
             'user_id' => User::factory(),
-            'personality_type' => fake()->randomElement(['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP']),
+            'personality_type' => fake()->randomElement([
+                'INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
+            ]),
             'trait_percentages' => [
                 'introversion' => fake()->numberBetween(1, 100),
                 'intuition' => fake()->numberBetween(1, 100),
@@ -35,12 +37,9 @@ class PromptRunFactory extends Factory
             'status' => 'pending',
             'workflow_stage' => 'submitted',
             'selected_framework' => null,
-            'framework_reasoning' => null,
             'framework_questions' => [],
             'clarifying_answers' => [],
             'optimized_prompt' => null,
-            'n8n_request_payload' => null,
-            'n8n_response_payload' => null,
             'error_message' => null,
             'completed_at' => null,
         ];
@@ -58,19 +57,19 @@ class PromptRunFactory extends Factory
     }
 
     /**
-     * Indicate that the framework has been selected.
+     * Indicate that the analysis is complete (PromptBuilder).
      */
-    public function frameworkSelected(): static
+    public function analysisComplete(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'processing',
-            'workflow_stage' => 'framework_selected',
-            'selected_framework' => 'SMART Goals',
-            'framework_reasoning' => 'This framework helps create specific, measurable goals.',
+            'status' => 'pending',
+            'workflow_stage' => 'analysis_complete',
+            'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
             'framework_questions' => [
-                'What specific outcome do you want?',
-                'How will you measure success?',
+                ['question' => 'What specific outcome do you want?'],
+                ['question' => 'How will you measure success?'],
             ],
+            'current_question_index' => 0,
         ]);
     }
 

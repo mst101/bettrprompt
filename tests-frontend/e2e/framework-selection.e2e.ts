@@ -50,7 +50,7 @@ const PERSONALITY_TYPES = [
 const TEST_TASK =
     'Help me create a comprehensive marketing strategy for a new SaaS product targeting small business owners';
 
-test.describe.skip('Framework Selection Analysis', () => {
+test.describe('Framework Selection Analysis', () => {
     // Seed test user before all tests
     test.beforeAll(async () => {
         await seedTestUser();
@@ -67,7 +67,7 @@ test.describe.skip('Framework Selection Analysis', () => {
             await loginAsTestUser(page);
 
             // Navigate to prompt optimiser
-            // await page.goto('/prompt-optimizer');
+            // await page.goto('/prompt-builder');
             // await page.waitForLoadState('networkidle');
 
             // For authenticated users, need to go to profile to set personality type
@@ -213,7 +213,7 @@ test.describe.skip('Framework Selection Analysis', () => {
             );
 
             // Navigate back to prompt optimiser
-            await page.goto('/prompt-optimizer');
+            await page.goto('/prompt-builder');
             await page.waitForLoadState('networkidle');
 
             // Fill in task description
@@ -233,7 +233,7 @@ test.describe.skip('Framework Selection Analysis', () => {
             // Wait for form submission and navigation
             try {
                 await Promise.all([
-                    page.waitForURL(/\/prompt-optimizer\/\d+/, {
+                    page.waitForURL(/\/prompt-builder\/\d+/, {
                         timeout: 10000,
                     }),
                     submitButton.click(),
@@ -336,7 +336,7 @@ test.describe.skip('Framework Selection Analysis', () => {
     }
 });
 
-test.describe.skip('Framework Selection - Quick Verification', () => {
+test.describe('Framework Selection - Quick Verification', () => {
     // This is a simpler test to verify the mechanism works without waiting for all types
     test('should persist prompt run for test user', async ({ page }) => {
         test.setTimeout(60000); // 1 minute
@@ -388,7 +388,7 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
         await page.waitForTimeout(1000);
 
         // Go to prompt optimiser
-        await page.goto('/prompt-optimizer');
+        await page.goto('/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Fill task
@@ -402,7 +402,7 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
 
         // Wait for navigation
         await Promise.all([
-            page.waitForURL(/\/prompt-optimizer\/\d+/, { timeout: 10000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 }),
             submitButton.click(),
         ]);
 

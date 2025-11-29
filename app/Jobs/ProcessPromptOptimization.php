@@ -36,7 +36,7 @@ class ProcessPromptOptimization implements ShouldQueue
 
             // Trigger final prompt optimizer workflow
             $response = $n8nClient->triggerWebhook(
-                '/webhook/final-prompt-optimizer',
+                '/webhook/final-prompt-builder',
                 $this->payload
             );
 

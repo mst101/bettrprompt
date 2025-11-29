@@ -2,23 +2,29 @@
 
 ## Executive Summary
 
-Analysis of the `resources/js` directory (167 Vue components, ~2,513 lines in Components alone) has identified 40+ actionable refactoring opportunities across code duplication, component structure, type safety, and styling patterns. This report prioritises high-impact changes that would improve maintainability, reduce bundle size, and enhance developer experience.
+Analysis of the `resources/js` directory (167 Vue components, ~2,513 lines in Components alone) has identified 40+
+actionable refactoring opportunities across code duplication, component structure, type safety, and styling patterns.
+This report prioritises high-impact changes that would improve maintainability, reduce bundle size, and enhance
+developer experience.
 
 ---
 
 ## 1. CODE DUPLICATION & REPEATED PATTERNS
 
 ### 1.1 Repeated Tailwind Focus Ring Classes
+
 **Priority: High**  
 **Impact: Styling consolidation, reduced duplication**
 
 **Current Pattern:**
+
 ```
 19 occurrences of: focus:ring-2 focus:ring-indigo-500
 12 occurrences of: focus:ring-offset-2 focus:outline-hidden
 ```
 
 **Files Affected:**
+
 - `/home/mark/repos/personality/resources/js/Components/ButtonVoiceInput.vue` (line 56)
 - `/home/mark/repos/personality/resources/js/Components/CookieBanner.vue` (lines 67, 74, 81)
 - `/home/mark/repos/personality/resources/js/Components/CookieSettings.vue` (lines 161, 168, 175)
@@ -43,18 +49,21 @@ export const TAILWIND_BTN_SECONDARY = `${TAILWIND_BTN_BASE} border-gray-300 bg-w
 Then use in components:
 
 ```vue
+
 <button :class="TAILWIND_BTN_PRIMARY">Save</button>
 ```
 
 ---
 
 ### 1.2 Transcription Logic Duplication
+
 **Priority: High**  
 **Impact: DRY principle, easier maintenance**
 
 **Current Implementation:**
 
-**File 1:** `/home/mark/repos/personality/resources/js/Pages/PromptOptimizer/Index.vue` (lines 25-31)
+**File 1:** `/home/mark/repos/personality/resources/js/Pages/PromptBuilder/Index.vue` (lines 25-31)
+
 ```typescript
 const handleTranscription = (text: string) => {
     if (form.taskDescription && !form.taskDescription.endsWith(' ')) {
@@ -64,7 +73,8 @@ const handleTranscription = (text: string) => {
 };
 ```
 
-**File 2:** `/home/mark/repos/personality/resources/js/Components/PromptOptimizer/QuestionAnsweringForm.vue` (lines 31-38)
+**File 2:** `/home/mark/repos/personality/resources/js/Components/PromptBuilder/QuestionAnsweringForm.vue` (lines 31-38)
+
 ```typescript
 const handleTranscription = (text: string) => {
     let newAnswer = props.answer;
@@ -89,7 +99,7 @@ export function useTextAppend() {
         }
         return currentText + textToAppend;
     };
-    
+
     return { appendText };
 }
 ```
@@ -106,10 +116,12 @@ const handleTranscription = (text: string) => {
 ---
 
 ### 1.3 Cookie Setting Modal Pattern Repetition
+
 **Priority: Medium**  
 **Impact: Component reusability**
 
-**Files:** 
+**Files:**
+
 - `/home/mark/repos/personality/resources/js/Components/CookieSettings.vue` (lines 115-153)
 - `/home/mark/repos/personality/resources/js/Components/FormCheckboxGroup.vue` (similar structure)
 
@@ -122,17 +134,18 @@ Extract into a reusable `SettingSection` component:
 ```vue
 <!-- Components/SettingSection.vue -->
 <script setup lang="ts">
-interface Props {
-    title: string;
-    description: string;
-    toggleLabel?: string;
-}
-const props = withDefaults(defineProps<Props>(), {
-    toggleLabel: '',
-});
-const emit = defineEmits<{
-    (e: 'update:toggle', value: boolean): void;
-}>();
+    interface Props {
+        title: string;
+        description: string;
+        toggleLabel?: string;
+    }
+
+    const props = withDefaults(defineProps<Props>(), {
+        toggleLabel: '',
+    });
+    const emit = defineEmits<{
+        (e: 'update:toggle', value: boolean): void;
+    }>();
 </script>
 
 <template>
@@ -151,7 +164,8 @@ const emit = defineEmits<{
 Then in CookieSettings:
 
 ```vue
-<SettingSection 
+
+<SettingSection
     :title="COOKIE_CATEGORIES.functional.name"
     :description="COOKIE_CATEGORIES.functional.description"
 >
@@ -164,10 +178,12 @@ Then in CookieSettings:
 ## 2. COMPONENT STRUCTURE IMPROVEMENTS
 
 ### 2.1 Button Component Fragmentation
+
 **Priority: High**  
 **Impact: Maintenance, consistency, bundle size**
 
 **Current State:**
+
 - `PrimaryButton.vue` (7 lines)
 - `SecondaryButton.vue` (20 lines)
 - `DangerButton.vue` (7 lines)
@@ -177,6 +193,7 @@ Then in CookieSettings:
 - `ButtonClose.vue` (26 lines)
 
 **Issues:**
+
 1. Many single-purpose button components with minimal unique logic
 2. Inconsistent styling approach (some have hardcoded classes, some don't)
 3. `ButtonClose.vue` and `ButtonMode.vue` could be combined with `ButtonBase`
@@ -190,40 +207,40 @@ Create a unified `Button.vue` component:
 ```vue
 <!-- Components/Button.vue -->
 <script setup lang="ts">
-import type { ButtonType } from '@/types';
+    import type { ButtonType } from '@/types';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
+    type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 
-interface Props {
-    type?: ButtonType;
-    variant?: Variant;
-    disabled?: boolean;
-    size?: 'sm' | 'md' | 'lg';
-    fullWidth?: boolean;
-    loading?: boolean;
-}
+    interface Props {
+        type?: ButtonType;
+        variant?: Variant;
+        disabled?: boolean;
+        size?: 'sm' | 'md' | 'lg';
+        fullWidth?: boolean;
+        loading?: boolean;
+    }
 
-const props = withDefaults(defineProps<Props>(), {
-    type: 'button',
-    variant: 'primary',
-    disabled: false,
-    size: 'md',
-    fullWidth: false,
-    loading: false,
-});
+    const props = withDefaults(defineProps<Props>(), {
+        type: 'button',
+        variant: 'primary',
+        disabled: false,
+        size: 'md',
+        fullWidth: false,
+        loading: false,
+    });
 
-const variantClasses = {
-    primary: 'border-transparent bg-indigo-600 text-white hover:bg-indigo-700',
-    secondary: 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
-    danger: 'border-transparent bg-red-600 text-white hover:bg-red-500',
-    ghost: 'border-transparent text-gray-600 hover:text-gray-800',
-};
+    const variantClasses = {
+        primary: 'border-transparent bg-indigo-600 text-white hover:bg-indigo-700',
+        secondary: 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
+        danger: 'border-transparent bg-red-600 text-white hover:bg-red-500',
+        ghost: 'border-transparent text-gray-600 hover:text-gray-800',
+    };
 
-const sizeClasses = {
-    sm: 'px-3 py-1.5 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
-};
+    const sizeClasses = {
+        sm: 'px-3 py-1.5 text-xs',
+        md: 'px-4 py-2 text-sm',
+        lg: 'px-6 py-3 text-base',
+    };
 </script>
 
 <template>
@@ -261,10 +278,12 @@ Then replace all button variants:
 ---
 
 ### 2.2 Form Component Consolidation
+
 **Priority: High**  
 **Impact: Reduced code duplication, consistent API**
 
 **Current Form Components:**
+
 - `FormField.vue` (76 lines) - wrapper for various input types
 - `FormInput.vue` (93 lines) - text/number input
 - `FormSelect.vue` (90 lines) - select dropdown
@@ -275,6 +294,7 @@ Then replace all button variants:
 - `FormFieldWrapper.vue` (37 lines) - shared wrapper logic
 
 **Issues:**
+
 1. `FormField.vue` is a wrapper that delegates to specific components but adds complexity
 2. Inconsistent handling of errors, help text, labels
 3. Multiple wrapper layers (`FormFieldWrapper`)
@@ -285,6 +305,7 @@ Then replace all button variants:
 **Example of Duplication:**
 
 FormInput.vue (lines 1-49):
+
 ```typescript
 interface Props {
     id: string;
@@ -318,6 +339,7 @@ const props = withDefaults(defineProps<Props>(), {
 ```
 
 FormSelect.vue (lines 1-36):
+
 ```typescript
 interface Props {
     id: string;
@@ -397,16 +419,19 @@ export function useFormInputBase(props: BaseFormInputProps) {
 ---
 
 ### 2.3 Authentication Modal Consolidation
+
 **Priority: Medium**  
 **Impact: Reduced duplication, easier feature additions**
 
 **Files:**
+
 - `/home/mark/repos/personality/resources/js/Components/LoginModal.vue` (127 lines)
 - `/home/mark/repos/personality/resources/js/Components/RegisterModal.vue` (117 lines)
 - `/home/mark/repos/personality/resources/js/Components/ForgotPasswordModal.vue` (97 lines)
 - `/home/mark/repos/personality/resources/js/Components/BaseAuthModal.vue` (66 lines)
 
 **Issues:**
+
 1. Each modal duplicates similar form structure
 2. Repeated button styling and layout
 3. Similar error handling across all three
@@ -418,14 +443,14 @@ Create a shared auth form component that handles common patterns:
 ```vue
 <!-- Components/AuthForm.vue -->
 <script setup lang="ts">
-interface Props {
-    title: string;
-    submitLabel: string;
-    loading?: boolean;
-    showGoogleSignIn?: boolean;
-}
+    interface Props {
+        title: string;
+        submitLabel: string;
+        loading?: boolean;
+        showGoogleSignIn?: boolean;
+    }
 
-const emit = defineEmits(['submit', 'google-signin'];
+    const emit = defineEmits(['submit', 'google-signin'];
 </script>
 
 <template>
@@ -446,14 +471,17 @@ const emit = defineEmits(['submit', 'google-signin'];
 ## 3. COMPOSABLES & STATE MANAGEMENT
 
 ### 3.1 Error Timeout Duplication
+
 **Priority: Medium**  
 **Impact: Code reuse, consistency**
 
 **Current Pattern Found In:**
+
 - `/home/mark/repos/personality/resources/js/Composables/useAudioRecording.ts` (lines 45-48, 84-87)
 - `/home/mark/repos/personality/resources/js/Components/FlashMessage.vue` (lines 28-31)
 
 **Code:**
+
 ```typescript
 // useAudioRecording.ts - appears twice
 setTimeout(() => {
@@ -471,18 +499,18 @@ import { ref } from 'vue';
 
 export function useErrorTimeout(timeout: number = 5000) {
     const error = ref<string | null>(null);
-    
+
     const setError = (message: string) => {
         error.value = message;
         setTimeout(() => {
             error.value = null;
         }, timeout);
     };
-    
+
     const clearError = () => {
         error.value = null;
     };
-    
+
     return {
         error,
         setError,
@@ -496,9 +524,11 @@ Then simplify useAudioRecording:
 ```typescript
 export function useAudioRecording() {
     const { error, setError } = useErrorTimeout(5000);
-    
+
     // ... in catch blocks
-    catch (err: any) {
+catch
+    (err: any)
+    {
         setError('Microphone access denied. Please enable microphone permissions.');
     }
 }
@@ -507,13 +537,16 @@ export function useAudioRecording() {
 ---
 
 ### 3.2 Cookie Management Duplication
+
 **Priority: Low**  
 **Impact: Type safety, consistency**
 
 **Files:**
+
 - `/home/mark/repos/personality/resources/js/Composables/useCookieConsent.ts` (getCookie/setCookie logic, lines 18-40)
 
-**Issue:** Cookie reading/writing logic is embedded in the composable and duplicated in `useAudioRecording.ts` (lines 102-116)
+**Issue:** Cookie reading/writing logic is embedded in the composable and duplicated in `useAudioRecording.ts` (lines
+102-116)
 
 **Suggested Improvement:**
 
@@ -525,8 +558,8 @@ export function getCookie(name: string): string | null {
     const matches = document.cookie.match(
         new RegExp(
             '(?:^|; )' +
-                name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') +
-                '=([^;]*)',
+            name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') +
+            '=([^;]*)',
         ),
     );
     return matches ? decodeURIComponent(matches[1]) : null;
@@ -548,36 +581,46 @@ export function setCookie(
 ## 4. TYPE SAFETY IMPROVEMENTS
 
 ### 4.1 Use of `any` Type
+
 **Priority: High**  
 **Impact: Type safety, IDE support, bug prevention**
 
 **Found Instances:**
 
 1. **`/home/mark/repos/personality/resources/js/Components/Checkbox.vue` (line 8)**
+
 ```typescript
-value?: any;
+value ? : any;
 ```
+
 Should be:
+
 ```typescript
-value?: string | number | boolean;
+value ? : string | number | boolean;
 ```
 
 2. **`/home/mark/repos/personality/resources/js/types/shared/common.ts` (line 16)**
+
 ```typescript
 export interface JsonData {
     [key: string]: any;
 }
 ```
+
 Could be made more specific based on usage, or:
+
 ```typescript
 export type JsonData = Record<string, unknown>;
 ```
 
 3. **`/home/mark/repos/personality/resources/js/Composables/useRealtimeUpdates.ts` (lines 40, 74, 91)**
+
 ```typescript
 let channel: any = null;
-channel.listen(eventName, (data: any) => { ... }
-channel.error((error: any) => { ... }
+channel.listen(eventName, (data: any) => { ...
+}
+channel.error((error: any) => { ...
+}
 ```
 
 **Suggested Improvement:**
@@ -588,12 +631,15 @@ Define proper types for Echo channel:
 // types/echo.ts
 export interface EchoChannel {
     listen(event: string, callback: (data: any) => void): EchoChannel;
+
     error(callback: (error: Error) => void): EchoChannel;
+
     // ... other methods
 }
 
 export interface EchoClient {
     channel(name: string): EchoChannel;
+
     leave(name: string): void;
 }
 
@@ -611,17 +657,20 @@ const setupEcho = () => {
 ---
 
 ### 4.2 Missing Event Types in Emits
+
 **Priority: Medium**  
 **Impact: Type safety, easier component usage**
 
 **Examples:**
 
 **File:** `/home/mark/repos/personality/resources/js/Components/Modal.vue` (line 17)
+
 ```typescript
 const emit = defineEmits(['close']);  // Untyped emit
 ```
 
 Should be:
+
 ```typescript
 const emit = defineEmits<{
     close: [];
@@ -629,11 +678,13 @@ const emit = defineEmits<{
 ```
 
 **File:** `/home/mark/repos/personality/resources/js/Components/LoginModal.vue` (line 15)
+
 ```typescript
 const emit = defineEmits(['close', 'switchToRegister', 'switchToForgotPassword']);
 ```
 
 Should be:
+
 ```typescript
 const emit = defineEmits<{
     close: [];
@@ -645,6 +696,7 @@ const emit = defineEmits<{
 ---
 
 ### 4.3 Inconsistent Prop Validation
+
 **Priority: Medium**  
 **Impact: Consistency, runtime safety**
 
@@ -670,6 +722,7 @@ const props = withDefaults(defineProps<Props>(), {
 ## 5. PERFORMANCE OPTIMIZATIONS
 
 ### 5.1 Missing Computed Properties
+
 **Priority: Medium**  
 **Impact: Render performance**
 
@@ -690,8 +743,16 @@ const getCircleColor = (index: number, isSelected: boolean) => {
 };
 
 // In template - called on every iteration
-:class="getCircleSize(index)"
-:class="getCircleColor(index, modelValue === value)"
+:
+
+class
+
+= "getCircleSize(index)"
+:
+
+class
+
+= "getCircleColor(index, modelValue === value)"
 ```
 
 **Suggested Improvement:**
@@ -711,8 +772,8 @@ const circleConfig = computed(() => {
 
 const getCircleClasses = (index: number, isSelected: boolean) => {
     const size = circleConfig.value.sizes[index] || 'h-14 w-14';
-    const color = circleConfig.value.colors[index]?.bg || 
-                 circleConfig.value.colors[3].bg;
+    const color = circleConfig.value.colors[index]?.bg ||
+        circleConfig.value.colors[3].bg;
     return [size, isSelected ? color.bg : color.border];
 };
 ```
@@ -720,6 +781,7 @@ const getCircleClasses = (index: number, isSelected: boolean) => {
 ---
 
 ### 5.2 Repeated Object Creation
+
 **Priority: Low**  
 **Impact: Memory efficiency**
 
@@ -755,32 +817,40 @@ const typeConfig = computed(() => MESSAGE_TYPE_CONFIG[props.type]);
 ## 6. ACCESSIBILITY IMPROVEMENTS
 
 ### 6.1 Missing ARIA Labels
+
 **Priority: Medium**  
 **Impact: Screen reader support**
 
 **File:** `/home/mark/repos/personality/resources/js/Components/ButtonClose.vue` (line 17)
+
 ```typescript
 // Has aria-label ✅
-aria-label="Close"
+aria - label = "Close"
 ```
 
 **File:** `/home/mark/repos/personality/resources/js/Components/FormToggle.vue` (line 32-34)
+
 ```typescript
 // Has aria-checked and aria-label ✅
-role="switch"
-:aria-checked="modelValue"
-:aria-label="label"
+role = "switch"
+:
+aria - checked = "modelValue"
+:
+aria - label = "label"
 ```
 
 **File:** `/home/mark/repos/personality/resources/js/Components/ButtonVoiceInput.vue` (line 64-68)
+
 ```typescript
 // Missing aria-label on button
-:title="isActive ? 'Stop recording' : 'Click to record using your microphone'"
+:
+title = "isActive ? 'Stop recording' : 'Click to record using your microphone'"
 ```
 
 **Suggested Fix:**
 
 ```vue
+
 <button
     type="button"
     :aria-label="isActive ? 'Stop recording' : 'Click to record using your microphone'"
@@ -791,6 +861,7 @@ role="switch"
 ---
 
 ### 6.2 Missing Keyboard Navigation
+
 **Priority: Low**  
 **Impact: Keyboard accessibility**
 
@@ -799,6 +870,7 @@ role="switch"
 The circular buttons need keyboard navigation:
 
 ```vue
+
 <button
     v-for="(value, index) in options"
     type="button"
@@ -815,6 +887,7 @@ The circular buttons need keyboard navigation:
 ## 7. STYLING & TAILWIND PATTERNS
 
 ### 7.1 Magic Hardcoded Values
+
 **Priority: Medium**  
 **Impact: Maintainability, consistency**
 
@@ -857,11 +930,14 @@ setTimeout(() => {
 ---
 
 ### 7.2 Repeated Transition Classes
+
 **Priority: Low**  
 **Impact: Consistency**
 
 **Pattern Found In Multiple Components:**
+
 ```vue
+
 <Transition
     enter-active-class="transition ease-out duration-300"
     enter-from-class="opacity-0 translate-y-2"
@@ -879,10 +955,10 @@ Create transition components:
 ```vue
 <!-- Components/Transitions/FadeSlideUp.vue -->
 <script setup lang="ts">
-defineProps<{
-    enterDuration?: number;
-    leaveDuration?: number;
-}>();
+    defineProps<{
+        enterDuration?: number;
+        leaveDuration?: number;
+    }>();
 </script>
 
 <template>
@@ -900,9 +976,9 @@ defineProps<{
 </template>
 
 <style scoped>
-:deep([enter-active-class]) {
-    duration: var(--duration-enter);
-}
+    :deep([enter-active-class]) {
+        duration: var(--duration-enter);
+    }
 </style>
 ```
 
@@ -911,12 +987,14 @@ defineProps<{
 ## 8. CONFIGURATION & CONSTANTS
 
 ### 8.1 Hardcoded Strings
+
 **Priority: Low**  
 **Impact: Maintainability, i18n support**
 
 **Files with Hardcoded Strings:**
 
 1. `/home/mark/repos/personality/resources/js/Components/ButtonVoiceInput.vue` (lines 28-33)
+
 ```typescript
 const buttonLabel = computed(() => {
     if (isProcessing.value) {
@@ -929,8 +1007,10 @@ const buttonLabel = computed(() => {
 });
 ```
 
-2. `/home/mark/repos/personality/resources/js/Pages/PromptOptimizer/Index.vue` (lines 39, 162)
+2. `/home/mark/repos/personality/resources/js/Pages/PromptBuilder/Index.vue` (lines 39, 162)
+
 ```vue
+
 <Head title="Prompt Optimiser" />
 <!-- and -->
 <span v-else>Optimise Prompt</span>
@@ -958,10 +1038,11 @@ export const PAGE_TITLES = {
 ## 9. COMPONENT COMPOSITION PATTERNS
 
 ### 9.1 Prop Drilling in QuestionAnsweringForm
+
 **Priority: Low**  
 **Impact: Component complexity**
 
-**File:** `/home/mark/repos/personality/resources/js/Components/PromptOptimizer/QuestionAnsweringForm.vue` (lines 9-17)
+**File:** `/home/mark/repos/personality/resources/js/Components/PromptBuilder/QuestionAnsweringForm.vue` (lines 9-17)
 
 ```typescript
 interface Props {
@@ -996,6 +1077,7 @@ interface Props {
 ```
 
 Then update template:
+
 ```vue
 <span>Question {{ progress.current }} of {{ progress.total }}</span>
 <span v-if="submission.hasError">{{ submission.errorMessage }}</span>
@@ -1006,6 +1088,7 @@ Then update template:
 ## 10. TESTING & DEBUGGING
 
 ### 10.1 Console Logging in Composables
+
 **Priority: Low**  
 **Impact: Production bundle size, debugging**
 
@@ -1021,7 +1104,7 @@ Create a debug utility:
 // utils/debug.ts
 export function createLogger(namespace: string) {
     const isDev = process.env.NODE_ENV === 'development';
-    
+
     return {
         log: (...args: any[]) => {
             if (isDev) console.log(`[${namespace}]`, ...args);
@@ -1044,18 +1127,18 @@ logger.log('Connected to channel', channelName);
 
 ## SUMMARY TABLE
 
-| Category | Count | Priority | Impact | Effort |
-|----------|-------|----------|--------|--------|
-| Tailwind Class Duplication | 31+ | High | Styling consolidation | Low |
-| Transcription Logic | 2 | High | DRY, Maintainability | Low |
-| Button Components | 7 | High | Consolidation, Consistency | Medium |
-| Form Components | 8 | High | Duplication reduction | High |
-| Type Safety (`any` usage) | 5+ | High | Type safety | Medium |
-| Missing Computed Properties | 3+ | Medium | Performance | Low |
-| Hardcoded Strings | 5+ | Low | i18n, Maintainability | Low |
-| Missing ARIA Labels | 3+ | Medium | Accessibility | Low |
-| Repeated Transitions | 4+ | Low | Consistency | Low |
-| Cookie Utilities | 2 | Low | Code reuse | Low |
+| Category                    | Count | Priority | Impact                     | Effort |
+|-----------------------------|-------|----------|----------------------------|--------|
+| Tailwind Class Duplication  | 31+   | High     | Styling consolidation      | Low    |
+| Transcription Logic         | 2     | High     | DRY, Maintainability       | Low    |
+| Button Components           | 7     | High     | Consolidation, Consistency | Medium |
+| Form Components             | 8     | High     | Duplication reduction      | High   |
+| Type Safety (`any` usage)   | 5+    | High     | Type safety                | Medium |
+| Missing Computed Properties | 3+    | Medium   | Performance                | Low    |
+| Hardcoded Strings           | 5+    | Low      | i18n, Maintainability      | Low    |
+| Missing ARIA Labels         | 3+    | Medium   | Accessibility              | Low    |
+| Repeated Transitions        | 4+    | Low      | Consistency                | Low    |
+| Cookie Utilities            | 2     | Low      | Code reuse                 | Low    |
 
 **Total Refactoring Opportunities: 40+**
 
@@ -1064,22 +1147,26 @@ logger.log('Connected to channel', channelName);
 ## RECOMMENDED IMPLEMENTATION ORDER
 
 ### Phase 1 (Immediate - High Impact, Low Effort)
+
 1. Extract Tailwind focus ring constants
 2. Consolidate button components
 3. Create text append composable
 4. Extract cookie utilities
 
 ### Phase 2 (Short-term - High Impact, Medium Effort)
+
 1. Refactor form components with shared props interface
 2. Add proper TypeScript types for Echo/async operations
 3. Extract hardcoded strings to constants
 
 ### Phase 3 (Medium-term - Medium Impact)
+
 1. Implement unified Button component (possibly using composition)
 2. Create reusable form section component
 3. Add comprehensive type definitions for composables
 
 ### Phase 4 (Long-term - Polish)
+
 1. Implement accessibility improvements
 2. Optimize performance with computed properties
 3. Add i18n support via message constants

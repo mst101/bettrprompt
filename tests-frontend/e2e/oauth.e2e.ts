@@ -92,7 +92,7 @@ test.describe.skip(
             // 2. Redirect to Google
             // 3. Google redirects back to /auth/google/callback with code
             // 4. User is authenticated
-            // 5. Redirect to /prompt-optimizer
+            // 5. Redirect to /prompt-builder
 
             await page.goto('/');
             expect(page.url()).toBe('/');

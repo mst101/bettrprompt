@@ -90,12 +90,12 @@ test('cookies page displays correctly', function () {
     );
 });
 
-test('dashboard redirects to prompt optimizer index', function () {
+test('dashboard redirects to prompt builder index', function () {
     $response = $this->get('/dashboard');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('PromptOptimizer/Index')
+        ->component('PromptBuilder/Index')
     );
 });
 

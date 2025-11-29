@@ -71,9 +71,10 @@ and generate clarifying questions.
 
 ### 2. Final Prompt Optimizer.json
 
-**Purpose**: Takes the selected framework, clarifying answers, and task details to generate the final optimised AI prompt.
+**Purpose**: Takes the selected framework, clarifying answers, and task details to generate the final optimised AI
+prompt.
 
-**Webhook Endpoint**: `POST /webhook/final-prompt-optimizer`
+**Webhook Endpoint**: `POST /webhook/final-prompt-builder`
 
 **Input Payload**:
 
