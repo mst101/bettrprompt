@@ -5,16 +5,25 @@ import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
+import VisitorLimitModal from '@/Components/VisitorLimitModal.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import type { PromptRunResource } from '@/types';
-import { useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { computed, inject, ref, watch } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
+    visitorHasCompletedPrompts?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    visitorHasCompletedPrompts: false,
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+const openRegisterModal = inject<() => void>('openRegisterModal');
+const showVisitorLimitModal = ref(false);
 
 const isEditing = ref(false);
 const { appendText } = useTextAppend();
@@ -37,6 +46,12 @@ const handleTranscription = (transcript: string) => {
 };
 
 const submit = () => {
+    // Check if unregistered visitor has completed prompts
+    if (!user.value && props.visitorHasCompletedPrompts) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     form.post(
         route('prompt-builder.create-child', {
             parentPromptRun: props.promptRun.id,
@@ -48,6 +63,13 @@ const submit = () => {
             },
         },
     );
+};
+
+const handleRegister = () => {
+    showVisitorLimitModal.value = false;
+    if (openRegisterModal) {
+        openRegisterModal();
+    }
 };
 
 // Reset edit mode when navigating to different prompt run
@@ -62,6 +84,12 @@ watch(
 </script>
 
 <template>
+    <VisitorLimitModal
+        :show="showVisitorLimitModal"
+        @close="showVisitorLimitModal = false"
+        @register="handleRegister"
+    />
+
     <Card>
         <div class="flex items-start justify-between gap-4">
             <h2 class="text-lg font-semibold text-gray-900">

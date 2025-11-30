@@ -40,6 +40,7 @@ interface Props {
     currentQuestion?: string | null;
     currentQuestionAnswer?: string | null;
     progress?: Progress;
+    visitorHasCompletedPrompts?: boolean;
 }
 
 // Define tabs
@@ -249,7 +250,12 @@ const handleDelete = () => {
 
             <!-- Your Task Tab -->
             <div v-if="activeTab === 'task'" class="space-y-4">
-                <TaskInformation :prompt-run="promptRun" />
+                <TaskInformation
+                    :prompt-run="promptRun"
+                    :visitor-has-completed-prompts="
+                        visitorHasCompletedPrompts || false
+                    "
+                />
 
                 <!-- Loading state when analysis is in progress -->
                 <div
@@ -343,6 +349,9 @@ const handleDelete = () => {
                 <ClarifyingQuestions
                     :prompt-run="promptRun"
                     :current-question-answer="currentQuestionAnswer"
+                    :visitor-has-completed-prompts="
+                        visitorHasCompletedPrompts || false
+                    "
                 />
             </div>
 

@@ -141,6 +141,16 @@ class PromptBuilderController extends Controller
         $answers = $promptRun->clarifying_answers ?? [];
         $currentQuestionAnswer = $answers[$currentQuestionIndex] ?? null;
 
+        // Check if visitor has already completed a prompt (for client-side modal)
+        $visitorHasCompletedPrompts = false;
+        if (! auth()->check()) {
+            $visitorId = $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
+            }
+        }
+
         return Inertia::render('PromptBuilder/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $currentQuestion,
@@ -149,6 +159,7 @@ class PromptBuilderController extends Controller
                 'answered' => $currentQuestionIndex,
                 'total' => count($promptRun->framework_questions ?? []),
             ],
+            'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
         ]);
     }
 

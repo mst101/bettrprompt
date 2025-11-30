@@ -6,14 +6,25 @@ import type { ClarifyingQuestion } from '@/Components/PromptBuilder/Cards/clarif
 import AnsweredList from '@/Components/PromptBuilder/Cards/ClarifyingQuestions/AnsweredList.vue';
 import BulkQuestions from '@/Components/PromptBuilder/Cards/ClarifyingQuestions/BulkQuestions.vue';
 import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringForm.vue';
+import VisitorLimitModal from '@/Components/VisitorLimitModal.vue';
 import type { PromptRunResource } from '@/types';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 
-const props = defineProps<{
+interface Props {
     promptRun: PromptRunResource;
-}>();
+    visitorHasCompletedPrompts?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    visitorHasCompletedPrompts: false,
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+const openRegisterModal = inject<() => void>('openRegisterModal');
+const showVisitorLimitModal = ref(false);
 
 const questions = computed<ClarifyingQuestion[]>(() => {
     const raw =
@@ -216,6 +227,12 @@ const submitAllAnswers = async () => {
 const submitEditedAnswers = () => {
     if (!questions.value.length) return;
 
+    // Check if unregistered visitor has completed prompts
+    if (!user.value && props.visitorHasCompletedPrompts) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     isSubmitting.value = true;
     submitError.value = null;
 
@@ -238,6 +255,13 @@ const submitEditedAnswers = () => {
             },
         },
     );
+};
+
+const handleRegister = () => {
+    showVisitorLimitModal.value = false;
+    if (openRegisterModal) {
+        openRegisterModal();
+    }
 };
 
 const hasSubmittedAnswers = computed(() => {
@@ -264,6 +288,12 @@ const bulkSubmitLabel = computed(() =>
 </script>
 
 <template>
+    <VisitorLimitModal
+        :show="showVisitorLimitModal"
+        @close="showVisitorLimitModal = false"
+        @register="handleRegister"
+    />
+
     <Card class="space-y-6">
         <div class="flex items-start justify-between gap-4">
             <h2 class="text-lg font-semibold text-gray-900">
