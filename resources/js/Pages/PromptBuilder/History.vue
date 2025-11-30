@@ -266,12 +266,6 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                         Created
                                     </TableHeaderSortable>
                                 </th>
-                                <th
-                                    scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase lg:table-cell"
-                                >
-                                    Actions
-                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
@@ -333,22 +327,24 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                             :status="promptRun.status"
                                         />
                                     </div>
-                                </td>
-                                <td
-                                    class="hidden px-6 py-4 text-sm whitespace-nowrap lg:table-cell"
-                                >
-                                    <ButtonSecondary
-                                        type="button"
-                                        @click="
-                                            handleDelete(promptRun.id, $event)
-                                        "
-                                    >
-                                        <DynamicIcon
-                                            name="trash"
-                                            class="h-4 w-4"
-                                        />
-                                        Delete
-                                    </ButtonSecondary>
+                                    <div class="mt-2">
+                                        <ButtonSecondary
+                                            type="button"
+                                            size="sm"
+                                            @click="
+                                                handleDelete(
+                                                    promptRun.id,
+                                                    $event,
+                                                )
+                                            "
+                                        >
+                                            <DynamicIcon
+                                                name="trash"
+                                                class="h-3 w-3"
+                                            />
+                                            Delete
+                                        </ButtonSecondary>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

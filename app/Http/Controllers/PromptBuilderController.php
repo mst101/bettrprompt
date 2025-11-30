@@ -318,6 +318,17 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($parentPromptRun, $request);
 
+        // Check if unregistered visitor has already completed a prompt
+        if (! auth()->check()) {
+            $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                if ($visitor && $visitor->hasCompletedPrompts()) {
+                    return back()->with('error', 'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                }
+            }
+        }
+
         $validated = $request->validate([
             'task_description' => 'required|string',
         ]);
@@ -372,6 +383,17 @@ class PromptBuilderController extends Controller
     public function createChildFromAnswers(Request $request, PromptRun $parentPromptRun)
     {
         $this->authorizePromptRun($parentPromptRun, $request);
+
+        // Check if unregistered visitor has already completed a prompt
+        if (! auth()->check()) {
+            $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                if ($visitor && $visitor->hasCompletedPrompts()) {
+                    return back()->with('error', 'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                }
+            }
+        }
 
         if (empty($parentPromptRun->framework_questions)) {
             return back()->with('error', 'Parent prompt run does not have clarifying questions.');
