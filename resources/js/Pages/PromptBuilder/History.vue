@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
@@ -146,6 +148,25 @@ onMounted(() => {
         });
     }
 });
+
+const handleDelete = (promptRunId: number, event: Event) => {
+    event.stopPropagation(); // Prevent row click from firing
+
+    if (
+        !confirm(
+            'Are you sure you want to delete this prompt run? This action cannot be undone.',
+        )
+    ) {
+        return;
+    }
+
+    router.delete(route('prompt-builder.destroy', promptRunId), {
+        preserveScroll: true,
+        onSuccess: () => {
+            // Success feedback is handled by flash message
+        },
+    });
+};
 </script>
 
 <template>
@@ -245,6 +266,12 @@ onMounted(() => {
                                         Created
                                     </TableHeaderSortable>
                                 </th>
+                                <th
+                                    scope="col"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase lg:table-cell"
+                                >
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
@@ -306,6 +333,22 @@ onMounted(() => {
                                             :status="promptRun.status"
                                         />
                                     </div>
+                                </td>
+                                <td
+                                    class="hidden px-6 py-4 text-sm whitespace-nowrap lg:table-cell"
+                                >
+                                    <ButtonSecondary
+                                        type="button"
+                                        @click="
+                                            handleDelete(promptRun.id, $event)
+                                        "
+                                    >
+                                        <DynamicIcon
+                                            name="trash"
+                                            class="h-4 w-4"
+                                        />
+                                        Delete
+                                    </ButtonSecondary>
                                 </td>
                             </tr>
                         </tbody>

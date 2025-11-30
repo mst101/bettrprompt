@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\PromptRunResource;
+use App\Jobs\ProcessPromptGeneration;
+use App\Jobs\ProcessTaskAnalysis;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
@@ -63,25 +65,13 @@ class PromptBuilderController extends Controller
         $visitorId = $this->getVisitorId($request);
         $personalityData = $this->getPersonalityData($request);
 
-        $result = $this->promptService->analyseTask(
-            $validated['task_description'],
-            $validated['personality_type'] ?? $personalityData['personality_type'],
-            $validated['trait_percentages'] ?? $personalityData['trait_percentages']
-        );
-
-        // Check if the analysis was successful
-        if (! $result['success']) {
-            return back()->with('error', $result['error']['message'] ?? 'Failed to analyse task');
-        }
-
-        // Create a prompt run with the analysis data
+        // Create a prompt run with initial status
         try {
             $promptRun = DatabaseService::retryOnDeadlock(function () use (
                 $userId,
                 $visitorId,
                 $validated,
-                $personalityData,
-                $result
+                $personalityData
             ) {
                 return PromptRun::create([
                     'user_id' => $userId,
@@ -89,21 +79,13 @@ class PromptBuilderController extends Controller
                     'personality_type' => $validated['personality_type'] ?? $personalityData['personality_type'],
                     'trait_percentages' => $validated['trait_percentages'] ?? $personalityData['trait_percentages'],
                     'task_description' => $validated['task_description'],
-                    'status' => 'pending',
-                    'workflow_stage' => 'analysis_complete',
-                    // Prompt Builder specific fields from analysis result
-                    'task_classification' => $result['data']['task_classification'] ?? null,
-                    'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
-                    'selected_framework' => $result['data']['selected_framework'] ?? null,
-                    'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
-                    'personality_tier' => $result['data']['personality_tier'] ?? 'none',
-                    'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
-                    'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
-                    'question_rationale' => $result['data']['question_rationale'] ?? null,
-                    'framework_questions' => $result['data']['clarifying_questions'] ?? [],
-                    'analysis_api_usage' => $result['api_usage'] ?? null,
+                    'status' => 'processing',
+                    'workflow_stage' => 'submitted',
                 ]);
             });
+
+            // Dispatch the job to analyse the task asynchronously
+            ProcessTaskAnalysis::dispatch($promptRun);
 
             return redirect()->route('prompt-builder.show', $promptRun);
 
@@ -113,7 +95,7 @@ class PromptBuilderController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Failed to save analysis. Please try again.');
+            return back()->with('error', 'Failed to create task. Please try again.');
         }
     }
 
@@ -189,70 +171,25 @@ class PromptBuilderController extends Controller
                 )
             );
 
-            // Update the prompt run with answers
+            // Update the prompt run with answers and set status to processing
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
                 $promptRun->update([
                     'clarifying_answers' => $answers,
+                    'status' => 'processing',
                     'workflow_stage' => 'generating_prompt',
                 ]);
             });
 
-            // Combine questions with answers for workflow 2
-            $questions = $promptRun->framework_questions ?? [];
-            $questionAnswers = [];
+            // Dispatch the job to generate the prompt asynchronously
+            ProcessPromptGeneration::dispatch($promptRun);
 
-            foreach ($questions as $index => $question) {
-                $questionAnswers[] = [
-                    'question' => $question['question'] ?? '',
-                    'answer' => $answers[$index] ?? '',
-                ];
-            }
-
-            // Call the generation workflow with task-trait alignment parameters
-            $result = $this->promptService->generatePrompt(
-                $promptRun->task_classification,
-                $promptRun->cognitive_requirements ?? [],
-                $promptRun->selected_framework,
-                $promptRun->personality_tier,
-                $promptRun->task_trait_alignment ?? [],
-                $promptRun->personality_adjustments_preview ?? [],
-                $promptRun->task_description,
-                $promptRun->personality_type,
-                $promptRun->trait_percentages,
-                $questionAnswers
-            );
-
-            // Check if generation was successful
-            if (! $result['success']) {
-                DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                    $promptRun->update([
-                        'status' => 'failed',
-                        'error_message' => $result['error']['message'] ?? 'Generation failed',
-                    ]);
-                });
-
-                return response()->json($result, 500);
-            }
-
-            // Update the prompt run with the generated result
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                $promptRun->update([
-                    'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
-                    'framework_used' => $result['data']['framework_used'] ?? null,
-                    'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
-                    'model_recommendations' => $result['data']['model_recommendations'] ?? null,
-                    'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
-                    'generation_api_usage' => $result['api_usage'] ?? null,
-                    'status' => 'completed',
-                    'workflow_stage' => 'completed',
-                    'completed_at' => now(),
-                ]);
-            });
-
-            return response()->json($result);
+            return response()->json([
+                'success' => true,
+                'message' => 'Generating your optimised prompt...',
+            ]);
 
         } catch (\Exception $e) {
-            Log::error('Failed to generate prompt', [
+            Log::error('Failed to dispatch prompt generation', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -260,7 +197,7 @@ class PromptBuilderController extends Controller
 
             return response()->json([
                 'success' => false,
-                'error' => ['message' => 'Failed to generate prompt. Please try again.'],
+                'error' => ['message' => 'Failed to start prompt generation. Please try again.'],
             ], 500);
         }
     }
@@ -387,29 +324,36 @@ class PromptBuilderController extends Controller
 
         $user = auth()->user();
         $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+        $personalityType = $user?->personality_type ?? $parentPromptRun->personality_type;
+        $traitPercentages = $user?->trait_percentages ?? $parentPromptRun->trait_percentages;
 
         try {
             $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
                 $user,
                 $visitorId,
                 $parentPromptRun,
-                $validated
+                $validated,
+                $personalityType,
+                $traitPercentages
             ) {
                 return PromptRun::create([
                     'visitor_id' => $visitorId,
                     'user_id' => $user?->id,
                     'parent_id' => $parentPromptRun->id,
-                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
-                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
                     'status' => 'processing',
                     'workflow_stage' => 'submitted',
                 ]);
             });
 
+            // Dispatch the job to analyse the task asynchronously
+            ProcessTaskAnalysis::dispatch($childPromptRun);
+
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
-                ->with('success', 'Starting a new prompt optimisation with your updated task.');
+                ->with('success', 'Analysing your updated task...');
         } catch (\Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
@@ -476,54 +420,8 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
-            // Combine questions with answers for generation
-            $questions = $parentPromptRun->framework_questions ?? [];
-            $questionAnswers = [];
-
-            foreach ($questions as $index => $question) {
-                $questionAnswers[] = [
-                    'question' => is_array($question) ? ($question['question'] ?? '') : $question,
-                    'answer' => $clarifyingAnswers[$index] ?? '',
-                ];
-            }
-
-            $result = $this->promptService->generatePrompt(
-                $childPromptRun->task_classification,
-                $childPromptRun->cognitive_requirements ?? [],
-                $childPromptRun->selected_framework,
-                $childPromptRun->personality_tier,
-                $childPromptRun->task_trait_alignment ?? [],
-                $childPromptRun->personality_adjustments_preview ?? [],
-                $childPromptRun->task_description,
-                $childPromptRun->personality_type,
-                $childPromptRun->trait_percentages,
-                $questionAnswers
-            );
-
-            if (! $result['success']) {
-                DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $result) {
-                    $childPromptRun->update([
-                        'status' => 'failed',
-                        'error_message' => $result['error']['message'] ?? 'Generation failed',
-                    ]);
-                });
-
-                return back()->with('error', 'Failed to generate prompt with edited answers.');
-            }
-
-            DatabaseService::retryOnDeadlock(function () use ($childPromptRun, $result) {
-                $childPromptRun->update([
-                    'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
-                    'framework_used' => $result['data']['framework_used'] ?? null,
-                    'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
-                    'model_recommendations' => $result['data']['model_recommendations'] ?? null,
-                    'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
-                    'generation_api_usage' => $result['api_usage'] ?? null,
-                    'status' => 'completed',
-                    'workflow_stage' => 'completed',
-                    'completed_at' => now(),
-                ]);
-            });
+            // Dispatch the job to generate the prompt asynchronously
+            ProcessPromptGeneration::dispatch($childPromptRun);
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
@@ -564,52 +462,19 @@ class PromptBuilderController extends Controller
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'status' => 'pending',
+                        'status' => 'processing',
                         'workflow_stage' => 'submitted',
                         'error_message' => null,
                         'completed_at' => null,
                     ]);
                 });
 
-                // Re-run analysis
-                $result = $this->promptService->analyseTask(
-                    $promptRun->task_description,
-                    $promptRun->personality_type,
-                    $promptRun->trait_percentages
-                );
-
-                if (! $result['success']) {
-                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                        $promptRun->update([
-                            'status' => 'failed',
-                            'error_message' => $result['error']['message'] ?? 'Analysis failed',
-                        ]);
-                    });
-
-                    return back()->with('error', 'Retry failed. Please try again.');
-                }
-
-                // Update with analysis results
-                DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                    $promptRun->update([
-                        'status' => 'pending',
-                        'workflow_stage' => 'analysis_complete',
-                        'task_classification' => $result['data']['task_classification'] ?? null,
-                        'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
-                        'selected_framework' => $result['data']['selected_framework'] ?? null,
-                        'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
-                        'personality_tier' => $result['data']['personality_tier'] ?? 'none',
-                        'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
-                        'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
-                        'question_rationale' => $result['data']['question_rationale'] ?? null,
-                        'framework_questions' => $result['data']['clarifying_questions'] ?? [],
-                        'analysis_api_usage' => $result['api_usage'] ?? null,
-                    ]);
-                });
+                // Dispatch the job to analyse the task asynchronously
+                ProcessTaskAnalysis::dispatch($promptRun);
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'Analysis completed successfully. You can now answer the questions.');
+                    ->with('success', 'Retrying analysis...');
 
             } elseif ($workflowStage === 'generating_prompt') {
                 // Generation failed - retry generation
@@ -625,60 +490,12 @@ class PromptBuilderController extends Controller
                     ]);
                 });
 
-                // Combine questions with answers for generation
-                $questions = $promptRun->framework_questions ?? [];
-                $answers = $promptRun->clarifying_answers ?? [];
-                $questionAnswers = [];
-
-                foreach ($questions as $index => $question) {
-                    $questionAnswers[] = [
-                        'question' => is_array($question) ? ($question['question'] ?? '') : $question,
-                        'answer' => $answers[$index] ?? '',
-                    ];
-                }
-
-                $result = $this->promptService->generatePrompt(
-                    $promptRun->task_classification,
-                    $promptRun->cognitive_requirements ?? [],
-                    $promptRun->selected_framework,
-                    $promptRun->personality_tier,
-                    $promptRun->task_trait_alignment ?? [],
-                    $promptRun->personality_adjustments_preview ?? [],
-                    $promptRun->task_description,
-                    $promptRun->personality_type,
-                    $promptRun->trait_percentages,
-                    $questionAnswers
-                );
-
-                if (! $result['success']) {
-                    DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                        $promptRun->update([
-                            'status' => 'failed',
-                            'error_message' => $result['error']['message'] ?? 'Generation failed',
-                        ]);
-                    });
-
-                    return back()->with('error', 'Retry failed. Please try again.');
-                }
-
-                // Update with generation results
-                DatabaseService::retryOnDeadlock(function () use ($promptRun, $result) {
-                    $promptRun->update([
-                        'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
-                        'framework_used' => $result['data']['framework_used'] ?? null,
-                        'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
-                        'model_recommendations' => $result['data']['model_recommendations'] ?? null,
-                        'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
-                        'generation_api_usage' => $result['api_usage'] ?? null,
-                        'status' => 'completed',
-                        'workflow_stage' => 'completed',
-                        'completed_at' => now(),
-                    ]);
-                });
+                // Dispatch the job to generate the prompt asynchronously
+                ProcessPromptGeneration::dispatch($promptRun);
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'Prompt generated successfully!');
+                    ->with('success', 'Retrying prompt generation...');
             }
 
             return back()->with('error', 'Cannot retry from this stage.');
@@ -861,6 +678,35 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()->with('error', 'Failed to update prompt. Please try again.');
+        }
+    }
+
+    /**
+     * Delete a prompt run
+     */
+    public function destroy(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                $promptRun->delete();
+            });
+
+            Log::info('Deleted prompt run (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+            ]);
+
+            return redirect()
+                ->route('prompt-builder.history')
+                ->with('success', 'Prompt run deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete prompt run (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to delete prompt run. Please try again.');
         }
     }
 }

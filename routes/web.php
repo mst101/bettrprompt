@@ -111,6 +111,8 @@ Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers', [Prom
     ->name('prompt-builder.create-child-from-answers');
 Route::post('/prompt-builder/{parentPromptRun}/create-child', [PromptBuilderController::class, 'createChild'])
     ->name('prompt-builder.create-child');
+Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
+    ->name('prompt-builder.destroy');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
     ->name('prompt-builder.answer');
 Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])

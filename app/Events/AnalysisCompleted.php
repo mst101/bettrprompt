@@ -9,7 +9,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FrameworkSelected implements ShouldBroadcast
+class AnalysisCompleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -38,7 +38,7 @@ class FrameworkSelected implements ShouldBroadcast
         return [
             'prompt_run_id' => $this->promptRun->id,
             'selected_framework' => $this->promptRun->selected_framework,
-            'framework_reasoning' => $this->promptRun->framework_reasoning,
+            'workflow_stage' => $this->promptRun->workflow_stage,
             'questions_count' => count($this->promptRun->framework_questions ?? []),
         ];
     }

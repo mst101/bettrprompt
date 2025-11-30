@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 import AlternativeFrameworks from '@/Components/PromptBuilder/Cards/AlternativeFrameworks.vue';
@@ -108,7 +110,26 @@ const tabs = computed<Tab[]>(() => {
     return allTabs;
 });
 
-const activeTab = ref<string>('task'); // Start on Your Task tab
+// Determine initial tab based on workflow stage
+const getInitialTab = (): string => {
+    // If we have an optimised prompt, show it
+    if (props.promptRun.optimizedPrompt) {
+        return 'prompt';
+    }
+
+    // If we've selected a framework and we're ready for questions, show framework
+    if (
+        props.promptRun.selectedFramework &&
+        props.promptRun.workflowStage === 'analysis_complete'
+    ) {
+        return 'framework';
+    }
+
+    // Default to task tab
+    return 'task';
+};
+
+const activeTab = ref<string>(getInitialTab());
 
 const hasRelatedRuns = computed(
     () =>
@@ -141,8 +162,8 @@ const handleProceedToQuestions = async () => {
 useRealtimeUpdates(
     `prompt-run.${props.promptRun.id}`,
     {
-        FrameworkSelected: () => {
-            // Reload page to show framework selection
+        AnalysisCompleted: () => {
+            // Reload page to show analysis results
             router.reload({
                 only: ['promptRun'],
                 onSuccess: () => {
@@ -174,6 +195,23 @@ watch(
         }
     },
 );
+
+const handleDelete = () => {
+    if (
+        !confirm(
+            'Are you sure you want to delete this prompt run? This action cannot be undone.',
+        )
+    ) {
+        return;
+    }
+
+    router.delete(route('prompt-builder.destroy', props.promptRun.id), {
+        onSuccess: () => {
+            // Redirect to history page after successful deletion
+            router.visit(route('prompt-builder.history'));
+        },
+    });
+};
 </script>
 
 <template>
@@ -181,6 +219,10 @@ watch(
 
     <HeaderPage title="Prompt Builder">
         <template #actions>
+            <ButtonSecondary type="button" @click="handleDelete">
+                <DynamicIcon name="trash" class="h-4 w-4" />
+                Delete
+            </ButtonSecondary>
             <LinkButton :href="route('prompt-builder.index')" variant="primary">
                 Create New
             </LinkButton>
@@ -201,6 +243,26 @@ watch(
             <!-- Your Task Tab -->
             <div v-if="activeTab === 'task'" class="space-y-4">
                 <TaskInformation :prompt-run="promptRun" />
+
+                <!-- Loading state when analysis is in progress -->
+                <div
+                    v-if="
+                        promptRun.workflowStage === 'submitted' &&
+                        promptRun.status === 'processing'
+                    "
+                    class="rounded-lg border border-blue-200 bg-blue-50 p-6 text-center"
+                >
+                    <div
+                        class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"
+                    ></div>
+                    <p class="font-medium text-blue-900">
+                        Analysing your task...
+                    </p>
+                    <p class="mt-1 text-sm text-blue-700">
+                        This usually takes 10-30 seconds
+                    </p>
+                </div>
+
                 <RelatedPromptRuns
                     v-if="hasRelatedRuns"
                     :parent="promptRun.parent"
@@ -250,11 +312,31 @@ watch(
             </div>
 
             <!-- Questions Tab -->
-            <ClarifyingQuestions
-                v-if="activeTab === 'questions'"
-                :prompt-run="promptRun"
-                :current-question-answer="currentQuestionAnswer"
-            />
+            <div v-if="activeTab === 'questions'" class="space-y-4">
+                <!-- Loading state when generation is in progress -->
+                <div
+                    v-if="
+                        promptRun.workflowStage === 'generating_prompt' &&
+                        promptRun.status === 'processing'
+                    "
+                    class="rounded-lg border border-green-200 bg-green-50 p-6 text-center"
+                >
+                    <div
+                        class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"
+                    ></div>
+                    <p class="font-medium text-green-900">
+                        Generating your optimised prompt...
+                    </p>
+                    <p class="mt-1 text-sm text-green-700">
+                        This usually takes 20-40 seconds
+                    </p>
+                </div>
+
+                <ClarifyingQuestions
+                    :prompt-run="promptRun"
+                    :current-question-answer="currentQuestionAnswer"
+                />
+            </div>
 
             <!-- Recommendations Tab -->
             <Recommendations

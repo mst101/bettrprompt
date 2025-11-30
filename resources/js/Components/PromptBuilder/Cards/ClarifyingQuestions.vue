@@ -9,7 +9,7 @@ import QuestionAnsweringForm from '@/Components/PromptBuilder/QuestionAnsweringF
 import type { PromptRunResource } from '@/types';
 import { router } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<{
     promptRun: PromptRunResource;
@@ -34,6 +34,9 @@ const showAllQuestions = ref(false);
 const isEditingAnswers = ref(false);
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
+const questionFormRef = ref<InstanceType<typeof QuestionAnsweringForm> | null>(
+    null,
+);
 
 const hasQuestions = computed(() => questions.value.length > 0);
 const currentQuestion = computed(
@@ -165,6 +168,9 @@ const submitAnswer = async () => {
         submitAllAnswers();
     } else {
         goNext();
+        // Focus the next question's textarea
+        await nextTick();
+        questionFormRef.value?.focus();
     }
 };
 
@@ -324,6 +330,7 @@ const bulkSubmitLabel = computed(() =>
         <!-- One-at-a-time Question Form -->
         <QuestionAnsweringForm
             v-if="shouldShowQuestionForm"
+            ref="questionFormRef"
             :key="`question-${currentIndex}`"
             v-model:answer="currentAnswer"
             :question="currentQuestion.question"
