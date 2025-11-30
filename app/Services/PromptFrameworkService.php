@@ -21,13 +21,19 @@ class PromptFrameworkService
     public function analyseTask(
         string $taskDescription,
         ?string $personalityType,
-        ?array $traitPercentages
+        ?array $traitPercentages,
+        ?string $forcedFrameworkCode = null
     ): array {
         $payload = [
             'task_description' => $taskDescription,
             'personality_type' => $personalityType,
             'trait_percentages' => $traitPercentages,
         ];
+
+        // Add forced framework if specified
+        if ($forcedFrameworkCode !== null) {
+            $payload['forced_framework_code'] = $forcedFrameworkCode;
+        }
 
         try {
             $response = Http::timeout(60)

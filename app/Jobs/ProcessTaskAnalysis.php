@@ -19,7 +19,8 @@ class ProcessTaskAnalysis implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public PromptRun $promptRun
+        public PromptRun $promptRun,
+        public ?string $forcedFrameworkCode = null
     ) {}
 
     /**
@@ -32,11 +33,12 @@ class ProcessTaskAnalysis implements ShouldQueue
                 'prompt_run_id' => $this->promptRun->id,
             ]);
 
-            // Run the analysis workflow
+            // Run the analysis workflow (with optional forced framework)
             $result = $promptService->analyseTask(
                 $this->promptRun->task_description,
                 $this->promptRun->personality_type,
-                $this->promptRun->trait_percentages
+                $this->promptRun->trait_percentages,
+                $this->forcedFrameworkCode
             );
 
             if (! $result['success']) {

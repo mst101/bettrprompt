@@ -27,13 +27,8 @@ const emit = defineEmits<{
             <h2 class="mb-4 text-lg font-semibold text-gray-900">
                 Selected Framework
             </h2>
-            <div class="rounded-lg bg-gray-50 p-3">
-                <span class="text-gray-900">
-                    {{ framework.name }}
-                </span>
-                <span class="ml-2 text-sm text-gray-600">
-                    ({{ framework.code }})
-                </span>
+            <div class="rounded-lg bg-gray-50 p-3 text-gray-900">
+                {{ framework.name }}
             </div>
         </div>
 

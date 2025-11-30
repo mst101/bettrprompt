@@ -49,6 +49,9 @@ const hasRelations =
                     {{ truncateText(parent.taskDescription) }}
                 </Link>
                 <p class="mt-1 text-xs text-gray-500">
+                    <span v-if="parent.selectedFramework?.name">
+                        {{ parent.selectedFramework.name }} •
+                    </span>
                     Created
                     {{ new Date(parent.createdAt).toLocaleDateString() }}
                 </p>
@@ -84,6 +87,9 @@ const hasRelations =
                         {{ truncateText(child.taskDescription) }}
                     </Link>
                     <p class="mt-1 text-xs text-gray-500">
+                        <span v-if="child.selectedFramework?.name">
+                            {{ child.selectedFramework.name }} •
+                        </span>
                         Created
                         {{ new Date(child.createdAt).toLocaleDateString() }}
                     </p>

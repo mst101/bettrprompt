@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface Framework {
     name: string;
@@ -9,9 +12,36 @@ interface Framework {
 
 interface Props {
     frameworks: Framework[];
+    promptRunId: number;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const switchingFramework = ref<string | null>(null);
+
+const handleSwitchFramework = (frameworkCode: string) => {
+    if (
+        !confirm(
+            'This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?',
+        )
+    ) {
+        return;
+    }
+
+    switchingFramework.value = frameworkCode;
+
+    router.post(
+        route('prompt-builder.switch-framework', props.promptRunId),
+        {
+            framework_code: frameworkCode,
+        },
+        {
+            onFinish: () => {
+                switchingFramework.value = null;
+            },
+        },
+    );
+};
 </script>
 
 <template>
@@ -25,20 +55,28 @@ defineProps<Props>();
             class="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
             <div class="mb-2 flex items-start justify-between">
-                <div>
-                    <h3 class="font-medium text-gray-900">
-                        {{ framework.name }}
-                    </h3>
-                    <span class="text-sm text-gray-600">
-                        {{ framework.code }}
-                    </span>
-                </div>
+                <h3 class="font-medium text-gray-900">
+                    {{ framework.name }}
+                </h3>
             </div>
-            <div class="mt-2">
+            <div
+                class="mt-2 flex flex-col sm:flex-row sm:justify-between sm:space-x-4"
+            >
                 <p class="text-sm text-gray-700">
                     <span class="font-medium">When to use:</span>
                     {{ framework.when_to_use_instead }}
                 </p>
+                <div class="mt-4 sm:whitespace-nowrap">
+                    <ButtonSecondary
+                        type="button"
+                        class="w-full"
+                        :disabled="switchingFramework !== null"
+                        :loading="switchingFramework === framework.code"
+                        @click="handleSwitchFramework(framework.code)"
+                    >
+                        Use This Framework
+                    </ButtonSecondary>
+                </div>
             </div>
         </div>
     </Card>

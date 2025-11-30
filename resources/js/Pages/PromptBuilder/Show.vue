@@ -117,15 +117,17 @@ const getInitialTab = (): string => {
         return 'prompt';
     }
 
-    // If we've selected a framework and we're ready for questions, show framework
+    // Only show framework tab if analysis is complete
+    // Don't show it during 'submitted' or 'processing' stages
     if (
         props.promptRun.selectedFramework &&
-        props.promptRun.workflowStage === 'analysis_complete'
+        props.promptRun.workflowStage === 'analysis_complete' &&
+        props.promptRun.status !== 'processing'
     ) {
         return 'framework';
     }
 
-    // Default to task tab
+    // Default to task tab (including during analysis)
     return 'task';
 };
 
@@ -219,13 +221,18 @@ const handleDelete = () => {
 
     <HeaderPage title="Prompt Builder">
         <template #actions>
-            <ButtonSecondary type="button" @click="handleDelete">
-                <DynamicIcon name="trash" class="h-4 w-4" />
-                Delete
-            </ButtonSecondary>
-            <LinkButton :href="route('prompt-builder.index')" variant="primary">
-                Create New
-            </LinkButton>
+            <div class="space-x-4">
+                <ButtonSecondary type="button" @click="handleDelete">
+                    <DynamicIcon name="trash" class="h-4 w-4" />
+                    Delete
+                </ButtonSecondary>
+                <LinkButton
+                    :href="route('prompt-builder.index')"
+                    variant="primary"
+                >
+                    Create New
+                </LinkButton>
+            </div>
         </template>
     </HeaderPage>
 
@@ -289,6 +296,7 @@ const handleDelete = () => {
                 <AlternativeFrameworks
                     v-if="promptRun.alternativeFrameworks"
                     :frameworks="promptRun.alternativeFrameworks as any"
+                    :prompt-run-id="promptRun.id"
                 />
             </div>
 

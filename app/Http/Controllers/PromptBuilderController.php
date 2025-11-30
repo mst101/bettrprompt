@@ -709,4 +709,59 @@ class PromptBuilderController extends Controller
             return back()->with('error', 'Failed to delete prompt run. Please try again.');
         }
     }
+
+    /**
+     * Create a child prompt run with a different framework
+     */
+    public function switchFramework(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        $validated = $request->validate([
+            'framework_code' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+        $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
+        $personalityType = $user?->personality_type ?? $promptRun->personality_type;
+        $traitPercentages = $user?->trait_percentages ?? $promptRun->trait_percentages;
+
+        try {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $visitorId,
+                $promptRun,
+                $personalityType,
+                $traitPercentages
+            ) {
+                return PromptRun::create([
+                    'visitor_id' => $visitorId,
+                    'user_id' => $user?->id,
+                    'parent_id' => $promptRun->id,
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
+                    'task_description' => $promptRun->task_description,
+                    'status' => 'processing',
+                    'workflow_stage' => 'submitted',
+                ]);
+            });
+
+            // Dispatch the job to analyse the task with the forced framework
+            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code']);
+
+            return redirect()
+                ->route('prompt-builder.show', $childPromptRun)
+                ->with('success', 'Re-analysing with selected framework...');
+        } catch (\Exception $e) {
+            Log::error('Failed to switch framework (PromptBuilder)', [
+                'prompt_run_id' => $promptRun->id,
+                'framework_code' => $validated['framework_code'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', 'An error occurred whilst switching frameworks. Please try again.');
+        }
+    }
 }
