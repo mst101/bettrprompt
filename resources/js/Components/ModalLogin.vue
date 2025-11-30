@@ -6,8 +6,9 @@ import ButtonText from '@/Components/ButtonText.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import { nextTick, watch } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     show: boolean;
 }>();
 
@@ -22,6 +23,22 @@ const form = useForm({
     password: '',
     remember: false,
 });
+
+// Focus the first field when modal opens
+watch(
+    () => props.show,
+    async (newValue) => {
+        if (newValue) {
+            await nextTick();
+            const inputElement = document.getElementById(
+                'login-email',
+            ) as HTMLInputElement;
+            if (inputElement) {
+                inputElement.focus();
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.post(route('login'), {

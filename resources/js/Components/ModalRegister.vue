@@ -5,8 +5,9 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import FormInput from '@/Components/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import { nextTick, watch } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     show: boolean;
 }>();
 
@@ -18,6 +19,22 @@ const form = useForm({
     password: '',
     passwordConfirmation: '',
 });
+
+// Focus the first field when modal opens
+watch(
+    () => props.show,
+    async (newValue) => {
+        if (newValue) {
+            await nextTick();
+            const inputElement = document.getElementById(
+                'register-name',
+            ) as HTMLInputElement;
+            if (inputElement) {
+                inputElement.focus();
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.post(route('register'), {
