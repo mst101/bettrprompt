@@ -9,7 +9,7 @@ import VisitorLimitModal from '@/Components/VisitorLimitModal.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import type { PromptRunResource } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { computed, inject, ref, watch } from 'vue';
+import { computed, inject, ref, watch, watchEffect } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -26,19 +26,41 @@ const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
 
 const isEditing = ref(false);
+const shouldFocusTextarea = ref(false);
+const shouldFocusButton = ref(false);
+const taskTextareaRef = ref<InstanceType<typeof FormTextarea> | null>(null);
+const editButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
 const { appendText } = useTextAppend();
 const form = useForm({
     task_description: props.promptRun.taskDescription,
 });
 
+// Watch for textarea ref and focus when it becomes available
+watchEffect(() => {
+    if (shouldFocusTextarea.value && taskTextareaRef.value) {
+        taskTextareaRef.value.focus();
+        shouldFocusTextarea.value = false;
+    }
+});
+
+// Watch for button ref and focus when it becomes available
+watchEffect(() => {
+    if (shouldFocusButton.value && editButtonRef.value) {
+        editButtonRef.value.focus();
+        shouldFocusButton.value = false;
+    }
+});
+
 const startEditing = () => {
     isEditing.value = true;
+    shouldFocusTextarea.value = true;
 };
 
 const cancelEditing = () => {
     isEditing.value = false;
     form.reset();
     form.clearErrors();
+    shouldFocusButton.value = true;
 };
 
 const handleTranscription = (transcript: string) => {
@@ -92,7 +114,7 @@ watch(
 
     <Card>
         <div class="flex items-start justify-between gap-4">
-            <h2 class="text-lg font-semibold text-gray-900">
+            <h2 class="text-lg font-semibold text-indigo-900">
                 {{
                     isEditing
                         ? 'Edit Task & Create New Optimisation'
@@ -102,6 +124,7 @@ watch(
 
             <ButtonSecondary
                 v-if="!isEditing"
+                ref="editButtonRef"
                 type="button"
                 class="inline-flex items-center gap-1"
                 @click="startEditing"
@@ -136,13 +159,13 @@ watch(
         <form v-else @submit.prevent="submit">
             <FormTextarea
                 id="task_description"
+                ref="taskTextareaRef"
                 v-model="form.task_description"
                 label="Edit Task Description"
                 :sr-only-label="true"
                 :rows="4"
                 :error="form.errors.task_description"
                 required
-                autofocus
                 placeholder="Describe the task you want to create a prompt for..."
             />
 
