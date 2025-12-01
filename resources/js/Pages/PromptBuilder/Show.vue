@@ -348,7 +348,6 @@ const handleDelete = () => {
 
                 <ClarifyingQuestions
                     :prompt-run="promptRun"
-                    :current-question-answer="currentQuestionAnswer"
                     :visitor-has-completed-prompts="
                         visitorHasCompletedPrompts || false
                     "
