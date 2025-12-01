@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useButtonClasses } from '@/Composables/useButtonClasses';
+import { ref } from 'vue';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -22,10 +23,23 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const buttonClasses = useButtonClasses(props);
+
+const buttonRef = ref<HTMLButtonElement | null>(null);
+
+const focus = () => {
+    buttonRef.value?.focus();
+};
+
+defineExpose({ focus });
 </script>
 
 <template>
-    <button :type="type" :disabled="disabled || loading" :class="buttonClasses">
+    <button
+        ref="buttonRef"
+        :type="type"
+        :disabled="disabled || loading"
+        :class="buttonClasses"
+    >
         <DynamicIcon
             v-if="loading"
             name="arrow-path-spin"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from '@/Components/Button.vue';
+import { ref } from 'vue';
 
 interface Props {
     disabled?: boolean;
@@ -12,10 +13,19 @@ withDefaults(defineProps<Props>(), {
     type: 'button',
     loading: false,
 });
+
+const buttonRef = ref<InstanceType<typeof Button> | null>(null);
+
+const focus = () => {
+    buttonRef.value?.focus();
+};
+
+defineExpose({ focus });
 </script>
 
 <template>
     <Button
+        ref="buttonRef"
         class="text-xs tracking-wider uppercase"
         variant="primary"
         :disabled="disabled"

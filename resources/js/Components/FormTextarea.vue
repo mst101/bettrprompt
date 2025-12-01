@@ -29,10 +29,9 @@ const textareaClasses = computed(() => {
         return props.textareaClass;
     }
     return [
-        'mt-2 block w-full text-black rounded-md border-indigo-100 bg-white inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500 sm:text-sm',
+        'mt-2 block w-full text-indigo-900 rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500 sm:text-sm',
         {
-            'cursor-not-allowed opacity-50':
-                props.disabled || props.isSubmitting,
+            'cursor-not-allowed': props.disabled || props.isSubmitting,
         },
         {
             'border-red-300 focus:border-red-500 focus:ring-red-500':
@@ -43,8 +42,16 @@ const textareaClasses = computed(() => {
 
 const textarea = ref<HTMLTextAreaElement | null>(null);
 
-const focus = () => {
+const focus = (options?: { cursorPosition?: 'start' | 'end' }) => {
     textarea.value?.focus();
+
+    if (options?.cursorPosition === 'start' && textarea.value) {
+        textarea.value.setSelectionRange(0, 0);
+        textarea.value.scrollTop = 0;
+    } else if (options?.cursorPosition === 'end' && textarea.value) {
+        const length = textarea.value.value.length;
+        textarea.value.setSelectionRange(length, length);
+    }
 };
 
 defineExpose({ focus });

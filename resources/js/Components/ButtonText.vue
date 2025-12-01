@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 type ButtonVariant = 'primary' | 'secondary' | 'info' | 'danger' | 'warning';
 
@@ -17,6 +17,14 @@ const props = withDefaults(defineProps<Props>(), {
     type: 'button',
     underline: false,
 });
+
+const buttonRef = ref<HTMLButtonElement | null>(null);
+
+const focus = () => {
+    buttonRef.value?.focus();
+};
+
+defineExpose({ focus });
 
 const buttonClasses = computed(() => {
     const base =
@@ -39,7 +47,13 @@ const buttonClasses = computed(() => {
 </script>
 
 <template>
-    <button :id="id" :type="type" :disabled="disabled" :class="buttonClasses">
+    <button
+        :id="id"
+        ref="buttonRef"
+        :type="type"
+        :disabled="disabled"
+        :class="buttonClasses"
+    >
         <slot />
     </button>
 </template>
