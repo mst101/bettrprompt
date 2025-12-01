@@ -5,6 +5,7 @@ import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import type { ClarifyingQuestion } from '@/Components/PromptBuilder/Cards/clarifyingQuestion';
 import { useTextAppend } from '@/Composables/useTextAppend';
+import { ref } from 'vue';
 
 const props = withDefaults(
     defineProps<{
@@ -30,6 +31,25 @@ const emit = defineEmits<{
 
 const { appendText } = useTextAppend();
 
+const textareaRefs = ref<
+    (InstanceType<typeof FormTextareaWithActions> | null)[]
+>([]);
+
+const setTextareaRef = (el: any, index: number) => {
+    if (el) {
+        textareaRefs.value[index] = el;
+    }
+};
+
+const focusFirstTextarea = () => {
+    const firstRef = textareaRefs.value[0];
+    if (firstRef) {
+        firstRef.focus();
+    }
+};
+
+defineExpose({ focusFirstTextarea });
+
 const updateAnswer = (index: number, value: string) => {
     emit('update:answer', index, value ?? '');
 };
@@ -41,13 +61,9 @@ const handleTranscription = (index: number, transcript: string) => {
 </script>
 
 <template>
-    <div class="space-y-4">
-        <div
-            v-for="(question, index) in questions"
-            :key="question.id ?? index"
-            class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs"
-        >
-            <div class="flex items-start gap-3">
+    <div class="space-y-8">
+        <div v-for="(question, index) in questions" :key="question.id ?? index">
+            <div class="flex items-start gap-4">
                 <span
                     class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-800"
                 >
@@ -55,7 +71,7 @@ const handleTranscription = (index: number, transcript: string) => {
                 </span>
                 <div class="flex-1 space-y-3">
                     <div>
-                        <p class="text-sm font-medium text-gray-900">
+                        <p class="text-sm font-medium text-indigo-900">
                             {{ question.question }}
                             <span
                                 v-if="question.required"
@@ -66,13 +82,14 @@ const handleTranscription = (index: number, transcript: string) => {
                         </p>
                         <p
                             v-if="question.purpose"
-                            class="mt-1 text-sm text-gray-600"
+                            class="mt-1 text-sm text-indigo-600"
                         >
                             {{ question.purpose }}
                         </p>
                     </div>
                     <FormTextareaWithActions
                         :id="`bulk-answer-${index}`"
+                        :ref="(el: any) => setTextareaRef(el, index)"
                         :model-value="answers[index] ?? ''"
                         :label="`Answer ${index + 1}`"
                         :disabled="isSubmitting"

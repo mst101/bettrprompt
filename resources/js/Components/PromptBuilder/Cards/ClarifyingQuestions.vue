@@ -10,7 +10,7 @@ import VisitorLimitModal from '@/Components/VisitorLimitModal.vue';
 import type { PromptRunResource } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, inject, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -45,9 +45,31 @@ const showAllQuestions = ref(false);
 const isEditingAnswers = ref(false);
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
+const shouldFocusBulkQuestions = ref(false);
+const shouldFocusEditButton = ref(false);
 const questionFormRef = ref<InstanceType<typeof QuestionAnsweringForm> | null>(
     null,
 );
+const bulkQuestionsRef = ref<InstanceType<typeof BulkQuestions> | null>(null);
+const editAnswersButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(
+    null,
+);
+
+// Watch for bulk questions ref and focus first textarea when available
+watchEffect(() => {
+    if (shouldFocusBulkQuestions.value && bulkQuestionsRef.value) {
+        bulkQuestionsRef.value.focusFirstTextarea();
+        shouldFocusBulkQuestions.value = false;
+    }
+});
+
+// Watch for edit button ref and focus when available
+watchEffect(() => {
+    if (shouldFocusEditButton.value && editAnswersButtonRef.value) {
+        editAnswersButtonRef.value.focus();
+        shouldFocusEditButton.value = false;
+    }
+});
 
 const hasQuestions = computed(() => questions.value.length > 0);
 const currentQuestion = computed(
@@ -188,11 +210,13 @@ const submitAnswer = async () => {
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
+    shouldFocusBulkQuestions.value = true;
 };
 
 const cancelEditingAnswers = () => {
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
+    shouldFocusEditButton.value = true;
 };
 
 const submitAllAnswers = async () => {
@@ -296,7 +320,7 @@ const bulkSubmitLabel = computed(() =>
 
     <Card class="space-y-6">
         <div class="flex items-start justify-between gap-4">
-            <h2 class="text-lg font-semibold text-gray-900">
+            <h2 class="text-lg font-semibold text-indigo-900">
                 Clarifying Questions
             </h2>
 
@@ -320,6 +344,7 @@ const bulkSubmitLabel = computed(() =>
                 <div v-if="hasSubmittedAnswers">
                     <ButtonSecondary
                         v-if="!isEditingAnswers"
+                        ref="editAnswersButtonRef"
                         type="button"
                         :disabled="isSubmitting"
                         @click="startEditingAnswers"
@@ -347,7 +372,7 @@ const bulkSubmitLabel = computed(() =>
             </div>
         </div>
 
-        <p v-if="promptRun.questionRationale" class="text-sm text-gray-600">
+        <p v-if="promptRun.questionRationale" class="text-sm text-indigo-600">
             {{ promptRun.questionRationale }}
         </p>
 
@@ -378,6 +403,7 @@ const bulkSubmitLabel = computed(() =>
 
         <BulkQuestions
             v-else-if="hasQuestions && (showAllQuestions || isEditingAnswers)"
+            ref="bulkQuestionsRef"
             :questions="questions"
             :answers="answers"
             :is-submitting="isSubmitting"
@@ -396,10 +422,6 @@ const bulkSubmitLabel = computed(() =>
                     : (showAllQuestions = false)
             "
         />
-
-        <p v-else class="text-sm text-gray-600">
-            No clarifying questions were generated for this prompt.
-        </p>
 
         <div
             v-if="submitError"
