@@ -21,6 +21,21 @@ const emit = defineEmits<{
 }>();
 
 const showPersonalityForm = ref(false);
+const addPersonalityLinkRef = ref<InstanceType<typeof LinkText> | null>(null);
+const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
+    null,
+);
+
+const focus = () => {
+    // Focus the link if authenticated, button if visitor
+    if (props.isAuthenticated) {
+        addPersonalityLinkRef.value?.focus();
+    } else {
+        addPersonalityButtonRef.value?.focus();
+    }
+};
+
+defineExpose({ focus });
 
 const handlePersonalitySaved = () => {
     showPersonalityForm.value = false;
@@ -63,7 +78,10 @@ watch(
                     <p v-if="isAuthenticated">
                         For personalised prompts tailored to your communication
                         style,
-                        <LinkText :href="route('profile.edit')">
+                        <LinkText
+                            ref="addPersonalityLinkRef"
+                            :href="route('profile.edit')"
+                        >
                             add your personality type
                         </LinkText>
                         to your profile. Otherwise, we'll select the best
@@ -80,6 +98,7 @@ watch(
                         <ButtonText
                             v-if="!showPersonalityForm"
                             id="add-personality-type"
+                            ref="addPersonalityButtonRef"
                             type="button"
                             variant="warning"
                             class="-m-1"

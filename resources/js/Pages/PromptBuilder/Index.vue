@@ -7,8 +7,16 @@ import TaskDescriptionForm from '@/Components/PromptBuilder/TaskDescriptionForm.
 import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { computed, inject, nextTick, ref, watch } from 'vue';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import {
+    computed,
+    inject,
+    nextTick,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+} from 'vue';
 
 interface Props {
     visitorPersonalityType?: string | null;
@@ -42,6 +50,9 @@ const hasPersonalityType = computed(() => {
 const taskDescriptionFormRef = ref<InstanceType<
     typeof TaskDescriptionForm
 > | null>(null);
+const personalityTypePromptRef = ref<InstanceType<
+    typeof PersonalityTypePrompt
+> | null>(null);
 
 const form = useForm({
     taskDescription: '',
@@ -71,6 +82,44 @@ const handlePersonalitySaved = async () => {
     taskDescriptionFormRef.value?.focus();
 };
 
+const focusAppropriateElement = async () => {
+    await nextTick();
+    // Use requestAnimationFrame to wait for all rendering to complete
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (!hasPersonalityType.value) {
+                // Focus the personality prompt (link or button)
+                personalityTypePromptRef.value?.focus();
+            } else {
+                // Focus the textarea
+                taskDescriptionFormRef.value?.focus();
+            }
+        }, 200);
+    });
+};
+
+// Focus appropriate element on mount
+onMounted(() => {
+    focusAppropriateElement();
+});
+
+// Also focus on Inertia navigation finish (for login redirects)
+const finishHandler = () => {
+    focusAppropriateElement();
+};
+
+let removeFinishListener: (() => void) | null = null;
+
+onMounted(() => {
+    removeFinishListener = router.on('finish', finishHandler);
+});
+
+onUnmounted(() => {
+    if (removeFinishListener) {
+        removeFinishListener();
+    }
+});
+
 // Watch for visitor personality type changes (first-time save)
 // Focus textarea when personality type is set for first time
 watch(
@@ -96,6 +145,7 @@ watch(
         <Card>
             <!--            <div class="px-6 sm:p-6">-->
             <PersonalityTypePrompt
+                ref="personalityTypePromptRef"
                 :has-personality-type="hasPersonalityType"
                 :is-authenticated="!!user"
                 :visitor-personality-type="visitorPersonalityType"
