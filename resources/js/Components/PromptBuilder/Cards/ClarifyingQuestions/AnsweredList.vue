@@ -8,17 +8,14 @@ defineProps<{
 </script>
 
 <template>
-    <div
-        v-if="answers && answers.length"
-        class="space-y-3 rounded-md border border-indigo-100 bg-indigo-50 p-4"
-    >
+    <div v-if="answers && answers.length" class="space-y-3">
         <h3 class="text-sm font-semibold text-indigo-900">
             Your previous answers
         </h3>
         <div
             v-for="(question, index) in questions"
             :key="`answer-${question.id ?? index}`"
-            class="rounded-md border border-indigo-100 bg-white p-4 shadow-xs"
+            class="rounded-md bg-indigo-50 p-4 shadow-xs dark:bg-indigo-100"
         >
             <div class="flex items-start gap-3">
                 <span
@@ -27,10 +24,10 @@ defineProps<{
                     {{ index + 1 }}
                 </span>
                 <div class="flex-1 space-y-2">
-                    <p class="text-sm font-medium text-gray-900">
+                    <p class="text-sm font-medium text-indigo-900">
                         {{ question.question }}
                     </p>
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-indigo-700">
                         {{ answers[index] ?? 'Skipped' }}
                     </p>
                 </div>

@@ -32,37 +32,40 @@ const grandTotal = () => {
 
 <template>
     <Card class="space-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">API Usage</h2>
+        <h2 class="text-lg font-semibold text-indigo-900">API Usage</h2>
 
         <!-- Analysis Workflow -->
-        <div v-if="analysisUsage" class="rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-3 text-sm font-medium text-gray-700">
+        <div
+            v-if="analysisUsage"
+            class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
+        >
+            <h3 class="mb-3 text-sm font-medium text-indigo-900">
                 Analysis Workflow
             </h3>
             <div class="space-y-2">
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Model:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Model:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ analysisUsage.model }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Input Tokens:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Input Tokens:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(analysisUsage.input_tokens) }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Output Tokens:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Output Tokens:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(analysisUsage.output_tokens) }}
                     </span>
                 </div>
                 <div
-                    class="flex justify-between border-t border-gray-200 pt-2 text-sm font-medium"
+                    class="flex justify-between border-t border-indigo-200 pt-2 text-sm font-medium"
                 >
-                    <span class="text-gray-900">Total:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-900">Total:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(totalTokens(analysisUsage)) }}
                     </span>
                 </div>
@@ -72,35 +75,35 @@ const grandTotal = () => {
         <!-- Generation Workflow -->
         <div
             v-if="generationUsage"
-            class="rounded-lg border border-gray-200 p-4"
+            class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
         >
-            <h3 class="mb-3 text-sm font-medium text-gray-700">
+            <h3 class="mb-3 text-sm font-medium text-indigo-900">
                 Generation Workflow
             </h3>
             <div class="space-y-2">
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Model:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Model:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ generationUsage.model }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Input Tokens:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Input Tokens:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(generationUsage.input_tokens) }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Output Tokens:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-600">Output Tokens:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(generationUsage.output_tokens) }}
                     </span>
                 </div>
                 <div
-                    class="flex justify-between border-t border-gray-200 pt-2 text-sm font-medium"
+                    class="flex justify-between border-t border-indigo-200 pt-2 text-sm font-medium"
                 >
-                    <span class="text-gray-900">Total:</span>
-                    <span class="font-mono text-gray-900">
+                    <span class="text-indigo-900">Total:</span>
+                    <span class="font-mono text-indigo-900">
                         {{ formatNumber(totalTokens(generationUsage)) }}
                     </span>
                 </div>
@@ -110,7 +113,7 @@ const grandTotal = () => {
         <!-- Grand Total -->
         <div
             v-if="analysisUsage || generationUsage"
-            class="rounded-lg bg-indigo-50 p-4"
+            class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <div class="flex justify-between text-sm font-semibold">
                 <span class="text-indigo-900">Combined Total:</span>
@@ -123,7 +126,7 @@ const grandTotal = () => {
         <!-- No Data -->
         <div
             v-if="!analysisUsage && !generationUsage"
-            class="text-center text-gray-500"
+            class="text-center text-indigo-500"
         >
             No API usage data available
         </div>

@@ -24,16 +24,18 @@ const emit = defineEmits<{
 <template>
     <Card class="space-y-4">
         <div>
-            <h2 class="mb-4 text-lg font-semibold text-gray-900">
+            <h2 class="mb-4 text-lg font-semibold text-indigo-900">
                 Selected Framework
             </h2>
-            <div class="rounded-lg bg-gray-50 p-3 text-gray-900">
+            <div
+                class="rounded-lg bg-indigo-50 p-3 text-indigo-800 dark:bg-indigo-100"
+            >
                 {{ framework.name }}
             </div>
         </div>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-gray-700">Components</h3>
+            <h3 class="mb-2 text-sm font-medium text-indigo-800">Components</h3>
             <div class="flex flex-wrap gap-2">
                 <span
                     v-for="component in framework.components"
@@ -46,9 +48,9 @@ const emit = defineEmits<{
         </div>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-gray-700">Rationale</h3>
-            <div class="rounded-lg bg-gray-50 p-3">
-                <p class="text-gray-900">
+            <h3 class="mb-2 text-sm font-medium text-indigo-800">Rationale</h3>
+            <div class="rounded-lg bg-indigo-50 p-3 dark:bg-indigo-100">
+                <p class="text-indigo-800">
                     {{ framework.rationale }}
                 </p>
             </div>

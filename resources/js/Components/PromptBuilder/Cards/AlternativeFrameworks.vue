@@ -46,23 +46,23 @@ const handleSwitchFramework = (frameworkCode: string) => {
 
 <template>
     <Card v-if="frameworks.length > 0" class="space-y-3">
-        <h2 class="mb-4 text-lg font-semibold text-gray-900">
+        <h2 class="mb-4 text-lg font-semibold text-indigo-900">
             Alternative Frameworks
         </h2>
         <div
             v-for="framework in frameworks"
             :key="framework.code"
-            class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+            class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <div class="mb-2 flex items-start justify-between">
-                <h3 class="font-medium text-gray-900">
+                <h3 class="font-medium text-indigo-900">
                     {{ framework.name }}
                 </h3>
             </div>
             <div
                 class="mt-2 flex flex-col sm:flex-row sm:justify-between sm:space-x-4"
             >
-                <p class="text-sm text-gray-700">
+                <p class="text-sm text-indigo-700">
                     <span class="font-medium">When to use:</span>
                     {{ framework.when_to_use_instead }}
                 </p>
@@ -81,7 +81,7 @@ const handleSwitchFramework = (frameworkCode: string) => {
         </div>
     </Card>
     <Card v-else>
-        <div class="text-center text-gray-500">
+        <div class="text-center text-indigo-500">
             No alternative frameworks suggested
         </div>
     </Card>

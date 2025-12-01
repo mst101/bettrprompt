@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
+import LinkText from '@/Components/LinkText.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import type { PromptRunResource } from '@/types';
 import { truncateText } from '@/utils/formatters';
-import { Link } from '@inertiajs/vue3';
 
 interface Props {
     parent?: PromptRunResource | null;
@@ -20,7 +20,7 @@ const hasRelations =
 
 <template>
     <Card v-if="hasRelations" class="mt-6">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">
+        <h3 class="mb-4 text-lg font-semibold text-indigo-900">
             Related Prompt Optimisations
         </h3>
 
@@ -28,27 +28,27 @@ const hasRelations =
             <!-- Parent Link -->
             <div
                 v-if="parent && parent.id"
-                class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
             >
                 <div class="mb-2 flex items-center gap-2">
                     <DynamicIcon
                         name="arrow-up"
-                        class="h-4 w-4 text-gray-500"
+                        class="h-4 w-4 text-indigo-700"
                     />
-                    <span class="text-sm font-medium text-gray-600">
+                    <span class="text-sm font-medium text-indigo-800">
                         Parent Optimisation
                     </span>
                     <StatusBadge :status="parent.status" />
                 </div>
-                <Link
+                <LinkText
+                    class="text-indigo-800 hover:text-indigo-700"
                     :href="
                         route('prompt-builder.show', { promptRun: parent.id })
                     "
-                    class="block text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
                 >
                     {{ truncateText(parent.taskDescription) }}
-                </Link>
-                <p class="mt-1 text-xs text-gray-500">
+                </LinkText>
+                <p class="mt-3 text-xs text-indigo-700">
                     <span v-if="parent.selectedFramework?.name">
                         {{ parent.selectedFramework.name }} •
                     </span>
@@ -60,33 +60,33 @@ const hasRelations =
             <!-- Children Links -->
             <div v-if="children && children.length > 0" class="space-y-2">
                 <div
-                    class="flex items-center gap-2 text-sm font-medium text-gray-600"
+                    class="flex items-center gap-2 text-sm font-medium text-indigo-600"
                 >
                     <DynamicIcon
                         name="arrow-down"
-                        class="h-4 w-4 text-gray-500"
+                        class="h-4 w-4 text-indigo-500"
                     />
                     <span>Child Optimisations ({{ children.length }})</span>
                 </div>
                 <div
                     v-for="child in children"
                     :key="child.id"
-                    class="ml-6 rounded-lg border border-gray-200 bg-white p-3"
+                    class="ml-6 rounded-lg bg-white p-3"
                 >
                     <div class="mb-1 flex items-center gap-2">
                         <StatusBadge :status="child.status" />
                     </div>
-                    <Link
+                    <LinkText
+                        class="text-indigo-800 hover:text-indigo-700"
                         :href="
                             route('prompt-builder.show', {
                                 promptRun: child.id,
                             })
                         "
-                        class="block text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
                     >
                         {{ truncateText(child.taskDescription) }}
-                    </Link>
-                    <p class="mt-1 text-xs text-gray-500">
+                    </LinkText>
+                    <p class="mt-3 text-xs text-indigo-500">
                         <span v-if="child.selectedFramework?.name">
                             {{ child.selectedFramework.name }} •
                         </span>

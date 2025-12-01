@@ -25,14 +25,18 @@ defineOptions({
     <HeaderPage title="Profile" />
 
     <ContainerPage spacing>
-        <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
+        <div
+            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        >
             <UpdatePersonalityTypeForm
                 :personality-types="personalityTypes"
                 class="max-w-xl"
             />
         </div>
 
-        <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
+        <div
+            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        >
             <UpdateProfileInformationForm
                 :must-verify-email="mustVerifyEmail"
                 :status="status"
@@ -40,11 +44,15 @@ defineOptions({
             />
         </div>
 
-        <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
+        <div
+            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        >
             <UpdatePasswordForm class="max-w-xl" />
         </div>
 
-        <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
+        <div
+            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        >
             <DeleteUserForm class="max-w-xl" />
         </div>
     </ContainerPage>
