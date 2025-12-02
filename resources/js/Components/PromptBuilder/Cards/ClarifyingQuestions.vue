@@ -26,7 +26,7 @@ const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
 
-const questions = computed<ClarifyingQuestion[]>(() => {
+const allQuestions = computed<ClarifyingQuestion[]>(() => {
     const raw =
         (props.promptRun.frameworkQuestions as ClarifyingQuestion[] | null) ??
         [];
@@ -34,8 +34,27 @@ const questions = computed<ClarifyingQuestion[]>(() => {
     return raw
         .filter(Boolean)
         .map((item) =>
-            typeof item === 'string' ? { question: item } : { ...item },
+            typeof item === 'string'
+                ? { question: item, required: true }
+                : { ...item },
         );
+});
+
+const requiredQuestions = computed<ClarifyingQuestion[]>(() =>
+    allQuestions.value.filter((q) => q.required !== false),
+);
+
+const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
+    allQuestions.value.filter((q) => q.required === false),
+);
+
+const showOptionalQuestions = ref(false);
+
+const questions = computed<ClarifyingQuestion[]>(() => {
+    if (showOptionalQuestions.value) {
+        return allQuestions.value;
+    }
+    return requiredQuestions.value;
 });
 
 const answers = ref<(string | null)[]>([]);
@@ -94,7 +113,8 @@ const normalizeAnswer = (value: string | null | undefined) => {
 
 const hydrateAnswers = () => {
     const existing = props.promptRun.clarifyingAnswers ?? [];
-    answers.value = questions.value.map((_, idx) => {
+    // Always use allQuestions for the answers array to maintain index consistency
+    answers.value = allQuestions.value.map((_, idx) => {
         const value = existing[idx];
         return normalizeAnswer(
             typeof value === 'string' ? value : (value ?? null),
@@ -108,7 +128,7 @@ const hydrateAnswers = () => {
         firstPending === -1
             ? Math.min(
                   nextIndexFromServer,
-                  Math.max(questions.value.length - 1, 0),
+                  Math.max(allQuestions.value.length - 1, 0),
               )
             : firstPending;
 
@@ -119,6 +139,7 @@ const hydrateAnswers = () => {
 
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
+    showOptionalQuestions.value = false;
     submitError.value = null;
 };
 
@@ -132,6 +153,16 @@ watch(
     hydrateAnswers,
     { immediate: true },
 );
+
+// When optional questions are shown/hidden, adjust current index if needed
+watch(showOptionalQuestions, (newValue) => {
+    if (!newValue && currentIndex.value >= requiredQuestions.value.length) {
+        // If hiding optional questions and we're on an optional question,
+        // move to the last required question
+        currentIndex.value = Math.max(0, requiredQuestions.value.length - 1);
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+    }
+});
 
 const goBack = () => {
     if (currentIndex.value > 0) {
@@ -210,12 +241,14 @@ const submitAnswer = async () => {
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
+    showOptionalQuestions.value = true; // Show all questions when editing
     shouldFocusBulkQuestions.value = true;
 };
 
 const cancelEditingAnswers = () => {
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
+    showOptionalQuestions.value = false;
     shouldFocusEditButton.value = true;
 };
 
@@ -309,6 +342,15 @@ const bulkSubmitLabel = computed(() =>
         ? 'Optimise Prompt with Edited Answers'
         : 'Submit All Answers',
 );
+
+const hasOptionalQuestions = computed(() => optionalQuestions.value.length > 0);
+
+const optionalQuestionsLabel = computed(() => {
+    const count = optionalQuestions.value.length;
+    return showOptionalQuestions.value
+        ? 'Hide optional questions'
+        : `Show ${count} optional question${count !== 1 ? 's' : ''}`;
+});
 </script>
 
 <template>
@@ -376,9 +418,40 @@ const bulkSubmitLabel = computed(() =>
             {{ promptRun.questionRationale }}
         </p>
 
+        <!-- Optional questions toggle (only shown when not editing and not already showing all) -->
+        <div
+            v-if="hasOptionalQuestions && !hasSubmittedAnswers"
+            class="rounded-lg border border-indigo-100 bg-indigo-50 p-4"
+        >
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-indigo-900">
+                        {{
+                            showOptionalQuestions
+                                ? 'Optional questions visible'
+                                : 'Additional questions available'
+                        }}
+                    </p>
+                    <p
+                        v-if="!showOptionalQuestions"
+                        class="mt-1 text-sm text-indigo-700"
+                    >
+                        Answer optional questions to further optimise your
+                        prompt
+                    </p>
+                </div>
+                <ButtonSecondary
+                    type="button"
+                    @click="showOptionalQuestions = !showOptionalQuestions"
+                >
+                    {{ optionalQuestionsLabel }}
+                </ButtonSecondary>
+            </div>
+        </div>
+
         <AnsweredList
             v-if="hasSubmittedAnswers && !isEditingAnswers"
-            :questions="questions"
+            :questions="allQuestions"
             :answers="promptRun.clarifyingAnswers"
         />
 
@@ -404,7 +477,7 @@ const bulkSubmitLabel = computed(() =>
         <BulkQuestions
             v-else-if="hasQuestions && (showAllQuestions || isEditingAnswers)"
             ref="bulkQuestionsRef"
-            :questions="questions"
+            :questions="isEditingAnswers ? allQuestions : questions"
             :answers="answers"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"

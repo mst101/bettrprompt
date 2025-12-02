@@ -11,6 +11,24 @@ import type { UserResource, VisitorResource } from '@/types';
  */
 export type TraitPercentages = Record<string, number>;
 
+/**
+ * Pre-analysis question option
+ */
+export interface PreAnalysisOption {
+    value: string;
+    label: string;
+}
+
+/**
+ * Pre-analysis question
+ */
+export interface PreAnalysisQuestion {
+    id: string;
+    question: string;
+    type: 'choice' | 'text' | 'yes_no';
+    options?: PreAnalysisOption[]; // Required for 'choice' and 'yes_no' types
+}
+
 export interface PromptRunResource {
     readonly id: number;
     readonly userId: number | null;
@@ -19,6 +37,11 @@ export interface PromptRunResource {
     readonly personalityType: string | null;
     readonly traitPercentages: TraitPercentages | null;
     readonly taskDescription: string;
+    readonly preAnalysisQuestions: PreAnalysisQuestion[] | null;
+    readonly preAnalysisAnswers: Record<string, string> | null;
+    readonly preAnalysisContext: Record<string, string> | null;
+    readonly preAnalysisReasoning: string | null;
+    readonly preAnalysisSkipped: boolean;
     readonly frameworkQuestions: string[] | null;
     readonly clarifyingAnswers: (string | null)[] | null;
     readonly currentQuestionIndex?: number | null;

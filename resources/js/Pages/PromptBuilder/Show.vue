@@ -11,6 +11,7 @@ import CognitiveRequirements from '@/Components/PromptBuilder/Cards/CognitiveReq
 import OptimizedPrompt from '@/Components/PromptBuilder/Cards/OptimizedPrompt.vue';
 import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
+import PreAnalysisQuestions from '@/Components/PromptBuilder/Cards/PreAnalysisQuestions.vue';
 import Recommendations from '@/Components/PromptBuilder/Cards/Recommendations.vue';
 import RelatedPromptRuns from '@/Components/PromptBuilder/Cards/RelatedPromptRuns.vue';
 import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
@@ -255,6 +256,12 @@ const handleDelete = () => {
                     :visitor-has-completed-prompts="
                         visitorHasCompletedPrompts || false
                     "
+                />
+
+                <!-- Pre-analysis questions -->
+                <PreAnalysisQuestions
+                    v-if="promptRun.workflowStage === 'pre_analysis_questions'"
+                    :prompt-run="promptRun"
                 />
 
                 <!-- Loading state when analysis is in progress -->

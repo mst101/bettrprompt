@@ -95,6 +95,8 @@ Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
     ->name('prompt-builder.index');
 Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
     ->name('prompt-builder.analyse');
+Route::post('/prompt-builder/{promptRun}/pre-analysis-answers', [PromptBuilderController::class, 'submitPreAnalysisAnswers'])
+    ->name('prompt-builder.pre-analysis-answers');
 Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
     ->name('prompt-builder.show');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])

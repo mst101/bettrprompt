@@ -18,6 +18,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly personalityType: string | null;
  *   readonly traitPercentages: Record<string, number> | null;
  *   readonly taskDescription: string;
+ *   readonly preAnalysisQuestions: Array<unknown> | null;
+ *   readonly preAnalysisAnswers: Record<string, string> | null;
+ *   readonly preAnalysisReasoning: string | null;
+ *   readonly preAnalysisSkipped: boolean;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
@@ -69,6 +73,11 @@ class PromptRunResource extends JsonResource
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
             'taskDescription' => $this->task_description,
+            'preAnalysisQuestions' => $this->pre_analysis_questions,
+            'preAnalysisAnswers' => $this->pre_analysis_answers,
+            'preAnalysisContext' => $this->pre_analysis_context,
+            'preAnalysisReasoning' => $this->pre_analysis_reasoning,
+            'preAnalysisSkipped' => $this->pre_analysis_skipped ?? false,
             'frameworkQuestions' => $this->framework_questions,
             'clarifyingAnswers' => $this->clarifying_answers
                 ? array_values($this->clarifying_answers)

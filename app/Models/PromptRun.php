@@ -18,6 +18,11 @@ class PromptRun extends Model
         'personality_type',
         'trait_percentages',
         'task_description',
+        'pre_analysis_questions',
+        'pre_analysis_answers',
+        'pre_analysis_context',
+        'pre_analysis_reasoning',
+        'pre_analysis_skipped',
         'framework_questions',
         'clarifying_answers',
         'current_question_index',
@@ -45,6 +50,10 @@ class PromptRun extends Model
 
     protected $casts = [
         'trait_percentages' => 'array',
+        'pre_analysis_questions' => 'array',
+        'pre_analysis_answers' => 'array',
+        'pre_analysis_context' => 'array',
+        'pre_analysis_skipped' => 'boolean',
         'framework_questions' => 'array',
         'clarifying_answers' => 'array',
         'completed_at' => 'datetime',

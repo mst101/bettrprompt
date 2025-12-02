@@ -65,29 +65,68 @@ class PromptBuilderController extends Controller
         $visitorId = $this->getVisitorId($request);
         $personalityData = $this->getPersonalityData($request);
 
+        $personalityType = $validated['personality_type'] ?? $personalityData['personality_type'];
+        $traitPercentages = $validated['trait_percentages'] ?? $personalityData['trait_percentages'];
+
+        // Run pre-analysis clarity check synchronously (task description only)
+        $preAnalysis = $this->promptService->preAnalyseTask($validated['task_description']);
+
         // Create a prompt run with initial status
         try {
-            $promptRun = DatabaseService::retryOnDeadlock(function () use (
-                $userId,
-                $visitorId,
-                $validated,
-                $personalityData
-            ) {
-                return PromptRun::create([
-                    'user_id' => $userId,
-                    'visitor_id' => $visitorId,
-                    'personality_type' => $validated['personality_type'] ?? $personalityData['personality_type'],
-                    'trait_percentages' => $validated['trait_percentages'] ?? $personalityData['trait_percentages'],
-                    'task_description' => $validated['task_description'],
-                    'status' => 'processing',
-                    'workflow_stage' => 'submitted',
-                ]);
-            });
+            if ($preAnalysis['needs_clarification']) {
+                // Pre-analysis needs clarification - show questions inline
+                $promptRun = DatabaseService::retryOnDeadlock(function () use (
+                    $userId,
+                    $visitorId,
+                    $validated,
+                    $personalityType,
+                    $traitPercentages,
+                    $preAnalysis
+                ) {
+                    return PromptRun::create([
+                        'user_id' => $userId,
+                        'visitor_id' => $visitorId,
+                        'personality_type' => $personalityType,
+                        'trait_percentages' => $traitPercentages,
+                        'task_description' => $validated['task_description'],
+                        'status' => 'pending',
+                        'workflow_stage' => 'pre_analysis_questions',
+                        'pre_analysis_questions' => $preAnalysis['questions'],
+                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
+                    ]);
+                });
 
-            // Dispatch the job to analyse the task asynchronously
-            ProcessTaskAnalysis::dispatch($promptRun);
+                return redirect()->route('prompt-builder.show', $promptRun);
+            } else {
+                // Pre-analysis skipped or task is clear - proceed directly to main analysis
+                // workflow_0 should have inferred the context even though no questions were asked
+                $promptRun = DatabaseService::retryOnDeadlock(function () use (
+                    $userId,
+                    $visitorId,
+                    $validated,
+                    $personalityType,
+                    $traitPercentages,
+                    $preAnalysis
+                ) {
+                    return PromptRun::create([
+                        'user_id' => $userId,
+                        'visitor_id' => $visitorId,
+                        'personality_type' => $personalityType,
+                        'trait_percentages' => $traitPercentages,
+                        'task_description' => $validated['task_description'],
+                        'status' => 'processing',
+                        'workflow_stage' => 'submitted',
+                        'pre_analysis_skipped' => true,
+                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
+                        'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
+                    ]);
+                });
 
-            return redirect()->route('prompt-builder.show', $promptRun);
+                // Dispatch the job to analyse the task asynchronously
+                ProcessTaskAnalysis::dispatch($promptRun);
+
+                return redirect()->route('prompt-builder.show', $promptRun);
+            }
 
         } catch (\Exception $e) {
             Log::error('Failed to create prompt run', [
@@ -97,6 +136,81 @@ class PromptBuilderController extends Controller
 
             return back()->with('error', 'Failed to create task. Please try again.');
         }
+    }
+
+    /**
+     * Submit pre-analysis answers and proceed to analysis (Step 2 → workflow_1)
+     */
+    public function submitPreAnalysisAnswers(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate workflow stage
+        if ($promptRun->workflow_stage !== 'pre_analysis_questions') {
+            return back()->with('error', 'Invalid workflow stage for submitting pre-analysis answers.');
+        }
+
+        $validated = $request->validate([
+            'answers' => 'required|array',
+            'answers.*' => 'required|string',
+        ]);
+
+        try {
+            // Build structured pre_analysis_context from answers
+            $preAnalysisContext = $this->buildPreAnalysisContext(
+                $promptRun->pre_analysis_questions,
+                $validated['answers']
+            );
+
+            // Update PromptRun with answers and context, then dispatch workflow_1
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated, $preAnalysisContext) {
+                $promptRun->update([
+                    'pre_analysis_answers' => $validated['answers'],
+                    'pre_analysis_context' => $preAnalysisContext,
+                    'workflow_stage' => 'submitted',
+                    'status' => 'processing',
+                ]);
+            });
+
+            // Dispatch workflow_1 (which will enhance + analyse)
+            ProcessTaskAnalysis::dispatch($promptRun);
+
+            return redirect()
+                ->route('prompt-builder.show', $promptRun)
+                ->with('success', 'Analysing your task...');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to submit pre-analysis answers', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Failed to submit answers. Please try again.');
+        }
+    }
+
+    /**
+     * Build structured pre_analysis_context from questions and answers
+     */
+    protected function buildPreAnalysisContext(?array $questions, array $answers): array
+    {
+        if (! $questions) {
+            return [];
+        }
+
+        $context = [];
+
+        foreach ($questions as $question) {
+            $questionId = $question['id'] ?? null;
+            $answer = $answers[$questionId] ?? null;
+
+            if ($questionId && $answer) {
+                $context[$questionId] = $answer;
+            }
+        }
+
+        return $context;
     }
 
     /**

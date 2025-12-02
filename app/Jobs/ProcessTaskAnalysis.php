@@ -34,10 +34,13 @@ class ProcessTaskAnalysis implements ShouldQueue
             ]);
 
             // Run the analysis workflow (with optional forced framework)
+            // Note: task_description may already be enhanced with pre-analysis
+            // Pre-analysis context provides structured clarification data
             $result = $promptService->analyseTask(
                 $this->promptRun->task_description,
                 $this->promptRun->personality_type,
                 $this->promptRun->trait_percentages,
+                $this->promptRun->pre_analysis_context,
                 $this->forcedFrameworkCode
             );
 

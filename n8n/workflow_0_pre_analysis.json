@@ -1,0 +1,150 @@
+{
+  "name": "Workflow 0: Pre-Analysis Clarity Check",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/n8n/webhook/pre-analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7c8a9f1d-3e2b-4f5c-9d6a-1b2c3d4e5f6a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "pre-analysis-clarity-check"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract input from webhook - only need task description\nconst webhookData = $input.first().json.body || {};\n\nconst systemPrompt = `You are a clarity assessment assistant for an AI prompt optimisation tool. Your job is to:\n1. Determine if a task description needs clarification\n2. ALWAYS extract/infer structured context (subject, audience, purpose, detail_level)\n\n# Assessment Criteria\nA task needs clarification if it's ambiguous in ANY of these areas:\n1. **Subject/Topic**: Unclear WHAT the task is about (most critical for generic requests)\n2. **Audience**: Unclear who will use/see the output and their technical level\n3. **Purpose**: Unclear WHY this is being created (inform/persuade/document/learn)\n4. **Detail Level**: Unclear depth required (summary/moderate/comprehensive)\n\n# Clear Task Examples (SKIP questions but INFER context)\n- \"Create a Python function to convert CSV to JSON with error handling\"\n  → subject: \"Python CSV to JSON conversion\", audience: \"self\", purpose: \"code_implementation\", detail_level: \"moderate\"\n- \"Write a marketing email for B2B SaaS product launch, professional tone, 200 words\"\n  → subject: \"B2B SaaS product launch\", audience: \"external\", purpose: \"marketing\", detail_level: \"summary\"\n- \"Debug this React component's useState hook initialisation issue\"\n  → subject: \"React useState hook bug\", audience: \"self\", purpose: \"debugging\", detail_level: \"moderate\"\n\n# Ambiguous Task Examples (ASK questions to gather context)\n- \"Help with marketing\" → lacks subject, audience, purpose\n- \"Create a report\" → lacks WHAT ABOUT, audience, detail level\n- \"Write a report\" → lacks SUBJECT/TOPIC (what is the report about?)\n- \"Fix my code\" → lacks scope, language, context\n\n# Decision Guidelines\n**ASK QUESTIONS when:**\n- Task is 1-3 words with no context\n- Missing WHAT ABOUT (subject/topic) - ALWAYS ASK THIS FIRST\n- Missing WHO (audience)\n- Missing WHY (purpose)\n- Missing HOW MUCH (detail level)\n- Generic verbs like \"help\", \"create\", \"write\", \"make\", \"analyse\" without subject\n\n**INFER CONTEXT when:**\n- Task includes specific technical requirements\n- Clear subject/topic AND deliverable\n- Has 10+ words with meaningful details\n\n# Context Fields (ALWAYS include these)\n- **subject**: Main topic/subject matter (string)\n- **audience**: \"self\", \"team\", \"management\", or \"external\"\n- **purpose**: High-level purpose category (string)\n- **detail_level**: \"summary\", \"moderate\", or \"comprehensive\"\n\n# Question Types (if asking questions)\n1. **Multiple Choice** (type: \"choice\") - For categorical options\n2. **Yes/No** (type: \"yes_no\") - For binary decisions\n3. **Text Input** (type: \"text\") - For open-ended information like subject/topic\n\n# Response Format\n\n**If CLEAR (has sufficient context - INFER the context):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": false,\n  \"pre_analysis_context\": {\n    \"subject\": \"[inferred subject]\",\n    \"audience\": \"self\",\n    \"purpose\": \"[inferred purpose]\",\n    \"detail_level\": \"moderate\"\n  },\n  \"reasoning\": \"Your task description provides sufficient context to proceed.\"\n}\n\\`\\`\\`\n\n**If AMBIGUOUS (lacks critical context - ask questions):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": true,\n  \"questions\": [\n    {\n      \"id\": \"subject\",\n      \"type\": \"text\",\n      \"question\": \"What is the main subject or topic?\"\n    },\n    {\n      \"id\": \"audience\",\n      \"type\": \"choice\",\n      \"question\": \"Who is the primary audience?\",\n      \"options\": [\n        { \"value\": \"self\", \"label\": \"For myself\" },\n        { \"value\": \"team\", \"label\": \"My team\" },\n        { \"value\": \"management\", \"label\": \"Senior management\" },\n        { \"value\": \"external\", \"label\": \"External stakeholders\" }\n      ]\n    },\n    {\n      \"id\": \"detail_level\",\n      \"type\": \"choice\",\n      \"question\": \"How detailed should this be?\",\n      \"options\": [\n        { \"value\": \"summary\", \"label\": \"High-level summary\" },\n        { \"value\": \"moderate\", \"label\": \"Moderate detail\" },\n        { \"value\": \"comprehensive\", \"label\": \"Comprehensive and detailed\" }\n      ]\n    }\n  ],\n  \"reasoning\": \"Your task needs clarification on [specific aspects] to generate an optimal prompt.\"\n}\n\\`\\`\\`\n\n# Rules\n1. **ALWAYS return pre_analysis_context** (either inferred or null if asking questions)\n2. **Ask 2-3 questions maximum**\n3. **For generic requests, ALWAYS ask about subject/topic FIRST using type: \"text\"**\n4. **Each question MUST have a \"type\" field: \"choice\", \"text\", or \"yes_no\"**\n5. **\"choice\" and \"yes_no\" questions MUST have \"options\" array (2-4 options)**\n6. **\"text\" questions MUST NOT have \"options\" array**\n7. **Each question must have unique \"id\"** (subject, audience, purpose, detail_level, etc.)\n8. **Be aggressive about asking questions for vague tasks**\n9. **Return ONLY valid JSON, no markdown code blocks**\n10. **When inferring audience, default to \"self\" for technical/code tasks**\n\nRespond with JSON only:`;\n\nconst userMessage = `Analyse this task and determine if clarification is needed:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}`;\n\nreturn [\n  {\n    json: {\n      system: systemPrompt,\n      messages: [\n        {\n          role: 'user',\n          content: userMessage\n        }\n      ]\n    }\n  }\n];\n"
+      },
+      "id": "8d9b0e2f-4a3c-5d6e-8f7a-2c3d4e5f6a7b",
+      "name": "Prepare Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: 'claude-3-5-haiku-20241022',\n  max_tokens: 500,\n  temperature: 0.3,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
+        "options": {}
+      },
+      "id": "9e0a1f2b-5c4d-6e7f-9a8b-3d4e5f6a7b8c",
+      "name": "Call Anthropic API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5u3Dji2E1ZKRUSRX",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the Claude response and structure it properly\nconst apiResponse = $input.first().json;\n\ntry {\n  // Extract text from Anthropic API response\n  let content = apiResponse.content?.[0]?.text || '';\n  \n  if (!content) {\n    throw new Error('No content in API response');\n  }\n  \n  // Remove any markdown code blocks if present\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  // Parse JSON response from Claude\n  const parsed = JSON.parse(content);\n  \n  // Validate response structure\n  if (typeof parsed.needs_clarification !== 'boolean') {\n    throw new Error('Invalid response: missing needs_clarification');\n  }\n  \n  // If clarification needed, validate questions\n  if (parsed.needs_clarification) {\n    if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n      throw new Error('Invalid response: needs_clarification=true but no questions provided');\n    }\n    \n    // Validate each question\n    for (const q of parsed.questions) {\n      if (!q.id || !q.question || !q.type) {\n        throw new Error('Invalid question structure: missing id, question, or type');\n      }\n      \n      if (!['choice', 'text', 'yes_no'].includes(q.type)) {\n        throw new Error(`Invalid question type: ${q.type}`);\n      }\n      \n      if ((q.type === 'choice' || q.type === 'yes_no') && !Array.isArray(q.options)) {\n        throw new Error(`${q.type} question must have options array`);\n      }\n      \n      if (q.type === 'text' && q.options) {\n        throw new Error('Text question should not have options');\n      }\n    }\n    \n    // Limit to 3 questions max\n    if (parsed.questions.length > 3) {\n      parsed.questions = parsed.questions.slice(0, 3);\n    }\n  }\n  \n  // Validate pre_analysis_context (should always be present now)\n  // If needs_clarification=true, context may be null (will be built from answers)\n  // If needs_clarification=false, context should be present (inferred)\n  if (!parsed.needs_clarification && !parsed.pre_analysis_context) {\n    console.warn('Warning: needs_clarification=false but no pre_analysis_context provided');\n    // Don't fail - just log warning and proceed\n  }\n  \n  // Return structured response\n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: parsed.needs_clarification,\n        questions: parsed.questions || null,\n        pre_analysis_context: parsed.pre_analysis_context || null,\n        reasoning: parsed.reasoning || (parsed.needs_clarification ? \n          'These questions will help optimise your prompt.' : \n          'Your task description is clear.')\n      }\n    }\n  };\n  \n} catch (error) {\n  // On any error, gracefully skip pre-analysis\n  console.error('Pre-analysis parsing error:', error.message);\n  \n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: false,\n        pre_analysis_context: null,\n        reasoning: 'Proceeding directly to analysis.'\n      }\n    }\n  };\n}\n"
+      },
+      "id": "0a1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+      "name": "Parse & Validate Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt": {
+      "main": [
+        [
+          {
+            "node": "Call Anthropic API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Anthropic API": {
+      "main": [
+        [
+          {
+            "node": "Parse & Validate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Validate Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-01T18:30:00.000Z",
+  "versionId": "5"
+}

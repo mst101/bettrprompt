@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PromptFrameworkService
 {
@@ -16,12 +17,80 @@ class PromptFrameworkService
     }
 
     /**
+     * Pre-Analysis: Quick clarity check before main analysis
+     * Returns whether clarification is needed and questions if applicable
+     * Always returns gracefully - never throws exceptions
+     * Note: Does NOT use personality data - only task description
+     */
+    public function preAnalyseTask(string $taskDescription): array
+    {
+        $payload = [
+            'task_description' => $taskDescription,
+        ];
+
+        try {
+            $response = Http::timeout(10)
+                ->connectTimeout(10)
+                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/pre-analysis", $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Log the raw response for debugging
+                Log::info('Pre-analysis response received', [
+                    'data' => $data,
+                    'task' => Str::limit($taskDescription, 100),
+                ]);
+
+                // Validate response structure
+                if (! isset($data['success']) || ! $data['success']) {
+                    throw new \Exception('Invalid response from pre-analysis workflow');
+                }
+
+                if (! isset($data['data']['needs_clarification'])) {
+                    throw new \Exception('Missing needs_clarification field');
+                }
+
+                return [
+                    'needs_clarification' => $data['data']['needs_clarification'],
+                    'questions' => $data['data']['questions'] ?? null,
+                    'reasoning' => $data['data']['reasoning'] ?? 'Proceeding with analysis.',
+                ];
+            }
+
+            // Non-successful response - skip gracefully
+            Log::warning('Pre-analysis failed, skipping', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'task' => Str::limit($taskDescription, 100),
+            ]);
+
+            return [
+                'needs_clarification' => false,
+                'reasoning' => 'Proceeding directly to analysis.',
+            ];
+        } catch (\Exception $e) {
+            // Any error - skip gracefully
+            Log::warning('Pre-analysis failed, skipping', [
+                'error' => $e->getMessage(),
+                'task' => Str::limit($taskDescription, 100),
+            ]);
+
+            return [
+                'needs_clarification' => false,
+                'reasoning' => 'Proceeding directly to analysis.',
+            ];
+        }
+    }
+
+    /**
      * Step 1: Analyse task and get framework + questions
      */
     public function analyseTask(
         string $taskDescription,
         ?string $personalityType,
         ?array $traitPercentages,
+        ?array $preAnalysisContext = null,
         ?string $forcedFrameworkCode = null
     ): array {
         $payload = [
@@ -29,6 +98,11 @@ class PromptFrameworkService
             'personality_type' => $personalityType,
             'trait_percentages' => $traitPercentages,
         ];
+
+        // Add pre-analysis context if available (structured JSON)
+        if ($preAnalysisContext !== null) {
+            $payload['pre_analysis_context'] = $preAnalysisContext;
+        }
 
         // Add forced framework if specified
         if ($forcedFrameworkCode !== null) {
