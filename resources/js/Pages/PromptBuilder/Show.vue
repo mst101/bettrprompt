@@ -23,7 +23,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PromptRunResource } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -42,6 +42,7 @@ interface Props {
     currentQuestionAnswer?: string | null;
     progress?: Progress;
     visitorHasCompletedPrompts?: boolean;
+    uiComplexity?: 'simple' | 'advanced';
 }
 
 // Define tabs
@@ -59,13 +60,15 @@ const tabs = computed<Tab[]>(() => {
     allTabs.push({
         id: 'framework',
         label: 'Framework',
+        mobileLabel: 'Selected Framework',
         icon: 'cube',
     });
 
-    // Add personality tab if tier is not 'none'
+    // Add personality tab if tier is not 'none' and UI complexity is advanced
     if (
         props.promptRun.personalityTier &&
-        props.promptRun.personalityTier !== 'none'
+        props.promptRun.personalityTier !== 'none' &&
+        props.uiComplexity === 'advanced'
     ) {
         allTabs.push({
             id: 'personality',
@@ -93,12 +96,14 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
-    // API Usage tab (always shown for transparency)
-    allTabs.push({
-        id: 'api-usage',
-        label: 'API Usage',
-        icon: 'chart-bar',
-    });
+    // API Usage tab (only shown in advanced mode)
+    if (props.uiComplexity === 'advanced') {
+        allTabs.push({
+            id: 'api-usage',
+            label: 'API Usage',
+            icon: 'chart-bar',
+        });
+    }
 
     // Optimised Prompt tab (only for completed runs with prompt)
     if (props.promptRun.optimizedPrompt) {
@@ -134,6 +139,9 @@ const getInitialTab = (): string => {
 };
 
 const activeTab = ref<string>(getInitialTab());
+const clarifyingQuestionsRef = ref<InstanceType<
+    typeof ClarifyingQuestions
+> | null>(null);
 
 const hasRelatedRuns = computed(
     () =>
@@ -200,6 +208,27 @@ watch(
     },
 );
 
+// Watch for tab validity - if current tab is no longer in tabs array, switch to first available tab
+watch(
+    tabs,
+    (newTabs) => {
+        const tabIds = newTabs.map((tab) => tab.id);
+        if (!tabIds.includes(activeTab.value)) {
+            // Current tab is no longer valid, switch to first tab
+            activeTab.value = newTabs[0]?.id || 'task';
+        }
+    },
+    { immediate: true },
+);
+
+// Focus first textarea when switching to questions tab
+watch(activeTab, async (newTab) => {
+    if (newTab === 'questions') {
+        await nextTick();
+        clarifyingQuestionsRef.value?.focus();
+    }
+});
+
 const handleDelete = () => {
     if (
         !confirm(
@@ -224,7 +253,11 @@ const handleDelete = () => {
     <HeaderPage title="Prompt Builder">
         <template #actions>
             <div class="space-x-4">
-                <ButtonSecondary type="button" @click="handleDelete">
+                <ButtonSecondary
+                    type="button"
+                    class="!hidden sm:!inline-flex"
+                    @click="handleDelete"
+                >
                     <DynamicIcon name="trash" class="h-4 w-4" />
                     Delete
                 </ButtonSecondary>
@@ -289,11 +322,17 @@ const handleDelete = () => {
                     :children="promptRun.children"
                 />
                 <TaskClassification
-                    v-if="promptRun.taskClassification"
+                    v-if="
+                        promptRun.taskClassification &&
+                        uiComplexity === 'advanced'
+                    "
                     :classification="promptRun.taskClassification as any"
                 />
                 <CognitiveRequirements
-                    v-if="promptRun.cognitiveRequirements"
+                    v-if="
+                        promptRun.cognitiveRequirements &&
+                        uiComplexity === 'advanced'
+                    "
                     :requirements="promptRun.cognitiveRequirements as any"
                 />
             </div>
@@ -354,7 +393,9 @@ const handleDelete = () => {
                 </div>
 
                 <ClarifyingQuestions
+                    ref="clarifyingQuestionsRef"
                     :prompt-run="promptRun"
+                    :ui-complexity="uiComplexity"
                     :visitor-has-completed-prompts="
                         visitorHasCompletedPrompts || false
                     "

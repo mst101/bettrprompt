@@ -8,6 +8,7 @@ export interface Tab {
     id: string;
     label: string;
     icon?: string;
+    mobileLabel?: string;
 }
 
 interface Props {
@@ -30,7 +31,7 @@ const selectOptions = computed<SelectOption[]>(() => {
     return props.tabs.map((tab) => {
         return {
             value: tab.id,
-            label: tab.label,
+            label: tab.mobileLabel || tab.label,
         };
     });
 });
@@ -43,7 +44,7 @@ const selectTab = (tabId: string) => {
 <template>
     <div class="">
         <!-- Mobile: Dropdown -->
-        <div class="sm:hidden">
+        <div class="mx-4 mb-4 sm:hidden">
             <FormSelect
                 id="tabs"
                 v-model="activeTab"

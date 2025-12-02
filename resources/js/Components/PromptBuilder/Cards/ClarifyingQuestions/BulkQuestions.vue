@@ -11,6 +11,9 @@ const props = withDefaults(
     defineProps<{
         questions: ClarifyingQuestion[];
         answers: (string | null)[];
+        hasOptionalQuestions: boolean;
+        showOptionalQuestions: boolean;
+        optionalQuestionsLabel: string;
         isSubmitting: boolean;
         submitLabel?: string;
         showBack?: boolean;
@@ -25,6 +28,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'update:answer', index: number, value: string): void;
+    (e: 'show-optional-questions', value: boolean): void;
     (e: 'submit-all'): void;
     (e: 'back'): void;
 }>();
@@ -35,7 +39,10 @@ const textareaRefs = ref<
     (InstanceType<typeof FormTextareaWithActions> | null)[]
 >([]);
 
-const setTextareaRef = (el: any, index: number) => {
+const setTextareaRef = (
+    el: InstanceType<typeof FormTextareaWithActions> | null,
+    index: number,
+) => {
     if (el) {
         textareaRefs.value[index] = el;
     }
@@ -63,70 +70,65 @@ const handleTranscription = (index: number, transcript: string) => {
 <template>
     <div class="space-y-8">
         <div v-for="(question, index) in questions" :key="question.id ?? index">
-            <div class="flex items-start gap-4">
+            <div class="flex gap-4">
                 <span
                     class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-800"
                 >
                     {{ index + 1 }}
                 </span>
-                <div class="flex-1 space-y-3">
-                    <div>
-                        <p class="text-sm font-medium text-indigo-900">
-                            {{ question.question }}
-                            <span
-                                v-if="question.required"
-                                class="ml-1 text-red-500"
-                            >
-                                *
-                            </span>
-                        </p>
-                        <p
-                            v-if="question.purpose"
-                            class="mt-1 text-sm text-indigo-600"
-                        >
-                            {{ question.purpose }}
-                        </p>
-                    </div>
-                    <FormTextareaWithActions
-                        :id="`bulk-answer-${index}`"
-                        :ref="(el: any) => setTextareaRef(el, index)"
-                        :model-value="answers[index] ?? ''"
-                        :label="`Answer ${index + 1}`"
-                        :disabled="isSubmitting"
-                        :rows="4"
-                        placeholder="Share your answer (leave empty to skip)..."
-                        @update:model-value="
-                            (value: string) => updateAnswer(index, value)
-                        "
-                    >
-                        <template #actions>
-                            <ButtonVoiceInput
-                                :disabled="isSubmitting"
-                                @transcription="
-                                    (transcript: string) =>
-                                        handleTranscription(index, transcript)
-                                "
-                            />
-                        </template>
-                    </FormTextareaWithActions>
-                </div>
+                <span class="text-sm font-medium text-indigo-900">
+                    {{ question.question }}
+                    <span v-if="question.required" class="ml-1 text-red-500">
+                        *
+                    </span>
+                </span>
+            </div>
+            <div class="mt-2 space-y-3 sm:mt-0 sm:ml-10">
+                <p v-if="question.purpose" class="text-sm text-indigo-600">
+                    {{ question.purpose }}
+                </p>
+                <FormTextareaWithActions
+                    :id="`bulk-answer-${index}`"
+                    :ref="(el: any) => setTextareaRef(el, index)"
+                    :model-value="answers[index] ?? ''"
+                    :label="`Answer ${index + 1}`"
+                    :disabled="isSubmitting"
+                    :rows="4"
+                    placeholder="Share your answer (leave empty to skip)..."
+                    @update:model-value="
+                        (value: string) => updateAnswer(index, value)
+                    "
+                >
+                    <template #actions>
+                        <ButtonVoiceInput
+                            :disabled="isSubmitting"
+                            @transcription="
+                                (transcript: string) =>
+                                    handleTranscription(index, transcript)
+                            "
+                        />
+                    </template>
+                </FormTextareaWithActions>
             </div>
         </div>
-        <div class="flex items-center justify-between gap-3">
-            <div>
-                <ButtonSecondary
-                    v-if="showBack"
-                    type="button"
-                    :disabled="isSubmitting"
-                    @click="emit('back')"
-                >
-                    {{ backLabel }}
-                </ButtonSecondary>
-            </div>
+        <div
+            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-2"
+        >
+            <ButtonSecondary
+                v-if="hasOptionalQuestions"
+                type="button"
+                class="flex w-full flex-col sm:w-auto"
+                title="Answer optional questions to further optimise your prompt"
+                @click="emit('show-optional-questions', !showOptionalQuestions)"
+            >
+                <span v-html="optionalQuestionsLabel"></span>
+            </ButtonSecondary>
+
             <ButtonPrimary
                 type="button"
                 :disabled="isSubmitting"
                 :loading="isSubmitting"
+                class="w-full sm:w-auto"
                 @click="emit('submit-all')"
             >
                 {{ submitLabel }}
