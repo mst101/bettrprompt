@@ -134,20 +134,12 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 /**
  * Seed the test user in the database
  * This should be called before running tests that require the test user
+ *
+ * NOTE: As of the E2E database setup, test data is seeded globally via
+ * global-setup.ts which runs E2eTestSeeder. This function is now a no-op
+ * for backwards compatibility with existing tests.
  */
 export async function seedTestUser(): Promise<void> {
-    // This will be called from the test setup
-    // The actual seeding happens via Laravel artisan command
-    const { exec } = await import('child_process');
-    const { promisify } = await import('util');
-    const execAsync = promisify(exec);
-
-    try {
-        await execAsync(
-            './vendor/bin/sail artisan db:seed --class=TestUserSeeder',
-        );
-    } catch (error) {
-        console.error('Failed to seed test user:', error);
-        throw error;
-    }
+    // No-op: Test data is seeded globally via global-setup.ts
+    // which runs E2eTestSeeder before all tests
 }
