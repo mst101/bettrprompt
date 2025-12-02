@@ -19,11 +19,11 @@ class TestPromptRunsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Find the test user
-        $user = User::where('email', 'test@hiddengambia.com')->first();
+        // Find the test user (use test@example.com for e2e tests)
+        $user = User::where('email', 'test@example.com')->first();
 
         if (! $user) {
-            $this->command->error('Test user not found. Please run TestUserSeeder first.');
+            $this->command->error('Test user not found. Please run E2eTestSeeder or TestUserSeeder first.');
 
             return;
         }
