@@ -309,7 +309,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 lg:table-cell"
                                 >
                                     {{
-                                        promptRun.selectedFramework.name ||
+                                        promptRun.selectedFramework?.name ||
                                         '\u2014'
                                     }}
                                 </td>
