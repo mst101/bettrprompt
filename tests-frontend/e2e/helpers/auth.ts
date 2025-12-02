@@ -39,6 +39,16 @@ export async function acceptCookies(page: Page): Promise<void> {
             sameSite: 'Strict',
         },
     ]);
+
+    // Intercept all requests to add the X-Test-Auth header
+    // This tells Laravel to use the personality_e2e database via UseE2eDatabase middleware
+    await page.route('**/*', async (route) => {
+        const headers = {
+            ...route.request().headers(),
+            'X-Test-Auth': 'playwright-e2e-tests',
+        };
+        await route.continue({ headers });
+    });
 }
 
 /**
