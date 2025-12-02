@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\PromptRun;
 use App\Models\User;
+use App\Models\Visitor;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class E2eTestSeeder extends Seeder
@@ -19,60 +22,76 @@ class E2eTestSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create test user
-        $testUser = User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
-                'personality_type' => 'INTJ-A',
-                'trait_percentages' => [
-                    'mind' => 75,
-                    'energy' => 60,
-                    'nature' => 70,
-                    'tactics' => 80,
-                    'identity' => 65,
+        DB::transaction(function () {
+            // Create or update test user
+            $testUser = User::updateOrCreate(
+                ['email' => 'test@example.com'],
+                [
+                    'name' => 'Test User',
+                    'password' => Hash::make('password'),
+                    'personality_type' => 'INTJ-A',
+                    'trait_percentages' => [
+                        'mind' => 75,
+                        'energy' => 60,
+                        'nature' => 70,
+                        'tactics' => 80,
+                        'identity' => 65,
+                    ],
+                    'ui_complexity' => 'advanced',
                 ],
-                'ui_complexity' => 'advanced',
-            ],
-        );
+            );
 
-        // Create prompt runs with different statuses for history tests
-        $frameworks = [
-            ['name' => 'STAR Method', 'code' => 'STAR'],
-            ['name' => 'Problem-Solution-Benefit', 'code' => 'PSB'],
-            ['name' => 'Feature-Advantage-Benefit', 'code' => 'FAB'],
-            ['name' => 'Before-After-Bridge', 'code' => 'BAB'],
-            ['name' => '4Cs Framework', 'code' => '4CS'],
-            ['name' => 'AIDA Model', 'code' => 'AIDA'],
-            null, // Some without frameworks
-        ];
+            // Create or update a persistent visitor for history runs
+            $visitor = Visitor::updateOrCreate(
+                ['user_id' => $testUser->id],
+                [
+                    'first_visit_at' => now()->subDays(30),
+                    'last_visit_at' => now()->subDay(),
+                    'visit_count' => 3,
+                    'personality_type' => 'INTJ-A',
+                    'trait_percentages' => [
+                        'mind' => 70,
+                        'energy' => 55,
+                        'nature' => 65,
+                        'tactics' => 75,
+                        'identity' => 60,
+                    ],
+                    'ui_complexity' => 'advanced',
+                ],
+            );
 
-        $personalityTypes = [
-            'INTJ-A',
-            'ENTJ-A',
-            'INFJ-A',
-            'ENFJ-A',
-            'ISTJ-A',
-            'ESTJ-A',
-        ];
+            // Clean existing runs for this user/visitor to avoid duplicates
+            PromptRun::where('user_id', $testUser->id)
+                ->orWhere('visitor_id', $visitor->id)
+                ->delete();
 
-        $statuses = ['submitted', 'framework_selected', 'completed', 'failed'];
+            // Data pools
+            $frameworks = new BaseCollection([
+                ['name' => 'STAR Method', 'code' => 'STAR'],
+                ['name' => 'Problem-Solution-Benefit', 'code' => 'PSB'],
+                ['name' => 'Feature-Advantage-Benefit', 'code' => 'FAB'],
+                ['name' => 'Before-After-Bridge', 'code' => 'BAB'],
+                ['name' => '4Cs Framework', 'code' => '4CS'],
+                ['name' => 'AIDA Model', 'code' => 'AIDA'],
+                null, // Some without frameworks
+            ]);
 
-        // Generate visitor ID for prompt runs
-        $visitor = \App\Models\Visitor::create([
-            'personality_type' => 'INTJ-A',
-            'first_visit_at' => now()->subDays(30),
-            'last_visit_at' => now()->subDays(5),
-        ]);
+            $personalityTypes = [
+                'INTJ-A',
+                'ENTJ-A',
+                'INFJ-A',
+                'ENFJ-A',
+                'ISTJ-A',
+                'ESTJ-A',
+            ];
 
-        // Create 25 prompt runs with varied data
-        for ($i = 0; $i < 25; $i++) {
-            $status = $statuses[array_rand($statuses)];
-            $framework = $frameworks[array_rand($frameworks)];
-            $personalityType = $personalityTypes[array_rand($personalityTypes)];
+            $statuses = [
+                'submitted' => 'submitted',
+                'framework_selected' => 'analysis_complete',
+                'completed' => 'completed',
+                'failed' => 'failed',
+            ];
 
-            // Generate more varied task descriptions
             $tasks = [
                 'Help me create a comprehensive marketing strategy for a new SaaS product targeting small business owners',
                 'Write a technical blog post about microservices architecture for a developer audience',
@@ -84,44 +103,63 @@ class E2eTestSeeder extends Seeder
                 'Design a customer feedback survey for improving our mobile app',
             ];
 
-            $promptRun = PromptRun::create([
-                'visitor_id' => $visitor->id,
-                'user_id' => $testUser->id,
-                'task_description' => $tasks[array_rand($tasks)],
-                'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-                'status' => $status,
-                'personality_type' => $personalityType,
-                'selected_framework' => $framework ? [
-                    'name' => $framework['name'],
-                    'code' => $framework['code'],
-                    'rationale' => 'Selected based on task analysis and personality type.',
-                ] : null,
-                'current_question_index' => 0,
-                'framework_questions' => $status === 'completed' ? [
-                    [
-                        'id' => 1,
-                        'question' => 'What is the main goal you want to achieve?',
-                        'purpose' => 'Understanding the primary objective',
-                        'required' => true,
-                    ],
-                    [
-                        'id' => 2,
-                        'question' => 'Who is your target audience?',
-                        'purpose' => 'Identifying the audience',
-                        'required' => true,
-                    ],
-                ] : null,
-                'clarifying_answers' => $status === 'completed' ? [
-                    '1' => 'Increase brand awareness and generate leads',
-                    '2' => 'Small to medium-sized business owners in tech sector',
-                ] : null,
-                'optimized_prompt' => $status === 'completed'
-                    ? "As an {$personalityType} with a strategic and analytical approach, here's an optimised prompt:\n\n[Detailed prompt content would go here based on the task and framework]"
-                    : null,
-                'created_at' => now()->subDays(rand(0, 30)),
-                'updated_at' => now()->subDays(rand(0, 30)),
-            ]);
-        }
+            // Create exactly 25 prompt runs with varied data
+            $runs = BaseCollection::times(25, function ($i) use (
+                $visitor,
+                $testUser,
+                $statuses,
+                $frameworks,
+                $personalityTypes,
+                $tasks
+            ) {
+                $status = array_rand($statuses);
+                $workflowStage = $statuses[$status];
+                $framework = $frameworks->random();
+                $personalityType = $personalityTypes[array_rand($personalityTypes)];
+                $completed = $status === 'completed';
+
+                return [
+                    'visitor_id' => $visitor->id,
+                    'user_id' => $testUser->id,
+                    'task_description' => $tasks[array_rand($tasks)],
+                    'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
+                    'status' => $status,
+                    'workflow_stage' => $workflowStage,
+                    'personality_type' => $personalityType,
+                    'selected_framework' => $framework ? [
+                        'name' => $framework['name'],
+                        'code' => $framework['code'],
+                        'rationale' => 'Selected based on task analysis and personality type.',
+                    ] : null,
+                    'current_question_index' => $completed ? 2 : 0,
+                    'framework_questions' => $completed ? [
+                        [
+                            'id' => 1,
+                            'question' => 'What is the main goal you want to achieve?',
+                            'purpose' => 'Understanding the primary objective',
+                            'required' => true,
+                        ],
+                        [
+                            'id' => 2,
+                            'question' => 'Who is your target audience?',
+                            'purpose' => 'Identifying the audience',
+                            'required' => true,
+                        ],
+                    ] : null,
+                    'clarifying_answers' => $completed ? [
+                        '1' => 'Increase brand awareness and generate leads',
+                        '2' => 'Small to medium-sized business owners in tech sector',
+                    ] : null,
+                    'optimized_prompt' => $completed
+                        ? "As an {$personalityType} with a strategic and analytical approach, here's an optimised prompt:\n\n[Detailed prompt content would go here based on the task and framework]"
+                        : null,
+                    'created_at' => now()->subDays(rand(0, 30)),
+                    'updated_at' => now()->subDays(rand(0, 30)),
+                ];
+            });
+
+            PromptRun::insert($runs->all());
+        });
 
         $this->command->info('E2E test data seeded successfully.');
         $this->command->info('Test user email: test@example.com');
