@@ -164,10 +164,21 @@ test.describe('Framework Selection Analysis', () => {
             });
             await page.waitForTimeout(500);
 
+            // Click save and wait for the HTTP response to complete
+            const saveResponsePromise = page.waitForResponse(
+                (response) =>
+                    response.url().includes('/profile/personality') &&
+                    response.status() === 200,
+                { timeout: 10000 },
+            );
+
             await savePersonalityButton.click();
 
-            // Wait for save to complete and success message
-            await page.waitForTimeout(3000);
+            // Wait for the save request to complete
+            await saveResponsePromise;
+
+            // Additional wait to ensure database transaction is committed
+            await page.waitForTimeout(2000);
 
             // Verify the personality type was saved by reloading and checking
             // Retry up to 3 times to handle race conditions

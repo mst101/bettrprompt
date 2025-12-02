@@ -25,6 +25,15 @@ async function globalSetup() {
             stdio: 'inherit',
         });
 
+        console.log('🌱 Seeding test data...');
+        // Seed test data for E2E tests
+        execSync(
+            './vendor/bin/sail artisan db:seed --env=e2e --class=E2eTestSeeder --force',
+            {
+                stdio: 'inherit',
+            },
+        );
+
         console.log('✅ E2E test environment ready!');
     } catch (error) {
         console.error('❌ Failed to set up E2E test environment:', error);
