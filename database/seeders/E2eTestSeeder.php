@@ -104,7 +104,7 @@ class E2eTestSeeder extends Seeder
             ];
 
             // Create exactly 25 prompt runs with varied data
-            $runs = BaseCollection::times(25, function ($i) use (
+            BaseCollection::times(25, function () use (
                 $visitor,
                 $testUser,
                 $statuses,
@@ -118,7 +118,7 @@ class E2eTestSeeder extends Seeder
                 $personalityType = $personalityTypes[array_rand($personalityTypes)];
                 $completed = $status === 'completed';
 
-                return [
+                PromptRun::create([
                     'visitor_id' => $visitor->id,
                     'user_id' => $testUser->id,
                     'task_description' => $tasks[array_rand($tasks)],
@@ -153,12 +153,10 @@ class E2eTestSeeder extends Seeder
                     'optimized_prompt' => $completed
                         ? "As an {$personalityType} with a strategic and analytical approach, here's an optimised prompt:\n\n[Detailed prompt content would go here based on the task and framework]"
                         : null,
-                    'created_at' => now()->subDays(rand(0, 30)),
-                    'updated_at' => now()->subDays(rand(0, 30)),
-                ];
+                    'created_at' => now()->subDays(rand(0, 30))->startOfDay(),
+                    'updated_at' => now()->subDays(rand(0, 30))->startOfDay(),
+                ]);
             });
-
-            PromptRun::insert($runs->all());
         });
 
         $this->command->info('E2E test data seeded successfully.');
