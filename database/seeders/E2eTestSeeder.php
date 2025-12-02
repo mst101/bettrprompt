@@ -24,13 +24,19 @@ class E2eTestSeeder extends Seeder
     public function run(): void
     {
         // Ensure the default connection reflects the current env (config cache-safe)
-        $connection = env('DB_CONNECTION', config('database.default'));
+        $connection = env('DB_CONNECTION', config('database.default', 'pgsql'));
         Config::set('database.default', $connection);
         DB::setDefaultConnection($connection);
 
-        DB::transaction(function () {
+        $this->command?->info(sprintf(
+            'Seeding using connection "%s" (%s)',
+            $connection,
+            DB::connection($connection)->getDatabaseName()
+        ));
+
+        DB::connection($connection)->transaction(function () use ($connection) {
             // Create or update test user
-            $testUser = User::updateOrCreate(
+            $testUser = User::on($connection)->updateOrCreate(
                 ['email' => 'test@example.com'],
                 [
                     'name' => 'Test User',
@@ -48,7 +54,7 @@ class E2eTestSeeder extends Seeder
             );
 
             // Create or update a persistent visitor for history runs
-            $visitor = Visitor::updateOrCreate(
+            $visitor = Visitor::on($connection)->updateOrCreate(
                 ['user_id' => $testUser->id],
                 [
                     'first_visit_at' => now()->subDays(30),
@@ -67,7 +73,8 @@ class E2eTestSeeder extends Seeder
             );
 
             // Clean existing runs for this user/visitor to avoid duplicates
-            PromptRun::where('user_id', $testUser->id)
+            PromptRun::on($connection)
+                ->where('user_id', $testUser->id)
                 ->orWhere('visitor_id', $visitor->id)
                 ->delete();
 
@@ -111,6 +118,7 @@ class E2eTestSeeder extends Seeder
 
             // Create exactly 25 prompt runs with varied data
             BaseCollection::times(25, function () use (
+                $connection,
                 $visitor,
                 $testUser,
                 $statuses,
@@ -124,7 +132,7 @@ class E2eTestSeeder extends Seeder
                 $personalityType = $personalityTypes[array_rand($personalityTypes)];
                 $completed = $status === 'completed';
 
-                PromptRun::create([
+                PromptRun::on($connection)->create([
                     'visitor_id' => $visitor->id,
                     'user_id' => $testUser->id,
                     'task_description' => $tasks[array_rand($tasks)],
