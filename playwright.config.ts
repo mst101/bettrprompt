@@ -5,6 +5,9 @@ import { defineConfig, devices } from '@playwright/test';
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
+    // Global setup script to prepare test database
+    globalSetup: './tests-frontend/e2e/global-setup.ts',
+
     // Look for test files in the "tests-frontend/e2e" directory
     testDir: './tests-frontend/e2e',
 
