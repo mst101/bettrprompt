@@ -25,6 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Trust all proxies for local development (Caddy reverse proxy)
         $middleware->trustProxies(at: '*');
+
+        // Exempt test login endpoint from CSRF protection
+        // This route is protected by X-Test-Auth header instead
+        $middleware->validateCsrfTokens(except: [
+            'test/login',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Handle CSRF token expiration (419 errors)

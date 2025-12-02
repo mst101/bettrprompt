@@ -62,17 +62,17 @@ watch(
         key="no-personality"
         class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
     >
-        <div class="flex">
-            <div class="shrink-0">
+        <div class="flex flex-col">
+            <div class="flex shrink-0">
                 <DynamicIcon
                     name="information-circle"
-                    class="h-5 w-5 text-amber-400"
+                    class="mr-3 h-5 w-5 text-amber-400"
                 />
-            </div>
-            <div class="ml-3">
                 <h3 class="text-sm font-medium text-amber-800">
                     Get personalised prompts (optional)
                 </h3>
+            </div>
+            <div class="sm:ml-3">
                 <div class="mt-2 text-sm text-amber-700">
                     <!-- Authenticated user -->
                     <p v-if="isAuthenticated">

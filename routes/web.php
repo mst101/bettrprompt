@@ -133,3 +133,24 @@ Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class,
 Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
     ->name('prompt-builder.update-prompt');
 // });
+
+// E2E Test-Only Routes
+// These routes provide a backdoor for E2E tests to authenticate without using the modal form
+// They check for a special header to ensure they're only used by Playwright tests
+Route::post('/test/login', function (Illuminate\Http\Request $request) {
+    // Only allow if the request includes the test auth header
+    // This header is set by Playwright tests to prove they're authorized to use this endpoint
+    if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+        abort(403, 'Unauthorized');
+    }
+
+    $user = \App\Models\User::where('email', $request->email)->first();
+
+    if (! $user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    \Illuminate\Support\Facades\Auth::login($user);
+
+    return response()->json(['success' => true]);
+})->name('test.login');

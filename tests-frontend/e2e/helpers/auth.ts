@@ -66,38 +66,45 @@ export async function loginAsTestUser(page: Page): Promise<void> {
         return;
     }
 
-    // Navigate to login page with modal parameter
-    await page.goto('/?modal=login');
+    // Use the test-only login endpoint (only available in e2e environment)
+    // This bypasses the modal form which has issues with Playwright input
+
+    // First, navigate to get a CSRF token
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // Wait for modal to appear and animation to complete
-    await page.waitForTimeout(500);
-
-    // Wait for email input to be visible (confirms modal is open)
-    const emailInput = page.getByLabel(/^email/i).first();
-    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
-
-    // Fill in login form
-    await emailInput.fill(TEST_USER.email);
-
-    const passwordInput = page.getByLabel(/^password/i).first();
-    await passwordInput.fill(TEST_USER.password);
-
-    // Submit the form by clicking the submit button
-    // Find the submit button within the modal dialog (type="submit")
-    const loginButton = page.locator('button[type="submit"]', {
-        hasText: /log in/i,
+    // Get CSRF token from the page
+    const csrfToken = await page.evaluate(() => {
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        return metaTag ? metaTag.getAttribute('content') : null;
     });
-    await loginButton.waitFor({ state: 'visible', timeout: 5000 });
 
-    // Click and wait for navigation
-    await Promise.all([
-        page.waitForLoadState('networkidle'),
-        loginButton.click(),
-    ]);
+    // Make the login request with proper headers
+    const response = await page.request.post(
+        'https://app.localhost/test/login',
+        {
+            data: {
+                email: TEST_USER.email,
+            },
+            headers: {
+                'X-CSRF-TOKEN': csrfToken || '',
+                'X-Test-Auth': 'playwright-e2e-tests',
+                Accept: 'application/json',
+            },
+        },
+    );
 
-    // Additional wait for authentication to complete
-    await page.waitForTimeout(1500);
+    if (!response.ok()) {
+        const body = await response.text();
+        throw new Error(
+            `Test login endpoint failed: ${response.status()} ${response.statusText()}\nBody: ${body}`,
+        );
+    }
+
+    // Reload the page to pick up the authenticated session
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
 
     // Verify we're logged in by checking for the user menu button
     // (Inertia clears query params after login, so we can't rely on URL)
