@@ -42,6 +42,7 @@ class TestPromptRunsSeeder extends Seeder
                 ->create([
                     'created_at' => now()->subDays($i),
                     'personality_type' => $personalityTypes[$i % count($personalityTypes)],
+                    'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
                 ]);
 
             // Apply status-specific state if provided

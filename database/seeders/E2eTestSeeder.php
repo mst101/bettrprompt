@@ -88,6 +88,7 @@ class E2eTestSeeder extends Seeder
                 'visitor_id' => $visitor->id,
                 'user_id' => $testUser->id,
                 'task_description' => $tasks[array_rand($tasks)],
+                'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
                 'status' => $status,
                 'personality_type' => $personalityType,
                 'selected_framework' => $framework ? [

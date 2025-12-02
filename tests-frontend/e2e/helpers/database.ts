@@ -14,11 +14,12 @@ export async function seedPromptRuns(
     status?: string,
 ): Promise<void> {
     try {
+        // Use Sail with bash -c to properly pass environment variables into the Docker container
         const env = status
             ? `SEED_COUNT=${count} SEED_STATUS=${status}`
             : `SEED_COUNT=${count}`;
         await execAsync(
-            `${env} ./vendor/bin/sail artisan db:seed --class=TestPromptRunsSeeder`,
+            `./vendor/bin/sail bash -c "${env} php artisan db:seed --class=TestPromptRunsSeeder --env=e2e"`,
         );
     } catch (error) {
         console.error('Failed to seed prompt runs:', error);
