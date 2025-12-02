@@ -152,5 +152,6 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
 
     \Illuminate\Support\Facades\Auth::login($user);
 
+    // Respond with success - session cookie is set by Laravel automatically
     return response()->json(['success' => true]);
 })->name('test.login');

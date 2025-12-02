@@ -89,8 +89,9 @@ export async function loginAsTestUser(page: Page): Promise<void> {
         return metaTag ? metaTag.getAttribute('content') : null;
     });
 
-    // Make the login request with proper headers
-    const response = await page.request.post(
+    // Make the login request - the endpoint will redirect to home
+    // Use page.request.post so cookies are properly handled
+    const loginResponse = await page.request.post(
         'https://app.localhost/test/login',
         {
             data: {
@@ -99,20 +100,20 @@ export async function loginAsTestUser(page: Page): Promise<void> {
             headers: {
                 'X-CSRF-TOKEN': csrfToken || '',
                 'X-Test-Auth': 'playwright-e2e-tests',
-                Accept: 'application/json',
+                'Content-Type': 'application/json',
             },
         },
     );
 
-    if (!response.ok()) {
-        const body = await response.text();
+    if (!loginResponse.ok()) {
+        const body = await loginResponse.text();
         throw new Error(
-            `Test login endpoint failed: ${response.status()} ${response.statusText()}\nBody: ${body}`,
+            `Test login failed: ${loginResponse.status()} ${loginResponse.statusText()}\nBody: ${body}`,
         );
     }
 
-    // Reload the page to pick up the authenticated session
-    await page.goto('/');
+    // After successful login, navigate to home to pick up the session
+    await page.goto('/', { waitUntil: 'networkidle' });
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
 
