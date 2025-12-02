@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Visitor;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,6 +23,11 @@ class E2eTestSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ensure the default connection reflects the current env (config cache-safe)
+        $connection = env('DB_CONNECTION', config('database.default'));
+        Config::set('database.default', $connection);
+        DB::setDefaultConnection($connection);
+
         DB::transaction(function () {
             // Create or update test user
             $testUser = User::updateOrCreate(
