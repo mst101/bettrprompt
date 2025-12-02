@@ -34,6 +34,7 @@ class Visitor extends Model
         'converted_at',
         'personality_type',
         'trait_percentages',
+        'ui_complexity',
         'referred_by_user_id',
     ];
 
@@ -50,6 +51,7 @@ class Visitor extends Model
             'converted_at' => 'datetime',
             'visit_count' => 'integer',
             'trait_percentages' => 'array',
+            'ui_complexity' => 'string',
         ];
     }
 

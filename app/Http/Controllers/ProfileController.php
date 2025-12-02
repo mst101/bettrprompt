@@ -45,6 +45,7 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'personalityTypes' => $personalityTypes,
+            'uiComplexity' => $request->user()->ui_complexity ?? 'advanced',
         ]);
     }
 
@@ -104,6 +105,23 @@ class ProfileController extends Controller
             return Redirect::back()->with('error',
                 'Failed to update personality type. Please try again.');
         }
+    }
+
+    /**
+     * Update the user's UI complexity preference.
+     */
+    public function updateUiComplexity(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ui_complexity' => ['required', 'in:simple,advanced'],
+        ]);
+
+        $request->user()->update([
+            'ui_complexity' => $validated['ui_complexity'],
+        ]);
+
+        return Redirect::route('profile.edit')
+            ->with('status', 'ui-complexity-updated');
     }
 
     /**

@@ -184,9 +184,15 @@ const submit = () => {
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                     <p class="text-sm text-gray-600">
-                        Enter your trait percentages from 16personalities.com.
-                        Your percentages must be 50% or higher for the traits in
-                        your type code ({{ fullPersonalityType }}).
+                        Enter your trait percentages from
+                        <a
+                            class="underline underline-offset-2"
+                            href="https://16personalities.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >16personalities.com</a
+                        >. Your percentages must be 50% or higher for the traits
+                        in your type code ({{ fullPersonalityType }}).
                     </p>
 
                     <div class="grid grid-cols-2 gap-4">

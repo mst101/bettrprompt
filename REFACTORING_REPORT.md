@@ -1011,7 +1011,7 @@ const buttonLabel = computed(() => {
 
 ```vue
 
-<Head title="Prompt Optimiser" />
+<Head title="Prompt Builder" />
 <!-- and -->
 <span v-else>Optimise Prompt</span>
 ```
@@ -1029,7 +1029,7 @@ export const AUDIO_LABELS = {
 } as const;
 
 export const PAGE_TITLES = {
-    promptOptimiser: 'Prompt Optimiser',
+    promptOptimiser: 'Prompt Builder',
 } as const;
 ```
 

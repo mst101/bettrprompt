@@ -30,7 +30,7 @@ each failure and provides specific recommendations for fixes.
 | Navigation          | 14    | 14     | 0      | 100%               |
 | OAuth               | 8     | 4      | 0      | 100% ✓ (4 skipped) |
 | Profile             | 14    | 2      | 12     | 14%                |
-| Prompt Optimiser    | 14    | 11     | 3      | 79%                |
+| Prompt Builder      | 14    | 11     | 3      | 79%                |
 | Prompt History      | 30    | 24     | 6      | 80%                |
 | Static Pages        | 51    | 35     | 16     | 69%                |
 | Real-time Updates   | 16    | 15     | 1      | 94%                |
@@ -203,7 +203,7 @@ if (!userMenu) {
 
 ---
 
-### 4. Prompt Optimiser Tests (3 failures)
+### 4. Prompt Builder Tests (3 failures)
 
 #### ❌ **prompt-builder.e2e.ts:5** - "should allow access to prompt optimizer when not logged in"
 
@@ -225,7 +225,7 @@ if (!userMenu) {
 
 ---
 
-### 5. Prompt Optimiser History Tests (6 failures)
+### 5. Prompt Builder History Tests (6 failures)
 
 #### ❌ **prompt-builder-history.e2e.ts:61** - "should show empty state message"
 

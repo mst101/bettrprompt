@@ -13,12 +13,12 @@ defineProps<{
         <div
             :class="[
                 bgColour || 'bg-indigo-600',
-                'mx-auto flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white',
+                'mx-auto flex size-10 items-center justify-center rounded-full text-xl font-bold text-white sm:size-16',
             ]"
         >
             {{ number }}
         </div>
-        <h3 class="mt-6 text-lg font-semibold text-gray-900">
+        <h3 class="mt-4 text-lg font-semibold text-gray-900 sm:mt-6">
             {{ title }}
         </h3>
         <!-- eslint-disable-next-line vue/no-v-html -->

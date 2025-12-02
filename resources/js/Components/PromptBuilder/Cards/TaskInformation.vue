@@ -114,7 +114,9 @@ watch(
 
     <Card>
         <div class="flex items-start justify-between gap-4">
-            <h2 class="text-lg font-semibold text-indigo-900">
+            <h2
+                class="sr-only text-lg font-semibold text-indigo-900 sm:not-sr-only"
+            >
                 {{
                     isEditing
                         ? 'Edit Task & Create New Optimisation'
@@ -126,7 +128,7 @@ watch(
                 v-if="!isEditing"
                 ref="editButtonRef"
                 type="button"
-                class="inline-flex items-center gap-1"
+                class="inline-flex w-full items-center gap-1 sm:w-fit"
                 @click="startEditing"
             >
                 <DynamicIcon name="edit" class="h-4 w-4" />

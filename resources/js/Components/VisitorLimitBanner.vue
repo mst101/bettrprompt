@@ -64,8 +64,8 @@ defineEmits<{
                 </h3>
                 <p class="mt-2 text-gray-700">
                     You've already created an optimised prompt as a visitor. To
-                    create more prompts, save your work, and iterate on existing
-                    ones, you'll need to create a free account.
+                    see your existing prompts, create more prompts, and iterate
+                    on existing ones, you'll need to create a free account.
                 </p>
                 <div class="mt-4 flex gap-3">
                     <ButtonPrimary @click="$emit('register')">

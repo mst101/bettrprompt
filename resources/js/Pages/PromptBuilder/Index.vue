@@ -134,9 +134,9 @@ watch(
 </script>
 
 <template>
-    <Head title="Prompt Optimiser" />
+    <Head title="Prompt Builder" />
 
-    <HeaderPage title="Prompt Optimiser" />
+    <HeaderPage title="Prompt Builder" />
 
     <ContainerPage>
         <!--        <div-->

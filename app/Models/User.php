@@ -26,6 +26,7 @@ class User extends Authenticatable
         'avatar',
         'personality_type',
         'trait_percentages',
+        'ui_complexity',
         'referral_code',
         'referred_by_user_id',
     ];
@@ -51,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'trait_percentages' => 'array',
+            'ui_complexity' => 'string',
             'is_admin' => 'boolean',
         ];
     }

@@ -24,7 +24,9 @@ const emit = defineEmits<{
 <template>
     <Card class="space-y-4">
         <div>
-            <h2 class="mb-4 text-lg font-semibold text-indigo-900">
+            <h2
+                class="sr-only mb-4 text-lg font-semibold text-indigo-900 sm:not-sr-only"
+            >
                 Selected Framework
             </h2>
             <div
@@ -40,7 +42,7 @@ const emit = defineEmits<{
                 <span
                     v-for="component in framework.components"
                     :key="component"
-                    class="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
+                    class="rounded-lg bg-blue-100 px-3 py-1 text-sm text-blue-800 sm:rounded-full"
                 >
                     {{ component }}
                 </span>

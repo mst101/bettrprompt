@@ -91,9 +91,16 @@ watch(
                     <div v-else>
                         <p class="mb-2">
                             For personalised prompts tailored to your
-                            communication style, add your 16personalities type.
-                            Otherwise, we'll select the best framework based
-                            purely on your task.
+                            communication style, add your
+                            <a
+                                class="underline underline-offset-2"
+                                href="https://16personalities.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >16personalities.com</a
+                            >
+                            type. Otherwise, we'll select the best framework
+                            based purely on your task.
                         </p>
                         <ButtonText
                             v-if="!showPersonalityForm"

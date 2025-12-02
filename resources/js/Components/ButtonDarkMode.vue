@@ -12,7 +12,7 @@ const title = computed(() => `Switch to ${otherMode.value} mode`);
 <template>
     <button
         type="button"
-        class="mr-4 size-10 shrink-0 cursor-pointer rounded-md fill-current p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden active:text-black"
+        class="mr-2 size-10 shrink-0 cursor-pointer rounded-md fill-current p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden active:text-black sm:mr-4"
         :title="title"
         @click="themeStore.toggleTheme()"
     >

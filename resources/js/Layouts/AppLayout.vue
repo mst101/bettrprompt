@@ -190,7 +190,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         route().current('prompt-builder.index')
                                     "
                                 >
-                                    Prompt Optimiser
+                                    Prompt Builder
                                 </NavLink>
                                 <NavLink
                                     :href="route('prompt-builder.history')"
@@ -310,7 +310,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Prompt Optimiser
+                                        Prompt Builder
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -336,43 +336,26 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     >
                                         Feedback
                                     </ResponsiveNavLink>
-                                </div>
 
-                                <!-- Responsive Settings Options -->
-                                <div class="border-t border-gray-200 pt-4 pb-1">
-                                    <div class="px-4">
-                                        <div
-                                            class="text-base font-medium text-gray-800"
-                                        >
-                                            {{ $page.props.auth!.user!.name }}
-                                        </div>
-                                        <div
-                                            class="text-sm font-medium text-gray-500"
-                                        >
-                                            {{ $page.props.auth!.user!.email }}
-                                        </div>
-                                    </div>
+                                    <ResponsiveNavLink
+                                        :href="route('profile.edit')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Profile
+                                    </ResponsiveNavLink>
 
-                                    <div class="mt-3 space-y-1">
-                                        <ResponsiveNavLink
-                                            :href="route('profile.edit')"
-                                            @click="
-                                                showingNavigationDropdown = false
-                                            "
-                                        >
-                                            Profile
-                                        </ResponsiveNavLink>
-                                        <ResponsiveNavLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                            @click="
-                                                showingNavigationDropdown = false
-                                            "
-                                        >
-                                            Log Out
-                                        </ResponsiveNavLink>
-                                    </div>
+                                    <ResponsiveNavLink
+                                        :href="route('logout')"
+                                        method="post"
+                                        as="button"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Log Out
+                                    </ResponsiveNavLink>
                                 </div>
                             </template>
 
@@ -395,13 +378,6 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     </Transition>
                 </Teleport>
             </nav>
-
-            <!-- Page Heading -->
-            <!--            <header class="bg-white shadow-sm" v-if="$slots.header">-->
-            <!--                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">-->
-            <!--                    <slot name="header" />-->
-            <!--                </div>-->
-            <!--            </header>-->
 
             <!-- Page Content -->
             <main class="flex-1">

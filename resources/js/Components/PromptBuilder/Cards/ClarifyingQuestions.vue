@@ -14,11 +14,13 @@ import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
+    uiComplexity?: 'simple' | 'advanced';
     visitorHasCompletedPrompts?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     visitorHasCompletedPrompts: false,
+    uiComplexity: 'advanced',
 });
 
 const page = usePage();
@@ -321,6 +323,19 @@ const handleRegister = () => {
     }
 };
 
+// Focus the first textarea - useful when switching to this tab
+const focus = async () => {
+    await nextTick();
+    if (shouldShowQuestionForm.value) {
+        questionFormRef.value?.focus();
+    } else if (showAllQuestions.value || isEditingAnswers.value) {
+        bulkQuestionsRef.value?.focusFirstTextarea();
+    }
+};
+
+// Expose focus method for parent components
+defineExpose({ focus });
+
 const hasSubmittedAnswers = computed(() => {
     if (!questions.value.length) return false;
     if (answers.value.length < questions.value.length) return false;
@@ -349,7 +364,7 @@ const optionalQuestionsLabel = computed(() => {
     const count = optionalQuestions.value.length;
     return showOptionalQuestions.value
         ? 'Hide optional questions'
-        : `Show ${count} optional question${count !== 1 ? 's' : ''}`;
+        : `Show ${count} optional question${count !== 1 ? 's' : ''} <span class="text-xs">(to improve your prompt)</span>`;
 });
 </script>
 
@@ -361,42 +376,55 @@ const optionalQuestionsLabel = computed(() => {
     />
 
     <Card class="space-y-6">
-        <div class="flex items-start justify-between gap-4">
-            <h2 class="text-lg font-semibold text-indigo-900">
+        <div
+            class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start"
+        >
+            <h2
+                class="sr-only text-lg font-semibold text-indigo-900 sm:not-sr-only"
+            >
                 Clarifying Questions
             </h2>
 
             <div
                 v-if="hasQuestions"
-                class="flex flex-col items-end gap-2 text-right"
+                class="flex w-full flex-col gap-2 sm:w-auto sm:items-end sm:text-right"
             >
-                <ButtonSecondary
+                <div
                     v-if="!hasSubmittedAnswers"
-                    id="show-all-questions"
-                    type="button"
-                    :underline="true"
-                    @click="showAllQuestions = !showAllQuestions"
+                    class="flex flex-col gap-2 sm:flex-row sm:space-x-2"
                 >
-                    {{
-                        showAllQuestions
-                            ? 'One at a time'
-                            : 'Show all questions'
-                    }}
-                </ButtonSecondary>
-                <div v-if="hasSubmittedAnswers">
+                    <ButtonSecondary
+                        id="show-all-questions"
+                        type="button"
+                        :underline="true"
+                        @click="showAllQuestions = !showAllQuestions"
+                    >
+                        {{
+                            showAllQuestions
+                                ? 'One at a time'
+                                : 'Show all questions'
+                        }}
+                    </ButtonSecondary>
+                </div>
+                <div v-if="hasSubmittedAnswers" class="w-full sm:w-auto">
                     <ButtonSecondary
                         v-if="!isEditingAnswers"
                         ref="editAnswersButtonRef"
                         type="button"
                         :disabled="isSubmitting"
+                        class="w-full sm:w-auto"
                         @click="startEditingAnswers"
                     >
                         Edit Answers
                     </ButtonSecondary>
-                    <div v-else class="flex items-center gap-2">
+                    <div
+                        v-else
+                        class="flex flex-col gap-2 sm:flex-row sm:items-center"
+                    >
                         <ButtonSecondary
                             type="button"
                             :disabled="isSubmitting"
+                            class="w-full sm:w-auto"
                             @click="cancelEditingAnswers"
                         >
                             Cancel
@@ -405,6 +433,7 @@ const optionalQuestionsLabel = computed(() => {
                             type="button"
                             :disabled="isSubmitting"
                             :loading="isSubmitting"
+                            class="w-full sm:w-auto"
                             @click="submitEditedAnswers"
                         >
                             Optimise Prompt with Edited Answers
@@ -414,40 +443,12 @@ const optionalQuestionsLabel = computed(() => {
             </div>
         </div>
 
-        <p v-if="promptRun.questionRationale" class="text-sm text-indigo-600">
+        <p
+            v-if="promptRun.questionRationale && uiComplexity === 'advanced'"
+            class="text-sm text-indigo-800"
+        >
             {{ promptRun.questionRationale }}
         </p>
-
-        <!-- Optional questions toggle (only shown when not editing and not already showing all) -->
-        <div
-            v-if="hasOptionalQuestions && !hasSubmittedAnswers"
-            class="rounded-lg border border-indigo-100 bg-indigo-50 p-4"
-        >
-            <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-indigo-900">
-                        {{
-                            showOptionalQuestions
-                                ? 'Optional questions visible'
-                                : 'Additional questions available'
-                        }}
-                    </p>
-                    <p
-                        v-if="!showOptionalQuestions"
-                        class="mt-1 text-sm text-indigo-700"
-                    >
-                        Answer optional questions to further optimise your
-                        prompt
-                    </p>
-                </div>
-                <ButtonSecondary
-                    type="button"
-                    @click="showOptionalQuestions = !showOptionalQuestions"
-                >
-                    {{ optionalQuestionsLabel }}
-                </ButtonSecondary>
-            </div>
-        </div>
 
         <AnsweredList
             v-if="hasSubmittedAnswers && !isEditingAnswers"
@@ -479,6 +480,9 @@ const optionalQuestionsLabel = computed(() => {
             ref="bulkQuestionsRef"
             :questions="isEditingAnswers ? allQuestions : questions"
             :answers="answers"
+            :has-optional-questions="hasOptionalQuestions"
+            :show-optional-questions="showOptionalQuestions"
+            :optional-questions-label="optionalQuestionsLabel"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
             :show-back="!isEditingAnswers"
@@ -493,6 +497,9 @@ const optionalQuestionsLabel = computed(() => {
                 isEditingAnswers
                     ? cancelEditingAnswers()
                     : (showAllQuestions = false)
+            "
+            @show-optional-questions="
+                (value) => (showOptionalQuestions = value)
             "
         />
 

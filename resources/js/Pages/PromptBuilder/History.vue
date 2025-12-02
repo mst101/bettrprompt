@@ -184,12 +184,12 @@ const handleDelete = (promptRunId: number, event: Event) => {
         <Card padding="none">
             <div
                 v-if="promptRuns.data.length === 0"
-                class="text-centre p-6 text-gray-500"
+                class="text-centre p-6 text-indigo-500"
             >
                 <p>No prompt history yet.</p>
                 <a
                     :href="route('prompt-builder.index')"
-                    class="mt-2 text-indigo-600 hover:text-indigo-800"
+                    class="mt-2 text-indigo-700 hover:text-indigo-800"
                 >
                     Create your first optimised prompt
                 </a>
@@ -198,12 +198,12 @@ const handleDelete = (promptRunId: number, event: Event) => {
             <div v-else>
                 <!-- Table -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-indigo-200">
+                        <thead class="bg-white dark:bg-indigo-50">
                             <tr>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-600 uppercase sm:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-indigo-700 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="personality_type"
@@ -216,7 +216,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-600 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-indigo-700 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="task_description"
@@ -229,7 +229,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase lg:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase lg:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="selected_framework"
@@ -242,7 +242,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase sm:table-cell"
+                                    class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="status"
@@ -255,7 +255,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-600 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="created_at"
@@ -268,11 +268,13 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody
+                            class="divide-y divide-indigo-200 bg-white dark:bg-indigo-50"
+                        >
                             <tr
                                 v-for="promptRun in promptRuns.data"
                                 :key="promptRun.id"
-                                class="cursor-pointer rounded-md hover:bg-gray-50 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 dark:hover:bg-gray-100"
+                                class="cursor-pointer rounded-md hover:bg-indigo-50 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 dark:hover:bg-indigo-100"
                                 tabindex="0"
                                 @click="
                                     $inertia.visit(
@@ -284,7 +286,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 "
                             >
                                 <td
-                                    class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:table-cell"
+                                    class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 sm:table-cell"
                                 >
                                     <span class="lg:hidden">{{
                                         promptRun.personalityType
@@ -295,7 +297,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                         )
                                     }}</span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
+                                <td class="px-6 py-4 text-sm text-indigo-700">
                                     {{
                                         truncateText(
                                             promptRun.taskDescription,
@@ -304,7 +306,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     }}
                                 </td>
                                 <td
-                                    class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 lg:table-cell"
+                                    class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 lg:table-cell"
                                 >
                                     {{
                                         promptRun.selectedFramework.name ||
@@ -317,7 +319,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     <StatusBadge :status="promptRun.status" />
                                 </td>
                                 <td
-                                    class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
+                                    class="px-6 py-4 text-sm whitespace-nowrap text-indigo-500"
                                 >
                                     <div>
                                         {{ formatDate(promptRun.createdAt) }}
@@ -368,7 +370,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
 
                     <p
                         v-if="promptRuns.meta.lastPage > 1"
-                        class="text-center text-sm text-gray-700"
+                        class="text-center text-sm text-indigo-700"
                     >
                         Page
                         {{ promptRuns.meta.currentPage }}
@@ -390,13 +392,13 @@ const handleDelete = (promptRunId: number, event: Event) => {
 
                 <!-- Pagination -->
                 <div
-                    class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+                    class="border-t border-indigo-200 bg-white px-4 py-3 sm:px-6"
                 >
                     <!-- Mobile Layout -->
                     <div class="sm:hidden">
                         <!-- Results info and page info -->
                         <div
-                            class="text-centre mb-3 space-y-1 text-sm text-gray-700"
+                            class="text-centre mb-3 space-y-1 text-sm text-indigo-700"
                         >
                             <p
                                 v-if="
@@ -424,7 +426,10 @@ const handleDelete = (promptRunId: number, event: Event) => {
                         <div
                             class="mt-3 flex items-center justify-center-safe gap-2"
                         >
-                            <label for="per-page" class="text-sm text-gray-700">
+                            <label
+                                for="per-page"
+                                class="text-sm text-indigo-700"
+                            >
                                 Show
                             </label>
                             <input
@@ -433,11 +438,13 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 type="number"
                                 min="1"
                                 max="100"
-                                class="w-16 rounded-md border-gray-300 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-16 rounded-md border-indigo-300 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
-                            <span class="text-sm text-gray-700">per page</span>
+                            <span class="text-sm text-indigo-700"
+                                >per page</span
+                            >
                         </div>
                     </div>
 
@@ -451,7 +458,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 v-if="
                                     promptRuns.meta.from && promptRuns.meta.to
                                 "
-                                class="text-sm text-gray-700"
+                                class="text-sm text-indigo-700"
                             >
                                 Showing
                                 <span class="font-medium">{{
@@ -473,7 +480,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                         <div class="flex items-center gap-2">
                             <label
                                 for="per-page-desktop"
-                                class="text-sm text-gray-700"
+                                class="text-sm text-indigo-700"
                             >
                                 Show
                             </label>
@@ -483,11 +490,13 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 type="number"
                                 min="1"
                                 max="100"
-                                class="w-16 rounded-md border-gray-300 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-16 rounded-md border-indigo-300 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
-                            <span class="text-sm text-gray-700">per page</span>
+                            <span class="text-sm text-indigo-700"
+                                >per page</span
+                            >
                         </div>
 
                         <!-- Navigation -->
@@ -507,7 +516,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     Previous
                                 </LinkButton>
                                 <span
-                                    class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
+                                    class="relative inline-flex items-center border border-indigo-300 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
                                 >
                                     Page
                                     {{ promptRuns.meta.currentPage }}

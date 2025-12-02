@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
+use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,11 +59,19 @@ Route::get('/feedback/download/{filename}', [FeedbackController::class, 'downloa
 Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
     ->middleware('throttle:30,1');
 
+// Visitor preferences (no authentication required)
+Route::patch('/visitor/ui-complexity', [VisitorController::class, 'updateUiComplexity'])
+    ->name('visitor.ui-complexity.update');
+Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
+    ->name('visitor.personality.update');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/personality',
         [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
+    Route::patch('/profile/ui-complexity',
+        [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Prompt Builder history (requires authentication)

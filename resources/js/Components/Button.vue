@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useButtonClasses } from '@/Composables/useButtonClasses';
-import { ref } from 'vue';
+import { computed, ref, useAttrs } from 'vue';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -23,6 +23,16 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const buttonClasses = useButtonClasses(props);
+const attrs = useAttrs();
+
+const mergedClasses = computed(() => {
+    const classes = [];
+    if (attrs.class) {
+        classes.push(attrs.class);
+    }
+    classes.push(buttonClasses.value);
+    return classes;
+});
 
 const buttonRef = ref<HTMLButtonElement | null>(null);
 
@@ -38,7 +48,7 @@ defineExpose({ focus });
         ref="buttonRef"
         :type="type"
         :disabled="disabled || loading"
-        :class="buttonClasses"
+        :class="mergedClasses"
     >
         <DynamicIcon
             v-if="loading"

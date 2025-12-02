@@ -1,6 +1,6 @@
-# Prompt Optimiser History E2E Tests
+# Prompt Builder History E2E Tests
 
-Comprehensive end-to-end tests for the Prompt Optimiser History feature.
+Comprehensive end-to-end tests for the Prompt Builder History feature.
 
 ## Test File
 
@@ -11,15 +11,18 @@ Comprehensive end-to-end tests for the Prompt Optimiser History feature.
 The test suite covers the following scenarios:
 
 ### 1. Unauthenticated Access
+
 - Redirects to login when accessing history without authentication
 
 ### 2. Empty State (No History)
+
 - Displays page heading when authenticated
 - Shows empty state message when no history exists
 - Shows "Create New" button in header
 - Navigates to prompt optimiser when clicking empty state link
 
 ### 3. With Data (History Table)
+
 - Displays history table with prompt runs
 - Shows all required columns (Personality Type, Task Description, Framework, Status, Created)
 - Displays status badges for each prompt run
@@ -29,16 +32,18 @@ The test suite covers the following scenarios:
 - Shows framework names or em-dash placeholder for null values
 
 ### 4. Sorting Functionality
+
 - Default sort by created date (descending)
 - Toggle sort direction when clicking column headers
 - Sort by:
-  - Task Description
-  - Status
-  - Personality Type
-  - Framework
-  - Created date
+    - Task Description
+    - Status
+    - Personality Type
+    - Framework
+    - Created date
 
 ### 5. Pagination
+
 - Displays pagination controls when multiple pages exist
 - Shows "Showing X to Y of Z results" text
 - Navigates to next/previous page
@@ -48,11 +53,13 @@ The test suite covers the following scenarios:
 - Maintains sort and pagination state when navigating back
 
 ### 6. Navigation
+
 - Navigates to prompt details when clicking a row
 - Supports keyboard navigation (Enter key)
 - Navigates to create new prompt from header button
 
 ### 7. Responsive Design
+
 - Adapts table layout for mobile viewport
 - Hides personality type column on mobile
 - Shows status badge in mobile view
@@ -61,6 +68,7 @@ The test suite covers the following scenarios:
 - Displays header and Create New button on mobile
 
 ### 8. Edge Cases
+
 - Handles prompt runs with different statuses (completed, processing, failed, pending)
 - Handles prompt runs without frameworks
 - Maintains state when navigating back from detail page
@@ -70,6 +78,7 @@ The test suite covers the following scenarios:
 The tests use the following helper functions:
 
 ### Authentication Helpers
+
 ```typescript
 import { loginAsTestUser, seedTestUser } from './helpers/auth';
 ```
@@ -78,6 +87,7 @@ import { loginAsTestUser, seedTestUser } from './helpers/auth';
 - `loginAsTestUser(page)` - Logs in the test user via the login modal
 
 ### Database Helpers
+
 ```typescript
 import { execAsync, seedPromptRuns } from './helpers/database';
 ```
@@ -90,6 +100,7 @@ import { execAsync, seedPromptRuns } from './helpers/database';
 The tests rely on Laravel seeders:
 
 ### TestUserSeeder
+
 Creates the test user (test@hiddengambia.com)
 
 ```bash
@@ -97,6 +108,7 @@ Creates the test user (test@hiddengambia.com)
 ```
 
 ### TestPromptRunsSeeder
+
 Creates prompt runs for the test user with configurable count and status
 
 ```bash
@@ -113,6 +125,7 @@ SEED_COUNT=10 SEED_STATUS=completed ./vendor/bin/sail artisan db:seed --class=Te
 Valid statuses: `completed`, `processing`, `failed`, `pending`
 
 ### CleanPromptRunsSeeder
+
 Removes all prompt runs for the test user
 
 ```bash

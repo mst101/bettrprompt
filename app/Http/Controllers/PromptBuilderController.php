@@ -257,12 +257,19 @@ class PromptBuilderController extends Controller
 
         // Check if visitor has already completed a prompt (for client-side modal)
         $visitorHasCompletedPrompts = false;
+        $uiComplexity = 'advanced'; // default
+
         if (! auth()->check()) {
             $visitorId = $this->getVisitorId($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
+                $uiComplexity = $visitor?->ui_complexity ?? 'simple';
+            } else {
+                $uiComplexity = 'simple'; // default for visitors
             }
+        } else {
+            $uiComplexity = auth()->user()->ui_complexity ?? 'advanced';
         }
 
         return Inertia::render('PromptBuilder/Show', [
@@ -274,6 +281,7 @@ class PromptBuilderController extends Controller
                 'total' => count($promptRun->framework_questions ?? []),
             ],
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
+            'uiComplexity' => $uiComplexity,
         ]);
     }
 

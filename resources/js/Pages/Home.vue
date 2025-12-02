@@ -15,11 +15,13 @@ defineOptions({
 
     <div class="">
         <!-- Hero Section -->
-        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div
+            class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-16 lg:px-8 lg:py-24"
+        >
             <div class="text-center">
                 <!-- Main Heading -->
                 <h1
-                    class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
+                    class="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
                 >
                     Optimise AI Prompts for
                     <span
@@ -30,9 +32,7 @@ defineOptions({
                 </h1>
 
                 <!-- Subheading -->
-                <p
-                    class="mx-auto mt-6 max-w-2xl text-lg text-gray-600 sm:text-xl"
-                >
+                <p class="mx-auto mt-6 max-w-2xl text-gray-600 sm:text-xl">
                     Different personality types solve problems differently.
                     Analytical minds need data and structure. Creative minds
                     need context and possibilities. AI Buddy speaks your
@@ -60,7 +60,7 @@ defineOptions({
             </div>
 
             <!-- Features Grid -->
-            <div class="mt-24">
+            <div class="mt-8 sm:mt-24">
                 <h2 class="sr-only">Features</h2>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
@@ -90,7 +90,7 @@ defineOptions({
             </div>
 
             <!-- Built for How You Work -->
-            <div class="mt-24">
+            <div class="mt-12 sm:mt-24">
                 <div class="text-center">
                     <h2
                         class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
@@ -99,7 +99,9 @@ defineOptions({
                     </h2>
                 </div>
 
-                <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div
+                    class="mt-4 grid gap-8 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3"
+                >
                     <div class="rounded-lg bg-indigo-50 p-8">
                         <h3 class="text-xl font-bold text-indigo-900">
                             For Analytical Minds
@@ -139,7 +141,7 @@ defineOptions({
             </div>
 
             <!-- How It Works -->
-            <div class="mt-24">
+            <div class="mt-12 sm:mt-24">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold tracking-tight text-gray-900">
                         How It Works
@@ -149,11 +151,11 @@ defineOptions({
                     </p>
                 </div>
 
-                <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="mt-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <StepCard
                         :number="1"
                         title="Tell Us How You Think"
-                        description="Select your 16personalities.com type (like INTJ-A or ENFP-T). Optionally add trait percentages for precision. This isn't just customisation - it's psychological insight into how you process information."
+                        description="Select your <a class='underline underline-offset-2' href='https://16personalities.com' target='_blank' rel='noopener noreferrer'>16personalities.com</a> type (like INTJ-A or ENFP-T). Optionally add trait percentages for precision. This psychological insight allows us to optimize your prompt to match how <strong>you</strong> best process information."
                         bg-colour="bg-indigo-600"
                     />
 

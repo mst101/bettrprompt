@@ -80,6 +80,7 @@ const labelClass = computed(() =>
             :autofocus="props.autofocus"
             :aria-label="props.srOnlyLabel ? props.label : undefined"
             v-bind="$attrs"
+            class="placeholder-indigo-700"
             :class="textareaClasses"
             @input="
                 emit(
@@ -89,7 +90,7 @@ const labelClass = computed(() =>
             "
         />
 
-        <p v-if="props.helpText" class="mt-1 text-xs text-gray-500">
+        <p v-if="props.helpText" class="mt-1 text-xs text-indigo-600">
             {{ props.helpText }}
         </p>
 

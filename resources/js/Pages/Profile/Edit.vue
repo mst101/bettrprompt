@@ -7,11 +7,13 @@ import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdatePersonalityTypeForm from './Partials/UpdatePersonalityTypeForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import UpdateUiComplexityForm from './Partials/UpdateUiComplexityForm.vue';
 
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
     personalityTypes: Record<string, string>;
+    uiComplexity: 'simple' | 'advanced';
 }>();
 
 defineOptions({
@@ -40,6 +42,15 @@ defineOptions({
             <UpdateProfileInformationForm
                 :must-verify-email="mustVerifyEmail"
                 :status="status"
+                class="max-w-xl"
+            />
+        </div>
+
+        <div
+            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        >
+            <UpdateUiComplexityForm
+                :ui-complexity="uiComplexity"
                 class="max-w-xl"
             />
         </div>

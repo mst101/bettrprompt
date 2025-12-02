@@ -1,4 +1,4 @@
-# Prompt Optimiser History E2E Tests - Implementation Summary
+# Prompt Builder History E2E Tests - Implementation Summary
 
 ## Files Created
 

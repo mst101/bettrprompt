@@ -3,7 +3,7 @@ import { loginAsTestUser, seedTestUser } from './helpers/auth';
 import { execAsync, seedPromptRuns } from './helpers/database';
 
 /**
- * Comprehensive e2e tests for the Prompt Optimiser History page
+ * Comprehensive e2e tests for the Prompt Builder History page
  *
  * Tests cover:
  * - Authentication requirements
@@ -15,7 +15,7 @@ import { execAsync, seedPromptRuns } from './helpers/database';
  * - Responsive design
  */
 
-test.describe('Prompt Optimiser History - Unauthenticated Access', () => {
+test.describe('Prompt Builder History - Unauthenticated Access', () => {
     test('should redirect to login when accessing history without authentication', async ({
         page,
     }) => {
@@ -31,7 +31,7 @@ test.describe('Prompt Optimiser History - Unauthenticated Access', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Empty State', () => {
+test.describe('Prompt Builder History - Empty State', () => {
     test.beforeAll(async () => {
         // Seed the test user
         await seedTestUser();
@@ -114,7 +114,7 @@ test.describe('Prompt Optimiser History - Empty State', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - With Data', () => {
+test.describe('Prompt Builder History - With Data', () => {
     test.beforeAll(async () => {
         // Seed the test user and create prompt runs
         await seedTestUser();
@@ -254,7 +254,7 @@ test.describe('Prompt Optimiser History - With Data', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Sorting', () => {
+test.describe('Prompt Builder History - Sorting', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(10);
@@ -363,7 +363,7 @@ test.describe('Prompt Optimiser History - Sorting', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Pagination', () => {
+test.describe('Prompt Builder History - Pagination', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(25); // Create enough for multiple pages
@@ -496,7 +496,7 @@ test.describe('Prompt Optimiser History - Pagination', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Navigation', () => {
+test.describe('Prompt Builder History - Navigation', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(5);
@@ -557,7 +557,7 @@ test.describe('Prompt Optimiser History - Navigation', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Responsive Design', () => {
+test.describe('Prompt Builder History - Responsive Design', () => {
     test.beforeAll(async () => {
         await seedTestUser();
         await seedPromptRuns(5);
@@ -649,7 +649,7 @@ test.describe('Prompt Optimiser History - Responsive Design', () => {
     });
 });
 
-test.describe('Prompt Optimiser History - Edge Cases', () => {
+test.describe('Prompt Builder History - Edge Cases', () => {
     test.beforeAll(async () => {
         await seedTestUser();
     });
