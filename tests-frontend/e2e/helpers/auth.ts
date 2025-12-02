@@ -76,49 +76,39 @@ export async function loginAsTestUser(page: Page): Promise<void> {
         return;
     }
 
-    // Use the test-only login endpoint (only available in e2e environment)
-    // This bypasses the modal form which has issues with Playwright input
+    // Use the test-only login endpoint via browser's fetch API
+    // This ensures cookies are properly handled by the browser context
+    await page.evaluate(async (email: string) => {
+        const csrfToken = (
+            document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+        )?.getAttribute('content');
 
-    // First, navigate to get a CSRF token
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Get CSRF token from the page
-    const csrfToken = await page.evaluate(() => {
-        const metaTag = document.querySelector('meta[name="csrf-token"]');
-        return metaTag ? metaTag.getAttribute('content') : null;
-    });
-
-    // Make the login request - the endpoint will redirect to home
-    // Use page.request.post so cookies are properly handled
-    const loginResponse = await page.request.post(
-        'https://app.localhost/test/login',
-        {
-            data: {
-                email: TEST_USER.email,
-            },
+        const response = await fetch('/test/login', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken || '',
                 'X-Test-Auth': 'playwright-e2e-tests',
-                'Content-Type': 'application/json',
             },
-        },
-    );
+            body: JSON.stringify({ email }),
+            credentials: 'include',
+        });
 
-    if (!loginResponse.ok()) {
-        const body = await loginResponse.text();
-        throw new Error(
-            `Test login failed: ${loginResponse.status()} ${loginResponse.statusText()}\nBody: ${body}`,
-        );
-    }
+        if (!response.ok) {
+            throw new Error(
+                `Login failed: ${response.status} ${response.statusText}`,
+            );
+        }
 
-    // After successful login, navigate to home to pick up the session
-    await page.goto('/', { waitUntil: 'networkidle' });
+        return response.json();
+    }, TEST_USER.email);
+
+    // Navigate away and back to trigger Inertia to reload with auth
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
 
     // Verify we're logged in by checking for the user menu button
-    // (Inertia clears query params after login, so we can't rely on URL)
     const userMenuAfterLogin = page.getByRole('button', {
         name: /user menu/i,
     });
