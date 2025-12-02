@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('personality_type', 6)->nullable(); // e.g., INTJ-A, ENFP-T
             $table->json('trait_percentages')->nullable(); // Store trait percentages
+            $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
             $table->rememberToken();
             $table->timestamps();
         });

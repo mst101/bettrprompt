@@ -20,8 +20,14 @@ return new class extends Migration
                 6)->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->text('task_description');
+            $table->json('pre_analysis_questions')->nullable();
+            $table->json('pre_analysis_answers')->nullable();
+            $table->json('pre_analysis_context')->nullable();
+            $table->text('pre_analysis_reasoning')->nullable();
+            $table->boolean('pre_analysis_skipped')->default(false);
             $table->json('framework_questions')->nullable();
             $table->json('clarifying_answers')->nullable();
+            $table->integer('current_question_index')->default(0);
             $table->text('optimized_prompt')->nullable();
             $table->string('status')->default('pending'); // pending, processing, completed, failed
             $table->string('workflow_stage')->default('submitted');

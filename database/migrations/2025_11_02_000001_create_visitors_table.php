@@ -39,6 +39,7 @@ return new class extends Migration
             // Personality data (before conversion to user)
             $table->string('personality_type', 6)->nullable();
             $table->json('trait_percentages')->nullable();
+            $table->enum('ui_complexity', ['simple', 'advanced'])->default('simple');
 
             $table->timestamps();
 
