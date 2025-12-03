@@ -11,7 +11,6 @@ import CognitiveRequirements from '@/Components/PromptBuilder/Cards/CognitiveReq
 import OptimizedPrompt from '@/Components/PromptBuilder/Cards/OptimizedPrompt.vue';
 import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
-import PreAnalysisQuestions from '@/Components/PromptBuilder/Cards/PreAnalysisQuestions.vue';
 import QuickQueries from '@/Components/PromptBuilder/Cards/QuickQueries.vue';
 import Recommendations from '@/Components/PromptBuilder/Cards/Recommendations.vue';
 import RelatedPromptRuns from '@/Components/PromptBuilder/Cards/RelatedPromptRuns.vue';
@@ -317,13 +316,14 @@ const handleDelete = () => {
                     "
                 />
 
-                <!-- Pre-analysis answers summary -->
-                <QuickQueries :prompt-run="promptRun" />
+                <!-- Pre-analysis answers summary (view/edit mode) -->
+                <QuickQueries :prompt-run="promptRun" mode="view-edit" />
 
-                <!-- Pre-analysis questions -->
-                <PreAnalysisQuestions
+                <!-- Pre-analysis questions (initial submit mode) -->
+                <QuickQueries
                     v-if="promptRun.workflowStage === 'pre_analysis_questions'"
                     :prompt-run="promptRun"
+                    mode="initial-submit"
                 />
 
                 <!-- Loading state when analysis is in progress -->
