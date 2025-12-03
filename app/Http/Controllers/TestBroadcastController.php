@@ -44,7 +44,7 @@ class TestBroadcastController extends Controller
                     ['id' => 2, 'question' => 'What Action did you take?'],
                     ['id' => 3, 'question' => 'What was the Result?'],
                 ],
-                'workflow_stage' => 'answering_questions',
+                'workflow_stage' => 'analysis_complete',
             ]);
 
             $promptRun->refresh();
@@ -169,7 +169,7 @@ class TestBroadcastController extends Controller
             $data['workflow_stage'] = 'submitted';
         } elseif ($state === 'framework_selected') {
             $data['status'] = 'framework_selected';
-            $data['workflow_stage'] = 'answering_questions';
+            $data['workflow_stage'] = 'analysis_complete';
             $data['selected_framework'] = [
                 'name' => 'STAR Method',
                 'code' => 'star',
