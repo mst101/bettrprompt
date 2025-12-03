@@ -20,15 +20,51 @@ const questions = computed<PreAnalysisQuestion[]>(
 
 // Initialize answers object with empty strings for each question
 const answers = ref<Record<string, string>>({});
+// Track additional text for "Other" options
+const otherResponses = ref<Record<string, string>>({});
 
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
 
-// Check if all questions have been answered
+// Detect if an option represents "Other" (by value or label)
+const isOtherOption = (label: string): boolean => {
+    const lowerLabel = label.toLowerCase();
+    return (
+        lowerLabel.includes('other') ||
+        lowerLabel.includes('different') ||
+        lowerLabel.includes('custom')
+    );
+};
+
+// Check if the user has selected an "Other" option
+const selectedOtherOption = (question: PreAnalysisQuestion): boolean => {
+    const selectedAnswer = answers.value[question.id];
+    return (
+        selectedAnswer !== undefined &&
+        selectedAnswer !== '' &&
+        question.options?.some(
+            (opt) => opt.value === selectedAnswer && isOtherOption(opt.label),
+        ) === true
+    );
+};
+
+// Check if all questions have been answered (including "Other" responses)
 const allAnswered = computed(() => {
     return questions.value.every((question) => {
         const answer = answers.value[question.id];
-        return answer && answer.trim().length > 0;
+
+        // Answer must be non-empty
+        if (!answer || answer.trim().length === 0) {
+            return false;
+        }
+
+        // If "Other" option is selected, require a freeform response
+        if (selectedOtherOption(question)) {
+            const otherResponse = otherResponses.value[question.id];
+            return otherResponse && otherResponse.trim().length > 0;
+        }
+
+        return true;
     });
 });
 
@@ -40,9 +76,23 @@ const submitAnswers = () => {
     isSubmitting.value = true;
     submitError.value = null;
 
+    // Combine answers with "Other" responses if applicable
+    const finalAnswers = { ...answers.value };
+
+    questions.value.forEach((question) => {
+        if (selectedOtherOption(question)) {
+            const otherResponse = otherResponses.value[question.id];
+            if (otherResponse) {
+                // Append the freeform text to indicate "Other" was selected with a specific response
+                finalAnswers[question.id] =
+                    `${answers.value[question.id]}: ${otherResponse}`;
+            }
+        }
+    });
+
     router.post(
         route('prompt-builder.pre-analysis-answers', props.promptRun.id),
-        { answers: answers.value },
+        { answers: finalAnswers },
         {
             preserveScroll: true,
             onError: (errors) => {
@@ -78,7 +128,7 @@ const submitAnswers = () => {
             </label>
 
             <!-- Multiple choice questions -->
-            <div v-if="question.type === 'choice'" class="space-y-2">
+            <div v-if="question.type === 'choice'" class="space-y-3">
                 <label
                     v-for="option in question.options"
                     :key="option.value"
@@ -99,6 +149,31 @@ const submitAnswers = () => {
                         option.label
                     }}</span>
                 </label>
+
+                <!-- "Other" text input for selected option -->
+                <div
+                    v-if="selectedOtherOption(question)"
+                    class="bg-indigo-25 rounded-lg border-2 border-indigo-300 p-3"
+                >
+                    <label
+                        :for="`other-${question.id}`"
+                        class="mb-2 block text-sm font-medium text-indigo-900"
+                    >
+                        Please specify:
+                    </label>
+                    <textarea
+                        :id="`other-${question.id}`"
+                        v-model="otherResponses[question.id]"
+                        rows="3"
+                        maxlength="500"
+                        class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                        placeholder="Please explain what you meant by 'Other'..."
+                    ></textarea>
+                    <p class="mt-1 text-xs text-indigo-600">
+                        {{ (otherResponses[question.id] || '').length }}/500
+                        characters
+                    </p>
+                </div>
             </div>
 
             <!-- Yes/No questions -->
