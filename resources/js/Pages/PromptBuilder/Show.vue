@@ -56,19 +56,26 @@ const tabs = computed<Tab[]>(() => {
         icon: 'squares-2x2',
     });
 
-    // Framework tab
-    allTabs.push({
-        id: 'framework',
-        label: 'Framework',
-        mobileLabel: 'Selected Framework',
-        icon: 'cube',
-    });
+    // Framework tab (only show when analysis is complete or framework has been selected)
+    if (
+        props.promptRun.selectedFramework &&
+        props.promptRun.workflowStage === 'analysis_complete'
+    ) {
+        allTabs.push({
+            id: 'framework',
+            label: 'Framework',
+            mobileLabel: 'Selected Framework',
+            icon: 'cube',
+        });
+    }
 
     // Add personality tab if tier is not 'none' and UI complexity is advanced
+    // Only show after analysis is complete
     if (
         props.promptRun.personalityTier &&
         props.promptRun.personalityTier !== 'none' &&
-        props.uiComplexity === 'advanced'
+        props.uiComplexity === 'advanced' &&
+        props.promptRun.workflowStage === 'analysis_complete'
     ) {
         allTabs.push({
             id: 'personality',
@@ -77,12 +84,17 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
-    // Add questions tab
-    allTabs.push({
-        id: 'questions',
-        label: 'Clarifying Questions',
-        icon: 'question-mark-circle',
-    });
+    // Add questions tab (only when framework questions exist)
+    if (
+        props.promptRun.frameworkQuestions &&
+        props.promptRun.frameworkQuestions.length > 0
+    ) {
+        allTabs.push({
+            id: 'questions',
+            label: 'Clarifying Questions',
+            icon: 'question-mark-circle',
+        });
+    }
 
     // Recommendations tab (only shown when model recommendations exist)
     if (
