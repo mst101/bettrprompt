@@ -11,8 +11,8 @@ import CognitiveRequirements from '@/Components/PromptBuilder/Cards/CognitiveReq
 import OptimizedPrompt from '@/Components/PromptBuilder/Cards/OptimizedPrompt.vue';
 import PersonalityAdjustments from '@/Components/PromptBuilder/Cards/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
-import PreAnalysisAnswersSummary from '@/Components/PromptBuilder/Cards/PreAnalysisAnswersSummary.vue';
 import PreAnalysisQuestions from '@/Components/PromptBuilder/Cards/PreAnalysisQuestions.vue';
+import QuickQueries from '@/Components/PromptBuilder/Cards/QuickQueries.vue';
 import Recommendations from '@/Components/PromptBuilder/Cards/Recommendations.vue';
 import RelatedPromptRuns from '@/Components/PromptBuilder/Cards/RelatedPromptRuns.vue';
 import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramework.vue';
@@ -318,7 +318,7 @@ const handleDelete = () => {
                 />
 
                 <!-- Pre-analysis answers summary -->
-                <PreAnalysisAnswersSummary :prompt-run="promptRun" />
+                <QuickQueries :prompt-run="promptRun" />
 
                 <!-- Pre-analysis questions -->
                 <PreAnalysisQuestions
