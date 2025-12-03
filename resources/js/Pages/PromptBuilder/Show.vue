@@ -316,14 +316,14 @@ const handleDelete = () => {
                     "
                 />
 
-                <!-- Pre-analysis answers summary (view/edit mode) -->
-                <QuickQueries :prompt-run="promptRun" mode="view-edit" />
-
-                <!-- Pre-analysis questions (initial submit mode) -->
+                <!-- Pre-analysis questions/answers -->
                 <QuickQueries
-                    v-if="promptRun.workflowStage === 'pre_analysis_questions'"
                     :prompt-run="promptRun"
-                    mode="initial-submit"
+                    :mode="
+                        promptRun.workflowStage === 'pre_analysis_questions'
+                            ? 'initial-submit'
+                            : 'view-edit'
+                    "
                 />
 
                 <!-- Loading state when analysis is in progress -->
