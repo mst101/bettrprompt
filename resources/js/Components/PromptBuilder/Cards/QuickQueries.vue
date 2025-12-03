@@ -582,6 +582,16 @@ const submitButtonText = computed(() => {
                             ? form.processing
                             : isSubmitting
                     "
+                    @click="
+                        console.log('Button clicked', {
+                            allAnswersValid: allAnswersValid,
+                            disabled:
+                                !allAnswersValid ||
+                                (props.mode === 'view-edit'
+                                    ? form.processing
+                                    : isSubmitting),
+                        })
+                    "
                 >
                     {{ submitButtonText }}
                 </ButtonPrimary>
