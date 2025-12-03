@@ -215,6 +215,9 @@ const saveAnswer = async (index: number, value: string | null) => {
 const skipQuestion = async () => {
     await saveAnswer(currentIndex.value, null);
     goNext();
+    // Focus the next question's textarea
+    await nextTick();
+    questionFormRef.value?.focus();
 };
 
 const clearCurrentAnswer = () => {
