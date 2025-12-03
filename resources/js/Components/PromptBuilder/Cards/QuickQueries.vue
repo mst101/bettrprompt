@@ -61,7 +61,21 @@ const handleTranscription = (transcript: string, questionId: string) => {
 // Focus first answer when entering edit/submit mode
 watchEffect(() => {
     if (shouldFocusFirstAnswer.value && firstAnswerRef.value) {
-        firstAnswerRef.value.focus();
+        // Try to focus directly if it's an input/textarea
+        if (
+            firstAnswerRef.value.tagName === 'INPUT' ||
+            firstAnswerRef.value.tagName === 'TEXTAREA'
+        ) {
+            firstAnswerRef.value.focus();
+        } else {
+            // Otherwise, find the first focusable element within
+            const focusable = firstAnswerRef.value.querySelector(
+                'input, textarea, [tabindex]',
+            ) as HTMLElement;
+            if (focusable) {
+                focusable.focus();
+            }
+        }
         shouldFocusFirstAnswer.value = false;
     }
 });
