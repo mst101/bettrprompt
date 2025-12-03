@@ -18,6 +18,7 @@ import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramewor
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
 import TaskInformation from '@/Components/PromptBuilder/Cards/TaskInformation.vue';
 import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignment.vue';
+import LoadingState from '@/Components/PromptBuilder/LoadingState.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -59,7 +60,8 @@ const tabs = computed<Tab[]>(() => {
     // Framework tab (only show when analysis is complete or framework has been selected)
     if (
         props.promptRun.selectedFramework &&
-        props.promptRun.workflowStage === 'analysis_complete'
+        (props.promptRun.workflowStage === 'analysis_complete' ||
+            props.promptRun.workflowStage === 'completed')
     ) {
         allTabs.push({
             id: 'framework',
@@ -75,7 +77,8 @@ const tabs = computed<Tab[]>(() => {
         props.promptRun.personalityTier &&
         props.promptRun.personalityTier !== 'none' &&
         props.uiComplexity === 'advanced' &&
-        props.promptRun.workflowStage === 'analysis_complete'
+        (props.promptRun.workflowStage === 'analysis_complete' ||
+            props.promptRun.workflowStage === 'completed')
     ) {
         allTabs.push({
             id: 'personality',
@@ -140,7 +143,8 @@ const getInitialTab = (): string => {
     // Don't show it during 'submitted' or 'processing' stages
     if (
         props.promptRun.selectedFramework &&
-        props.promptRun.workflowStage === 'analysis_complete' &&
+        (props.promptRun.workflowStage === 'analysis_complete' ||
+            props.promptRun.workflowStage === 'completed') &&
         props.promptRun.status !== 'processing'
     ) {
         return 'framework';
@@ -309,6 +313,17 @@ const handleDelete = () => {
                 class="space-y-4"
                 data-testid="tab-task"
             >
+                <!-- Loading state when analysis is in progress -->
+                <LoadingState
+                    v-if="
+                        promptRun.workflowStage === 'submitted' &&
+                        promptRun.status === 'processing'
+                    "
+                    variant="blue"
+                    message="Analysing your task..."
+                    sub-message="This usually takes 10-30 seconds"
+                />
+
                 <TaskInformation
                     :prompt-run="promptRun"
                     :visitor-has-completed-prompts="
@@ -317,33 +332,7 @@ const handleDelete = () => {
                 />
 
                 <!-- Pre-analysis questions/answers -->
-                <QuickQueries
-                    :prompt-run="promptRun"
-                    :mode="
-                        promptRun.workflowStage === 'pre_analysis_questions'
-                            ? 'initial-submit'
-                            : 'view-edit'
-                    "
-                />
-
-                <!-- Loading state when analysis is in progress -->
-                <div
-                    v-if="
-                        promptRun.workflowStage === 'submitted' &&
-                        promptRun.status === 'processing'
-                    "
-                    class="rounded-lg border border-blue-200 bg-blue-50 p-6 text-center"
-                >
-                    <div
-                        class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"
-                    ></div>
-                    <p class="font-medium text-blue-900">
-                        Analysing your task...
-                    </p>
-                    <p class="mt-1 text-sm text-blue-700">
-                        This usually takes 10-30 seconds
-                    </p>
-                </div>
+                <QuickQueries :prompt-run="promptRun" />
 
                 <RelatedPromptRuns
                     v-if="hasRelatedRuns"
@@ -415,23 +404,15 @@ const handleDelete = () => {
                 data-testid="tab-questions"
             >
                 <!-- Loading state when generation is in progress -->
-                <div
+                <LoadingState
                     v-if="
                         promptRun.workflowStage === 'generating_prompt' &&
                         promptRun.status === 'processing'
                     "
-                    class="rounded-lg border border-green-200 bg-green-50 p-6 text-center"
-                >
-                    <div
-                        class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"
-                    ></div>
-                    <p class="font-medium text-green-900">
-                        Generating your optimised prompt...
-                    </p>
-                    <p class="mt-1 text-sm text-green-700">
-                        This usually takes 20-40 seconds
-                    </p>
-                </div>
+                    variant="green"
+                    message="Generating your optimised prompt..."
+                    sub-message="This usually takes 20-40 seconds"
+                />
 
                 <ClarifyingQuestions
                     ref="clarifyingQuestionsRef"
@@ -461,6 +442,7 @@ const handleDelete = () => {
             <!-- API Usage Tab -->
             <div v-if="activeTab === 'api-usage'" data-testid="tab-api-usage">
                 <ApiUsage
+                    :pre-analysis-usage="promptRun.preAnalysisApiUsage as any"
                     :analysis-usage="promptRun.analysisApiUsage as any"
                     :generation-usage="promptRun.generationApiUsage as any"
                 />
