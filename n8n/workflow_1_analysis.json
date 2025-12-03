@@ -123,19 +123,6 @@
     },
     {
       "parameters": {
-        "jsCode": "// Sort clarifying questions so required ones come first\nconst data = $input.first().json;\n\n// Check if we have clarifying questions to sort\nif (data.success && data.data && Array.isArray(data.data.clarifying_questions)) {\n  // Sort questions: required (true/undefined) before optional (false)\n  data.data.clarifying_questions.sort((a, b) => {\n    const aRequired = a.required !== false; // true or undefined = required\n    const bRequired = b.required !== false;\n    \n    // If both have same required status, maintain original order (stable sort)\n    if (aRequired === bRequired) return 0;\n    \n    // Required questions come first\n    return aRequired ? -1 : 1;\n  });\n}\n\nreturn [{ json: data }];"
-      },
-      "id": "8f4a2c1d-5b3e-4d2f-9a8c-1e3f4g5h6i7j",
-      "name": "Sort Questions (Required First)",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        192,
-        192
-      ]
-    },
-    {
-      "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify($json) }}",
         "options": {
@@ -154,7 +141,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        416,
+        304,
         192
       ]
     },
@@ -251,17 +238,6 @@
       ]
     },
     "Format Response": {
-      "main": [
-        [
-          {
-            "node": "Sort Questions (Required First)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Sort Questions (Required First)": {
       "main": [
         [
           {
