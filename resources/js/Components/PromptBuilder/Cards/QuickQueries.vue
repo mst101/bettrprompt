@@ -243,7 +243,12 @@ const submitAnswers = () => {
 };
 
 const submitUpdatedAnswers = () => {
+    console.log('submitUpdatedAnswers called', {
+        allAnswersValid: allAnswersValid.value,
+        formProcessing: form.processing,
+    });
     if (!allAnswersValid.value || form.processing) {
+        console.log('Early return - validation failed or form processing');
         return;
     }
 
@@ -266,12 +271,19 @@ const submitUpdatedAnswers = () => {
 
     form.answers = finalAnswers;
 
+    console.log('Submitting form with answers:', finalAnswers);
     form.post(
         route('prompt-builder.create-child', {
             parentPromptRun: props.promptRun.id,
         }),
         {
             preserveScroll: true,
+            onSuccess: () => {
+                console.log('Form submission successful');
+            },
+            onError: (errors) => {
+                console.log('Form submission error:', errors);
+            },
         },
     );
 };
