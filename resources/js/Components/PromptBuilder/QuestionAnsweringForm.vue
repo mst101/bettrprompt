@@ -190,19 +190,32 @@ const handleTranscription = (text: string) => {
                 </ButtonSecondary>
             </div>
 
-            <ButtonPrimary
-                type="button"
-                :disabled="isSubmitting || !answer.trim()"
-                :loading="isSubmitting"
-                class="w-full sm:w-auto"
-                @click="emit('submit')"
-            >
-                {{
-                    currentQuestionNumber === totalQuestions
-                        ? 'Submit All Answers'
-                        : 'Next Question'
-                }}
-            </ButtonPrimary>
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ButtonSecondary
+                    v-if="!isRequired && currentQuestionNumber < totalQuestions"
+                    type="button"
+                    :disabled="isSubmitting"
+                    :loading="isSubmitting"
+                    class="w-full sm:w-auto"
+                    @click="emit('submit')"
+                >
+                    Submit All Answers
+                </ButtonSecondary>
+
+                <ButtonPrimary
+                    type="button"
+                    :disabled="isSubmitting || !answer.trim()"
+                    :loading="isSubmitting"
+                    class="w-full sm:w-auto"
+                    @click="emit('submit')"
+                >
+                    {{
+                        currentQuestionNumber === totalQuestions
+                            ? 'Submit All Answers'
+                            : 'Next Question'
+                    }}
+                </ButtonPrimary>
+            </div>
         </div>
     </div>
 </template>

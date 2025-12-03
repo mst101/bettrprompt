@@ -48,8 +48,16 @@ const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
 
 const showOptionalHints = ref(false);
 
-// Always show all questions, but optionalHints controls display of purpose text
-const questions = computed<ClarifyingQuestion[]>(() => allQuestions.value);
+// Always show all questions (required first), but optionalHints controls display of purpose text
+const questions = computed<ClarifyingQuestion[]>(() => {
+    const all = allQuestions.value;
+    // Sort so required questions come first
+    return [...all].sort((a, b) => {
+        const aRequired = a.required !== false ? 1 : 0;
+        const bRequired = b.required !== false ? 1 : 0;
+        return bRequired - aRequired; // Required first (1 > 0)
+    });
+});
 
 const answers = ref<(string | null)[]>([]);
 const currentIndex = ref(0);
