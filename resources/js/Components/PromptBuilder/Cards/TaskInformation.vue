@@ -67,6 +67,11 @@ const handleTranscription = (transcript: string) => {
     form.task_description = appendText(form.task_description, transcript);
 };
 
+// Check if task description has changed
+const taskDescriptionHasChanged = computed(
+    () => form.task_description !== props.promptRun.taskDescription,
+);
+
 const submit = () => {
     // Check if unregistered visitor has completed prompts
     if (!user.value && props.visitorHasCompletedPrompts) {
@@ -179,7 +184,8 @@ watch(
                     :disabled="
                         !form.task_description ||
                         form.task_description.trim() === '' ||
-                        form.processing
+                        form.processing ||
+                        !taskDescriptionHasChanged
                     "
                     :loading="form.processing"
                 >

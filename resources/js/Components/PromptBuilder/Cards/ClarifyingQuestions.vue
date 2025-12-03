@@ -148,7 +148,15 @@ watch(
     { immediate: true },
 );
 
-// No need to adjust index - we always show all questions now
+// Check if any answers have changed from their original values
+const clarifyingAnswersHaveChanged = computed(() => {
+    const original =
+        (props.promptRun.clarifyingAnswers as (string | null)[]) ?? [];
+    return answers.value.some((current, idx) => {
+        const originalAnswer = normalizeAnswer(original[idx]);
+        return current !== originalAnswer;
+    });
+});
 
 const goBack = () => {
     if (currentIndex.value > 0) {
@@ -415,7 +423,9 @@ const optionalQuestionsLabel = computed(() => {
                         </ButtonSecondary>
                         <ButtonPrimary
                             type="button"
-                            :disabled="isSubmitting"
+                            :disabled="
+                                isSubmitting || !clarifyingAnswersHaveChanged
+                            "
                             :loading="isSubmitting"
                             class="w-full sm:w-auto"
                             @click="submitEditedAnswers"

@@ -200,6 +200,15 @@ const allAnswersValid = computed(() => {
     });
 });
 
+// Check if any answers have changed from their original values
+const answersHaveChanged = computed(() => {
+    return questions.value.some((question) => {
+        const currentAnswer = currentAnswers.value[question.id];
+        const originalAnswer = answers.value[question.id];
+        return currentAnswer !== originalAnswer;
+    });
+});
+
 const submitAnswers = () => {
     if (!allAnswersValid.value || isSubmitting.value) {
         return;
@@ -348,7 +357,7 @@ const submitButtonText = computed(() => {
                         :disabled="
                             !allAnswersValid ||
                             (props.mode === 'view-edit'
-                                ? form.processing
+                                ? form.processing || !answersHaveChanged
                                 : isSubmitting)
                         "
                         :loading="
@@ -576,7 +585,7 @@ const submitButtonText = computed(() => {
                     :disabled="
                         !allAnswersValid ||
                         (props.mode === 'view-edit'
-                            ? form.processing
+                            ? form.processing || !answersHaveChanged
                             : isSubmitting)
                     "
                     :loading="
