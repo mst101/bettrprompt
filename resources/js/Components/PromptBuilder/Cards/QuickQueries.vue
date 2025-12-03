@@ -267,8 +267,8 @@ const submitUpdatedAnswers = () => {
     form.answers = finalAnswers;
 
     form.post(
-        route('prompt-builder.create-child', {
-            parentPromptRun: props.promptRun.id,
+        route('prompt-builder.update-quick-queries', {
+            promptRun: props.promptRun.id,
         }),
         {
             preserveScroll: true,

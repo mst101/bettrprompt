@@ -191,6 +191,58 @@ class PromptBuilderController extends Controller
     }
 
     /**
+     * Update quick queries answers and re-analyse (for view-edit mode)
+     */
+    public function updateQuickQueries(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        // Validate workflow stage - should have pre-analysis questions
+        if (! $promptRun->pre_analysis_questions || empty($promptRun->pre_analysis_questions)) {
+            return back()->with('error', 'This prompt run does not have quick queries to update.');
+        }
+
+        $validated = $request->validate([
+            'answers' => 'required|array',
+            'answers.*' => 'required|string',
+        ]);
+
+        try {
+            // Build structured pre_analysis_context from updated answers
+            $preAnalysisContext = $this->buildPreAnalysisContext(
+                $promptRun->pre_analysis_questions,
+                $validated['answers']
+            );
+
+            // Update the prompt run with new answers and context, then dispatch workflow_1
+            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated, $preAnalysisContext) {
+                $promptRun->update([
+                    'pre_analysis_answers' => $validated['answers'],
+                    'pre_analysis_context' => $preAnalysisContext,
+                    'workflow_stage' => 'submitted',
+                    'status' => 'processing',
+                ]);
+            });
+
+            // Dispatch workflow_1 again to re-analyse with new answers
+            ProcessTaskAnalysis::dispatch($promptRun);
+
+            return redirect()
+                ->route('prompt-builder.show', $promptRun)
+                ->with('success', 'Re-analysing your task with updated answers...');
+
+        } catch (\Exception $e) {
+            Log::error('Failed to update quick queries', [
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Failed to update answers. Please try again.');
+        }
+    }
+
+    /**
      * Build structured pre_analysis_context from questions and answers
      */
     protected function buildPreAnalysisContext(?array $questions, array $answers): array

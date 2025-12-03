@@ -106,6 +106,8 @@ Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse
     ->name('prompt-builder.analyse');
 Route::post('/prompt-builder/{promptRun}/pre-analysis-answers', [PromptBuilderController::class, 'submitPreAnalysisAnswers'])
     ->name('prompt-builder.pre-analysis-answers');
+Route::post('/prompt-builder/{promptRun}/update-quick-queries', [PromptBuilderController::class, 'updateQuickQueries'])
+    ->name('prompt-builder.update-quick-queries');
 Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
     ->name('prompt-builder.show');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
