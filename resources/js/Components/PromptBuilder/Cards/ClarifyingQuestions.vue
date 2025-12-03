@@ -48,15 +48,26 @@ const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
 
 const showOptionalHints = ref(false);
 
+// Create a mapping from sorted question indices to original indices
+const questionIndexMapping = computed<number[]>(() => {
+    const all = allQuestions.value;
+    const indices = all.map((_, idx) => idx);
+
+    // Sort indices based on the corresponding questions (required first)
+    indices.sort((aIdx, bIdx) => {
+        const aRequired = all[aIdx].required !== false ? 1 : 0;
+        const bRequired = all[bIdx].required !== false ? 1 : 0;
+        return bRequired - aRequired; // Required first (1 > 0)
+    });
+
+    return indices;
+});
+
 // Always show all questions (required first), but optionalHints controls display of purpose text
 const questions = computed<ClarifyingQuestion[]>(() => {
     const all = allQuestions.value;
-    // Sort so required questions come first
-    return [...all].sort((a, b) => {
-        const aRequired = a.required !== false ? 1 : 0;
-        const bRequired = b.required !== false ? 1 : 0;
-        return bRequired - aRequired; // Required first (1 > 0)
-    });
+    // Return questions in sorted order (required first)
+    return questionIndexMapping.value.map((idx) => all[idx]);
 });
 
 const answers = ref<(string | null)[]>([]);
@@ -111,6 +122,11 @@ const normalizeAnswer = (value: string | null | undefined) => {
     if (value === undefined || value === null) return null;
     const trimmed = value.trim();
     return trimmed.length ? trimmed : null;
+};
+
+// Helper: Convert from sorted question index to original question index
+const getOriginalIndex = (sortedIndex: number): number => {
+    return questionIndexMapping.value[sortedIndex] ?? sortedIndex;
 };
 
 const hydrateAnswers = () => {
@@ -169,7 +185,8 @@ const clarifyingAnswersHaveChanged = computed(() => {
 const goBack = async () => {
     if (currentIndex.value > 0) {
         currentIndex.value -= 1;
-        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+        const originalIdx = getOriginalIndex(currentIndex.value);
+        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
         // Focus the previous question's textarea
         await nextTick();
         questionFormRef.value?.focus();
@@ -179,31 +196,37 @@ const goBack = async () => {
 const goNext = () => {
     if (currentIndex.value < questions.value.length - 1) {
         currentIndex.value += 1;
-        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+        const originalIdx = getOriginalIndex(currentIndex.value);
+        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
     }
 };
 
-const saveAnswer = async (index: number, value: string | null) => {
+const saveAnswer = async (sortedIndex: number, value: string | null) => {
     isSubmitting.value = true;
     submitError.value = null;
 
     try {
+        // Convert sorted index to original index for the API call
+        const originalIndex = getOriginalIndex(sortedIndex);
+
         const response = await axios.post(
             route('prompt-builder.answer', props.promptRun.id),
             {
-                question_index: index,
+                question_index: originalIndex,
                 answer: value,
             },
         );
 
         const updated =
             (response.data?.clarifying_answers as (string | null)[]) ?? [];
-        answers.value = questions.value.map(
+        // Answers array is always in original question order from the server
+        answers.value = allQuestions.value.map(
             (_, idx) => normalizeAnswer(updated[idx]) ?? null,
         );
 
         // Update draft to match saved answer
-        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+        const originalIdx = getOriginalIndex(currentIndex.value);
+        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
     } catch (error: unknown) {
         const axiosError = error as {
             response?: { data?: { error?: { message?: string } } };
