@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Card from '@/Components/Card.vue';
+import FormTextarea from '@/Components/FormTextarea.vue';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
 } from '@/types/resources/PromptRunResource';
 import { router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -22,9 +23,32 @@ const questions = computed<PreAnalysisQuestion[]>(
 const answers = ref<Record<string, string>>({});
 // Track additional text for "Other" options
 const otherResponses = ref<Record<string, string>>({});
+// Track refs to "Other" textareas for auto-focus
+const otherTextareaRefs = ref<
+    Record<string, InstanceType<typeof FormTextarea>>
+>({});
 
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
+
+// Watch for changes in answers and focus the "Other" textarea when selected
+watch(
+    answers,
+    async () => {
+        await nextTick();
+        questions.value.forEach((question) => {
+            const textareaRef = otherTextareaRefs.value[question.id];
+            if (selectedOtherOption(question) && textareaRef) {
+                // Get the textarea element from the FormTextarea component and focus it
+                const textarea = textareaRef.$el?.querySelector('textarea');
+                if (textarea) {
+                    textarea.focus();
+                }
+            }
+        });
+    },
+    { deep: true },
+);
 
 // Detect if an option represents "Other" (by value or label)
 const isOtherOption = (label: string): boolean => {
@@ -155,20 +179,19 @@ const submitAnswers = () => {
                     v-if="selectedOtherOption(question)"
                     class="bg-indigo-25 rounded-lg border-2 border-indigo-300 p-3"
                 >
-                    <label
-                        :for="`other-${question.id}`"
-                        class="mb-2 block text-sm font-medium text-indigo-900"
-                    >
-                        Please specify:
-                    </label>
-                    <textarea
+                    <FormTextarea
                         :id="`other-${question.id}`"
+                        :ref="
+                            (el) =>
+                                (otherTextareaRefs[question.id] =
+                                    el as InstanceType<typeof FormTextarea>)
+                        "
                         v-model="otherResponses[question.id]"
-                        rows="3"
-                        maxlength="500"
-                        class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                        label="Please specify:"
+                        :rows="3"
+                        :maxlength="500"
                         placeholder="Please explain what you meant by 'Other'..."
-                    ></textarea>
+                    ></FormTextarea>
                     <p class="mt-1 text-xs text-indigo-600">
                         {{ (otherResponses[question.id] || '').length }}/500
                         characters
