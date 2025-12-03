@@ -42,22 +42,14 @@ const allQuestions = computed<ClarifyingQuestion[]>(() => {
         );
 });
 
-const requiredQuestions = computed<ClarifyingQuestion[]>(() =>
-    allQuestions.value.filter((q) => q.required !== false),
-);
-
 const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
     allQuestions.value.filter((q) => q.required === false),
 );
 
-const showOptionalQuestions = ref(false);
+const showOptionalHints = ref(false);
 
-const questions = computed<ClarifyingQuestion[]>(() => {
-    if (showOptionalQuestions.value) {
-        return allQuestions.value;
-    }
-    return requiredQuestions.value;
-});
+// Always show all questions, but optionalHints controls display of purpose text
+const questions = computed<ClarifyingQuestion[]>(() => allQuestions.value);
 
 const answers = ref<(string | null)[]>([]);
 const currentIndex = ref(0);
@@ -141,7 +133,7 @@ const hydrateAnswers = () => {
 
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
-    showOptionalQuestions.value = false;
+    showOptionalHints.value = false;
     submitError.value = null;
 };
 
@@ -156,15 +148,7 @@ watch(
     { immediate: true },
 );
 
-// When optional questions are shown/hidden, adjust current index if needed
-watch(showOptionalQuestions, (newValue) => {
-    if (!newValue && currentIndex.value >= requiredQuestions.value.length) {
-        // If hiding optional questions and we're on an optional question,
-        // move to the last required question
-        currentIndex.value = Math.max(0, requiredQuestions.value.length - 1);
-        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
-    }
-});
+// No need to adjust index - we always show all questions now
 
 const goBack = () => {
     if (currentIndex.value > 0) {
@@ -243,14 +227,14 @@ const submitAnswer = async () => {
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
-    showOptionalQuestions.value = true; // Show all questions when editing
+    showOptionalHints.value = true; // Show hints for optional questions when editing
     shouldFocusBulkQuestions.value = true;
 };
 
 const cancelEditingAnswers = () => {
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
-    showOptionalQuestions.value = false;
+    showOptionalHints.value = false;
     shouldFocusEditButton.value = true;
 };
 
@@ -362,8 +346,8 @@ const hasOptionalQuestions = computed(() => optionalQuestions.value.length > 0);
 
 const optionalQuestionsLabel = computed(() => {
     const count = optionalQuestions.value.length;
-    return showOptionalQuestions.value
-        ? 'Hide optional questions'
+    return showOptionalHints.value
+        ? 'Hide optional question hints'
         : `Show ${count} optional question${count !== 1 ? 's' : ''} <span class="text-xs">(to improve your prompt)</span>`;
 });
 </script>
@@ -462,26 +446,28 @@ const optionalQuestionsLabel = computed(() => {
             ref="questionFormRef"
             :key="`question-${currentIndex}`"
             v-model:answer="currentAnswer"
-            :question="currentQuestion.question"
+            :question="currentQuestion"
             :current-question-number="currentIndex + 1"
             :total-questions="questions.length"
             :is-submitting="isSubmitting"
             :can-go-back="currentIndex > 0"
+            :show-optional-hints="showOptionalHints"
             :show-all="showAllQuestions"
             @submit="submitAnswer"
             @skip="skipQuestion"
             @go-back="goBack"
             @clear="clearCurrentAnswer"
             @toggle-show-all="showAllQuestions = !showAllQuestions"
+            @toggle-optional-hints="showOptionalHints = !showOptionalHints"
         />
 
         <BulkQuestions
             v-else-if="hasQuestions && (showAllQuestions || isEditingAnswers)"
             ref="bulkQuestionsRef"
-            :questions="isEditingAnswers ? allQuestions : questions"
+            :questions="allQuestions"
             :answers="answers"
             :has-optional-questions="hasOptionalQuestions"
-            :show-optional-questions="showOptionalQuestions"
+            :show-optional-questions="showOptionalHints"
             :optional-questions-label="optionalQuestionsLabel"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
@@ -498,9 +484,7 @@ const optionalQuestionsLabel = computed(() => {
                     ? cancelEditingAnswers()
                     : (showAllQuestions = false)
             "
-            @show-optional-questions="
-                (value) => (showOptionalQuestions = value)
-            "
+            @show-optional-questions="(value) => (showOptionalHints = value)"
         />
 
         <div
