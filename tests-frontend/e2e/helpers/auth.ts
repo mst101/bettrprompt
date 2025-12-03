@@ -60,8 +60,8 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     await acceptCookies(page);
 
     // Check if already logged in to avoid unnecessary login attempts
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('domcontentloaded');
 
     // Wait a bit for any dynamic content to load
     await page.waitForTimeout(500);
@@ -104,8 +104,8 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     }, TEST_USER.email);
 
     // Navigate away and back to trigger Inertia to reload with auth
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(500);
 
     // Verify we're logged in by checking for the user menu button
@@ -137,17 +137,4 @@ export async function loginAsTestUser(page: Page): Promise<void> {
             'Login failed - user menu not found after 3 attempts. Check credentials or form validation.',
         );
     }
-}
-
-/**
- * Seed the test user in the database
- * This should be called before running tests that require the test user
- *
- * NOTE: As of the E2E database setup, test data is seeded globally via
- * global-setup.ts which runs E2eTestSeeder. This function is now a no-op
- * for backwards compatibility with existing tests.
- */
-export async function seedTestUser(): Promise<void> {
-    // No-op: Test data is seeded globally via global-setup.ts
-    // which runs E2eTestSeeder before all tests
 }

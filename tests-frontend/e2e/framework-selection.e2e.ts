@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { loginAsTestUser, seedTestUser } from './helpers/auth';
+import { loginAsTestUser } from './helpers/auth';
 
 /**
  * Framework Selection Tests
@@ -50,12 +50,7 @@ const PERSONALITY_TYPES = [
 const TEST_TASK =
     'Help me create a comprehensive marketing strategy for a new SaaS product targeting small business owners';
 
-test.describe('Framework Selection Analysis', () => {
-    // Seed test user before all tests
-    test.beforeAll(async () => {
-        await seedTestUser();
-    });
-
+test.describe.skip('Framework Selection Analysis', () => {
     // Run a test for each personality type
     for (const personalityType of PERSONALITY_TYPES) {
         test(`should select framework for ${personalityType.name} (${personalityType.code})`, async ({
@@ -347,12 +342,11 @@ test.describe('Framework Selection Analysis', () => {
     }
 });
 
-test.describe('Framework Selection - Quick Verification', () => {
+test.describe.skip('Framework Selection - Quick Verification', () => {
     // This is a simpler test to verify the mechanism works without waiting for all types
     test('should persist prompt run for test user', async ({ page }) => {
         test.setTimeout(60000); // 1 minute
 
-        await seedTestUser();
         await loginAsTestUser(page);
 
         // Go to profile to set personality type

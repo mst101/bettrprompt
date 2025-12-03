@@ -473,14 +473,28 @@ Common issues:
 
 2. **Reset database:**
    ```bash
-   ./vendor/bin/sail artisan migrate:fresh --env=e2e
-   ./vendor/bin/sail artisan db:seed --class=E2eTestSeeder --env=e2e
+   ./vendor/bin/sail artisan migrate:fresh --env=e2e --force
+   ./vendor/bin/sail artisan db:seed --class=E2eTestSeeder --env=e2e --force
    ```
 
 3. **Check Docker containers:**
    ```bash
    ./vendor/bin/sail ps
    ```
+
+### Seeder Writing to Wrong Database
+
+**Symptom:** Running `sail artisan db:seed --class=E2eTestSeeder --env=e2e` creates data in `personality` instead of `personality_e2e`
+
+**Cause:** Laravel's configuration cache prevents the `--env=e2e` flag from loading the correct database configuration from `.env.e2e`
+
+**Solution:** Clear the configuration cache first:
+```bash
+./vendor/bin/sail artisan config:clear
+./vendor/bin/sail artisan db:seed --class=E2eTestSeeder --env=e2e --force
+```
+
+**Verification:** Check the seeder output - it should show "Seeding using connection 'pgsql' (personality_e2e)" not "(personality)"
 
 ### Environment Variable Issues
 

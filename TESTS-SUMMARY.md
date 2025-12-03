@@ -58,7 +58,7 @@ Removes all prompt runs for the test user to ensure clean state for empty state 
 Usage:
 
 ```bash
-./vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder
+./vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e
 ```
 
 ### 4. Documentation

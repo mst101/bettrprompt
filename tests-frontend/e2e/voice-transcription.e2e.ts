@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { loginAsTestUser, seedTestUser } from './helpers/auth';
+import { loginAsTestUser } from './helpers/auth';
 
 /**
  * Voice Transcription E2E Tests
@@ -767,10 +767,6 @@ test.describe.skip('Voice Transcription - Integration with Form', () => {
 test.describe.skip(
     'Voice Transcription - Authenticated User Experience',
     () => {
-        test.beforeAll(async () => {
-            await seedTestUser();
-        });
-
         test.beforeEach(async ({ page }) => {
             await loginAsTestUser(page);
             await page.goto('/prompt-builder');

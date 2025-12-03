@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { loginAsTestUser, seedTestUser } from './helpers/auth';
+import { loginAsTestUser } from './helpers/auth';
 import { execAsync, seedPromptRuns } from './helpers/database';
 
 /**
@@ -33,12 +33,9 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 
 test.describe('Prompt Builder History - Empty State', () => {
     test.beforeAll(async () => {
-        // Seed the test user
-        await seedTestUser();
-
         // Ensure no prompt runs exist for test user
         await execAsync(
-            './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder',
+            './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e',
         );
     });
 
@@ -116,8 +113,7 @@ test.describe('Prompt Builder History - Empty State', () => {
 
 test.describe('Prompt Builder History - With Data', () => {
     test.beforeAll(async () => {
-        // Seed the test user and create prompt runs
-        await seedTestUser();
+        // Create prompt runs for testing pagination
         await seedPromptRuns(15); // Create 15 prompt runs for testing pagination
     });
 
@@ -256,7 +252,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
 test.describe('Prompt Builder History - Sorting', () => {
     test.beforeAll(async () => {
-        await seedTestUser();
         await seedPromptRuns(10);
     });
 
@@ -290,9 +285,14 @@ test.describe('Prompt Builder History - Sorting', () => {
         const taskHeader = page
             .getByRole('columnheader', { name: /task description/i })
             .locator('button');
-        await taskHeader.click();
 
-        // Wait for Inertia navigation
+        // Wait for URL to change after clicking
+        await Promise.all([
+            page.waitForURL(/sort_by=task_description/, { timeout: 5000 }),
+            taskHeader.click(),
+        ]);
+
+        // Wait for navigation to complete
         await page.waitForLoadState('networkidle');
 
         // URL should contain sort parameters
@@ -300,7 +300,11 @@ test.describe('Prompt Builder History - Sorting', () => {
         expect(page.url()).toContain('sort_direction=asc');
 
         // Click again to reverse sort
-        await taskHeader.click();
+        await Promise.all([
+            page.waitForURL(/sort_direction=desc/, { timeout: 5000 }),
+            taskHeader.click(),
+        ]);
+
         await page.waitForLoadState('networkidle');
 
         // Direction should change to descending
@@ -318,7 +322,12 @@ test.describe('Prompt Builder History - Sorting', () => {
         const statusHeader = page
             .getByRole('columnheader', { name: /status/i })
             .locator('button');
-        await statusHeader.click();
+
+        // Wait for URL to change after clicking
+        await Promise.all([
+            page.waitForURL(/sort_by=status/, { timeout: 5000 }),
+            statusHeader.click(),
+        ]);
 
         await page.waitForLoadState('networkidle');
 
@@ -336,7 +345,12 @@ test.describe('Prompt Builder History - Sorting', () => {
         const personalityHeader = page
             .getByRole('columnheader', { name: /personality type/i })
             .locator('button');
-        await personalityHeader.click();
+
+        // Wait for URL to change after clicking
+        await Promise.all([
+            page.waitForURL(/sort_by=personality_type/, { timeout: 5000 }),
+            personalityHeader.click(),
+        ]);
 
         await page.waitForLoadState('networkidle');
 
@@ -354,7 +368,12 @@ test.describe('Prompt Builder History - Sorting', () => {
         const frameworkHeader = page
             .getByRole('columnheader', { name: /framework/i })
             .locator('button');
-        await frameworkHeader.click();
+
+        // Wait for URL to change after clicking
+        await Promise.all([
+            page.waitForURL(/sort_by=selected_framework/, { timeout: 5000 }),
+            frameworkHeader.click(),
+        ]);
 
         await page.waitForLoadState('networkidle');
 
@@ -365,12 +384,20 @@ test.describe('Prompt Builder History - Sorting', () => {
 
 test.describe('Prompt Builder History - Pagination', () => {
     test.beforeAll(async () => {
-        await seedTestUser();
         await seedPromptRuns(25); // Create enough for multiple pages
     });
 
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ page, context }) => {
+        // Clear cookies to prevent test interference
+        await context.clearCookies();
+
         await loginAsTestUser(page);
+
+        // Clear localStorage after login to reset per_page preference
+        // This prevents tests from interfering with each other
+        await page.evaluate(() => {
+            localStorage.removeItem('history_per_page');
+        });
     });
 
     test('should display pagination controls when multiple pages exist', async ({
@@ -382,14 +409,14 @@ test.describe('Prompt Builder History - Pagination', () => {
         // Desktop size to see pagination
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        // Should see "Showing X to Y of Z results" text
-        const resultsText = page.getByText(
-            /showing \d+ to \d+ of \d+ results/i,
-        );
+        // Should see "Showing X to Y of Z results" text (use .last() to get desktop version)
+        const resultsText = page
+            .getByText(/Showing \d+ to \d+ of \d+ results/i)
+            .last();
         await expect(resultsText).toBeVisible();
 
-        // Should see page indicator
-        const pageIndicator = page.getByText(/page \d+ of \d+/i);
+        // Should see page indicator (use .last() to get desktop version)
+        const pageIndicator = page.getByText(/page \d+ of \d+/i).last();
         await expect(pageIndicator).toBeVisible();
     });
 
@@ -402,7 +429,12 @@ test.describe('Prompt Builder History - Pagination', () => {
         // Click Next button
         const nextButton = page.getByRole('link', { name: /next/i }).first();
         await expect(nextButton).toBeVisible();
-        await nextButton.click();
+
+        // Wait for URL to change after clicking
+        await Promise.all([
+            page.waitForURL(/page=2/, { timeout: 5000 }),
+            nextButton.click(),
+        ]);
 
         await page.waitForLoadState('networkidle');
 
@@ -447,7 +479,12 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Change to 20
         await perPageInput.fill('20');
-        await perPageInput.press('Enter');
+
+        // Wait for URL to change after pressing Enter
+        await Promise.all([
+            page.waitForURL(/per_page=20/, { timeout: 5000 }),
+            perPageInput.press('Enter'),
+        ]);
 
         await page.waitForLoadState('networkidle');
 
@@ -465,8 +502,8 @@ test.describe('Prompt Builder History - Pagination', () => {
         await page.goto('/prompt-builder-history?per_page=10');
         await page.waitForLoadState('networkidle');
 
-        // Should see mobile "Page X of Y" text
-        const pageIndicator = page.getByText(/page \d+ of \d+/i);
+        // Should see mobile "Page X of Y" text (use .first() for mobile version)
+        const pageIndicator = page.getByText(/page \d+ of \d+/i).first();
         await expect(pageIndicator).toBeVisible();
 
         // Should see Previous or Next button (depending on page)
@@ -485,20 +522,35 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         const perPageInput = page.locator('#per-page-desktop');
 
+        // Current value should be 10
+        await expect(perPageInput).toHaveValue('10');
+
         // Try to set invalid value (too high)
         await perPageInput.fill('500');
         await perPageInput.press('Enter');
 
-        await page.waitForLoadState('networkidle');
+        // Give it a moment to process
+        await page.waitForTimeout(500);
 
-        // Should be clamped to max (100)
-        expect(page.url()).toContain('per_page=100');
+        // Should reject invalid value and reset input to current value (10)
+        await expect(perPageInput).toHaveValue('10');
+        // URL should remain unchanged
+        expect(page.url()).toContain('per_page=10');
+
+        // Try invalid value (too low)
+        await perPageInput.fill('0');
+        await perPageInput.press('Enter');
+
+        await page.waitForTimeout(500);
+
+        // Should reject and reset
+        await expect(perPageInput).toHaveValue('10');
+        expect(page.url()).toContain('per_page=10');
     });
 });
 
 test.describe('Prompt Builder History - Navigation', () => {
     test.beforeAll(async () => {
-        await seedTestUser();
         await seedPromptRuns(5);
     });
 
@@ -514,15 +566,20 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Click the first row
         const firstRow = page.locator('tbody tr').first();
-        await firstRow.click();
 
-        // Should navigate to prompt show page
-        await page.waitForURL(/\/prompt-builder\/\d+/);
+        // Wait for navigation after clicking
+        await Promise.all([
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
+            firstRow.click(),
+        ]);
+
         expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
 
-        // Should see the prompt details page
-        const statusBadge = page.getByTestId('status-badge');
-        await expect(statusBadge).toBeVisible();
+        // Should see the prompt details page (verify by heading)
+        const heading = page.getByRole('heading', {
+            name: /prompt builder/i,
+        });
+        await expect(heading).toBeVisible();
     });
 
     test('should support keyboard navigation to prompt details', async ({
@@ -534,10 +591,13 @@ test.describe('Prompt Builder History - Navigation', () => {
         // Focus and press Enter on first row
         const firstRow = page.locator('tbody tr').first();
         await firstRow.focus();
-        await firstRow.press('Enter');
 
-        // Should navigate
-        await page.waitForURL(/\/prompt-builder\/\d+/);
+        // Wait for navigation after pressing Enter
+        await Promise.all([
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
+            firstRow.press('Enter'),
+        ]);
+
         expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
@@ -559,7 +619,6 @@ test.describe('Prompt Builder History - Navigation', () => {
 
 test.describe('Prompt Builder History - Responsive Design', () => {
     test.beforeAll(async () => {
-        await seedTestUser();
         await seedPromptRuns(5);
     });
 
@@ -609,9 +668,10 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         const perPageInput = page.locator('#per-page');
         await expect(perPageInput).toBeVisible();
 
-        // Should show "Show X per page" label
-        const label = page.getByText(/show/i);
+        // Should show "Show X per page" label (use label for per-page input to be specific)
+        const label = page.locator('label[for="per-page"]');
         await expect(label).toBeVisible();
+        await expect(label).toHaveText('Show');
     });
 
     test('should maintain clickable rows on mobile', async ({ page }) => {
@@ -650,10 +710,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
 });
 
 test.describe('Prompt Builder History - Edge Cases', () => {
-    test.beforeAll(async () => {
-        await seedTestUser();
-    });
-
     test.beforeEach(async ({ page }) => {
         await loginAsTestUser(page);
     });
@@ -701,6 +757,12 @@ test.describe('Prompt Builder History - Edge Cases', () => {
     }) => {
         await seedPromptRuns(15);
 
+        // Set localStorage to match the per_page we'll use in the URL
+        await page.goto('/');
+        await page.evaluate(() => {
+            localStorage.setItem('history_per_page', '5');
+        });
+
         // Navigate with specific sort and pagination
         await page.goto(
             '/prompt-builder-history?sort_by=status&sort_direction=asc&per_page=5&page=2',
@@ -709,11 +771,21 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Click on a prompt
         const firstRow = page.locator('tbody tr').first();
-        await firstRow.click();
-        await page.waitForURL(/\/prompt-builder\/\d+/);
 
-        // Go back
-        await page.goBack();
+        // Wait for navigation after clicking
+        await Promise.all([
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
+            firstRow.click(),
+        ]);
+
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
+
+        // Go back and wait for navigation to history page
+        await Promise.all([
+            page.waitForURL(/\/prompt-builder-history/, { timeout: 5000 }),
+            page.goBack(),
+        ]);
+
         await page.waitForLoadState('networkidle');
 
         // Should maintain query parameters

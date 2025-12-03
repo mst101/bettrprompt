@@ -101,7 +101,7 @@ The tests rely on Laravel seeders:
 
 ### TestUserSeeder
 
-Creates the test user (test@hiddengambia.com)
+Creates the test user (test@example.com)
 
 ```bash
 ./vendor/bin/sail artisan db:seed --class=TestUserSeeder
@@ -129,7 +129,7 @@ Valid statuses: `completed`, `processing`, `failed`, `pending`
 Removes all prompt runs for the test user
 
 ```bash
-./vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder
+./vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e
 ```
 
 ## Running the Tests

@@ -17,7 +17,7 @@ class CleanPromptRunsSeeder extends Seeder
     public function run(): void
     {
         // Find the test user
-        $user = User::where('email', 'test@hiddengambia.com')->first();
+        $user = User::where('email', 'test@example.com')->first();
 
         if (! $user) {
             $this->command->warn('Test user not found. Nothing to clean.');

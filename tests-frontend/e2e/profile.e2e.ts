@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { loginAsTestUser, seedTestUser, TEST_USER } from './helpers/auth';
+import { loginAsTestUser, TEST_USER } from './helpers/auth';
 
 test.describe('Profile - Unauthenticated Access', () => {
     test('should redirect to login when accessing profile without auth', async ({
@@ -15,11 +15,6 @@ test.describe('Profile - Unauthenticated Access', () => {
 });
 
 test.describe('Profile - Authenticated User', () => {
-    test.beforeAll(async () => {
-        // Seed test user before running tests
-        await seedTestUser();
-    });
-
     test.beforeEach(async ({ page }) => {
         // Log in before each test
         await loginAsTestUser(page);

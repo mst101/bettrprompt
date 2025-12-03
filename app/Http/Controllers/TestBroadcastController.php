@@ -1,0 +1,209 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Events\AnalysisCompleted;
+use App\Events\PromptOptimizationCompleted;
+use App\Models\PromptRun;
+use App\Models\Visitor;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+/**
+ * Test-only controller for triggering broadcast events in E2E tests
+ *
+ * This controller allows E2E tests to manually trigger WebSocket events
+ * so we can test real-time update functionality without waiting for
+ * asynchronous n8n workflows to complete.
+ *
+ * SECURITY: Only accessible with X-Test-Auth header (same as test login)
+ */
+class TestBroadcastController extends Controller
+{
+    /**
+     * Trigger an AnalysisCompleted event for a prompt run
+     *
+     * This simulates the event that fires when n8n completes framework selection
+     */
+    public function triggerAnalysisCompleted(Request $request, int $promptRunId): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        $promptRun = PromptRun::findOrFail($promptRunId);
+
+        // Update the prompt run to simulate completed analysis
+        if (! $promptRun->selected_framework) {
+            $promptRun->update([
+                'selected_framework' => 'STAR Method',
+                'framework_reasoning' => 'Test framework selection for E2E testing',
+                'framework_questions' => [
+                    ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
+                    ['id' => 2, 'question' => 'What Action did you take?'],
+                    ['id' => 3, 'question' => 'What was the Result?'],
+                ],
+                'workflow_stage' => 'answering_questions',
+            ]);
+
+            $promptRun->refresh();
+        }
+
+        // Broadcast the event
+        event(new AnalysisCompleted($promptRun));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'AnalysisCompleted event broadcasted',
+            'data' => [
+                'prompt_run_id' => $promptRun->id,
+                'selected_framework' => $promptRun->selected_framework,
+                'workflow_stage' => $promptRun->workflow_stage,
+            ],
+        ]);
+    }
+
+    /**
+     * Trigger a PromptOptimizationCompleted event for a prompt run
+     *
+     * This simulates the event that fires when n8n completes prompt optimisation
+     */
+    public function triggerPromptOptimizationCompleted(Request $request, int $promptRunId): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        $promptRun = PromptRun::findOrFail($promptRunId);
+
+        // Ensure framework is selected first
+        if (! $promptRun->selected_framework) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Framework must be selected before prompt optimisation can be completed',
+                'hint' => 'Call triggerAnalysisCompleted first',
+            ], 422);
+        }
+
+        // Update the prompt run to simulate completed optimisation
+        if (! $promptRun->optimized_prompt) {
+            $promptRun->update([
+                'status' => 'completed',
+                'workflow_stage' => 'completed',
+                'optimized_prompt' => "# Test Optimised Prompt\n\nThis is a test prompt generated for E2E testing purposes.\n\n## Your Task\n{$promptRun->task_description}\n\n## Recommended Framework\n{$promptRun->selected_framework}\n\nPlease proceed with this structured approach to achieve the best results.",
+                'completed_at' => now(),
+            ]);
+
+            $promptRun->refresh();
+        }
+
+        // Broadcast the event
+        event(new PromptOptimizationCompleted($promptRun));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'PromptOptimizationCompleted event broadcasted',
+            'data' => [
+                'prompt_run_id' => $promptRun->id,
+                'status' => $promptRun->status,
+                'completed_at' => $promptRun->completed_at?->toIso8601String(),
+            ],
+        ]);
+    }
+
+    /**
+     * Get information about WebSocket/Echo connection for debugging
+     */
+    public function echoInfo(Request $request): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        return response()->json([
+            'reverb_enabled' => config('broadcasting.default') === 'reverb',
+            'reverb_host' => config('broadcasting.connections.reverb.options.host'),
+            'reverb_port' => config('broadcasting.connections.reverb.options.port'),
+            'app_key' => config('broadcasting.connections.reverb.key'),
+            'environment' => app()->environment(),
+        ]);
+    }
+
+    /**
+     * Create a test prompt run in a specific state for testing
+     *
+     * States supported:
+     * - 'submitted': No framework selected
+     * - 'framework_selected': Framework selected, no optimised prompt
+     * - 'completed': Full workflow completed
+     */
+    public function createTestPromptRun(Request $request): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        $state = $request->query('state', 'submitted');
+        $userId = auth()->id();
+
+        // Get the first existing visitor, or create a new one if none exist
+        $visitor = Visitor::first();
+        if (! $visitor) {
+            $visitor = Visitor::create([]);
+        }
+
+        $data = [
+            'visitor_id' => $visitor->id,
+            'user_id' => $userId,
+            'task_description' => "E2E Test Prompt - State: {$state}",
+            'task_classification' => ['type' => 'prompt_builder', 'source' => 'test'],
+            'personality_type' => 'INTJ-A',
+        ];
+
+        if ($state === 'submitted') {
+            $data['status'] = 'submitted';
+            $data['workflow_stage'] = 'submitted';
+        } elseif ($state === 'framework_selected') {
+            $data['status'] = 'framework_selected';
+            $data['workflow_stage'] = 'answering_questions';
+            $data['selected_framework'] = [
+                'name' => 'STAR Method',
+                'code' => 'star',
+                'rationale' => 'Test framework for broadcast testing',
+            ];
+            $data['framework_questions'] = [
+                ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
+                ['id' => 2, 'question' => 'What Action did you take?'],
+                ['id' => 3, 'question' => 'What was the Result?'],
+            ];
+        } elseif ($state === 'completed') {
+            $data['status'] = 'completed';
+            $data['workflow_stage'] = 'completed';
+            $data['selected_framework'] = [
+                'name' => 'STAR Method',
+                'code' => 'star',
+                'rationale' => 'Test framework for broadcast testing',
+            ];
+            $data['framework_questions'] = [
+                ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
+                ['id' => 2, 'question' => 'What Action did you take?'],
+                ['id' => 3, 'question' => 'What was the Result?'],
+            ];
+            $data['optimized_prompt'] = 'This is a test optimised prompt.';
+            $data['completed_at'] = now();
+        }
+
+        $promptRun = PromptRun::create($data);
+
+        return response()->json([
+            'success' => true,
+            'prompt_run_id' => $promptRun->id,
+            'state' => $state,
+            'url' => "/prompt-builder/{$promptRun->id}",
+        ]);
+    }
+}

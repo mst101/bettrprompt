@@ -284,6 +284,14 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                         ),
                                     )
                                 "
+                                @keydown.enter="
+                                    $inertia.visit(
+                                        route(
+                                            'prompt-builder.show',
+                                            promptRun.id,
+                                        ),
+                                    )
+                                "
                             >
                                 <td
                                     class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 sm:table-cell"

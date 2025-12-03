@@ -155,3 +155,24 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
     // Respond with success - session cookie is set by Laravel automatically
     return response()->json(['success' => true]);
 })->name('test.login');
+
+// E2E Test-Only Broadcast Routes
+// These routes allow E2E tests to trigger WebSocket events manually
+Route::post('/test/broadcast/analysis-completed/{promptRunId}', [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])
+    ->name('test.broadcast.analysis-completed');
+Route::post('/test/broadcast/prompt-optimization-completed/{promptRunId}', [\App\Http\Controllers\TestBroadcastController::class, 'triggerPromptOptimizationCompleted'])
+    ->name('test.broadcast.prompt-optimization-completed');
+Route::get('/test/echo-info', [\App\Http\Controllers\TestBroadcastController::class, 'echoInfo'])
+    ->name('test.echo-info');
+Route::post('/test/create-prompt-run', [\App\Http\Controllers\TestBroadcastController::class, 'createTestPromptRun'])
+    ->name('test.create-prompt-run');
+
+// Mock n8n webhook endpoints for E2E testing
+// These endpoints simulate n8n responses without requiring n8n to be running
+// The .env.e2e file should have N8N_URL=http://localhost (pointing to these routes)
+Route::post('/webhook/api/n8n/webhook/pre-analysis', [\App\Http\Controllers\MockN8nController::class, 'preAnalysis'])
+    ->name('test.n8n.pre-analysis');
+Route::post('/webhook/api/n8n/webhook/analyse', [\App\Http\Controllers\MockN8nController::class, 'analyse'])
+    ->name('test.n8n.analyse');
+Route::post('/webhook/api/n8n/webhook/optimise-prompt', [\App\Http\Controllers\MockN8nController::class, 'optimisePrompt'])
+    ->name('test.n8n.optimise-prompt');

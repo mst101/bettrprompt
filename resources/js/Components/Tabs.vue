@@ -61,6 +61,7 @@ const selectTab = (tabId: string) => {
                 v-for="tab in tabs"
                 :key="tab.id"
                 :tabindex="activeTab === tab.id ? -1 : 0"
+                :data-testid="`tab-button-${tab.id}`"
                 :class="[
                     activeTab === tab.id
                         ? 'border-indigo-500 text-indigo-600'

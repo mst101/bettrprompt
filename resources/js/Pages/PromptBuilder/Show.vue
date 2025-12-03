@@ -272,18 +272,31 @@ const handleDelete = () => {
     </HeaderPage>
 
     <ContainerPage>
-        <div class="mb-6 max-w-4xl shadow-xs sm:rounded-lg">
-            <Tabs v-model="activeTab" :tabs="tabs" />
-
-            <!-- Optimised Prompt Tab -->
-            <OptimizedPrompt
-                v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
-                :optimized-prompt="promptRun.optimizedPrompt"
-                :prompt-run-id="promptRun.id"
+        <div
+            class="mb-6 max-w-4xl shadow-xs sm:rounded-lg"
+            data-testid="prompt-builder-container"
+        >
+            <Tabs
+                v-model="activeTab"
+                :tabs="tabs"
+                data-testid="prompt-builder-tabs"
             />
 
+            <!-- Optimised Prompt Tab -->
+            <div v-if="activeTab === 'prompt'" data-testid="tab-prompt">
+                <OptimizedPrompt
+                    v-if="promptRun.optimizedPrompt"
+                    :optimized-prompt="promptRun.optimizedPrompt"
+                    :prompt-run-id="promptRun.id"
+                />
+            </div>
+
             <!-- Your Task Tab -->
-            <div v-if="activeTab === 'task'" class="space-y-4">
+            <div
+                v-if="activeTab === 'task'"
+                class="space-y-4"
+                data-testid="tab-task"
+            >
                 <TaskInformation
                     :prompt-run="promptRun"
                     :visitor-has-completed-prompts="
@@ -338,7 +351,11 @@ const handleDelete = () => {
             </div>
 
             <!-- Framework Tab -->
-            <div v-if="activeTab === 'framework'" class="space-y-4">
+            <div
+                v-if="activeTab === 'framework'"
+                class="space-y-4"
+                data-testid="tab-framework"
+            >
                 <SelectedFramework
                     v-if="promptRun.selectedFramework"
                     :framework="promptRun.selectedFramework as any"
@@ -353,7 +370,11 @@ const handleDelete = () => {
             </div>
 
             <!-- Personality Tab -->
-            <div v-if="activeTab === 'personality'" class="space-y-4">
+            <div
+                v-if="activeTab === 'personality'"
+                class="space-y-4"
+                data-testid="tab-personality"
+            >
                 <TaskTraitAlignment
                     v-if="promptRun.taskTraitAlignment"
                     :alignment="promptRun.taskTraitAlignment as any"
@@ -372,7 +393,11 @@ const handleDelete = () => {
             </div>
 
             <!-- Questions Tab -->
-            <div v-if="activeTab === 'questions'" class="space-y-4">
+            <div
+                v-if="activeTab === 'questions'"
+                class="space-y-4"
+                data-testid="tab-questions"
+            >
                 <!-- Loading state when generation is in progress -->
                 <div
                     v-if="
@@ -403,18 +428,27 @@ const handleDelete = () => {
             </div>
 
             <!-- Recommendations Tab -->
-            <Recommendations
+            <div
                 v-if="activeTab === 'recommendations'"
-                :model-recommendations="promptRun.modelRecommendations as any"
-                :iteration-suggestions="promptRun.iterationSuggestions as any"
-            />
+                data-testid="tab-recommendations"
+            >
+                <Recommendations
+                    :model-recommendations="
+                        promptRun.modelRecommendations as any
+                    "
+                    :iteration-suggestions="
+                        promptRun.iterationSuggestions as any
+                    "
+                />
+            </div>
 
             <!-- API Usage Tab -->
-            <ApiUsage
-                v-if="activeTab === 'api-usage'"
-                :analysis-usage="promptRun.analysisApiUsage as any"
-                :generation-usage="promptRun.generationApiUsage as any"
-            />
+            <div v-if="activeTab === 'api-usage'" data-testid="tab-api-usage">
+                <ApiUsage
+                    :analysis-usage="promptRun.analysisApiUsage as any"
+                    :generation-usage="promptRun.generationApiUsage as any"
+                />
+            </div>
         </div>
     </ContainerPage>
 </template>

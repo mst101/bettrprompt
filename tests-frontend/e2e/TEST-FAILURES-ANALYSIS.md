@@ -421,8 +421,8 @@ export interface TestUser {
 
 export const TEST_USER: TestUser = {
     name: 'Test User',
-    email: 'test@hiddengambia.com',
-    password: 'voodoo90',
+    email: 'test@example.com',
+    password: 'password',
 };
 
 export async function loginAsTestUser(page: Page): Promise<void> {
