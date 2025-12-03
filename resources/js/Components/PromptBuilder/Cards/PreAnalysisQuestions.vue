@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
+import { useTextAppend } from '@/Composables/useTextAppend';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
@@ -30,6 +32,15 @@ const otherTextareaRefs = ref<
 
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
+
+const { appendText } = useTextAppend();
+
+const handleTranscription = (transcript: string, questionId: string) => {
+    answers.value[questionId] = appendText(
+        answers.value[questionId] || '',
+        transcript,
+    );
+};
 
 // Watch for changes in answers and focus the "Other" textarea when selected
 watch(
@@ -224,13 +235,23 @@ const submitAnswers = () => {
             </div>
 
             <!-- Text input questions -->
-            <div v-else-if="question.type === 'text'">
-                <textarea
-                    v-model="answers[question.id]"
-                    rows="3"
-                    class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    placeholder="Type your answer here..."
-                ></textarea>
+            <div v-else-if="question.type === 'text'" class="mt-3">
+                <div class="flex items-end gap-3">
+                    <div class="flex-1">
+                        <textarea
+                            v-model="answers[question.id]"
+                            rows="3"
+                            class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="Type your answer here..."
+                        ></textarea>
+                    </div>
+                    <ButtonVoiceInput
+                        @transcription="
+                            (transcript) =>
+                                handleTranscription(transcript, question.id)
+                        "
+                    />
+                </div>
             </div>
         </div>
 

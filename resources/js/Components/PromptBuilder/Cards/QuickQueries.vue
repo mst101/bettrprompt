@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
+import { useTextAppend } from '@/Composables/useTextAppend';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
@@ -27,18 +29,27 @@ const answers = computed<Record<string, string>>(
 
 const isEditing = ref(false);
 const shouldFocusFirstAnswer = ref(false);
-const shouldFocusCancelButton = ref(false);
+const shouldFocusEditButton = ref(false);
 const editAnswers = ref<Record<string, string>>({});
 const otherResponses = ref<Record<string, string>>({});
 const otherTextareaRefs = ref<
     Record<string, InstanceType<typeof FormTextarea>>
 >({});
 const firstAnswerRef = ref<HTMLInputElement | HTMLTextAreaElement | null>(null);
-const cancelButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
+const editButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
 
 const form = useForm({
     answers: {} as Record<string, string>,
 });
+
+const { appendText } = useTextAppend();
+
+const handleTranscription = (transcript: string, questionId: string) => {
+    editAnswers.value[questionId] = appendText(
+        editAnswers.value[questionId] || '',
+        transcript,
+    );
+};
 
 // Focus first answer when entering edit mode
 watchEffect(() => {
@@ -48,11 +59,11 @@ watchEffect(() => {
     }
 });
 
-// Focus cancel button when exiting edit mode
+// Focus edit button when exiting edit mode
 watchEffect(() => {
-    if (shouldFocusCancelButton.value && cancelButtonRef.value) {
-        cancelButtonRef.value.focus();
-        shouldFocusCancelButton.value = false;
+    if (shouldFocusEditButton.value && editButtonRef.value) {
+        editButtonRef.value.focus();
+        shouldFocusEditButton.value = false;
     }
 });
 
@@ -140,7 +151,7 @@ const cancelEditing = () => {
     editAnswers.value = {};
     otherResponses.value = {};
     form.clearErrors();
-    shouldFocusCancelButton.value = true;
+    shouldFocusEditButton.value = true;
 };
 
 // Check if all answers are valid during editing
@@ -209,6 +220,7 @@ const hasAnswers = computed(
             <h2 class="text-lg font-semibold text-indigo-900">Quick Queries</h2>
             <ButtonSecondary
                 v-if="!isEditing"
+                ref="editButtonRef"
                 type="button"
                 class="inline-flex w-full items-center gap-1 sm:w-fit"
                 @click="startEditing"
@@ -219,7 +231,6 @@ const hasAnswers = computed(
 
             <div v-else class="space-y-2 sm:space-x-4">
                 <ButtonSecondary
-                    ref="cancelButtonRef"
                     type="button"
                     class="inline-flex w-full items-center gap-1 sm:w-fit"
                     :disabled="form.processing"
@@ -353,19 +364,29 @@ const hasAnswers = computed(
 
                 <!-- Text input questions -->
                 <div v-else-if="question.type === 'text'" class="mt-3">
-                    <textarea
-                        :ref="
-                            questions[0].id === question.id
-                                ? (el) =>
-                                      (firstAnswerRef =
-                                          el as HTMLTextAreaElement)
-                                : undefined
-                        "
-                        v-model="editAnswers[question.id]"
-                        rows="3"
-                        class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        placeholder="Type your answer here..."
-                    ></textarea>
+                    <div class="flex items-end gap-3">
+                        <div class="flex-1">
+                            <textarea
+                                :ref="
+                                    questions[0].id === question.id
+                                        ? (el) =>
+                                              (firstAnswerRef =
+                                                  el as HTMLTextAreaElement)
+                                        : undefined
+                                "
+                                v-model="editAnswers[question.id]"
+                                rows="3"
+                                class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Type your answer here..."
+                            ></textarea>
+                        </div>
+                        <ButtonVoiceInput
+                            @transcription="
+                                (transcript) =>
+                                    handleTranscription(transcript, question.id)
+                            "
+                        />
+                    </div>
                 </div>
             </div>
 
