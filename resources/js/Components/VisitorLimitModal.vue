@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import Modal from '@/Components/Modal.vue';
 
@@ -36,13 +37,9 @@ const emit = defineEmits<{
                         <ButtonPrimary @click="emit('register')">
                             Create Free Account
                         </ButtonPrimary>
-                        <button
-                            type="button"
-                            class="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-                            @click="emit('close')"
-                        >
+                        <ButtonSecondary type="button" @click="emit('close')">
                             Cancel
-                        </button>
+                        </ButtonSecondary>
                     </div>
                 </div>
             </div>
