@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
+import OptionalBadge from '@/Components/OptionalBadge.vue';
 import type { ClarifyingQuestion } from '@/Components/PromptBuilder/Cards/clarifyingQuestion';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { ref } from 'vue';
@@ -12,7 +12,6 @@ const props = withDefaults(
         questions: ClarifyingQuestion[];
         answers: (string | null)[];
         hasOptionalQuestions: boolean;
-        showOptionalQuestions: boolean;
         optionalQuestionsLabel: string;
         isSubmitting: boolean;
         submitLabel?: string;
@@ -28,7 +27,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'update:answer', index: number, value: string): void;
-    (e: 'show-optional-questions', value: boolean): void;
     (e: 'submit-all'): void;
     (e: 'back'): void;
 }>();
@@ -76,12 +74,18 @@ const handleTranscription = (index: number, transcript: string) => {
                 >
                     {{ index + 1 }}
                 </span>
-                <span class="text-sm font-medium text-indigo-900">
-                    {{ question.question }}
-                    <span v-if="question.required" class="ml-1 text-red-500">
-                        *
+                <div class="flex flex-1 items-start gap-3">
+                    <span class="flex-1 text-sm font-medium text-indigo-900">
+                        {{ question.question }}
+                        <span
+                            v-if="question.required"
+                            class="ml-1 text-red-500"
+                        >
+                            *
+                        </span>
                     </span>
-                </span>
+                    <OptionalBadge v-if="question.required === false" />
+                </div>
             </div>
             <div class="mt-2 space-y-3 sm:mt-0 sm:ml-10">
                 <p v-if="question.purpose" class="text-sm text-indigo-600">
@@ -112,18 +116,8 @@ const handleTranscription = (index: number, transcript: string) => {
             </div>
         </div>
         <div
-            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:space-x-2"
+            class="flex flex-col justify-end gap-2 sm:flex-row sm:items-center sm:space-x-2"
         >
-            <ButtonSecondary
-                v-if="hasOptionalQuestions"
-                type="button"
-                class="flex w-full flex-col sm:w-auto"
-                title="Answer optional questions to further optimise your prompt"
-                @click="emit('show-optional-questions', !showOptionalQuestions)"
-            >
-                <span v-html="optionalQuestionsLabel"></span>
-            </ButtonSecondary>
-
             <ButtonPrimary
                 type="button"
                 :disabled="isSubmitting"

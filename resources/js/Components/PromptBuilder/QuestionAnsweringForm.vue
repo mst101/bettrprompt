@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
+import OptionalBadge from '@/Components/OptionalBadge.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
@@ -16,13 +17,11 @@ interface Props {
     currentQuestionNumber: number;
     totalQuestions: number;
     isSubmitting: boolean;
-    showOptionalHints?: boolean;
     canGoBack?: boolean;
     showAll?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    showOptionalHints: false,
     canGoBack: false,
     showAll: false,
 });
@@ -33,7 +32,6 @@ const emit = defineEmits<{
     (e: 'skip'): void;
     (e: 'go-back'): void;
     (e: 'clear'): void;
-    (e: 'toggle-optional-hints'): void;
 }>();
 
 const { appendText } = useTextAppend();
@@ -116,28 +114,11 @@ const handleTranscription = (text: string) => {
                 <h3 class="flex-1 text-sm font-medium text-indigo-900">
                     {{ questionText }}
                 </h3>
-                <span
-                    v-if="!isRequired"
-                    class="inline-flex shrink-0 items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800"
-                >
-                    Optional
-                </span>
+                <OptionalBadge v-if="!isRequired" />
             </div>
-            <p
-                v-if="questionPurpose && showOptionalHints"
-                class="mt-2 text-xs text-indigo-600"
-            >
+            <p v-if="questionPurpose" class="mt-2 text-xs text-indigo-600">
                 {{ questionPurpose }}
             </p>
-            <button
-                v-if="!isRequired"
-                type="button"
-                :disabled="isSubmitting"
-                class="text-xs text-indigo-600 underline hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-                @click="emit('toggle-optional-hints')"
-            >
-                {{ showOptionalHints ? 'Hide' : 'Show' }} why we're asking
-            </button>
         </div>
 
         <!-- Answer Input -->
