@@ -237,7 +237,7 @@ const submitAnswers = () => {
 
             <!-- Text input questions -->
             <div v-else-if="question.type === 'text'" class="mt-3">
-                <div class="mb-3 flex items-center gap-3">
+                <div class="mb-3 flex items-center justify-end gap-3">
                     <ButtonVoiceInput
                         @transcription="
                             (transcript) =>
