@@ -158,10 +158,13 @@ const clarifyingAnswersHaveChanged = computed(() => {
     });
 });
 
-const goBack = () => {
+const goBack = async () => {
     if (currentIndex.value > 0) {
         currentIndex.value -= 1;
         currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
+        // Focus the previous question's textarea
+        await nextTick();
+        questionFormRef.value?.focus();
     }
 };
 
