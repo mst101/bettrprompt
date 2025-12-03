@@ -393,8 +393,8 @@ const submitButtonText = computed(() => {
             class="space-y-4"
             @submit.prevent="
                 props.mode === 'view-edit'
-                    ? submitUpdatedAnswers()
-                    : submitAnswers()
+                    ? submitUpdatedAnswers
+                    : submitAnswers
             "
         >
             <div v-for="question in questions" :key="question.id">
@@ -510,7 +510,7 @@ const submitButtonText = computed(() => {
                         "
                         v-model="currentAnswers[question.id]"
                         :label="question.question"
-                        rows="3"
+                        :rows="3"
                         placeholder="Type your answer here..."
                     >
                         <template #actions>
