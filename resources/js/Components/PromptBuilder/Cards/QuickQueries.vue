@@ -272,6 +272,12 @@ const hasAnswers = computed(
     () => questions.value.length > 0 && Object.keys(answers.value).length > 0,
 );
 
+// Get the ID of the first text input question
+const firstTextQuestionId = computed(() => {
+    const firstTextQuestion = questions.value.find((q) => q.type === 'text');
+    return firstTextQuestion?.id;
+});
+
 // Show this component if in initial-submit mode OR if we have answers in view-edit mode
 const shouldShow = computed(() => {
     if (props.mode === 'initial-submit') {
@@ -382,7 +388,7 @@ const submitButtonText = computed(() => {
                     : submitAnswers()
             "
         >
-            <div v-for="(question, index) in questions" :key="question.id">
+            <div v-for="question in questions" :key="question.id">
                 <!-- Multiple choice questions -->
                 <div v-if="question.type === 'choice'" class="space-y-3">
                     <label class="block text-sm font-medium text-indigo-900">
@@ -472,7 +478,7 @@ const submitButtonText = computed(() => {
                     <FormTextareaWithActions
                         :id="`question-${question.id}`"
                         :ref="
-                            index === 0
+                            question.id === firstTextQuestionId
                                 ? (el) =>
                                       (firstAnswerRef = el as InstanceType<
                                           typeof FormTextareaWithActions
