@@ -5,6 +5,7 @@ import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import Card from '@/Components/Card.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
+import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import type {
     PreAnalysisQuestion,
@@ -364,29 +365,31 @@ const hasAnswers = computed(
 
                 <!-- Text input questions -->
                 <div v-else-if="question.type === 'text'" class="mt-3">
-                    <div class="flex items-end gap-3">
-                        <div class="flex-1">
-                            <textarea
-                                :ref="
-                                    questions[0].id === question.id
-                                        ? (el) =>
-                                              (firstAnswerRef =
-                                                  el as HTMLTextAreaElement)
-                                        : undefined
-                                "
-                                v-model="editAnswers[question.id]"
-                                rows="3"
-                                class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="Type your answer here..."
-                            ></textarea>
-                        </div>
+                    <div class="mb-3 flex items-center gap-3">
                         <ButtonVoiceInput
                             @transcription="
                                 (transcript) =>
                                     handleTranscription(transcript, question.id)
                             "
                         />
+                        <ButtonTrash
+                            :disabled="!editAnswers[question.id]"
+                            @clear="editAnswers[question.id] = ''"
+                        />
                     </div>
+                    <textarea
+                        :ref="
+                            questions[0].id === question.id
+                                ? (el) =>
+                                      (firstAnswerRef =
+                                          el as HTMLTextAreaElement)
+                                : undefined
+                        "
+                        v-model="editAnswers[question.id]"
+                        rows="3"
+                        class="block w-full rounded-lg border border-indigo-200 px-3 py-2 text-sm text-indigo-900 placeholder-indigo-300 focus:border-indigo-500 focus:ring-indigo-500"
+                        placeholder="Type your answer here..."
+                    ></textarea>
                 </div>
             </div>
 
