@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { acceptCookies, loginAsTestUser } from './helpers/auth';
+import { seedPromptRuns } from './helpers/database';
 
 test.describe('Prompt Builder - Unauthenticated', () => {
     test('should allow access to prompt optimizer when not logged in', async ({
@@ -289,11 +290,10 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     });
 
     test('should display optimised prompt when complete', async ({ page }) => {
-        // For this test, we'd ideally navigate to a completed prompt run
-        // This could be done by creating one via API or seeding the database
-        // For now, we'll test the UI elements that should appear
+        // Seed a completed prompt for this test to ensure reliable results
+        await seedPromptRuns(1, 'completed');
 
-        // Navigate to prompt builder history to find a completed prompt
+        // Navigate to prompt builder history to find the completed prompt
         await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
@@ -342,7 +342,10 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     });
 
     test('should copy optimised prompt to clipboard', async ({ page }) => {
-        // Navigate to history and find a completed prompt
+        // Seed a completed prompt for this test
+        await seedPromptRuns(1, 'completed');
+
+        // Navigate to history and find the completed prompt
         await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 
@@ -405,7 +408,10 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should allow editing and saving optimised prompt', async ({
         page,
     }) => {
-        // Navigate to a completed prompt
+        // Seed a completed prompt for this test
+        await seedPromptRuns(1, 'completed');
+
+        // Navigate to the completed prompt
         await page.goto('/prompt-builder-history');
         await page.waitForLoadState('networkidle');
 

@@ -32,14 +32,12 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 });
 
 test.describe('Prompt Builder History - Empty State', () => {
-    test.beforeAll(async () => {
-        // Ensure no prompt runs exist for test user
+    test.beforeEach(async ({ page }) => {
+        // Clean database for each test to ensure empty state
         await execAsync(
             './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e',
         );
-    });
 
-    test.beforeEach(async ({ page }) => {
         // Log in before each test
         await loginAsTestUser(page);
     });
@@ -112,12 +110,10 @@ test.describe('Prompt Builder History - Empty State', () => {
 });
 
 test.describe('Prompt Builder History - With Data', () => {
-    test.beforeAll(async () => {
-        // Create prompt runs for testing pagination
-        await seedPromptRuns(15); // Create 15 prompt runs for testing pagination
-    });
-
     test.beforeEach(async ({ page }) => {
+        // Seed prompt runs before each test to ensure fresh data
+        await seedPromptRuns(15); // Create 15 prompt runs for testing
+
         // Log in before each test
         await loginAsTestUser(page);
     });
@@ -251,11 +247,10 @@ test.describe('Prompt Builder History - With Data', () => {
 });
 
 test.describe('Prompt Builder History - Sorting', () => {
-    test.beforeAll(async () => {
-        await seedPromptRuns(10);
-    });
-
     test.beforeEach(async ({ page }) => {
+        // Seed data for each test to ensure consistent sorting
+        await seedPromptRuns(10);
+
         await loginAsTestUser(page);
     });
 
@@ -383,18 +378,16 @@ test.describe('Prompt Builder History - Sorting', () => {
 });
 
 test.describe('Prompt Builder History - Pagination', () => {
-    test.beforeAll(async () => {
-        await seedPromptRuns(25); // Create enough for multiple pages
-    });
-
     test.beforeEach(async ({ page, context }) => {
+        // Seed data for pagination testing before each test
+        await seedPromptRuns(25); // Create enough for multiple pages
+
         // Clear cookies to prevent test interference
         await context.clearCookies();
 
         await loginAsTestUser(page);
 
         // Clear localStorage after login to reset per_page preference
-        // This prevents tests from interfering with each other
         await page.evaluate(() => {
             localStorage.removeItem('history_per_page');
         });
@@ -550,11 +543,10 @@ test.describe('Prompt Builder History - Pagination', () => {
 });
 
 test.describe('Prompt Builder History - Navigation', () => {
-    test.beforeAll(async () => {
-        await seedPromptRuns(5);
-    });
-
     test.beforeEach(async ({ page }) => {
+        // Seed data for navigation tests
+        await seedPromptRuns(5);
+
         await loginAsTestUser(page);
     });
 
@@ -618,11 +610,9 @@ test.describe('Prompt Builder History - Navigation', () => {
 });
 
 test.describe('Prompt Builder History - Responsive Design', () => {
-    test.beforeAll(async () => {
-        await seedPromptRuns(5);
-    });
-
     test.beforeEach(async ({ page }) => {
+        // Seed data for each test to ensure consistent responsive layout
+        await seedPromptRuns(5);
         await loginAsTestUser(page);
     });
 
@@ -717,7 +707,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
     test('should handle prompt runs with different statuses', async ({
         page,
     }) => {
-        // Create runs with various statuses
+        // Seed runs with various statuses for this test
         await seedPromptRuns(3, 'completed');
         await seedPromptRuns(2, 'processing');
         await seedPromptRuns(1, 'failed');
@@ -736,7 +726,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
     });
 
     test('should handle prompt runs without frameworks', async ({ page }) => {
-        // Create runs without frameworks selected yet
+        // Seed runs without frameworks selected yet for this test
         await seedPromptRuns(3, 'pending');
 
         await page.goto('/prompt-builder-history');
@@ -755,6 +745,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
     test('should maintain sort and pagination state when navigating back', async ({
         page,
     }) => {
+        // Seed data for navigation and state testing
         await seedPromptRuns(15);
 
         // Set localStorage to match the per_page we'll use in the URL
