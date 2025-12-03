@@ -243,12 +243,7 @@ const submitAnswers = () => {
 };
 
 const submitUpdatedAnswers = () => {
-    console.log('submitUpdatedAnswers called', {
-        allAnswersValid: allAnswersValid.value,
-        formProcessing: form.processing,
-    });
     if (!allAnswersValid.value || form.processing) {
-        console.log('Early return - validation failed or form processing');
         return;
     }
 
@@ -271,19 +266,12 @@ const submitUpdatedAnswers = () => {
 
     form.answers = finalAnswers;
 
-    console.log('Submitting form with answers:', finalAnswers);
     form.post(
         route('prompt-builder.create-child', {
             parentPromptRun: props.promptRun.id,
         }),
         {
             preserveScroll: true,
-            onSuccess: () => {
-                console.log('Form submission successful');
-            },
-            onError: (errors) => {
-                console.log('Form submission error:', errors);
-            },
         },
     );
 };
@@ -355,10 +343,24 @@ const submitButtonText = computed(() => {
                     </ButtonSecondary>
 
                     <ButtonPrimary
-                        type="submit"
+                        type="button"
                         class="inline-flex w-full items-center gap-1 sm:w-fit"
-                        :disabled="!allAnswersValid || form.processing"
-                        :loading="form.processing"
+                        :disabled="
+                            !allAnswersValid ||
+                            (props.mode === 'view-edit'
+                                ? form.processing
+                                : isSubmitting)
+                        "
+                        :loading="
+                            props.mode === 'view-edit'
+                                ? form.processing
+                                : isSubmitting
+                        "
+                        @click="
+                            props.mode === 'view-edit'
+                                ? submitUpdatedAnswers()
+                                : submitAnswers()
+                        "
                     >
                         {{ submitButtonText }}
                     </ButtonPrimary>
@@ -581,16 +583,6 @@ const submitButtonText = computed(() => {
                         props.mode === 'view-edit'
                             ? form.processing
                             : isSubmitting
-                    "
-                    @click="
-                        console.log('Button clicked', {
-                            allAnswersValid: allAnswersValid,
-                            disabled:
-                                !allAnswersValid ||
-                                (props.mode === 'view-edit'
-                                    ? form.processing
-                                    : isSubmitting),
-                        })
                     "
                 >
                     {{ submitButtonText }}
