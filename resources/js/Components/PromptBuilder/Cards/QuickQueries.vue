@@ -17,12 +17,9 @@ import { computed, nextTick, ref, watch, watchEffect } from 'vue';
 
 interface Props {
     promptRun: PromptRunResource;
-    mode?: 'view-edit' | 'initial-submit';
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    mode: 'view-edit',
-});
+const props = defineProps<Props>();
 
 const questions = computed<PreAnalysisQuestion[]>(
     () => props.promptRun.preAnalysisQuestions ?? [],
@@ -88,18 +85,31 @@ watchEffect(() => {
     }
 });
 
-// Watch for changes in currentAnswers and focus the "Other" textarea when selected
+// Track previous "Other" selections to only focus when newly selected
+const previousOtherSelections = ref<Set<string>>(new Set());
+
+// Watch for changes in currentAnswers and focus the "Other" textarea only when newly selected
 watch(
     currentAnswers,
     async () => {
         await nextTick();
         questions.value.forEach((question) => {
-            const textareaRef = otherTextareaRefs.value[question.id];
-            if (selectedOtherOption(question) && textareaRef) {
-                const textarea = textareaRef.$el?.querySelector('textarea');
-                if (textarea) {
-                    textarea.focus();
+            const isCurrentlyOther = selectedOtherOption(question);
+            const wasOther = previousOtherSelections.value.has(question.id);
+
+            // Only focus if "Other" was just selected (wasn't selected before, but is now)
+            if (isCurrentlyOther && !wasOther) {
+                const textareaRef = otherTextareaRefs.value[question.id];
+                if (textareaRef) {
+                    const textarea = textareaRef.$el?.querySelector('textarea');
+                    if (textarea) {
+                        textarea.focus();
+                    }
                 }
+                previousOtherSelections.value.add(question.id);
+            } else if (!isCurrentlyOther && wasOther) {
+                // Remove from tracking if no longer "Other"
+                previousOtherSelections.value.delete(question.id);
             }
         });
     },
@@ -147,6 +157,7 @@ const getAnswerLabel = (
 const startEditing = () => {
     currentAnswers.value = { ...answers.value };
     otherResponses.value = {};
+    previousOtherSelections.value.clear();
 
     // Parse "Other" responses from combined answers
     questions.value.forEach((question) => {
@@ -163,6 +174,13 @@ const startEditing = () => {
         }
     });
 
+    // Initialize tracking for any pre-existing "Other" selections
+    questions.value.forEach((question) => {
+        if (selectedOtherOption(question)) {
+            previousOtherSelections.value.add(question.id);
+        }
+    });
+
     isEditing.value = true;
     shouldFocusFirstAnswer.value = true;
 };
@@ -173,13 +191,6 @@ const cancelEditing = () => {
     otherResponses.value = {};
     form.clearErrors();
     shouldFocusEditButton.value = true;
-};
-
-const startInitialSubmit = () => {
-    currentAnswers.value = {};
-    otherResponses.value = {};
-    isEditing.value = true;
-    shouldFocusFirstAnswer.value = true;
 };
 
 // Check if all answers are valid
@@ -209,15 +220,8 @@ const answersHaveChanged = computed(() => {
     });
 });
 
-const submitAnswers = () => {
-    if (!allAnswersValid.value || isSubmitting.value) {
-        return;
-    }
-
-    isSubmitting.value = true;
-    submitError.value = null;
-
-    // Combine answers with "Other" responses if applicable
+// Helper to build final answers with "Other" responses
+const buildFinalAnswers = (): Record<string, string> => {
     const finalAnswers: Record<string, string> = {};
 
     questions.value.forEach((question) => {
@@ -234,53 +238,73 @@ const submitAnswers = () => {
         }
     });
 
+    return finalAnswers;
+};
+
+const submitAnswers = () => {
+    if (!allAnswersValid.value) {
+        return;
+    }
+
+    const finalAnswers = buildFinalAnswers();
+
+    // If we have existing answers, this is an edit (create new prompt run)
+    if (hasAnswers.value) {
+        form.answers = finalAnswers;
+        form.post(
+            route('prompt-builder.update-quick-queries', {
+                promptRun: props.promptRun.id,
+            }),
+            {
+                onSuccess: () => {
+                    window.scrollTo(0, 0);
+                },
+            },
+        );
+    } else {
+        // Initial submission (continue to analysis)
+        isSubmitting.value = true;
+        submitError.value = null;
+
+        router.post(
+            route('prompt-builder.pre-analysis-answers', props.promptRun.id),
+            { answers: finalAnswers },
+            {
+                onSuccess: () => {
+                    window.scrollTo(0, 0);
+                },
+                onError: (errors) => {
+                    submitError.value =
+                        (errors as Record<string, string>)?.message ||
+                        'Failed to submit answers. Please try again.';
+                },
+                onFinish: () => {
+                    isSubmitting.value = false;
+                },
+            },
+        );
+    }
+};
+
+const continueToAnalysis = () => {
+    isSubmitting.value = true;
+    submitError.value = null;
+
     router.post(
         route('prompt-builder.pre-analysis-answers', props.promptRun.id),
-        { answers: finalAnswers },
+        { answers: answers.value },
         {
-            preserveScroll: true,
+            onSuccess: () => {
+                window.scrollTo(0, 0);
+            },
             onError: (errors) => {
                 submitError.value =
                     (errors as Record<string, string>)?.message ||
-                    'Failed to submit answers. Please try again.';
+                    'Failed to continue to analysis. Please try again.';
             },
             onFinish: () => {
                 isSubmitting.value = false;
             },
-        },
-    );
-};
-
-const submitUpdatedAnswers = () => {
-    if (!allAnswersValid.value || form.processing) {
-        return;
-    }
-
-    // Combine answers with "Other" responses if applicable
-    const finalAnswers: Record<string, string> = {};
-
-    questions.value.forEach((question) => {
-        const answer = currentAnswers.value[question.id];
-        if (!answer) return;
-
-        if (selectedOtherOption(question)) {
-            const otherResponse = otherResponses.value[question.id];
-            if (otherResponse) {
-                finalAnswers[question.id] = `${answer}: ${otherResponse}`;
-            }
-        } else {
-            finalAnswers[question.id] = answer;
-        }
-    });
-
-    form.answers = finalAnswers;
-
-    form.post(
-        route('prompt-builder.update-quick-queries', {
-            promptRun: props.promptRun.id,
-        }),
-        {
-            preserveScroll: true,
         },
     );
 };
@@ -293,132 +317,105 @@ const hasAnswers = computed(
     () => questions.value.length > 0 && Object.keys(answers.value).length > 0,
 );
 
+// Auto-start editing if there are no answers yet
+if (hasQuestions.value && !hasAnswers.value) {
+    startEditing();
+}
+
 // Get the ID of the first question
 const firstQuestionId = computed(() => questions.value[0]?.id);
 
-// Show this component if in initial-submit mode OR if we have answers in view-edit mode
-const shouldShow = computed(() => {
-    if (props.mode === 'initial-submit') {
-        return hasQuestions.value;
-    }
-    return hasAnswers.value;
-});
+// Show this component if we have questions
+const shouldShow = computed(() => hasQuestions.value);
 
-// Determine which title and button text to show
-const cardTitle = computed(() => {
-    if (props.mode === 'initial-submit') {
-        return 'Quick Clarification';
-    }
-    return 'Quick Queries';
-});
+const submitButtonText = computed(() =>
+    hasAnswers.value ? 'Generate New Prompt' : 'Continue',
+);
 
-const submitButtonText = computed(() => {
-    if (props.mode === 'initial-submit') {
-        return 'Continue';
-    }
-    return 'Generate New Prompt';
-});
+const isLoading = computed(() =>
+    hasAnswers.value ? form.processing : isSubmitting.value,
+);
+
+const isDisabled = computed(() =>
+    hasAnswers.value
+        ? !allAnswersValid.value || form.processing || !answersHaveChanged.value
+        : !allAnswersValid.value || isSubmitting.value,
+);
 </script>
 
 <template>
     <Card v-if="shouldShow" class="space-y-4">
-        <!-- View/Edit mode header -->
-        <template v-if="props.mode === 'view-edit'">
-            <div
-                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
-            >
+        <!-- Header -->
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+        >
+            <div>
                 <h2 class="text-lg font-semibold text-indigo-900">
-                    {{ cardTitle }}
+                    Quick Queries
                 </h2>
+                <p
+                    v-if="!hasAnswers && promptRun.preAnalysisReasoning"
+                    class="mt-1 text-sm text-indigo-600"
+                >
+                    {{ promptRun.preAnalysisReasoning }}
+                </p>
+            </div>
+            <ButtonSecondary
+                v-if="!isEditing && hasAnswers"
+                ref="editButtonRef"
+                type="button"
+                class="inline-flex w-full items-center gap-1 sm:w-fit"
+                @click="startEditing"
+            >
+                <DynamicIcon name="edit" class="h-4 w-4" />
+                Edit Answers
+            </ButtonSecondary>
+        </div>
+
+        <!-- View Mode (only show if has answers and not editing) -->
+        <div v-if="!isEditing && hasAnswers" class="space-y-4">
+            <div
+                v-for="question in questions"
+                :key="question.id"
+                class="rounded-lg border border-indigo-200 bg-indigo-50 p-3"
+            >
+                <p class="text-xs font-medium text-indigo-600">
+                    {{ question.question }}
+                </p>
+                <p class="mt-2 text-sm text-indigo-900">
+                    {{ getAnswerLabel(question, answers[question.id] || '') }}
+                </p>
+            </div>
+
+            <!-- Action buttons for view mode -->
+            <div class="flex flex-col justify-end gap-3 sm:flex-row">
                 <ButtonSecondary
-                    v-if="!isEditing"
-                    ref="editButtonRef"
                     type="button"
                     class="inline-flex w-full items-center gap-1 sm:w-fit"
+                    :disabled="isLoading"
                     @click="startEditing"
                 >
                     <DynamicIcon name="edit" class="h-4 w-4" />
                     Edit Answers
                 </ButtonSecondary>
 
-                <div v-else class="space-y-2 sm:space-x-4">
-                    <ButtonSecondary
-                        type="button"
-                        class="inline-flex w-full items-center gap-1 sm:w-fit"
-                        :disabled="form.processing"
-                        @click="cancelEditing"
-                    >
-                        Cancel
-                    </ButtonSecondary>
-
-                    <ButtonPrimary
-                        type="button"
-                        class="inline-flex w-full items-center gap-1 sm:w-fit"
-                        :disabled="
-                            !allAnswersValid ||
-                            (props.mode === 'view-edit'
-                                ? form.processing || !answersHaveChanged
-                                : isSubmitting)
-                        "
-                        :loading="
-                            props.mode === 'view-edit'
-                                ? form.processing
-                                : isSubmitting
-                        "
-                        @click="
-                            props.mode === 'view-edit'
-                                ? submitUpdatedAnswers()
-                                : submitAnswers()
-                        "
-                    >
-                        {{ submitButtonText }}
-                    </ButtonPrimary>
-                </div>
-            </div>
-
-            <!-- View Mode -->
-            <div v-if="!isEditing" class="space-y-4">
-                <div
-                    v-for="question in questions"
-                    :key="question.id"
-                    class="rounded-lg border border-indigo-200 bg-indigo-50 p-3"
+                <ButtonPrimary
+                    type="button"
+                    class="inline-flex w-full items-center gap-1 sm:w-fit"
+                    :disabled="isLoading"
+                    :loading="isLoading"
+                    @click="continueToAnalysis"
                 >
-                    <p class="text-xs font-medium text-indigo-600">
-                        {{ question.question }}
-                    </p>
-                    <p class="mt-2 text-sm text-indigo-900">
-                        {{
-                            getAnswerLabel(question, answers[question.id] || '')
-                        }}
-                    </p>
-                </div>
+                    Optimise Prompt
+                </ButtonPrimary>
             </div>
-        </template>
-
-        <!-- Initial submit mode header -->
-        <template v-else>
-            <div v-if="!isEditing">
-                <h2 class="mb-2 text-lg font-semibold text-indigo-900">
-                    {{ cardTitle }}
-                </h2>
-                <p
-                    v-if="promptRun.preAnalysisReasoning"
-                    class="text-sm text-indigo-600"
-                >
-                    {{ promptRun.preAnalysisReasoning }}
-                </p>
-            </div>
-        </template>
+        </div>
 
         <!-- Edit/Submit Form -->
         <form
             v-if="isEditing"
             class="space-y-4"
-            @submit.prevent="
-                props.mode === 'view-edit'
-                    ? submitUpdatedAnswers
-                    : submitAnswers
-            "
+            @submit.prevent="submitAnswers"
         >
             <div v-for="question in questions" :key="question.id">
                 <!-- Multiple choice questions -->
@@ -570,10 +567,10 @@ const submitButtonText = computed(() => {
                 class="mt-8 flex flex-col justify-end gap-3 sm:mt-0 sm:flex-row"
             >
                 <ButtonSecondary
-                    v-if="props.mode === 'view-edit'"
+                    v-if="hasAnswers"
                     type="button"
                     class="inline-flex w-full items-center gap-1 sm:w-fit"
-                    :disabled="form.processing"
+                    :disabled="isLoading"
                     @click="cancelEditing"
                 >
                     Cancel
@@ -582,35 +579,12 @@ const submitButtonText = computed(() => {
                 <ButtonPrimary
                     type="submit"
                     class="inline-flex w-full items-center gap-1 sm:w-fit"
-                    :disabled="
-                        !allAnswersValid ||
-                        (props.mode === 'view-edit'
-                            ? form.processing || !answersHaveChanged
-                            : isSubmitting)
-                    "
-                    :loading="
-                        props.mode === 'view-edit'
-                            ? form.processing
-                            : isSubmitting
-                    "
+                    :disabled="isDisabled"
+                    :loading="isLoading"
                 >
                     {{ submitButtonText }}
                 </ButtonPrimary>
             </div>
         </form>
-
-        <!-- Initial submit mode: show start button -->
-        <template v-if="props.mode === 'initial-submit' && !isEditing">
-            <div class="flex justify-end">
-                <ButtonPrimary
-                    type="button"
-                    :disabled="isSubmitting"
-                    :loading="isSubmitting"
-                    @click="startInitialSubmit"
-                >
-                    {{ submitButtonText }}
-                </ButtonPrimary>
-            </div>
-        </template>
     </Card>
 </template>

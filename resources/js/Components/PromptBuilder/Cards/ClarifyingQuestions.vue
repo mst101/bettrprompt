@@ -46,28 +46,9 @@ const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
     allQuestions.value.filter((q) => q.required === false),
 );
 
-const showOptionalHints = ref(false);
-
-// Create a mapping from sorted question indices to original indices
-const questionIndexMapping = computed<number[]>(() => {
-    const all = allQuestions.value;
-    const indices = all.map((_, idx) => idx);
-
-    // Sort indices based on the corresponding questions (required first)
-    indices.sort((aIdx, bIdx) => {
-        const aRequired = all[aIdx].required !== false ? 1 : 0;
-        const bRequired = all[bIdx].required !== false ? 1 : 0;
-        return bRequired - aRequired; // Required first (1 > 0)
-    });
-
-    return indices;
-});
-
-// Always show all questions (required first), but optionalHints controls display of purpose text
+// Questions are already sorted by the backend (required first)
 const questions = computed<ClarifyingQuestion[]>(() => {
-    const all = allQuestions.value;
-    // Return questions in sorted order (required first)
-    return questionIndexMapping.value.map((idx) => all[idx]);
+    return allQuestions.value;
 });
 
 const answers = ref<(string | null)[]>([]);
@@ -124,11 +105,6 @@ const normalizeAnswer = (value: string | null | undefined) => {
     return trimmed.length ? trimmed : null;
 };
 
-// Helper: Convert from sorted question index to original question index
-const getOriginalIndex = (sortedIndex: number): number => {
-    return questionIndexMapping.value[sortedIndex] ?? sortedIndex;
-};
-
 const hydrateAnswers = () => {
     const existing = props.promptRun.clarifyingAnswers ?? [];
     // Always use allQuestions for the answers array to maintain index consistency
@@ -157,7 +133,6 @@ const hydrateAnswers = () => {
 
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
-    showOptionalHints.value = false;
     submitError.value = null;
 };
 
@@ -185,8 +160,7 @@ const clarifyingAnswersHaveChanged = computed(() => {
 const goBack = async () => {
     if (currentIndex.value > 0) {
         currentIndex.value -= 1;
-        const originalIdx = getOriginalIndex(currentIndex.value);
-        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
         // Focus the previous question's textarea
         await nextTick();
         questionFormRef.value?.focus();
@@ -196,23 +170,19 @@ const goBack = async () => {
 const goNext = () => {
     if (currentIndex.value < questions.value.length - 1) {
         currentIndex.value += 1;
-        const originalIdx = getOriginalIndex(currentIndex.value);
-        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
+        currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
     }
 };
 
-const saveAnswer = async (sortedIndex: number, value: string | null) => {
+const saveAnswer = async (questionIndex: number, value: string | null) => {
     isSubmitting.value = true;
     submitError.value = null;
 
     try {
-        // Convert sorted index to original index for the API call
-        const originalIndex = getOriginalIndex(sortedIndex);
-
         const response = await axios.post(
             route('prompt-builder.answer', props.promptRun.id),
             {
-                question_index: originalIndex,
+                question_index: questionIndex,
                 answer: value,
             },
         );
@@ -225,8 +195,7 @@ const saveAnswer = async (sortedIndex: number, value: string | null) => {
         );
 
         // Update draft to match saved answer
-        const originalIdx = getOriginalIndex(currentIndex.value);
-        currentAnswerDraft.value = answers.value[originalIdx] ?? '';
+        currentAnswerDraft.value = answers.value[questionIndex] ?? '';
     } catch (error: unknown) {
         const axiosError = error as {
             response?: { data?: { error?: { message?: string } } };
@@ -272,14 +241,12 @@ const submitAnswer = async () => {
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
-    showOptionalHints.value = true; // Show hints for optional questions when editing
     shouldFocusBulkQuestions.value = true;
 };
 
 const cancelEditingAnswers = () => {
     isEditingAnswers.value = false;
     showAllQuestions.value = false;
-    showOptionalHints.value = false;
     shouldFocusEditButton.value = true;
 };
 
@@ -296,6 +263,7 @@ const submitAllAnswers = async () => {
             question_answers: payload,
         });
 
+        window.scrollTo(0, 0);
         router.reload({ only: ['promptRun'] });
     } catch (error: unknown) {
         const axiosError = error as {
@@ -332,7 +300,9 @@ const submitEditedAnswers = () => {
         }),
         { clarifying_answers: payload },
         {
-            preserveScroll: true,
+            onSuccess: () => {
+                window.scrollTo(0, 0);
+            },
             onError: () => {
                 submitError.value =
                     'Failed to optimise with edited answers. Please try again.';
@@ -391,9 +361,7 @@ const hasOptionalQuestions = computed(() => optionalQuestions.value.length > 0);
 
 const optionalQuestionsLabel = computed(() => {
     const count = optionalQuestions.value.length;
-    return showOptionalHints.value
-        ? 'Hide optional question hints'
-        : `Show ${count} optional question${count !== 1 ? 's' : ''} <span class="text-xs">(to improve your prompt)</span>`;
+    return `${count} optional question${count !== 1 ? 's' : ''} <span class="text-xs">(to improve your prompt)</span>`;
 });
 </script>
 
@@ -498,14 +466,12 @@ const optionalQuestionsLabel = computed(() => {
             :total-questions="questions.length"
             :is-submitting="isSubmitting"
             :can-go-back="currentIndex > 0"
-            :show-optional-hints="showOptionalHints"
             :show-all="showAllQuestions"
             @submit="submitAnswer"
             @skip="skipQuestion"
             @go-back="goBack"
             @clear="clearCurrentAnswer"
             @toggle-show-all="showAllQuestions = !showAllQuestions"
-            @toggle-optional-hints="showOptionalHints = !showOptionalHints"
         />
 
         <BulkQuestions
@@ -514,7 +480,6 @@ const optionalQuestionsLabel = computed(() => {
             :questions="allQuestions"
             :answers="answers"
             :has-optional-questions="hasOptionalQuestions"
-            :show-optional-questions="showOptionalHints"
             :optional-questions-label="optionalQuestionsLabel"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
@@ -531,7 +496,6 @@ const optionalQuestionsLabel = computed(() => {
                     ? cancelEditingAnswers()
                     : (showAllQuestions = false)
             "
-            @show-optional-questions="(value) => (showOptionalHints = value)"
         />
 
         <div
