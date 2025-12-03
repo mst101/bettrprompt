@@ -8,6 +8,7 @@ interface ApiUsageData {
 }
 
 interface Props {
+    preAnalysisUsage: ApiUsageData | null;
     analysisUsage: ApiUsageData | null;
     generationUsage: ApiUsageData | null;
 }
@@ -25,7 +26,9 @@ const formatNumber = (num: number) => {
 
 const grandTotal = () => {
     return (
-        totalTokens(props.analysisUsage) + totalTokens(props.generationUsage)
+        totalTokens(props.preAnalysisUsage) +
+        totalTokens(props.analysisUsage) +
+        totalTokens(props.generationUsage)
     );
 };
 </script>
@@ -33,6 +36,44 @@ const grandTotal = () => {
 <template>
     <Card class="space-y-6">
         <h2 class="text-lg font-semibold text-indigo-900">API Usage</h2>
+
+        <!-- Pre-Analysis Workflow -->
+        <div
+            v-if="preAnalysisUsage"
+            class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
+        >
+            <h3 class="mb-3 text-sm font-medium text-indigo-900">
+                Pre-Analysis Workflow
+            </h3>
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-600">Model:</span>
+                    <span class="font-mono text-indigo-900">
+                        {{ preAnalysisUsage.model }}
+                    </span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-600">Input Tokens:</span>
+                    <span class="font-mono text-indigo-900">
+                        {{ formatNumber(preAnalysisUsage.input_tokens) }}
+                    </span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-600">Output Tokens:</span>
+                    <span class="font-mono text-indigo-900">
+                        {{ formatNumber(preAnalysisUsage.output_tokens) }}
+                    </span>
+                </div>
+                <div
+                    class="flex justify-between border-t border-indigo-200 pt-2 text-sm font-medium"
+                >
+                    <span class="text-indigo-900">Total:</span>
+                    <span class="font-mono text-indigo-900">
+                        {{ formatNumber(totalTokens(preAnalysisUsage)) }}
+                    </span>
+                </div>
+            </div>
+        </div>
 
         <!-- Analysis Workflow -->
         <div
@@ -112,7 +153,7 @@ const grandTotal = () => {
 
         <!-- Grand Total -->
         <div
-            v-if="analysisUsage || generationUsage"
+            v-if="preAnalysisUsage || analysisUsage || generationUsage"
             class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <div class="flex justify-between text-sm font-semibold">
@@ -125,7 +166,7 @@ const grandTotal = () => {
 
         <!-- No Data -->
         <div
-            v-if="!analysisUsage && !generationUsage"
+            v-if="!preAnalysisUsage && !analysisUsage && !generationUsage"
             class="text-center text-indigo-500"
         >
             No API usage data available

@@ -66,7 +66,7 @@ class ProcessTaskAnalysis implements ShouldQueue
                     'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
                     'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
                     'question_rationale' => $result['data']['question_rationale'] ?? null,
-                    'framework_questions' => $result['data']['clarifying_questions'] ?? [],
+                    'framework_questions' => $this->sortClarifyingQuestions($result['data']['clarifying_questions'] ?? []),
                     'analysis_api_usage' => $result['api_usage'] ?? null,
                     'error_message' => null,
                 ]);
@@ -124,5 +124,27 @@ class ProcessTaskAnalysis implements ShouldQueue
                 'error_message' => $errorMessage,
             ]);
         });
+    }
+
+    /**
+     * Sort clarifying questions so required ones come first
+     * Maintains logical flow by using a stable sort
+     */
+    protected function sortClarifyingQuestions(array $questions): array
+    {
+        // Separate required and optional questions, preserving order within each group
+        $required = [];
+        $optional = [];
+
+        foreach ($questions as $question) {
+            if (isset($question['required']) && $question['required'] === false) {
+                $optional[] = $question;
+            } else {
+                $required[] = $question;
+            }
+        }
+
+        // Merge with required questions first
+        return array_merge($required, $optional);
     }
 }
