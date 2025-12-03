@@ -41,9 +41,7 @@ const otherResponses = ref<Record<string, string>>({});
 const otherTextareaRefs = ref<
     Record<string, InstanceType<typeof FormTextarea>>
 >({});
-const firstAnswerRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
-    null,
-);
+const firstAnswerRef = ref<HTMLElement | null>(null);
 const editButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
 const submitError = ref<string | null>(null);
 
@@ -272,11 +270,8 @@ const hasAnswers = computed(
     () => questions.value.length > 0 && Object.keys(answers.value).length > 0,
 );
 
-// Get the ID of the first text input question
-const firstTextQuestionId = computed(() => {
-    const firstTextQuestion = questions.value.find((q) => q.type === 'text');
-    return firstTextQuestion?.id;
-});
+// Get the ID of the first question
+const firstQuestionId = computed(() => questions.value[0]?.id);
 
 // Show this component if in initial-submit mode OR if we have answers in view-edit mode
 const shouldShow = computed(() => {
@@ -396,7 +391,7 @@ const submitButtonText = computed(() => {
                     </label>
                     <div class="space-y-3">
                         <label
-                            v-for="option in question.options"
+                            v-for="(option, optionIndex) in question.options"
                             :key="option.value"
                             class="flex cursor-pointer items-start rounded-lg border border-indigo-200 p-3 transition-colors hover:bg-indigo-50"
                             :class="{
@@ -406,6 +401,14 @@ const submitButtonText = computed(() => {
                             }"
                         >
                             <input
+                                :ref="
+                                    question.id === firstQuestionId &&
+                                    optionIndex === 0
+                                        ? (el) =>
+                                              (firstAnswerRef =
+                                                  el as HTMLElement)
+                                        : undefined
+                                "
                                 v-model="currentAnswers[question.id]"
                                 type="radio"
                                 :name="`question-${question.id}`"
@@ -450,7 +453,7 @@ const submitButtonText = computed(() => {
                     </label>
                     <div class="space-y-2">
                         <label
-                            v-for="option in question.options"
+                            v-for="(option, optionIndex) in question.options"
                             :key="option.value"
                             class="flex cursor-pointer items-start rounded-lg border border-indigo-200 p-3 transition-colors hover:bg-indigo-50"
                             :class="{
@@ -460,6 +463,14 @@ const submitButtonText = computed(() => {
                             }"
                         >
                             <input
+                                :ref="
+                                    question.id === firstQuestionId &&
+                                    optionIndex === 0
+                                        ? (el) =>
+                                              (firstAnswerRef =
+                                                  el as HTMLElement)
+                                        : undefined
+                                "
                                 v-model="currentAnswers[question.id]"
                                 type="radio"
                                 :name="`question-${question.id}`"
@@ -478,11 +489,9 @@ const submitButtonText = computed(() => {
                     <FormTextareaWithActions
                         :id="`question-${question.id}`"
                         :ref="
-                            question.id === firstTextQuestionId
+                            question.id === firstQuestionId
                                 ? (el) =>
-                                      (firstAnswerRef = el as InstanceType<
-                                          typeof FormTextareaWithActions
-                                      >)
+                                      (firstAnswerRef = el?.$el as HTMLElement)
                                 : undefined
                         "
                         v-model="currentAnswers[question.id]"
