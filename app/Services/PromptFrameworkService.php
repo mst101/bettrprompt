@@ -55,6 +55,8 @@ class PromptFrameworkService
                     'needs_clarification' => $data['data']['needs_clarification'],
                     'questions' => $data['data']['questions'] ?? null,
                     'reasoning' => $data['data']['reasoning'] ?? 'Proceeding with analysis.',
+                    'pre_analysis_context' => $data['data']['pre_analysis_context'] ?? null,
+                    'api_usage' => $data['api_usage'] ?? null,
                 ];
             }
 
@@ -68,6 +70,8 @@ class PromptFrameworkService
             return [
                 'needs_clarification' => false,
                 'reasoning' => 'Proceeding directly to analysis.',
+                'pre_analysis_context' => null,
+                'api_usage' => null,
             ];
         } catch (\Exception $e) {
             // Any error - skip gracefully
@@ -79,6 +83,8 @@ class PromptFrameworkService
             return [
                 'needs_clarification' => false,
                 'reasoning' => 'Proceeding directly to analysis.',
+                'pre_analysis_context' => null,
+                'api_usage' => null,
             ];
         }
     }

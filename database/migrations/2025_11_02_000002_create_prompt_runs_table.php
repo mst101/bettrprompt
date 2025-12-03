@@ -51,6 +51,7 @@ return new class extends Migration
             $table->json('iteration_suggestions')->nullable(); // string[] of suggestions for improving the prompt
 
             // API usage tracking
+            $table->json('pre_analysis_api_usage')->nullable(); // {model, input_tokens, output_tokens} from workflow 0
             $table->json('analysis_api_usage')->nullable(); // {model, input_tokens, output_tokens} from workflow 1
             $table->json('generation_api_usage')->nullable(); // {model, input_tokens, output_tokens} from workflow 2
 

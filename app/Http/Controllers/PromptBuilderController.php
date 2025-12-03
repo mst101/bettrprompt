@@ -93,6 +93,7 @@ class PromptBuilderController extends Controller
                         'workflow_stage' => 'pre_analysis_questions',
                         'pre_analysis_questions' => $preAnalysis['questions'],
                         'pre_analysis_reasoning' => $preAnalysis['reasoning'],
+                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
                     ]);
                 });
 
@@ -119,6 +120,7 @@ class PromptBuilderController extends Controller
                         'pre_analysis_skipped' => true,
                         'pre_analysis_reasoning' => $preAnalysis['reasoning'],
                         'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
+                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
                     ]);
                 });
 
@@ -837,7 +839,12 @@ class PromptBuilderController extends Controller
                 $query->orWhere('visitor_id', $visitor->id);
             }
         })
-            ->whereNotNull('task_classification') // Only prompt-builder runs
+            ->where(function ($query) {
+                // Include prompt-builder runs that have at least completed workflow_0 (pre-analysis)
+                // or workflow_1 (analysis)
+                $query->whereNotNull('task_classification') // Completed workflow_1
+                    ->orWhereNotNull('pre_analysis_questions'); // Completed workflow_0
+            })
             ->orderBy($sortBy, $sortDirection)
             ->paginate($perPage)
             ->withQueryString();

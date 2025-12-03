@@ -45,6 +45,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly personalityAdjustmentsSummary: Array<string> | null;
  *   readonly modelRecommendations: Array<unknown> | null;
  *   readonly iterationSuggestions: Array<string> | null;
+ *   readonly preAnalysisApiUsage: Record<string, unknown> | null;
  *   readonly analysisApiUsage: Record<string, unknown> | null;
  *   readonly generationApiUsage: Record<string, unknown> | null;
  *
@@ -104,6 +105,7 @@ class PromptRunResource extends JsonResource
             'personalityAdjustmentsSummary' => $this->personality_adjustments_summary,
             'modelRecommendations' => $this->model_recommendations,
             'iterationSuggestions' => $this->iteration_suggestions,
+            'preAnalysisApiUsage' => $this->pre_analysis_api_usage,
             'analysisApiUsage' => $this->analysis_api_usage,
             'generationApiUsage' => $this->generation_api_usage,
 

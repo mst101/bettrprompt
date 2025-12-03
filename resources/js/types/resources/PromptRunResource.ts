@@ -65,6 +65,7 @@ export interface PromptRunResource {
     readonly personalityAdjustmentsSummary: string[] | null;
     readonly modelRecommendations: Record<string, unknown>[] | null;
     readonly iterationSuggestions: string[] | null;
+    readonly preAnalysisApiUsage: Record<string, unknown> | null;
     readonly analysisApiUsage: Record<string, unknown> | null;
     readonly generationApiUsage: Record<string, unknown> | null;
     // Relationships
