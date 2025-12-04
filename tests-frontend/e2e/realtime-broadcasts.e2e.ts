@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-import { loginAsTestUser } from './helpers/auth';
+import { expect, test } from './fixtures';
 import {
     createTestPromptRun,
     triggerAnalysisCompleted,
@@ -13,8 +12,10 @@ import {
  */
 
 test.describe('Realtime - Event Broadcasting', () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should update UI when AnalysisCompleted event broadcasts', async ({
