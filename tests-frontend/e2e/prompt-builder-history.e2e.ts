@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-import { loginAsTestUser } from './helpers/auth';
+import { expect, test } from './fixtures';
 import { execAsync, seedPromptRuns } from './helpers/database';
 
 /**
@@ -31,14 +30,14 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 });
 
 test.describe('Prompt Builder History - Empty State', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Clean database for each test to ensure empty state
         await execAsync(
             './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e',
         );
+        // User is already authenticated via fixture
 
-        // Log in before each test
-        await loginAsTestUser(page);
+        void authenticatedPage;
     });
 
     test('should display page heading when authenticated', async ({ page }) => {
@@ -105,12 +104,12 @@ test.describe('Prompt Builder History - Empty State', () => {
 });
 
 test.describe('Prompt Builder History - With Data', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Seed prompt runs before each test to ensure fresh data
         await seedPromptRuns(15); // Create 15 prompt runs for testing
+        // User is already authenticated via fixture
 
-        // Log in before each test
-        await loginAsTestUser(page);
+        void authenticatedPage;
     });
 
     test('should display history table with prompt runs', async ({ page }) => {
@@ -235,11 +234,12 @@ test.describe('Prompt Builder History - With Data', () => {
 });
 
 test.describe('Prompt Builder History - Sorting', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Seed data for each test to ensure consistent sorting
         await seedPromptRuns(10);
+        // User is already authenticated via fixture
 
-        await loginAsTestUser(page);
+        void authenticatedPage;
     });
 
     test('should sort by created date (default descending)', async ({
@@ -352,19 +352,16 @@ test.describe('Prompt Builder History - Sorting', () => {
 });
 
 test.describe('Prompt Builder History - Pagination', () => {
-    test.beforeEach(async ({ page, context }) => {
+    test.beforeEach(async ({ page, authenticatedPage }) => {
         // Seed data for pagination testing before each test
         await seedPromptRuns(25); // Create enough for multiple pages
-
-        // Clear cookies to prevent test interference
-        await context.clearCookies();
-
-        await loginAsTestUser(page);
 
         // Clear localStorage after login to reset per_page preference
         await page.evaluate(() => {
             localStorage.removeItem('history_per_page');
         });
+        // User is already authenticated via fixture
+        void authenticatedPage; // Ensure fixture is consumed
     });
 
     test('should display pagination controls when multiple pages exist', async ({
@@ -502,11 +499,12 @@ test.describe('Prompt Builder History - Pagination', () => {
 });
 
 test.describe('Prompt Builder History - Navigation', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Seed data for navigation tests
         await seedPromptRuns(5);
+        // User is already authenticated via fixture
 
-        await loginAsTestUser(page);
+        void authenticatedPage;
     });
 
     test('should navigate to prompt details when clicking a row', async ({
@@ -566,10 +564,12 @@ test.describe('Prompt Builder History - Navigation', () => {
 });
 
 test.describe('Prompt Builder History - Responsive Design', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Seed data for each test to ensure consistent responsive layout
         await seedPromptRuns(5);
-        await loginAsTestUser(page);
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should adapt table layout for mobile viewport', async ({ page }) => {
@@ -651,8 +651,10 @@ test.describe('Prompt Builder History - Responsive Design', () => {
 });
 
 test.describe('Prompt Builder History - Edge Cases', () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should handle prompt runs with different statuses', async ({
