@@ -252,69 +252,73 @@ test.describe.skip('Framework Selection Analysis', () => {
             }
 
             // Check if framework has been selected
-            // Poll for framework tab appearance, but don't block forever
-            let frameworkFound = false;
+            // Wait for framework tab appearance, but don't block forever
             const maxWaitTime = 45000; // Wait up to 45 seconds for framework
-            const pollInterval = 3000; // Check every 3 seconds
             const startTime = Date.now();
 
             console.log(
                 `\n[${personalityType.code}] Waiting for framework selection...`,
             );
 
-            while (!frameworkFound && Date.now() - startTime < maxWaitTime) {
-                // Reload page to get latest state from backend
-                await page.reload();
+            try {
+                await page.waitForFunction(
+                    async () => {
+                        // Reload page to get latest state from backend
+                        await page.reload();
 
-                // Check for all tabs on the page
-                // Tabs are buttons in a nav with aria-label="Tabs"
-                const allTabs = await page
-                    .locator('nav[aria-label="Tabs"] button')
-                    .allTextContents();
+                        // Check for all tabs on the page
+                        // Tabs are buttons in a nav with aria-label="Tabs"
+                        const allTabs = await page
+                            .locator('nav[aria-label="Tabs"] button')
+                            .allTextContents();
 
-                const hasFrameworkTab = allTabs.some((text) =>
-                    /framework/i.test(text),
+                        const hasFrameworkTab = allTabs.some((text) =>
+                            /framework/i.test(text),
+                        );
+
+                        // Check workflow stage indicators
+                        const hasProcessingIndicator = await page
+                            .getByText(/selecting optimal framework/i)
+                            .isVisible()
+                            .catch(() => false);
+
+                        // Check for loading states
+                        const hasGeneratingIndicator = await page
+                            .getByText(/generating.*prompt/i)
+                            .isVisible()
+                            .catch(() => false);
+
+                        const frameworkFound =
+                            hasFrameworkTab &&
+                            !hasProcessingIndicator &&
+                            !hasGeneratingIndicator;
+
+                        const elapsed = Math.round(
+                            (Date.now() - startTime) / 1000,
+                        );
+
+                        if (frameworkFound) {
+                            console.log(
+                                `  ✓ Framework selected after ${elapsed}s`,
+                            );
+                            console.log(
+                                `  Tabs found: [${allTabs.join(', ')}]`,
+                            );
+                        } else if (elapsed % 6 === 0 || elapsed === 3) {
+                            // Debug logging every 6 seconds
+                            console.log(
+                                `  [${elapsed}s] Tabs: [${allTabs.join(', ')}] | Processing: ${hasProcessingIndicator} | Generating: ${hasGeneratingIndicator}`,
+                            );
+                        }
+
+                        return frameworkFound;
+                    },
+                    { timeout: maxWaitTime },
                 );
-
-                // Check workflow stage indicators
-                const hasProcessingIndicator = await page
-                    .getByText(/selecting optimal framework/i)
-                    .isVisible()
-                    .catch(() => false);
-
-                // Check for loading states
-                const hasGeneratingIndicator = await page
-                    .getByText(/generating.*prompt/i)
-                    .isVisible()
-                    .catch(() => false);
-
-                frameworkFound =
-                    hasFrameworkTab &&
-                    !hasProcessingIndicator &&
-                    !hasGeneratingIndicator;
-
+            } catch {
                 const elapsed = Math.round((Date.now() - startTime) / 1000);
-
-                if (frameworkFound) {
-                    console.log(`  ✓ Framework selected after ${elapsed}s`);
-                    console.log(`  Tabs found: [${allTabs.join(', ')}]`);
-                    break;
-                }
-
-                // Debug logging every 6 seconds
-                if (elapsed % 6 === 0 || elapsed === 3) {
-                    console.log(
-                        `  [${elapsed}s] Tabs: [${allTabs.join(', ')}] | Processing: ${hasProcessingIndicator} | Generating: ${hasGeneratingIndicator}`,
-                    );
-                }
-
-                // Wait before checking again
-                await page.waitForTimeout(pollInterval);
-            }
-
-            if (!frameworkFound) {
                 console.log(
-                    `  ⚠ Framework not selected within ${maxWaitTime / 1000}s, moving to next test`,
+                    `  ⚠ Framework not selected within ${elapsed}s (max: ${maxWaitTime / 1000}s), moving to next test`,
                 );
                 console.log(
                     `  Check prompt run ID ${page.url().match(/\d+$/)?.[0]} later in database`,
