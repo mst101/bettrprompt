@@ -61,10 +61,6 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 
     // Check if already logged in to avoid unnecessary login attempts
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('domcontentloaded');
-
-    // Wait a bit for any dynamic content to load
-    await page.waitForTimeout(500);
 
     const userMenu = page.getByRole('button', { name: /user menu/i });
     const isAlreadyLoggedIn = await userMenu
@@ -105,8 +101,6 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 
     // Navigate away and back to trigger Inertia to reload with auth
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(500);
 
     // Verify we're logged in by checking for the user menu button
     const userMenuAfterLogin = page.getByRole('button', {
@@ -126,9 +120,7 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 
         // If not visible, reload and check again
         if (attempt < 2) {
-            await page.reload();
-            await page.waitForLoadState('networkidle');
-            await page.waitForTimeout(1000);
+            await page.reload({ waitUntil: 'domcontentloaded' });
         }
     }
 

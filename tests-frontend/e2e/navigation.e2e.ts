@@ -13,7 +13,6 @@ test.describe('Site Navigation', () => {
 
         if ((await ctaButton.count()) > 0) {
             await ctaButton.first().click();
-            await page.waitForLoadState('networkidle');
 
             // Should navigate to prompt optimizer or login
             const url = page.url();
@@ -72,9 +71,6 @@ test.describe('Site Navigation', () => {
             // Click to open mobile menu
             await menuButton.first().click();
 
-            // Menu should expand
-            await page.waitForTimeout(500);
-
             // Check if navigation items are now visible
             const navItems = page.getByRole('button', {
                 name: /log in|get started/i,
@@ -87,7 +83,6 @@ test.describe('Site Navigation', () => {
 test.describe('Accessibility', () => {
     test('should have proper page title on home page', async ({ page }) => {
         await page.goto('/');
-        await page.waitForLoadState('networkidle');
 
         const title = await page.title();
         expect(title).toMatch(/AI Buddy|Welcome/i);
@@ -95,7 +90,6 @@ test.describe('Accessibility', () => {
 
     test('should have accessible form labels', async ({ page }) => {
         await page.goto('/?modal=login');
-        await page.waitForTimeout(500);
 
         // Check for properly labelled form inputs
         const emailInput = page.getByLabel(/email/i);
@@ -176,9 +170,6 @@ test.describe('Accessibility', () => {
 
         if ((await darkModeToggle.count()) > 0) {
             await darkModeToggle.first().click();
-
-            // Wait for theme change
-            await page.waitForTimeout(500);
 
             // Verify dark mode class or attribute
             const html = page.locator('html');
