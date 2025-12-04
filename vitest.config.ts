@@ -25,6 +25,7 @@ export default defineConfig({
             '**/storage/**',
             '**/public/**',
             '**/.{git,cache}/**',
+            'tests-frontend/e2e/**',
         ],
         coverage: {
             provider: 'v8',
