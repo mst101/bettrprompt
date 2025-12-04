@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Apply UseE2eDatabase middleware globally to detect Playwright test requests
         $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 
+        // Apply SwitchDataCollectionDatabase middleware to handle data collection tests
+        $middleware->append(\App\Http\Middleware\SwitchDataCollectionDatabase::class);
+
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
@@ -35,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'test/login',
             'test/broadcast/*',
             'test/create-prompt-run',
+            'test/set-personality',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -16,6 +16,10 @@
         "test:e2e:ui": "playwright test --ui",
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:debug": "playwright test --debug",
+        "test:data-collection": "playwright test --config=playwright-data-collection.config.ts",
+        "test:data-collection:headed": "playwright test --config=playwright-data-collection.config.ts --headed",
+        "test:data-collection:debug": "playwright test --config=playwright-data-collection.config.ts --debug",
+        "data-collection:clear": "bash scripts/clear-data-collection.sh",
         "prepare": "husky"
     },
     "devDependencies": {
