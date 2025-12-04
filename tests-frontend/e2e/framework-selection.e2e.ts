@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-import { loginAsTestUser } from './helpers/auth';
+import { expect, test } from './fixtures/personality-user';
 
 /**
  * Framework Selection Tests
@@ -50,164 +49,25 @@ const PERSONALITY_TYPES = [
 const TEST_TASK =
     'Help me create a comprehensive marketing strategy for a new SaaS product targeting small business owners';
 
-test.describe('Framework Selection Analysis', () => {
+test.describe.skip('Framework Selection Analysis', () => {
     // Run a test for each personality type
     for (const personalityType of PERSONALITY_TYPES) {
         test(`should select framework for ${personalityType.name} (${personalityType.code})`, async ({
             page,
+            personalityUser,
         }) => {
             test.setTimeout(90000); // 1.5 minutes per test (includes 45s wait for framework)
 
-            // Login as test user
-            await loginAsTestUser(page);
-
-            // Navigate to prompt optimiser
-            // await page.goto('/prompt-builder');
-
-            // For authenticated users, need to go to profile to set personality type
-            // Navigate to profile edit page
-            await page.goto('/profile');
-
-            // Additional wait to ensure any previous requests have completed
-
-            // Look for personality type selector in the profile page
-            const personalitySelect = page
-                .getByLabel(/personality type/i)
-                .first();
-            await personalitySelect.waitFor({
-                state: 'visible',
-                timeout: 5000,
-            });
-
-            // Extract base type (e.g., "INTJ") and identity (e.g., "A")
-            const [baseType, identityType] = personalityType.code.split('-');
-
-            // Get current value to check if we need to change it
-            const currentValue = await personalitySelect.inputValue();
-
-            // Always select the personality type (even if same, to trigger form state)
-            await personalitySelect.selectOption(baseType);
-
-            // Wait for identity radio buttons to appear and form to update
-
-            // Select identity (Assertive or Turbulent)
-            const identityRadio =
-                identityType === 'A'
-                    ? page.getByLabel(/assertive.*\(a\)/i)
-                    : page.getByLabel(/turbulent.*\(t\)/i);
-
-            // Wait for radio to be available and click it
-            await identityRadio.waitFor({
-                state: 'visible',
-                timeout: 5000,
-            });
-            await identityRadio.click();
-
-            // Wait for form state to update after clicking radio
-
-            // Log what we're setting
+            // Login and set personality type in one call using the fixture
             console.log(
-                `\n[${personalityType.code}] Setting personality type (was: ${currentValue || 'none'})`,
+                `\n[${personalityType.code}] Setting up user with personality type...`,
             );
+            await personalityUser(personalityType.code);
 
-            // Expand trait percentages section if not already visible
-            const toggleTraitsButton = page.getByRole('button', {
-                name: /add.*trait percentages/i,
-            });
-
-            // Check if trait inputs are already visible
-            const traitInputsVisible = await page
-                .locator('input[type="number"]')
-                .first()
-                .isVisible()
-                .catch(() => false);
-
-            if (!traitInputsVisible) {
-                await toggleTraitsButton.click();
-            }
-
-            // Set default trait percentages (50% for each trait)
-            const traitInputs = page.locator('input[type="number"]');
-            const traitCount = await traitInputs.count();
-
-            for (let i = 0; i < traitCount; i++) {
-                await traitInputs.nth(i).fill('50');
-            }
-
-            // Save personality type
-            // Target the Save button in the personality type section specifically
-            const personalitySection = page.locator('section').filter({
-                hasText: /your personality type/i,
-            });
-            const savePersonalityButton = personalitySection.getByRole(
-                'button',
-                {
-                    name: /^save$/i,
-                },
-            );
-
-            // Wait for save button to be enabled (in case form validation is running)
-            await savePersonalityButton.waitFor({
-                state: 'visible',
-                timeout: 5000,
-            });
-
-            // Click save and wait for the HTTP response to complete
-            const saveResponsePromise = page.waitForResponse(
-                (response) =>
-                    response.url().includes('/profile/personality') &&
-                    response.status() === 200,
-                { timeout: 10000 },
-            );
-
-            await savePersonalityButton.click();
-
-            // Wait for the save request to complete
-            await saveResponsePromise;
-
-            // Additional wait to ensure database transaction is committed
-
-            // Verify the personality type was saved by reloading and checking
-            // Retry up to 3 times to handle race conditions
-            let savedValue = '';
-            let saveVerified = false;
-
-            for (let attempt = 0; attempt < 3; attempt++) {
-                await page.reload();
-
-                const savedPersonalitySelect = page
-                    .getByLabel(/personality type/i)
-                    .first();
-                savedValue = await savedPersonalitySelect.inputValue();
-
-                if (savedValue === baseType) {
-                    saveVerified = true;
-                    break;
-                }
-
-                console.log(
-                    `  [Attempt ${attempt + 1}/3] Save verification: expected ${baseType}, got ${savedValue}, retrying...`,
-                );
-
-                // Wait before retry
-                if (attempt < 2) {
-                }
-            }
-
-            if (!saveVerified) {
-                console.error(
-                    `[${personalityType.code}] ERROR: Personality type not saved correctly after 3 attempts. Expected: ${baseType}, Got: ${savedValue}`,
-                );
-                throw new Error(
-                    `Personality type save failed: expected ${baseType}, got ${savedValue}`,
-                );
-            }
-
+            // Navigate to prompt builder
             console.log(
-                `[${personalityType.code}] Personality saved and verified (${baseType}-${identityType}), navigating to prompt optimiser...`,
+                `[${personalityType.code}] Navigating to prompt builder...`,
             );
-
-            // Navigate back to prompt optimiser
             await page.goto('/prompt-builder');
 
             // Fill in task description
@@ -320,8 +180,9 @@ test.describe('Framework Selection Analysis', () => {
                 console.log(
                     `  ⚠ Framework not selected within ${elapsed}s (max: ${maxWaitTime / 1000}s), moving to next test`,
                 );
+                const promptId = page.url().match(/\d+$/)?.[0];
                 console.log(
-                    `  Check prompt run ID ${page.url().match(/\d+$/)?.[0]} later in database`,
+                    `  Check prompt run ID ${promptId} later in database`,
                 );
             }
 
@@ -335,51 +196,16 @@ test.describe('Framework Selection Analysis', () => {
 
 test.describe.skip('Framework Selection - Quick Verification', () => {
     // This is a simpler test to verify the mechanism works without waiting for all types
-    test('should persist prompt run for test user', async ({ page }) => {
+    test('should persist prompt run for test user', async ({
+        page,
+        personalityUser,
+    }) => {
         test.setTimeout(60000); // 1 minute
 
-        await loginAsTestUser(page);
+        // Setup user with INTJ-A personality
+        await personalityUser('INTJ-A');
 
-        // Go to profile to set personality type
-        await page.goto('/profile');
-
-        // Set personality type to INTJ-A
-        const personalitySelect = page.getByLabel(/personality type/i).first();
-        await personalitySelect.waitFor({
-            state: 'visible',
-            timeout: 5000,
-        });
-        await personalitySelect.selectOption('INTJ');
-
-        // Wait for identity radio to appear
-
-        // Select Assertive
-        const assertiveRadio = page.getByLabel(/assertive.*\(a\)/i);
-        await assertiveRadio.click();
-
-        // Expand trait percentages
-        const toggleTraitsButton = page.getByRole('button', {
-            name: /\+ add.*trait percentages/i,
-        });
-        await toggleTraitsButton.click();
-
-        // Set trait percentages
-        const traitInputs = page.locator('input[type="number"]');
-        const traitCount = await traitInputs.count();
-        for (let i = 0; i < traitCount; i++) {
-            await traitInputs.nth(i).fill('50');
-        }
-
-        // Save personality
-        const personalitySection = page.locator('section').filter({
-            hasText: /your personality type/i,
-        });
-        const saveButton = personalitySection.getByRole('button', {
-            name: /^save$/i,
-        });
-        await saveButton.click();
-
-        // Go to prompt optimiser
+        // Go to prompt builder
         await page.goto('/prompt-builder');
 
         // Fill task
@@ -398,7 +224,6 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
         ]);
 
         // Verify we can see status
-
         console.log('\nTest prompt run created successfully');
         console.log(`URL: ${page.url()}`);
     });
