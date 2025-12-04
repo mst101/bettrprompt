@@ -14,6 +14,9 @@ export default defineConfig({
     // Match test files
     testMatch: '**/*.e2e.{ts,js}',
 
+    // Exclude data-collection tests (run separately with playwright-data-collection.config.ts)
+    testIgnore: '**/data-collection/**',
+
     // Run tests in files in parallel
     fullyParallel: true,
 
