@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { acceptCookies, loginAsTestUser } from './helpers/auth';
+import { expect, test } from './fixtures';
+import { acceptCookies } from './helpers/auth';
 import { seedPromptRuns } from './helpers/database';
 
 test.describe('Prompt Builder - Unauthenticated', () => {
@@ -60,9 +60,10 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     // These tests all make synchronous calls to mock n8n endpoints
     test.describe.configure({ mode: 'serial' });
 
-    test.beforeEach(async ({ page }) => {
-        // Log in before each test
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should submit a prompt and navigate to show page', async ({
