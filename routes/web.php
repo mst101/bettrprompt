@@ -168,6 +168,8 @@ Route::get('/test/echo-info', [\App\Http\Controllers\TestBroadcastController::cl
     ->name('test.echo-info');
 Route::post('/test/create-prompt-run', [\App\Http\Controllers\TestBroadcastController::class, 'createTestPromptRun'])
     ->name('test.create-prompt-run');
+Route::post('/test/set-personality', [\App\Http\Controllers\TestBroadcastController::class, 'setPersonalityType'])
+    ->name('test.set-personality');
 
 // Mock n8n webhook endpoints for E2E testing
 // These endpoints simulate n8n responses without requiring n8n to be running

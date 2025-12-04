@@ -130,3 +130,54 @@ export async function loginAsTestUser(page: Page): Promise<void> {
         );
     }
 }
+
+/**
+ * Login as test user and set a specific personality type
+ *
+ * This is more efficient than manually navigating through the profile page
+ * Uses the test-only API endpoint to set personality type directly
+ */
+export async function loginWithPersonalityType(
+    page: Page,
+    personalityCode: string,
+): Promise<void> {
+    // First do regular login
+    await loginAsTestUser(page);
+
+    // Then set personality type via test endpoint
+    await page.evaluate(async (code: string) => {
+        const csrfToken = (
+            document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+        )?.getAttribute('content');
+
+        const [baseType, identity] = code.split('-');
+
+        const response = await fetch('/test/set-personality', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+                'X-Test-Auth': 'playwright-e2e-tests',
+            },
+            body: JSON.stringify({
+                personality_type: baseType,
+                identity: identity === 'A' ? 'assertive' : 'turbulent',
+                traits: {
+                    extraversion: 50,
+                    intuition: 50,
+                    feeling: 50,
+                    perceiving: 50,
+                },
+            }),
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to set personality type: ${response.status} ${response.statusText}`,
+            );
+        }
+
+        return response.json();
+    }, personalityCode);
+}

@@ -8,6 +8,7 @@ use App\Models\PromptRun;
 use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Test-only controller for triggering broadcast events in E2E tests
@@ -204,6 +205,56 @@ class TestBroadcastController extends Controller
             'prompt_run_id' => $promptRun->id,
             'state' => $state,
             'url' => "/prompt-builder/{$promptRun->id}",
+        ]);
+    }
+
+    /**
+     * Set personality type for the currently authenticated user
+     *
+     * This allows E2E tests to quickly configure a user with a specific personality
+     * without going through the UI form manually
+     */
+    public function setPersonalityType(Request $request): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        if (! Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'User must be authenticated',
+            ], 401);
+        }
+
+        $user = Auth::user();
+        $personalityType = $request->input('personality_type');
+        $identity = $request->input('identity', 'assertive');
+        $traits = $request->input('traits', [
+            'extraversion' => 50,
+            'intuition' => 50,
+            'feeling' => 50,
+            'perceiving' => 50,
+        ]);
+
+        // Update user personality
+        $user->update([
+            'personality_type' => $personalityType,
+            'identity_type' => $identity,
+            'trait_extraversion' => $traits['extraversion'] ?? 50,
+            'trait_intuition' => $traits['intuition'] ?? 50,
+            'trait_feeling' => $traits['feeling'] ?? 50,
+            'trait_perceiving' => $traits['perceiving'] ?? 50,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Personality type set successfully',
+            'data' => [
+                'personality_type' => $user->personality_type,
+                'identity_type' => $user->identity_type,
+            ],
         ]);
     }
 }
