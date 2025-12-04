@@ -107,8 +107,9 @@ export default defineConfig({
     //     timeout: 120 * 1000,
     // },
 
-    // Global timeout for each test (30 seconds)
-    timeout: 30 * 1000,
+    // Global timeout for each test (60 seconds)
+    // Increased from 30s to handle parallel test execution and async n8n workflow processing
+    timeout: 60 * 1000,
 
     // Global setup timeout
     globalTimeout: 10 * 60 * 1000, // 10 minutes
