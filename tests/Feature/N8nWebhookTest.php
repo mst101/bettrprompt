@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\FrameworkSelected;
+use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
 use App\Models\User;
@@ -153,12 +153,24 @@ test('webhook updates prompt run successfully', function () {
         'status' => 'processing',
     ]);
 
+    $selectedFramework = [
+        'name' => 'SMART Goals',
+        'code' => 'SMART',
+        'components' => [
+            'Specific',
+            'Measurable',
+            'Achievable',
+            'Relevant',
+            'Time-bound',
+        ],
+        'rationale' => 'This framework suits your task',
+    ];
+
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
         'workflow_stage' => 'framework_selected',
         'status' => 'processing',
-        'selected_framework' => 'SMART Goals',
-        'framework_reasoning' => 'This framework suits your task',
+        'selected_framework' => $selectedFramework,
         'framework_questions' => [
             'What is your specific goal?',
             'How will you measure success?',
@@ -171,13 +183,13 @@ test('webhook updates prompt run successfully', function () {
     $promptRun->refresh();
     expect($promptRun->workflow_stage)->toBe('framework_selected')
         ->and($promptRun->status)->toBe('processing')
-        ->and($promptRun->selected_framework)->toBe('SMART Goals')
-        ->and($promptRun->framework_reasoning)->toBe('This framework suits your task')
+        ->and($promptRun->selected_framework)->toBe($selectedFramework)
+        ->and($promptRun->selected_framework['rationale'])->toBe('This framework suits your task')
         ->and($promptRun->framework_questions)->toHaveCount(2);
 });
 
-test('webhook broadcasts framework selected event', function () {
-    Event::fake([FrameworkSelected::class]);
+test('webhook broadcasts analysis completed event', function () {
+    Event::fake([AnalysisCompleted::class]);
 
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
@@ -188,12 +200,17 @@ test('webhook broadcasts framework selected event', function () {
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
         'workflow_stage' => 'framework_selected',
-        'selected_framework' => 'SMART Goals',
+        'selected_framework' => [
+            'name' => 'SMART Goals',
+            'code' => 'SMART',
+            'components' => ['Specific', 'Measurable', 'Achievable', 'Relevant', 'Time-bound'],
+            'rationale' => 'Ideal for structured goal-setting',
+        ],
     ]);
 
     $response->assertOk();
 
-    Event::assertDispatched(FrameworkSelected::class, function ($event) use ($promptRun) {
+    Event::assertDispatched(AnalysisCompleted::class, function ($event) use ($promptRun) {
         return $event->promptRun->id === $promptRun->id;
     });
 });
@@ -286,32 +303,6 @@ test('webhook stores error message', function () {
         ->and($promptRun->error_message)->toBe('OpenAI API rate limit exceeded');
 });
 
-test('webhook stores n8n response payload', function () {
-    $user = User::factory()->create();
-    $promptRun = PromptRun::factory()->create(['user_id' => $user->id]);
-
-    $payload = [
-        'execution_id' => 'exec-123',
-        'timestamp' => '2025-01-08T12:00:00Z',
-        'details' => [
-            'httpCode' => 500,
-            'errorType' => 'API_ERROR',
-        ],
-    ];
-
-    $response = webhookPost([
-        'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'failed',
-        'status' => 'failed',
-        'n8n_response_payload' => $payload,
-    ]);
-
-    $response->assertOk();
-
-    $promptRun->refresh();
-    expect($promptRun->n8n_response_payload)->toBe($payload);
-});
-
 test('webhook respects rate limiting', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create(['user_id' => $user->id]);
@@ -333,7 +324,7 @@ test('webhook respects rate limiting', function () {
 });
 
 test('webhook does not broadcast on non milestone stages', function () {
-    Event::fake([FrameworkSelected::class, PromptOptimizationCompleted::class]);
+    Event::fake([AnalysisCompleted::class, PromptOptimizationCompleted::class]);
 
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
@@ -350,92 +341,6 @@ test('webhook does not broadcast on non milestone stages', function () {
     $response->assertOk();
 
     // Should not broadcast any events
-    Event::assertNotDispatched(FrameworkSelected::class);
+    Event::assertNotDispatched(AnalysisCompleted::class);
     Event::assertNotDispatched(PromptOptimizationCompleted::class);
-});
-
-test('webhook updates personality approach field', function () {
-    $user = User::factory()->create();
-    $promptRun = PromptRun::factory()->create([
-        'user_id' => $user->id,
-        'workflow_stage' => 'submitted',
-        'personality_approach' => null,
-    ]);
-
-    $response = webhookPost([
-        'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
-        'selected_framework' => 'Brainstorming',
-        'framework_reasoning' => 'Amplifies your creative strengths',
-        'personality_approach' => 'amplify',
-        'framework_questions' => [
-            'What ideas do you want to explore?',
-        ],
-    ]);
-
-    $response->assertOk();
-
-    $promptRun->refresh();
-    expect($promptRun->personality_approach)->toBe('amplify')
-        ->and($promptRun->selected_framework)->toBe('Brainstorming');
-});
-
-test('webhook accepts counterbalance personality approach', function () {
-    $user = User::factory()->create();
-    $promptRun = PromptRun::factory()->create([
-        'user_id' => $user->id,
-        'workflow_stage' => 'submitted',
-    ]);
-
-    $response = webhookPost([
-        'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
-        'selected_framework' => 'SMART Goals',
-        'personality_approach' => 'counterbalance',
-        'framework_questions' => ['What is your goal?'],
-    ]);
-
-    $response->assertOk();
-
-    $promptRun->refresh();
-    expect($promptRun->personality_approach)->toBe('counterbalance');
-});
-
-test('webhook accepts null personality approach', function () {
-    $user = User::factory()->create();
-    $promptRun = PromptRun::factory()->create([
-        'user_id' => $user->id,
-        'workflow_stage' => 'submitted',
-    ]);
-
-    $response = webhookPost([
-        'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
-        'selected_framework' => 'CRISPE',
-        'personality_approach' => null,
-        'framework_questions' => ['What is the context?'],
-    ]);
-
-    $response->assertOk();
-
-    $promptRun->refresh();
-    expect($promptRun->personality_approach)->toBeNull();
-});
-
-test('webhook validates personality approach enum values', function () {
-    $user = User::factory()->create();
-    $promptRun = PromptRun::factory()->create(['user_id' => $user->id]);
-
-    $response = webhookPost([
-        'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
-        'personality_approach' => 'invalid_approach',
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJson([
-        'success' => false,
-        'error' => 'Invalid payload',
-    ]);
-    $response->assertJsonStructure(['details' => ['personality_approach']]);
 });

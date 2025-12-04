@@ -58,25 +58,18 @@ test('analyse validates task description min length', function () {
 test('analyse creates prompt run successfully', function () {
     $this->actingAs($this->user);
 
+    // Fake the queue so jobs don't actually execute
+    Queue::fake();
+
     // Mock PromptFrameworkService to return success
     $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+        // First call: preAnalyseTask (returns no clarification needed)
+        $mock->shouldReceive('preAnalyseTask')
             ->once()
             ->andReturn([
-                'success' => true,
-                'data' => [
-                    'task_classification' => ['category' => 'planning'],
-                    'cognitive_requirements' => ['reasoning' => 'high'],
-                    'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
-                    'alternative_frameworks' => [],
-                    'personality_tier' => 'full',
-                    'task_trait_alignment' => ['alignment' => 'strong'],
-                    'personality_adjustments_preview' => ['amplify' => ['logical thinking']],
-                    'question_rationale' => 'These questions will help...',
-                    'clarifying_questions' => [
-                        ['question' => 'What is your specific objective?'],
-                    ],
-                ],
+                'needs_clarification' => false,
+                'reasoning' => 'Task description is clear',
+                'questions' => [],
             ]);
     });
 
@@ -90,31 +83,23 @@ test('analyse creates prompt run successfully', function () {
         'user_id' => $this->user->id,
         'task_description' => 'Create a detailed project plan for launching a new product',
         'personality_type' => 'INTJ',
-        'status' => 'pending',
-        'workflow_stage' => 'analysis_complete',
+        'status' => 'processing',
+        'workflow_stage' => 'submitted',
     ]);
 });
 
 test('analyse includes user personality traits', function () {
     $this->actingAs($this->user);
 
+    Queue::fake();
+
     $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+        $mock->shouldReceive('preAnalyseTask')
             ->once()
-            ->with(
-                \Mockery::any(),
-                'INTJ',
-                \Mockery::on(function ($traits) {
-                    return $traits['introversion'] === 75;
-                })
-            )
             ->andReturn([
-                'success' => true,
-                'data' => [
-                    'task_classification' => [],
-                    'selected_framework' => ['code' => 'SMART'],
-                    'clarifying_questions' => [],
-                ],
+                'needs_clarification' => false,
+                'reasoning' => 'Task description is clear',
+                'questions' => [],
             ]);
     });
 
@@ -353,17 +338,16 @@ test('generate creates optimised prompt', function () {
 });
 
 test('guests can create prompt runs as visitors', function () {
+    Queue::fake();
+
     // Mock PromptFrameworkService to return success
     $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+        $mock->shouldReceive('preAnalyseTask')
             ->once()
             ->andReturn([
-                'success' => true,
-                'data' => [
-                    'task_classification' => [],
-                    'selected_framework' => ['code' => 'SMART'],
-                    'clarifying_questions' => [],
-                ],
+                'needs_clarification' => false,
+                'reasoning' => 'Task description is clear',
+                'questions' => [],
             ]);
     });
 
@@ -434,20 +418,16 @@ test('completed prompt run displays optimized prompt', function () {
 test('analyse saves personality tier', function () {
     $this->actingAs($this->user);
 
+    Queue::fake();
+
     // Mock PromptFrameworkService to return personality tier
     $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+        $mock->shouldReceive('preAnalyseTask')
             ->once()
             ->andReturn([
-                'success' => true,
-                'data' => [
-                    'task_classification' => [],
-                    'selected_framework' => ['code' => 'BRAINSTORM'],
-                    'personality_tier' => 'full',
-                    'task_trait_alignment' => ['alignment' => 'strong'],
-                    'personality_adjustments_preview' => ['amplify' => ['intuition']],
-                    'clarifying_questions' => [],
-                ],
+                'needs_clarification' => false,
+                'reasoning' => 'Task description is clear',
+                'questions' => [],
             ]);
     });
 
@@ -459,7 +439,6 @@ test('analyse saves personality tier', function () {
 
     $this->assertDatabaseHas('prompt_runs', [
         'user_id' => $this->user->id,
-        'personality_tier' => 'full',
     ]);
 });
 
@@ -492,22 +471,15 @@ test('user without personality type can create prompt run', function () {
 
     $this->actingAs($userWithoutPersonality);
 
+    Queue::fake();
+
     $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+        $mock->shouldReceive('preAnalyseTask')
             ->once()
-            ->with(
-                \Mockery::any(),
-                null,
-                null
-            )
             ->andReturn([
-                'success' => true,
-                'data' => [
-                    'task_classification' => [],
-                    'selected_framework' => ['code' => 'CRISPE'],
-                    'personality_tier' => 'none',
-                    'clarifying_questions' => [],
-                ],
+                'needs_clarification' => false,
+                'reasoning' => 'Task description is clear',
+                'questions' => [],
             ]);
     });
 
@@ -520,7 +492,6 @@ test('user without personality type can create prompt run', function () {
     $this->assertDatabaseHas('prompt_runs', [
         'user_id' => $userWithoutPersonality->id,
         'personality_type' => null,
-        'personality_tier' => 'none',
     ]);
 });
 

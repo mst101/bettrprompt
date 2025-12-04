@@ -1,0 +1,11 @@
+{
+    "name": "RICE",
+    "code": "RICE",
+    "components": [
+        "Reach (How many options to consider)",
+        "Impact (How meaningful\/valuable)",
+        "Confidence (How certain about the choice)",
+        "Effort (Time\/cost to acquire)"
+    ],
+    "rationale": "RICE is ideal for prioritising between gift options. It provides a structured way to evaluate reach (relevance to wife's interests), impact (emotional significance), confidence (likelihood she'll love it), and effort (budget\/availability). Low complexity framework appropriate for personal decision-making."
+}

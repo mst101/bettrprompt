@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\FrameworkSelected;
+use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
@@ -30,14 +30,15 @@ Route::post('/n8n/webhook', function (Request $request) {
             'prompt_run_id' => 'required|integer|exists:prompt_runs,id',
             'workflow_stage' => 'nullable|string|in:submitted,framework_selected,answering_questions,generating_prompt,completed,failed',
             'status' => 'nullable|string|in:pending,processing,completed,failed',
-            'selected_framework' => 'nullable|string',
-            'framework_reasoning' => 'nullable|string',
-            'personality_approach' => 'nullable|string|in:amplify,counterbalance',
+            'selected_framework' => 'nullable|array',
+            'selected_framework.name' => 'required_with:selected_framework|string',
+            'selected_framework.code' => 'required_with:selected_framework|string',
+            'selected_framework.components' => 'required_with:selected_framework|array',
+            'selected_framework.rationale' => 'nullable|string',
             'framework_questions' => 'nullable|array',
             'framework_questions.*' => 'string',
             'optimized_prompt' => 'nullable|string',
             'error_message' => 'nullable|string',
-            'n8n_response_payload' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -83,12 +84,9 @@ Route::post('/n8n/webhook', function (Request $request) {
                 'workflow_stage',
                 'status',
                 'selected_framework',
-                'framework_reasoning',
-                'personality_approach',
                 'framework_questions',
                 'optimized_prompt',
                 'error_message',
-                'n8n_response_payload',
             ]));
 
             // Mark as completed if finished
@@ -99,9 +97,9 @@ Route::post('/n8n/webhook', function (Request $request) {
             // Broadcast events if needed
             if ($request->input('workflow_stage') === 'framework_selected') {
                 try {
-                    event(new FrameworkSelected($promptRun));
+                    event(new AnalysisCompleted($promptRun));
                 } catch (\Exception $e) {
-                    Log::error('Failed to broadcast FrameworkSelected event', [
+                    Log::error('Failed to broadcast AnalysisCompleted event', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
                     ]);
