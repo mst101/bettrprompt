@@ -218,8 +218,8 @@ export class StaticPage {
                 errors.push(msg.text());
             }
         });
-        // Allow time for errors to occur
-        await this.page.waitForTimeout(500);
+        // Wait for any initial render to complete, then check for errors
+        await this.page.waitForLoadState('networkidle').catch(() => null);
         expect(errors).toHaveLength(0);
     }
 }

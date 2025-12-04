@@ -51,8 +51,12 @@ export async function triggerAnalysisCompleted(
         console.log('[E2E] AnalysisCompleted event triggered:', data);
     }, promptRunId);
 
-    // Give the WebSocket a moment to deliver the event
-    await page.waitForTimeout(500);
+    // Wait for WebSocket to process the event - check for framework tab or loading state
+    await page
+        .locator('nav[aria-label="Tabs"] button:has-text("Framework")')
+        .first()
+        .waitFor({ state: 'visible', timeout: 5000 })
+        .catch(() => null);
 }
 
 /**
@@ -99,8 +103,12 @@ export async function triggerPromptOptimizationCompleted(
         console.log('[E2E] PromptOptimizationCompleted event triggered:', data);
     }, promptRunId);
 
-    // Give the WebSocket a moment to deliver the event
-    await page.waitForTimeout(500);
+    // Wait for the optimised prompt tab to appear, indicating the event was processed
+    await page
+        .locator('nav[aria-label="Tabs"] button:has-text("Optimised Prompt")')
+        .first()
+        .waitFor({ state: 'visible', timeout: 5000 })
+        .catch(() => null);
 }
 
 /**
