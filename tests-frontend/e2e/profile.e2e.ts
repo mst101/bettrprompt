@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { loginAsTestUser, TEST_USER } from './helpers/auth';
+import { expect, test } from './fixtures';
+import { TEST_USER } from './helpers/auth';
 
 test.describe('Profile - Unauthenticated Access', () => {
     test('should redirect to login when accessing profile without auth', async ({
@@ -14,9 +14,10 @@ test.describe('Profile - Unauthenticated Access', () => {
 });
 
 test.describe('Profile - Authenticated User', () => {
-    test.beforeEach(async ({ page }) => {
-        // Log in before each test
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should load profile edit page', async ({ page }) => {
