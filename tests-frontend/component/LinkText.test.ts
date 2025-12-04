@@ -54,7 +54,7 @@ describe('LinkText', () => {
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('hover:text-indigo-800');
+        expect(link.classes()).toContain('hover:text-indigo-700');
     });
 
     it('should have transition classes', () => {

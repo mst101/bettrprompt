@@ -1,6 +1,7 @@
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
+import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
 
 /**
  * Integration tests for Laravel Echo / WebSocket scenarios
@@ -74,9 +75,19 @@ describe('Laravel Echo Integration', () => {
         it('should establish WebSocket connection on mount', async () => {
             const eventHandler = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                TestEvent: eventHandler,
+            // Create a test component that uses the composable
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        TestEvent: eventHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            // Mount the component to trigger lifecycle hooks
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -85,15 +96,25 @@ describe('Laravel Echo Integration', () => {
                 'TestEvent',
                 expect.any(Function),
             );
+
+            wrapper.unmount();
         });
 
         it('should receive and handle events from Echo', async () => {
             const eventHandler = vi.fn();
             const testData = { id: 123, status: 'completed' };
 
-            useRealtimeUpdates('test-channel', {
-                EventName: eventHandler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        EventName: eventHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -101,16 +122,26 @@ describe('Laravel Echo Integration', () => {
             mockChannel._simulateEvent('EventName', testData);
 
             expect(eventHandler).toHaveBeenCalledWith(testData);
+
+            wrapper.unmount();
         });
 
         it('should handle multiple events from same channel', async () => {
             const handler1 = vi.fn();
             const handler2 = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                Event1: handler1,
-                Event2: handler2,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        Event1: handler1,
+                        Event2: handler2,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -122,24 +153,38 @@ describe('Laravel Echo Integration', () => {
 
             expect(handler1).toHaveBeenCalledWith(data1);
             expect(handler2).toHaveBeenCalledWith(data2);
+
+            wrapper.unmount();
         });
     });
 
     describe('error handling and recovery', () => {
         it('should fallback to polling when channel error occurs', async () => {
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return composableState;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(false);
+            expect(composableState.usingFallback.value).toBe(false);
 
             // Simulate channel error
             mockChannel._simulateError(new Error('Connection lost'));
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
             expect(mockRouter.reload).toBeDefined();
+
+            wrapper.unmount();
         });
 
         it('should continue processing events even if handler throws', async () => {
@@ -148,10 +193,18 @@ describe('Laravel Echo Integration', () => {
             });
             const successHandler = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                FailEvent: errorHandler,
-                SuccessEvent: successHandler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        FailEvent: errorHandler,
+                        SuccessEvent: successHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -161,6 +214,8 @@ describe('Laravel Echo Integration', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(successHandler).toHaveBeenCalledWith({ data: 'test' });
+
+            wrapper.unmount();
         });
     });
 
@@ -169,33 +224,61 @@ describe('Laravel Echo Integration', () => {
             // Start in disconnected state
             global.window.isEchoConnected = vi.fn().mockReturnValue(false);
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return composableState;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
 
             // Simulate Echo reconnection
             global.window.isEchoConnected = vi.fn().mockReturnValue(true);
 
-            // Re-mount with new connection state
-            const { usingFallback: fallback2 } = useRealtimeUpdates(
-                'test-channel2',
-                {},
-            );
+            // Create a new component with the new connection state
+            let composableState2: any;
+
+            const TestComponent2 = defineComponent({
+                setup() {
+                    composableState2 = useRealtimeUpdates('test-channel2', {});
+                    return composableState2;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper2 = mount(TestComponent2);
 
             await nextTick();
 
-            expect(fallback2.value).toBe(false);
+            expect(composableState2.usingFallback.value).toBe(false);
             expect(mockEcho.channel).toHaveBeenCalled();
+
+            wrapper.unmount();
+            wrapper2.unmount();
         });
 
         it('should handle rapid reconnect/disconnect cycles', async () => {
             const eventHandler = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                TestEvent: eventHandler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        TestEvent: eventHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -212,6 +295,8 @@ describe('Laravel Echo Integration', () => {
 
             expect(eventHandler).toHaveBeenCalledWith({ cycle: 2 });
             expect(eventHandler).toHaveBeenCalledTimes(2);
+
+            wrapper.unmount();
         });
     });
 
@@ -219,9 +304,17 @@ describe('Laravel Echo Integration', () => {
         it('should handle high-frequency events without queuing issues', async () => {
             const eventHandler = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                HighFreqEvent: eventHandler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        HighFreqEvent: eventHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -232,26 +325,45 @@ describe('Laravel Echo Integration', () => {
 
             expect(eventHandler).toHaveBeenCalledTimes(100);
             expect(eventHandler).toHaveBeenLastCalledWith({ index: 99 });
+
+            wrapper.unmount();
         });
 
         it('should handle multiple channels simultaneously', async () => {
             const handler1 = vi.fn();
             const handler2 = vi.fn();
 
-            // Create two separate composable instances
-            useRealtimeUpdates('channel-1', {
-                Event: handler1,
+            const TestComponent1 = defineComponent({
+                setup() {
+                    useRealtimeUpdates('channel-1', {
+                        Event: handler1,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
 
-            useRealtimeUpdates('channel-2', {
-                Event: handler2,
+            const TestComponent2 = defineComponent({
+                setup() {
+                    useRealtimeUpdates('channel-2', {
+                        Event: handler2,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper1 = mount(TestComponent1);
+            const wrapper2 = mount(TestComponent2);
 
             await nextTick();
 
             // Both channels should be created
             expect(mockEcho.channel).toHaveBeenCalledWith('channel-1');
             expect(mockEcho.channel).toHaveBeenCalledWith('channel-2');
+
+            wrapper1.unmount();
+            wrapper2.unmount();
         });
     });
 
@@ -260,10 +372,18 @@ describe('Laravel Echo Integration', () => {
             const analysisHandler = vi.fn();
             const optimizationHandler = vi.fn();
 
-            useRealtimeUpdates(`prompt-run.123`, {
-                AnalysisCompleted: analysisHandler,
-                PromptOptimizationCompleted: optimizationHandler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates(`prompt-run.123`, {
+                        AnalysisCompleted: analysisHandler,
+                        PromptOptimizationCompleted: optimizationHandler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -286,29 +406,52 @@ describe('Laravel Echo Integration', () => {
             });
 
             expect(optimizationHandler).toHaveBeenCalled();
+
+            wrapper.unmount();
         });
 
         it('should gracefully handle page navigation', async () => {
-            const { cleanup } = useRealtimeUpdates('test-channel', {});
+            let composableCleanup: () => void;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    const state = useRealtimeUpdates('test-channel', {});
+                    composableCleanup = state.cleanup;
+                    return state;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
             // Simulate navigation away
-            cleanup();
+            composableCleanup!();
 
             expect(mockEcho.leave).toHaveBeenCalledWith('test-channel');
+
+            wrapper.unmount();
         });
 
         it('should handle concurrent subscriptions to same channel', async () => {
             const handlers = [vi.fn(), vi.fn()];
+            const instances: any[] = [];
 
-            // Create two instances listening to same channel
-            // (simulating component re-mounts or multiple listeners)
-            const instances = handlers.map((handler) =>
-                useRealtimeUpdates('shared-channel', {
-                    Event: handler,
-                }),
-            );
+            for (const handler of handlers) {
+                const TestComponent = defineComponent({
+                    setup() {
+                        const state = useRealtimeUpdates('shared-channel', {
+                            Event: handler,
+                        });
+                        instances.push(state);
+                        return state;
+                    },
+                    template: '<div></div>',
+                });
+
+                mount(TestComponent);
+            }
 
             await nextTick();
 
@@ -327,9 +470,17 @@ describe('Laravel Echo Integration', () => {
         it('should handle event handlers registered correctly', async () => {
             const handler = vi.fn();
 
-            useRealtimeUpdates('test-channel', {
-                RobustEvent: handler,
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {
+                        RobustEvent: handler,
+                    });
+                    return {};
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -343,14 +494,26 @@ describe('Laravel Echo Integration', () => {
             mockChannel._simulateEvent('RobustEvent', { data: 'test' });
 
             expect(handler).toHaveBeenCalledWith({ data: 'test' });
+
+            wrapper.unmount();
         });
 
         it('should cleanup properly after unmount', async () => {
             const handler = vi.fn();
+            let composableCleanup: () => void;
 
-            const { cleanup } = useRealtimeUpdates('test-channel', {
-                CleanupEvent: handler,
+            const TestComponent = defineComponent({
+                setup() {
+                    const state = useRealtimeUpdates('test-channel', {
+                        CleanupEvent: handler,
+                    });
+                    composableCleanup = state.cleanup;
+                    return state;
+                },
+                template: '<div></div>',
             });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -358,10 +521,12 @@ describe('Laravel Echo Integration', () => {
             expect(mockEcho.channel).toHaveBeenCalled();
 
             // Clean up
-            cleanup();
+            composableCleanup!();
 
             // Verify cleanup
             expect(mockEcho.leave).toHaveBeenCalled();
+
+            wrapper.unmount();
         });
     });
 });

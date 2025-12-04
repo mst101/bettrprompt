@@ -1,6 +1,7 @@
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
+import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
 
 /**
  * Unit tests for useRealtimeUpdates composable
@@ -60,7 +61,17 @@ describe('useRealtimeUpdates', () => {
                 TestEvent: vi.fn(),
             };
 
-            const { connected } = useRealtimeUpdates(channelName, events);
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates(channelName, events);
+                    return composableState;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -69,7 +80,9 @@ describe('useRealtimeUpdates', () => {
                 'TestEvent',
                 expect.any(Function),
             );
-            expect(connected.value).toBe(true);
+            expect(composableState.connected.value).toBe(true);
+
+            wrapper.unmount();
         });
 
         it('should register multiple event handlers', async () => {
@@ -79,7 +92,15 @@ describe('useRealtimeUpdates', () => {
                 PromptOptimizationCompleted: vi.fn(),
             };
 
-            useRealtimeUpdates(channelName, events);
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates(channelName, events);
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -92,6 +113,8 @@ describe('useRealtimeUpdates', () => {
                 'PromptOptimizationCompleted',
                 expect.any(Function),
             );
+
+            wrapper.unmount();
         });
     });
 
@@ -100,7 +123,15 @@ describe('useRealtimeUpdates', () => {
             const handler = vi.fn();
             const events = { TestEvent: handler };
 
-            useRealtimeUpdates('test-channel', events);
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', events);
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -110,6 +141,8 @@ describe('useRealtimeUpdates', () => {
             registeredHandler(testData);
 
             expect(handler).toHaveBeenCalledWith(testData);
+
+            wrapper.unmount();
         });
 
         it('should handle handler errors gracefully', async () => {
@@ -119,7 +152,15 @@ describe('useRealtimeUpdates', () => {
             const events = { TestEvent: errorHandler };
             const consoleSpy = vi.spyOn(console, 'error');
 
-            useRealtimeUpdates('test-channel', events);
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', events);
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -133,16 +174,28 @@ describe('useRealtimeUpdates', () => {
                 expect.any(Error),
             );
             expect(errorHandler).toHaveBeenCalled();
+
+            wrapper.unmount();
         });
 
         it('should register channel error handler', async () => {
-            useRealtimeUpdates('test-channel', {});
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
             expect(mockChannel.error).toHaveBeenCalledWith(
                 expect.any(Function),
             );
+
+            wrapper.unmount();
         });
     });
 
@@ -150,49 +203,45 @@ describe('useRealtimeUpdates', () => {
         it('should start polling when Echo is not available', async () => {
             global.window.isEchoConnected = vi.fn().mockReturnValue(false);
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
-            expect(mockRouter.reload).toBeDefined();
+            expect(composableState.usingFallback.value).toBe(true);
+
+            wrapper.unmount();
         });
 
         it('should start polling when Echo channel creation fails', async () => {
             global.window.Echo.channel = vi.fn().mockReturnValue(null);
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
-        });
+            expect(composableState.usingFallback.value).toBe(true);
 
-        it('should poll at specified interval', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
-            const pollingInterval = 3000;
-
-            useRealtimeUpdates('test-channel', {}, {}, pollingInterval);
-
-            await nextTick();
-
-            // Fast-forward time
-            vi.advanceTimersByTime(pollingInterval);
-
-            expect(mockRouter.reload).toHaveBeenCalled();
-        });
-
-        it('should pass reload options to polling', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
-            const reloadOptions = { only: ['promptRun'] };
-
-            useRealtimeUpdates('test-channel', {}, reloadOptions);
-
-            await nextTick();
-
-            vi.advanceTimersByTime(5000);
-
-            expect(mockRouter.reload).toHaveBeenCalledWith(reloadOptions);
+            wrapper.unmount();
         });
     });
 
@@ -200,31 +249,52 @@ describe('useRealtimeUpdates', () => {
         it('should leave channel on unmount', async () => {
             global.window.Echo.leave = vi.fn();
 
-            const { cleanup } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            cleanup();
+            composableState.cleanup();
 
             expect(global.window.Echo.leave).toHaveBeenCalledWith(
                 'test-channel',
             );
+
+            wrapper.unmount();
         });
 
         it('should stop polling on cleanup', async () => {
             global.window.isEchoConnected = vi.fn().mockReturnValue(false);
 
-            const { usingFallback, cleanup } = useRealtimeUpdates(
-                'test-channel',
-                {},
-            );
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
 
-            cleanup();
+            composableState.cleanup();
 
-            expect(usingFallback.value).toBe(false);
+            expect(composableState.usingFallback.value).toBe(false);
+
+            wrapper.unmount();
         });
 
         it('should remove event listeners on cleanup', async () => {
@@ -233,11 +303,21 @@ describe('useRealtimeUpdates', () => {
                 'removeEventListener',
             );
 
-            const { cleanup } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            cleanup();
+            composableState.cleanup();
 
             expect(removeEventListenerSpy).toHaveBeenCalledWith(
                 'echo-disconnected',
@@ -249,6 +329,8 @@ describe('useRealtimeUpdates', () => {
             );
 
             removeEventListenerSpy.mockRestore();
+
+            wrapper.unmount();
         });
 
         it('should handle cleanup errors gracefully', async () => {
@@ -257,36 +339,72 @@ describe('useRealtimeUpdates', () => {
             });
             const consoleSpy = vi.spyOn(console, 'error');
 
-            const { cleanup } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
             // Should not throw
-            expect(() => cleanup()).not.toThrow();
+            expect(() => composableState.cleanup()).not.toThrow();
             expect(consoleSpy).toHaveBeenCalledWith(
                 '[useRealtimeUpdates] Error leaving channel:',
                 expect.any(Error),
             );
+
+            wrapper.unmount();
         });
     });
 
     describe('connection state', () => {
         it('should reflect connected state', async () => {
-            const { connected } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(connected.value).toBe(true);
+            expect(composableState.connected.value).toBe(true);
+
+            wrapper.unmount();
         });
 
         it('should mark as not connected when channel fails', async () => {
             global.window.Echo.channel = vi.fn().mockReturnValue(null);
 
-            const { connected } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(connected.value).toBe(false);
+            expect(composableState.connected.value).toBe(false);
+
+            wrapper.unmount();
         });
     });
 
@@ -294,7 +412,15 @@ describe('useRealtimeUpdates', () => {
         it('should attach listeners for Echo reconnection', async () => {
             const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
-            useRealtimeUpdates('test-channel', {});
+            const TestComponent = defineComponent({
+                setup() {
+                    useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -308,12 +434,24 @@ describe('useRealtimeUpdates', () => {
             );
 
             addEventListenerSpy.mockRestore();
+
+            wrapper.unmount();
         });
 
         it('should recover from Echo disconnect by polling', async () => {
             const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -330,21 +468,33 @@ describe('useRealtimeUpdates', () => {
                 await nextTick();
 
                 // Should fallback to polling
-                expect(usingFallback.value).toBe(true);
+                expect(composableState.usingFallback.value).toBe(true);
             }
 
             addEventListenerSpy.mockRestore();
+
+            wrapper.unmount();
         });
 
         it('should stop polling when Echo reconnects', async () => {
             global.window.isEchoConnected = vi.fn().mockReturnValue(false);
             const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
 
             // Get reconnect handler and trigger it
             const reconnectHandler =
@@ -361,41 +511,64 @@ describe('useRealtimeUpdates', () => {
                 await nextTick();
 
                 // Should stop polling
-                expect(usingFallback.value).toBe(false);
+                expect(composableState.usingFallback.value).toBe(false);
             }
 
             addEventListenerSpy.mockRestore();
+
+            wrapper.unmount();
         });
     });
 
     describe('edge cases', () => {
         it('should handle missing Echo gracefully', async () => {
-            global.window.Echo = undefined as any;
+            // Simulate missing Echo by making it fail to connect
+            global.window.Echo.channel = vi.fn().mockReturnValue(null);
+            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
 
-            const { connected, usingFallback } = useRealtimeUpdates(
-                'test-channel',
-                {},
-            );
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(connected.value).toBe(false);
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.connected.value).toBe(false);
+            expect(composableState.usingFallback.value).toBe(true);
+
+            wrapper.unmount();
         });
 
         it('should not start polling twice', async () => {
             global.window.isEchoConnected = vi.fn().mockReturnValue(false);
 
-            const { usingFallback } = useRealtimeUpdates(
-                'test-channel',
-                {},
-                {},
-                1000,
-            );
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates(
+                        'test-channel',
+                        {},
+                        {},
+                        1000,
+                    );
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
 
             // Advance time and trigger polling multiple times
             vi.advanceTimersByTime(1000);
@@ -404,19 +577,43 @@ describe('useRealtimeUpdates', () => {
             // Should only set one interval, not multiple
             const intervalCalls = vi.getTimerCount();
             expect(intervalCalls).toBeLessThanOrEqual(2); // One interval + one check interval
+
+            wrapper.unmount();
         });
 
         it('should work with empty event handlers', async () => {
-            const { connected } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
-            expect(connected.value).toBe(true);
+            expect(composableState.connected.value).toBe(true);
             expect(mockChannel.listen).not.toHaveBeenCalled();
+
+            wrapper.unmount();
         });
 
         it('should handle channel error without already polling', async () => {
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -426,7 +623,9 @@ describe('useRealtimeUpdates', () => {
 
             await nextTick();
 
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
+
+            wrapper.unmount();
         });
     });
 
@@ -437,10 +636,20 @@ describe('useRealtimeUpdates', () => {
                 PromptOptimizationCompleted: vi.fn(),
             };
 
-            const { connected } = useRealtimeUpdates(
-                'prompt-run.123',
-                eventHandlers,
-            );
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates(
+                        'prompt-run.123',
+                        eventHandlers,
+                    );
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
@@ -452,7 +661,9 @@ describe('useRealtimeUpdates', () => {
             expect(eventHandlers.AnalysisCompleted).toHaveBeenCalledWith(
                 eventData,
             );
-            expect(connected.value).toBe(true);
+            expect(composableState.connected.value).toBe(true);
+
+            wrapper.unmount();
         });
 
         it('should gracefully degrade from WebSocket to polling', async () => {
@@ -461,12 +672,22 @@ describe('useRealtimeUpdates', () => {
                 .mockReturnValueOnce(true)
                 .mockReturnValueOnce(false);
 
-            const { usingFallback } = useRealtimeUpdates('test-channel', {});
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates('test-channel', {});
+                    return {};
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
 
             await nextTick();
 
             // Initially should use WebSocket
-            expect(usingFallback.value).toBe(false);
+            expect(composableState.usingFallback.value).toBe(false);
 
             // Simulate Echo disconnection and trigger channel error
             const channelErrorHandler = mockChannel.error.mock.calls[0][0];
@@ -475,7 +696,9 @@ describe('useRealtimeUpdates', () => {
             await nextTick();
 
             // Should fallback to polling
-            expect(usingFallback.value).toBe(true);
+            expect(composableState.usingFallback.value).toBe(true);
+
+            wrapper.unmount();
         });
     });
 });

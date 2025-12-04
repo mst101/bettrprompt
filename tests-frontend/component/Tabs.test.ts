@@ -56,7 +56,7 @@ describe('Tabs', () => {
 
         const buttons = wrapper.findAll('button');
         expect(buttons[0].classes()).toContain('border-transparent');
-        expect(buttons[0].classes()).toContain('text-gray-500');
+        expect(buttons[0].classes()).toContain('text-indigo-500');
     });
 
     it('should emit update:modelValue when tab is clicked', async () => {
