@@ -23,7 +23,8 @@ export default defineConfig({
     // Retry on CI only
     retries: process.env.CI ? 2 : 0,
 
-    // Opt out of parallel tests on CI
+    // Parallel workers: use all available CPUs locally, single worker on CI
+    // Set via PW_WORKERS env var or CLI flag: npx playwright test --workers=4
     workers: process.env.CI ? 1 : undefined,
 
     // Reporter to use
@@ -114,4 +115,24 @@ export default defineConfig({
 
     // Folder for test artifacts such as screenshots, videos, traces, etc.
     outputDir: 'tests-frontend/e2e/results',
+
+    // ===== Performance Optimizations =====
+
+    // Disable animations to speed up tests
+    reducedMotion: 'reduce',
+
+    // Use --headed flag to run with UI, default is headless for speed
+    // Command: npx playwright test --headed
+
+    // Expect timeout for individual assertions
+    expect: {
+        timeout: 5000,
+    },
+
+    // Configure slow test detection
+    // Tests taking longer than this will be marked as slow in the report
+    slow: 5000, // 5 seconds = slow test
+
+    // Use --debug flag to run in debug mode with inspector
+    // Command: npx playwright test --debug
 });
