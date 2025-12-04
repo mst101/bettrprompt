@@ -80,12 +80,11 @@ export const test = base.extend({
             // identity: Assertive vs Turbulent
 
             const traitPercentages = {
-                mind: traits?.mind ?? 50,
-                energy: traits?.energy ?? 50,
-                nature: traits?.nature ?? 50,
-                tactics: traits?.tactics ?? 50,
-                identity:
-                    traits?.identity ?? (identity === 'assertive' ? 75 : 25),
+                mind: traits?.mind ?? 65,
+                energy: traits?.energy ?? 65,
+                nature: traits?.nature ?? 65,
+                tactics: traits?.tactics ?? 65,
+                identity: traits?.identity ?? 65,
             };
 
             // Check if already logged in to avoid unnecessary login attempts

@@ -11,9 +11,9 @@ import { expect, test } from './fixtures/data-collection-user';
 
 // All 16 MBTI personality types with their subtypes
 const PERSONALITY_TYPES = [
-    { code: 'INTJ-A', name: 'Architect (Assertive)' },
+    // { code: 'INTJ-A', name: 'Architect (Assertive)' },
     // { code: 'INTJ-T', name: 'Architect (Turbulent)' },
-    { code: 'INTP-A', name: 'Logician (Assertive)' },
+    // { code: 'INTP-A', name: 'Logician (Assertive)' },
     // { code: 'INTP-T', name: 'Logician (Turbulent)' },
     // { code: 'ENTJ-A', name: 'Commander (Assertive)' },
     // { code: 'ENTJ-T', name: 'Commander (Turbulent)' },
@@ -34,7 +34,7 @@ const PERSONALITY_TYPES = [
     // { code: 'ESTJ-A', name: 'Executive (Assertive)' },
     // { code: 'ESTJ-T', name: 'Executive (Turbulent)' },
     // { code: 'ESFJ-A', name: 'Consul (Assertive)' },
-    // { code: 'ESFJ-T', name: 'Consul (Turbulent)' },
+    { code: 'ESFJ-T', name: 'Consul (Turbulent)' },
     // { code: 'ISTP-A', name: 'Virtuoso (Assertive)' },
     // { code: 'ISTP-T', name: 'Virtuoso (Turbulent)' },
     // { code: 'ISFP-A', name: 'Adventurer (Assertive)' },
@@ -47,17 +47,20 @@ const PERSONALITY_TYPES = [
 
 // Sample task to test framework selection consistency
 // Made precise to avoid triggering pre-analysis questions
+// const TEST_TASK =
+//     'Write a project management system for a healthcare clinic. The system must include: ' +
+//     '1) Patient appointment scheduling with automatic reminders via SMS and email; ' +
+//     '2) Electronic medical records storage with HIPAA compliance; ' +
+//     '3) Integration with existing billing systems; ' +
+//     '4) Role-based access control for doctors, nurses, and administrators; ' +
+//     '5) Real-time patient wait time tracking; ' +
+//     '6) Prescription management with pharmacy integration. ' +
+//     'All components must be scalable to support 500+ daily patients across multiple clinics. ' +
+//     'Use modern technology stack with microservices architecture. ' +
+//     'Ensure 99.9% uptime SLA with comprehensive error handling and logging.';
+
 const TEST_TASK =
-    'Write a project management system for a healthcare clinic. The system must include: ' +
-    '1) Patient appointment scheduling with automatic reminders via SMS and email; ' +
-    '2) Electronic medical records storage with HIPAA compliance; ' +
-    '3) Integration with existing billing systems; ' +
-    '4) Role-based access control for doctors, nurses, and administrators; ' +
-    '5) Real-time patient wait time tracking; ' +
-    '6) Prescription management with pharmacy integration. ' +
-    'All components must be scalable to support 500+ daily patients across multiple clinics. ' +
-    'Use modern technology stack with microservices architecture. ' +
-    'Ensure 99.9% uptime SLA with comprehensive error handling and logging.';
+    'I want to buy a second-hand, small, petrol car for commuting to work which is 20 miles away from home in Bromsgrove, UK. It will only be used by me. My main concerns are to have a car that is reliable and has low maintenance';
 
 test.describe.serial('Framework Selection Analysis', () => {
     // Run a test for each personality type
@@ -81,10 +84,11 @@ test.describe.serial('Framework Selection Analysis', () => {
                 `[${personalityType.code}] Setting personality type...`,
             );
             await setPersonality(baseType, identity, {
-                extraversion: 50,
-                intuition: 50,
-                thinking: 50,
-                judging: 50,
+                extraversion: 65,
+                intuition: 65,
+                thinking: 65,
+                judging: 65,
+                identity: 65,
             });
 
             // Navigate to prompt builder

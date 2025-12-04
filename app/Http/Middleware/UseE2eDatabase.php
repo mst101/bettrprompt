@@ -19,17 +19,28 @@ class UseE2eDatabase
     {
         // Check if this is a Playwright E2E test request
         if ($request->header('X-Test-Auth') === 'playwright-e2e-tests') {
-            // Switch to the E2E database
-            Config::set('database.connections.pgsql.database', 'personality_e2e');
+            // Only switch to personality_e2e if not already switched to data_collection
+            // (SwitchDataCollectionDatabase middleware runs first and takes priority)
+            $currentDb = Config::get('database.connections.pgsql.database');
+            if ($currentDb !== 'personality_data_collection') {
+                // Switch to the E2E database
+                Config::set('database.connections.pgsql.database', 'personality_e2e');
 
-            // Reconnect to apply the new database setting
-            app('db')->purge('pgsql');
+                // Reconnect to apply the new database setting
+                app('db')->purge('pgsql');
 
-            // Log for debugging
-            \Log::info('UseE2eDatabase middleware: Switched to personality_e2e database', [
-                'url' => $request->url(),
-                'current_db' => Config::get('database.connections.pgsql.database'),
-            ]);
+                // Log for debugging
+                \Log::info('UseE2eDatabase middleware: Switched to personality_e2e database', [
+                    'url' => $request->url(),
+                    'current_db' => Config::get('database.connections.pgsql.database'),
+                ]);
+            } else {
+                // Data collection database is already set, don't override it
+                \Log::info('UseE2eDatabase middleware: Data collection database already set, skipping E2E override', [
+                    'url' => $request->url(),
+                    'current_db' => $currentDb,
+                ]);
+            }
         }
 
         return $next($request);

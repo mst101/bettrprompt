@@ -23,6 +23,18 @@ class PromptBuilderController extends Controller
     ) {}
 
     /**
+     * Determine which database to use for queue jobs based on request context
+     */
+    private function getJobDatabase(Request $request): ?string
+    {
+        // If X-Data-Collection-Test header is present, use personality_data_collection
+        // This ensures queue jobs save to the same database as the HTTP request
+        return $request->hasHeader('X-Data-Collection-Test')
+            ? 'personality_data_collection'
+            : null;
+    }
+
+    /**
      * Show the prompt builder page
      */
     public function index(Request $request)
@@ -125,7 +137,7 @@ class PromptBuilderController extends Controller
                 });
 
                 // Dispatch the job to analyse the task asynchronously
-                ProcessTaskAnalysis::dispatch($promptRun);
+                ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
                 return redirect()->route('prompt-builder.show', $promptRun);
             }
@@ -175,7 +187,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch workflow_1 (which will enhance + analyse)
-            ProcessTaskAnalysis::dispatch($promptRun);
+            ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
@@ -227,7 +239,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch workflow_1 again to re-analyse with new answers
-            ProcessTaskAnalysis::dispatch($promptRun);
+            ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
@@ -257,10 +269,26 @@ class PromptBuilderController extends Controller
 
         foreach ($questions as $question) {
             $questionId = $question['id'] ?? null;
+            $questionText = $question['question'] ?? null;
             $answer = $answers[$questionId] ?? null;
+            $questionType = $question['type'] ?? null;
 
-            if ($questionId && $answer) {
-                $context[$questionId] = $answer;
+            if ($questionId) {
+                $context[$questionId] = [
+                    'question' => $questionText,
+                    'answer' => $answer,
+                ];
+
+                if ($questionType === 'choice') {
+                    $matchingOption = Arr::first(
+                        $question['options'] ?? [],
+                        fn ($option) => ($option['value'] ?? null) === $answer
+                    );
+
+                    if ($matchingOption && isset($matchingOption['label'])) {
+                        $context[$questionId]['answer_label'] = $matchingOption['label'];
+                    }
+                }
             }
         }
 
@@ -368,7 +396,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to generate the prompt asynchronously
-            ProcessPromptGeneration::dispatch($promptRun);
+            ProcessPromptGeneration::dispatch($promptRun, $this->getJobDatabase($request));
 
             return response()->json([
                 'success' => true,
@@ -547,7 +575,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to analyse the task asynchronously
-            ProcessTaskAnalysis::dispatch($childPromptRun);
+            ProcessTaskAnalysis::dispatch($childPromptRun, null, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
@@ -630,7 +658,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to generate the prompt asynchronously
-            ProcessPromptGeneration::dispatch($childPromptRun);
+            ProcessPromptGeneration::dispatch($childPromptRun, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
@@ -679,7 +707,7 @@ class PromptBuilderController extends Controller
                 });
 
                 // Dispatch the job to analyse the task asynchronously
-                ProcessTaskAnalysis::dispatch($promptRun);
+                ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
@@ -700,7 +728,7 @@ class PromptBuilderController extends Controller
                 });
 
                 // Dispatch the job to generate the prompt asynchronously
-                ProcessPromptGeneration::dispatch($promptRun);
+                ProcessPromptGeneration::dispatch($promptRun, $this->getJobDatabase($request));
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
@@ -961,7 +989,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to analyse the task with the forced framework
-            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code']);
+            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code'], $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)

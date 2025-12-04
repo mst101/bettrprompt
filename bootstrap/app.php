@@ -13,11 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Apply UseE2eDatabase middleware globally to detect Playwright test requests
-        $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
-
-        // Apply SwitchDataCollectionDatabase middleware to handle data collection tests
+        // Apply SwitchDataCollectionDatabase middleware FIRST (for data collection tests)
+        // This must run before UseE2eDatabase so it can take priority
         $middleware->append(\App\Http\Middleware\SwitchDataCollectionDatabase::class);
+
+        // Apply UseE2eDatabase middleware globally to detect Playwright test requests
+        // This runs after SwitchDataCollectionDatabase and defaults to personality_e2e for regular E2E tests
+        $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,

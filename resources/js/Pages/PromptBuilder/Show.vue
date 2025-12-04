@@ -57,12 +57,8 @@ const tabs = computed<Tab[]>(() => {
         icon: 'squares-2x2',
     });
 
-    // Framework tab (only show when analysis is complete or framework has been selected)
-    if (
-        props.promptRun.selectedFramework &&
-        (props.promptRun.workflowStage === 'analysis_complete' ||
-            props.promptRun.workflowStage === 'completed')
-    ) {
+    // Framework tab (show whenever a framework has been selected, regardless of workflow stage)
+    if (props.promptRun.selectedFramework) {
         allTabs.push({
             id: 'framework',
             label: 'Framework',
@@ -72,13 +68,10 @@ const tabs = computed<Tab[]>(() => {
     }
 
     // Add personality tab if tier is not 'none' and UI complexity is advanced
-    // Only show after analysis is complete
     if (
         props.promptRun.personalityTier &&
         props.promptRun.personalityTier !== 'none' &&
-        props.uiComplexity === 'advanced' &&
-        (props.promptRun.workflowStage === 'analysis_complete' ||
-            props.promptRun.workflowStage === 'completed')
+        props.uiComplexity === 'advanced'
     ) {
         allTabs.push({
             id: 'personality',
@@ -237,11 +230,17 @@ watch(
     { immediate: true },
 );
 
-// Focus first textarea when switching to questions tab
+// Focus first textarea and reload data when switching to questions tab
 watch(activeTab, async (newTab) => {
     if (newTab === 'questions') {
-        await nextTick();
-        clarifyingQuestionsRef.value?.focus();
+        // Reload the prompt run data to ensure we have the latest answers from auto-saves
+        router.reload({
+            only: ['promptRun'],
+            onSuccess: async () => {
+                await nextTick();
+                clarifyingQuestionsRef.value?.focus();
+            },
+        });
     }
 });
 

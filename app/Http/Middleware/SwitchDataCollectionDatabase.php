@@ -24,6 +24,9 @@ class SwitchDataCollectionDatabase
 
             // Reconnect to apply the new database configuration
             DB::purge('pgsql');
+
+            // Mark this request as a data collection test for PromptRun models
+            $request->attributes->set('is_data_collection', true);
         }
 
         return $next($request);
