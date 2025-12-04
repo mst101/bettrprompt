@@ -29,9 +29,11 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
     });
 });
 
-test.describe('Prompt Builder History - Empty State', () => {
+test.describe.serial('Prompt Builder History - Empty State', () => {
     test.beforeEach(async ({ authenticatedPage }) => {
         // Clean database for each test to ensure empty state
+        // Using describe.serial() ensures these tests run sequentially before other test groups
+        // to prevent race conditions with parallel seeding from other test groups
         await execAsync(
             './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e',
         );
