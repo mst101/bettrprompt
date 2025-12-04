@@ -6,7 +6,6 @@ test.describe('Profile - Unauthenticated Access', () => {
         page,
     }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Should be redirected to home or login
         const url = page.url();
@@ -22,7 +21,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should load profile edit page', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Should see Profile heading from HeaderPage component
         const heading = page.getByRole('heading', { name: /^profile$/i });
@@ -45,7 +43,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should display current user information', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Should see name and email fields populated with TEST_USER data
         // Labels may include asterisk for required fields: "Name *"
@@ -66,7 +63,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should update profile information', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Scroll to profile section to ensure elements are visible
         const profileSection = page
@@ -91,7 +87,6 @@ test.describe('Profile - Authenticated User', () => {
         const successMessage = profileSection.getByText(/saved\./i);
         await saveButton.click();
         await expect(successMessage).toBeVisible({ timeout: 5000 });
-        await page.waitForLoadState('networkidle');
 
         // Verify the name was updated in the form
         await expect(nameInput).toHaveValue(newName);
@@ -101,14 +96,11 @@ test.describe('Profile - Authenticated User', () => {
         const restoreMessage = profileSection.getByText(/saved\./i);
         await saveButton.click();
         await expect(restoreMessage).toBeVisible({ timeout: 5000 });
-        await page.waitForLoadState('networkidle');
         // Extra wait to ensure database write completes
-        await page.waitForTimeout(500);
     });
 
     test('should display personality type section', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Look for personality type section
         const personalityHeading = page.getByRole('heading', {
@@ -124,7 +116,6 @@ test.describe('Profile - Authenticated User', () => {
         await personalitySelect.selectOption({ index: 1 }); // Select first actual option
 
         // Wait for identity radio buttons to appear
-        await page.waitForTimeout(500);
 
         // Should see identity radio buttons
         const assertiveRadio = page.getByLabel(/assertive \(a\)/i);
@@ -142,7 +133,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should update personality type traits', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const personalitySection = page
             .locator('section')
@@ -154,7 +144,6 @@ test.describe('Profile - Authenticated User', () => {
         await personalitySelect.selectOption('INTJ');
 
         // Wait for identity options to appear
-        await page.waitForTimeout(500);
 
         // Select identity - Assertive
         const assertiveRadio =
@@ -169,7 +158,6 @@ test.describe('Profile - Authenticated User', () => {
         // Click toggle if trait percentages are hidden
         if (await toggleButton.isVisible()) {
             await toggleButton.click();
-            await page.waitForTimeout(500);
         }
 
         // Fill in trait percentage inputs
@@ -208,12 +196,10 @@ test.describe('Profile - Authenticated User', () => {
         });
         await saveButton.click();
         await expect(taskCtaButton).toBeVisible({ timeout: 5000 });
-        await page.waitForLoadState('networkidle');
     });
 
     test('should change password successfully', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const passwordSection = page
             .locator('section')
@@ -241,7 +227,6 @@ test.describe('Profile - Authenticated User', () => {
         const successMessage = passwordSection.getByText(/saved\./i);
         await saveButton.click();
         await expect(successMessage).toBeVisible({ timeout: 5000 });
-        await page.waitForLoadState('networkidle');
 
         // Change password back to original for subsequent tests
         await passwordSection
@@ -254,14 +239,12 @@ test.describe('Profile - Authenticated User', () => {
             .getByLabel(/confirm password/i)
             .fill(TEST_USER.password);
         await saveButton.click();
-        await page.waitForLoadState('networkidle');
     });
 
     test('should show validation errors for mismatched passwords', async ({
         page,
     }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const passwordSection = page
             .locator('section')
@@ -286,7 +269,6 @@ test.describe('Profile - Authenticated User', () => {
         await saveButton.click();
 
         // Wait for validation error
-        await page.waitForLoadState('networkidle');
 
         // Laravel validation error appears near the passwordConfirmation field
         // Check for error text related to password confirmation
@@ -298,7 +280,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should delete account with confirmation modal', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const deleteSection = page
             .locator('section')
@@ -315,7 +296,6 @@ test.describe('Profile - Authenticated User', () => {
         await deleteButton.click();
 
         // Wait for modal to appear
-        await page.waitForTimeout(500);
 
         // Should show confirmation modal with warning text
         const modal = page.getByRole('dialog');
@@ -346,7 +326,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should display user avatar if present', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Check for avatar image (may not be implemented yet)
         const avatar = page
@@ -370,7 +349,6 @@ test.describe('Profile - Authenticated User', () => {
         page,
     }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const profileSection = page
             .locator('section')
@@ -389,8 +367,6 @@ test.describe('Profile - Authenticated User', () => {
         });
         await saveButton.click();
 
-        await page.waitForLoadState('networkidle');
-
         // Should show validation error for required name field
         // HTML5 validation or Laravel validation should prevent submission
         const errorMessage = profileSection.locator('text=/required/i').first();
@@ -406,7 +382,6 @@ test.describe('Profile - Authenticated User', () => {
 
     test('should validate email format', async ({ page }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const profileSection = page
             .locator('section')
@@ -425,8 +400,6 @@ test.describe('Profile - Authenticated User', () => {
         });
         await saveButton.click();
 
-        await page.waitForLoadState('networkidle');
-
         // HTML5 validation should catch invalid email format
         const isInvalid = await emailInput.evaluate((el) =>
             el.matches(':invalid'),
@@ -441,7 +414,6 @@ test.describe('Profile - Authenticated User', () => {
         page,
     }) => {
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         const personalitySection = page
             .locator('section')
@@ -453,7 +425,6 @@ test.describe('Profile - Authenticated User', () => {
         await personalitySelect.selectOption('INTJ');
 
         // Wait for identity options
-        await page.waitForTimeout(500);
 
         // HTML5 validation should prevent submission due to required identity radio
         // Check that at least one radio in the identity group has the required attribute
@@ -471,7 +442,6 @@ test.describe('Profile - Authenticated User', () => {
         await saveButton.click();
 
         // Should still be on profile page (form didn't submit)
-        await page.waitForTimeout(500);
         expect(page.url()).toContain('/profile');
     });
 
@@ -482,7 +452,6 @@ test.describe('Profile - Authenticated User', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // All sections should still be visible and usable
         await expect(

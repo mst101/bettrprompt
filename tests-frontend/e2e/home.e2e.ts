@@ -5,7 +5,6 @@ test.describe('Home Page', () => {
         await page.goto('/');
 
         // Wait for page to be fully loaded
-        await page.waitForLoadState('networkidle');
 
         // Check that the page title is correct
         await expect(page).toHaveTitle(/Welcome to AI Buddy/);
@@ -49,7 +48,6 @@ test.describe('Home Page', () => {
         );
 
         // Wait a bit for any lazy-loaded content
-        await page.waitForTimeout(1000);
 
         // At least some content should be visible (this is a flexible check)
         await expect(page.locator('body')).toBeVisible();

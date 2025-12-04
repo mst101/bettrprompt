@@ -20,7 +20,6 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should redirect to home or login page
         const url = page.url();
@@ -44,7 +43,6 @@ test.describe('Prompt Builder History - Empty State', () => {
 
     test('should display page heading when authenticated', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see the page heading
         const heading = page.getByRole('heading', {
@@ -57,7 +55,6 @@ test.describe('Prompt Builder History - Empty State', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see empty state message
         const emptyMessage = page.getByText(/no prompt history yet/i);
@@ -75,7 +72,6 @@ test.describe('Prompt Builder History - Empty State', () => {
 
     test('should show "Create New" button in header', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see "Create New" button
         const createButton = page.getByRole('link', {
@@ -91,7 +87,6 @@ test.describe('Prompt Builder History - Empty State', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click the create link in empty state
         const createLink = page.getByRole('link', {
@@ -120,7 +115,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
     test('should display history table with prompt runs', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see the table
         const table = page.locator('table');
@@ -147,7 +141,6 @@ test.describe('Prompt Builder History - With Data', () => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see all column headers on desktop
         await expect(
@@ -169,7 +162,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
     test('should show status badges for each prompt run', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see at least one status badge
         const statusBadges = page.getByTestId('status-badge');
@@ -182,7 +174,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
     test('should display dates in British format', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Get first date cell
         const firstRow = page.locator('tbody tr').first();
@@ -197,7 +188,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
     test('should display personality types', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // At desktop size, should see personality types in dedicated column
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -213,7 +203,6 @@ test.describe('Prompt Builder History - With Data', () => {
 
     test('should truncate long task descriptions', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Task descriptions should be visible but may be truncated
         const taskCells = page.locator('tbody tr td').nth(1);
@@ -228,7 +217,6 @@ test.describe('Prompt Builder History - With Data', () => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Framework column should exist on large screens
         const frameworkHeader = page.getByRole('columnheader', {
@@ -258,7 +246,6 @@ test.describe('Prompt Builder History - Sorting', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Created column should be sortable
         const createdHeader = page.getByRole('columnheader', {
@@ -274,7 +261,6 @@ test.describe('Prompt Builder History - Sorting', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click task description header to sort
         const taskHeader = page
@@ -288,7 +274,6 @@ test.describe('Prompt Builder History - Sorting', () => {
         ]);
 
         // Wait for navigation to complete
-        await page.waitForLoadState('networkidle');
 
         // URL should contain sort parameters
         expect(page.url()).toContain('sort_by=task_description');
@@ -300,15 +285,12 @@ test.describe('Prompt Builder History - Sorting', () => {
             taskHeader.click(),
         ]);
 
-        await page.waitForLoadState('networkidle');
-
         // Direction should change to descending
         expect(page.url()).toContain('sort_direction=desc');
     });
 
     test('should sort by status', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Desktop size to see all columns
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -324,8 +306,6 @@ test.describe('Prompt Builder History - Sorting', () => {
             statusHeader.click(),
         ]);
 
-        await page.waitForLoadState('networkidle');
-
         // Should sort by status
         expect(page.url()).toContain('sort_by=status');
     });
@@ -334,7 +314,6 @@ test.describe('Prompt Builder History - Sorting', () => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click personality type header
         const personalityHeader = page
@@ -347,8 +326,6 @@ test.describe('Prompt Builder History - Sorting', () => {
             personalityHeader.click(),
         ]);
 
-        await page.waitForLoadState('networkidle');
-
         // Should sort by personality type
         expect(page.url()).toContain('sort_by=personality_type');
     });
@@ -357,7 +334,6 @@ test.describe('Prompt Builder History - Sorting', () => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click framework header
         const frameworkHeader = page
@@ -369,8 +345,6 @@ test.describe('Prompt Builder History - Sorting', () => {
             page.waitForURL(/sort_by=selected_framework/, { timeout: 5000 }),
             frameworkHeader.click(),
         ]);
-
-        await page.waitForLoadState('networkidle');
 
         // Should sort by framework
         expect(page.url()).toContain('sort_by=selected_framework');
@@ -397,7 +371,6 @@ test.describe('Prompt Builder History - Pagination', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         // Desktop size to see pagination
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -415,7 +388,6 @@ test.describe('Prompt Builder History - Pagination', () => {
 
     test('should navigate to next page', async ({ page }) => {
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -429,8 +401,6 @@ test.describe('Prompt Builder History - Pagination', () => {
             nextButton.click(),
         ]);
 
-        await page.waitForLoadState('networkidle');
-
         // URL should contain page parameter
         expect(page.url()).toContain('page=2');
     });
@@ -438,7 +408,6 @@ test.describe('Prompt Builder History - Pagination', () => {
     test('should navigate to previous page', async ({ page }) => {
         // Start on page 2
         await page.goto('/prompt-builder-history?per_page=10&page=2');
-        await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -449,8 +418,6 @@ test.describe('Prompt Builder History - Pagination', () => {
         await expect(prevButton).toBeVisible();
         await prevButton.click();
 
-        await page.waitForLoadState('networkidle');
-
         // Should go back to page 1
         const url = page.url();
         const isPageOne = !url.includes('page=') || url.includes('page=1');
@@ -459,7 +426,6 @@ test.describe('Prompt Builder History - Pagination', () => {
 
     test('should allow changing items per page', async ({ page }) => {
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -479,8 +445,6 @@ test.describe('Prompt Builder History - Pagination', () => {
             perPageInput.press('Enter'),
         ]);
 
-        await page.waitForLoadState('networkidle');
-
         // URL should reflect the change
         expect(page.url()).toContain('per_page=20');
 
@@ -493,7 +457,6 @@ test.describe('Prompt Builder History - Pagination', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         // Should see mobile "Page X of Y" text (use .first() for mobile version)
         const pageIndicator = page.getByText(/page \d+ of \d+/i).first();
@@ -509,7 +472,6 @@ test.describe('Prompt Builder History - Pagination', () => {
 
     test('should validate per-page input constraints', async ({ page }) => {
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -523,7 +485,6 @@ test.describe('Prompt Builder History - Pagination', () => {
         await perPageInput.press('Enter');
 
         // Give it a moment to process
-        await page.waitForTimeout(500);
 
         // Should reject invalid value and reset input to current value (10)
         await expect(perPageInput).toHaveValue('10');
@@ -533,8 +494,6 @@ test.describe('Prompt Builder History - Pagination', () => {
         // Try invalid value (too low)
         await perPageInput.fill('0');
         await perPageInput.press('Enter');
-
-        await page.waitForTimeout(500);
 
         // Should reject and reset
         await expect(perPageInput).toHaveValue('10');
@@ -554,7 +513,6 @@ test.describe('Prompt Builder History - Navigation', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click the first row
         const firstRow = page.locator('tbody tr').first();
@@ -578,7 +536,6 @@ test.describe('Prompt Builder History - Navigation', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Focus and press Enter on first row
         const firstRow = page.locator('tbody tr').first();
@@ -597,7 +554,6 @@ test.describe('Prompt Builder History - Navigation', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Click Create New button in header
         const createButton = page.getByRole('link', { name: /create new/i });
@@ -621,7 +577,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Table should still be visible
         const table = page.locator('table');
@@ -640,7 +595,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Status badges should be visible on mobile (in the created date cell)
         const statusBadges = page.getByTestId('status-badge');
@@ -652,7 +606,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history?per_page=10');
-        await page.waitForLoadState('networkidle');
 
         // Mobile per-page input should be visible
         const perPageInput = page.locator('#per-page');
@@ -668,7 +621,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Rows should still be clickable
         const firstRow = page.locator('tbody tr').first();
@@ -687,7 +639,6 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Header should be visible
         const heading = page.getByRole('heading', { name: /prompt history/i });
@@ -713,7 +664,6 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await seedPromptRuns(1, 'failed');
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see various status badges
         const statusBadges = page.getByTestId('status-badge');
@@ -730,7 +680,6 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await seedPromptRuns(3, 'pending');
 
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -758,7 +707,6 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await page.goto(
             '/prompt-builder-history?sort_by=status&sort_direction=asc&per_page=5&page=2',
         );
-        await page.waitForLoadState('networkidle');
 
         // Click on a prompt
         const firstRow = page.locator('tbody tr').first();
@@ -776,8 +724,6 @@ test.describe('Prompt Builder History - Edge Cases', () => {
             page.waitForURL(/\/prompt-builder-history/, { timeout: 5000 }),
             page.goBack(),
         ]);
-
-        await page.waitForLoadState('networkidle');
 
         // Should maintain query parameters
         const url = page.url();

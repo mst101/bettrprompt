@@ -65,7 +65,6 @@ test.describe('Google OAuth Authentication', () => {
         await page.goto('/auth/google/callback');
 
         // Should redirect to login or home with error message
-        await page.waitForLoadState('networkidle');
 
         // Check if we're redirected (not on callback URL anymore)
         const url = page.url();
@@ -136,7 +135,6 @@ test.describe.skip(
             await logoutButton.click();
 
             // Should redirect to home
-            await page.waitForLoadState('networkidle');
             expect(page.url()).toBe('/');
 
             // Verify user is logged out (no user menu visible)
