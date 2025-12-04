@@ -32,6 +32,20 @@ export class PromptBuilderPage {
         return this.page.locator('[data-testid="tab-questions"]');
     }
 
+    get frameworkTab(): Locator {
+        return this.page
+            .locator('nav[aria-label="Tabs"]')
+            .getByRole('button', { name: /Framework/i })
+            .first();
+    }
+
+    get optimisedPromptTab(): Locator {
+        return this.page
+            .locator('nav[aria-label="Tabs"]')
+            .getByRole('button', { name: /Optimised Prompt/i })
+            .first();
+    }
+
     get loadingSpinner(): Locator {
         return this.page.locator('[data-testid*="loading"]');
     }
@@ -97,6 +111,20 @@ export class PromptBuilderPage {
     async skipQuestion(): Promise<void> {
         const skipButton = this.page.getByRole('button', { name: /skip/i });
         await skipButton.click();
+    }
+
+    // ===== Tab Navigation Waiting =====
+
+    async waitForFrameworkTab(): Promise<void> {
+        await this.frameworkTab
+            .waitFor({ state: 'visible', timeout: 5000 })
+            .catch(() => null);
+    }
+
+    async waitForOptimisedPromptTab(): Promise<void> {
+        await this.optimisedPromptTab
+            .waitFor({ state: 'visible', timeout: 5000 })
+            .catch(() => null);
     }
 
     // ===== Results Interaction =====

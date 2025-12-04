@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { PromptBuilderPage } from '../pages/PromptBuilderPage';
 
 /**
  * Helper functions for triggering WebSocket broadcast events in E2E tests
@@ -51,13 +52,9 @@ export async function triggerAnalysisCompleted(
         console.log('[E2E] AnalysisCompleted event triggered:', data);
     }, promptRunId);
 
-    // Wait for WebSocket to process the event - check for framework tab or loading state
-    await page
-        .locator('nav[aria-label="Tabs"]')
-        .getByRole('button', { name: /Framework/i })
-        .first()
-        .waitFor({ state: 'visible', timeout: 5000 })
-        .catch(() => null);
+    // Wait for WebSocket to process the event - check for framework tab to appear
+    const promptBuilder = new PromptBuilderPage(page);
+    await promptBuilder.waitForFrameworkTab();
 }
 
 /**
@@ -105,12 +102,8 @@ export async function triggerPromptOptimizationCompleted(
     }, promptRunId);
 
     // Wait for the optimised prompt tab to appear, indicating the event was processed
-    await page
-        .locator('nav[aria-label="Tabs"]')
-        .getByRole('button', { name: /Optimised Prompt/i })
-        .first()
-        .waitFor({ state: 'visible', timeout: 5000 })
-        .catch(() => null);
+    const promptBuilder = new PromptBuilderPage(page);
+    await promptBuilder.waitForOptimisedPromptTab();
 }
 
 /**
