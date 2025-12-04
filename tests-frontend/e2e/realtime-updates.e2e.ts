@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-import { loginAsTestUser } from './helpers/auth';
+import { expect, test } from './fixtures';
 import { createTestPromptRun } from './helpers/broadcast';
 
 /**
@@ -13,8 +12,10 @@ import { createTestPromptRun } from './helpers/broadcast';
  */
 
 test.describe('Realtime - Fallback Behavior', () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should remain functional when WebSocket unavailable', async ({
@@ -54,8 +55,10 @@ test.describe('Realtime - Fallback Behavior', () => {
 });
 
 test.describe('Realtime - Channel Cleanup', () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should cleanup channels without JavaScript errors', async ({
@@ -105,8 +108,10 @@ test.describe('Realtime - Channel Cleanup', () => {
 });
 
 test.describe('Realtime - Tab Visibility', () => {
-    test.beforeEach(async ({ page }) => {
-        await loginAsTestUser(page);
+    test.beforeEach(async ({ authenticatedPage }) => {
+        // User is already authenticated via fixture
+
+        void authenticatedPage;
     });
 
     test('should display framework tab for framework-selected state', async ({
