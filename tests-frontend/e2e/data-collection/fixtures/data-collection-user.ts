@@ -14,11 +14,6 @@ interface PersonalityTraits {
     nature?: number; // Thinking (T) vs Feeling (F)
     tactics?: number; // Judging (J) vs Perceiving (P)
     identity?: number; // Assertive (A) vs Turbulent (T)
-    // Legacy names (mapped to new format for backwards compatibility)
-    extraversion?: number;
-    intuition?: number;
-    thinking?: number;
-    judging?: number;
 }
 
 export const test = base.extend({
@@ -77,19 +72,20 @@ export const test = base.extend({
         ) => {
             const personalityCode = `${baseType}-${identity.charAt(0).toUpperCase()}`;
 
-            // Map MBTI trait names to the expected format
-            // mind: Introversion/Extraversion (E=high, I=low)
-            // energy: Intuition/Sensing (N=high, S=low)
-            // nature: Thinking/Feeling (T=high, F=low)
-            // tactics: Judging/Perceiving (J=high, P=low)
-            // identity: Assertive/Turbulent (A=high, T=low)
+            // 16 personalities.com trait percentages
+            // mind: Introversion vs Extraversion
+            // energy: Intuition vs Sensing
+            // nature: Thinking vs Feeling
+            // tactics: Judging vs Perceiving
+            // identity: Assertive vs Turbulent
 
-            const mappedTraits = {
-                mind: traits?.extraversion ?? 50,
-                energy: traits?.intuition ?? 50,
-                nature: traits?.thinking ?? 50,
-                tactics: traits?.judging ?? 50,
-                identity: identity === 'assertive' ? 75 : 25,
+            const traitPercentages = {
+                mind: traits?.mind ?? 50,
+                energy: traits?.energy ?? 50,
+                nature: traits?.nature ?? 50,
+                tactics: traits?.tactics ?? 50,
+                identity:
+                    traits?.identity ?? (identity === 'assertive' ? 75 : 25),
             };
 
             // Check if already logged in to avoid unnecessary login attempts
@@ -186,7 +182,7 @@ export const test = base.extend({
                 {
                     bType: baseType,
                     ident: identity,
-                    traitValues: mappedTraits,
+                    traitValues: traitPercentages,
                 },
             );
 
