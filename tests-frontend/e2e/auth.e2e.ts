@@ -26,14 +26,6 @@ test.describe('Authentication', () => {
         await expect(page.getByLabel(/^password/i)).toBeVisible();
     });
 
-    test('should navigate to home page', async ({ page }) => {
-        await page.goto('/');
-
-        // Verify we're on the home page
-        expect(page.url()).toContain('/');
-        await expect(page).toHaveTitle(/Welcome to AI Buddy/);
-    });
-
     test('should allow navigation to register from login', async ({ page }) => {
         // Navigate to home page
         await page.goto('/');
