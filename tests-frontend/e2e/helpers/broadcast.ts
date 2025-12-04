@@ -53,7 +53,8 @@ export async function triggerAnalysisCompleted(
 
     // Wait for WebSocket to process the event - check for framework tab or loading state
     await page
-        .locator('nav[aria-label="Tabs"] button:has-text("Framework")')
+        .locator('nav[aria-label="Tabs"]')
+        .getByRole('button', { name: /Framework/i })
         .first()
         .waitFor({ state: 'visible', timeout: 5000 })
         .catch(() => null);
@@ -105,7 +106,8 @@ export async function triggerPromptOptimizationCompleted(
 
     // Wait for the optimised prompt tab to appear, indicating the event was processed
     await page
-        .locator('nav[aria-label="Tabs"] button:has-text("Optimised Prompt")')
+        .locator('nav[aria-label="Tabs"]')
+        .getByRole('button', { name: /Optimised Prompt/i })
         .first()
         .waitFor({ state: 'visible', timeout: 5000 })
         .catch(() => null);
