@@ -232,20 +232,26 @@ class TestBroadcastController extends Controller
         $personalityType = $request->input('personality_type');
         $identity = $request->input('identity', 'assertive');
         $traits = $request->input('traits', [
-            'extraversion' => 50,
-            'intuition' => 50,
-            'feeling' => 50,
-            'perceiving' => 50,
+            'mind' => 50,
+            'energy' => 50,
+            'nature' => 50,
+            'tactics' => 50,
+            'identity' => 50,
         ]);
 
-        // Update user personality
+        // Create personality type code (e.g., "INTJ-A")
+        $personalityCode = "{$personalityType}-".($identity === 'assertive' ? 'A' : 'T');
+
+        // Update user personality with the trait percentages as sent by the fixture
         $user->update([
-            'personality_type' => $personalityType,
-            'identity_type' => $identity,
-            'trait_extraversion' => $traits['extraversion'] ?? 50,
-            'trait_intuition' => $traits['intuition'] ?? 50,
-            'trait_feeling' => $traits['feeling'] ?? 50,
-            'trait_perceiving' => $traits['perceiving'] ?? 50,
+            'personality_type' => $personalityCode,
+            'trait_percentages' => [
+                'mind' => $traits['mind'] ?? 50,
+                'energy' => $traits['energy'] ?? 50,
+                'nature' => $traits['nature'] ?? 50,
+                'tactics' => $traits['tactics'] ?? 50,
+                'identity' => $traits['identity'] ?? 50,
+            ],
         ]);
 
         return response()->json([
@@ -253,7 +259,7 @@ class TestBroadcastController extends Controller
             'message' => 'Personality type set successfully',
             'data' => [
                 'personality_type' => $user->personality_type,
-                'identity_type' => $user->identity_type,
+                'trait_percentages' => $user->trait_percentages,
             ],
         ]);
     }

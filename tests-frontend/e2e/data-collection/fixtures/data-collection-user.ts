@@ -9,10 +9,16 @@ import { test as base } from '../../fixtures/personality-user';
  */
 
 interface PersonalityTraits {
-    extraversion: number;
-    intuition: number;
-    thinking: number;
-    judging: number;
+    mind?: number; // Introversion (I) vs Extraversion (E)
+    energy?: number; // Intuition (N) vs Sensing (S)
+    nature?: number; // Thinking (T) vs Feeling (F)
+    tactics?: number; // Judging (J) vs Perceiving (P)
+    identity?: number; // Assertive (A) vs Turbulent (T)
+    // Legacy names (mapped to new format for backwards compatibility)
+    extraversion?: number;
+    intuition?: number;
+    thinking?: number;
+    judging?: number;
 }
 
 export const test = base.extend({
@@ -70,11 +76,20 @@ export const test = base.extend({
             traits?: Partial<PersonalityTraits>,
         ) => {
             const personalityCode = `${baseType}-${identity.charAt(0).toUpperCase()}`;
-            const defaultTraits: PersonalityTraits = {
-                extraversion: 50,
-                intuition: 50,
-                thinking: 50,
-                judging: 50,
+
+            // Map MBTI trait names to the expected format
+            // mind: Introversion/Extraversion (E=high, I=low)
+            // energy: Intuition/Sensing (N=high, S=low)
+            // nature: Thinking/Feeling (T=high, F=low)
+            // tactics: Judging/Perceiving (J=high, P=low)
+            // identity: Assertive/Turbulent (A=high, T=low)
+
+            const mappedTraits = {
+                mind: traits?.extraversion ?? 50,
+                energy: traits?.intuition ?? 50,
+                nature: traits?.thinking ?? 50,
+                tactics: traits?.judging ?? 50,
+                identity: identity === 'assertive' ? 75 : 25,
             };
 
             // Check if already logged in to avoid unnecessary login attempts
@@ -171,7 +186,7 @@ export const test = base.extend({
                 {
                     bType: baseType,
                     ident: identity,
-                    traitValues: { ...defaultTraits, ...traits },
+                    traitValues: mappedTraits,
                 },
             );
 
