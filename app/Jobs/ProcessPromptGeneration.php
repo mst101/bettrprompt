@@ -27,9 +27,43 @@ class ProcessPromptGeneration implements ShouldQueue
      */
     public function handle(PromptFrameworkService $promptService): void
     {
+        // Check if this prompt_run exists in the data collection database
+        // If it does, switch to that database for the duration of this job
+        $currentDb = config('database.connections.pgsql.database');
+        $dataCollectionDb = 'personality_data_collection';
+
+        // Only check if we're currently on the main personality database
+        $usingDataCollection = false;
+        if ($currentDb === 'personality') {
+            // Temporarily switch to check if the record exists in data collection DB
+            config(['database.connections.pgsql.database' => $dataCollectionDb]);
+            \DB::purge('pgsql');
+
+            try {
+                $exists = \DB::table('prompt_runs')
+                    ->where('id', $this->promptRun->id)
+                    ->exists();
+
+                if ($exists) {
+                    $usingDataCollection = true;
+                    // Reload the model from the data collection database
+                    $this->promptRun = PromptRun::find($this->promptRun->id);
+                } else {
+                    // Switch back to the original database
+                    config(['database.connections.pgsql.database' => $currentDb]);
+                    \DB::purge('pgsql');
+                }
+            } catch (\Exception $e) {
+                // If data collection DB doesn't exist, switch back
+                config(['database.connections.pgsql.database' => $currentDb]);
+                \DB::purge('pgsql');
+            }
+        }
+
         try {
             Log::info('Processing prompt generation', [
                 'prompt_run_id' => $this->promptRun->id,
+                'using_data_collection_db' => $usingDataCollection,
             ]);
 
             // Combine questions with answers for workflow 2
