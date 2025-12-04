@@ -146,17 +146,12 @@ export async function loginWithPersonalityType(
 
     // Then set personality type via test endpoint
     await page.evaluate(async (code: string) => {
-        const csrfToken = (
-            document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
-        )?.getAttribute('content');
-
         const [baseType, identity] = code.split('-');
 
         const response = await fetch('/test/set-personality', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken || '',
                 'X-Test-Auth': 'playwright-e2e-tests',
             },
             body: JSON.stringify({
@@ -173,6 +168,11 @@ export async function loginWithPersonalityType(
         });
 
         if (!response.ok) {
+            // Log response details for debugging
+            const body = await response.text().catch(() => '<no body>');
+            console.error(
+                `[DEBUG] Failed to set personality - Status: ${response.status}, StatusText: ${response.statusText}, Body: ${body}`,
+            );
             throw new Error(
                 `Failed to set personality type: ${response.status} ${response.statusText}`,
             );
