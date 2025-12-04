@@ -8,7 +8,6 @@ test.describe('Prompt Builder - Unauthenticated', () => {
     }) => {
         await acceptCookies(page);
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Should stay on prompt optimizer page - no redirect
         const url = page.url();
@@ -26,7 +25,6 @@ test.describe('Prompt Builder - Basic Flow', () => {
     }) => {
         await acceptCookies(page);
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Should stay on prompt optimizer - no auth required
         const url = page.url();
@@ -48,7 +46,6 @@ test.describe('Prompt Builder - Basic Flow', () => {
     }) => {
         await acceptCookies(page);
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // History requires authentication - should redirect to login
         const url = page.url();
@@ -73,7 +70,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     }) => {
         // Navigate to the prompt builder index
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Fill in the task description
         const taskInput = page.getByLabel(/task description/i);
@@ -127,7 +123,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     }) => {
         // Navigate to the prompt builder
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Submit a prompt
         const taskInput = page.getByLabel(/task description/i);
@@ -175,7 +170,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should answer a clarifying question', async ({ page }) => {
         // First, create a prompt run
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
         await taskInput.fill('Design a database schema for a blog platform');
@@ -218,7 +212,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await submitAnswerButton.click();
 
             // Wait for navigation or next question
-            await page.waitForLoadState('networkidle');
 
             // Verify we've moved forward (progress indicator updated or completed)
             const progressIndicator = page.getByTestId('progress-indicator');
@@ -244,7 +237,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should skip a question', async ({ page }) => {
         // Create a prompt run and navigate to questions
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
         await taskInput.fill('Build a RESTful API for a mobile app');
@@ -271,7 +263,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await skipButton.click();
 
             // Wait for navigation to next question or completion
-            await page.waitForLoadState('networkidle');
 
             // Verify we've moved forward - either to next question or completed
             const progressIndicator = page.getByTestId('progress-indicator');
@@ -295,7 +286,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Navigate to prompt builder history to find the completed prompt
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Look for any completed prompts in history
         const completedBadge = page
@@ -347,7 +337,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Navigate to history and find the completed prompt
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         const completedBadge = page
             .getByTestId('status-badge')
@@ -413,7 +402,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Navigate to the completed prompt
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         const completedBadge = page
             .getByTestId('status-badge')
@@ -450,7 +438,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await saveButton.click();
 
             // Wait for save to complete
-            await page.waitForLoadState('networkidle');
 
             // Verify the edited text is now displayed
             const promptDisplay = page.getByTestId('optimized-prompt-text');
@@ -460,7 +447,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
     test('should view prompt history', async ({ page }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Should see the heading
         const heading = page.getByRole('heading', {
@@ -483,7 +469,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         page,
     }) => {
         await page.goto('/prompt-builder-history');
-        await page.waitForLoadState('networkidle');
 
         // Look for any table rows (prompt entries)
         const promptRows = page.locator('tbody tr');
@@ -510,7 +495,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
     test('should show voice input button when available', async ({ page }) => {
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Look for the voice input button within the form
         // The button is inside the FormTextareaWithActions component
@@ -533,7 +517,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should navigate back to index from show page', async ({ page }) => {
         // Create a prompt
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
         await taskInput.fill('Test navigation functionality');
@@ -569,7 +552,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     }) => {
         // Create a prompt
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
         await taskInput.fill('Create a marketing strategy for a SaaS product');
@@ -610,7 +592,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         const taskDescription = 'Write a simple hello world program in Python';
 
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         const taskInput = page.getByLabel(/task description/i);
         await taskInput.fill(taskDescription);
@@ -631,7 +612,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await taskTab.click();
 
         // Wait for tab content to load
-        await page.waitForLoadState('networkidle');
 
         // Should see the task description or related content on the page
         // The page might show the full task description or pre-analysis questions about it

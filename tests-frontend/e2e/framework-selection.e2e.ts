@@ -63,15 +63,12 @@ test.describe.skip('Framework Selection Analysis', () => {
 
             // Navigate to prompt optimiser
             // await page.goto('/prompt-builder');
-            // await page.waitForLoadState('networkidle');
 
             // For authenticated users, need to go to profile to set personality type
             // Navigate to profile edit page
             await page.goto('/profile');
-            await page.waitForLoadState('networkidle');
 
             // Additional wait to ensure any previous requests have completed
-            await page.waitForTimeout(500);
 
             // Look for personality type selector in the profile page
             const personalitySelect = page
@@ -92,7 +89,6 @@ test.describe.skip('Framework Selection Analysis', () => {
             await personalitySelect.selectOption(baseType);
 
             // Wait for identity radio buttons to appear and form to update
-            await page.waitForTimeout(500);
 
             // Select identity (Assertive or Turbulent)
             const identityRadio =
@@ -108,7 +104,6 @@ test.describe.skip('Framework Selection Analysis', () => {
             await identityRadio.click();
 
             // Wait for form state to update after clicking radio
-            await page.waitForTimeout(300);
 
             // Log what we're setting
             console.log(
@@ -129,7 +124,6 @@ test.describe.skip('Framework Selection Analysis', () => {
 
             if (!traitInputsVisible) {
                 await toggleTraitsButton.click();
-                await page.waitForTimeout(300);
             }
 
             // Set default trait percentages (50% for each trait)
@@ -157,7 +151,6 @@ test.describe.skip('Framework Selection Analysis', () => {
                 state: 'visible',
                 timeout: 5000,
             });
-            await page.waitForTimeout(500);
 
             // Click save and wait for the HTTP response to complete
             const saveResponsePromise = page.waitForResponse(
@@ -173,7 +166,6 @@ test.describe.skip('Framework Selection Analysis', () => {
             await saveResponsePromise;
 
             // Additional wait to ensure database transaction is committed
-            await page.waitForTimeout(2000);
 
             // Verify the personality type was saved by reloading and checking
             // Retry up to 3 times to handle race conditions
@@ -182,8 +174,6 @@ test.describe.skip('Framework Selection Analysis', () => {
 
             for (let attempt = 0; attempt < 3; attempt++) {
                 await page.reload();
-                await page.waitForLoadState('networkidle');
-                await page.waitForTimeout(1000);
 
                 const savedPersonalitySelect = page
                     .getByLabel(/personality type/i)
@@ -201,7 +191,6 @@ test.describe.skip('Framework Selection Analysis', () => {
 
                 // Wait before retry
                 if (attempt < 2) {
-                    await page.waitForTimeout(2000);
                 }
             }
 
@@ -220,7 +209,6 @@ test.describe.skip('Framework Selection Analysis', () => {
 
             // Navigate back to prompt optimiser
             await page.goto('/prompt-builder');
-            await page.waitForLoadState('networkidle');
 
             // Fill in task description
             const taskInput = page.getByLabel(/task description/i);
@@ -277,7 +265,6 @@ test.describe.skip('Framework Selection Analysis', () => {
             while (!frameworkFound && Date.now() - startTime < maxWaitTime) {
                 // Reload page to get latest state from backend
                 await page.reload();
-                await page.waitForLoadState('networkidle');
 
                 // Check for all tabs on the page
                 // Tabs are buttons in a nav with aria-label="Tabs"
@@ -351,7 +338,6 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
 
         // Go to profile to set personality type
         await page.goto('/profile');
-        await page.waitForLoadState('networkidle');
 
         // Set personality type to INTJ-A
         const personalitySelect = page.getByLabel(/personality type/i).first();
@@ -362,7 +348,6 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
         await personalitySelect.selectOption('INTJ');
 
         // Wait for identity radio to appear
-        await page.waitForTimeout(300);
 
         // Select Assertive
         const assertiveRadio = page.getByLabel(/assertive.*\(a\)/i);
@@ -373,7 +358,6 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
             name: /\+ add.*trait percentages/i,
         });
         await toggleTraitsButton.click();
-        await page.waitForTimeout(300);
 
         // Set trait percentages
         const traitInputs = page.locator('input[type="number"]');
@@ -390,11 +374,9 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
             name: /^save$/i,
         });
         await saveButton.click();
-        await page.waitForTimeout(1000);
 
         // Go to prompt optimiser
         await page.goto('/prompt-builder');
-        await page.waitForLoadState('networkidle');
 
         // Fill task
         const taskInput = page.getByLabel(/task description/i);
@@ -412,7 +394,6 @@ test.describe.skip('Framework Selection - Quick Verification', () => {
         ]);
 
         // Verify we can see status
-        await page.waitForTimeout(1000);
 
         console.log('\nTest prompt run created successfully');
         console.log(`URL: ${page.url()}`);
