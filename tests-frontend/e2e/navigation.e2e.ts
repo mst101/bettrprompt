@@ -12,7 +12,18 @@ test.describe('Site Navigation', () => {
         });
 
         if ((await ctaButton.count()) > 0) {
-            await ctaButton.first().click();
+            // Use Promise.all to coordinate click with navigation
+            await Promise.all([
+                page
+                    .waitForURL(
+                        (url) =>
+                            url.pathname.includes('/prompt-builder') ||
+                            url.pathname.includes('/login'),
+                        { timeout: 5000 },
+                    )
+                    .catch(() => null),
+                ctaButton.first().click(),
+            ]);
 
             // Should navigate to prompt optimizer or login
             const url = page.url();

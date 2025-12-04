@@ -237,14 +237,28 @@ test.describe('Cross-Page Navigation', () => {
         for (const pagePath of pages) {
             await page.goto(pagePath);
 
-            // Click logo
+            // Click logo and wait for navigation
             const logoLink = page
                 .getByRole('link', { name: /AI Buddy/i })
                 .first();
-            await logoLink.click();
+
+            // Use Promise.all to coordinate click with navigation
+            await Promise.all([
+                page
+                    .waitForURL(
+                        (url) => {
+                            const pathname = url.pathname;
+                            return pathname === '/' || pathname === '';
+                        },
+                        { timeout: 5000 },
+                    )
+                    .catch(() => null),
+                logoLink.click(),
+            ]);
 
             // Should navigate to home
-            expect(page.url()).toMatch(/\/(#.*)?$/);
+            const currentPath = new URL(page.url()).pathname;
+            expect(currentPath === '/' || currentPath === '').toBeTruthy();
         }
     });
 
