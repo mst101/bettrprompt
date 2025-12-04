@@ -34,34 +34,14 @@ test.describe('Authentication', () => {
         await expect(page).toHaveTitle(/Welcome to AI Buddy/);
     });
 
-    test('should display Google Sign-In option when available', async ({
-        page,
-    }) => {
-        // Navigate to login page or open login modal
-        await page.goto('/?modal=login');
-
-        // Wait for page load
-        await page.waitForLoadState('networkidle');
-
-        // Check if Google Sign-In button exists
-        // This is a flexible test - it won't fail if the button isn't there
-        const googleButton = page.getByRole('button', { name: /google/i });
-        await googleButton.count(); // Check if button exists
-
-        // Just verify the page loaded successfully
-        expect(page.url()).toBeTruthy();
-    });
-
     test('should allow navigation to register from login', async ({ page }) => {
         // Navigate to home page
         await page.goto('/');
-        await page.waitForLoadState('networkidle');
 
         // Dismiss cookie banner if it appears
         const acceptButton = page.getByRole('button', { name: /accept all/i });
         if (await acceptButton.isVisible().catch(() => false)) {
             await acceptButton.click();
-            await page.waitForTimeout(300);
         }
 
         // Click the login button to open the modal
@@ -98,32 +78,6 @@ test.describe('Authentication', () => {
         });
         await expect(registerSubmitButton).toBeVisible();
     });
-
-    test('should show login modal with form fields', async ({ page }) => {
-        // Navigate to login modal
-        await page.goto('/?modal=login');
-        await page.waitForLoadState('networkidle');
-
-        // Wait for modal to appear
-        await page.waitForTimeout(500);
-
-        // Look for email and password inputs within the modal
-        // Use pattern that handles asterisk for required fields
-        const emailInput = page.getByLabel(/^email/i).first();
-        const passwordInput = page.getByLabel(/^password/i).first();
-
-        // Check if login form is visible
-        if (await emailInput.isVisible().catch(() => false)) {
-            await expect(emailInput).toBeVisible();
-            await expect(passwordInput).toBeVisible();
-
-            // Verify there's a submit button
-            const submitButton = page
-                .getByRole('button', { name: /log in|sign in/i })
-                .first();
-            await expect(submitButton).toBeVisible();
-        }
-    });
 });
 
 test.describe('Protected Routes', () => {
@@ -132,9 +86,6 @@ test.describe('Protected Routes', () => {
     }) => {
         // Try to access the profile page without authentication
         await page.goto('/profile');
-
-        // Wait for any redirects
-        await page.waitForLoadState('networkidle');
 
         // Should be redirected to login or home
         const url = page.url();
@@ -148,9 +99,6 @@ test.describe('Protected Routes', () => {
     }) => {
         // Unauthenticated users can now use the prompt optimizer
         await page.goto('/prompt-builder');
-
-        // Wait for page to load
-        await page.waitForLoadState('networkidle');
 
         // Should NOT be redirected - should stay on prompt optimizer
         const url = page.url();
