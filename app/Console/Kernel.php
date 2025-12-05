@@ -43,6 +43,19 @@ class Kernel extends ConsoleKernel
 
         // Process Mailgun events hourly
         $schedule->command('mailgun:process-events')->hourly();
+
+        // Update GeoIP database every Monday at 2:00 AM
+        $schedule->command('geoip:update')
+            ->weekly()
+            ->mondays()
+            ->at('02:00')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                \Illuminate\Support\Facades\Log::info('GeoIP database updated successfully via scheduler');
+            })
+            ->onFailure(function () {
+                \Illuminate\Support\Facades\Log::error('GeoIP database update failed');
+            });
     }
 
     /**

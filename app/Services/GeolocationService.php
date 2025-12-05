@@ -181,7 +181,7 @@ class GeolocationService
             return $this->reader;
         }
 
-        $databasePath = config('geoip.database_path');
+        $databasePath = config('geoip.maxmind.database_path');
 
         if (! file_exists($databasePath)) {
             Log::warning("MaxMind database not found at: {$databasePath}");
@@ -248,7 +248,11 @@ class GeolocationService
     public function __destruct()
     {
         if ($this->reader !== null) {
-            $this->reader->close();
+            try {
+                $this->reader->close();
+            } catch (\Exception) {
+                // Ignore exceptions during cleanup
+            }
         }
     }
 }
