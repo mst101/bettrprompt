@@ -75,71 +75,67 @@ test.describe('Google OAuth Authentication', () => {
     });
 });
 
-test.describe.skip(
-    'Google OAuth - Successful Login (requires OAuth setup)',
-    () => {
-        test('should complete Google OAuth flow and log in user', async ({
-            page,
-        }) => {
-            // This test would require:
-            // 1. Mocking Google OAuth responses
-            // 2. Or using a test Google account
-            // 3. Or using Playwright's auth state
+test.describe
+    .skip('Google OAuth - Successful Login (requires OAuth setup)', () => {
+    test('should complete Google OAuth flow and log in user', async ({
+        page,
+    }) => {
+        // This test would require:
+        // 1. Mocking Google OAuth responses
+        // 2. Or using a test Google account
+        // 3. Or using Playwright's auth state
 
-            // Expected flow:
-            // 1. Click "Sign in with Google"
-            // 2. Redirect to Google
-            // 3. Google redirects back to /auth/google/callback with code
-            // 4. User is authenticated
-            // 5. Redirect to /prompt-builder
+        // Expected flow:
+        // 1. Click "Sign in with Google"
+        // 2. Redirect to Google
+        // 3. Google redirects back to /auth/google/callback with code
+        // 4. User is authenticated
+        // 5. Redirect to /prompt-builder
 
-            await page.goto('/');
-            expect(page.url()).toBe('/');
+        await page.goto('/');
+        expect(page.url()).toBe('/');
+    });
+
+    test('should create new user account from Google OAuth data', async ({
+        page,
+    }) => {
+        // Expected flow for new user:
+        // 1. Complete OAuth flow
+        // 2. Check if email exists in database
+        // 3. If not, create new user
+        // 4. Log user in
+        // 5. Redirect to prompt optimizer
+
+        await page.goto('/');
+        expect(page.url()).toBe('/');
+    });
+
+    test('should link Google account to existing email', async ({ page }) => {
+        // Expected flow:
+        // 1. User with email exists but no google_id
+        // 2. User authenticates with Google using same email
+        // 3. System updates user record with google_id
+        // 4. User is logged in
+
+        await page.goto('/');
+        expect(page.url()).toBe('/');
+    });
+
+    test('should log out user', async ({ page }) => {
+        // Assuming user is authenticated
+        await page.goto('/');
+
+        // Find and click logout button
+        const logoutButton = page.getByRole('button', {
+            name: /log out|sign out/i,
         });
+        await logoutButton.click();
 
-        test('should create new user account from Google OAuth data', async ({
-            page,
-        }) => {
-            // Expected flow for new user:
-            // 1. Complete OAuth flow
-            // 2. Check if email exists in database
-            // 3. If not, create new user
-            // 4. Log user in
-            // 5. Redirect to prompt optimizer
+        // Should redirect to home
+        expect(page.url()).toBe('/');
 
-            await page.goto('/');
-            expect(page.url()).toBe('/');
-        });
-
-        test('should link Google account to existing email', async ({
-            page,
-        }) => {
-            // Expected flow:
-            // 1. User with email exists but no google_id
-            // 2. User authenticates with Google using same email
-            // 3. System updates user record with google_id
-            // 4. User is logged in
-
-            await page.goto('/');
-            expect(page.url()).toBe('/');
-        });
-
-        test('should log out user', async ({ page }) => {
-            // Assuming user is authenticated
-            await page.goto('/');
-
-            // Find and click logout button
-            const logoutButton = page.getByRole('button', {
-                name: /log out|sign out/i,
-            });
-            await logoutButton.click();
-
-            // Should redirect to home
-            expect(page.url()).toBe('/');
-
-            // Verify user is logged out (no user menu visible)
-            const userMenu = page.getByText(/profile|account/i);
-            await expect(userMenu).not.toBeVisible();
-        });
-    },
-);
+        // Verify user is logged out (no user menu visible)
+        const userMenu = page.getByText(/profile|account/i);
+        await expect(userMenu).not.toBeVisible();
+    });
+});
