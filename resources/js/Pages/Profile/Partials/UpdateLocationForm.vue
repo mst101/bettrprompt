@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonText from '@/Components/ButtonText.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -124,13 +126,7 @@ const clearLocation = () => {
                         Detected {{ detectedAtFormatted }}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    class="text-xs font-medium text-blue-600 hover:text-blue-700"
-                    @click="clearLocation"
-                >
-                    Clear
-                </button>
+                <ButtonText @click="clearLocation"> Clear </ButtonText>
             </div>
         </div>
 
@@ -190,14 +186,13 @@ const clearLocation = () => {
                     Save Location
                 </ButtonPrimary>
 
-                <button
+                <ButtonSecondary
                     type="button"
-                    class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
                     :disabled="form.processing"
                     @click="detectLocation"
                 >
                     Auto-Detect
-                </button>
+                </ButtonSecondary>
             </div>
         </form>
     </section>

@@ -30,25 +30,6 @@ const companySizeOptions = [
     { value: 'enterprise', label: 'Enterprise (1000+ people)' },
 ];
 
-const commonIndustries = [
-    'Technology',
-    'Finance',
-    'Healthcare',
-    'Education',
-    'Retail',
-    'Manufacturing',
-    'Consulting',
-    'Marketing',
-    'Design',
-    'Engineering',
-    'Sales',
-    'Operations',
-    'Product Management',
-    'Data Science',
-    'Cyber Security',
-    'Other',
-];
-
 const form = useForm({
     job_title: props.professionalData.jobTitle || '',
     industry: props.professionalData.industry || '',
@@ -89,35 +70,14 @@ const submit = () => {
                 />
 
                 <!-- Industry -->
-                <div>
-                    <label
-                        for="industry"
-                        class="block text-sm font-medium text-black"
-                    >
-                        Industry
-                    </label>
-                    <input
-                        id="industry"
-                        v-model="form.industry"
-                        type="text"
-                        list="industries"
-                        placeholder="e.g., Technology"
-                        class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                    <datalist id="industries">
-                        <option
-                            v-for="industry in commonIndustries"
-                            :key="industry"
-                            :value="industry"
-                        />
-                    </datalist>
-                    <p
-                        v-if="form.errors.industry"
-                        class="mt-1 text-sm text-red-600"
-                    >
-                        {{ form.errors.industry }}
-                    </p>
-                </div>
+                <FormInput
+                    id="industry"
+                    v-model="form.industry"
+                    label="Industry"
+                    placeholder="e.g., Technology"
+                    :error="form.errors.industry"
+                    help-text="Your industry or sector"
+                />
 
                 <!-- Experience Level -->
                 <FormSelect

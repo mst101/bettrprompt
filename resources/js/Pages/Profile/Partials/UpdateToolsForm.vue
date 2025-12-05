@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import FormCheckbox from '@/Components/FormCheckbox.vue';
+import FormSelect from '@/Components/FormSelect.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -114,60 +116,31 @@ const submit = () => {
                     </p>
                 </div>
 
-                <!-- Collapsible Tool Categories -->
+                <!-- Tool Categories -->
                 <div class="space-y-4">
                     <div
                         v-for="(tools, category) in toolCategories"
                         :key="category"
                         class="rounded-lg border border-gray-200"
                     >
-                        <button
-                            type="button"
-                            class="flex w-full items-center justify-between rounded-lg px-4 py-3 font-medium text-gray-900 hover:bg-gray-50"
-                            @click="
-                                (e) => {
-                                    const el =
-                                        e.currentTarget.nextElementSibling;
-                                    el?.classList.toggle('hidden');
-                                }
-                            "
-                        >
-                            <span>{{ category }}</span>
-                            <svg
-                                class="h-5 w-5 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                                />
-                            </svg>
-                        </button>
+                        <div class="border-b border-gray-200 px-4 py-3">
+                            <p class="font-medium text-gray-900">
+                                {{ category }}
+                            </p>
+                        </div>
 
-                        <div
-                            class="grid grid-cols-2 gap-3 border-t border-gray-200 p-4 sm:grid-cols-3"
-                        >
-                            <label
+                        <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
+                            <FormCheckbox
                                 v-for="tool in tools"
+                                :id="`tool-${tool}`"
                                 :key="tool"
-                                class="flex items-center"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="
-                                        form.preferred_tools.includes(tool)
-                                    "
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    @change="toggleTool(tool)"
-                                />
-                                <span class="ml-2 text-sm text-gray-700">
-                                    {{ tool }}
-                                </span>
-                            </label>
+                                :model-value="form.preferred_tools"
+                                :value="tool"
+                                :label="tool"
+                                @update:model-value="
+                                    (value) => (form.preferred_tools = value)
+                                "
+                            />
                         </div>
                     </div>
                 </div>
@@ -202,34 +175,20 @@ const submit = () => {
             </div>
 
             <!-- Primary Programming Language -->
-            <div>
-                <label
-                    for="primary_programming_language"
-                    class="block text-sm font-medium text-black"
-                >
-                    Primary Programming Language
-                </label>
-                <select
-                    id="primary_programming_language"
-                    v-model="form.primary_programming_language"
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                >
-                    <option value="">Select or type language</option>
-                    <option
-                        v-for="lang in programmingLanguages"
-                        :key="lang"
-                        :value="lang"
-                    >
-                        {{ lang }}
-                    </option>
-                </select>
-                <p
-                    v-if="form.errors.primary_programming_language"
-                    class="mt-1 text-sm text-red-600"
-                >
-                    {{ form.errors.primary_programming_language }}
-                </p>
-            </div>
+            <FormSelect
+                id="primary_programming_language"
+                v-model="form.primary_programming_language"
+                label="Primary Programming Language"
+                :options="
+                    programmingLanguages.map((lang) => ({
+                        value: lang,
+                        label: lang,
+                    }))
+                "
+                :error="form.errors.primary_programming_language"
+                placeholder="Select language"
+                show-placeholder
+            />
 
             <div class="flex items-center gap-4">
                 <ButtonPrimary
