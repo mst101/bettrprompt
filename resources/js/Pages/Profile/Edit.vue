@@ -49,6 +49,11 @@ interface ToolsData {
     primaryProgrammingLanguage: string | null;
 }
 
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
@@ -56,6 +61,9 @@ defineProps<{
     uiComplexity: 'simple' | 'advanced';
     profileCompletion: number;
     locationData: LocationData;
+    countries: SelectOption[];
+    currencies: SelectOption[];
+    languages: SelectOption[];
     professionalData: ProfessionalData;
     teamData: TeamData;
     budgetData: BudgetData;
@@ -117,6 +125,9 @@ defineOptions({
         >
             <UpdateLocationForm
                 :location-data="locationData"
+                :countries="countries"
+                :currencies="currencies"
+                :languages="languages"
                 class="max-w-2xl"
             />
         </div>
