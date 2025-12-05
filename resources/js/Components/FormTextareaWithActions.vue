@@ -35,7 +35,7 @@ defineExpose({ focus });
 
 <template>
     <div v-bind="$attrs" class="relative">
-        <div class="mb-2 flex items-center justify-between">
+        <div class="mb-2 flex flex-col justify-between">
             <label
                 v-if="props.label"
                 :for="props.id"
@@ -48,7 +48,7 @@ defineExpose({ focus });
                     ></span
                 >
             </label>
-            <div class="flex items-center gap-4">
+            <div class="mt-2 flex items-center justify-end">
                 <slot name="actions" />
             </div>
         </div>

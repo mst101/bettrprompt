@@ -8,13 +8,13 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "b5cd068d-33fe-49ba-9445-32223d331d30",
+      "id": "0cc14a07-aec3-45c3-af2b-f477945884a5",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1040,
-        192
+        288,
+        136
       ],
       "webhookId": "prompt-analysis-webhook"
     },
@@ -23,13 +23,13 @@
         "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/framework-taxonomy",
         "options": {}
       },
-      "id": "33f7fab9-958b-4930-9ff8-6837d2437e98",
+      "id": "a273da0f-f0bc-4fa8-93d7-ec6250dba942",
       "name": "Fetch Framework Taxonomy",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -816,
-        0
+        736,
+        -128
       ]
     },
     {
@@ -37,13 +37,13 @@
         "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/personality-calibration-smart",
         "options": {}
       },
-      "id": "68ecb0d2-6415-4b51-8421-f1684febbe7d",
+      "id": "7f3d465e-96db-4da8-a4f6-caa2e6a0fb27",
       "name": "Fetch Personality Calibration",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -816,
-        192
+        736,
+        64
       ]
     },
     {
@@ -70,13 +70,13 @@
         },
         "options": {}
       },
-      "id": "check-has-personality-node",
+      "id": "b5c3eb3d-6aa6-4d3e-aaf8-416544330bf0",
       "name": "Check Has Personality",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -816,
-        96
+        512,
+        136
       ]
     },
     {
@@ -84,26 +84,26 @@
         "url": "={{ $env.LARAVEL_BASE_URL }}/api/reference/question-bank",
         "options": {}
       },
-      "id": "4c361cd6-626f-4eb3-b267-33db89010037",
+      "id": "8eae3804-d84e-48f3-b15b-2e5cd0d166bb",
       "name": "Fetch Question Bank",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -816,
-        384
+        736,
+        352
       ]
     },
     {
       "parameters": {
-        "jsCode": "// Collect all data from the workflow\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst frameworkDoc = $('Fetch Framework Taxonomy').first().json;\n// Personality calibration is only fetched if personality_type exists\nlet personalityDoc = { content: 'Not applicable - no personality data provided' };\ntry {\n  const personalityDocNode = $('Fetch Personality Calibration').all();\n  if (personalityDocNode.length > 0) {\n    personalityDoc = personalityDocNode[0].json;\n  }\n} catch (e) {\n  // Node hasn't been executed - personality was skipped\n  console.log('Personality Calibration node was not executed (no personality data)');\n}\nconst questionDoc = $('Fetch Question Bank').first().json;\n\n// Get user context for workflow optimisation\nconst userContext = webhookData.user_context || null;\n\n// Build user context string for user message\nlet userContextString = '';\nif (userContext) {\n  const parts = [];\n  \n  // Location context\n  if (userContext.location?.country) {\n    parts.push(`Location: ${userContext.location.country}${userContext.location.city ? ` (${userContext.location.city})` : ''}`);\n    if (userContext.location.timezone) parts.push(`Timezone: ${userContext.location.timezone}`);\n    if (userContext.location.currency) parts.push(`Currency: ${userContext.location.currency}`);\n    if (userContext.location.language) parts.push(`Language: ${userContext.location.language}`);\n  }\n  \n  // Professional context\n  if (userContext.professional?.job_title || userContext.professional?.industry) {\n    const prof = userContext.professional;\n    const profParts = [];\n    if (prof.job_title) profParts.push(prof.job_title);\n    if (prof.industry) profParts.push(`in ${prof.industry}`);\n    if (prof.experience_level) profParts.push(`(${prof.experience_level} level)`);\n    if (profParts.length > 0) parts.push(`Professional: ${profParts.join(' ')}`);\n    if (prof.company_size) parts.push(`Company size: ${prof.company_size}`);\n  }\n  \n  // Team context\n  if (userContext.team?.size || userContext.team?.role) {\n    const team = userContext.team;\n    const teamParts = [];\n    if (team.size) teamParts.push(`${team.size} team`);\n    if (team.role) teamParts.push(`${team.role} role`);\n    if (team.work_mode) teamParts.push(`(${team.work_mode})`);\n    if (teamParts.length > 0) parts.push(`Team: ${teamParts.join(', ')}`);\n  }\n  \n  // Preferences context\n  if (userContext.preferences?.budget) {\n    parts.push(`Budget preference: ${userContext.preferences.budget}`);\n  }\n  if (userContext.preferences?.primary_programming_language) {\n    parts.push(`Primary language: ${userContext.preferences.primary_programming_language}`);\n  }\n  \n  if (parts.length > 0) {\n    userContextString = '\\n\\n# User Context\\n' + parts.map(p => `- ${p}`).join('\\n') + '\\n\\nUse this context when making framework recommendations and generating questions (e.g., suggest local tools, use appropriate currency, consider technical level).';\n  }\n}\n\n\n// Check if a forced framework was provided\nconst forcedFrameworkCode = webhookData.forced_framework_code || null;\nlet frameworkInstructions = '';\n\nif (forcedFrameworkCode) {\n    frameworkInstructions = `\n## FORCED FRAMEWORK SELECTION\n\n**CRITICAL:** The user has selected a specific framework to use: **${forcedFrameworkCode}**\n\nYou MUST:\n1. Use ${forcedFrameworkCode} as the selected_framework (look up its details from the Framework Taxonomy)\n2. Generate clarifying questions that are SPECIFIC to ${forcedFrameworkCode}\n3. Ensure the rationale explains why ${forcedFrameworkCode} is suitable for this task\n4. Suggest alternative frameworks OTHER than ${forcedFrameworkCode}\n5. Recalculate task_classification and cognitive_requirements considering ${forcedFrameworkCode}'s strengths\n6. Update personality adjustments based on how ${forcedFrameworkCode} leverages personality traits\n\nDo NOT select a different framework - you must use ${forcedFrameworkCode}.\n`;\n} else {\n    frameworkInstructions = `\n## FRAMEWORK SELECTION\n\n3. **Select the most appropriate framework** for the task from the Framework Taxonomy\n`;\n}\n\n// Build the combined prompt\nconst systemPrompt = `You are an API that returns JSON. You do not write conversational text. You ONLY output valid JSON.\n\nYour task is to analyse user requests, classify them into task categories, identify cognitive requirements, select the most appropriate prompt framework, perform Task-Trait Alignment analysis, and generate tailored clarifying questions.\n\nYou have access to three reference documents:\n\n## FRAMEWORK TAXONOMY\n${frameworkDoc.content || 'Not available'}\n\n## PERSONALITY CALIBRATION\n${personalityDoc.content || 'Not available'}\n\n## QUESTION BANK\n${questionDoc.content || 'Not available'}\n\n---\n\n## YOUR TASK\n\n1. **Classify the user's task** into a primary category (and secondary if applicable) from the taxonomy\n2. **Identify cognitive requirements** for the task (from the Task Cognitive Requirements section)\n${frameworkInstructions}\n4. **Perform Task-Trait Alignment analysis** (if personality data provided):\n   - Identify which traits ALIGN with task requirements \u2192 Mark for AMPLIFICATION\n   - Identify which traits OPPOSE task requirements \u2192 Mark for COUNTERBALANCING\n   - Identify which traits are UNRELATED \u2192 Mark as NEUTRAL\n5. **Generate clarifying questions** tailored to the task${forcedFrameworkCode ? ' AND the forced framework (' + forcedFrameworkCode + ')' : ''} and personality (if provided)\n6. **Apply personality calibration** to question phrasing and quantity (if personality data provided)\n\n## TASK-TRAIT ALIGNMENT\n\nAnalyze user's actual traits (provided in personality data):\n- **AMPLIFY** aligned traits (leverage strengths)\n- **COUNTERBALANCE** opposing traits (inject requirements to cover blind spots)\n- **NEUTRAL** for unrelated traits\n\n## IMPORTANT RULES\n\n- If NO personality data is provided, skip Task-Trait Alignment and use neutral defaults\n- Always explain your classification reasoning\n- Select questions that are essential for generating a high-quality prompt\n- Sequence questions logically (context \u2192 goals \u2192 constraints \u2192 specifics)\n- Respect the question quantity guidelines based on task complexity${forcedFrameworkCode ? '\\n- Generate questions SPECIFIC to ' + forcedFrameworkCode + ' framework requirements' : ''}\n\n## CRITICAL: OUTPUT FORMAT\n\nYou are a JSON API. Your response MUST:\n- Start with { and end with }\n- Contain ONLY valid JSON\n- NO explanatory text before or after the JSON\n- NO markdown code blocks\n- NO conversational language like \"Great!\" or \"Here's...\"\n\nReturn this exact JSON structure:\n\n{\n  \"task_classification\": {\n    \"primary_category\": \"CATEGORY_CODE\",\n    \"secondary_category\": null,\n    \"complexity\": \"simple | moderate | complex\",\n    \"classification_reasoning\": \"Brief explanation\",\n    \"content_type\": \"For CREATION_CONTENT only, e.g. customer_email\"\n  },\n  \"cognitive_requirements\": {\n    \"primary\": [\"REQUIREMENT_CODE\", \"REQUIREMENT_CODE\"],\n    \"secondary\": [\"REQUIREMENT_CODE\"],\n    \"reasoning\": \"Why these requirements apply to this task\"\n  },\n  \"selected_framework\": {\n    \"name\": \"Framework Name\",\n    \"code\": \"FRAMEWORK_CODE\",\n    \"components\": [\"Component1\", \"Component2\"],\n    \"rationale\": \"Why this framework is best for this task\"\n  },\n  \"alternative_frameworks\": [\n    {\n      \"name\": \"Alternative Name\",\n      \"code\": \"ALT_CODE\",\n      \"when_to_use_instead\": \"Condition\"\n    }\n  ],\n  \"personality_tier\": \"full | partial | none\",\n  \"task_trait_alignment\": {\n    \"NOTE\": \"ONLY include traits from the user's actual personality. DO NOT make up traits.\",\n    \"amplified\": [\n      {\n        \"trait\": \"One of the user's ACTUAL traits from the list provided\",\n        \"requirement_aligned\": \"OBJECTIVE\",\n        \"reason\": \"Why THIS SPECIFIC trait helps with this task\"\n      }\n    ],\n    \"counterbalanced\": [\n      {\n        \"trait\": \"Another of the user's ACTUAL traits from the list provided\",\n        \"requirement_opposed\": \"EMPATHY\",\n        \"reason\": \"Why THIS SPECIFIC trait may create a blind spot\",\n        \"injection\": \"Specific requirement to add to the prompt\"\n      }\n    ],\n    \"neutral\": [\n      {\n        \"trait\": \"Another of the user's ACTUAL traits from the list provided\",\n        \"reason\": \"Why THIS SPECIFIC trait is not relevant to the task\"\n      }\n    ]\n  },\n  \"personality_adjustments_preview\": [\n    \"AMPLIFIED: Description of what will be leveraged\",\n    \"COUNTERBALANCED: Description of what will be injected\"\n  ],\n  \"clarifying_questions\": [\n    {\n      \"id\": \"Q1\",\n      \"question\": \"The question text\",\n      \"purpose\": \"Why this question matters\",\n      \"required\": true\n    }\n  ],\n  \"question_rationale\": \"Brief explanation of question selection\"\n}`;\n\nconst hasPersonality = !!webhookData.personality_type;\nlet personalityInfo =\n    'No personality data provided. Skip Task-Trait Alignment and use neutral defaults.';\n\nif (hasPersonality) {\n    personalityInfo = `Type: ${webhookData.personality_type}`;\n    if (webhookData.trait_percentages) {\n        // Extract trait letters from personality type and percentages\n        // personality_type format: \"INTP-A\" where each letter corresponds to a trait\n        const typeLetters = webhookData.personality_type.split('-');\n        const mainType = typeLetters[0]; // e.g., \"INTP\"\n        const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n        const traits = webhookData.trait_percentages;\n        const traitDescriptions = [];\n        \n        // Map each percentage to its corresponding letter from the personality type\n        if (traits.mind !== undefined) {\n            traitDescriptions.push(`${mainType[0]} (${traits.mind}%)`); // I or E\n        }\n        if (traits.energy !== undefined) {\n            traitDescriptions.push(`${mainType[1]} (${traits.energy}%)`); // S or N\n        }\n        if (traits.nature !== undefined) {\n            traitDescriptions.push(`${mainType[2]} (${traits.nature}%)`); // T or F\n        }\n        if (traits.tactics !== undefined) {\n            traitDescriptions.push(`${mainType[3]} (${traits.tactics}%)`); // J or P\n        }\n        if (traits.identity !== undefined) {\n            traitDescriptions.push(`${identity} (${traits.identity}%)`); // A or T\n        }\n        \n        personalityInfo += `\\nTraits: ${traitDescriptions.join(', ')}`;\n        personalityInfo += `\\nAnalyze ONLY these traits (not hypothetical ideal traits).`;\n        personalityInfo += `\\nFor each: AMPLIFIED (helps task), COUNTERBALANCED (opposes task), or NEUTRAL.`;\n    } else {\n        personalityInfo += `\\nPercentages: Not provided (use 65% default for each trait)`;\n        personalityInfo += `\\nPerform Task-Trait Alignment with default percentages.`;\n    }\n}\n\n\n// Pre-analysis context should ALWAYS be provided (either from answers or inferred by workflow_0)\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\nlet preAnalysisSection = '';\n\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n    preAnalysisSection = '\\n\\n**Pre-Analysis Context:**\\nContext gathered during pre-analysis (either from user answers or inferred):';\n    \n    // Format the context\n    if (preAnalysisContext.subject) {\n        preAnalysisSection += `\\n- Subject/Topic: ${preAnalysisContext.subject}`;\n    }\n    if (preAnalysisContext.audience) {\n        // Map values to readable labels\n        const audienceLabels = {\n            'self': 'For myself',\n            'team': 'For my team',\n            'management': 'For senior management',\n            'external': 'For external stakeholders'\n        };\n        const audienceLabel = audienceLabels[preAnalysisContext.audience] || preAnalysisContext.audience;\n        preAnalysisSection += `\\n- Audience: ${audienceLabel}`;\n    }\n    if (preAnalysisContext.purpose) {\n        preAnalysisSection += `\\n- Purpose: ${preAnalysisContext.purpose}`;\n    }\n    if (preAnalysisContext.detail_level) {\n        const detailLabels = {\n            'summary': 'High-level summary',\n            'moderate': 'Moderate detail',\n            'comprehensive': 'Comprehensive and detailed'\n        };\n        const detailLabel = detailLabels[preAnalysisContext.detail_level] || preAnalysisContext.detail_level;\n        preAnalysisSection += `\\n- Detail Level: ${detailLabel}`;\n    }\n    \n    preAnalysisSection += '\\n\\n**IMPORTANT for Task-Trait Alignment:**';\n    preAnalysisSection += '\\n- If audience is \"self\" \u2192 Apply full personality optimisation';\n    preAnalysisSection += '\\n- If audience is external (team/management/external) \u2192 Still apply personality adjustments but note \"creating for others\"';\n    preAnalysisSection += '\\n- Audience context should inform counterbalancing (e.g., external stakeholders may need different communication style)';\n}\n\nlet userMessage = `Analyse this task and generate clarifying questions:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}\n\n**Personality Data:**\\n${personalityInfo}${preAnalysisSection}`;\n\nif (forcedFrameworkCode) {\n    userMessage += `\\n\\n**FORCED FRAMEWORK:** ${forcedFrameworkCode}`;\n    userMessage += `\\nYou MUST use this framework as the selected_framework. Look it up in the Framework Taxonomy and generate questions specific to it.${userContextString}`;\n}\n\nreturn [\n    {\n        json: {\n            system: systemPrompt,\n            messages: [\n                {\n                    role: 'user',\n                    content: userMessage,\n                },\n            ],\n            originalInput: {\n                task_description: webhookData.task_description,\n                personality_type: webhookData.personality_type || null,\n                trait_percentages: webhookData.trait_percentages || null,\n                forced_framework_code: forcedFrameworkCode,\n            },\n        },\n    },\n];\n"
+        "jsCode": "// Collect all data from the workflow\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst frameworkDoc = $('Fetch Framework Taxonomy').first().json;\n// Personality calibration is only fetched if personality_type exists\nlet personalityDoc = { content: 'Not applicable - no personality data provided' };\ntry {\n  const personalityDocNode = $('Fetch Personality Calibration').all();\n  if (personalityDocNode.length > 0) {\n    personalityDoc = personalityDocNode[0].json;\n  }\n} catch (e) {\n  // Node hasn't been executed - personality was skipped\n  console.log('Personality Calibration node was not executed (no personality data)');\n}\nconst questionDoc = $('Fetch Question Bank').first().json;\n\n// Check if a forced framework was provided\nconst forcedFrameworkCode = webhookData.forced_framework_code || null;\nlet frameworkInstructions = '';\n\nif (forcedFrameworkCode) {\n    frameworkInstructions = `\n## FORCED FRAMEWORK SELECTION\n\n**CRITICAL:** The user has selected a specific framework to use: **${forcedFrameworkCode}**\n\nYou MUST:\n1. Use ${forcedFrameworkCode} as the selected_framework (look up its details from the Framework Taxonomy)\n2. Generate clarifying questions that are SPECIFIC to ${forcedFrameworkCode}\n3. Ensure the rationale explains why ${forcedFrameworkCode} is suitable for this task\n4. Suggest alternative frameworks OTHER than ${forcedFrameworkCode}\n5. Recalculate task_classification and cognitive_requirements considering ${forcedFrameworkCode}'s strengths\n6. Update personality adjustments based on how ${forcedFrameworkCode} leverages personality traits\n\nDo NOT select a different framework - you must use ${forcedFrameworkCode}.\n`;\n} else {\n    frameworkInstructions = `\n## FRAMEWORK SELECTION\n\n3. **Select the most appropriate framework** for the task from the Framework Taxonomy\n`;\n}\n\n// Build the combined prompt\nconst systemPrompt = `You are an API that returns JSON. You do not write conversational text. You ONLY output valid JSON.\n\nYour task is to analyse user requests, classify them into task categories, identify cognitive requirements, select the most appropriate prompt framework, perform Task-Trait Alignment analysis, and generate tailored clarifying questions.\n\nYou have access to three reference documents:\n\n## FRAMEWORK TAXONOMY\n${frameworkDoc.content || 'Not available'}\n\n## PERSONALITY CALIBRATION\n${personalityDoc.content || 'Not available'}\n\n## QUESTION BANK\n${questionDoc.content || 'Not available'}\n\n---\n\n## YOUR TASK\n\n1. **Classify the user's task** into a primary category (and secondary if applicable) from the taxonomy\n2. **Identify cognitive requirements** for the task (from the Task Cognitive Requirements section)\n${frameworkInstructions}\n4. **Perform Task-Trait Alignment analysis** (if personality data provided):\n   - Identify which traits ALIGN with task requirements → Mark for AMPLIFICATION\n   - Identify which traits OPPOSE task requirements → Mark for COUNTERBALANCING\n   - Identify which traits are UNRELATED → Mark as NEUTRAL\n5. **Generate clarifying questions** tailored to the task${forcedFrameworkCode ? ' AND the forced framework (' + forcedFrameworkCode + ')' : ''} and personality (if provided)\n6. **Apply personality calibration** to question phrasing and quantity (if personality data provided)\n\n## TASK-TRAIT ALIGNMENT\n\nAnalyze user's actual traits (provided in personality data):\n- **AMPLIFY** aligned traits (leverage strengths)\n- **COUNTERBALANCE** opposing traits (inject requirements to cover blind spots)\n- **NEUTRAL** for unrelated traits\n\n## IMPORTANT RULES\n\n- If NO personality data is provided, skip Task-Trait Alignment and use neutral defaults\n- Always explain your classification reasoning\n- Select questions that are essential for generating a high-quality prompt\n- Sequence questions logically (context → goals → constraints → specifics)\n- Respect the question quantity guidelines based on task complexity${forcedFrameworkCode ? '\\n- Generate questions SPECIFIC to ' + forcedFrameworkCode + ' framework requirements' : ''}\n\n## CRITICAL: OUTPUT FORMAT\n\nYou are a JSON API. Your response MUST:\n- Start with { and end with }\n- Contain ONLY valid JSON\n- NO explanatory text before or after the JSON\n- NO markdown code blocks\n- NO conversational language like \"Great!\" or \"Here's...\"\n\nReturn this exact JSON structure:\n\n{\n  \"task_classification\": {\n    \"primary_category\": \"CATEGORY_CODE\",\n    \"secondary_category\": null,\n    \"complexity\": \"simple | moderate | complex\",\n    \"classification_reasoning\": \"Brief explanation\",\n    \"content_type\": \"For CREATION_CONTENT only, e.g. customer_email\"\n  },\n  \"cognitive_requirements\": {\n    \"primary\": [\"REQUIREMENT_CODE\", \"REQUIREMENT_CODE\"],\n    \"secondary\": [\"REQUIREMENT_CODE\"],\n    \"reasoning\": \"Why these requirements apply to this task\"\n  },\n  \"selected_framework\": {\n    \"name\": \"Framework Name\",\n    \"code\": \"FRAMEWORK_CODE\",\n    \"components\": [\"Component1\", \"Component2\"],\n    \"rationale\": \"Why this framework is best for this task\"\n  },\n  \"alternative_frameworks\": [\n    {\n      \"name\": \"Alternative Name\",\n      \"code\": \"ALT_CODE\",\n      \"when_to_use_instead\": \"Condition\"\n    }\n  ],\n  \"personality_tier\": \"full | partial | none\",\n  \"task_trait_alignment\": {\n    \"NOTE\": \"ONLY include traits from the user's actual personality. DO NOT make up traits.\",\n    \"amplified\": [\n      {\n        \"trait\": \"One of the user's ACTUAL traits from the list provided\",\n        \"requirement_aligned\": \"OBJECTIVE\",\n        \"reason\": \"Why THIS SPECIFIC trait helps with this task\"\n      }\n    ],\n    \"counterbalanced\": [\n      {\n        \"trait\": \"Another of the user's ACTUAL traits from the list provided\",\n        \"requirement_opposed\": \"EMPATHY\",\n        \"reason\": \"Why THIS SPECIFIC trait may create a blind spot\",\n        \"injection\": \"Specific requirement to add to the prompt\"\n      }\n    ],\n    \"neutral\": [\n      {\n        \"trait\": \"Another of the user's ACTUAL traits from the list provided\",\n        \"reason\": \"Why THIS SPECIFIC trait is not relevant to the task\"\n      }\n    ]\n  },\n  \"personality_adjustments_preview\": [\n    \"AMPLIFIED: Description of what will be leveraged\",\n    \"COUNTERBALANCED: Description of what will be injected\"\n  ],\n  \"clarifying_questions\": [\n    {\n      \"id\": \"Q1\",\n      \"question\": \"The question text\",\n      \"purpose\": \"Why this question matters\",\n      \"required\": true\n    }\n  ],\n  \"question_rationale\": \"Brief explanation of question selection\"\n}`;\n\nconst hasPersonality = !!webhookData.personality_type;\nlet personalityInfo =\n    'No personality data provided. Skip Task-Trait Alignment and use neutral defaults.';\n\nif (hasPersonality) {\n    personalityInfo = `Type: ${webhookData.personality_type}`;\n    if (webhookData.trait_percentages) {\n        // Extract trait letters from personality type and percentages\n        // personality_type format: \"INTP-A\" where each letter corresponds to a trait\n        const typeLetters = webhookData.personality_type.split('-');\n        const mainType = typeLetters[0]; // e.g., \"INTP\"\n        const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n        const traits = webhookData.trait_percentages;\n        const traitDescriptions = [];\n        \n        // Map each percentage to its corresponding letter from the personality type\n        if (traits.mind !== undefined) {\n            traitDescriptions.push(`${mainType[0]} (${traits.mind}%)`); // I or E\n        }\n        if (traits.energy !== undefined) {\n            traitDescriptions.push(`${mainType[1]} (${traits.energy}%)`); // S or N\n        }\n        if (traits.nature !== undefined) {\n            traitDescriptions.push(`${mainType[2]} (${traits.nature}%)`); // T or F\n        }\n        if (traits.tactics !== undefined) {\n            traitDescriptions.push(`${mainType[3]} (${traits.tactics}%)`); // J or P\n        }\n        if (traits.identity !== undefined) {\n            traitDescriptions.push(`${identity} (${traits.identity}%)`); // A or T\n        }\n        \n        personalityInfo += `\\nTraits: ${traitDescriptions.join(', ')}`;\n        personalityInfo += `\\nAnalyze ONLY these traits (not hypothetical ideal traits).`;\n        personalityInfo += `\\nFor each: AMPLIFIED (helps task), COUNTERBALANCED (opposes task), or NEUTRAL.`;\n    } else {\n        personalityInfo += `\\nPercentages: Not provided (use 65% default for each trait)`;\n        personalityInfo += `\\nPerform Task-Trait Alignment with default percentages.`;\n    }\n}\n\n\n// Pre-analysis context should ALWAYS be provided (either from answers or inferred by workflow_0)\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\nlet preAnalysisSection = '';\n\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n    preAnalysisSection = '\\n\\n**Pre-Analysis Context:**\\nContext gathered during pre-analysis (either from user answers or inferred):';\n    \n    // Format the context\n    if (preAnalysisContext.subject) {\n        preAnalysisSection += `\\n- Subject/Topic: ${preAnalysisContext.subject}`;\n    }\n    if (preAnalysisContext.audience) {\n        // Map values to readable labels\n        const audienceLabels = {\n            'self': 'For myself',\n            'team': 'For my team',\n            'management': 'For senior management',\n            'external': 'For external stakeholders'\n        };\n        const audienceLabel = audienceLabels[preAnalysisContext.audience] || preAnalysisContext.audience;\n        preAnalysisSection += `\\n- Audience: ${audienceLabel}`;\n    }\n    if (preAnalysisContext.purpose) {\n        preAnalysisSection += `\\n- Purpose: ${preAnalysisContext.purpose}`;\n    }\n    if (preAnalysisContext.detail_level) {\n        const detailLabels = {\n            'summary': 'High-level summary',\n            'moderate': 'Moderate detail',\n            'comprehensive': 'Comprehensive and detailed'\n        };\n        const detailLabel = detailLabels[preAnalysisContext.detail_level] || preAnalysisContext.detail_level;\n        preAnalysisSection += `\\n- Detail Level: ${detailLabel}`;\n    }\n    \n    preAnalysisSection += '\\n\\n**IMPORTANT for Task-Trait Alignment:**';\n    preAnalysisSection += '\\n- If audience is \"self\" → Apply full personality optimisation';\n    preAnalysisSection += '\\n- If audience is external (team/management/external) → Still apply personality adjustments but note \"creating for others\"';\n    preAnalysisSection += '\\n- Audience context should inform counterbalancing (e.g., external stakeholders may need different communication style)';\n}\n\nlet userMessage = `Analyse this task and generate clarifying questions:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}\n\n**Personality Data:**\\n${personalityInfo}${preAnalysisSection}`;\n\nif (forcedFrameworkCode) {\n    userMessage += `\\n\\n**FORCED FRAMEWORK:** ${forcedFrameworkCode}`;\n    userMessage += `\\nYou MUST use this framework as the selected_framework. Look it up in the Framework Taxonomy and generate questions specific to it.${userContextString}`;\n}\n\nreturn [\n    {\n        json: {\n            system: systemPrompt,\n            messages: [\n                {\n                    role: 'user',\n                    content: userMessage,\n                },\n            ],\n            originalInput: {\n                task_description: webhookData.task_description,\n                personality_type: webhookData.personality_type || null,\n                trait_percentages: webhookData.trait_percentages || null,\n                forced_framework_code: forcedFrameworkCode,\n            },\n        },\n    },\n];\n"
       },
-      "id": "03da5982-acc5-4612-94aa-99223394e7ae",
+      "id": "c944bb6d-1c12-4089-a32d-c3e43e4c1766",
       "name": "Prepare Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -368,
-        192
+        1184,
+        136
       ]
     },
     {
@@ -126,13 +126,13 @@
         "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 4096,\n  temperature: 0.3,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
         "options": {}
       },
-      "id": "e763f7c6-a113-47a1-8846-f50972df6c4b",
+      "id": "5d306a45-ccd1-425e-b047-fc1a3393c141",
       "name": "Call Anthropic API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -144,
-        192
+        1408,
+        136
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -145,13 +145,13 @@
       "parameters": {
         "jsCode": "const apiResponse = $input.first().json;\nconst originalInput = $('Prepare Prompt').first().json.originalInput;\n\nlet analysisData;\ntry {\n  // Extract text from Anthropic API response\n  let content = apiResponse.content?.[0]?.text || '';\n  \n  if (!content) {\n    throw new Error('No content in API response');\n  }\n  \n  // Remove any markdown code blocks if present\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  // Try to parse JSON\n  analysisData = JSON.parse(content);\n  \n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      original_input: originalInput,\n      api_usage: null,\n      error: {\n        message: 'Failed to parse LLM response',\n        details: e.message,\n        raw_response: apiResponse\n      }\n    }\n  }];\n}\n\n// Extract API usage data\nconst apiUsage = {\n  model: apiResponse.model || 'claude-haiku-4-5',\n  input_tokens: apiResponse.usage?.input_tokens || 0,\n  output_tokens: apiResponse.usage?.output_tokens || 0\n};\n\nreturn [{\n  json: {\n    success: true,\n    data: analysisData,\n    original_input: originalInput,\n    api_usage: apiUsage,\n    error: null\n  }\n}];"
       },
-      "id": "061c7529-ba50-42a7-897a-e90a25528427",
+      "id": "9e330227-5b0e-46b0-b091-3891b5053e22",
       "name": "Format Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        80,
-        192
+        1632,
+        136
       ]
     },
     {
@@ -169,28 +169,26 @@
           }
         }
       },
-      "id": "5cf4d4f4-4363-4b74-a55f-d8b26900cc1a",
+      "id": "a9d57021-ecb5-413d-b6a7-57b4f95876f8",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        304,
-        192
+        1856,
+        136
       ]
     },
     {
       "parameters": {
-        "mode": "combine",
-        "combinationMode": "mergeByPosition",
-        "options": {}
+        "numberInputs": 3
       },
-      "id": "7c133240-447f-441e-8acd-9f14d51327f7",
+      "id": "07e7c586-8f57-4753-8ab4-6d9ae77b90ae",
       "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        -592,
-        176
+        960,
+        120
       ]
     }
   ],
@@ -232,9 +230,9 @@
       "main": [
         [
           {
-            "node": "Prepare Prompt",
+            "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
@@ -303,7 +301,13 @@
             "index": 0
           }
         ],
-        []
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
       ]
     }
   },
@@ -311,7 +315,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "6",
+  "versionId": "1b882a5a-54ed-410c-aed5-7eea50db9bfe",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
@@ -324,6 +328,5 @@
       "id": "JCf838Zrlbs7oBCN",
       "name": "prompt-framework"
     }
-  ],
-  "updatedAt": "2025-12-01T18:45:00.000Z"
+  ]
 }
