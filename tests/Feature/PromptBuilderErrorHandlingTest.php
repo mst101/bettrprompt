@@ -156,6 +156,8 @@ test('cannot retry non failed prompt runs', function () {
 });
 
 test('generate handles requests successfully', function () {
+    Queue::fake();
+
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'workflow_stage' => 'analysis_complete',
@@ -173,6 +175,9 @@ test('generate handles requests successfully', function () {
     // The controller returns 200 with success: true in response
     $response->assertOk();
     $response->assertJson(['success' => true]);
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPromptGeneration::class);
 });
 
 test('cannot go back past first question', function () {

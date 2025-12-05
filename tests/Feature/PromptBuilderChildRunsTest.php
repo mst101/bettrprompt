@@ -17,6 +17,8 @@ beforeEach(function () {
 });
 
 test('create child with new task description successfully', function () {
+    Queue::fake();
+
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -37,8 +39,11 @@ test('create child with new task description successfully', function () {
     expect($childRun)->not->toBeNull()
         ->and($childRun->task_description)->toBe('Updated task description for child run')
         ->and($childRun->parent_id)->toBe($parentRun->id)
-        ->and($childRun->status)->toBeIn(['processing', 'pending'])
-        ->and($childRun->workflow_stage)->toBeIn(['submitted', 'analysis_complete']);
+        ->and($childRun->status)->toBe('processing')
+        ->and($childRun->workflow_stage)->toBe('submitted');
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessTaskAnalysis::class);
 });
 
 test('create child validates task description required', function () {
