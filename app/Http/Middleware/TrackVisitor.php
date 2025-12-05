@@ -111,8 +111,15 @@ class TrackVisitor
                 // Perform geolocation lookup if enabled
                 $locationData = null;
                 if (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
-                    $geolocationService = new GeolocationService;
-                    $locationData = $geolocationService->lookupIp($request->ip());
+                    try {
+                        $geolocationService = new GeolocationService;
+                        $locationData = $geolocationService->lookupIp($request->ip());
+                    } catch (\Exception $e) {
+                        Log::error('Geolocation lookup failed', [
+                            'ip' => $request->ip(),
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
                 }
 
                 $visitorData = [

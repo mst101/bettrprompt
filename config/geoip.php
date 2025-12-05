@@ -55,6 +55,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Development Settings
+    |--------------------------------------------------------------------------
+    |
+    | In local development with Docker, you may want to allow geolocation
+    | lookups for private IPs so you can test with Docker network IPs.
+    | This is NOT recommended for production.
+    |
+    */
+
+    'development' => [
+        // Allow geolocation lookups for private IPs in non-production environments
+        'allow_private_ip_lookup' => env('GEOIP_ALLOW_PRIVATE_IPS', env('APP_ENV') !== 'production'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Feature Flags
     |--------------------------------------------------------------------------
     */

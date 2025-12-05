@@ -86,11 +86,17 @@ class GeolocationService
      */
     public function lookupIp(string $ip): ?LocationData
     {
-        // Reject private IPs
+        // Reject private IPs (unless in development mode)
         if ($this->isPrivateIp($ip)) {
-            Log::debug("Skipping geolocation for private IP: {$ip}");
+            if (! config('geoip.development.allow_private_ip_lookup')) {
+                Log::debug("Skipping geolocation for private IP: {$ip}");
 
-            return null;
+                return null;
+            }
+            Log::debug("Performing geolocation lookup for private IP in development: {$ip}");
+
+            // Return a default location for development with private IPs
+            return $this->getDefaultLocationForDevelopment();
         }
 
         // Try cache first
@@ -240,6 +246,26 @@ class GeolocationService
         }
 
         return round($coordinate, 2);
+    }
+
+    /**
+     * Get a default location for development mode (when using private IPs)
+     * This allows testing geolocation flows without needing a public IP
+     */
+    private function getDefaultLocationForDevelopment(): LocationData
+    {
+        return new LocationData(
+            countryCode: 'GB',
+            countryName: 'United Kingdom',
+            region: 'England',
+            city: 'London',
+            timezone: 'Europe/London',
+            currencyCode: 'GBP',
+            latitude: 51.51,
+            longitude: -0.13,
+            languageCode: 'en',
+            detectedAt: now(),
+        );
     }
 
     /**
