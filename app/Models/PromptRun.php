@@ -138,4 +138,37 @@ class PromptRun extends Model
     {
         return count($this->framework_questions ?? []);
     }
+
+    /**
+     * Get user context for workflow optimisation
+     * Falls back to visitor context if no authenticated user
+     */
+    public function getUserContext(): ?array
+    {
+        // Try authenticated user first
+        if ($this->user) {
+            return $this->user->getUserContext();
+        }
+
+        // Fall back to visitor context (location only)
+        if ($this->visitor && $this->visitor->hasLocationData()) {
+            return [
+                'location' => [
+                    'country' => $this->visitor->country_name,
+                    'country_code' => $this->visitor->country_code,
+                    'region' => $this->visitor->region,
+                    'city' => $this->visitor->city,
+                    'timezone' => $this->visitor->timezone,
+                    'currency' => $this->visitor->currency_code,
+                    'language' => $this->visitor->language_code,
+                ],
+                'professional' => null,
+                'team' => null,
+                'preferences' => null,
+                'personality' => null,
+            ];
+        }
+
+        return null;
+    }
 }

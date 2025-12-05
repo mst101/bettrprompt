@@ -52,8 +52,8 @@ class ProcessPromptGeneration implements ShouldQueue
                 ];
             }
 
-            // Get user context for workflow optimization
-            $userContext = $this->promptRun->user?->getUserContext();
+            // Get user context for workflow optimisation (includes visitor fallback)
+            $userContext = $this->promptRun->getUserContext();
 
             // Run the generation workflow
             $result = $promptService->generatePrompt(
