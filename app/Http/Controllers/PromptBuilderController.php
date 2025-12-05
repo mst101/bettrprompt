@@ -80,8 +80,11 @@ class PromptBuilderController extends Controller
         $personalityType = $validated['personality_type'] ?? $personalityData['personality_type'];
         $traitPercentages = $validated['trait_percentages'] ?? $personalityData['trait_percentages'];
 
+        // Get user context for workflow optimization
+        $userContext = $this->getUserContext($request);
+
         // Run pre-analysis clarity check synchronously (task description only)
-        $preAnalysis = $this->promptService->preAnalyseTask($validated['task_description']);
+        $preAnalysis = $this->promptService->preAnalyseTask($validated['task_description'], $userContext);
 
         // Create a prompt run with initial status
         try {
@@ -787,6 +790,45 @@ class PromptBuilderController extends Controller
             'personality_type' => null,
             'trait_percentages' => null,
         ];
+    }
+
+    /**
+     * Get user context for workflow optimization
+     * Includes location, professional, team, budget, and tool preferences
+     */
+    protected function getUserContext(Request $request): ?array
+    {
+        // Authenticated users - get full context from user profile
+        if (auth()->check()) {
+            return auth()->user()->getUserContext();
+        }
+
+        // Guest users - build minimal context from visitor location data
+        $visitorId = $this->getVisitorId($request);
+        if ($visitorId) {
+            $visitor = Visitor::find($visitorId);
+            if ($visitor && $visitor->hasLocationData()) {
+                return [
+                    'location' => [
+                        'country' => $visitor->country_name,
+                        'country_code' => $visitor->country_code,
+                        'region' => $visitor->region,
+                        'city' => $visitor->city,
+                        'timezone' => $visitor->timezone,
+                        'currency' => $visitor->currency_code,
+                        'language' => $visitor->language_code,
+                    ],
+                    // Guests don't have professional/team/preferences data
+                    'professional' => null,
+                    'team' => null,
+                    'preferences' => null,
+                    'personality' => null,
+                ];
+            }
+        }
+
+        // No context available
+        return null;
     }
 
     /**

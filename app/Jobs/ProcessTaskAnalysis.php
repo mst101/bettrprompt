@@ -41,6 +41,9 @@ class ProcessTaskAnalysis implements ShouldQueue
                 'database' => $this->database ?? config('database.connections.pgsql.database'),
             ]);
 
+            // Get user context for workflow optimization
+            $userContext = $this->promptRun->user?->getUserContext();
+
             // Run the analysis workflow (with optional forced framework)
             // Note: task_description may already be enhanced with pre-analysis
             // Pre-analysis context provides structured clarification data
@@ -49,7 +52,8 @@ class ProcessTaskAnalysis implements ShouldQueue
                 $this->promptRun->personality_type,
                 $this->promptRun->trait_percentages,
                 $this->promptRun->pre_analysis_context,
-                $this->forcedFrameworkCode
+                $this->forcedFrameworkCode,
+                $userContext
             );
 
             if (! $result['success']) {

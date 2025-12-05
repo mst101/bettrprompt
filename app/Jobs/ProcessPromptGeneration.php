@@ -52,6 +52,9 @@ class ProcessPromptGeneration implements ShouldQueue
                 ];
             }
 
+            // Get user context for workflow optimization
+            $userContext = $this->promptRun->user?->getUserContext();
+
             // Run the generation workflow
             $result = $promptService->generatePrompt(
                 $this->promptRun->task_classification,
@@ -63,7 +66,8 @@ class ProcessPromptGeneration implements ShouldQueue
                 $this->promptRun->task_description,
                 $this->promptRun->personality_type,
                 $this->promptRun->trait_percentages,
-                $questionAnswers
+                $questionAnswers,
+                $userContext
             );
 
             if (! $result['success']) {
