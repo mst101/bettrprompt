@@ -22,11 +22,16 @@ class PromptFrameworkService
      * Always returns gracefully - never throws exceptions
      * Note: Does NOT use personality data - only task description
      */
-    public function preAnalyseTask(string $taskDescription): array
+    public function preAnalyseTask(string $taskDescription, ?array $userContext = null): array
     {
         $payload = [
             'task_description' => $taskDescription,
         ];
+
+        // Add user context if available
+        if ($userContext !== null) {
+            $payload['user_context'] = $userContext;
+        }
 
         try {
             $response = Http::timeout(10)
@@ -97,7 +102,8 @@ class PromptFrameworkService
         ?string $personalityType,
         ?array $traitPercentages,
         ?array $preAnalysisContext = null,
-        ?string $forcedFrameworkCode = null
+        ?string $forcedFrameworkCode = null,
+        ?array $userContext = null
     ): array {
         $payload = [
             'task_description' => $taskDescription,
@@ -113,6 +119,11 @@ class PromptFrameworkService
         // Add forced framework if specified
         if ($forcedFrameworkCode !== null) {
             $payload['forced_framework_code'] = $forcedFrameworkCode;
+        }
+
+        // Add user context if available
+        if ($userContext !== null) {
+            $payload['user_context'] = $userContext;
         }
 
         try {
@@ -155,7 +166,8 @@ class PromptFrameworkService
         string $originalTaskDescription,
         ?string $personalityType,
         ?array $traitPercentages,
-        array $questionAnswers
+        array $questionAnswers,
+        ?array $userContext = null
     ): array {
         $payload = [
             'analysis_data' => [
@@ -170,6 +182,11 @@ class PromptFrameworkService
             'trait_percentages' => $traitPercentages,
             'question_answers' => $questionAnswers,
         ];
+
+        // Add user context if available
+        if ($userContext !== null) {
+            $payload['user_context'] = $userContext;
+        }
 
         try {
             $response = Http::timeout(90)

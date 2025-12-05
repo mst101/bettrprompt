@@ -36,6 +36,17 @@ class Visitor extends Model
         'trait_percentages',
         'ui_complexity',
         'referred_by_user_id',
+        // Location fields
+        'country_code',
+        'country_name',
+        'region',
+        'city',
+        'timezone',
+        'currency_code',
+        'latitude',
+        'longitude',
+        'language_code',
+        'location_detected_at',
     ];
 
     /**
@@ -52,6 +63,10 @@ class Visitor extends Model
             'visit_count' => 'integer',
             'trait_percentages' => 'array',
             'ui_complexity' => 'string',
+            // Location
+            'location_detected_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
@@ -97,5 +112,29 @@ class Visitor extends Model
             ->where('workflow_stage', 'completed')
             ->whereNotNull('optimized_prompt')
             ->exists();
+    }
+
+    /**
+     * Check if visitor has location data
+     */
+    public function hasLocationData(): bool
+    {
+        return ! is_null($this->country_code) && ! is_null($this->timezone);
+    }
+
+    /**
+     * Get a summary of the visitor's location
+     */
+    public function getLocationSummary(): string
+    {
+        if (! $this->hasLocationData()) {
+            return 'Unknown location';
+        }
+
+        if (is_null($this->city)) {
+            return "{$this->region}, {$this->country_name}";
+        }
+
+        return "{$this->city}, {$this->region}, {$this->country_name}";
     }
 }

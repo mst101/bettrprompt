@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             if ($visitor && ! $visitor->user_id) {
-                // Copy personality data and referrer from visitor to user
+                // Copy personality data, location data, and referrer from visitor to user
                 $updates = [];
                 if ($visitor->personality_type) {
                     $updates['personality_type'] = $visitor->personality_type;
@@ -59,8 +59,25 @@ class RegisteredUserController extends Controller
                 if ($visitor->referred_by_user_id) {
                     $updates['referred_by_user_id'] = $visitor->referred_by_user_id;
                 }
+                // Copy location data from visitor
+                if ($visitor->hasLocationData()) {
+                    $updates['country_code'] = $visitor->country_code;
+                    $updates['country_name'] = $visitor->country_name;
+                    $updates['region'] = $visitor->region;
+                    $updates['city'] = $visitor->city;
+                    $updates['timezone'] = $visitor->timezone;
+                    $updates['currency_code'] = $visitor->currency_code;
+                    $updates['latitude'] = $visitor->latitude;
+                    $updates['longitude'] = $visitor->longitude;
+                    $updates['language_code'] = $visitor->language_code;
+                    $updates['location_detected_at'] = $visitor->location_detected_at;
+                    $updates['location_manually_set'] = false; // Auto-detected
+                    $updates['language_manually_set'] = false; // Auto-detected
+                }
                 if (! empty($updates)) {
                     $user->update($updates);
+                    // Update profile completion after copying location data
+                    $user->updateProfileCompletion();
                 }
 
                 // Update visitor record
@@ -79,6 +96,7 @@ class RegisteredUserController extends Controller
                     'visitor_id' => $visitorId,
                     'claimed_prompt_runs' => $claimedCount,
                     'copied_personality' => (bool) $visitor->personality_type,
+                    'copied_location' => $visitor->hasLocationData(),
                     'copied_referrer' => (bool) $visitor->referred_by_user_id,
                 ]);
             }

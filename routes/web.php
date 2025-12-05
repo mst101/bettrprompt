@@ -72,6 +72,19 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
     Route::patch('/profile/ui-complexity',
         [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
+    // Location profile routes
+    Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
+    Route::post('/profile/location/detect', [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
+    Route::delete('/profile/location', [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
+    // Professional profile routes
+    Route::patch('/profile/professional', [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
+    // Team profile routes
+    Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
+    // Budget profile routes
+    Route::patch('/profile/budget', [ProfileController::class, 'updateBudget'])->name('profile.budget.update');
+    // Tools profile routes
+    Route::patch('/profile/tools', [ProfileController::class, 'updateTools'])->name('profile.tools.update');
+    // Account deletion
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Prompt Builder history (requires authentication)

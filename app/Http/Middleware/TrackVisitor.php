@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use App\Models\Visitor;
+use App\Services\GeolocationService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -107,7 +108,14 @@ class TrackVisitor
             // Create visitor in a separate transaction that commits immediately
             // This ensures the visitor persists even if the main request fails
             $visitor = DB::transaction(function () use ($request, $referredByUserId) {
-                return Visitor::create([
+                // Perform geolocation lookup if enabled
+                $locationData = null;
+                if (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
+                    $geolocationService = new GeolocationService;
+                    $locationData = $geolocationService->lookupIp($request->ip());
+                }
+
+                $visitorData = [
                     // Don't set 'id' - let HasUuids trait generate it
                     'utm_source' => $request->query('utm_source'),
                     'utm_medium' => $request->query('utm_medium'),
@@ -122,7 +130,14 @@ class TrackVisitor
                     'last_visit_at' => now(),
                     'visit_count' => 1,
                     'referred_by_user_id' => $referredByUserId,
-                ]);
+                ];
+
+                // Add location data if geolocation succeeded
+                if ($locationData !== null) {
+                    $visitorData = array_merge($visitorData, $locationData->toArray());
+                }
+
+                return Visitor::create($visitorData);
             });
 
             $visitorId = (string) $visitor->id;
