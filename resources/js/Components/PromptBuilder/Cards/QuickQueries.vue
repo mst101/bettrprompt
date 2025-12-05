@@ -7,6 +7,7 @@ import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
+import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import type {
     PreAnalysisQuestion,
@@ -375,16 +376,26 @@ const isDisabled = computed(() =>
         <!-- View Mode (only show if has answers and not editing) -->
         <div v-if="!isEditing && hasAnswers" class="space-y-4">
             <div
-                v-for="question in questions"
+                v-for="(question, index) in questions"
                 :key="question.id"
                 class="rounded-lg border border-indigo-200 bg-indigo-50 p-3"
             >
-                <p class="text-xs font-medium text-indigo-600">
-                    {{ question.question }}
-                </p>
-                <p class="mt-2 text-sm text-indigo-900">
-                    {{ getAnswerLabel(question, answers[question.id] || '') }}
-                </p>
+                <div class="flex gap-3">
+                    <QuestionNumber :number="index + 1" />
+                    <div class="flex-1">
+                        <p class="text-xs font-medium text-indigo-600">
+                            {{ question.question }}
+                        </p>
+                        <p class="mt-2 text-sm text-indigo-900">
+                            {{
+                                getAnswerLabel(
+                                    question,
+                                    answers[question.id] || '',
+                                )
+                            }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <!-- Action buttons for view mode -->
@@ -414,15 +425,20 @@ const isDisabled = computed(() =>
         <!-- Edit/Submit Form -->
         <form
             v-if="isEditing"
-            class="space-y-4"
+            class="space-y-8"
             @submit.prevent="submitAnswers"
         >
-            <div v-for="question in questions" :key="question.id">
+            <div v-for="(question, index) in questions" :key="question.id">
                 <!-- Multiple choice questions -->
                 <div v-if="question.type === 'choice'" class="space-y-3">
-                    <label class="block text-sm font-medium text-indigo-900">
-                        {{ question.question }}
-                    </label>
+                    <div class="flex gap-3">
+                        <QuestionNumber :number="index + 1" />
+                        <label
+                            class="block flex-1 text-sm font-medium text-indigo-900"
+                        >
+                            {{ question.question }}
+                        </label>
+                    </div>
                     <div class="space-y-3">
                         <label
                             v-for="(option, optionIndex) in question.options"
@@ -482,9 +498,14 @@ const isDisabled = computed(() =>
 
                 <!-- Yes/No questions -->
                 <div v-else-if="question.type === 'yes_no'" class="space-y-3">
-                    <label class="block text-sm font-medium text-indigo-900">
-                        {{ question.question }}
-                    </label>
+                    <div class="flex gap-3">
+                        <QuestionNumber :number="index + 1" />
+                        <label
+                            class="block flex-1 text-sm font-medium text-indigo-900"
+                        >
+                            {{ question.question }}
+                        </label>
+                    </div>
                     <div class="space-y-2">
                         <label
                             v-for="(option, optionIndex) in question.options"
@@ -520,6 +541,12 @@ const isDisabled = computed(() =>
 
                 <!-- Text input questions -->
                 <div v-else-if="question.type === 'text'" class="space-y-3">
+                    <div class="flex gap-3">
+                        <QuestionNumber :number="index + 1" />
+                        <span class="text-sm font-medium text-indigo-900">
+                            {{ question.question }}
+                        </span>
+                    </div>
                     <FormTextareaWithActions
                         :id="`question-${question.id}`"
                         :ref="
@@ -529,7 +556,7 @@ const isDisabled = computed(() =>
                                 : undefined
                         "
                         v-model="currentAnswers[question.id]"
-                        :label="question.question"
+                        :label="`Answer ${index + 1}`"
                         :rows="3"
                         placeholder="Type your answer here..."
                     >

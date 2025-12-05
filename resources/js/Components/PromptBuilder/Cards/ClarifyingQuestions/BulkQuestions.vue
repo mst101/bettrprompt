@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/OptionalBadge.vue';
 import type { ClarifyingQuestion } from '@/Components/PromptBuilder/Cards/clarifyingQuestion';
+import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { ref } from 'vue';
 
@@ -69,11 +71,9 @@ const handleTranscription = (index: number, transcript: string) => {
     <div class="space-y-8">
         <div v-for="(question, index) in questions" :key="question.id ?? index">
             <div class="flex gap-4">
-                <span
-                    class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-800"
-                >
-                    {{ index + 1 }}
-                </span>
+                <div class="mt-0.5">
+                    <QuestionNumber :number="index + 1" />
+                </div>
                 <div class="flex flex-1 items-start gap-3">
                     <span class="flex-1 text-sm font-medium text-indigo-900">
                         {{ question.question }}
@@ -118,6 +118,15 @@ const handleTranscription = (index: number, transcript: string) => {
         <div
             class="flex flex-col justify-end gap-2 sm:flex-row sm:items-center sm:space-x-2"
         >
+            <ButtonSecondary
+                v-if="showBack"
+                type="button"
+                :disabled="isSubmitting"
+                class="w-full sm:w-auto"
+                @click="emit('back')"
+            >
+                {{ backLabel }}
+            </ButtonSecondary>
             <ButtonPrimary
                 type="button"
                 :disabled="isSubmitting"

@@ -6,6 +6,7 @@ import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/OptionalBadge.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
+import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -111,11 +112,9 @@ const handleTranscription = (text: string) => {
         <!-- Question -->
         <div class="space-y-2 rounded-lg bg-indigo-50 p-4">
             <div class="flex gap-4">
-                <span
-                    class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-800"
-                >
-                    {{ currentQuestionNumber }}
-                </span>
+                <div class="mt-0.5">
+                    <QuestionNumber :number="currentQuestionNumber" />
+                </div>
                 <div class="flex flex-1 items-start gap-3">
                     <span class="flex-1 text-sm font-medium text-indigo-900">
                         {{ questionText }}
