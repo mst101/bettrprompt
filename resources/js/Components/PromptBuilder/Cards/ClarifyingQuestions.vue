@@ -214,10 +214,16 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
 
 const skipQuestion = async () => {
     await saveAnswer(currentIndex.value, null);
-    goNext();
-    // Focus the next question's textarea
-    await nextTick();
-    questionFormRef.value?.focus();
+
+    if (atLastQuestion.value) {
+        // If skipping the last question, submit all answers
+        submitAllAnswers();
+    } else {
+        goNext();
+        // Focus the next question's textarea
+        await nextTick();
+        questionFormRef.value?.focus();
+    }
 };
 
 const clearCurrentAnswer = () => {

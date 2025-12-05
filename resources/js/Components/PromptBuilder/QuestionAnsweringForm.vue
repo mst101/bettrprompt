@@ -110,13 +110,26 @@ const handleTranscription = (text: string) => {
 
         <!-- Question -->
         <div class="space-y-2 rounded-lg bg-indigo-50 p-4">
-            <div class="flex items-start gap-3">
-                <h3 class="flex-1 text-sm font-medium text-indigo-900">
-                    {{ questionText }}
-                </h3>
-                <OptionalBadge v-if="!isRequired" />
+            <div class="flex gap-4">
+                <span
+                    class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-800"
+                >
+                    {{ currentQuestionNumber }}
+                </span>
+                <div class="flex flex-1 items-start gap-3">
+                    <span class="flex-1 text-sm font-medium text-indigo-900">
+                        {{ questionText }}
+                        <span v-if="isRequired" class="ml-1 text-red-500">
+                            *
+                        </span>
+                    </span>
+                    <OptionalBadge v-if="!isRequired" />
+                </div>
             </div>
-            <p v-if="questionPurpose" class="mt-2 text-xs text-indigo-600">
+            <p
+                v-if="questionPurpose"
+                class="mt-2 ml-10 text-xs text-indigo-600"
+            >
                 {{ questionPurpose }}
             </p>
         </div>
