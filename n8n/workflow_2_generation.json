@@ -50,6 +50,38 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "personality-tier-check",
+              "leftValue": "={{ $json.body.analysis_data.personality_tier }}",
+              "rightValue": "none",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-has-personality-tier-node",
+      "name": "Check Personality Tier",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        288,
+        128
+      ]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
         "authentication": "genericCredentialType",
@@ -173,7 +205,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Collect all data from the workflow\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconsole.log(webhookData);\nconst frameworkTemplateDoc = $('Fetch Framework Template').first().json;\nconst personalityDoc = $('Fetch Personality Calibration').first().json;\n\n// Extract the analysis data from Workflow 1\nconst analysisData = webhookData.analysis_data || {};\nconst questionAnswers = webhookData.question_answers || [];\n\n// Build the system prompt\nconst systemPrompt = `You are an expert prompt engineering assistant. Your task is to construct an optimised, ready-to-use prompt based on the framework selected in the analysis phase, applying Task-Trait Alignment adjustments (amplification and counterbalancing) as specified.\n\nYou have access to two reference documents:\n\n## FRAMEWORK TEMPLATE\n${frameworkTemplateDoc.content || 'Not available'}\n\n## PERSONALITY CALIBRATION\n${personalityDoc.content || 'Not available'}\n\n---\n\n## TASK\n\n1. Use framework template\n2. Apply amplification (leverage strengths) and counterbalancing (inject requirements)\n3. Incorporate user answers\n4. Generate model recommendations\n\n## COUNTERBALANCE INJECTION\n\nWhen counterbalancing specified: add explicit requirements in prompt, include in quality criteria.\n\n## OUTPUT FORMAT\n\nYou MUST respond with valid JSON only (no markdown code blocks, no extra text).\n\nIMPORTANT: The optimised_prompt field will contain newlines. You MUST properly escape them as \\\\n in the JSON output. All newlines in string values must be escaped.\n\nUse this exact structure:\n\n{\n  \"optimised_prompt\": \"The complete prompt text, ready for copy/paste. This should be a fully self-contained prompt that includes all context, requirements, and instructions. It should be usable immediately without any additional information.\",\n\n  \"metadata\": {\n    \"framework_used\": {\n      \"name\": \"Framework Name\",\n      \"code\": \"FRAMEWORK_CODE\",\n      \"components\": [\"Component1\", \"Component2\"],\n      \"explanation\": \"How the framework was applied\"\n    },\n\n    \"task_trait_alignment\": {\n      \"amplified\": [\n        {\n          \"trait\": \"High N (64%)\",\n          \"requirement_aligned\": \"VISION\",\n          \"how_applied\": \"Description of how this was leveraged in the prompt\"\n        }\n      ],\n      \"counterbalanced\": [\n        {\n          \"trait\": \"High T (84%)\",\n          \"requirement_opposed\": \"EMPATHY\",\n          \"reason\": \"Why counterbalancing was needed\",\n          \"injections_added\": [\n            \"Specific text that was added to the prompt\"\n          ]\n        }\n      ],\n      \"neutral\": [\n        {\n          \"trait\": \"High I (65%)\",\n          \"reason\": \"Why no adjustment was made\"\n        }\n      ]\n    },\n\n    \"personality_adjustments_summary\": [\n      \"AMPLIFIED: Brief description\",\n      \"COUNTERBALANCED: Brief description\"\n    ],\n\n    \"model_recommendations\": [\n      {\n        \"rank\": 1,\n        \"model\": \"Model Name\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Why this model is recommended, considering counterbalance complexity\"\n      },\n      {\n        \"rank\": 2,\n        \"model\": \"Alternative Model\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Why this is a good alternative\"\n      },\n      {\n        \"rank\": 3,\n        \"model\": \"Budget Option\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Cost-effective option if applicable\"\n      }\n    ],\n\n    \"iteration_suggestions\": [\n      \"Suggestion for how to refine the prompt if needed\",\n      \"Another potential adjustment\"\n    ]\n  }\n}`;\n\n// Build the user message with all the context\nlet userMessage = `## ANALYSIS FROM WORKFLOW 1\\n\\n`;\nuserMessage += `Task: ${analysisData.task_classification?.primary_category} (${analysisData.task_classification?.complexity})\n`;\nuserMessage += `Framework: ${analysisData.selected_framework?.name}\n`;\nuserMessage += `Personality: ${analysisData.personality_tier || 'none'}\n\n`;\n\nif (analysisData.task_trait_alignment) {\n    userMessage += `**Task-Trait Alignment Analysis:**\\n${JSON.stringify(analysisData.task_trait_alignment, null, 2)}\\n\\n`;\n    userMessage += `IMPORTANT: Apply the amplifications and counterbalancing as specified above. For each counterbalanced trait, ensure the injection text is explicitly included in the generated prompt.\\n\\n`;\n}\n\nuserMessage += `---\\n\\n## ORIGINAL TASK\\n\\n${webhookData.original_task_description || 'No task description provided'}\\n\\n`;\n\nif (webhookData.personality_type) {\n    userMessage += `## PERSONALITY DATA\\n\\n`;\n    userMessage += `Type: ${webhookData.personality_type}\\n`;\n    if (webhookData.trait_percentages) {\n        userMessage += `Percentages: ${JSON.stringify(webhookData.trait_percentages)}\\n`;\n    }\n    userMessage += `\\n`;\n}\n\nuserMessage += `## USER'S ANSWERS TO CLARIFYING QUESTIONS\\n\\n`;\nif (questionAnswers && questionAnswers.length > 0) {\n    questionAnswers.forEach((qa, index) => {\n        userMessage += `**Q${index + 1}: ${qa.question}**\\n`;\n        userMessage += `A: ${qa.answer}\\n\\n`;\n    });\n} else {\n    userMessage += `No question answers provided.\\n\\n`;\n}\n\nuserMessage += `---\\n\\n`;\nuserMessage += `Now construct the optimised prompt. Remember to:\\n`;\nuserMessage += `1. Use the ${analysisData.selected_framework?.name || 'selected'} framework structure\\n`;\nuserMessage += `2. Incorporate all user answers naturally into the prompt\\n`;\nuserMessage += `3. Apply AMPLIFICATION for aligned traits (leverage strengths)\\n`;\nuserMessage += `4. Apply COUNTERBALANCING for opposed traits (inject explicit requirements)\\n`;\nuserMessage += `5. Make the prompt self-contained and immediately usable\\n`;\nuserMessage += `6. Recommend models considering the complexity of counterbalancing needed${userContextString}`;\n\nreturn [\n    {\n        json: {\n            system: systemPrompt,\n            messages: [\n                {\n                    role: 'user',\n                    content: userMessage,\n                },\n            ],\n            originalInput: {\n                original_task_description:\n                    webhookData.original_task_description,\n                personality_type: webhookData.personality_type || null,\n                trait_percentages: webhookData.trait_percentages || null,\n                analysis_data: analysisData,\n                question_answers: questionAnswers,\n            },\n        },\n    },\n];\n"
+        "jsCode": "// Collect all data from the workflow\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconsole.log(webhookData);\nconst frameworkTemplateDoc = $('Fetch Framework Template').first().json;\n// Personality calibration is only fetched if personality_tier !== 'none'\nconst personalityDocNode = $('Fetch Personality Calibration').all();\nconst personalityDoc = personalityDocNode.length > 0 ? personalityDocNode[0].json : { content: 'Not applicable - no personality data provided' };\n\n// Extract the analysis data from Workflow 1\nconst analysisData = webhookData.analysis_data || {};\nconst questionAnswers = webhookData.question_answers || [];\n\n// Build the system prompt\nconst systemPrompt = `You are an expert prompt engineering assistant. Your task is to construct an optimised, ready-to-use prompt based on the framework selected in the analysis phase, applying Task-Trait Alignment adjustments (amplification and counterbalancing) as specified.\n\nYou have access to two reference documents:\n\n## FRAMEWORK TEMPLATE\n${frameworkTemplateDoc.content || 'Not available'}\n\n## PERSONALITY CALIBRATION\n${personalityDoc.content || 'Not available'}\n\n---\n\n## TASK\n\n1. Use framework template\n2. Apply amplification (leverage strengths) and counterbalancing (inject requirements)\n3. Incorporate user answers\n4. Generate model recommendations\n\n## COUNTERBALANCE INJECTION\n\nWhen counterbalancing specified: add explicit requirements in prompt, include in quality criteria.\n\n## OUTPUT FORMAT\n\nYou MUST respond with valid JSON only (no markdown code blocks, no extra text).\n\nIMPORTANT: The optimised_prompt field will contain newlines. You MUST properly escape them as \\\\n in the JSON output. All newlines in string values must be escaped.\n\nUse this exact structure:\n\n{\n  \"optimised_prompt\": \"The complete prompt text, ready for copy/paste. This should be a fully self-contained prompt that includes all context, requirements, and instructions. It should be usable immediately without any additional information.\",\n\n  \"metadata\": {\n    \"framework_used\": {\n      \"name\": \"Framework Name\",\n      \"code\": \"FRAMEWORK_CODE\",\n      \"components\": [\"Component1\", \"Component2\"],\n      \"explanation\": \"How the framework was applied\"\n    },\n\n    \"task_trait_alignment\": {\n      \"amplified\": [\n        {\n          \"trait\": \"High N (64%)\",\n          \"requirement_aligned\": \"VISION\",\n          \"how_applied\": \"Description of how this was leveraged in the prompt\"\n        }\n      ],\n      \"counterbalanced\": [\n        {\n          \"trait\": \"High T (84%)\",\n          \"requirement_opposed\": \"EMPATHY\",\n          \"reason\": \"Why counterbalancing was needed\",\n          \"injections_added\": [\n            \"Specific text that was added to the prompt\"\n          ]\n        }\n      ],\n      \"neutral\": [\n        {\n          \"trait\": \"High I (65%)\",\n          \"reason\": \"Why no adjustment was made\"\n        }\n      ]\n    },\n\n    \"personality_adjustments_summary\": [\n      \"AMPLIFIED: Brief description\",\n      \"COUNTERBALANCED: Brief description\"\n    ],\n\n    \"model_recommendations\": [\n      {\n        \"rank\": 1,\n        \"model\": \"Model Name\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Why this model is recommended, considering counterbalance complexity\"\n      },\n      {\n        \"rank\": 2,\n        \"model\": \"Alternative Model\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Why this is a good alternative\"\n      },\n      {\n        \"rank\": 3,\n        \"model\": \"Budget Option\",\n        \"model_id\": \"model-id-string\",\n        \"rationale\": \"Cost-effective option if applicable\"\n      }\n    ],\n\n    \"iteration_suggestions\": [\n      \"Suggestion for how to refine the prompt if needed\",\n      \"Another potential adjustment\"\n    ]\n  }\n}`;\n\n// Build the user message with all the context\nlet userMessage = `## ANALYSIS FROM WORKFLOW 1\\n\\n`;\nuserMessage += `Task: ${analysisData.task_classification?.primary_category} (${analysisData.task_classification?.complexity})\n`;\nuserMessage += `Framework: ${analysisData.selected_framework?.name}\n`;\nuserMessage += `Personality: ${analysisData.personality_tier || 'none'}\n\n`;\n\nif (analysisData.task_trait_alignment) {\n    userMessage += `**Task-Trait Alignment Analysis:**\\n${JSON.stringify(analysisData.task_trait_alignment, null, 2)}\\n\\n`;\n    userMessage += `IMPORTANT: Apply the amplifications and counterbalancing as specified above. For each counterbalanced trait, ensure the injection text is explicitly included in the generated prompt.\\n\\n`;\n}\n\nuserMessage += `---\\n\\n## ORIGINAL TASK\\n\\n${webhookData.original_task_description || 'No task description provided'}\\n\\n`;\n\nif (webhookData.personality_type) {\n    userMessage += `## PERSONALITY DATA\\n\\n`;\n    userMessage += `Type: ${webhookData.personality_type}\\n`;\n    if (webhookData.trait_percentages) {\n        userMessage += `Percentages: ${JSON.stringify(webhookData.trait_percentages)}\\n`;\n    }\n    userMessage += `\\n`;\n}\n\nuserMessage += `## USER'S ANSWERS TO CLARIFYING QUESTIONS\\n\\n`;\nif (questionAnswers && questionAnswers.length > 0) {\n    questionAnswers.forEach((qa, index) => {\n        userMessage += `**Q${index + 1}: ${qa.question}**\\n`;\n        userMessage += `A: ${qa.answer}\\n\\n`;\n    });\n} else {\n    userMessage += `No question answers provided.\\n\\n`;\n}\n\nuserMessage += `---\\n\\n`;\nuserMessage += `Now construct the optimised prompt. Remember to:\\n`;\nuserMessage += `1. Use the ${analysisData.selected_framework?.name || 'selected'} framework structure\\n`;\nuserMessage += `2. Incorporate all user answers naturally into the prompt\\n`;\nuserMessage += `3. Apply AMPLIFICATION for aligned traits (leverage strengths)\\n`;\nuserMessage += `4. Apply COUNTERBALANCING for opposed traits (inject explicit requirements)\\n`;\nuserMessage += `5. Make the prompt self-contained and immediately usable\\n`;\nuserMessage += `6. Recommend models considering the complexity of counterbalancing needed${userContextString}`;\n\nreturn [\n    {\n        json: {\n            system: systemPrompt,\n            messages: [\n                {\n                    role: 'user',\n                    content: userMessage,\n                },\n            ],\n            originalInput: {\n                original_task_description:\n                    webhookData.original_task_description,\n                personality_type: webhookData.personality_type || null,\n                trait_percentages: webhookData.trait_percentages || null,\n                analysis_data: analysisData,\n                question_answers: questionAnswers,\n            },\n        },\n    },\n];\n"
       },
       "id": "f5198784-c72c-461d-bc2d-8868f0589db6",
       "name": "Prepare Prompt",
@@ -196,7 +228,7 @@
             "index": 0
           },
           {
-            "node": "Fetch Personality Calibration",
+            "node": "Check Personality Tier",
             "type": "main",
             "index": 0
           }
@@ -276,6 +308,24 @@
             "node": "Call Anthropic API",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Personality Tier": {
+      "main": [
+        [
+          {
+            "node": "Fetch Personality Calibration",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge Inputs",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
