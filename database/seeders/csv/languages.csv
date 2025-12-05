@@ -1,0 +1,46 @@
+id,name,active
+ar-AE,"العربية (الإمارات العربية المتحدة)",0
+ar-PS,"العربية (الأراضي الفلسطينية)",0
+az-AZ,"Azərbaycan­ılı (Azərbaycan)",0
+bg-BG,"български (България)",0
+bs-BA,bosanski,0
+ca-ES,"català (català)",0
+cs-CZ,"čeština (Česká republika)",0
+da-DK,"dansk (Danmark)",0
+de-DE,"Deutsch (Deutschland)",0
+el-GR,"Ελληνικά (Ελλάδα)",0
+en-GB,"English (United Kingdom)",1
+en-GG,"English (United Kingdom)",0
+en-US,"English (United States)",1
+es-ES,"Español (España)",0
+es-MX,"Español (México)",0
+et-EE,"eesti (Eesti)",0
+fi-FI,"suomi (Suomi)",0
+fr-FR,"français (France)",0
+hr-HR,"hrvatski (Hrvatska)",0
+hu-HU,"magyar (Magyarország)",0
+id-ID,"Bahasa Indonesia (Indonesia)",0
+it-IT,"italiano (Italia)",0
+ja-JP,"日本語 (日本)",0
+ko-KR,"한국어 (대한민국)",0
+lt-LT,"lietuvių (Lietuva)",0
+lv-LV,"latviešu (Latvija)",0
+ms-MY,"Bahasa Melayu (Malaysia)",0
+nb-NO,"norsk, bokmål (Norge)",0
+nl-NL,"Nederlands (Nederland)",0
+pl-PL,"polski (Polska)",0
+pt-BR,"Português (Brasil)",0
+pt-PT,"português (Portugal)",0
+ro-RO,"română (România)",0
+ru-RU,"русский (Россия)",0
+sk-SK,"slovenčina (Slovenská republika)",0
+sv-SE,"svenska (Sverige)",0
+th-TH,"ไทย (ไทย)",0
+tl-PH,"Filipino (Pilipinas)",0
+tr-TR,"Türkçe (Türkiye)",0
+uk-UA,"українська (Україна)",0
+vi-VN,"Tiếng Việt (Việt Nam)",0
+zh-CN,简体中文,0
+zh-HK,中文(香港特別行政區),0
+zh-SG,中文(新加坡),0
+zh-TW,繁體中文,0

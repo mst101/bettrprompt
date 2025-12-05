@@ -16,6 +16,7 @@ const getCompletionColor = (percentage: number) => {
 };
 
 const getCompletionLabel = (percentage: number) => {
+    if (percentage === 100) return 'Complete';
     if (percentage >= 80) return 'Nearly Complete';
     if (percentage >= 60) return 'Good Progress';
     if (percentage >= 40) return 'Getting Started';

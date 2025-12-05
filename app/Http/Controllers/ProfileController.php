@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePersonalityTypeRequest;
+use App\Models\Country;
+use App\Models\Currency;
+use App\Models\Language;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -44,6 +47,22 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Get reference data for forms
+        $countries = Country::sortedByName()->map(fn ($country) => [
+            'value' => $country->id,
+            'label' => $country->name,
+        ])->values();
+
+        $currencies = Currency::all()->map(fn ($currency) => [
+            'value' => $currency->id,
+            'label' => "{$currency->symbol} ({$currency->id})",
+        ])->values();
+
+        $languages = Language::active()->map(fn ($language) => [
+            'value' => $language->id,
+            'label' => $language->name,
+        ])->values();
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -62,6 +81,10 @@ class ProfileController extends Controller
                 'detectedAt' => $user->location_detected_at,
                 'manuallySet' => $user->location_manually_set,
             ],
+            // Reference data
+            'countries' => $countries,
+            'currencies' => $currencies,
+            'languages' => $languages,
             'professionalData' => [
                 'jobTitle' => $user->job_title,
                 'industry' => $user->industry,

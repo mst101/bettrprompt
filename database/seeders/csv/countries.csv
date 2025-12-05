@@ -1,0 +1,248 @@
+id,continent_id,currency_id,language_id,first_day_of_week,uses_miles,en,da,de,es,fr,it,nb,nl,pt,sv
+AD,E,EUR,fr-FR,mon,0,Andorra,Andorra,Andorra,Andorra,Andorre,Andorra,Andorra,Andorra,Andorra,Andorra
+AE,M,AED,ar-AE,sat,0,"United Arab Emirates","De Forenede Arabiske Emirater","Vereinigte Arabische Emirate","Emiratos Árabes Unidos","Émirats Arabes Unis","Emirati Arabi Uniti","De forente arabiske emirater","Verenigde Arabische Emiraten","Emirados Árabes Unidos","Förenade arabemiraten"
+AF,A,AFN,en-GB,sat,0,Afghanistan,Afghanistan,Afghanistan,Afganistán,Afghanistan,Afghanistan,Afghanistan,Afghanistan,Afeganistão,Afghanistan
+AG,C,XCD,en-GB,mon,1,"Antigua and Barbuda","Antigua og Barbuda","Antigua und Barbuda","Antigua y Barbuda",Antigua-Et-Barbuda,"Antigua e Barbuda","Antigua og Barbuda","Antigua en Barbuda","Antígua e Barbuda","Antigua och Barbuda"
+AI,C,XCD,en-GB,mon,0,Anguilla,Anguilla,Anguilla,Anguila,Anguilla,Anguilla,Anguilla,Anguilla,Anguilla,Anguilla
+AL,E,ALL,en-GB,mon,0,Albania,Albanien,Albanien,Albania,Albanie,Albania,Albania,Albanië,Albânia,Albanien
+AM,A,AMD,en-GB,mon,0,Armenia,Armenien,Armenien,Armenia,Arménie,Armenia,Armenia,Armenië,Armênia,Armenien
+AO,F,AOA,pt-PT,mon,0,Angola,Angola,Angola,Angola,Angola,Angola,Angola,Angola,Angola,Angola
+AQ,Z,USD,en-GB,mon,0,Antarctica,Antarktis,Antarktis,Antártida,Antarctique,Antartide,Antarktis,Antarctica,Antártica,Antarktis
+AR,S,ARS,es-ES,sun,0,Argentina,Argentina,Argentinien,Argentina,Argentine,Argentina,Argentina,Argentinië,Argentina,Argentina
+AS,O,USD,en-GB,mon,0,"American Samoa","Amerikansk Samoa",Amerikanisch-Samoa,"Samoa Américana","Samoa Américaines","Samoa americane","Amerikansk Samoa",Amerikaans-Samoa,"Samoa Americana","Amerikanska Samoa"
+AT,E,EUR,de-DE,mon,0,Austria,Østrig,Österreich,Austria,Autriche,Austria,Østerrike,Oostenrijk,Áustria,Österrike
+AU,O,AUD,en-GB,mon,0,Australia,Australien,Australien,Australia,Australie,Australia,Australia,Australië,Austrália,Australien
+AW,C,AWG,nl-NL,mon,0,Aruba,Aruba,Aruba,Aruba,Aruba,Aruba,Aruba,Aruba,Aruba,Aruba
+AZ,A,AZN,az-AZ,mon,0,Azerbaijan,Aserbajdsjan,Aserbaidschan,Azerbaiyán,Azerbaïdjan,Azerbaigian,Aserbajdsjan,Azerbeidzjan,Azerbaijão,Azerbajdzjan
+BA,E,BAM,bs-BA,mon,0,"Bosnia and Herzegovina",Bosnien-Hercegovina,"Bosnien und Herzegowina","Bosnia y Herzegovina",Bosnie-Herzégovine,"Bosnia - Erzegovina",Bosnia-Hercegovina,"Bosnië en Herzegovina","Bósnia e Herzegovina","Bosnien och Herzegovina"
+BB,C,BBD,en-GB,mon,0,Barbados,Barbados,Barbados,Barbados,Barbade,Barbados,Barbados,Barbados,Barbados,Barbados
+BD,A,BDT,en-GB,mon,0,Bangladesh,Bangladesh,Bangladesch,Bangladesh,Bangladesh,Bangladesh,Bangladesh,Bangladesh,Bangladeste,Bangladesh
+BE,E,EUR,fr-FR,mon,0,Belgium,Belgien,Belgien,Bélgica,Belgique,Belgio,Belgia,België,Bélgica,Belgien
+BF,F,XOF,fr-FR,mon,0,"Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso","Burkina Faso"
+BG,E,BGN,bg-BG,mon,0,Bulgaria,Bulgarien,Bulgarien,Bulgaria,Bulgarie,Bulgaria,Bulgaria,Bulgarije,Bulgária,Bulgarien
+BH,M,BHD,ar-AE,sat,0,Bahrain,Bahrain,Bahrain,Baréin,Bahreïn,Bahrain,Bahrain,Bahrein,"Reino de Bahrain",Bahrain
+BI,F,BIF,fr-FR,mon,0,Burundi,Burundi,Burundi,Burundi,Burundi,Burundi,Burundi,Burundi,Burundi,Burundi
+BJ,F,XOF,fr-FR,mon,0,Benin,Benin,Benin,Benín,Bénin,Benin,Benin,Benin,Benin,Benin
+BL,N,EUR,fr-FR,mon,0,"Saint Barthelemy","Saint Barthelemy",Saint-Barthélemy,"San Bartolomé",Saint-Barthélemy,Saint-Barthelemy,"Saint Barthélemy","Saint Barthélemy","Saint Barthelemy",Saint-Barthélemy
+BM,N,BMD,en-GB,mon,0,Bermuda,Bermuda,Bermudas,Bermudas,Bermudes,Bermuda,Bermuda,Bermuda,Bermuda,Bermuda
+BN,I,BND,ms-MY,mon,0,Brunei,Brunei,Brunei,Brunéi,Brunei,Brunei,Brunei,Brunei,Brunei,Brunei
+BO,S,BOB,es-ES,sun,0,Bolivia,Bolivia,Bolivien,Bolivia,Bolivie,Bolivia,Bolivia,Bolivia,Bolívia,Bolivia
+BQ,C,USD,nl-NL,mon,0,"Caribbean Netherlands","Hollandske Antiller",BES-Inseln,"Islas BES","îles BES","Caraibi Olandesi","De nederlandske Antillene","Caribisch Nederland","Caribe Holandês","Nederländska Antillerna"
+BR,S,BRL,pt-BR,sun,0,Brazil,Brasilien,Brasilien,Brasil,Brésil,Brasile,Brasil,Brazilië,Brasil,Brasilien
+BS,C,BSD,en-GB,mon,1,Bahamas,Bahamas,Bahamas,Bahamas,Bahamas,Bahamas,Bahamas,Bahama's,"Ilhas Bahamas",Bahamas
+BT,A,BTN,en-GB,mon,0,Bhutan,Bhutan,Bhutan,Bután,Bhoutan,Bhutan,Bhutan,Bhutan,Butão,Bhutan
+BV,Z,NOK,nb-NO,mon,0,"Bouvet Island","Bouvet Island",Bouvetinsel,"Isla Bouvet","Île Bouvet","Isola Bouvet","Bouvet Island",Bouvet-eiland,"Ilha Bouvet","Bouvet Island"
+BW,F,BWP,en-GB,mon,0,Botswana,Botswana,Botsuana,Botsuana,Botswana,Botswana,Botswana,Botswana,"República de Botsuana",Botswana
+BY,E,BYN,ru-RU,mon,0,Belarus,Hviderusland,Weißrussland,Bielorrusia,Biélorussie,Bielorussia,Hviterussland,Wit-Rusland,Bielorrússia,Vitryssland
+BZ,C,BZD,en-GB,sun,0,Belize,Belize,Belize,Belice,Belize,Belize,Belize,Belize,Belize,Belize
+CA,N,CAD,en-GB,sun,0,Canada,Canada,Kanada,Canadá,Canada,Canada,Canada,Canada,Canadá,Kanada
+CC,I,AUD,en-GB,mon,0,"Cocos (Keeling) Islands","Cocosøerne (Keelingøerne)",Kokosinseln,"Islas Cocos","Îles Cocos","Cocos (Keeling), Isole",Kokosøyene,Cocoseilanden,"Ilhas Cocos (Keeling)",Kokosöarna
+CD,F,CDF,fr-FR,mon,0,"DR Congo","DR Congo","DR Kongo","RD Congo","RD Congo","RD Congo","DR Kongo","DR Congo","RD Congo","DR Kongo"
+CE,E,RUB,ru-RU,mon,0,Crimea,Krim,Krim,Crimea,Crimée,Crimea,Krim,Krim,Crimeia,Krim
+CF,F,XAF,fr-FR,mon,0,"Central African Republic","Centralafrikanske Republik","Zentralafrikanische Republik","República Centroafricana","Centrafricaine, République","Repubblica Centroafricana","Den sentralafrikanske republikk","Centraal-Afrikaanse Republiek","República Centro Africana","Centralafrikanska republiken"
+CG,F,XAF,fr-FR,mon,0,Congo,Congo,Kongo,Congo,Congo,Congo,Kongo,Congo,Congo,Kongo
+CH,E,CHF,de-DE,mon,0,Switzerland,Schweiz,Schweiz,Suiza,Suisse,Svizzera,Sveits,Zwitserland,Suíça,Schweiz
+CI,F,XOF,fr-FR,mon,0,"Ivory Coast",Elfenbenskysten,Elfenbeinküste,"Costa de Marfil","Côte d'Ivoire","Costa d'Avorio",Elfenbenskysten,Ivoorkust,"Costa do Marfim",Elfenbenskusten
+CK,O,NZD,en-GB,mon,0,"Cook Islands",Cookøerne,Cookinseln,"Islas Cook","Îles Cook","Cook, Isole",Cookøyene,Cookeilanden,"Ilhas Cook",Cooköarna
+CL,S,CLP,es-ES,sun,0,Chile,Chile,Chile,Chile,Chili,Cile,Chile,Chili,Chile,Chile
+CM,F,XAF,fr-FR,mon,0,Cameroon,Cameroon,Kamerun,Camerún,Cameroun,Camerun,Kamerun,Kameroen,Camarões,Kamerun
+CN,A,CNY,zh-CN,sun,0,China,Kina,China,China,Chine,Cina,Kina,China,China,Kina
+CO,S,COP,es-ES,sun,0,Colombia,Colombia,Kolumbien,Colombia,Colombie,Colombia,Colombia,Colombia,Colômbia,Colombia
+CR,C,CRC,es-ES,sun,0,"Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica","Costa Rica"
+CU,C,CUP,es-ES,mon,0,Cuba,Cuba,Kuba,Cuba,Cuba,Cuba,Cuba,Cuba,Cuba,Kuba
+CV,F,CVE,pt-PT,mon,0,"Cape Verde","Kap Verde","Kap Verde","Cabo Verde",Cap-Vert,"Capo Verde","Kapp Verde",Kaapverdië,"Cabo Verde","Cape Verde"
+CW,C,ANG,nl-NL,mon,0,Curacao,Curaçao,Curaçao,Curaçao,Curaçao,Curacao,Curaçao,Curaçao,Curacao,Curacao
+CX,I,AUD,en-GB,mon,0,"Christmas Island",Juleøen,Weihnachtsinsel,"Isla de Navidad","Île Christmas","Christmas, Isola","Christmas Island",Christmaseiland/Kersteiland,"Ilha Christmas",Julön
+CY,E,EUR,tr-TR,mon,0,Cyprus,Cypern,Zypern,Chipre,Chypre,Cipro,Kypros,Cyprus,Chipre,Cypern
+CZ,E,CZK,cs-CZ,mon,0,"Czech Republic",Tjekkiet,"Tschechische Republik","República Checa","République Tchèque","Repubblica Ceca",Tsjekkia,Tsjechië,"República Checa","Tjeckiska republiken"
+DE,E,EUR,de-DE,mon,0,Germany,Tyskland,Deutschland,Alemania,Allemagne,Germania,Tyskland,Duitsland,Alemanha,Tyskland
+DJ,F,DJF,fr-FR,mon,0,Djibouti,Djibouti,Dschibuti,Yibuti,Djibouti,Gibuti,Djibouti,Djibouti,Djibouti,Djibouti
+DK,E,DKK,da-DK,mon,0,Denmark,Danmark,Dänemark,Dinamarca,Danemark,Danimarca,Danmark,Denemarken,Dinamarca,Danmark
+DM,C,XCD,en-GB,mon,0,Dominica,Dominica,Dominica,Dominica,Dominique,Dominica,Dominica,Dominica,Dominica,Dominica
+DO,C,DOP,es-ES,sun,0,"Dominican Republic","Den Dominikanske Republik","Dominikanische Republik","República Dominicana","République Dominicaine","Repubblica Dominicana","Den dominikanske republikk","Dominicaanse Republiek","República Dominicana","Dominikanska republiken"
+DZ,F,ALL,fr-FR,sat,0,Algeria,Algeriet,Algerien,Argelia,Algérie,Algeria,Algerie,Algerije,Argélia,Algeriet
+EC,S,USD,es-ES,sun,0,Ecuador,Ecuador,Ecuador,Ecuador,Équateur,Ecuador,Ecuador,Ecuador,Equador,Ecuador
+EE,E,EUR,et-EE,mon,0,Estonia,Estland,Estland,Estonia,Estonie,Estonia,Estland,Estland,Estónia,Estland
+EG,F,EGP,ar-AE,sat,0,Egypt,Egypten,Ägypten,Egipto,Égypte,Egitto,Egypt,Egypte,Egito,Egypten
+EH,F,MAD,fr-FR,sat,0,"Western Sahara",Vestsahara,Westsahara,"Sahara Occidental","Sahara occidental","Sahara occidentale","Sahara occidentale","Westelijke Sahara","Saara Ocidental","Västra Sahara"
+ER,F,ERN,ar-AE,mon,0,Eritrea,Eritrea,Eritrea,Eritrea,Érythrée,Eritrea,Eritrea,Eritrea,Eritréia,Eritrea
+ES,E,EUR,es-ES,mon,0,Spain,Spanien,Spanien,España,Espagne,Spagna,Spania,Spanje,Espanha,Spanien
+ET,F,ETB,en-GB,mon,0,Ethiopia,Etiopien,Äthiopien,Etiopía,Éthiopie,Etiopia,Etiopia,Ethiopië,Etiópia,Etiopien
+FI,E,EUR,fi-FI,mon,0,Finland,Finland,Finnland,Finlandia,Finlande,Finlandia,Finland,Finland,Finlândia,Finland
+FJ,O,FJD,en-GB,mon,0,Fiji,Fiji,Fidschi,Fiyi,Fidji,Figi,Fiji,Fiji,"República de Fiji",Fiji
+FK,S,GBP,en-GB,mon,0,"Falkland Islands",Falklandsøerne,Falklandinseln,"Islas Malvinas","Îles Falkland (Malouines)","Isole Falkland",Falklandsøyene,Falklandeilanden,"Ilhas Malvinas",Falklandsöarna
+FM,O,USD,en-GB,mon,0,Micronesia,Mikronesien,Mikronesien,Micronesia,Micronésie,Micronesia,Mikronesia,Micronesië,Micronésia,Mikronesien
+FO,E,EUR,en-GB,mon,0,"Faroe Islands",Færøerne,Färöer,"Islas Feroe","Îles Féroé","Fær Øer, Isole",Færøyene,Faeröer,"Ilhas Faroe",Färöarna
+FR,E,EUR,fr-FR,mon,0,France,Frankrig,Frankreich,Francia,France,Francia,Frankrike,Frankrijk,França,Frankrike
+GA,F,XAF,fr-FR,mon,0,Gabon,Gabon,Gabun,Gabón,Gabon,Gabon,Gabon,Gabon,Gabão,Gabon
+GD,C,XCD,en-GB,mon,1,Grenada,Grenada,Grenada,Grenada,Grenade,Grenada,Grenada,Grenada,Granada,Grenada
+GE,A,GEL,en-GB,mon,0,Georgia,Georgien,Georgien,Georgia,Géorgie,Georgia,Georgia,Georgië,Geórgia,Georgien
+GF,S,EUR,fr-FR,mon,0,"French Guiana","Fransk Guyana",Französisch-Guayana,"Guayana Francesa","Guyane Française","Guyana Francese","Fransk Guyana",Frans-Guyana,"Guiana Francesa","Franska Guyana"
+GG,E,GBP,en-GB,mon,0,Guernsey,Guernsey,Guernsey,Guernesey,Guernesey,Guernsey,Guernsey,Guernsey,Guernsey,Guernsey
+GH,F,GHS,en-GB,mon,0,Ghana,Ghana,Ghana,Ghana,Ghana,Ghana,Ghana,Ghana,Gana,Ghana
+GI,E,GIP,en-GB,mon,1,Gibraltar,Gibraltar,Gibraltar,Gibraltar,Gibraltar,Gibilterra,Gibraltar,Gibraltar,Gibraltar,Gibraltar
+GL,X,DKK,da-DK,mon,0,Greenland,Grønland,Grönland,Groenlandia,Groenland,Groenlandia,Grønland,Groenland,Groenlândia,Grönland
+GM,F,GMD,en-GB,mon,0,Gambia,Gambia,Gambia,Gambia,Gambie,Gambia,Gambia,Gambia,Gâmbia,Gambia
+GN,F,GNF,fr-FR,mon,0,Guinea,Guinea,Guinea,Guinea,Guinée,Guinea,Guinea,Guinee,Guiné,Guinea
+GP,C,EUR,fr-FR,mon,0,Guadeloupe,Guadeloupe,Guadeloupe,Guadalupe,Guadeloupe,Guadalupa,Guadeloupe,Guadeloupe,Guadalupe,Guadeloupe
+GQ,F,XAF,es-ES,mon,0,"Equatorial Guinea",Ækvatorialguinea,Äquatorialguinea,"Guinea Ecuatorial","Guinée Équatoriale","Guinea Equatoriale",Ekvatorial-Guinea,Equatoriaal-Guinea,"Guiné Equatorial",Ekvatorialguinea
+GR,E,EUR,el-GR,mon,0,Greece,Grækenland,Griechenland,Grecia,Grèce,Grecia,Hellas,Griekenland,Grécia,Grekland
+GS,Z,GBP,en-GB,mon,0,"S. Georgia and S. Sandwich Isls.","South Georgia og De Sydlige Sandwichøer","Südgeorgien und Südliche Sandwichinseln","Islas Georgias y Sandwich","Géorgie du Sud, Sandwich du Sud (Îles)","Georgia e  Sandwich del Sud, Isole","S. Georgia og S. Sandwich øyene","Zuid-Georgia en de Zuidelijke Sandwicheilanden","Ilhas Geórgia do Sul e Sandwich do Sul","S. Georgia och S. Sandwich-öarna"
+GT,C,GTQ,es-ES,sun,0,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala,Guatemala
+GU,O,USD,en-GB,mon,1,Guam,Guam,Guam,Guam,Guam,Guam,Guam,Guam,Guam,Guam
+GW,F,XOF,pt-PT,mon,0,Guinea-Bissau,Guinea-Bissau,Guinea-Bissau,Guinea-Bissáu,Guinée-Bissau,Guinea-Bissau,Guinea-Bissau,Guinee-Bissau,"República de Guiné Bissau",Guinea-Bissau
+GY,S,GYD,en-GB,mon,0,Guyana,Guyana,Guyana,Guyana,Guyana,Guiana,Guyana,Guyana,Guiana,Guyana
+HK,I,HKD,zh-HK,sun,0,"Hong Kong",Hongkong,"Hong Kong","Hong Kong","Hong Kong","Hong Kong",Hongkong,Hongkong,"Hong Kong",Hongkong
+HM,Z,AUD,en-GB,mon,0,"Heard and McDonald Islands","Heard og McDonald Islands","Heard- und McDonald-Inseln","Islas Heard y McDonald","Îles Heard et McDonald","Isole Heard e McDonald","Islas Heard y McDonald","Islas Heard y McDonald","Islas Heard y McDonald","Heard och McDonald Islands"
+HN,C,HNL,es-ES,sun,0,Honduras,Honduras,Honduras,Honduras,Honduras,Honduras,Honduras,Honduras,Honduras,Honduras
+HR,E,HRK,hr-HR,mon,0,Croatia,Kroatien,Kroatien,Croacia,Croatie,"Croazia (Hrvatska)",Kroatia,Kroatië,Croácia,Kroatien
+HT,C,HTG,fr-FR,mon,0,Haiti,Haiti,Haiti,Haití,Haïti,Haiti,Haiti,Haïti,Haiti,Haiti
+HU,E,HUF,hu-HU,mon,0,Hungary,Ungarn,Ungarn,Hungría,Hongrie,Ungheria,Ungarn,Hongarije,Hungria,Ungern
+ID,I,IDR,id-ID,mon,0,Indonesia,Indonesien,Indonesien,Indonesia,Indonésie,Indonesia,Indonesia,Indonesië,Indonésia,Indonesien
+IE,E,EUR,en-GB,mon,0,Ireland,Irland,Irland,Irlanda,Irlande,Irlanda,Irland,Ierland,Irlanda,Irland
+IL,M,ILS,en-GB,sun,0,Israel,Israel,Israel,Israel,Israël,Israele,Israel,Israël,Israel,Israel
+IN,A,INR,en-GB,mon,0,India,Indien,Indien,India,Inde,India,India,India,Índia,Indien
+IO,A,GBP,en-GB,mon,0,"British Indian Ocean Territory","British Indian Ocean Territory","Britisches Territorium des Indischen Ozeans","Territorio Británico del Océano Índico","Territoire britannique de l'océan Indien","Territorio britannico dell'Oceano Indiano","British Indian Ocean Territory","Brits-Indisch oceaan gebied","Território Británico do Oceano Índico","Brittiska territoriet i Indiska oceanen"
+IQ,M,IQD,ar-AE,sat,0,Iraq,Irak,Irak,Iraq,Irak,Iraq,Irak,Irak,Iraque,Irak
+IR,M,IRR,ar-AE,sat,0,Iran,Iran,Iran,Irán,Iran,Iran,Iran,Iran,Irã,Iran
+IS,Y,ISK,en-GB,mon,0,Iceland,Island,Island,Islandia,Islande,Islanda,Island,IJsland,Islândia,Island
+IT,E,EUR,it-IT,mon,0,Italy,Italien,Italien,Italia,Italie,Italia,Italia,Italië,Itália,Italien
+JM,C,JMD,en-GB,sun,0,Jamaica,Jamaica,Jamaika,Jamaica,Jamaïque,Giamaica,Jamaica,Jamaica,Jamaica,Jamaica
+JO,M,JOD,ar-AE,sat,0,Jordan,Jordan,Jordanien,Jordania,Jordanie,Giordania,Jordan,Jordanië,Jordânia,Jordanien
+JP,A,JPY,ja-JP,sun,0,Japan,Japan,Japan,Japón,Japon,Giappone,Japan,Japan,Japão,Japan
+KE,F,KES,en-GB,sun,0,Kenya,Kenya,Kenia,Kenia,Kenya,Kenya,Kenya,Kenia,Quénia,Kenya
+KG,A,KGS,ru-RU,mon,0,Kyrgyzstan,Kirgisistan,Kirgisistan,Kirguistán,Kirghizistan,Kirghizistan,Kirgisistan,Kirgizië,Quirguistão,Kyrgyzstan
+KH,I,KHR,en-GB,mon,0,Cambodia,Cambodia,Kambodscha,Camboya,Cambodge,Cambogia,Kambodsja,Cambodja,Cambódia,Kambodja
+KI,O,AUD,en-GB,mon,0,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati,Kiribati
+KM,F,KMF,fr-FR,mon,0,Comoros,Comorerne,Komoren,Comoras,Comores,Comore,Komorene,Comoren,"República Federal Comoros",Komorerna
+KN,C,XCD,en-GB,mon,1,"Saint Kitts and Nevis","Saint Kitts og Nevis","St. Kitts und Nevis","San Cristóbal y Nieves",Saint-Christophe-et-Niévès,"Saint Kitts e Nevis","Saint Kitts og Nevis","Saint Kitts en Nevis","São Cristóvão e Neves","Saint Kitts och Nevis"
+KO,E,EUR,en-GB,mon,0,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo,Kosovo
+KP,A,KPW,ko-KR,sun,0,"North Korea",Nordkorea,Nordkorea,"Corea del Norte","Corée du Nord","Corea del Nord",Nord-Korea,Noord-Korea,"Coréia do Norte",Nordkorea
+KR,A,KRW,ko-KR,sun,0,"South Korea",Sydkorea,Südkorea,"Corea del Sur","Corée du Sud","Corea del Sud",Sør-Korea,Zuid-Korea,"Coreia do Sul",Sydkorea
+KW,M,KWD,ar-AE,sat,0,Kuwait,Kuwait,Kuwait,Kuwait,Koweït,Kuwait,Kuwait,Koeweit,Kuwait,Kuwait
+KY,C,KYD,en-GB,mon,0,"Cayman Islands",Caymanøerne,Kaimaninseln,"Islas Caimán","Îles Caïmans","Cayman, Isole",Caymanøyene,Caymaneilanden,"Ilhas Caimão",Caymanöarna
+KZ,A,KZT,ru-RU,mon,0,Kazakhstan,Kasakhstan,Kasachstan,Kazajstán,Kazakhstan,Kazakistan,Kasakhstan,Kazachstan,Cazaquistão,Kazakstan
+LA,I,LAK,th-TH,mon,0,Laos,Laos,Laos,Laos,Laos,Laos,Laos,Laos,Laos,Laos
+LB,M,LBP,ar-AE,mon,0,Lebanon,Libanon,Libanon,Líbano,Liban,Libano,Libanon,Libanon,Líbano,Libanon
+LC,C,XCD,en-GB,mon,1,"Saint Lucia","Saint Lucia","St. Lucia","Santa Lucía",Sainte-Lucie,"Saint Lucia","Saint Lucia","Saint Lucia","Santa Lúcia","Saint Lucia"
+LI,E,CHF,de-DE,mon,0,Liechtenstein,Liechtenstein,Liechtenstein,Liechtenstein,Liechtenstein,Liechtenstein,Liechtenstein,Liechtenstein,"Principado de Liechtenstein",Liechtenstein
+LK,A,LKR,en-GB,mon,0,"Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka","Sri Lanka"
+LR,F,LRD,en-GB,mon,0,Liberia,Liberia,Liberia,Liberia,Libéria,Liberia,Liberia,Liberia,Libéria,Liberia
+LS,F,LSL,en-GB,mon,0,Lesotho,Lesotho,Lesotho,Lesoto,Lesotho,Lesotho,Lesotho,Lesotho,Lesoto,Lesotho
+LT,E,EUR,lt-LT,mon,0,Lithuania,Litauen,Litauen,Lituania,Lituanie,Lituania,Litauen,Litouwen,Lituânia,Litauen
+LU,E,EUR,fr-FR,mon,0,Luxembourg,Luxembourg,Luxemburg,Luxemburgo,Luxembourg,Lussemburgo,Luxembourg,Luxemburg,Luxemburgo,Luxemburg
+LV,E,EUR,lv-LV,mon,0,Latvia,Letland,Lettland,Letonia,Lettonie,Lettonia,Latvia,Letland,"República da Látvia",Lettland
+LY,F,LYD,ar-AE,sat,0,Libya,Libyen,Libyen,Libia,Libye,Libia,Libya,Libië,Líbia,Libyen
+MA,F,MAD,fr-FR,mon,0,Morocco,Marokko,Marokko,Marruecos,Maroc,Marocco,Marokko,Marokko,Marrocos,Marocko
+MC,E,EUR,fr-FR,mon,0,Monaco,Monaco,Monaco,Mónaco,Monaco,Monaco,Monaco,Monaco,Mônaco,Monaco
+MD,E,MDL,ro-RO,mon,0,Moldova,Moldova,Moldawien,Moldavia,Moldavie,Moldavia,Moldova,Moldavië,Moldávia,Moldavien
+ME,E,EUR,en-GB,mon,0,Montenegro,Montenegro,Montenegro,Montenegro,Monténégro,Montenegro,Montenegro,Montenegro,Montenegro,Montenegro
+MG,F,MGA,fr-FR,mon,0,Madagascar,Madagaskar,Madagaskar,Madagascar,Madagascar,Madagascar,Madagaskar,Madagaskar,Madagascar,Madagaskar
+MH,O,USD,en-GB,mon,0,"Marshall Islands",Marshalløerne,Marshallinseln,"Islas Marshall","Marshall, Îles","Marshall, Isole",Marshalløyene,Marshalleilanden,"Ilhas Marshall",Marshallöarna
+MK,E,MKD,en-GB,mon,0,"North Macedonia",Nordmakedonien,Nordmazedonien,"Macedonia del Norte","Macédoine du Nord","Macedonia del Nord",Nord-Makedonia,Noord-Macedonië,"Macedónia do Norte",Nordmakedonien
+ML,F,XOF,fr-FR,mon,0,Mali,Mali,Mali,Mali,Mali,Mali,Mali,Mali,Mali,Mali
+MM,I,MMK,en-GB,mon,1,Myanmar,Myanmar,Myanmar,Myanmar,Myanmar,Myanmar,Burma,Myanmar,Mianmar,Myanmar
+MN,A,MNT,en-GB,mon,0,Mongolia,Mongoliet,Mongolei,Mongolia,Mongolie,Mongolia,Mongolia,Mongolië,Mongólia,Mongoliet
+MO,I,MOP,zh-CN,sun,0,Macau,Macau,Macao,Macao,Macao,Macao,Macau,Macau,Macau,Macao
+MP,O,USD,en-GB,mon,0,"Northern Mariana Islands",Nordmarianerne,"Nördliche Marianen","Islas Marianas del Norte","Îles Mariannes du Nord","Marianne Settentrionali, Isole",Nord-Marianene,"Noordelijke Marianen","Ilhas Marianas do Norte",Nordmarianerna
+MQ,C,EUR,fr-FR,mon,0,Martinique,Martinique,Martinique,Martinica,Martinique,Martinica,Martinique,Martinique,Martinica,Martinique
+MR,F,MRO,fr-FR,mon,0,Mauritania,Mauretanien,Mauretanien,Mauritania,Mauritanie,Mauritania,Mauritania,Mauritanië,Mauritânia,Mauretanien
+MS,C,XCD,en-GB,mon,0,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat,Montserrat
+MT,E,EUR,en-GB,mon,0,Malta,Malta,Malta,Malta,Malte,Malta,Malta,Malta,Malta,Malta
+MU,F,MUR,fr-FR,mon,0,Mauritius,Mauritius,Mauritius,Mauricio,Maurice,Mauritius,Mauritius,Mauritius,Maurícias,Mauritius
+MV,A,MVR,en-GB,mon,0,Maldives,Maldiverne,Malediven,Maldivas,Maldives,Maldive,Maldivene,Maldiven,Maldivas,Maldiverna
+MW,F,MWK,en-GB,mon,0,Malawi,Malawi,Malawi,Malawi,Malawi,Malawi,Malawi,Malawi,Malawi,Malawi
+MX,N,MXN,es-MX,sun,0,Mexico,Mexico,Mexiko,México,Mexique,Messico,Mexico,Mexico,México,Mexiko
+MY,I,MYR,ms-MY,mon,0,Malaysia,Malaysia,Malaysia,Malasia,Malaisie,Malesia,Malaysia,Maleisië,Malásia,Malaysia
+MZ,F,MZN,pt-PT,mon,0,Mozambique,Mozambique,Mosambik,Mozambique,Mozambique,Mozambico,Mosambik,Mozambique,Moçambique,Moçambique
+NA,F,NAD,en-GB,mon,0,Namibia,Namibia,Namibia,Namibia,Namibie,Namibia,Namibia,Namibië,Namíbia,Namibia
+NC,O,XPF,fr-FR,mon,0,"New Caledonia","Ny Kaledonien",Neukaledonien,"Nueva Caledonia",Nouvelle-Calédonie,"Nuova Caledonia","New Caledonia",Nieuw-Caledonië,"Nova Caledônia","Nya Kaledonien"
+NE,F,XOF,fr-FR,mon,0,Niger,Niger,Niger,Níger,Niger,Niger,Niger,Niger,Níger,Niger
+NF,O,AUD,en-GB,mon,0,"Norfolk Island","Norfolk Island",Norfolkinsel,"Isla Norfolk","l'ile de Norfolk","Isole Norfolk","Norfolk Island",Norfolkeiland,"Ilha Norfolk","Norfolk Island"
+NG,F,NGN,en-GB,mon,0,Nigeria,Nigeria,Nigeria,Nigeria,Nigeria,Nigeria,Nigeria,Nigeria,Nigéria,Nigeria
+NI,C,NIO,es-ES,sun,0,Nicaragua,Nicaragua,Nicaragua,Nicaragua,Nicaragua,Nicaragua,Nicaragua,Nicaragua,Nicarágua,Nicaragua
+NL,E,EUR,nl-NL,mon,0,Netherlands,Holland,Niederlande,"Países Bajos",Pays-Bas,"Paesi Bassi",Nederland,Nederland,Holanda,Holland
+NO,E,NOK,nb-NO,mon,0,Norway,Norge,Norwegen,Noruega,Norvège,Norvegia,Norge,Noorwegen,Noruega,Norge
+NP,A,NPR,en-GB,mon,0,Nepal,Nepal,Nepal,Nepal,Népal,Nepal,Nepal,Nepal,Nepal,Nepal
+NR,O,AUD,en-GB,mon,0,Nauru,Nauru,Nauru,Nauru,Nauru,Nauru,Nauru,Nauru,Nauro,Nauru
+NU,O,NZD,en-GB,mon,0,Niue,Niue,Niue,Niue,Niué,Niue,Niue,Niue,Niue,Niue
+NZ,O,NZD,en-GB,mon,0,"New Zealand","New Zealand",Neuseeland,"Nueva Zelanda",Nouvelle-Zélande,"Nuova Zelanda","New Zealand",Nieuw-Zeeland,"Nova Zelândia","Nya Zeeland"
+OM,M,OMR,ar-AE,sat,0,Oman,Oman,Oman,Omán,Oman,Oman,Oman,Oman,Omã,Oman
+PA,C,USD,es-ES,sun,0,Panama,Panama,Panama,Panamá,Panamá,Panama,Panama,Panama,Panamá,Panama
+PE,S,PEN,es-ES,sun,0,Peru,Peru,Peru,Perú,Pérou,Perù,Peru,Peru,Peru,Peru
+PF,O,XPF,fr-FR,mon,0,"French Polynesia","Fransk Polynesien",Französisch-Polynesien,"Polinesia Francesa","Polynésie Française","Polinesia francese","Fransk Polynesia",Frans-Polynesië,"Polinésia Francesa","Franska Polynesien"
+PG,O,PGK,en-GB,mon,0,"Papua New Guinea","Papua Ny Guinea",Papua-Neuguinea,"Papúa Nueva Guinea",Papouasie-Nouvelle-Guinée,"Papua Nuova Guinea","Papua Ny-Guinea",Papoea-Nieuw-Guinea,"Papua-Nova Guiné","Papua Nya Guinea"
+PH,I,PHP,tl-PH,sun,0,Philippines,Filippinerne,Philippinen,Filipinas,Philippines,Filippine,Filippinene,Filipijnen,Filipinas,Filippinerna
+PK,A,PKR,en-GB,mon,0,Pakistan,Pakistan,Pakistan,Pakistán,Pakistan,Pakistan,Pakistan,Pakistan,Paquistão,Pakistan
+PL,E,PLN,pl-PL,mon,0,Poland,Polen,Polen,Polonia,Pologne,Polonia,Polen,Polen,Polónia,Polen
+PM,N,EUR,fr-FR,mon,0,"St. Pierre and Miquelon","St. Pierre og Miquelon","St. Pierre und Miquelon","San Pedro y Miquelón",Saint-Pierre-Et-Miquelon,"St. Pierre e Miquelon","Saint-Pierre og Miquelon","Saint-Pierre en Miquelon","São Pedro e Miquelon","Saint-Pierre och Miquelon"
+PN,O,NZD,en-GB,mon,0,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn,Pitcairn
+PR,C,USD,es-ES,sun,1,"Puerto Rico","Puerto Rico","Puerto Rico","Puerto Rico","Porto Rico","Porto Rico","Puerto Rico","Puerto Rico","Porto Rico","Puerto Rico"
+PS,M,EGP,ar-PS,sat,0,"Palestinian Territories","Palestinske territorier","Palästinensische Gebiete","Territorios palestinos","Territoires palestiniens","Territori palestinesi","Palestinske områder","Palestijnse grondgebieden","Territórios palestinos","Palestinska territorier"
+PT,E,EUR,pt-PT,mon,0,Portugal,Portugal,Portugal,Portugal,Portugal,Portogallo,Portugal,Portugal,Portugal,Portugal
+PW,O,USD,en-GB,mon,0,Palau,Palau,Palau,Palau,Palaos,Palau,Palau,Palau,Palau,Palau
+PY,S,PYG,es-ES,mon,0,Paraguay,Paraguay,Paraguay,Paraguay,Paraguay,Paraguay,Paraguay,Paraguay,Paraguai,Paraguay
+QA,M,QAR,ar-AE,sat,0,Qatar,Qatar,Katar,Qatar,Qatar,Qatar,Qatar,Qatar,Qatar,Qatar
+RE,F,EUR,fr-FR,mon,0,Reunion,Reunion,Réunion,Reunión,Réunion,Reunion,Reunion,Reunion,"Ilha Reunião",Reunion
+RO,E,RON,ro-RO,mon,0,Romania,Rumænien,Rumänien,Rumanía,Roumanie,Romania,Romania,Roemenië,Roménia,Rumänien
+RS,E,RSD,en-GB,mon,0,Serbia,Serbien,Serbien,Serbia,Serbie,Serbia,Serbia,Servië,Sérvia,Serbien
+RU,E,RUB,ru-RU,mon,0,Russia,Rusland,Russland,Rusia,Russie,Russia,Russland,Rusland,Rússia,Ryssland
+RW,F,RWF,fr-FR,mon,0,Rwanda,Rwanda,Ruanda,Ruanda,Rwanda,Rwanda,Rwanda,Rwanda,Ruanda,Rwanda
+SA,M,SAR,ar-AE,sat,0,"Saudi Arabia",Saudi-Arabien,Saudi-Arabien,"Arabia Saudita","Arabie Saoudite","Arabia Saudita",Saudi-Arabia,Saoedi-Arabië,"Arábia Saudita",Saudiarabien
+SB,O,SBD,en-GB,mon,0,"Solomon Islands",Salomonøerne,Salomonen,"Islas Salomón","Îles Salomon","Solomon, Isole",Salomonøyene,Salomonseilanden,"Ilhas Salomão",Salomonöarna
+SC,F,SCR,fr-FR,mon,0,Seychelles,Seychellerne,Seychellen,Seychelles,Seychelles,Seychelles,Seychellene,Seychellen,Seychelles,Seychellerna
+SD,F,SDG,ar-AE,mon,0,Sudan,Sudan,Sudan,Sudán,Soudan,Sudan,Sudan,Soedan,Sudão,Sudan
+SE,E,SEK,sv-SE,mon,0,Sweden,Sverige,Schweden,Suecia,Suède,Svezia,Sverige,Zweden,Suécia,Sverige
+SG,I,SGD,zh-SG,mon,0,Singapore,Singapore,Singapur,Singapur,Singapour,Singapore,Singapore,Singapore,Singapura,Singapore
+SH,F,SHP,en-GB,mon,1,"St. Helena","St. Helena","St. Helena","St. Helena","Île Sainte-Hélène","Sant'Elena, Isola","Saint Helena",Sint-Helena,"Santa Helena","Sankta Helena"
+SI,E,EUR,en-GB,mon,0,Slovenia,Slovenien,Slowenien,Eslovenia,Slovénie,Slovenia,Slovenia,Slovenië,Eslovénia,Slovenien
+SJ,E,NOK,nb-NO,mon,0,"Svalbard and Jan Mayen Islands","Svalbard- en Jan Mayen-eilanden","Svalbard und Jan Mayen Islands","Islas Svalbard y Jan Mayen","Îles Svalbard et Jan Mayen","Isole Svalbard e Jan Mayen","Svalbard og Jan Mayen","Svalbard- en Jan Mayen-eilanden","Ilhas Svalbard e Jan Mayen","Svalbard- och Jan Mayenöarna"
+SK,E,EUR,sk-SK,mon,0,Slovakia,Slovakiet,Slowakei,Eslovaquia,Slovaquie,Slovacchia,Slovakia,Slowakije,Eslováquia,Slovakien
+SL,F,SLL,en-GB,mon,0,"Sierra Leone","Sierra Leone","Sierra Leone","Sierra Leona","Sierra Leone","Sierra Leone","Sierra Leone","Sierra Leone","Serra Leoa","Sierra Leone"
+SM,E,EUR,it-IT,mon,0,"San Marino","San Marino","San Marino","San Marino","Saint Marin","San Marino","San Marino","San Marino","San Marino","San Marino"
+SN,F,XOF,fr-FR,mon,0,Senegal,Senegal,Senegal,Senegal,Sénégal,Senegal,Senegal,Senegal,Senegal,Senegal
+SO,F,SOS,en-GB,mon,0,Somalia,Somalia,Somalia,Somalia,Somalie,Somalia,Somalia,Somalië,Somália,Somalia
+SR,S,SRD,nl-NL,mon,0,Suriname,Surinam,Suriname,Surinam,Suriname,Suriname,Surinam,Suriname,Suriname,Suriname
+SS,F,SSP,en-GB,mon,0,"South Sudan",Sydsudan,Südsudan,"Sudán del Sur",Sud-Soudan,"Sudan del Sud",Sør-Sudan,Zuid-Soedan,"Sudão do Sul","södra Sudan"
+ST,F,STD,pt-PT,mon,0,"Sao Tome and Principe","Sao Tome og Principe","São Tomé und Príncipe","Santo Tomé y Príncipe","São Tomé-et-Principe","São Tomé e Príncipe","São Tomé og Príncipe","Sao Tomé en Principe","São Tomé e Príncipe","São Tomé och Príncipe"
+SV,C,USD,es-ES,sun,0,"El Salvador","El Salvador","El Salvador","El Salvador",Salvador,"El Salvador","El Salvador","El Salvador","El Salvador","El Salvador"
+SX,C,ANG,nl-NL,mon,0,"St Maarten","St. Martin","Sint Maarten","San Martín",Saint-Martin,"Saint Martin","St Maarten","Sint Maarten","São Martim","Saint Martin"
+SY,M,SYP,ar-AE,sat,0,Syria,Syrien,Syrien,Siria,Syrie,Siria,Syria,Syrië,Síria,Syrien
+SZ,F,SZL,en-GB,mon,0,Eswatini,Eswatini,Eswatini,Esuatini,Eswatini,Eswatini,Eswatini,eSwatini,Essuatíni,Eswatini
+TC,C,USD,en-GB,mon,0,"Turks and Caicos Islands","Turks- og Caicosøerne","Turks- und Caicosinseln","Islas Turcas y Caicos","îles Turks et Caicos","Turks e Caicos, Isole","Turks- og Caicosøyene","Turks- en Caicoseilanden","Ilhas Turks e Caicos","Turks- och Caicosöarna"
+TD,F,XAF,fr-FR,mon,0,Chad,Tchad,Tschad,Chad,Tchad,Ciad,Tsjad,Tsjaad,"República do Chade",Tchad
+TF,Z,EUR,fr-FR,mon,0,"French Southern Territories","Franske sydlige territorier","Südfranzösische Territorien","Territorios Franceses del Sur","Terres Australes Françaises","Territori della Francia del sud","Franske sørlige territorier","Franse zuidelijke gebieden","Territórios Franceses do Sul","Franska södra territorier"
+TG,F,XOF,fr-FR,mon,0,Togo,Togo,Togo,Togo,Togo,Togo,Togo,Togo,Togo,Togo
+TH,I,THB,th-TH,mon,0,Thailand,Thailand,Thailand,Tailandia,Thaïlande,Thailandia,Thailand,Thailand,Tailândia,Thailand
+TJ,A,TJS,ru-RU,mon,0,Tajikistan,Tadsjikistan,Tadschikistan,Tayikistán,Tadjikistan,Tagikistan,Tadsjikistan,Tadzjikistan,Tadjiquistão,Tadzjikistan
+TK,O,NZD,en-GB,mon,0,Tokelau,Tokelau,Tokelau,Tokelau,Tokélaou,Tokelau,Tokelau,Tokelau,Tokelau,Tokelau
+TL,O,USD,pt-PT,mon,0,"East Timor",Østtimor,Timor-Leste,"Timor Oriental","Timor oriental","Timor Est",Øst-Timor,Oost-Timor,"Timor Leste",Östtimor
+TM,A,TMT,ru-RU,mon,0,Turkmenistan,Turkmenistan,Turkmenistan,Turkmenistán,Turkménistan,Turkmenistan,Turkmenistan,Turkmenistan,Turcomenistão,Turkmenistan
+TN,F,TND,fr-FR,mon,0,Tunisia,Tunesien,Tunesien,Túnez,Tunisie,Tunisia,Tunisia,Tunesië,Tunísia,Tunisien
+TO,O,TOP,en-GB,mon,0,Tonga,Tonga,Tonga,Tonga,Tonga,Tonga,Tonga,Tonga,"Reino de Tonga",Tonga
+TR,M,TRY,tr-TR,mon,0,Turkey,Tyrkiet,Türkei,Turquía,Turquie,Turchia,Tyrkia,Turkije,Turquia,Turkiet
+TT,C,TTD,en-GB,mon,0,"Trinidad and Tobago","Trinidad og Tobago","Trinidad und Tobago","Trinidad y Tobago",Trinité-Et-Tobago,"Trinidad e Tobago","Trinidad og Tobago","Trinidad en Tobago","Trinidade e Tobago","Trinidad och Tobago"
+TV,O,AUD,en-GB,mon,0,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu,Tuvalu
+TW,I,TWD,zh-TW,sun,0,Taiwan,Taiwan,Taiwan,Taiwán,Taïwan,Taiwan,Taiwan,Taiwan,Taiwan,Taiwan
+TZ,F,TZS,en-GB,mon,0,Tanzania,Tanzania,Tansania,Tanzania,Tanzanie,Tanzania,Tanzania,Tanzania,Tanzânia,Tanzania
+UA,E,UAH,uk-UA,mon,0,Ukraine,Ukraine,Ukraine,Ucrania,Ukraine,Ucraina,Ukraina,Oekraïne,Ucrânia,Ukraina
+UG,F,UGX,en-GB,mon,0,Uganda,Uganda,Uganda,Uganda,Ouganda,Uganda,Uganda,Oeganda,Uganda,Uganda
+UK,E,GBP,en-GB,mon,1,"United Kingdom",Storbritannien,Großbritannien,"Reino Unido",Royaume-Uni,"Regno Unito",Storbritannia,"Verenigd Koninkrijk","Reino Unido",Storbritannien
+UM,O,USD,en-US,mon,0,"US Minor Outlying Islands","Amerikanske mindre afsidesliggende øer","US Minor Outlying Islands","Islas ultramarinas menores de EE. UU.","Îles mineures éloignées des États-Unis","Isole minori esterne degli Stati Uniti","Amerikanske mindre utliggende øyer","Amerikaanse ondergeschikte afgelegen eilanden","Ilhas Menores Distantes dos EUA","Amerikanska mindre avlägsna öar"
+US,N,USD,en-US,sun,1,"United States",USA,"Vereinigte Staaten","Estados Unidos",États-Unis,"Stati Uniti","De forente stater","Verenigde Staten","Estados Unidos",USA
+UY,S,UYU,es-ES,mon,0,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguai,Uruguay
+UZ,A,UZS,ru-RU,mon,0,Uzbekistan,Usbekistan,Usbekistan,Uzbekistán,Ouzbékistan,Uzbekistan,Usbekistan,Oezbekistan,Uzbequistão,Uzbekistan
+VA,E,EUR,it-IT,mon,0,"Vatican City State (Holy See)",Vatikanstaten,Vatikanstadt,"Vaticano (Santa Sede)","Saint-Siège (Vatican)","Città del Vaticano",Vatikanstaten,Vaticaanstad,"Estado da Cidade do Vaticano","Vatikanstaten (Holy See)"
+VC,C,XCD,en-GB,mon,1,"Saint Vincent and the Grenadines","Saint Vincent og Grenadinerne","St. Vincent und die Grenadinen","San Vicente y las Granadinas","Saint-Vincent-Et-Les Grenadines","Saint Vincent e Grenadine","Saint Vincent og Grenadinene","Saint Vincent en de Grenadines","São Vicente e os Grenadinos","Saint Vincent och Grenadinerna"
+VE,S,VEF,es-ES,sun,0,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela,Venezuela
+VG,C,USD,en-GB,mon,1,"British Virgin Islands","Britiske Jomfruøer","Britische Jungferninseln","Islas Vírgenes Británicas","Îles Vierges Britanniques","Isole Vergini Britanniche","De britiske jomfruøyene","Britse Maagdeneilanden","Ilhas Virgens Britânicas","Brittiska Jungfruöarna"
+VI,C,USD,en-US,mon,1,"US Virgin Islands","US Virgin Islands","Amerikanische Jungferninseln","Islas Vírgenes de EE. UU.","Îles Vierges des États-Unis","US Virgin Islands","De amerikanske Jomfruøyer","Amerikaanse Maagdeneilanden","Ilhas Virgens Americanas","Amerikanska Jungfruöarna"
+VN,I,VND,vi-VN,mon,0,Vietnam,Vietnam,Vietnam,Vietnam,Viêtnam,Vietnam,Vietnam,Vietnam,Vietname,Vietnam
+VU,O,VUV,fr-FR,mon,0,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu,Vanuatu
+WF,O,XPF,fr-FR,mon,0,"Wallis and Futuna Islands","Wallis og Futunaøerne","Wallis und Futuna","Wallis y Futuna",Wallis-et-Futuna,"Wallis e Futuna, Isole","Wallis og Futuna","Wallis en Futuna","Ilhas Wallis e Futuna","Wallis- och Futunaöarna"
+WS,O,WST,en-GB,mon,1,Samoa,Samoa,Samoa,Samoa,Samoa,Samoa,Samoa,Samoa,Samoa,Samoa
+YE,M,YER,ar-AE,sat,0,Yemen,Yemen,Jemen,Yemen,Yémen,Yemen,Jemen,Jemen,Iémen,Jemen
+YT,F,EUR,fr-FR,mon,0,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte,Mayotte
+ZA,F,ZAR,en-GB,sun,0,"South Africa",Sydafrika,Südafrika,Sudáfrica,"Afrique Du Sud",Sudafrica,Sør-Afrika,Zuid-Afrika,"África do Sul",Sydafrika
+ZM,F,ZMW,en-GB,mon,0,Zambia,Zambia,Sambia,Zambia,Zambie,Zambia,Zambia,Zambia,Zâmbia,Zambia
+ZW,F,USD,en-GB,sun,0,Zimbabwe,Zimbabwe,Simbabwe,Zimbabwe,Zimbabwe,Zimbabwe,Zimbabwe,Zimbabwe,Zimbábue,Zimbabwe

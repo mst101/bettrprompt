@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormInput from '@/Components/FormInput.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
+
+interface SelectOption {
+    value: string;
+    label: string;
+}
 
 interface Props {
     locationData: {
@@ -17,11 +21,14 @@ interface Props {
         detectedAt: string | null;
         manuallySet: boolean;
     };
+    countries: SelectOption[];
+    currencies: SelectOption[];
+    languages: SelectOption[];
 }
 
 const props = defineProps<Props>();
 
-// Common timezones
+// Common timezones (still using common ones as not in database)
 const timezones = [
     { value: 'UTC', label: 'UTC' },
     { value: 'Europe/London', label: 'Europe/London (GMT/BST)' },
@@ -38,42 +45,6 @@ const timezones = [
     { value: 'Australia/Sydney', label: 'Australia/Sydney (AEDT/AEST)' },
     { value: 'Australia/Melbourne', label: 'Australia/Melbourne (AEDT/AEST)' },
     { value: 'Pacific/Auckland', label: 'Pacific/Auckland (NZDT/NZST)' },
-];
-
-// Common currencies
-const currencies = [
-    { value: 'USD', label: 'US Dollar (USD)' },
-    { value: 'EUR', label: 'Euro (EUR)' },
-    { value: 'GBP', label: 'British Pound (GBP)' },
-    { value: 'JPY', label: 'Japanese Yen (JPY)' },
-    { value: 'CAD', label: 'Canadian Dollar (CAD)' },
-    { value: 'AUD', label: 'Australian Dollar (AUD)' },
-    { value: 'NZD', label: 'New Zealand Dollar (NZD)' },
-    { value: 'CHF', label: 'Swiss Franc (CHF)' },
-    { value: 'CNY', label: 'Chinese Yuan (CNY)' },
-    { value: 'INR', label: 'Indian Rupee (INR)' },
-    { value: 'SGD', label: 'Singapore Dollar (SGD)' },
-    { value: 'HKD', label: 'Hong Kong Dollar (HKD)' },
-    { value: 'BRL', label: 'Brazilian Real (BRL)' },
-    { value: 'ZAR', label: 'South African Rand (ZAR)' },
-];
-
-// Common languages
-const languages = [
-    { value: 'en', label: 'English' },
-    { value: 'de', label: 'Deutsch (German)' },
-    { value: 'fr', label: 'Français (French)' },
-    { value: 'es', label: 'Español (Spanish)' },
-    { value: 'it', label: 'Italiano (Italian)' },
-    { value: 'nl', label: 'Nederlands (Dutch)' },
-    { value: 'pt', label: 'Português (Portuguese)' },
-    { value: 'ja', label: '日本語 (Japanese)' },
-    { value: 'zh', label: '中文 (Chinese)' },
-    { value: 'ru', label: 'Русский (Russian)' },
-    { value: 'ko', label: '한국어 (Korean)' },
-    { value: 'sv', label: 'Svenska (Swedish)' },
-    { value: 'no', label: 'Norsk (Norwegian)' },
-    { value: 'da', label: 'Dansk (Danish)' },
 ];
 
 const form = useForm({
@@ -176,12 +147,23 @@ const clearLocation = () => {
                     show-placeholder
                 />
 
+                <!-- Country -->
+                <FormSelect
+                    id="country_code"
+                    v-model="form.country_code"
+                    label="Country"
+                    :options="props.countries"
+                    :error="form.errors.country_code"
+                    placeholder="Select country"
+                    show-placeholder
+                />
+
                 <!-- Currency -->
                 <FormSelect
                     id="currency_code"
                     v-model="form.currency_code"
                     label="Currency"
-                    :options="currencies"
+                    :options="props.currencies"
                     :error="form.errors.currency_code"
                     placeholder="Select currency"
                     show-placeholder
@@ -192,20 +174,10 @@ const clearLocation = () => {
                     id="language_code"
                     v-model="form.language_code"
                     label="Language"
-                    :options="languages"
+                    :options="props.languages"
                     :error="form.errors.language_code"
                     placeholder="Select language"
                     show-placeholder
-                />
-
-                <!-- Country Code (for reference) -->
-                <FormInput
-                    id="country_code"
-                    v-model="form.country_code"
-                    label="Country Code"
-                    placeholder="e.g., GB, US"
-                    :error="form.errors.country_code"
-                    help-text="ISO 3166-1 alpha-2 code"
                 />
             </div>
 

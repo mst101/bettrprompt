@@ -15,21 +15,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed reference data first
+        $this->call([
+            LanguageSeeder::class,
+            CurrencySeeder::class,
+            CountrySeeder::class,
+        ]);
+
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Mark Thompson',
-            'email' => 'info@hiddengambia.com',
-            'password' => bcrypt('voodoo90'),
-            'personality_type' => 'INTP-A',
-            'trait_percentages' => [
-                'mind' => 65,
-                'energy' => 64,
-                'nature' => 84,
-                'tactics' => 57,
-                'identity' => 84,
-            ],
-            'is_admin' => true,
-        ]);
+        // Create admin user if it doesn't already exist
+        User::firstOrCreate(
+            ['email' => 'info@hiddengambia.com'],
+            [
+                'name' => 'Mark Thompson',
+                'password' => bcrypt('voodoo90'),
+                'personality_type' => 'INTP-A',
+                'trait_percentages' => [
+                    'mind' => 65,
+                    'energy' => 64,
+                    'nature' => 84,
+                    'tactics' => 57,
+                    'identity' => 84,
+                ],
+                'is_admin' => true,
+            ]
+        );
     }
 }
