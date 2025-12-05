@@ -180,7 +180,9 @@
     },
     {
       "parameters": {
-        "numberInputs": 3
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
       },
       "id": "7c133240-447f-441e-8acd-9f14d51327f7",
       "name": "Merge",
@@ -230,9 +232,9 @@
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Prepare Prompt",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ]
       ]
@@ -301,13 +303,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 2
-          }
-        ]
+        []
       ]
     }
   },
