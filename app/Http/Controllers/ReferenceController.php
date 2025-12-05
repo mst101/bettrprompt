@@ -84,8 +84,10 @@ class ReferenceController extends Controller
      */
     public function frameworkTemplate(string $code): JsonResponse
     {
-        // Normalise code: uppercase and replace spaces with underscores
-        $normalisedCode = strtoupper(str_replace(' ', '_', $code));
+        // Normalise code: remove all special characters except underscores, then uppercase
+        // First replace spaces and hyphens with underscores, then remove everything else that's not alphanumeric or underscore
+        $normalisedCode = strtoupper(str_replace([' ', '-'], '_', $code));
+        $normalisedCode = preg_replace('/[^A-Z0-9_]/', '', $normalisedCode);
         $cacheKey = "framework_template_{$normalisedCode}";
 
         $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($normalisedCode) {
