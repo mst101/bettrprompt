@@ -52,33 +52,33 @@ class GeolocationService
     ];
 
     /**
-     * Country to language code mapping
+     * Country to language code mapping (BCP 47 locale format)
      */
     private const COUNTRY_LANGUAGE_MAP = [
-        'US' => 'en',
-        'GB' => 'en',
-        'CA' => 'en',
-        'AU' => 'en',
-        'NZ' => 'en',
-        'DE' => 'de',
-        'FR' => 'fr',
-        'IT' => 'it',
-        'ES' => 'es',
-        'NL' => 'nl',
-        'BE' => 'nl',
-        'AT' => 'de',
-        'CH' => 'de',
-        'SE' => 'sv',
-        'NO' => 'no',
-        'DK' => 'da',
-        'JP' => 'ja',
-        'CN' => 'zh',
-        'IN' => 'hi',
-        'BR' => 'pt',
-        'MX' => 'es',
-        'ZA' => 'en',
-        'SG' => 'en',
-        'HK' => 'zh',
+        'US' => 'en-US',
+        'GB' => 'en-GB',
+        'CA' => 'en-CA',
+        'AU' => 'en-AU',
+        'NZ' => 'en-NZ',
+        'DE' => 'de-DE',
+        'FR' => 'fr-FR',
+        'IT' => 'it-IT',
+        'ES' => 'es-ES',
+        'NL' => 'nl-NL',
+        'BE' => 'nl-BE',
+        'AT' => 'de-AT',
+        'CH' => 'de-CH',
+        'SE' => 'sv-SE',
+        'NO' => 'nb-NO',
+        'DK' => 'da-DK',
+        'JP' => 'ja-JP',
+        'CN' => 'zh-CN',
+        'IN' => 'en-IN',
+        'BR' => 'pt-BR',
+        'MX' => 'es-MX',
+        'ZA' => 'en-ZA',
+        'SG' => 'en-SG',
+        'HK' => 'zh-HK',
     ];
 
     /**
@@ -263,7 +263,7 @@ class GeolocationService
             currencyCode: 'GBP',
             latitude: 51.51,
             longitude: -0.13,
-            languageCode: 'en',
+            languageCode: 'en-GB',
             detectedAt: now(),
         );
     }
