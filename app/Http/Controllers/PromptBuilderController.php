@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
+use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunResource;
 use App\Jobs\ProcessPromptGeneration;
 use App\Jobs\ProcessTaskAnalysis;
+use App\Models\ClaudeModel;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
@@ -357,6 +359,14 @@ class PromptBuilderController extends Controller
             $uiComplexity = auth()->user()->ui_complexity ?? 'advanced';
         }
 
+        // Fetch Claude models for cost calculations (only in advanced mode)
+        $claudeModels = [];
+        if ($uiComplexity === 'advanced') {
+            $claudeModels = ClaudeModelResource::collection(
+                ClaudeModel::active()->orderByDesc('release_date')->get()
+            )->resolve();
+        }
+
         return Inertia::render('PromptBuilder/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
             'currentQuestion' => $currentQuestion,
@@ -367,6 +377,7 @@ class PromptBuilderController extends Controller
             ],
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
             'uiComplexity' => $uiComplexity,
+            'claudeModels' => $claudeModels,
         ]);
     }
 

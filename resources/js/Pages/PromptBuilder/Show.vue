@@ -22,7 +22,7 @@ import LoadingState from '@/Components/PromptBuilder/LoadingState.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { PromptRunResource } from '@/types';
+import type { ClaudeModel, PromptRunResource } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -44,6 +44,7 @@ interface Props {
     progress?: Progress;
     visitorHasCompletedPrompts?: boolean;
     uiComplexity?: 'simple' | 'advanced';
+    claudeModels?: ClaudeModel[];
 }
 
 // Define tabs
@@ -444,6 +445,7 @@ const handleDelete = () => {
                     :pre-analysis-usage="promptRun.preAnalysisApiUsage as any"
                     :analysis-usage="promptRun.analysisApiUsage as any"
                     :generation-usage="promptRun.generationApiUsage as any"
+                    :claude-models="claudeModels || []"
                 />
             </div>
         </div>
