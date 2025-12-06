@@ -640,8 +640,9 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         try {
             // Setup the test page with cookies and auth headers
+            // NOTE: acceptCookies sets up route handler for X-Test-Auth header
             await acceptCookies(testPage);
-            // Login to test page
+            // loginAsTestUser will call acceptCookies again, but route handlers accumulate
             await loginAsTestUser(testPage);
 
             // Enable mocking with API error scenario
@@ -695,8 +696,9 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         try {
             // Setup the test page with cookies and auth headers
+            // NOTE: acceptCookies sets up route handler for X-Test-Auth header
             await acceptCookies(testPage);
-            // Login to test page
+            // loginAsTestUser will call acceptCookies again, but route handlers accumulate
             await loginAsTestUser(testPage);
 
             // Enable mocking with rate limit scenario
@@ -737,10 +739,10 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         try {
             // Setup the test page with cookies and auth headers
+            // NOTE: acceptCookies sets up route handler for X-Test-Auth header
             await acceptCookies(testPage);
-
-            // Setup the test page with cookies and auth headers
-            await acceptCookies(testPage);
+            // loginAsTestUser will call acceptCookies again, but route handlers accumulate
+            await loginAsTestUser(testPage);
 
             // Enable mocking with validation error scenario
             const n8nMock = new N8nMockService(testPage);
@@ -780,7 +782,10 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         try {
             // Setup the test page with cookies and auth headers
+            // NOTE: acceptCookies sets up route handler for X-Test-Auth header
             await acceptCookies(testPage);
+            // loginAsTestUser will call acceptCookies again, but route handlers accumulate
+            await loginAsTestUser(testPage);
 
             // Start with error scenario
             const n8nMock = new N8nMockService(testPage);
