@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { acceptCookies } from './helpers/auth';
+import { acceptCookies, loginAsTestUser } from './helpers/auth';
 import { seedPromptRuns } from './helpers/database';
 import { N8nMockService } from './mocks/n8n-mock-service';
 
@@ -638,6 +638,8 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         try {
             // Setup the test page with cookies and auth headers
             await acceptCookies(testPage);
+            // Login to test page
+            await loginAsTestUser(testPage);
 
             // Enable mocking with API error scenario
             const n8nMock = new N8nMockService(testPage);
@@ -691,9 +693,8 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         try {
             // Setup the test page with cookies and auth headers
             await acceptCookies(testPage);
-
-            // Setup the test page with cookies and auth headers
-            await acceptCookies(testPage);
+            // Login to test page
+            await loginAsTestUser(testPage);
 
             // Enable mocking with rate limit scenario
             const n8nMock = new N8nMockService(testPage);
