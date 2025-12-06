@@ -24,11 +24,19 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->enum('personality_type', [
+                // Analysts (NT)
                 'INTJ-A', 'INTJ-T', 'INTP-A', 'INTP-T',
                 'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
+                // Diplomats (NF)
                 'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
                 'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
-            ])->nullable(); // e.g., INTJ-A, ENFP-T (A=Assertive, T=Turbulent)
+                // Sentinels (SJ)
+                'ISTJ-A', 'ISTJ-T', 'ISFJ-A', 'ISFJ-T',
+                'ESTJ-A', 'ESTJ-T', 'ESFJ-A', 'ESFJ-T',
+                // Explorers (SP)
+                'ISTP-A', 'ISTP-T', 'ISFP-A', 'ISFP-T',
+                'ESTP-A', 'ESTP-T', 'ESFP-A', 'ESFP-T',
+            ])->nullable(); // 32 MBTI personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
 
