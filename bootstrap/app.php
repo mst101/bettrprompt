@@ -38,9 +38,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // These routes are protected by X-Test-Auth header instead
         $middleware->validateCsrfTokens(except: [
             'test/login',
+            'test/oauth-login',
             'test/broadcast/*',
             'test/create-prompt-run',
             'test/set-personality',
+            'test/echo-info',
+            'webhook/api/n8n/webhook/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

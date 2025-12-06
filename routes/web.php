@@ -175,6 +175,8 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
 // Test OAuth endpoint for E2E tests
 // Allows tests to authenticate with a mock Google account without actual OAuth flow
 Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
+    // Note: CSRF protection is bypassed via middleware exemption for test routes
+
     // Only allow if the request includes the test auth header
     if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
         abort(403, 'Unauthorized');

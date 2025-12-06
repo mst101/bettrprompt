@@ -61,21 +61,15 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     // These tests all use mocked n8n responses for deterministic testing
     test.describe.configure({ mode: 'serial' });
 
-    test.beforeEach(async ({ authenticatedPage, page }) => {
-        // User is already authenticated via fixture
-        // Enable n8n mocking for deterministic testing
-        const n8nMock = new N8nMockService(page);
-        await n8nMock.enableMocking({
-            scenario: 'success',
-            responseDelay: 100, // Simulate API processing time
-        });
-
-        void authenticatedPage;
-    });
-
     test('should submit a prompt and navigate to show page', async ({
         page,
     }) => {
+        // Enable n8n mocking for this test
+        const n8nMock = new N8nMockService(page);
+        await n8nMock.enableMocking({
+            scenario: 'success',
+            responseDelay: 100,
+        });
         // Navigate to the prompt builder index
         await page.goto('/prompt-builder');
 
@@ -128,6 +122,12 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should wait for framework selection and see framework tab', async ({
         page,
     }) => {
+        // Enable n8n mocking for this test
+        const n8nMock = new N8nMockService(page);
+        await n8nMock.enableMocking({
+            scenario: 'success',
+            responseDelay: 100,
+        });
         // Navigate to the prompt builder
         await page.goto('/prompt-builder');
 
@@ -157,7 +157,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await expect(frameworkTab).toBeVisible({ timeout: 3000 });
     });
 
-    test('should answer a clarifying question', async ({ page }) => {
+    test('should answer a clarifying question', async ({
+        authenticatedPage: page,
+    }) => {
         // First, create a prompt run
         await page.goto('/prompt-builder');
 
@@ -201,7 +203,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
-    test('should skip a question', async ({ page }) => {
+    test('should skip a question', async ({ authenticatedPage: page }) => {
         // Create a prompt run and navigate to questions
         await page.goto('/prompt-builder');
 
@@ -232,7 +234,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
-    test('should display optimised prompt when complete', async ({ page }) => {
+    test('should display optimised prompt when complete', async ({
+        authenticatedPage: page,
+    }) => {
         // Seed a completed prompt for this test to ensure reliable results
         await seedPromptRuns(1, 'completed');
 
@@ -283,7 +287,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
     });
 
-    test('should copy optimised prompt to clipboard', async ({ page }) => {
+    test('should copy optimised prompt to clipboard', async ({
+        authenticatedPage: page,
+    }) => {
         // Seed a completed prompt for this test
         await seedPromptRuns(1, 'completed');
 
@@ -328,6 +334,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             // Try to verify clipboard contains the prompt text
             // Note: Clipboard API can be flaky in headless browsers
             try {
+                // Setup the test page with cookies and auth headers
+                await acceptCookies(testPage);
+
                 const clipboardText = await page.evaluate(() =>
                     navigator.clipboard.readText(),
                 );
@@ -397,7 +406,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
     });
 
-    test('should view prompt history', async ({ page }) => {
+    test('should view prompt history', async ({ authenticatedPage: page }) => {
         await page.goto('/prompt-builder-history');
 
         // Should see the heading
@@ -445,7 +454,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
     });
 
-    test('should show voice input button when available', async ({ page }) => {
+    test('should show voice input button when available', async ({
+        authenticatedPage: page,
+    }) => {
         await page.goto('/prompt-builder');
 
         // Look for the voice input button within the form
@@ -466,7 +477,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
     });
 
-    test('should navigate back to index from show page', async ({ page }) => {
+    test('should navigate back to index from show page', async ({
+        authenticatedPage: page,
+    }) => {
         // Create a prompt
         await page.goto('/prompt-builder');
 
@@ -539,7 +552,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
     });
 
-    test('should display task information on show page', async ({ page }) => {
+    test('should display task information on show page', async ({
+        authenticatedPage: page,
+    }) => {
         // Create a prompt with specific content
         const taskDescription = 'Write a simple hello world program in Python';
 
@@ -612,6 +627,12 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const testPage = await context.newPage();
 
         try {
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
             // Enable mocking with API error scenario
             const n8nMock = new N8nMockService(testPage);
             await n8nMock.enableMocking({
@@ -650,6 +671,12 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const testPage = await context.newPage();
 
         try {
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
             // Enable mocking with rate limit scenario
             const n8nMock = new N8nMockService(testPage);
             await n8nMock.enableMocking({
@@ -687,6 +714,12 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const testPage = await context.newPage();
 
         try {
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
             // Enable mocking with validation error scenario
             const n8nMock = new N8nMockService(testPage);
             await n8nMock.enableMocking({
@@ -724,6 +757,9 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const testPage = await context.newPage();
 
         try {
+            // Setup the test page with cookies and auth headers
+            await acceptCookies(testPage);
+
             // Start with error scenario
             const n8nMock = new N8nMockService(testPage);
             await n8nMock.enableMocking({

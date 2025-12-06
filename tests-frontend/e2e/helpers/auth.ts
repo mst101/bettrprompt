@@ -196,34 +196,25 @@ export async function loginWithMockOAuth(
 ): Promise<void> {
     await acceptCookies(page);
 
-    // First navigate to home page to establish base URL context for fetch
+    // First navigate to home page to establish base URL context
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // Use the test-only OAuth endpoint
-    await page.evaluate(
-        async (credentials: { email: string; name: string }) => {
-            const response = await fetch('/test/oauth-login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Test-Auth': 'playwright-e2e-tests',
-                },
-                body: JSON.stringify(credentials),
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    `OAuth login failed: ${response.status} ${response.statusText}`,
-                );
-            }
-
-            return response.json();
+    // Use the test-only OAuth endpoint via Playwright's API request (not fetch inside page)
+    // This ensures headers are properly passed through Playwright's interception
+    const response = await page.request.post('/test/oauth-login', {
+        data: {
+            email,
+            name,
         },
-        { email, name },
-    );
+    });
 
-    // Navigate away and back to trigger Inertia to reload with auth
+    if (!response.ok()) {
+        throw new Error(
+            `OAuth login failed: ${response.status()} ${response.statusText()}`,
+        );
+    }
+
+    // Navigate to trigger Inertia to reload with auth
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Verify we're logged in
