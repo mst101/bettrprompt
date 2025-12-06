@@ -293,7 +293,8 @@ export async function loginWithMockOAuth(
 
     // Use the test-only OAuth endpoint via Playwright's API request
     // Manually add X-Test-Auth header since page.request doesn't go through page.route() interceptors
-    const response = await page.request.post('/test/oauth-login', {
+    const baseURL = new URL(page.url()).origin;
+    const response = await page.request.post(`${baseURL}/test/oauth-login`, {
         headers: {
             'X-Test-Auth': 'playwright-e2e-tests',
         },

@@ -149,17 +149,32 @@ test.describe('Accessibility', () => {
 
         // Try tabbing through the page and verify focus changes
         const initialFocused = await page.evaluate(() => {
-            return document.activeElement?.getAttribute('id');
+            const el = document.activeElement as HTMLElement | null;
+            return {
+                tagName: el?.tagName,
+                id: el?.id || null,
+                textContent: el?.textContent?.substring(0, 20) || null,
+            };
         });
 
         await page.keyboard.press('Tab');
 
         const afterFirstTab = await page.evaluate(() => {
-            return document.activeElement?.getAttribute('id');
+            const el = document.activeElement as HTMLElement | null;
+            return {
+                tagName: el?.tagName,
+                id: el?.id || null,
+                textContent: el?.textContent?.substring(0, 20) || null,
+            };
         });
 
         // Verify focus actually moved to a different element
-        expect(afterFirstTab).not.toBe(initialFocused);
+        // Elements are different if they have different tag names or content
+        const elementChanged =
+            afterFirstTab.tagName !== initialFocused.tagName ||
+            afterFirstTab.textContent !== initialFocused.textContent;
+
+        expect(elementChanged).toBe(true);
 
         // Verify focused element is interactive (link, button, or input)
         const focusedElement = await page.evaluate(() => {
