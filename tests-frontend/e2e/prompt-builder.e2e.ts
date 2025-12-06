@@ -62,57 +62,56 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test.describe.configure({ mode: 'serial' });
 
     test('should submit a prompt and navigate to show page', async ({
-        page,
+        authenticatedPage,
     }) => {
-        // Set up test environment
-        await acceptCookies(page);
-
         // Enable n8n mocking for this test
-        const n8nMock = new N8nMockService(page);
+        const n8nMock = new N8nMockService(authenticatedPage);
         await n8nMock.enableMocking({
             scenario: 'success',
             responseDelay: 100,
         });
 
         // Navigate to the prompt builder index
-        await page.goto('/prompt-builder');
+        await authenticatedPage.goto('/prompt-builder');
 
         // Fill in the task description
-        const taskInput = page.getByLabel(/task description/i);
+        const taskInput = authenticatedPage.getByLabel(/task description/i);
         await taskInput.fill(
             'Help me write better code documentation for my Vue components',
         );
 
         // Submit the form and wait for navigation
         // With mocked n8n responses, this should complete in under 1 second
-        const submitButton = page.getByRole('button', {
+        const submitButton = authenticatedPage.getByRole('button', {
             name: /optimise.*prompt/i,
         });
 
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
+            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+                timeout: 5000,
+            }),
             submitButton.click(),
         ]);
 
         // Verify we're on the show page
-        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Should see the page title
-        await expect(page).toHaveTitle(/Prompt Analysis/);
+        await expect(authenticatedPage).toHaveTitle(/Prompt Analysis/);
 
         // After submitting, we might see:
         // 1. Pre-analysis questions (workflow_stage='pre_analysis_questions')
         // 2. Loading state (workflow_stage='submitted' with status='processing')
         // 3. Analysis complete (workflow_stage='analysis_complete')
-        const hasPreAnalysisQuestions = await page
+        const hasPreAnalysisQuestions = await authenticatedPage
             .getByText(/answer.*questions/i)
             .isVisible()
             .catch(() => false);
-        const hasLoadingState = await page
+        const hasLoadingState = await authenticatedPage
             .getByText(/analysing your task/i)
             .isVisible()
             .catch(() => false);
-        const hasTabs = await page
+        const hasTabs = await authenticatedPage
             .getByRole('navigation', { name: 'Tabs' })
             .isVisible()
             .catch(() => false);
@@ -124,38 +123,44 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     });
 
     test('should wait for framework selection and see framework tab', async ({
-        page,
+        authenticatedPage,
     }) => {
         // Enable n8n mocking for this test
-        const n8nMock = new N8nMockService(page);
+        const n8nMock = new N8nMockService(authenticatedPage);
         await n8nMock.enableMocking({
             scenario: 'success',
             responseDelay: 100,
         });
         // Navigate to the prompt builder
-        await page.goto('/prompt-builder');
+        await authenticatedPage.goto('/prompt-builder');
 
         // Submit a prompt
-        const taskInput = page.getByLabel(/task description/i);
+        const taskInput = authenticatedPage.getByLabel(/task description/i);
         await taskInput.fill('Create a project plan for a new web application');
 
-        const submitButton = page.getByRole('button', {
+        const submitButton = authenticatedPage.getByRole('button', {
             name: /optimise.*prompt/i,
         });
 
         // Wait for navigation after submission
         // With mocked n8n, this completes in milliseconds
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
+            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+                timeout: 5000,
+            }),
             submitButton.click(),
         ]);
 
         // Wait for page to settle after navigation
-        await page.waitForLoadState('networkidle').catch(() => null);
+        await authenticatedPage
+            .waitForLoadState('networkidle')
+            .catch(() => null);
 
         // After navigation, we're now on the show page
         // The framework tab should appear after the mock response is processed
-        const frameworkTab = page.getByTestId('tab-button-framework');
+        const frameworkTab = authenticatedPage.getByTestId(
+            'tab-button-framework',
+        );
 
         // With mocked responses, framework tab should appear quickly
         await expect(frameworkTab).toBeVisible({ timeout: 3000 });
