@@ -14,26 +14,33 @@ import {
 test.describe('Realtime - Event Broadcasting', () => {
     test.beforeEach(async ({ authenticatedPage }) => {
         // User is already authenticated via fixture
-
         void authenticatedPage;
     });
 
     test('should update UI when AnalysisCompleted event broadcasts', async ({
-        page,
+        authenticatedPage,
     }) => {
         // Create a submitted prompt run
-        const promptRunId = await createTestPromptRun(page, 'submitted');
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        const promptRunId = await createTestPromptRun(
+            authenticatedPage,
+            'submitted',
+        );
+        await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
 
         // Verify we navigated correctly
-        expect(page.url()).toContain(`/prompt-builder/${promptRunId}`);
+        expect(authenticatedPage.url()).toContain(
+            `/prompt-builder/${promptRunId}`,
+        );
 
         // Trigger the AnalysisCompleted event
-        await triggerAnalysisCompleted(page, promptRunId);
+        await triggerAnalysisCompleted(authenticatedPage, promptRunId);
 
         // Framework tab should appear after page reloads with updated data
-        const frameworkTab = page.getByTestId('tab-button-framework');
-        const frameworkBadge = page.getByText(/framework selected/i);
+        const frameworkTab = authenticatedPage.getByTestId(
+            'tab-button-framework',
+        );
+        const frameworkBadge =
+            authenticatedPage.getByText(/framework selected/i);
 
         const hasFrameworkTab = await frameworkTab
             .isVisible({ timeout: 5000 })

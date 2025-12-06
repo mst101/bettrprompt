@@ -196,6 +196,9 @@ export async function loginWithMockOAuth(
 ): Promise<void> {
     await acceptCookies(page);
 
+    // First navigate to home page to establish base URL context for fetch
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
     // Use the test-only OAuth endpoint
     await page.evaluate(
         async (credentials: { email: string; name: string }) => {

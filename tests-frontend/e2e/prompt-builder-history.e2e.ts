@@ -30,7 +30,7 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 });
 
 test.describe.serial('Prompt Builder History - Empty State', () => {
-    test.beforeEach(async ({ page, authenticatedPage }) => {
+    test.beforeEach(async ({ authenticatedPage }) => {
         // Clean database for each test to ensure empty state
         // Using describe.serial() ensures these tests run sequentially before other test groups
         // to prevent race conditions with parallel seeding from other test groups
@@ -40,21 +40,21 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
 
         // Hard refresh to ensure we fetch fresh data from the server
         // This is critical because the page may have cached data from previous tests
-        await page.goto('/prompt-builder-history', {
+        await authenticatedPage.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
 
         // Wait for page to settle and any loading states to complete
-        await page.waitForLoadState('networkidle');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Verify we're actually in an empty state by checking for either:
         // - No table rows, OR
         // - Empty state message visible
         // If we see a table with data, wait and retry
-        const table = page.locator('table');
+        const table = authenticatedPage.locator('table');
 
         // Give the page a moment to render
-        await page.waitForTimeout(500);
+        await authenticatedPage.waitForTimeout(500);
 
         // If table exists and has data rows, something went wrong
         const hasTableWithRows =
@@ -63,44 +63,45 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
 
         if (hasTableWithRows) {
             // Wait a bit more for the empty state to appear
-            await page.waitForTimeout(1000);
+            await authenticatedPage.waitForTimeout(1000);
             // Refresh if still showing data
-            await page.reload({ waitUntil: 'networkidle' });
+            await authenticatedPage.reload({ waitUntil: 'networkidle' });
         }
-
-        // User is already authenticated via fixture
-        void authenticatedPage;
     });
 
-    test('should display page heading when authenticated', async ({ page }) => {
-        await page.goto('/prompt-builder-history', {
+    test('should display page heading when authenticated', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
 
         // Should see the page heading
-        const heading = page.getByRole('heading', {
+        const heading = authenticatedPage.getByRole('heading', {
             name: /prompt history/i,
         });
         await expect(heading).toBeVisible();
     });
 
     test('should show empty state message when no history exists', async ({
-        page,
+        authenticatedPage,
     }) => {
-        await page.goto('/prompt-builder-history', {
+        await authenticatedPage.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
 
         // Wait for page to settle
-        await page.waitForLoadState('networkidle');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Should see empty state message
         // Use a longer timeout and allow for page to render
-        const emptyMessage = page.getByText(/no prompt history yet/i);
+        const emptyMessage = authenticatedPage.getByText(
+            /no prompt history yet/i,
+        );
         await expect(emptyMessage).toBeVisible({ timeout: 10000 });
 
         // Should see a link to create first prompt
-        const createLink = page.getByRole('link', {
+        const createLink = authenticatedPage.getByRole('link', {
             name: /create your first optimised prompt/i,
         });
         await expect(createLink).toBeVisible({ timeout: 5000 });
@@ -109,13 +110,15 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
         );
     });
 
-    test('should show "Create New" button in header', async ({ page }) => {
-        await page.goto('/prompt-builder-history', {
+    test('should show "Create New" button in header', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
 
         // Should see "Create New" button
-        const createButton = page.getByRole('link', {
+        const createButton = authenticatedPage.getByRole('link', {
             name: /create new/i,
         });
         await expect(createButton).toBeVisible();
