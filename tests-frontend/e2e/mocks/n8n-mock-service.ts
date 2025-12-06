@@ -164,7 +164,33 @@ export class N8nMockService {
                 break;
         }
 
-        // Return mock response
+        // For success scenarios, pass the request through to the actual backend
+        // The backend will process and update the database
+        // We still return our mock response to the client
+        if (this.config.scenario === 'success') {
+            try {
+                // Build the webhook payload with the mock response data
+                const webhookPayload = {
+                    ...payload,
+                    ...response,
+                };
+
+                // Let the request continue to the actual backend
+                // This ensures the database is updated
+                await route.fallback({
+                    postData: JSON.stringify(webhookPayload),
+                });
+
+                // Note: route.fallback() will use the original response from the backend
+                // We don't need to call route.fulfill() in this case
+                return;
+            } catch (error) {
+                console.error('Failed to pass webhook to backend:', error);
+                // Fall through to mock response on error
+            }
+        }
+
+        // Return mock response to the client
         await route.fulfill({
             status: 200,
             contentType: 'application/json',
