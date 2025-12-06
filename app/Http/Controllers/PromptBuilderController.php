@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PreAnalysisCompleted;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\ClaudeModelResource;
@@ -600,6 +601,9 @@ class PromptBuilderController extends Controller
                         'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
                     ]);
                 });
+
+                // Broadcast event to notify frontend that Quick Queries are ready
+                PreAnalysisCompleted::dispatch($childPromptRun);
 
                 return redirect()->route('prompt-builder.show', $childPromptRun);
             } else {

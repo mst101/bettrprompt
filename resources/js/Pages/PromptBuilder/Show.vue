@@ -184,6 +184,16 @@ const handleProceedToQuestions = async () => {
 useRealtimeUpdates(
     `prompt-run.${props.promptRun.id}`,
     {
+        PreAnalysisCompleted: () => {
+            // Reload page to show Quick Queries
+            router.reload({
+                only: ['promptRun'],
+                onSuccess: () => {
+                    // Stay on Task tab to show Quick Queries
+                    activeTab.value = 'task';
+                },
+            });
+        },
         AnalysisCompleted: () => {
             // Reload page to show analysis results
             router.reload({
