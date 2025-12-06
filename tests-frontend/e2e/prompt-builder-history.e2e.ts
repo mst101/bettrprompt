@@ -244,13 +244,18 @@ test.describe('Prompt Builder History - With Data', () => {
 
         // Get first date cell
         const firstRow = page.locator('tbody tr').first();
-        const dateCell = firstRow.locator('td').last();
+        const dateCell = firstRow.locator(
+            '[data-testid="table-cell-date"], td:last-child',
+        );
         const dateText = await dateCell.textContent();
 
         // Date should be formatted (DD/MM/YYYY or similar British format)
-        // Just verify it contains a date-like pattern
+        // Verify it contains a date-like pattern (numbers and slashes)
         expect(dateText).toBeTruthy();
-        expect(dateText?.trim().length).toBeGreaterThan(0);
+        const trimmedDate = dateText?.trim() || '';
+        expect(trimmedDate.length).toBeGreaterThan(0);
+        // Verify date contains numbers (basic validation)
+        expect(/\d/.test(trimmedDate)).toBeTruthy();
     });
 
     test('should display personality types', async ({ page }) => {
@@ -272,12 +277,20 @@ test.describe('Prompt Builder History - With Data', () => {
         await page.goto('/prompt-builder-history');
 
         // Task descriptions should be visible but may be truncated
-        const taskCells = page.locator('tbody tr td').nth(1);
-        const taskText = await taskCells.first().textContent();
+        // Use data-testid to avoid brittle nth() selectors
+        const taskCell = page.locator(
+            '[data-testid="table-cell-task"], tbody tr td:nth-child(2)',
+        );
+        const taskText = await taskCell.first().textContent();
 
         expect(taskText).toBeTruthy();
         // Text should be reasonable length (truncated at 80 chars in component)
         expect(taskText!.length).toBeLessThanOrEqual(85);
+
+        // Verify truncation actually occurred by checking for ellipsis or length limit
+        const fullText = taskText?.trim() || '';
+        const isTruncated = fullText.endsWith('...') || fullText.length >= 80;
+        expect(isTruncated).toBeTruthy();
     });
 
     test('should show framework names or placeholder', async ({ page }) => {
@@ -292,12 +305,34 @@ test.describe('Prompt Builder History - With Data', () => {
         await expect(frameworkHeader).toBeVisible();
 
         // First row's framework cell should have content or placeholder
+        // Use data-testid to avoid brittle nth() selectors
         const firstRow = page.locator('tbody tr').first();
-        const frameworkCell = firstRow.locator('td').nth(2);
+        const frameworkCell = firstRow.locator(
+            '[data-testid="table-cell-framework"], td:nth-child(3)',
+        );
         const frameworkText = await frameworkCell.textContent();
 
         // Should have text (framework name or em-dash for null)
         expect(frameworkText).toBeTruthy();
+
+        // Verify framework is either a valid framework name or placeholder (em-dash)
+        const trimmedText = frameworkText?.trim() || '';
+        const validFrameworks = [
+            'SMART',
+            'RICE',
+            'COAST',
+            'Design Thinking',
+            'Waterfall',
+            'Agile',
+            '—',
+            '–',
+        ];
+        const isValidFramework =
+            validFrameworks.some((f) => trimmedText.includes(f)) ||
+            trimmedText === '—' ||
+            trimmedText === '–';
+
+        expect(isValidFramework).toBeTruthy();
     });
 });
 
@@ -495,7 +530,9 @@ test.describe('Prompt Builder History - Pagination', () => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
         // Find the per-page input
-        const perPageInput = page.locator('#per-page-desktop');
+        const perPageInput = page.locator(
+            '[data-testid="per-page-input"], #per-page-desktop, input[name="per_page"]',
+        );
         await expect(perPageInput).toBeVisible();
 
         // Current value should be 10
@@ -540,7 +577,9 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        const perPageInput = page.locator('#per-page-desktop');
+        const perPageInput = page.locator(
+            '[data-testid="per-page-input"], #per-page-desktop, input[name="per_page"]',
+        );
 
         // Current value should be 10
         await expect(perPageInput).toHaveValue('10');
@@ -676,11 +715,15 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await page.goto('/prompt-builder-history?per_page=10');
 
         // Mobile per-page input should be visible
-        const perPageInput = page.locator('#per-page');
+        const perPageInput = page.locator(
+            '[data-testid="per-page-input-mobile"], #per-page, input[name="per_page"]',
+        );
         await expect(perPageInput).toBeVisible();
 
         // Should show "Show X per page" label (use label for per-page input to be specific)
-        const label = page.locator('label[for="per-page"]');
+        const label = page.locator(
+            'label[for="per-page"], [data-testid="per-page-label"]',
+        );
         await expect(label).toBeVisible();
         await expect(label).toHaveText('Show');
     });

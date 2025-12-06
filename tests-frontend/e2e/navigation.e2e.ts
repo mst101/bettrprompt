@@ -147,13 +147,34 @@ test.describe('Accessibility', () => {
     test('should support keyboard navigation', async ({ page }) => {
         await page.goto('/');
 
-        // Try tabbing through the page
-        await page.keyboard.press('Tab');
+        // Try tabbing through the page and verify focus changes
+        const initialFocused = await page.evaluate(() => {
+            return document.activeElement?.getAttribute('id');
+        });
+
         await page.keyboard.press('Tab');
 
-        // Page should handle keyboard input (no errors thrown)
-        // The test passing means keyboard events work
-        expect(page.url()).toContain('/');
+        const afterFirstTab = await page.evaluate(() => {
+            return document.activeElement?.getAttribute('id');
+        });
+
+        // Verify focus actually moved to a different element
+        expect(afterFirstTab).not.toBe(initialFocused);
+
+        // Verify focused element is interactive (link, button, or input)
+        const focusedElement = await page.evaluate(() => {
+            const el = document.activeElement as HTMLElement;
+            return el?.tagName.toLowerCase();
+        });
+
+        const interactiveElements = [
+            'a',
+            'button',
+            'input',
+            'textarea',
+            'select',
+        ];
+        expect(interactiveElements).toContain(focusedElement);
     });
 
     test('should have sufficient colour contrast', async ({ page }) => {

@@ -153,7 +153,9 @@ for (const page of staticPages) {
             await expect(mobileHeading).toBeVisible();
 
             // Content should be readable (not truncated)
-            const content = browserPage.locator('.prose, .not-prose');
+            const content = browserPage.locator(
+                '[data-testid="prose-content"], .prose',
+            );
             await expect(content.first()).toBeVisible();
         });
 
@@ -331,12 +333,14 @@ test.describe('Accessibility and Content Quality', () => {
     }) => {
         await page.goto('/terms');
 
-        // Verify prose content is visible
-        const proseContent = page.locator('.prose');
+        // Verify prose content is visible - use specific prose div, not general main
+        const proseContent = page.locator(
+            '[data-testid="prose-content"], .prose',
+        );
         await expect(proseContent).toBeVisible();
 
         // Should have substantial content
-        const paragraphs = page.locator('.prose p');
+        const paragraphs = proseContent.locator('p');
         const count = await paragraphs.count();
         expect(count).toBeGreaterThan(5);
     });

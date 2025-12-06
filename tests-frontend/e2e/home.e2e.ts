@@ -49,8 +49,16 @@ test.describe('Home Page', () => {
 
         // Wait a bit for any lazy-loaded content
 
-        // At least some content should be visible (this is a flexible check)
-        await expect(page.locator('body')).toBeVisible();
+        // Verify feature cards are actually displayed
+        // Cards should have proper semantic structure (role="article" or data-testid)
+        const featureCards = page.locator(
+            '[data-testid="feature-card"], [role="article"]',
+        );
+        await expect(featureCards.first()).toBeVisible();
+
+        // Verify at least 2 cards are displayed (features section typically shows multiple)
+        const cardCount = await featureCards.count();
+        expect(cardCount).toBeGreaterThanOrEqual(2);
     });
 
     test('should be responsive on mobile viewport', async ({ page }) => {

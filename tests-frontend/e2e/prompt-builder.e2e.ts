@@ -396,7 +396,10 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await editButton.click();
 
             // Edit the prompt
-            const promptTextarea = page.locator('#optimized_prompt');
+            // Use semantic selector instead of hard-coded ID for better maintainability
+            const promptTextarea = page.locator(
+                '[data-testid="optimized-prompt-edit"], #optimized_prompt, textarea[name="prompt"]',
+            );
             await expect(promptTextarea).toBeVisible();
 
             const editedText = 'This is my edited prompt for testing';
