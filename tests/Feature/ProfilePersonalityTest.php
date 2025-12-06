@@ -150,77 +150,68 @@ test('personality update requires authentication', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('personality update accepts all valid mbti types', function () {
-    $validTypes = [
-        'INTJ-A', 'INTJ-T',
-        'INTP-A', 'INTP-T',
-        'ENTJ-A', 'ENTJ-T',
-        'ENTP-A', 'ENTP-T',
-        'INFJ-A', 'INFJ-T',
-        'INFP-A', 'INFP-T',
-        'ENFJ-A', 'ENFJ-T',
-        'ENFP-A', 'ENFP-T',
-        'ISTJ-A', 'ISTJ-T',
-        'ISFJ-A', 'ISFJ-T',
-        'ESTJ-A', 'ESTJ-T',
-        'ESFJ-A', 'ESFJ-T',
-        'ISTP-A', 'ISTP-T',
-        'ISFP-A', 'ISFP-T',
-        'ESTP-A', 'ESTP-T',
-        'ESFP-A', 'ESFP-T',
-    ];
+test('personality update accepts valid mbti type', function (string $type) {
+    $response = $this->patch(route('profile.personality.update'), [
+        'personalityType' => $type,
+        'traitPercentages' => [
+            'mind' => 50,
+            'energy' => 50,
+            'nature' => 50,
+            'tactics' => 50,
+            'identity' => 50,
+        ],
+    ]);
 
-    foreach ($validTypes as $type) {
-        $response = $this->patch(route('profile.personality.update'), [
-            'personalityType' => $type,
-            'traitPercentages' => [
-                'mind' => 50,
-                'energy' => 50,
-                'nature' => 50,
-                'tactics' => 50,
-                'identity' => 50,
-            ],
-        ]);
+    $response->assertRedirect(route('profile.edit'));
+    $response->assertSessionHas('status', 'personality-updated');
 
-        $response->assertRedirect(route('profile.edit'));
-        $response->assertSessionHas('status', 'personality-updated');
+    $this->user->refresh();
+    expect($this->user->personality_type)->toBe($type);
+})->with([
+    'INTJ-A', 'INTJ-T',
+    'INTP-A', 'INTP-T',
+    'ENTJ-A', 'ENTJ-T',
+    'ENTP-A', 'ENTP-T',
+    'INFJ-A', 'INFJ-T',
+    'INFP-A', 'INFP-T',
+    'ENFJ-A', 'ENFJ-T',
+    'ENFP-A', 'ENFP-T',
+    'ISTJ-A', 'ISTJ-T',
+    'ISFJ-A', 'ISFJ-T',
+    'ESTJ-A', 'ESTJ-T',
+    'ESFJ-A', 'ESFJ-T',
+    'ISTP-A', 'ISTP-T',
+    'ISFP-A', 'ISFP-T',
+    'ESTP-A', 'ESTP-T',
+    'ESFP-A', 'ESFP-T',
+]);
 
-        $this->user->refresh();
-        expect($this->user->personality_type)->toBe($type);
-    }
-});
+test('personality update rejects invalid mbti type', function (string $type) {
+    $response = $this->patch(route('profile.personality.update'), [
+        'personalityType' => $type,
+        'traitPercentages' => [
+            'mind' => 50,
+            'energy' => 50,
+            'nature' => 50,
+            'tactics' => 50,
+            'identity' => 50,
+        ],
+    ]);
 
-test('personality update rejects invalid mbti types', function () {
-    // Test patterns that the regex /^[A-Z]{4}-[AT]$/ would reject
-    $invalidTypes = [
-        'INTJ-X', // Invalid identity (not A or T)
-        'INTJ',   // Missing identity
-        'intj-a', // Lowercase
-        'INT-A',  // Too short (only 3 letters before dash)
-        'INTJ-AB', // Too long
-        '1NTJ-A', // Contains number
-        'INTJ A', // Space instead of dash
-    ];
+    $response->assertSessionHasErrors(['personalityType']);
 
-    foreach ($invalidTypes as $type) {
-        $response = $this->patch(route('profile.personality.update'), [
-            'personalityType' => $type,
-            'traitPercentages' => [
-                'mind' => 50,
-                'energy' => 50,
-                'nature' => 50,
-                'tactics' => 50,
-                'identity' => 50,
-            ],
-        ]);
-
-        $response->assertSessionHasErrors(['personalityType']);
-
-        // Should remain unchanged
-        $this->user->refresh();
-        expect($this->user->personality_type)->toBe('INTJ-A');
-    }
-});
+    // Should remain unchanged
+    $this->user->refresh();
+    expect($this->user->personality_type)->toBe('INTJ-A');
+})->with([
+    ['INTJ-X'],  // Invalid identity (not A or T)
+    ['INTJ'],    // Missing identity
+    ['intj-a'],  // Lowercase
+    ['INT-A'],   // Too short (only 3 letters before dash)
+    ['INTJ-AB'], // Too long
+    ['1NTJ-A'],  // Contains number
+    ['INTJ A'],  // Space instead of dash
+]);
 
 test('personality type is stored with prompt runs', function () {
     // Update personality type

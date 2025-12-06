@@ -43,22 +43,13 @@ test('home page passes modal query parameter', function () {
     );
 });
 
-test('home page can login is true when login route exists', function () {
+test('home page has login and register flags', function () {
     $response = $this->get('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('Home')
         ->where('canLogin', true)
-    );
-});
-
-test('home page can register is true when register route exists', function () {
-    $response = $this->get('/');
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Home')
         ->where('canRegister', true)
     );
 });
@@ -99,51 +90,10 @@ test('dashboard redirects to prompt builder index', function () {
     );
 });
 
-test('static pages are accessible to guests', function () {
-    $response = $this->get('/');
-    $response->assertOk();
-
-    $response = $this->get('/terms');
-    $response->assertOk();
-
-    $response = $this->get('/privacy');
-    $response->assertOk();
-
-    $response = $this->get('/cookies');
-    $response->assertOk();
-});
-
-test('static pages return successful status codes', function () {
-    expect($this->get('/')->status())->toBe(200);
-    expect($this->get('/terms')->status())->toBe(200);
-    expect($this->get('/privacy')->status())->toBe(200);
-    expect($this->get('/cookies')->status())->toBe(200);
-});
-
-test('home page does not require authentication', function () {
-    $response = $this->get('/');
+test('static pages are accessible without authentication', function ($path) {
+    $response = $this->get($path);
 
     $response->assertOk();
+    $response->assertStatus(200);
     $this->assertGuest();
-});
-
-test('terms page does not require authentication', function () {
-    $response = $this->get('/terms');
-
-    $response->assertOk();
-    $this->assertGuest();
-});
-
-test('privacy page does not require authentication', function () {
-    $response = $this->get('/privacy');
-
-    $response->assertOk();
-    $this->assertGuest();
-});
-
-test('cookies page does not require authentication', function () {
-    $response = $this->get('/cookies');
-
-    $response->assertOk();
-    $this->assertGuest();
-});
+})->with(['/', '/terms', '/privacy', '/cookies']);

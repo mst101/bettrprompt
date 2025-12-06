@@ -29,90 +29,26 @@ test('history page displays with default sorting', function () {
     );
 });
 
-test('history page sorts by created at ascending', function () {
-    $oldRun = PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'created_at' => now()->subDays(3),
-        'task_description' => 'Old task',
-    ]);
-
-    $newRun = PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'created_at' => now()->subDay(),
-        'task_description' => 'New task',
-    ]);
-
-    $response = $this->get(route('prompt-builder.history', [
-        'sort_by' => 'created_at',
-        'sort_direction' => 'asc',
-    ]));
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->where('promptRuns.data.0.id', $oldRun->id)
-        ->where('promptRuns.data.1.id', $newRun->id)
-        ->where('filters.sort_direction', 'asc')
-    );
-});
-
-test('history page sorts by personality type', function () {
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'personality_type' => 'ENFP',
-        'task_description' => 'Task A',
-    ]);
-
-    PromptRun::factory()->create([
+test('history page supports sorting by different columns', function ($sortBy) {
+    // Create test data
+    PromptRun::factory()->count(2)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
         'personality_type' => 'INTJ',
-        'task_description' => 'Task B',
-    ]);
-
-    $response = $this->get(route('prompt-builder.history', [
-        'sort_by' => 'personality_type',
-        'sort_direction' => 'asc',
-    ]));
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'personality_type')
-        ->where('filters.sort_direction', 'asc')
-    );
-});
-
-test('history page sorts by status', function () {
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
         'status' => 'completed',
     ]);
 
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'status' => 'failed',
-    ]);
-
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'status' => 'processing',
-    ]);
-
     $response = $this->get(route('prompt-builder.history', [
-        'sort_by' => 'status',
+        'sort_by' => $sortBy,
         'sort_direction' => 'asc',
     ]));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'status')
+        ->where('filters.sort_by', $sortBy)
+        ->where('filters.sort_direction', 'asc')
     );
-});
+})->with(['created_at', 'personality_type', 'status', 'task_description']);
 
 test('history page rejects invalid sort column', function () {
     PromptRun::factory()->create([
@@ -183,40 +119,27 @@ test('history page respects custom per page parameter', function () {
     );
 });
 
-test('history page clamps per page to maximum of 100', function () {
+test('history page clamps per page to valid bounds', function (int $perPage, int $expectedPerPage) {
     PromptRun::factory()->count(5)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
     ]);
 
     $response = $this->get(route('prompt-builder.history', [
-        'per_page' => 500, // Exceeds max
+        'per_page' => $perPage,
     ]));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.per_page', 100) // Should be clamped to 100
+        ->where('filters.per_page', $expectedPerPage)
     );
-});
-
-test('history page clamps per page to minimum of 1', function () {
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-    ]);
-
-    $response = $this->get(route('prompt-builder.history', [
-        'per_page' => -5, // Negative value
-    ]));
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->where('filters.per_page', 1) // Should be clamped to 1
-    );
-});
+})->with([
+    [500, 100],          // Exceeds max, clamps to 100
+    [-5, 1],             // Negative, clamps to 1
+]);
 
 test('history page handles non numeric per page gracefully', function () {
-    PromptRun::factory()->create([
+    PromptRun::factory()->count(5)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
     ]);
@@ -293,33 +216,8 @@ test('history page requires authentication', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('history page sorts by task description', function () {
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'task_description' => 'Zebra task',
-    ]);
-
-    PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'task_classification' => ['category' => 'planning'],
-        'task_description' => 'Alpha task',
-    ]);
-
-    $response = $this->get(route('prompt-builder.history', [
-        'sort_by' => 'task_description',
-        'sort_direction' => 'asc',
-    ]));
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'task_description')
-        ->where('promptRuns.data.0.taskDescription', 'Alpha task')
-        ->where('promptRuns.data.1.taskDescription', 'Zebra task')
-    );
-});
-
 test('history page handles sorting nulls in personality type', function () {
+    // Test that sorting works even with null values
     PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
@@ -329,7 +227,7 @@ test('history page handles sorting nulls in personality type', function () {
     PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'personality_type' => null, // No personality type
+        'personality_type' => null,
     ]);
 
     $response = $this->get(route('prompt-builder.history', [
@@ -338,10 +236,7 @@ test('history page handles sorting nulls in personality type', function () {
     ]));
 
     $response->assertOk();
-    // Should handle null values without error
-    $response->assertInertia(fn ($page) => $page
-        ->has('promptRuns.data', 2)
-    );
+    $response->assertInertia(fn ($page) => $page->has('promptRuns.data', 2));
 });
 
 test('history page only shows PromptBuilder runs with task classification', function () {

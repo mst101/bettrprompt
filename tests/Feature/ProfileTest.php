@@ -2,6 +2,12 @@
 
 use App\Models\User;
 
+test('profile page requires authentication', function () {
+    $response = $this->get('/profile');
+
+    $response->assertRedirect(route('login'));
+});
+
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 

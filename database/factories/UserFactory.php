@@ -41,4 +41,31 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Indicate that the user has a personality type and trait percentages.
+     */
+    public function withPersonality(string $type = 'INTJ-A'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'personality_type' => $type,
+            'trait_percentages' => [
+                'mind' => \fake()->numberBetween(50, 100),
+                'energy' => \fake()->numberBetween(50, 100),
+                'nature' => \fake()->numberBetween(50, 100),
+                'tactics' => \fake()->numberBetween(50, 100),
+                'identity' => \fake()->numberBetween(50, 100),
+            ],
+        ]);
+    }
+
+    /**
+     * Indicate that the user has authenticated via Google OAuth.
+     */
+    public function withGoogleAuth(?string $googleId = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'google_id' => $googleId ?? \Illuminate\Support\Str::ulid(),
+        ]);
+    }
 }

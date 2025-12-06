@@ -6,12 +6,13 @@ use App\Services\PromptFrameworkService;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'trait_percentages' => [
-            'introversion' => 75,
-            'intuition' => 80,
-            'thinking' => 70,
-            'judging' => 65,
+            'mind' => 75,
+            'energy' => 55,
+            'nature' => 80,
+            'tactics' => 70,
+            'identity' => 65,
         ],
     ]);
 });

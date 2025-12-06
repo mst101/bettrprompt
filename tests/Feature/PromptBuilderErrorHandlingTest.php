@@ -6,12 +6,13 @@ use App\Services\PromptFrameworkService;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'trait_percentages' => [
-            'introversion' => 75,
-            'intuition' => 80,
-            'thinking' => 70,
-            'judging' => 65,
+            'mind' => 75,
+            'energy' => 55,
+            'nature' => 80,
+            'tactics' => 70,
+            'identity' => 65,
         ],
     ]);
     $this->actingAs($this->user);
@@ -85,8 +86,14 @@ test('retry handles service failure', function () {
         'status' => 'failed',
         'workflow_stage' => 'failed',
         'task_description' => 'Failed task',
-        'personality_type' => 'INTJ',
-        'trait_percentages' => ['introversion' => 75],
+        'personality_type' => 'INTJ-A',
+        'trait_percentages' => [
+            'mind' => 75,
+            'energy' => 55,
+            'nature' => 80,
+            'tactics' => 70,
+            'identity' => 65,
+        ],
     ]);
 
     $response = $this->post(route('prompt-builder.retry', $promptRun));
@@ -98,7 +105,7 @@ test('retry handles service failure', function () {
         ->and($promptRun->workflow_stage)->toBe('submitted');
 });
 
-test('retry succeeds after previous failure', function () {
+test('retry resets failed prompt run to processing state', function () {
     Queue::fake();
 
     $promptRun = PromptRun::factory()->create([
@@ -106,8 +113,14 @@ test('retry succeeds after previous failure', function () {
         'status' => 'failed',
         'workflow_stage' => 'failed',
         'task_description' => 'Failed task',
-        'personality_type' => 'INTJ',
-        'trait_percentages' => ['introversion' => 75],
+        'personality_type' => 'INTJ-A',
+        'trait_percentages' => [
+            'mind' => 75,
+            'energy' => 55,
+            'nature' => 80,
+            'tactics' => 70,
+            'identity' => 65,
+        ],
     ]);
 
     $response = $this->post(route('prompt-builder.retry', $promptRun));

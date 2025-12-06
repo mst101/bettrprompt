@@ -7,12 +7,13 @@ use App\Services\PromptFrameworkService;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'trait_percentages' => [
-            'introversion' => 75,
-            'intuition' => 80,
-            'thinking' => 70,
-            'judging' => 65,
+            'mind' => 75,
+            'energy' => 55,
+            'nature' => 80,
+            'tactics' => 70,
+            'identity' => 65,
         ],
     ]);
 });
@@ -82,7 +83,7 @@ test('analyse creates prompt run successfully', function () {
     $this->assertDatabaseHas('prompt_runs', [
         'user_id' => $this->user->id,
         'task_description' => 'Create a detailed project plan for launching a new product',
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'status' => 'processing',
         'workflow_stage' => 'submitted',
     ]);
@@ -108,6 +109,12 @@ test('analyse includes user personality traits', function () {
     ]);
 
     $response->assertRedirect();
+
+    // Verify personality traits were saved
+    $this->assertDatabaseHas('prompt_runs', [
+        'user_id' => $this->user->id,
+        'personality_type' => 'INTJ-A',
+    ]);
 });
 
 test('show displays prompt run details', function () {
@@ -234,16 +241,11 @@ test('history orders by created at desc', function () {
 test('answer question saves answer successfully', function () {
     $this->actingAs($this->user);
 
-    $promptRun = PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
-        'framework_questions' => [
-            ['question' => 'Question 1'],
-            ['question' => 'Question 2'],
-        ],
-        'clarifying_answers' => [],
-        'current_question_index' => 0,
-    ]);
+    $promptRun = promptRunBuilder()
+        ->withUser($this->user)
+        ->answeringQuestions(['Question 1', 'Question 2'])
+        ->withAnswers([]) // Clear any default answers
+        ->build();
 
     $response = $this->post(route('prompt-builder.answer', $promptRun), [
         'question_index' => 0,

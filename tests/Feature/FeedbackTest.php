@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Feedback;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -18,17 +18,15 @@ test('create feedback page is displayed for authenticated users', function () {
 });
 
 test('create feedback page redirects to show if feedback exists', function () {
-    // Insert existing feedback
-    DB::table('feedback')->insert([
+    // Create existing feedback using factory
+    Feedback::factory()->create([
         'user_id' => $this->user->id,
-        'experience_level' => 4, // 1-7 scale
+        'experience_level' => 4,
         'usefulness' => 4,
-        'usage_intent' => 6, // 1-7 scale for NPS
+        'usage_intent' => 6,
         'suggestions' => null,
-        'desired_features' => json_encode(['templates']),
+        'desired_features' => ['templates'],
         'desired_features_other' => null,
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     $response = $this->get(route('feedback.create'));
@@ -37,17 +35,15 @@ test('create feedback page redirects to show if feedback exists', function () {
 });
 
 test('show feedback page displays existing feedback', function () {
-    // Insert feedback
-    DB::table('feedback')->insert([
+    // Create feedback using factory
+    Feedback::factory()->create([
         'user_id' => $this->user->id,
-        'experience_level' => 6, // 1-7 scale (advanced)
+        'experience_level' => 6,
         'usefulness' => 5,
-        'usage_intent' => 7, // 1-7 scale for NPS (very likely)
+        'usage_intent' => 7,
         'suggestions' => 'Great tool!',
-        'desired_features' => json_encode(['templates', 'api-integration']),
+        'desired_features' => ['templates', 'api-integration'],
         'desired_features_other' => 'Custom feature request',
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     $response = $this->get(route('feedback.show'));
@@ -97,6 +93,7 @@ test('store feedback validates required fields', function () {
     $response = $this->post(route('feedback.store'), []);
 
     $response->assertSessionHasErrors(['experience_level', 'usefulness', 'usage_intent', 'desired_features']);
+    $this->assertDatabaseEmpty('feedback');
 });
 
 test('store feedback validates experience level range', function () {
@@ -132,7 +129,7 @@ test('store feedback validates recommendation likelihood range', function () {
     $response->assertSessionHasErrors(['usage_intent']);
 });
 
-test('store feedback allows null suggestions', function () {
+test('store feedback allows optional fields to be null', function () {
     $response = $this->post(route('feedback.store'), [
         'experience_level' => 4,
         'usefulness' => 3,
@@ -146,42 +143,24 @@ test('store feedback allows null suggestions', function () {
     $this->assertDatabaseHas('feedback', [
         'user_id' => $this->user->id,
         'suggestions' => null,
-    ]);
-});
-
-test('store feedback allows null desired features other', function () {
-    $response = $this->post(route('feedback.store'), [
-        'experience_level' => 4,
-        'usefulness' => 3,
-        'usage_intent' => 5,
-        'desired_features' => ['templates'],
-    ]);
-
-    $response->assertRedirect(route('feedback.thank-you'));
-    $response->assertSessionHas('success');
-
-    $this->assertDatabaseHas('feedback', [
-        'user_id' => $this->user->id,
         'desired_features_other' => null,
     ]);
 });
 
 test('update feedback updates existing feedback record', function () {
-    // Insert existing feedback
-    DB::table('feedback')->insert([
+    // Create existing feedback using factory
+    Feedback::factory()->create([
         'user_id' => $this->user->id,
-        'experience_level' => 2, // beginner
+        'experience_level' => 2,
         'usefulness' => 3,
         'usage_intent' => 4,
         'suggestions' => 'Original suggestion',
-        'desired_features' => json_encode(['templates']),
+        'desired_features' => ['templates'],
         'desired_features_other' => null,
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     $response = $this->put(route('feedback.update'), [
-        'experience_level' => 4, // intermediate
+        'experience_level' => 4,
         'usefulness' => 5,
         'usage_intent' => 6,
         'suggestions' => 'Updated suggestion',
@@ -203,17 +182,15 @@ test('update feedback updates existing feedback record', function () {
 });
 
 test('update feedback validates required fields', function () {
-    // Insert existing feedback
-    DB::table('feedback')->insert([
+    // Create existing feedback using factory
+    Feedback::factory()->create([
         'user_id' => $this->user->id,
         'experience_level' => 2,
         'usefulness' => 3,
         'usage_intent' => 4,
         'suggestions' => null,
-        'desired_features' => json_encode(['templates']),
+        'desired_features' => ['templates'],
         'desired_features_other' => null,
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     $response = $this->put(route('feedback.update'), []);
@@ -231,27 +208,52 @@ test('feedback routes are accessible to guests', function () {
     // Guests can access feedback show page (will redirect to create if no feedback)
     $response = $this->get(route('feedback.show'));
     $response->assertRedirect(route('feedback.create'));
+});
 
-    // Note: Actual storing of feedback is tested in other tests
-    // This just verifies routes are accessible without auth
+test('guests can store feedback', function () {
+    auth()->logout();
+
+    $response = $this->post(route('feedback.store'), [
+        'experience_level' => 3,
+        'usefulness' => 4,
+        'usage_intent' => 5,
+        'suggestions' => 'Great application!',
+        'desired_features' => ['templates', 'api-integration'],
+        'desired_features_other' => null,
+    ]);
+
+    $response->assertRedirect(route('feedback.thank-you'));
+    $response->assertSessionHas('success', 'Thank you for your feedback!');
+
+    $this->assertDatabaseHas('feedback', [
+        'user_id' => null,
+        'experience_level' => 3,
+        'usefulness' => 4,
+        'usage_intent' => 5,
+        'suggestions' => 'Great application!',
+    ]);
 });
 
 test('users can only see their own feedback', function () {
     // Create feedback for another user
     $otherUser = User::factory()->create();
-    DB::table('feedback')->insert([
+    Feedback::factory()->create([
         'user_id' => $otherUser->id,
-        'experience_level' => 6, // advanced
+        'experience_level' => 6,
         'usefulness' => 5,
         'usage_intent' => 7,
         'suggestions' => null,
-        'desired_features' => json_encode(['templates']),
+        'desired_features' => ['templates'],
         'desired_features_other' => null,
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     // Current user should see create page (no feedback exists for them)
     $response = $this->get(route('feedback.show'));
     $response->assertRedirect(route('feedback.create'));
+
+    // Verify other user's feedback is not accessible
+    $this->actingAs($otherUser);
+    $response = $this->get(route('feedback.show'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page->where('feedback.experienceLevel', 6));
 });

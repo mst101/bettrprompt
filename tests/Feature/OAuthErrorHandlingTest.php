@@ -4,8 +4,29 @@ use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 
+/**
+ * Helper to create a mocked Socialite user
+ */
+function createMockOAuthUser(string $id, ?string $email, ?string $name = null, ?string $avatar = null)
+{
+    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
+    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn($id);
+    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn($email);
+    if ($name) {
+        $mockUser->shouldReceive('getAttribute')->with('name')->andReturn($name);
+    }
+    if ($avatar) {
+        $mockUser->shouldReceive('getAttribute')->with('avatar')->andReturn($avatar);
+    }
+    $mockUser->id = $id;
+    $mockUser->email = $email;
+    $mockUser->name = $name;
+    $mockUser->avatar = $avatar;
+
+    return $mockUser;
+}
+
 test('handles invalid state exception', function () {
-    // Mock Socialite to throw InvalidStateException
     Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
     Socialite::shouldReceive('user')->andThrow(new InvalidStateException);
 
@@ -15,144 +36,7 @@ test('handles invalid state exception', function () {
     $response->assertSessionHas('error', 'Authentication session expired. Please try logging in again.');
 });
 
-test('handles missing email from oauth provider', function () {
-    // Mock OAuth user with missing email
-    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
-    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn('google123');
-    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn(null);
-    $mockUser->id = 'google123';
-    $mockUser->email = null;
-
-    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-    Socialite::shouldReceive('user')->andReturn($mockUser);
-
-    $response = $this->get(route('auth.google.callback'));
-
-    $response->assertRedirect(route('login'));
-    $response->assertSessionHas('error', 'Could not retrieve your account information from Google. Please try again.');
-});
-
-test('handles invalid email from oauth provider', function () {
-    // Mock OAuth user with invalid email format
-    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
-    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn('google123');
-    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn('not-an-email');
-    $mockUser->shouldReceive('getAttribute')->with('name')->andReturn('Test User');
-    $mockUser->shouldReceive('getAttribute')->with('avatar')->andReturn('https://example.com/avatar.jpg');
-    $mockUser->id = 'google123';
-    $mockUser->email = 'not-an-email';
-    $mockUser->name = 'Test User';
-    $mockUser->avatar = 'https://example.com/avatar.jpg';
-
-    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-    Socialite::shouldReceive('user')->andReturn($mockUser);
-
-    $response = $this->get(route('auth.google.callback'));
-
-    $response->assertRedirect(route('login'));
-    $response->assertSessionHas('error', 'Invalid email address received from Google. Please try again.');
-});
-
-test('creates new user from oauth data', function () {
-    // Mock OAuth user with valid data
-    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
-    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn('google123');
-    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn('newuser@example.com');
-    $mockUser->shouldReceive('getAttribute')->with('name')->andReturn('New User');
-    $mockUser->shouldReceive('getAttribute')->with('avatar')->andReturn('https://example.com/avatar.jpg');
-    $mockUser->id = 'google123';
-    $mockUser->email = 'newuser@example.com';
-    $mockUser->name = 'New User';
-    $mockUser->avatar = 'https://example.com/avatar.jpg';
-
-    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-    Socialite::shouldReceive('user')->andReturn($mockUser);
-
-    $response = $this->get(route('auth.google.callback'));
-
-    $response->assertRedirect(route('prompt-builder.index'));
-
-    // Verify user was created
-    $this->assertDatabaseHas('users', [
-        'email' => 'newuser@example.com',
-        'google_id' => 'google123',
-        'name' => 'New User',
-    ]);
-
-    // Verify user is authenticated
-    $this->assertAuthenticated();
-});
-
-test('updates existing user with google id', function () {
-    // Create existing user without Google ID
-    $existingUser = User::factory()->create([
-        'email' => 'existing@example.com',
-        'google_id' => null,
-    ]);
-
-    // Mock OAuth user with same email
-    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
-    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn('google456');
-    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn('existing@example.com');
-    $mockUser->shouldReceive('getAttribute')->with('name')->andReturn('Existing User');
-    $mockUser->shouldReceive('getAttribute')->with('avatar')->andReturn('https://example.com/new-avatar.jpg');
-    $mockUser->id = 'google456';
-    $mockUser->email = 'existing@example.com';
-    $mockUser->name = 'Existing User';
-    $mockUser->avatar = 'https://example.com/new-avatar.jpg';
-
-    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-    Socialite::shouldReceive('user')->andReturn($mockUser);
-
-    $response = $this->get(route('auth.google.callback'));
-
-    $response->assertRedirect(route('prompt-builder.index'));
-
-    // Verify user was updated with Google ID
-    $existingUser->refresh();
-    expect($existingUser->google_id)->toBe('google456')
-        ->and($existingUser->avatar)->toBe('https://example.com/new-avatar.jpg');
-
-    // Verify user is authenticated
-    $this->assertAuthenticated();
-    expect(auth()->id())->toBe($existingUser->id);
-});
-
-test('finds existing user by google id', function () {
-    // Create existing user with Google ID
-    $existingUser = User::factory()->create([
-        'email' => 'user@example.com',
-        'google_id' => 'google789',
-    ]);
-
-    // Mock OAuth user with same Google ID
-    $mockUser = Mockery::mock('Laravel\Socialite\Two\User');
-    $mockUser->shouldReceive('getAttribute')->with('id')->andReturn('google789');
-    $mockUser->shouldReceive('getAttribute')->with('email')->andReturn('user@example.com');
-    $mockUser->shouldReceive('getAttribute')->with('name')->andReturn('User Name');
-    $mockUser->shouldReceive('getAttribute')->with('avatar')->andReturn('https://example.com/avatar.jpg');
-    $mockUser->id = 'google789';
-    $mockUser->email = 'user@example.com';
-    $mockUser->name = 'User Name';
-    $mockUser->avatar = 'https://example.com/avatar.jpg';
-
-    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
-    Socialite::shouldReceive('user')->andReturn($mockUser);
-
-    $response = $this->get(route('auth.google.callback'));
-
-    $response->assertRedirect(route('prompt-builder.index'));
-
-    // Verify user is authenticated as the existing user
-    $this->assertAuthenticated();
-    expect(auth()->id())->toBe($existingUser->id);
-
-    // Verify no new user was created
-    expect(User::all())->toHaveCount(1);
-});
-
 test('handles network errors from oauth provider', function () {
-    // Mock Socialite to throw a Guzzle ClientException
     $mockResponse = Mockery::mock('Psr\Http\Message\ResponseInterface');
     $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
 
@@ -169,6 +53,84 @@ test('handles network errors from oauth provider', function () {
 
     $response->assertRedirect(route('login'));
     $response->assertSessionHas('error', 'Failed to communicate with Google. Please try again later.');
+});
+
+test('handles missing or invalid email from oauth provider', function (string $googleId, ?string $email, string $expectedError) {
+    $mockUser = createMockOAuthUser($googleId, $email, 'Test User', 'https://example.com/avatar.jpg');
+
+    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
+    Socialite::shouldReceive('user')->andReturn($mockUser);
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $response->assertRedirect(route('login'));
+    $response->assertSessionHas('error', $expectedError);
+})->with([
+    ['google123', null, 'Could not retrieve your account information from Google. Please try again.'],
+    ['google123', 'not-an-email', 'Invalid email address received from Google. Please try again.'],
+]);
+
+test('creates new user from oauth data', function () {
+    $mockUser = createMockOAuthUser('google123', 'newuser@example.com', 'New User', 'https://example.com/avatar.jpg');
+
+    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
+    Socialite::shouldReceive('user')->andReturn($mockUser);
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $response->assertRedirect(route('prompt-builder.index'));
+
+    $this->assertDatabaseHas('users', [
+        'email' => 'newuser@example.com',
+        'google_id' => 'google123',
+        'name' => 'New User',
+    ]);
+
+    $this->assertAuthenticated();
+});
+
+test('updates existing user with google id', function () {
+    $existingUser = User::factory()->create([
+        'email' => 'existing@example.com',
+        'google_id' => null,
+    ]);
+
+    $mockUser = createMockOAuthUser('google456', 'existing@example.com', 'Existing User', 'https://example.com/new-avatar.jpg');
+
+    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
+    Socialite::shouldReceive('user')->andReturn($mockUser);
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $response->assertRedirect(route('prompt-builder.index'));
+
+    $existingUser->refresh();
+    expect($existingUser->google_id)->toBe('google456')
+        ->and($existingUser->avatar)->toBe('https://example.com/new-avatar.jpg');
+
+    $this->assertAuthenticated();
+    expect(auth()->id())->toBe($existingUser->id);
+});
+
+test('finds existing user by google id', function () {
+    $existingUser = User::factory()->create([
+        'email' => 'user@example.com',
+        'google_id' => 'google789',
+    ]);
+
+    $mockUser = createMockOAuthUser('google789', 'user@example.com', 'User Name', 'https://example.com/avatar.jpg');
+
+    Socialite::shouldReceive('driver')->with('google')->andReturnSelf();
+    Socialite::shouldReceive('user')->andReturn($mockUser);
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $response->assertRedirect(route('prompt-builder.index'));
+
+    $this->assertAuthenticated();
+    expect(auth()->id())->toBe($existingUser->id);
+
+    expect(User::all())->toHaveCount(1);
 });
 
 test('redirect to google handles errors', function () {
