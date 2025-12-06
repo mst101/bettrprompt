@@ -42,15 +42,29 @@ return new class extends Migration
                 'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
                 'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
                 'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
-            ])->nullable();
+            ])->nullable(); // A=Assertive, T=Turbulent
             $table->json('trait_percentages')->nullable();
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('simple');
+
+            // Geolocation data
+            $table->string('country_code', 2)->nullable();
+            $table->string('country_name')->nullable();
+            $table->string('region')->nullable();
+            $table->string('city')->nullable();
+            $table->string('timezone')->nullable();
+            $table->string('currency_code', 3)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->string('language_code', 5)->nullable();
+            $table->timestamp('location_detected_at')->nullable();
 
             $table->timestamps();
 
             // Indexes for performance
             $table->index(['user_id', 'first_visit_at']);
             $table->index('converted_at');
+            $table->index('country_code');
+            $table->index('timezone');
         });
     }
 
@@ -59,6 +73,16 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::hasTable('visitors')) {
+            Schema::table('visitors', function (Blueprint $table) {
+                $table->dropIndex(['user_id', 'first_visit_at']);
+                $table->dropIndex(['converted_at']);
+                $table->dropIndex(['country_code']);
+                $table->dropIndex(['timezone']);
+                $table->dropIndex(['referred_by_user_id']);
+            });
+        }
+
         Schema::dropIfExists('visitors');
     }
 };

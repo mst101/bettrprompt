@@ -21,7 +21,7 @@ return new class extends Migration
                 'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
                 'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
                 'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
-            ])->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
+            ])->nullable(); // e.g., INTJ-A, ENFP-T (A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->text('task_description');
             $table->json('pre_analysis_questions')->nullable();
