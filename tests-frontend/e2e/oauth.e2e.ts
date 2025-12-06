@@ -105,7 +105,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
 
         // Open user menu to verify name is set
         await userMenu.click();
-        const profileLink = page.getByRole('menuitem', { name: /profile/i });
+        const profileLink = page.getByRole('link', { name: /profile/i });
         await expect(profileLink).toBeVisible();
     });
 
@@ -117,7 +117,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
         // Then log out
         const userMenu = page.getByRole('button', { name: /user menu/i });
         await userMenu.click();
-        const logoutButton = page.getByRole('menuitem', { name: /log out/i });
+        const logoutButton = page.getByRole('button', { name: /log out/i });
         await logoutButton.click();
 
         // Wait for logout to complete
@@ -147,7 +147,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
 
         // Find and click logout button
         await userMenu.click();
-        const logoutButton = page.getByRole('menuitem', { name: /log out/i });
+        const logoutButton = page.getByRole('button', { name: /log out/i });
         await expect(logoutButton).toBeVisible();
         await logoutButton.click();
 
