@@ -21,7 +21,7 @@ export interface N8nQuestion {
 
 export interface N8nAnalysisResponse {
     prompt_run_id: number;
-    workflow_stage: 'framework_selected';
+    workflow_stage: 'analysis_complete';
     status: 'processing';
     selected_framework: N8nFramework;
     framework_questions: N8nQuestion[];
@@ -383,7 +383,7 @@ export function mockFrameworkSelectionResponse(
 
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'framework_selected',
+        workflow_stage: 'analysis_complete',
         status: 'processing',
         selected_framework: framework,
         framework_questions: questions,

@@ -31,14 +31,14 @@ test('complete workflow progression from submission to completion', function () 
     // Step 1: Framework selected
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'status' => 'processing',
         'selected_framework' => createSmartFramework(),
         'framework_questions' => createFrameworkQuestions(2),
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('framework_selected')
+    expect($promptRun->workflow_stage)->toBe('analysis_complete')
         ->and($promptRun->selected_framework['code'])->toBe('SMART');
 
     // Step 2: User answers questions (simulated)
@@ -87,7 +87,7 @@ test('workflow handles user personality during processing', function () {
     // Framework selected tailored to ENFP personality
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'selected_framework' => [
             'name' => 'Design Thinking',
             'code' => 'DT',
@@ -122,7 +122,7 @@ test('workflow recovers from failed state', function () {
     // Retry: reset to processing
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'status' => 'processing',
         'selected_framework' => createSmartFramework(),
         'error_message' => null,
@@ -130,7 +130,7 @@ test('workflow recovers from failed state', function () {
 
     $promptRun->refresh();
     expect($promptRun->status)->toBe('processing')
-        ->and($promptRun->workflow_stage)->toBe('framework_selected')
+        ->and($promptRun->workflow_stage)->toBe('analysis_complete')
         ->and($promptRun->error_message)->toBeNull();
 });
 
@@ -173,7 +173,7 @@ test('workflow preserves user context through multiple updates', function () {
     // Update workflow but verify user context persists
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'selected_framework' => [
             'name' => 'Waterfall',
             'code' => 'WF',
@@ -200,7 +200,7 @@ test('workflow handles multiple concurrent updates correctly', function () {
     // Update first prompt run
     webhookPost(createFrameworkSelectedPayload($promptRun1));
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('framework_selected');
+    expect($promptRun1->workflow_stage)->toBe('analysis_complete');
 
     // Update second prompt run independently
     webhookPost(createCompletedPayload($promptRun2));
@@ -209,7 +209,7 @@ test('workflow handles multiple concurrent updates correctly', function () {
 
     // First should not be affected
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('framework_selected')
+    expect($promptRun1->workflow_stage)->toBe('analysis_complete')
         ->and($promptRun1->id)->not->toBe($promptRun2->id);
 });
 
@@ -224,7 +224,7 @@ test('workflow validates data integrity through updates', function () {
 
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'selected_framework' => $framework,
         'framework_questions' => createFrameworkQuestions(3),
     ]);

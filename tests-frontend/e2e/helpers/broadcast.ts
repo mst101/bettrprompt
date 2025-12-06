@@ -189,7 +189,7 @@ export async function getPromptRunIdFromUrl(
  *
  * States supported:
  * - 'submitted': No framework selected
- * - 'framework_selected': Framework selected, no optimised prompt
+ * - 'analysis_complete': Framework selected, no optimised prompt
  * - 'completed': Full workflow completed
  *
  * @param page - Playwright page object
@@ -198,7 +198,7 @@ export async function getPromptRunIdFromUrl(
  */
 export async function createTestPromptRun(
     page: Page,
-    state: 'submitted' | 'framework_selected' | 'completed' = 'submitted',
+    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
 ): Promise<number> {
     return await page.evaluate(async (s: string) => {
         const response = await fetch(`/test/create-prompt-run?state=${s}`, {

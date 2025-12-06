@@ -8,7 +8,7 @@ import type { Page } from '@playwright/test';
 
 export interface PromptRunData {
     task: string;
-    state: 'submitted' | 'framework_selected' | 'completed';
+    state: 'submitted' | 'analysis_complete' | 'completed';
     frameworkName?: string;
     optimizedPrompt?: string;
 }
@@ -167,7 +167,7 @@ export const testDataScenarios = {
     ): Promise<number> {
         const builder = new TestDataBuilder(page);
         return builder
-            .withPromptRun('framework_selected')
+            .withPromptRun('analysis_complete')
             .withTask(task)
             .withFramework(framework)
             .createPromptRun();
@@ -209,7 +209,7 @@ export const testDataScenarios = {
  *
  * // Using the builder directly
  * const promptRunId = await new TestDataBuilder(page)
- *     .withPromptRun('framework_selected')
+ *     .withPromptRun('analysis_complete')
  *     .withTask('Write a poem')
  *     .withFramework('Poetic Structure')
  *     .createPromptRun();

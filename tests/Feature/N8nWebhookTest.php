@@ -63,13 +63,13 @@ function createFrameworkQuestions(int $count = 2): array
 }
 
 /**
- * Create a standard webhook payload for framework_selected stage
+ * Create a standard webhook payload for analysis_complete stage
  */
 function createFrameworkSelectedPayload(\App\Models\PromptRun $promptRun, ?array $framework = null, ?array $questions = null): array
 {
     return [
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
         'status' => 'processing',
         'selected_framework' => $framework ?? createSmartFramework(),
         'framework_questions' => $questions ?? createFrameworkQuestions(),
@@ -95,7 +95,7 @@ test('webhook requires valid secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ]);
 
     $response->assertOk();
@@ -108,7 +108,7 @@ test('webhook rejects missing secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ], false); // No secret
 
     $response->assertStatus(403);
@@ -121,7 +121,7 @@ test('webhook rejects invalid secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ], 'invalid-secret');
 
     $response->assertStatus(403);
@@ -130,7 +130,7 @@ test('webhook rejects invalid secret', function () {
 
 test('webhook validates prompt run id required', function () {
     $response = webhookPost([
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ]);
 
     $response->assertStatus(422);
@@ -144,7 +144,7 @@ test('webhook validates prompt run id required', function () {
 test('webhook validates prompt run id exists', function () {
     $response = webhookPost([
         'prompt_run_id' => 999999,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ]);
 
     $response->assertStatus(422);
@@ -220,7 +220,7 @@ test('webhook updates prompt run successfully', function () {
     $response->assertJson(['success' => true]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('framework_selected')
+    expect($promptRun->workflow_stage)->toBe('analysis_complete')
         ->and($promptRun->status)->toBe('processing')
         ->and($promptRun->selected_framework['name'])->toBe('SMART Goals')
         ->and($promptRun->selected_framework['rationale'])->toBe('This framework suits your task')
@@ -293,7 +293,7 @@ test('webhook handles missing prompt run', function () {
     // Validation kicks in before manual checks, so deleted IDs return 422, not 404
     $response = webhookPost([
         'prompt_run_id' => $promptRunId,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ]);
 
     $response->assertStatus(422);
@@ -336,14 +336,14 @@ test('webhook is protected by rate limiting middleware', function () {
     for ($i = 0; $i < 5; $i++) {
         $response = webhookPost([
             'prompt_run_id' => $promptRun->id,
-            'workflow_stage' => 'framework_selected',
+            'workflow_stage' => 'analysis_complete',
         ]);
         $response->assertStatus(200);
     }
 
     // Verify the prompt run was updated
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('framework_selected');
+    expect($promptRun->workflow_stage)->toBe('analysis_complete');
 });
 
 test('webhook does not broadcast on non milestone stages', function () {
@@ -352,7 +352,7 @@ test('webhook does not broadcast on non milestone stages', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => 'framework_selected',
+        'workflow_stage' => 'analysis_complete',
     ]);
 
     // Update to answering_questions (not a milestone)

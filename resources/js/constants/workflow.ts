@@ -3,7 +3,7 @@
  */
 export const WORKFLOW_STAGES = {
     SUBMITTED: 'submitted',
-    FRAMEWORK_SELECTED: 'framework_selected',
+    ANALYSIS_COMPLETE: 'analysis_complete',
     ANSWERING_QUESTIONS: 'answering_questions',
     GENERATING_PROMPT: 'generating_prompt',
     COMPLETED: 'completed',
@@ -80,8 +80,8 @@ export function getWorkflowStageLabel(stage: WorkflowStage | string): string {
     switch (stage) {
         case WORKFLOW_STAGES.SUBMITTED:
             return 'Submitted';
-        case WORKFLOW_STAGES.FRAMEWORK_SELECTED:
-            return 'Framework Selected';
+        case WORKFLOW_STAGES.ANALYSIS_COMPLETE:
+            return 'Analysis Complete';
         case WORKFLOW_STAGES.ANSWERING_QUESTIONS:
             return 'Answering Questions';
         case WORKFLOW_STAGES.GENERATING_PROMPT:

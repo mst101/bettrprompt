@@ -86,7 +86,7 @@ class TestPromptRunsSeeder extends Seeder
                     ]),
                     'processing' => $promptRun->update([
                         'status' => 'processing',
-                        'workflow_stage' => 'framework_selected',
+                        'workflow_stage' => 'analysis_complete',
                         'selected_framework' => $frameworks[$i % count($frameworks)],
                     ]),
                     default => null,

@@ -137,14 +137,7 @@ export class N8nMockService {
             case 'success':
             default:
                 // Determine response type based on payload
-                if (payload.workflow_stage === 'framework_selected') {
-                    // Return framework selection response
-                    response = mockFrameworkSelectionResponse(
-                        payload.prompt_run_id,
-                        this.config.taskDescription || payload.task_description,
-                        this.config.personalityType || payload.personality_type,
-                    );
-                } else if (payload.workflow_stage === 'generating_prompt') {
+                if (payload.workflow_stage === 'generating_prompt') {
                     // Return prompt generation response
                     const frameworkFromPayload = payload.selected_framework;
                     response = mockPromptGenerationResponse(
@@ -154,7 +147,7 @@ export class N8nMockService {
                         payload.clarifying_answers,
                     );
                 } else {
-                    // Default to framework selection
+                    // Default to framework analysis completion (workflow 1)
                     response = mockFrameworkSelectionResponse(
                         payload.prompt_run_id,
                         this.config.taskDescription || payload.task_description,

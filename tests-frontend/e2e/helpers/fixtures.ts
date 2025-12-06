@@ -118,14 +118,14 @@ export const test = base.extend<TestFixtures>({
  * Example:
  * ```typescript
  * test('example', async ({ authenticatedPage }) => {
- *     const promptRunId = await setupPromptRun(authenticatedPage, 'framework_selected');
+ *     const promptRunId = await setupPromptRun(authenticatedPage, 'analysis_complete');
  *     await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
  * });
  * ```
  */
 export async function setupPromptRun(
     page: Page,
-    state: 'submitted' | 'framework_selected' | 'completed' = 'submitted',
+    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
 ): Promise<number> {
     return await createTestPromptRun(page, state);
 }
@@ -140,14 +140,14 @@ export async function setupPromptRun(
  * test('example', async ({ authenticatedPage }) => {
  *     await setupAndNavigateToPromptRun(
  *         authenticatedPage,
- *         'framework_selected',
+ *         'analysis_complete',
  *     );
  * });
  * ```
  */
 export async function setupAndNavigateToPromptRun(
     page: Page,
-    state: 'submitted' | 'framework_selected' | 'completed' = 'submitted',
+    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
 ): Promise<number> {
     const id = await createTestPromptRun(page, state);
     await page.goto(`/prompt-builder/${id}`);
@@ -193,7 +193,7 @@ export async function waitForUIReady(page: Page): Promise<void> {
  */
 export async function setupRealtimeTest(
     page: Page,
-    state: 'submitted' | 'framework_selected' | 'completed' = 'submitted',
+    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
 ): Promise<number> {
     const id = await setupAndNavigateToPromptRun(page, state);
     await waitForUIReady(page);

@@ -44,7 +44,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Waiting for prompt optimisation',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'framework_selected',
+            'status' => 'analysis_complete',
             'workflow_stage' => 'answering_questions',
             'personality_type' => 'ENTJ-A',
             'selected_framework' => [

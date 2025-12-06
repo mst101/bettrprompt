@@ -138,7 +138,7 @@ class TestBroadcastController extends Controller
      *
      * States supported:
      * - 'submitted': No framework selected
-     * - 'framework_selected': Framework selected, no optimised prompt
+     * - 'analysis_complete': Framework selected, no optimised prompt
      * - 'completed': Full workflow completed
      */
     public function createTestPromptRun(Request $request): JsonResponse
@@ -168,8 +168,8 @@ class TestBroadcastController extends Controller
         if ($state === 'submitted') {
             $data['status'] = 'submitted';
             $data['workflow_stage'] = 'submitted';
-        } elseif ($state === 'framework_selected') {
-            $data['status'] = 'framework_selected';
+        } elseif ($state === 'analysis_complete') {
+            $data['status'] = 'analysis_complete';
             $data['workflow_stage'] = 'analysis_complete';
             $data['selected_framework'] = [
                 'name' => 'STAR Method',

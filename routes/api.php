@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
@@ -28,7 +27,7 @@ Route::post('/n8n/webhook', function (Request $request) {
         // Validate payload structure
         $validator = Validator::make($request->all(), [
             'prompt_run_id' => 'required|integer|exists:prompt_runs,id',
-            'workflow_stage' => 'nullable|string|in:submitted,framework_selected,answering_questions,generating_prompt,completed,failed',
+            'workflow_stage' => 'nullable|string|in:submitted,answering_questions,generating_prompt,completed,failed',
             'status' => 'nullable|string|in:pending,processing,completed,failed',
             'selected_framework' => 'nullable|array',
             'selected_framework.name' => 'required_with:selected_framework|string',
@@ -95,18 +94,6 @@ Route::post('/n8n/webhook', function (Request $request) {
             }
 
             // Broadcast events if needed
-            if ($request->input('workflow_stage') === 'framework_selected') {
-                try {
-                    event(new AnalysisCompleted($promptRun));
-                } catch (\Exception $e) {
-                    Log::error('Failed to broadcast AnalysisCompleted event', [
-                        'prompt_run_id' => $promptRun->id,
-                        'error' => $e->getMessage(),
-                    ]);
-                    // Don't fail the webhook for broadcast failures
-                }
-            }
-
             if ($request->input('workflow_stage') === 'completed') {
                 try {
                     event(new PromptOptimizationCompleted($promptRun));

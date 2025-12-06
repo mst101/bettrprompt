@@ -120,7 +120,7 @@ test.describe('Realtime - Tab Visibility', () => {
         // Create prompt with framework already selected
         const promptRunId = await createTestPromptRun(
             page,
-            'framework_selected',
+            'analysis_complete',
         );
         await page.goto(`/prompt-builder/${promptRunId}`);
 
