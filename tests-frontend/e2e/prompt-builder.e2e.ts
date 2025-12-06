@@ -185,8 +185,8 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             'tab-button-framework',
         );
 
-        // With mocked responses, framework tab should appear quickly
-        await expect(frameworkTab).toBeVisible({ timeout: 3000 });
+        // Framework tab should appear after n8n workflow processes the framework selection
+        await expect(frameworkTab).toBeVisible({ timeout: 10000 });
     });
 
     test('should answer a clarifying question', async ({
