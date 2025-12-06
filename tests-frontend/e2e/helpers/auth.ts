@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 /**
  * Authentication helper for e2e tests
@@ -180,4 +181,53 @@ export async function loginWithPersonalityType(
 
         return response.json();
     }, personalityCode);
+}
+
+/**
+ * Login via mock OAuth endpoint
+ *
+ * Simulates Google OAuth flow without requiring actual Google credentials
+ * Creates or updates user with google_id
+ */
+export async function loginWithMockOAuth(
+    page: Page,
+    email: string = 'oauth-test@example.com',
+    name: string = 'OAuth Test User',
+): Promise<void> {
+    await acceptCookies(page);
+
+    // Use the test-only OAuth endpoint
+    await page.evaluate(
+        async (credentials: { email: string; name: string }) => {
+            const response = await fetch('/test/oauth-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Test-Auth': 'playwright-e2e-tests',
+                },
+                body: JSON.stringify(credentials),
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `OAuth login failed: ${response.status} ${response.statusText}`,
+                );
+            }
+
+            return response.json();
+        },
+        { email, name },
+    );
+
+    // Navigate away and back to trigger Inertia to reload with auth
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Verify we're logged in
+    const userMenu = page.getByRole('button', { name: /user menu/i });
+    await expect(userMenu)
+        .toBeVisible({ timeout: 5000 })
+        .catch(() => {
+            throw new Error('OAuth login failed - user menu not visible');
+        });
 }

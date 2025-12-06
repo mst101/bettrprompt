@@ -172,6 +172,44 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
     return response()->json(['success' => true]);
 })->name('test.login');
 
+// Test OAuth endpoint for E2E tests
+// Allows tests to authenticate with a mock Google account without actual OAuth flow
+Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
+    // Only allow if the request includes the test auth header
+    if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+        abort(403, 'Unauthorized');
+    }
+
+    $email = $request->input('email', 'oauth-test@example.com');
+    $name = $request->input('name', 'OAuth Test User');
+    $googleId = $request->input('google_id', 'test-google-id-'.uniqid());
+
+    // Find or create user with Google ID
+    $user = \App\Models\User::where('google_id', $googleId)
+        ->orWhere('email', $email)
+        ->first();
+
+    if (! $user) {
+        // Create new user from OAuth data
+        $user = \App\Models\User::create([
+            'name' => $name,
+            'email' => $email,
+            'google_id' => $googleId,
+            'password' => bcrypt('oauth-'.$googleId),
+        ]);
+    } else {
+        // Update existing user with google_id if not already set
+        $user->update([
+            'google_id' => $googleId,
+            'name' => $name,
+        ]);
+    }
+
+    \Illuminate\Support\Facades\Auth::login($user);
+
+    return response()->json(['success' => true, 'user_id' => $user->id]);
+})->name('test.oauth-login');
+
 // E2E Test-Only Broadcast Routes
 // These routes allow E2E tests to trigger WebSocket events manually
 Route::post('/test/broadcast/analysis-completed/{promptRunId}', [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])

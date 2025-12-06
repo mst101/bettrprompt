@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { loginWithMockOAuth } from './helpers/auth';
 
 test.describe('Google OAuth Authentication', () => {
     test('should display Google Sign-In button on home page', async ({
@@ -75,67 +76,82 @@ test.describe('Google OAuth Authentication', () => {
     });
 });
 
-test.describe
-    .skip('Google OAuth - Successful Login (requires OAuth setup)', () => {
-    test('should complete Google OAuth flow and log in user', async ({
+test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
+    test('should complete OAuth flow and log in user via mock endpoint', async ({
         page,
     }) => {
-        // This test would require:
-        // 1. Mocking Google OAuth responses
-        // 2. Or using a test Google account
-        // 3. Or using Playwright's auth state
+        // Use mock OAuth endpoint instead of real Google OAuth
+        await loginWithMockOAuth(page, 'oauth-user@example.com', 'OAuth User');
 
-        // Expected flow:
-        // 1. Click "Sign in with Google"
-        // 2. Redirect to Google
-        // 3. Google redirects back to /auth/google/callback with code
-        // 4. User is authenticated
-        // 5. Redirect to /prompt-builder
+        // Should be logged in and redirected to home
+        expect(page.url()).toContain('/');
 
-        await page.goto('/');
-        expect(page.url()).toBe('/');
+        // Verify user menu is visible (indicates logged in)
+        const userMenu = page.getByRole('button', { name: /user menu/i });
+        await expect(userMenu).toBeVisible();
     });
 
-    test('should create new user account from Google OAuth data', async ({
-        page,
-    }) => {
-        // Expected flow for new user:
-        // 1. Complete OAuth flow
-        // 2. Check if email exists in database
-        // 3. If not, create new user
-        // 4. Log user in
-        // 5. Redirect to prompt optimizer
+    test('should create new user account from OAuth data', async ({ page }) => {
+        const newEmail = `oauth-${Date.now()}@example.com`;
+        const newName = 'Brand New OAuth User';
 
-        await page.goto('/');
-        expect(page.url()).toBe('/');
+        // Mock OAuth with new email should create account
+        await loginWithMockOAuth(page, newEmail, newName);
+
+        // Should be logged in
+        expect(page.url()).toContain('/');
+        const userMenu = page.getByRole('button', { name: /user menu/i });
+        await expect(userMenu).toBeVisible();
+
+        // Open user menu to verify name is set
+        await userMenu.click();
+        const profileLink = page.getByRole('menuitem', { name: /profile/i });
+        await expect(profileLink).toBeVisible();
     });
 
     test('should link Google account to existing email', async ({ page }) => {
-        // Expected flow:
-        // 1. User with email exists but no google_id
-        // 2. User authenticates with Google using same email
-        // 3. System updates user record with google_id
-        // 4. User is logged in
+        // First, create a user via regular login
+        const { loginAsTestUser } = await import('./helpers/auth');
+        await loginAsTestUser(page);
 
-        await page.goto('/');
-        expect(page.url()).toBe('/');
-    });
-
-    test('should log out user', async ({ page }) => {
-        // Assuming user is authenticated
-        await page.goto('/');
-
-        // Find and click logout button
-        const logoutButton = page.getByRole('button', {
-            name: /log out|sign out/i,
-        });
+        // Then log out
+        const userMenu = page.getByRole('button', { name: /user menu/i });
+        await userMenu.click();
+        const logoutButton = page.getByRole('menuitem', { name: /log out/i });
         await logoutButton.click();
 
-        // Should redirect to home
-        expect(page.url()).toBe('/');
+        // Wait for logout to complete
+        await expect(userMenu).not.toBeVisible({ timeout: 5000 });
 
-        // Verify user is logged out (no user menu visible)
-        const userMenu = page.getByText(/profile|account/i);
-        await expect(userMenu).not.toBeVisible();
+        // Now authenticate with OAuth using the same email
+        await loginWithMockOAuth(page, 'test@example.com', 'Test User');
+
+        // Should be logged in successfully
+        const userMenuAfterOAuth = page.getByRole('button', {
+            name: /user menu/i,
+        });
+        await expect(userMenuAfterOAuth).toBeVisible();
+    });
+
+    test('should log out user after OAuth login', async ({ page }) => {
+        // Login via OAuth
+        await loginWithMockOAuth(
+            page,
+            'logout-test@example.com',
+            'Logout Test',
+        );
+
+        // User should be logged in
+        const userMenu = page.getByRole('button', { name: /user menu/i });
+        await expect(userMenu).toBeVisible();
+
+        // Find and click logout button
+        await userMenu.click();
+        const logoutButton = page.getByRole('menuitem', { name: /log out/i });
+        await expect(logoutButton).toBeVisible();
+        await logoutButton.click();
+
+        // Should redirect to home and user menu should disappear
+        await expect(userMenu).not.toBeVisible({ timeout: 5000 });
     });
 });

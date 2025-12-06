@@ -33,18 +33,15 @@ test.describe('Realtime - Event Broadcasting', () => {
 
         // Framework tab should appear after page reloads with updated data
         const frameworkTab = page.getByTestId('tab-button-framework');
+        const frameworkBadge = page.getByText(/framework selected/i);
 
-        // Wait for either the framework tab OR the page to show analysis-in-progress state
-        try {
-            await expect(frameworkTab).toBeVisible({ timeout: 5000 });
-        } catch {
-            // If framework tab isn't visible, check for analysis state or framework badge
-            const frameworkBadge = page.getByText(/framework selected/i);
-            const hasFrameworkIndicator = await frameworkBadge
-                .isVisible()
-                .catch(() => false);
+        const hasFrameworkTab = await frameworkTab
+            .isVisible({ timeout: 5000 })
+            .catch(() => false);
+        const hasFrameworkBadge = await frameworkBadge
+            .isVisible({ timeout: 2000 })
+            .catch(() => false);
 
-            expect(hasFrameworkIndicator || page.url()).toBeTruthy();
-        }
+        expect(hasFrameworkTab || hasFrameworkBadge).toBe(true);
     });
 });
