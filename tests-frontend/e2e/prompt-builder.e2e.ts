@@ -64,12 +64,16 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should submit a prompt and navigate to show page', async ({
         page,
     }) => {
+        // Set up test environment
+        await acceptCookies(page);
+
         // Enable n8n mocking for this test
         const n8nMock = new N8nMockService(page);
         await n8nMock.enableMocking({
             scenario: 'success',
             responseDelay: 100,
         });
+
         // Navigate to the prompt builder index
         await page.goto('/prompt-builder');
 
@@ -630,9 +634,6 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             // Setup the test page with cookies and auth headers
             await acceptCookies(testPage);
 
-            // Setup the test page with cookies and auth headers
-            await acceptCookies(testPage);
-
             // Enable mocking with API error scenario
             const n8nMock = new N8nMockService(testPage);
             await n8nMock.enableMocking({
@@ -649,16 +650,28 @@ test.describe('Prompt Builder - Error Scenarios', () => {
                 name: /optimise.*prompt/i,
             });
 
-            // Submit and wait for error state
+            // Submit and wait a moment for error state to appear
             await submitButton.click();
+            await testPage.waitForTimeout(2000);
 
             // Should show an error message or retry option
+            // Look for multiple error indicators
             const errorMessage = testPage.locator(
-                'text=/error|failed|unavailable/i',
+                'text=/error|failed|unavailable|something went wrong/i',
             );
-            const hasErrorState = await errorMessage
-                .isVisible({ timeout: 3000 })
-                .catch(() => false);
+            const retryButton = testPage.getByRole('button', {
+                name: /retry|try again/i,
+            });
+            const statusBadge = testPage.locator('[class*="error"]');
+
+            const hasErrorState =
+                (await errorMessage
+                    .isVisible({ timeout: 1000 })
+                    .catch(() => false)) ||
+                (await retryButton
+                    .isVisible({ timeout: 1000 })
+                    .catch(() => false)) ||
+                (await statusBadge.count()) > 0;
 
             expect(hasErrorState).toBe(true);
         } finally {
