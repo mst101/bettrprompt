@@ -504,7 +504,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Wait for navigation to show page after submission
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 }),
             submitButton.click(),
         ]);
 
@@ -539,14 +539,14 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Wait for navigation to show page after submission
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 }),
             submitButton.click(),
         ]);
 
         // Wait for progress indicator (appears when answering questions)
         const progressIndicator = page.getByTestId('progress-indicator');
         const hasProgress = await progressIndicator
-            .isVisible({ timeout: 30000 })
+            .isVisible({ timeout: 10000 })
             .catch(() => false);
 
         if (hasProgress) {
@@ -581,7 +581,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Wait for navigation to show page after submission
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 10000 }),
             submitButton.click(),
         ]);
 
