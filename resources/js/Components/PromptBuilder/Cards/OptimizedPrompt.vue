@@ -179,6 +179,7 @@ const saveEdits = () => {
                 id="optimized_prompt"
                 ref="textareaRef"
                 v-model="editedPrompt"
+                data-testid="optimized-prompt-edit"
                 class="space-y-4 font-mono text-sm sm:p-6"
                 label="Optimised Prompt"
                 :rows="15"

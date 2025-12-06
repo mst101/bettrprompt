@@ -13,6 +13,7 @@ defineProps<{
 
 <template>
     <div
+        data-testid="feature-card"
         class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:bg-indigo-50"
     >
         <div class="flex items-center gap-4">

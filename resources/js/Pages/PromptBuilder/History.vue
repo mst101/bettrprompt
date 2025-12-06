@@ -305,7 +305,10 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                         )
                                     }}</span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-indigo-700">
+                                <td
+                                    data-testid="table-cell-task"
+                                    class="px-6 py-4 text-sm text-indigo-700"
+                                >
                                     {{
                                         truncateText(
                                             promptRun.taskDescription,
@@ -314,6 +317,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     }}
                                 </td>
                                 <td
+                                    data-testid="table-cell-framework"
                                     class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 lg:table-cell"
                                 >
                                     {{
@@ -327,6 +331,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     <StatusBadge :status="promptRun.status" />
                                 </td>
                                 <td
+                                    data-testid="table-cell-date"
                                     class="px-6 py-4 text-sm whitespace-nowrap text-indigo-500"
                                 >
                                     <div>
@@ -436,6 +441,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                         >
                             <label
                                 for="per-page"
+                                data-testid="per-page-label"
                                 class="text-sm text-indigo-700"
                             >
                                 Show
@@ -443,6 +449,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                             <input
                                 id="per-page"
                                 v-model="perPageInput"
+                                data-testid="per-page-input-mobile"
                                 type="number"
                                 min="1"
                                 max="100"
@@ -495,6 +502,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                             <input
                                 id="per-page-desktop"
                                 v-model="perPageInput"
+                                data-testid="per-page-input"
                                 type="number"
                                 min="1"
                                 max="100"
