@@ -16,8 +16,12 @@ return new class extends Migration
             $table->foreignUuid('visitor_id')->constrained('visitors')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('prompt_runs')->onDelete('cascade');
-            $table->string('personality_type',
-                6)->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
+            $table->enum('personality_type', [
+                'INTJ-A', 'INTJ-T', 'INTP-A', 'INTP-T',
+                'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
+                'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
+                'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
+            ])->nullable(); // e.g., INTJ-A, ENFP-T (nullable for users without personality)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->text('task_description');
             $table->json('pre_analysis_questions')->nullable();
@@ -29,8 +33,8 @@ return new class extends Migration
             $table->json('clarifying_answers')->nullable();
             $table->integer('current_question_index')->default(0);
             $table->text('optimized_prompt')->nullable();
-            $table->string('status')->default('pending'); // pending, processing, completed, failed
-            $table->string('workflow_stage')->default('submitted');
+            $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
+            $table->enum('workflow_stage', ['submitted', 'analysis_complete', 'answering_questions', 'generating_prompt', 'completed', 'failed'])->default('submitted');
             $table->text('error_message')->nullable();
             $table->timestamp('completed_at')->nullable();
 
@@ -39,7 +43,7 @@ return new class extends Migration
             $table->json('cognitive_requirements')->nullable(); // {primary[], secondary[], reasoning}
             $table->json('selected_framework')->nullable(); // {name, code, components[], rationale}
             $table->json('alternative_frameworks')->nullable(); // [{name, code, when_to_use_instead}]
-            $table->string('personality_tier')->nullable(); // full, partial, none
+            $table->enum('personality_tier', ['full', 'partial', 'none'])->nullable();
             $table->json('task_trait_alignment')->nullable(); // {amplified[], counterbalanced[], neutral[]}
             $table->json('personality_adjustments_preview')->nullable(); // string[]
             $table->text('question_rationale')->nullable(); // Why these questions were chosen

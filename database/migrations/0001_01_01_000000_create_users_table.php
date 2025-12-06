@@ -23,7 +23,12 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->string('personality_type', 6)->nullable(); // e.g., INTJ-A, ENFP-T
+            $table->enum('personality_type', [
+                'INTJ-A', 'INTJ-T', 'INTP-A', 'INTP-T',
+                'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
+                'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
+                'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
+            ])->nullable(); // e.g., INTJ-A, ENFP-T
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
             $table->rememberToken();

@@ -37,7 +37,12 @@ return new class extends Migration
             $table->index('referred_by_user_id');
 
             // Personality data (before conversion to user)
-            $table->string('personality_type', 6)->nullable();
+            $table->enum('personality_type', [
+                'INTJ-A', 'INTJ-T', 'INTP-A', 'INTP-T',
+                'ENTJ-A', 'ENTJ-T', 'ENTP-A', 'ENTP-T',
+                'INFJ-A', 'INFJ-T', 'INFP-A', 'INFP-T',
+                'ENFJ-A', 'ENFJ-T', 'ENFP-A', 'ENFP-T',
+            ])->nullable();
             $table->json('trait_percentages')->nullable();
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('simple');
 
