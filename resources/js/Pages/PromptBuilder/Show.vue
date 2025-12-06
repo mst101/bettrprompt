@@ -206,12 +206,9 @@ useRealtimeUpdates(
         },
         PromptOptimizationCompleted: () => {
             // Reload page to show completed prompt
+            // The watcher on optimizedPrompt will automatically switch to the prompt tab
             router.reload({
                 only: ['promptRun'],
-                onSuccess: () => {
-                    // Switch to Optimised Prompt tab after reload
-                    activeTab.value = 'prompt';
-                },
             });
         },
     },
