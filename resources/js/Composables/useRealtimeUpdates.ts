@@ -71,8 +71,10 @@ export function useRealtimeUpdates(
             }
 
             // Set up event listeners
+            // When using broadcastAs(), the event name needs a dot prefix
             Object.entries(events).forEach(([eventName, handler]) => {
-                channel!.listen(eventName, (data: unknown) => {
+                const echoEventName = `.${eventName}`;
+                channel!.listen(echoEventName, (data: unknown) => {
                     try {
                         console.log(
                             `[useRealtimeUpdates] Event: ${eventName}`,
