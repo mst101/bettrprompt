@@ -1,6 +1,7 @@
 import { expect, test } from './fixtures';
 import { acceptCookies } from './helpers/auth';
 import { seedPromptRuns } from './helpers/database';
+import { N8nMockService } from './mocks/n8n-mock-service';
 
 test.describe('Prompt Builder - Unauthenticated', () => {
     test('should allow access to prompt optimizer when not logged in', async ({
@@ -57,11 +58,17 @@ test.describe('Prompt Builder - Basic Flow', () => {
 
 test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     // Run tests serially to avoid overwhelming the Laravel backend
-    // These tests all make synchronous calls to mock n8n endpoints
+    // These tests all use mocked n8n responses for deterministic testing
     test.describe.configure({ mode: 'serial' });
 
-    test.beforeEach(async ({ authenticatedPage }) => {
+    test.beforeEach(async ({ authenticatedPage, page }) => {
         // User is already authenticated via fixture
+        // Enable n8n mocking for deterministic testing
+        const n8nMock = new N8nMockService(page);
+        await n8nMock.enableMocking({
+            scenario: 'success',
+            responseDelay: 100, // Simulate API processing time
+        });
 
         void authenticatedPage;
     });
@@ -79,14 +86,13 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         );
 
         // Submit the form and wait for navigation
-        // Note: The form makes a synchronous call to n8n for pre-analysis (10s timeout)
-        // then redirects to show page, so we need generous timeout
+        // With mocked n8n responses, this should complete in under 1 second
         const submitButton = page.getByRole('button', {
             name: /optimise.*prompt/i,
         });
 
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
             submitButton.click(),
         ]);
 
@@ -134,8 +140,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         });
 
         // Wait for navigation after submission
+        // With mocked n8n, this completes in milliseconds
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
             submitButton.click(),
         ]);
 
@@ -143,34 +150,11 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await page.waitForLoadState('networkidle').catch(() => null);
 
         // After navigation, we're now on the show page
-        // The framework tab only appears after the analysis completes (workflow_stage='analysis_complete')
-        // This requires n8n to process the request, which is asynchronous
+        // The framework tab should appear after the mock response is processed
         const frameworkTab = page.getByTestId('tab-button-framework');
 
-        // Check if framework tab is present (with generous timeout for n8n processing)
-        // Note: In E2E tests without n8n running, this will timeout
-        const isFrameworkTabVisible = await frameworkTab
-            .isVisible({ timeout: 15000 })
-            .catch(() => false);
-
-        if (isFrameworkTabVisible) {
-            await expect(frameworkTab).toBeVisible();
-        } else {
-            // If framework hasn't been selected yet, check we're at least on the show page
-            // We should see either pre-analysis questions or the processing state
-            const hasPreAnalysisQuestions = await page
-                .getByText(/answer.*questions/i)
-                .isVisible()
-                .catch(() => false);
-            const hasLoadingState = await page
-                .getByText(/analysing your task/i)
-                .isVisible()
-                .catch(() => false);
-
-            expect(
-                hasPreAnalysisQuestions || hasLoadingState || page.url(),
-            ).toBeTruthy();
-        }
+        // With mocked responses, framework tab should appear quickly
+        await expect(frameworkTab).toBeVisible({ timeout: 3000 });
     });
 
     test('should answer a clarifying question', async ({ page }) => {
@@ -185,59 +169,36 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         });
 
         // Wait for navigation after submission
+        // With mocked responses, this completes quickly
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
             submitButton.click(),
         ]);
 
-        // After navigation, we might see:
-        // 1. Pre-analysis questions (workflow_stage='pre_analysis_questions')
-        // 2. Framework clarifying questions (workflow_stage='answering_questions') - requires n8n async processing
-        // 3. Loading state (workflow_stage='submitted' with status='processing')
+        // With mocked n8n, framework questions should appear quickly
+        // Look for the first question
+        const firstQuestion = page.locator(
+            '[data-testid="clarifying-question"]:first-child',
+        );
+        await expect(firstQuestion).toBeVisible({ timeout: 3000 });
 
-        // Look for any answer textarea (could be pre-analysis or framework questions)
-        const answerTextarea = page.getByLabel(/your answer/i);
+        // Find the answer textarea
+        const answerTextarea = page.getByLabel(/your answer/i).first();
+        await expect(answerTextarea).toBeVisible();
 
-        // Check if we're in any question answering phase
-        const isInQuestionPhase = await answerTextarea
-            .isVisible({ timeout: 30000 })
-            .catch(() => false);
+        // Fill in an answer
+        await answerTextarea.fill(
+            'The blog should support multiple authors and categories',
+        );
 
-        if (isInQuestionPhase) {
-            // We're in a question answering phase
-            await expect(answerTextarea).toBeVisible();
+        // Submit the answer
+        const submitAnswerButton = page.getByTestId('submit-answer-button');
+        await expect(submitAnswerButton).toBeEnabled();
+        await submitAnswerButton.click();
 
-            // Fill in an answer
-            await answerTextarea.fill(
-                'The blog should support multiple authors and categories',
-            );
-
-            // Submit the answer
-            const submitAnswerButton = page.getByTestId('submit-answer-button');
-            await expect(submitAnswerButton).toBeEnabled();
-            await submitAnswerButton.click();
-
-            // Wait for navigation or next question
-
-            // Verify we've moved forward (progress indicator updated or completed)
-            const progressIndicator = page.getByTestId('progress-indicator');
-            const isProgressVisible = await progressIndicator
-                .isVisible()
-                .catch(() => false);
-
-            if (isProgressVisible) {
-                // Still answering questions
-                await expect(progressIndicator).toBeVisible();
-            } else {
-                // Might have completed questions - check page is still valid
-                // Should be on the same prompt run page
-                expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
-            }
-        } else {
-            // Test is informational: couldn't reach question phase in time
-            // This happens when n8n is not running or pre-analysis is skipped
-            expect(true).toBe(true);
-        }
+        // Verify we've moved forward or completed
+        // Should still be on the prompt run page
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
     test('should skip a question', async ({ page }) => {
@@ -252,38 +213,23 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         });
 
         // Wait for navigation after submission
+        // With mocked responses, this completes quickly
         await Promise.all([
-            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 15000 }),
+            page.waitForURL(/\/prompt-builder\/\d+/, { timeout: 5000 }),
             submitButton.click(),
         ]);
 
-        // Wait for skip button to appear (could be pre-analysis or framework questions)
+        // Wait for skip button to appear
+        // With mocked responses, this should be fast
         const skipButton = page.getByTestId('skip-question-button');
-        const isSkipButtonVisible = await skipButton
-            .isVisible({ timeout: 30000 })
-            .catch(() => false);
+        await expect(skipButton).toBeVisible({ timeout: 3000 });
 
-        if (isSkipButtonVisible) {
-            // Click skip button
-            await expect(skipButton).toBeEnabled();
-            await skipButton.click();
+        // Click skip button
+        await expect(skipButton).toBeEnabled();
+        await skipButton.click();
 
-            // Wait for navigation to next question or completion
-
-            // Verify we've moved forward - either to next question or completed
-            const progressIndicator = page.getByTestId('progress-indicator');
-            const isStillAnswering = await progressIndicator
-                .isVisible()
-                .catch(() => false);
-
-            // If no progress indicator, we might have completed all questions
-            if (!isStillAnswering) {
-                // Check we're still on a valid page
-                expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
-            } else {
-                expect(isStillAnswering).toBeTruthy();
-            }
-        }
+        // Verify we're still on a valid page after skipping
+        expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
     test('should display optimised prompt when complete', async ({ page }) => {
@@ -642,6 +588,181 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             if (hasKeywords) {
                 expect(hasKeywords).toBeTruthy();
             }
+        }
+    });
+});
+
+test.describe('Prompt Builder - Error Scenarios', () => {
+    // These tests verify proper error handling using mocked failure scenarios
+    test.describe.configure({ mode: 'serial' });
+
+    test.beforeEach(async ({ page }) => {
+        // Enable n8n mocking for error scenario testing
+        const n8nMock = new N8nMockService(page);
+        await n8nMock.enableMocking({
+            scenario: 'success', // Will be overridden per test
+            responseDelay: 100,
+        });
+
+        void page;
+    });
+
+    test('should handle API errors gracefully', async ({ context }) => {
+        // Create a new mocked page for this specific test
+        const testPage = await context.newPage();
+
+        try {
+            // Enable mocking with API error scenario
+            const n8nMock = new N8nMockService(testPage);
+            await n8nMock.enableMocking({
+                scenario: 'api-error',
+                responseDelay: 100,
+            });
+
+            await testPage.goto('/prompt-builder');
+
+            const taskInput = testPage.getByLabel(/task description/i);
+            await taskInput.fill('Test task that will fail');
+
+            const submitButton = testPage.getByRole('button', {
+                name: /optimise.*prompt/i,
+            });
+
+            // Submit and wait for error state
+            await submitButton.click();
+
+            // Should show an error message or retry option
+            const errorMessage = testPage.locator(
+                'text=/error|failed|unavailable/i',
+            );
+            const hasErrorState = await errorMessage
+                .isVisible({ timeout: 3000 })
+                .catch(() => false);
+
+            expect(hasErrorState).toBe(true);
+        } finally {
+            await testPage.close();
+        }
+    });
+
+    test('should handle rate limit errors', async ({ context }) => {
+        // Create a new mocked page for this specific test
+        const testPage = await context.newPage();
+
+        try {
+            // Enable mocking with rate limit scenario
+            const n8nMock = new N8nMockService(testPage);
+            await n8nMock.enableMocking({
+                scenario: 'rate-limit',
+                responseDelay: 100,
+            });
+
+            await testPage.goto('/prompt-builder');
+
+            const taskInput = testPage.getByLabel(/task description/i);
+            await taskInput.fill('Test task for rate limit');
+
+            const submitButton = testPage.getByRole('button', {
+                name: /optimise.*prompt/i,
+            });
+
+            await submitButton.click();
+
+            // Should show rate limit message with retry guidance
+            const rateLimitMessage = testPage.locator(
+                'text=/rate limit|wait|retry/i',
+            );
+            const hasRateLimitMessage = await rateLimitMessage
+                .isVisible({ timeout: 3000 })
+                .catch(() => false);
+
+            expect(hasRateLimitMessage).toBe(true);
+        } finally {
+            await testPage.close();
+        }
+    });
+
+    test('should handle validation errors', async ({ context }) => {
+        // Create a new mocked page for this specific test
+        const testPage = await context.newPage();
+
+        try {
+            // Enable mocking with validation error scenario
+            const n8nMock = new N8nMockService(testPage);
+            await n8nMock.enableMocking({
+                scenario: 'validation-error',
+                responseDelay: 100,
+            });
+
+            await testPage.goto('/prompt-builder');
+
+            const taskInput = testPage.getByLabel(/task description/i);
+            await taskInput.fill('Invalid task');
+
+            const submitButton = testPage.getByRole('button', {
+                name: /optimise.*prompt/i,
+            });
+
+            await submitButton.click();
+
+            // Should show validation error
+            const validationMessage = testPage.locator(
+                'text=/invalid|missing|required/i',
+            );
+            const hasValidationError = await validationMessage
+                .isVisible({ timeout: 3000 })
+                .catch(() => false);
+
+            expect(hasValidationError).toBe(true);
+        } finally {
+            await testPage.close();
+        }
+    });
+
+    test('should allow retry after failure', async ({ context }) => {
+        // Create a new mocked page for this specific test
+        const testPage = await context.newPage();
+
+        try {
+            // Start with error scenario
+            const n8nMock = new N8nMockService(testPage);
+            await n8nMock.enableMocking({
+                scenario: 'api-error',
+                responseDelay: 100,
+            });
+
+            await testPage.goto('/prompt-builder');
+
+            const taskInput = testPage.getByLabel(/task description/i);
+            await taskInput.fill('Test task');
+
+            const submitButton = testPage.getByRole('button', {
+                name: /optimise.*prompt/i,
+            });
+
+            // First submission fails
+            await submitButton.click();
+
+            const errorMessage = testPage.locator(
+                'text=/error|failed|unavailable/i',
+            );
+            await expect(errorMessage).toBeVisible({ timeout: 3000 });
+
+            // Now switch mock to success scenario
+            n8nMock.setScenario('success');
+
+            // Clear and retry
+            await taskInput.clear();
+            await taskInput.fill('Retry test task');
+            await submitButton.click();
+
+            // Should navigate to show page on success
+            await testPage.waitForURL(/\/prompt-builder\/\d+/, {
+                timeout: 5000,
+            });
+            expect(testPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        } finally {
+            await testPage.close();
         }
     });
 });
