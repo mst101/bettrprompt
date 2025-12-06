@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
 import { acceptCookies, loginAsTestUser } from '../helpers/auth';
 import { AuthPage } from '../pages/AuthPage';
@@ -15,7 +16,7 @@ type AuthenticatedPageFixture = {
      * Pre-authenticated page (user is logged in)
      * Automatically logs in before the test runs
      */
-    authenticatedPage: void;
+    authenticatedPage: Page;
 };
 
 type PageObjectsFixture = {
@@ -52,8 +53,8 @@ export const test = base.extend<TestFixtures>({
             throw new Error('Failed to authenticate - user menu not visible');
         }
 
-        // Use the fixture
-        await use();
+        // Use the fixture - provide the authenticated page
+        await use(page);
     },
 
     /**
