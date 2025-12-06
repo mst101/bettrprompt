@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
+import { N8nMockService } from '../mocks/n8n-mock-service';
 import { acceptCookies, loginAsTestUser } from './auth';
 import { createTestPromptRun, waitForEchoConnection } from './broadcast';
 
@@ -9,6 +10,7 @@ import { createTestPromptRun, waitForEchoConnection } from './broadcast';
  * Provides common setup/teardown and utilities to reduce boilerplate code
  * across test files. This includes:
  * - Pre-authenticated test user
+ * - Automatic n8n webhook mocking (all tests are isolated from real n8n)
  * - Helper functions for common operations
  * - Consistent setup with cookies and login
  */
@@ -29,8 +31,30 @@ export interface TestFixtures {
  *     await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
  * });
  * ```
+ *
+ * NOTE: All tests automatically have n8n webhook mocking enabled.
+ * This prevents any real calls to n8n workflows during tests.
+ * To use a specific scenario, create your own N8nMockService in the test.
  */
 export const test = base.extend<TestFixtures>({
+    /**
+     * Base page fixture with n8n mocking
+     *
+     * Overriding the default page fixture to enable n8n mocking for
+     * ALL tests, even unauthenticated ones.
+     */
+
+    page: async ({ page }, use) => {
+        // Enable n8n mocking for unauthenticated pages as well
+        // This prevents any real n8n calls regardless of auth state
+        const n8nMock = new N8nMockService(page);
+        await n8nMock.enableMocking({
+            scenario: 'success',
+            responseDelay: 100,
+        });
+
+        await use(page);
+    },
     /**
      * authenticatedPage fixture
      *
@@ -41,17 +65,18 @@ export const test = base.extend<TestFixtures>({
      * - Eliminates boilerplate loginAsTestUser() calls
      * - Consistent authentication across all tests
      * - Automatic cookie acceptance
+     * - n8n webhook mocking already enabled via page fixture
      */
     authenticatedPage: async ({ page }, use) => {
         // Set up authentication
         await acceptCookies(page);
         await loginAsTestUser(page);
 
+        // Note: n8n mocking is already enabled via the page fixture above
+        // No need to set it up again here
+
         // Use the authenticated page for the test
         await use(page);
-
-        // Cleanup (if needed)
-        // Nothing required here - browser closes naturally
     },
 
     /**
