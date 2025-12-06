@@ -64,12 +64,8 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should submit a prompt and navigate to show page', async ({
         authenticatedPage,
     }) => {
-        // Enable n8n mocking for this test
-        const n8nMock = new N8nMockService(authenticatedPage);
-        await n8nMock.enableMocking({
-            scenario: 'success',
-            responseDelay: 100,
-        });
+        // Note: n8n mocking is automatically enabled via the authenticatedPage fixture
+        // No need to set it up manually here
 
         // Navigate to the prompt builder index
         await authenticatedPage.goto('/prompt-builder');
@@ -139,12 +135,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should wait for framework selection and see framework tab', async ({
         authenticatedPage,
     }) => {
-        // Enable n8n mocking for this test
-        const n8nMock = new N8nMockService(authenticatedPage);
-        await n8nMock.enableMocking({
-            scenario: 'success',
-            responseDelay: 100,
-        });
+        // Note: n8n mocking is automatically enabled via the authenticatedPage fixture
+        // No need to set it up manually here
+
         // Navigate to the prompt builder
         await authenticatedPage.goto('/prompt-builder');
 
@@ -646,16 +639,10 @@ test.describe('Prompt Builder - Error Scenarios', () => {
     // These tests verify proper error handling using mocked failure scenarios
     test.describe.configure({ mode: 'serial' });
 
-    test.beforeEach(async ({ page }) => {
-        // Enable n8n mocking for error scenario testing
-        const n8nMock = new N8nMockService(page);
-        await n8nMock.enableMocking({
-            scenario: 'success', // Will be overridden per test
-            responseDelay: 100,
-        });
-
-        void page;
-    });
+    // Note: These tests use context.newPage() to create fresh pages, so they
+    // explicitly enable n8n mocking for each new page with the appropriate scenario.
+    // The global fixture mocking applies to the default page fixture, but new pages
+    // need their own mocking setup.
 
     test('should handle API errors gracefully', async ({ context }) => {
         // Create a new mocked page for this specific test
