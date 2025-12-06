@@ -84,19 +84,19 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
     });
 
     test('should show empty state message when no history exists', async ({
-        authenticatedPage,
+        authenticatedPageWithUniqueUser,
     }) => {
         // Navigate to history page with extra wait for page to fully load
-        await authenticatedPage.goto('/prompt-builder-history', {
+        await authenticatedPageWithUniqueUser.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
 
         // Wait for page to settle and any loading states to clear
-        await authenticatedPage.waitForLoadState('networkidle');
-        await authenticatedPage.waitForTimeout(1000);
+        await authenticatedPageWithUniqueUser.waitForLoadState('networkidle');
+        await authenticatedPageWithUniqueUser.waitForTimeout(1000);
 
         // Check if table has data rows
-        const tableRows = await authenticatedPage
+        const tableRows = await authenticatedPageWithUniqueUser
             .locator('table tbody tr')
             .count();
 
@@ -105,7 +105,7 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
         expect(tableRows).toBe(0);
 
         // The heading should still be visible
-        const heading = authenticatedPage.getByRole('heading', {
+        const heading = authenticatedPageWithUniqueUser.getByRole('heading', {
             name: /prompt history/i,
         });
         await expect(heading).toBeVisible();

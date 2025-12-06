@@ -1,6 +1,10 @@
 import type { Page } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
-import { acceptCookies, loginAsTestUser } from '../helpers/auth';
+import {
+    acceptCookies,
+    loginAsTestUser,
+    loginWithUniqueName,
+} from '../helpers/auth';
 import { AuthPage } from '../pages/AuthPage';
 import { PromptBuilderPage } from '../pages/PromptBuilderPage';
 import { StaticPage } from '../pages/StaticPage';
@@ -17,6 +21,11 @@ type AuthenticatedPageFixture = {
      * Automatically logs in before the test runs
      */
     authenticatedPage: Page;
+    /**
+     * Pre-authenticated page with a unique user per test
+     * Useful for tests that need an empty state or isolated data
+     */
+    authenticatedPageWithUniqueUser: Page;
 };
 
 type PageObjectsFixture = {
@@ -42,6 +51,37 @@ export const test = base.extend<TestFixtures>({
 
         // Log in as test user
         await loginAsTestUser(page);
+
+        // Verify login was successful
+        const isLoggedIn = await page
+            .getByRole('button', { name: /user menu/i })
+            .isVisible({ timeout: 5000 })
+            .catch(() => false);
+
+        if (!isLoggedIn) {
+            throw new Error('Failed to authenticate - user menu not visible');
+        }
+
+        // Use the fixture - provide the authenticated page
+        await use(page);
+    },
+
+    /**
+     * Fixture: Pre-authenticated page with unique user
+     * Logs in a unique test user (different per test)
+     * Useful for tests that need empty state or isolated data
+     */
+    authenticatedPageWithUniqueUser: async ({ page }, use) => {
+        // Accept cookies first
+        await acceptCookies(page);
+
+        // Generate unique email for this test
+        const uniqueSuffix = Math.random().toString(36).substring(2, 8);
+        const uniqueEmail = `test-${uniqueSuffix}@example.com`;
+        const uniqueName = `Test User ${uniqueSuffix}`;
+
+        // Log in with unique user
+        await loginWithUniqueName(page, uniqueEmail, uniqueName);
 
         // Verify login was successful
         const isLoggedIn = await page

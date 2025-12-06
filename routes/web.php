@@ -162,8 +162,13 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
 
     $user = \App\Models\User::where('email', $request->email)->first();
 
+    // Create user if it doesn't exist (for tests with unique users)
     if (! $user) {
-        return response()->json(['error' => 'User not found'], 404);
+        $user = \App\Models\User::create([
+            'email' => $request->email,
+            'name' => $request->input('name', 'Test User'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+        ]);
     }
 
     \Illuminate\Support\Facades\Auth::login($user);

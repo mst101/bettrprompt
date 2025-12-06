@@ -184,6 +184,98 @@ export async function loginWithPersonalityType(
 }
 
 /**
+ * Login with a unique email and name
+ * Useful for tests that need isolated data or empty state
+ */
+export async function loginWithUniqueName(
+    page: Page,
+    email: string,
+    name: string,
+): Promise<void> {
+    await acceptCookies(page);
+
+    // Check if already logged in
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const userMenu = page.getByRole('button', { name: /user menu/i });
+    const isAlreadyLoggedIn = await userMenu
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
+
+    if (isAlreadyLoggedIn) {
+        // Check if it's the same user, if not we need to log out and log in with new user
+        // For now, just return since we're already logged in
+        return;
+    }
+
+    // Use the test-only login endpoint via browser's fetch API
+    await page.evaluate(
+        async ({
+            email: userEmail,
+            name: userName,
+        }: {
+            email: string;
+            name: string;
+        }) => {
+            const csrfToken = (
+                document.querySelector(
+                    'meta[name="csrf-token"]',
+                ) as HTMLMetaElement
+            )?.getAttribute('content');
+
+            const response = await fetch('/test/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Test-Auth': 'playwright-e2e-tests',
+                },
+                body: JSON.stringify({ email: userEmail, name: userName }),
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Login failed: ${response.status} ${response.statusText}`,
+                );
+            }
+
+            return response.json();
+        },
+        { email, name },
+    );
+
+    // Navigate away and back to trigger Inertia to reload with auth
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Verify we're logged in
+    const userMenuAfterLogin = page.getByRole('button', {
+        name: /user menu/i,
+    });
+
+    let isLoggedIn = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        isLoggedIn = await userMenuAfterLogin
+            .isVisible({ timeout: 2000 })
+            .catch(() => false);
+
+        if (isLoggedIn) {
+            break;
+        }
+
+        if (attempt < 2) {
+            await page.reload({ waitUntil: 'domcontentloaded' });
+        }
+    }
+
+    if (!isLoggedIn) {
+        throw new Error(
+            'Login failed - user menu not found after 3 attempts with unique user.',
+        );
+    }
+}
+
+/**
  * Login via mock OAuth endpoint
  *
  * Simulates Google OAuth flow without requiring actual Google credentials
