@@ -29,6 +29,14 @@ class AnalysisCompleted implements ShouldBroadcast
     }
 
     /**
+     * Get the broadcast event name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'AnalysisCompleted';
+    }
+
+    /**
      * Get the data to broadcast.
      *
      * @return array<string, mixed>

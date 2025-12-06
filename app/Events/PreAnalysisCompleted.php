@@ -29,6 +29,14 @@ class PreAnalysisCompleted implements ShouldBroadcast
     }
 
     /**
+     * Get the broadcast event name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'PreAnalysisCompleted';
+    }
+
+    /**
      * Get the data to broadcast.
      *
      * @return array<string, mixed>

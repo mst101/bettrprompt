@@ -29,6 +29,14 @@ class PromptOptimizationCompleted implements ShouldBroadcast
     }
 
     /**
+     * Get the broadcast event name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'PromptOptimizationCompleted';
+    }
+
+    /**
      * Get the data to broadcast.
      *
      * @return array<string, mixed>
