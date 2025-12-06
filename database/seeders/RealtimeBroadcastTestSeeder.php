@@ -32,7 +32,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Framework selection pending',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'submitted',
+            'status' => 'processing',
             'workflow_stage' => 'submitted',
             'personality_type' => 'INTJ-A',
         ]);
@@ -44,7 +44,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Waiting for prompt optimisation',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'analysis_complete',
+            'status' => 'processing',
             'workflow_stage' => 'answering_questions',
             'personality_type' => 'ENTJ-A',
             'selected_framework' => [

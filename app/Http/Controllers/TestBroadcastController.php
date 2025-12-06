@@ -166,10 +166,10 @@ class TestBroadcastController extends Controller
         ];
 
         if ($state === 'submitted') {
-            $data['status'] = 'submitted';
+            $data['status'] = 'processing';
             $data['workflow_stage'] = 'submitted';
         } elseif ($state === 'analysis_complete') {
-            $data['status'] = 'analysis_complete';
+            $data['status'] = 'processing';
             $data['workflow_stage'] = 'analysis_complete';
             $data['selected_framework'] = [
                 'name' => 'STAR Method',

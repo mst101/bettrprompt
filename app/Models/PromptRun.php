@@ -79,6 +79,38 @@ class PromptRun extends Model
         return $this->belongsTo(Visitor::class);
     }
 
+    /**
+     * Get valid status values
+     */
+    public static function getValidStatuses(): array
+    {
+        return ['pending', 'processing', 'completed', 'failed'];
+    }
+
+    /**
+     * Get valid workflow stages
+     */
+    public static function getValidWorkflowStages(): array
+    {
+        return ['submitted', 'analysis_complete', 'answering_questions', 'generating_prompt', 'completed', 'failed'];
+    }
+
+    /**
+     * Check if status is valid
+     */
+    public function isValidStatus(string $status): bool
+    {
+        return in_array($status, self::getValidStatuses());
+    }
+
+    /**
+     * Check if workflow stage is valid
+     */
+    public function isValidWorkflowStage(string $stage): bool
+    {
+        return in_array($stage, self::getValidWorkflowStages());
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

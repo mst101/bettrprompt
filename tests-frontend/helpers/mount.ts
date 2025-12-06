@@ -111,7 +111,7 @@ export function createMockPromptRun(
         user_id: 1,
         slug: 'test-slug',
         original_prompt: 'Test prompt',
-        status: 'submitted',
+        status: 'processing',
         workflow_stage: 'submitted',
         selected_framework: null,
         framework_reasoning: null,
