@@ -87,6 +87,7 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
         authenticatedPageWithUniqueUser,
     }) => {
         // Navigate to history page with extra wait for page to fully load
+        // The unique user should have no prompts created yet
         await authenticatedPageWithUniqueUser.goto('/prompt-builder-history', {
             waitUntil: 'networkidle',
         });
@@ -96,12 +97,11 @@ test.describe.serial('Prompt Builder History - Empty State', () => {
         await authenticatedPageWithUniqueUser.waitForTimeout(1000);
 
         // Check if table has data rows
+        // With a unique user, there should be 0 rows
         const tableRows = await authenticatedPageWithUniqueUser
             .locator('table tbody tr')
             .count();
 
-        // The main goal is to ensure there's no data when empty
-        // The empty state message might not be displayed, but the table should be empty
         expect(tableRows).toBe(0);
 
         // The heading should still be visible
