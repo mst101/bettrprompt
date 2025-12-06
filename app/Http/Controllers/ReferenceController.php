@@ -15,7 +15,7 @@ class ReferenceController extends Controller
 
     public function frameworkTaxonomy(): JsonResponse
     {
-        return $this->getReference('framework_taxonomy_compressed.md');
+        return $this->getReference('framework_taxonomy.md');
     }
 
     public function personalityCalibration(): JsonResponse
@@ -34,11 +34,11 @@ class ReferenceController extends Controller
         $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($types) {
             $disk = Storage::disk('reference_documents');
 
-            if (! $disk->exists('personality_calibration_core.md')) {
+            if (! $disk->exists('personality_calibration.md')) {
                 return null;
             }
 
-            $content = $disk->get('personality_calibration_core.md');
+            $content = $disk->get('personality_calibration.md');
 
             // If specific types requested and traits file exists, add relevant trait details
             if ($types && $disk->exists('personality_traits_detailed.md')) {
@@ -50,7 +50,7 @@ class ReferenceController extends Controller
             return [
                 'content' => $content,
                 'types_included' => $types ?: 'core_only',
-                'last_updated' => $disk->lastModified('personality_calibration_core.md'),
+                'last_updated' => $disk->lastModified('personality_calibration.md'),
             ];
         });
 
