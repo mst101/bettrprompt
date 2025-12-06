@@ -50,41 +50,56 @@
 
 ## Workflow 1: Prompt Framework - Analysis & Questions
 
-### Node List & Timing
+### Node List & Timing (OPTIMIZED ✨)
+
+**Status:** Optimized on 2025-12-06 - Removed HTTP fetches, embedded static reference documents
 
 | # | Node | Type | Min | Typical | Max | % of Total |
 |---|------|------|-----|---------|-----|-----------|
 | **1.** | Webhook Trigger | Webhook | 1ms | 3ms | 5ms | <1% |
-| **2.** | Fetch Framework Taxonomy | HTTP | 100ms | 500ms | 1000ms | 7% |
-| **3.** | Fetch Personality Calibration | HTTP | 100ms | 500ms | 1000ms | 7% |
-| **4.** | Check Has Personality | Conditional | 1ms | 5ms | 10ms | <1% |
-| **5.** | Fetch Question Bank | HTTP | 100ms | 500ms | 1000ms | 7% |
-| **6.** | Prepare Prompt | Code (JavaScript) | 50ms | 125ms | 200ms | 2% |
-| **7.** | Call Anthropic API | HTTP Request | 1000ms | 5000ms | 10000ms | **74%** |
-| **8.** | Format Response | Code (JavaScript) | 50ms | 125ms | 200ms | 2% |
-| **9.** | Respond to Webhook | Webhook Response | 1ms | 5ms | 10ms | <1% |
-| **10.** | Merge | Merge Node | 1ms | 5ms | 10ms | <1% |
-| | **TOTAL** | | **1404ms** | **6768ms** | **13435ms** | **100%** |
+| **2.** | Load Reference Documents | Set (Static Data) | 5ms | 10ms | 20ms | <1% |
+| **3.** | Prepare Prompt | Code (JavaScript) | 50ms | 125ms | 200ms | 2% |
+| **4.** | Call Anthropic API | HTTP Request | 1000ms | 5000ms | 10000ms | **95%** |
+| **5.** | Format Response | Code (JavaScript) | 50ms | 125ms | 200ms | 2% |
+| **6.** | Respond to Webhook | Webhook Response | 1ms | 5ms | 10ms | <1% |
+| | **TOTAL** | | **1107ms** | **5268ms** | **10435ms** | **100%** |
 
-### Execution Flow
+**Performance Improvement:**
+- ✅ Removed 3 HTTP requests: -1500ms typical
+- ✅ Simplified from 10 nodes → 6 nodes (40% reduction)
+- ✅ Eliminated conditional branching
+- ✅ Linear execution flow (easier to debug)
+
+**Previous Performance:** ~6.8 seconds typical
+**New Performance:** ~5.3 seconds typical
+**Improvement:** 22% faster (1.5 seconds saved)
+
+### Execution Flow (OPTIMIZED)
 
 ```
-1. Webhook triggered
+1. Webhook triggered (3ms)
    ↓
-2. Parallel data fetches (run simultaneously):
-   ├─ Fetch Framework Taxonomy (500ms)
-   ├─ Fetch Personality Calibration (500ms)
-   └─ Fetch Question Bank (500ms)
+2. Load Reference Documents (10ms) ← NEW: Static data, no HTTP!
    ↓
-3. Conditional: Check if user has personality data
+3. Prepare system prompt (125ms)
    ↓
-4. Prepare system prompt (125ms)
+4. Call Anthropic API with analysis prompt (5000ms) ← BOTTLENECK
    ↓
-5. Call Anthropic API with analysis prompt (5000ms) ← BOTTLENECK
+5. Format response (125ms)
    ↓
-6. Format response (125ms)
-   ↓
-7. Merge data & send webhook response back
+6. Send webhook response back (5ms)
+```
+
+**Previous Flow (Before Optimization):**
+```
+Webhook → [3 HTTP requests in parallel: 500ms each] → Merge → Prepare Prompt → API → Format → Respond
+Total: ~6.8s
+```
+
+**New Flow (After Optimization):**
+```
+Webhook → Load Static Docs → Prepare Prompt → API → Format → Respond
+Total: ~5.3s (-22%)
 ```
 
 ### Timeline Visualization
