@@ -36,7 +36,7 @@ return new class extends Migration
                 // Explorers (SP)
                 'ISTP-A', 'ISTP-T', 'ISFP-A', 'ISFP-T',
                 'ESTP-A', 'ESTP-T', 'ESFP-A', 'ESFP-T',
-            ])->nullable(); // 32 MBTI personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
+            ])->nullable(); // 32 personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
 
@@ -63,7 +63,8 @@ return new class extends Migration
             // Team and budget context
             $table->enum('team_size', ['solo', 'small', 'medium', 'large'])->nullable();
             $table->enum('team_role', ['individual', 'lead', 'manager', 'director', 'executive'])->nullable();
-            $table->enum('budget_consciousness', ['free_only', 'free_first', 'mixed', 'premium_ok', 'enterprise'])->nullable();
+            $table->enum('budget_consciousness',
+                ['free_only', 'free_first', 'mixed', 'premium_ok', 'enterprise'])->nullable();
             $table->enum('work_mode', ['office', 'hybrid', 'remote', 'freelance'])->nullable();
 
             // Tool preferences

@@ -50,7 +50,7 @@ return new class extends Migration
                 // Explorers (SP)
                 'ISTP-A', 'ISTP-T', 'ISFP-A', 'ISFP-T',
                 'ESTP-A', 'ESTP-T', 'ESFP-A', 'ESFP-T',
-            ])->nullable(); // 32 MBTI personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
+            ])->nullable(); // 32 personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable();
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('simple');
 

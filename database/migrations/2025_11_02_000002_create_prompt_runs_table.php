@@ -42,7 +42,10 @@ return new class extends Migration
             $table->integer('current_question_index')->default(0);
             $table->text('optimized_prompt')->nullable();
             $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
-            $table->enum('workflow_stage', ['submitted', 'analysis_complete', 'answering_questions', 'generating_prompt', 'completed', 'failed'])->default('submitted');
+            $table->enum('workflow_stage', [
+                'submitted', 'pre_analysis_questions', 'analysis_complete', 'answering_questions', 'generating_prompt',
+                'completed', 'failed',
+            ])->default('submitted');
             $table->text('error_message')->nullable();
             $table->timestamp('completed_at')->nullable();
 

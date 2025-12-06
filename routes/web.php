@@ -74,10 +74,12 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
     // Location profile routes
     Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
-    Route::post('/profile/location/detect', [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
+    Route::post('/profile/location/detect',
+        [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
     Route::delete('/profile/location', [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
     // Professional profile routes
-    Route::patch('/profile/professional', [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
+    Route::patch('/profile/professional',
+        [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
     // Team profile routes
     Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
     // Budget profile routes
@@ -117,7 +119,8 @@ Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
     ->name('prompt-builder.index');
 Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'analyse'])
     ->name('prompt-builder.analyse');
-Route::post('/prompt-builder/{promptRun}/pre-analysis-answers', [PromptBuilderController::class, 'submitPreAnalysisAnswers'])
+Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
+    [PromptBuilderController::class, 'submitPreAnalysisAnswers'])
     ->name('prompt-builder.pre-analysis-answers');
 Route::post('/prompt-builder/{promptRun}/update-quick-queries', [PromptBuilderController::class, 'updateQuickQueries'])
     ->name('prompt-builder.update-quick-queries');
@@ -133,7 +136,8 @@ Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class
     ->name('prompt-builder.retry');
 Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
     ->name('prompt-builder.generate');
-Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers', [PromptBuilderController::class, 'createChildFromAnswers'])
+Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
+    [PromptBuilderController::class, 'createChildFromAnswers'])
     ->name('prompt-builder.create-child-from-answers');
 Route::post('/prompt-builder/{parentPromptRun}/create-child', [PromptBuilderController::class, 'createChild'])
     ->name('prompt-builder.create-child');
@@ -219,9 +223,11 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
 
 // E2E Test-Only Broadcast Routes
 // These routes allow E2E tests to trigger WebSocket events manually
-Route::post('/test/broadcast/analysis-completed/{promptRunId}', [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])
+Route::post('/test/broadcast/analysis-completed/{promptRunId}',
+    [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])
     ->name('test.broadcast.analysis-completed');
-Route::post('/test/broadcast/prompt-optimization-completed/{promptRunId}', [\App\Http\Controllers\TestBroadcastController::class, 'triggerPromptOptimizationCompleted'])
+Route::post('/test/broadcast/prompt-optimization-completed/{promptRunId}',
+    [\App\Http\Controllers\TestBroadcastController::class, 'triggerPromptOptimizationCompleted'])
     ->name('test.broadcast.prompt-optimization-completed');
 Route::get('/test/echo-info', [\App\Http\Controllers\TestBroadcastController::class, 'echoInfo'])
     ->name('test.echo-info');
@@ -237,5 +243,6 @@ Route::post('/webhook/api/n8n/webhook/pre-analysis', [\App\Http\Controllers\Mock
     ->name('test.n8n.pre-analysis');
 Route::post('/webhook/api/n8n/webhook/analyse', [\App\Http\Controllers\MockN8nController::class, 'analyse'])
     ->name('test.n8n.analyse');
-Route::post('/webhook/api/n8n/webhook/optimise-prompt', [\App\Http\Controllers\MockN8nController::class, 'optimisePrompt'])
+Route::post('/webhook/api/n8n/webhook/optimise-prompt',
+    [\App\Http\Controllers\MockN8nController::class, 'optimisePrompt'])
     ->name('test.n8n.optimise-prompt');

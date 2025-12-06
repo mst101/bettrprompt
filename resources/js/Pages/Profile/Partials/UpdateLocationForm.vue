@@ -126,7 +126,9 @@ const clearLocation = () => {
                         Detected {{ detectedAtFormatted }}
                     </p>
                 </div>
-                <ButtonText @click="clearLocation"> Clear </ButtonText>
+                <ButtonText id="clear-location-form" @click="clearLocation">
+                    Clear
+                </ButtonText>
             </div>
         </div>
 

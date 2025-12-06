@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             LanguageSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
+            ClaudeModelSeeder::class,
         ]);
 
         // User::factory(10)->create();

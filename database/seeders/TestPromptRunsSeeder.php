@@ -34,7 +34,7 @@ class TestPromptRunsSeeder extends Seeder
 
         // Create prompt runs with varied data
         $frameworks = ['SMART Goals', 'Brainstorming', '5 Whys', 'SWOT Analysis', null];
-        $personalityTypes = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP'];
+        $personalityTypes = ['INTJ-A', 'INTP-A', 'ENTJ-A', 'ENTP-A', 'INFJ-T', 'INFP-T', 'ENFJ-T', 'ENFP-T'];
 
         for ($i = 0; $i < $count; $i++) {
             $promptRun = PromptRun::factory()
