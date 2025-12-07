@@ -516,7 +516,8 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', 'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                    return back()->with('error',
+                        'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
                 }
             }
         }
@@ -582,7 +583,8 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', 'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                    return back()->with('error',
+                        'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
                 }
             }
         }
@@ -1005,7 +1007,8 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to analyse the task with the forced framework
-            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code'], $this->getJobDatabase($request));
+            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code'],
+                $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)

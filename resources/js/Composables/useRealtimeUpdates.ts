@@ -64,20 +64,32 @@ export function useRealtimeUpdates(
 
     const setupEcho = () => {
         try {
+            console.log(
+                `[useRealtimeUpdates] Setting up Echo for channel: ${channelName}`,
+            );
+
             channel = window.Echo?.channel(channelName);
 
             if (!channel) {
                 throw new Error('Echo channel could not be created');
             }
 
+            console.log(
+                `[useRealtimeUpdates] Channel created successfully: ${channelName}`,
+            );
+
             // Set up event listeners
             Object.entries(events).forEach(([eventName, handler]) => {
                 // Event names from broadcastAs() are used directly without a dot prefix
                 const echoEventName = eventName;
+                console.log(
+                    `[useRealtimeUpdates] Registering listener for event: ${echoEventName}`,
+                );
+
                 channel!.listen(echoEventName, (data: unknown) => {
                     try {
                         console.log(
-                            `[useRealtimeUpdates] Event: ${eventName}`,
+                            `[useRealtimeUpdates] Event received: ${eventName}`,
                             data,
                         );
                         handler(data);
@@ -106,10 +118,11 @@ export function useRealtimeUpdates(
 
             connected.value = true;
             console.log(
-                `[useRealtimeUpdates] Connected to channel: ${channelName}`,
+                `[useRealtimeUpdates] Successfully connected to channel: ${channelName}`,
             );
         } catch (error) {
             console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
+            console.error('[useRealtimeUpdates] Falling back to polling...');
             startPolling();
         }
     };
@@ -154,11 +167,27 @@ export function useRealtimeUpdates(
     };
 
     const trySetup = () => {
+        console.log('[useRealtimeUpdates] trySetup called');
+        console.log('[useRealtimeUpdates] channel:', channel);
+        console.log(
+            '[useRealtimeUpdates] window.Echo:',
+            window.Echo ? 'exists' : 'null',
+        );
+
         if (channel || !window.Echo) {
+            console.log(
+                '[useRealtimeUpdates] Skipping setup - channel already exists or Echo not available',
+            );
             return;
         }
 
-        if (!window.isEchoConnected()) {
+        const echoConnected = window.isEchoConnected();
+        console.log(
+            '[useRealtimeUpdates] Echo connection status:',
+            echoConnected,
+        );
+
+        if (!echoConnected) {
             console.warn(
                 '[useRealtimeUpdates] Echo not connected yet, waiting while polling',
             );
@@ -166,6 +195,9 @@ export function useRealtimeUpdates(
             return;
         }
 
+        console.log(
+            '[useRealtimeUpdates] Echo is connected, setting up channel',
+        );
         setupEcho();
     };
 
