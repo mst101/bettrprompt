@@ -127,11 +127,10 @@ export function useRealtimeUpdates(
     const handleEchoReconnect = () => {
         if (usingFallback.value) {
             console.log(
-                '[useRealtimeUpdates] Echo reconnected, stopping polling fallback',
+                '[useRealtimeUpdates] Echo reconnected, stopping polling',
             );
             connected.value = true;
-            // Note: We keep polling as a safety net even when Echo is connected
-            // stopPolling();
+            stopPolling();
         }
     };
 
@@ -174,10 +173,6 @@ export function useRealtimeUpdates(
         // Always attach listeners so we can recover once Echo connects
         window.addEventListener('echo-disconnected', handleEchoDisconnect);
         window.addEventListener('echo-connected', handleEchoReconnect);
-
-        // Start polling immediately as a safety net - it will complement WebSocket updates
-        // This ensures data is always kept in sync even if WebSocket connection is unreliable
-        startPolling();
 
         trySetup();
 

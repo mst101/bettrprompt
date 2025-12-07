@@ -73,7 +73,14 @@ class ProcessPreAnalysis implements ShouldQueue
 
                 // Broadcast pre-analysis completed event
                 try {
+                    Log::info('Dispatching PreAnalysisCompleted event', [
+                        'prompt_run_id' => $this->promptRun->id,
+                        'workflow_stage' => $this->promptRun->workflow_stage,
+                    ]);
                     event(new PreAnalysisCompleted($this->promptRun));
+                    Log::info('PreAnalysisCompleted event dispatched successfully', [
+                        'prompt_run_id' => $this->promptRun->id,
+                    ]);
                 } catch (Exception $e) {
                     Log::error('Failed to broadcast PreAnalysisCompleted event', [
                         'prompt_run_id' => $this->promptRun->id,

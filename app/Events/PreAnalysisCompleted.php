@@ -26,7 +26,12 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('prompt-run.'.$this->promptRun->id);
+        $channelName = 'prompt-run.'.$this->promptRun->id;
+        Log::info('PreAnalysisCompleted::broadcastOn() called', [
+            'prompt_run_id' => $this->promptRun->id,
+            'channel' => $channelName,
+        ]);
+        return new Channel($channelName);
     }
 
     /**
@@ -34,6 +39,10 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
+        Log::info('PreAnalysisCompleted::broadcastAs() called', [
+            'prompt_run_id' => $this->promptRun->id,
+            'channel' => 'prompt-run.'.$this->promptRun->id,
+        ]);
         return 'PreAnalysisCompleted';
     }
 
@@ -44,10 +53,14 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
-        return [
+        $data = [
             'prompt_run_id' => $this->promptRun->id,
             'workflow_stage' => $this->promptRun->workflow_stage,
             'questions_count' => count($this->promptRun->pre_analysis_questions ?? []),
         ];
+        Log::info('PreAnalysisCompleted::broadcastWith() called', [
+            'data' => $data,
+        ]);
+        return $data;
     }
 }
