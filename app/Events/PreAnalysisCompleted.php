@@ -31,10 +31,6 @@ class PreAnalysisCompleted implements ShouldBroadcast
 
     /**
      * Get the broadcast event name.
-     *
-     * For Reverb, the event name needs to match what Laravel uses by default
-     * when the class name gets converted. This is typically the short class name
-     * followed by the namespace-based identifier.
      */
     public function broadcastAs(): string
     {
