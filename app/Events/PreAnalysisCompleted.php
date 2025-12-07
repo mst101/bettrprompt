@@ -19,7 +19,11 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function __construct(
         public PromptRun $promptRun
-    ) {}
+    ) {
+        Log::info('PreAnalysisCompleted::__construct() called', [
+            'prompt_run_id' => $promptRun->id,
+        ]);
+    }
 
     /**
      * Get the channels the event should broadcast on.
