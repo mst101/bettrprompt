@@ -73,6 +73,10 @@ class ProcessPreAnalysis implements ShouldQueue
 
                 // Broadcast pre-analysis completed event
                 try {
+                    // Add a small delay to ensure client has subscribed to the channel
+                    // This helps with race conditions where the event broadcasts before subscription
+                    usleep(500000); // 0.5 seconds
+
                     Log::info('Dispatching PreAnalysisCompleted event', [
                         'prompt_run_id' => $this->promptRun->id,
                         'workflow_stage' => $this->promptRun->workflow_stage,

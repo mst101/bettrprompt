@@ -77,10 +77,12 @@ return [
                 'secret' => env('REVERB_APP_SECRET'),
                 'app_id' => env('REVERB_APP_ID'),
                 'options' => [
-                    'host' => env('REVERB_HOST'),
-                    'port' => env('REVERB_PORT', 443),
-                    'scheme' => env('REVERB_SCHEME', 'https'),
-                    'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
+                    // Client options: tell the FRONTEND where to connect to Reverb
+                    // Use VITE_* env vars which are frontend-facing (through Caddy proxy)
+                    'host' => env('VITE_REVERB_HOST', env('REVERB_HOST')),
+                    'port' => env('VITE_REVERB_PORT', env('REVERB_PORT', 443)),
+                    'scheme' => env('VITE_REVERB_SCHEME', env('REVERB_SCHEME', 'https')),
+                    'useTLS' => env('VITE_REVERB_SCHEME', env('REVERB_SCHEME', 'https')) === 'https',
                 ],
                 'allowed_origins' => ['*'],
                 'ping_interval' => env('REVERB_APP_PING_INTERVAL', 60),

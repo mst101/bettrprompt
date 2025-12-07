@@ -108,6 +108,10 @@ export function useRealtimeUpdates(
                     '[useRealtimeUpdates] WebSocket channel error:',
                     error,
                 );
+                console.error(
+                    '[useRealtimeUpdates] Error details:',
+                    JSON.stringify(error),
+                );
                 if (!usingFallback.value) {
                     console.warn(
                         '[useRealtimeUpdates] Falling back to polling due to channel error',
@@ -115,6 +119,16 @@ export function useRealtimeUpdates(
                     startPolling();
                 }
             });
+
+            // Handle subscription errors
+            if ('subscriptionError' in channel) {
+                (channel as any).subscriptionError((error: Error) => {
+                    console.error(
+                        '[useRealtimeUpdates] Subscription error:',
+                        error,
+                    );
+                });
+            }
 
             connected.value = true;
             console.log(
