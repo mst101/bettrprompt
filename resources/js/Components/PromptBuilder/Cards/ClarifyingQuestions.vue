@@ -244,6 +244,13 @@ const submitAnswer = async () => {
     }
 };
 
+const submitAllAnswersEarly = async () => {
+    // Save current answer first, then submit all answers
+    const answer = normalizeAnswer(currentAnswer.value);
+    await saveAnswer(currentIndex.value, answer);
+    await submitAllAnswers();
+};
+
 const startEditingAnswers = () => {
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
@@ -474,6 +481,7 @@ const optionalQuestionsLabel = computed(() => {
             :can-go-back="currentIndex > 0"
             :show-all="showAllQuestions"
             @submit="submitAnswer"
+            @submit-all="submitAllAnswersEarly"
             @skip="skipQuestion"
             @go-back="goBack"
             @clear="clearCurrentAnswer"

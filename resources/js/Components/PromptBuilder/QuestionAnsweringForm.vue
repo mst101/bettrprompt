@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: 'update:answer', value: string): void;
     (e: 'submit'): void;
+    (e: 'submit-all'): void;
     (e: 'skip'): void;
     (e: 'go-back'): void;
     (e: 'clear'): void;
@@ -190,7 +191,7 @@ const handleTranscription = (text: string) => {
                     :disabled="isSubmitting"
                     :loading="isSubmitting"
                     class="w-full sm:w-auto"
-                    @click="emit('submit')"
+                    @click="emit('submit-all')"
                 >
                     Submit All Answers
                 </ButtonSecondary>
