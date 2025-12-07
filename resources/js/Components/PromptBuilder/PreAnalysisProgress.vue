@@ -9,8 +9,8 @@ const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
 
-// Average completion time: 5 seconds
-const ESTIMATED_TOTAL_TIME = 5000; // ms
+// Average completion time: 6 seconds
+const ESTIMATED_TOTAL_TIME = 6000; // ms
 
 // Progress simulation (incremental)
 const progress = computed(() => {
@@ -32,11 +32,10 @@ const estimatedTimeRemaining = computed(() => {
 // Current stage based on progress
 const currentStageIndex = computed(() => {
     const p = progress.value;
-    if (p < 20) return 0;
-    if (p < 40) return 1;
-    if (p < 65) return 2;
-    if (p < 85) return 3;
-    return 4;
+    if (p < 25) return 0;
+    if (p < 50) return 1;
+    if (p < 85) return 2;
+    return 2;
 });
 
 const stages = [

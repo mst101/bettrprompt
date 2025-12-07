@@ -318,10 +318,16 @@ const hasAnswers = computed(
     () => questions.value.length > 0 && Object.keys(answers.value).length > 0,
 );
 
-// Auto-start editing if there are no answers yet
-if (hasQuestions.value && !hasAnswers.value) {
-    startEditing();
-}
+// Auto-start editing if there are no answers yet (reactive watcher)
+watch(
+    () => [hasQuestions.value, hasAnswers.value],
+    ([hasQuestionsValue, hasAnswersValue]) => {
+        if (hasQuestionsValue && !hasAnswersValue && !isEditing.value) {
+            startEditing();
+        }
+    },
+    { immediate: true },
+);
 
 // Get the ID of the first question
 const firstQuestionId = computed(() => questions.value[0]?.id);

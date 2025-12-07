@@ -217,6 +217,42 @@ useRealtimeUpdates(
     { only: ['promptRun'] },
 );
 
+// Watch for workflow stage changes and reload if needed (fallback to WebSocket events)
+watch(
+    () => props.promptRun.workflowStage,
+    (newStage, oldStage) => {
+        // When pre-analysis completes (either with questions or proceeding to analysis)
+        if (
+            oldStage === 'generating_pre_analysis' &&
+            (newStage === 'pre_analysis_questions' || newStage === 'submitted')
+        ) {
+            if (newStage === 'pre_analysis_questions') {
+                // Quick Queries are ready - reload to show them
+                router.reload({
+                    only: ['promptRun'],
+                    onSuccess: () => {
+                        activeTab.value = 'task';
+                    },
+                });
+            } else if (newStage === 'submitted') {
+                // Proceeding directly to analysis - reload to show AnalysisProgress
+                router.reload({
+                    only: ['promptRun'],
+                });
+            }
+        }
+        // When main analysis completes
+        if (oldStage === 'submitted' && newStage === 'analysis_complete') {
+            router.reload({
+                only: ['promptRun'],
+                onSuccess: () => {
+                    activeTab.value = 'framework';
+                },
+            });
+        }
+    },
+);
+
 // Switch to prompt tab when optimized prompt is returned
 watch(
     () => props.promptRun.optimizedPrompt,
