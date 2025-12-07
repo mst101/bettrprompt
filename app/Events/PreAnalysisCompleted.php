@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class PreAnalysisCompleted implements ShouldBroadcast
 {
@@ -30,6 +31,10 @@ class PreAnalysisCompleted implements ShouldBroadcast
 
     /**
      * Get the broadcast event name.
+     *
+     * For Reverb, the event name needs to match what Laravel uses by default
+     * when the class name gets converted. This is typically the short class name
+     * followed by the namespace-based identifier.
      */
     public function broadcastAs(): string
     {
