@@ -49,15 +49,6 @@ class ProcessPreAnalysis implements ShouldQueue
                 $userContext
             );
 
-            if (! $preAnalysis['success']) {
-                $this->handleFailure(
-                    $preAnalysis['error']['message'] ?? 'Pre-analysis workflow failed',
-                    $preAnalysis
-                );
-
-                return;
-            }
-
             // Check if pre-analysis needs clarification questions
             if ($preAnalysis['needs_clarification']) {
                 // Update with questions - user will answer them
