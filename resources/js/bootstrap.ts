@@ -19,7 +19,7 @@ let connectionState: 'connected' | 'connecting' | 'disconnected' | 'failed' =
 // Initialize Echo with error handling
 function initializeEcho() {
     try {
-        echoInstance = new Echo({
+        const reverbConfig = {
             broadcaster: 'reverb',
             key: import.meta.env.VITE_REVERB_APP_KEY,
             wsHost: import.meta.env.VITE_REVERB_HOST,
@@ -29,46 +29,63 @@ function initializeEcho() {
             enabledTransports: ['ws', 'wss'],
             enableLogging: import.meta.env.DEV,
             authEndpoint: '/broadcasting/auth',
+        };
+
+        console.log('[Echo Init] Configuration:', {
+            wsHost: reverbConfig.wsHost,
+            wsPort: reverbConfig.wsPort,
+            wssPort: reverbConfig.wssPort,
+            forceTLS: reverbConfig.forceTLS,
+            scheme: import.meta.env.VITE_REVERB_SCHEME,
         });
+
+        echoInstance = new Echo(reverbConfig);
 
         // Access underlying Pusher connection
         const pusher = echoInstance.connector.pusher;
 
+        console.log('[Echo Init] Pusher instance created:', {
+            options: pusher.options,
+            state: pusher.connection.state,
+        });
+
         // Handle connection events
         pusher.connection.bind('connected', () => {
-            console.log('WebSocket connected');
+            console.log('[Echo] WebSocket connected successfully');
             connectionState = 'connected';
             window.dispatchEvent(new CustomEvent('echo-connected'));
         });
 
         pusher.connection.bind('connecting', () => {
-            console.log('WebSocket connecting...');
+            console.log('[Echo] WebSocket connecting...');
             connectionState = 'connecting';
         });
 
         pusher.connection.bind('disconnected', () => {
-            console.warn('WebSocket disconnected');
+            console.warn('[Echo] WebSocket disconnected');
             connectionState = 'disconnected';
             window.dispatchEvent(new CustomEvent('echo-disconnected'));
         });
 
         pusher.connection.bind('failed', () => {
-            console.error('WebSocket connection failed');
+            console.error('[Echo] WebSocket connection failed');
+            console.error('[Echo] Connection state:', pusher.connection.state);
             connectionState = 'failed';
             window.dispatchEvent(new CustomEvent('echo-failed'));
         });
 
         pusher.connection.bind('error', (error: unknown) => {
-            console.error('WebSocket error', error);
+            console.error('[Echo] WebSocket error:', error);
         });
 
         pusher.connection.bind('unavailable', () => {
-            console.warn('WebSocket unavailable, will retry...');
+            console.warn('[Echo] WebSocket unavailable, will retry...');
         });
 
         window.Echo = echoInstance;
+        console.log('[Echo Init] Echo initialized successfully');
     } catch (error) {
-        console.error('Failed to initialize Echo', error);
+        console.error('[Echo Init] Failed to initialize Echo:', error);
         connectionState = 'failed';
         window.Echo = null;
         window.dispatchEvent(new CustomEvent('echo-failed'));
