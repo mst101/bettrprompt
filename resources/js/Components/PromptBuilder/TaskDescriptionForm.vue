@@ -65,6 +65,7 @@ defineExpose({ focus });
                 <template #actions>
                     <ButtonTrash
                         v-if="form.taskDescription"
+                        class="mr-2"
                         @click="emit('clear')"
                     />
                     <ButtonVoiceInput
