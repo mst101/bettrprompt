@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PreAnalysisCompleted;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunResource;
+use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
 use App\Jobs\ProcessTaskAnalysis;
 use App\Models\ClaudeModel;
@@ -83,70 +83,32 @@ class PromptBuilderController extends Controller
         $personalityType = $validated['personality_type'] ?? $personalityData['personality_type'];
         $traitPercentages = $validated['trait_percentages'] ?? $personalityData['trait_percentages'];
 
-        // Get user context for workflow optimization
-        $userContext = $this->getUserContext($request);
-
-        // Run pre-analysis clarity check synchronously (task description only)
-        $preAnalysis = $this->promptService->preAnalyseTask($validated['task_description'], $userContext);
-
         // Create a prompt run with initial status
+        // Pre-analysis will run asynchronously via ProcessPreAnalysis job
         try {
-            if ($preAnalysis['needs_clarification']) {
-                // Pre-analysis needs clarification - show questions inline
-                $promptRun = DatabaseService::retryOnDeadlock(function () use (
-                    $userId,
-                    $visitorId,
-                    $validated,
-                    $personalityType,
-                    $traitPercentages,
-                    $preAnalysis
-                ) {
-                    return PromptRun::create([
-                        'user_id' => $userId,
-                        'visitor_id' => $visitorId,
-                        'personality_type' => $personalityType,
-                        'trait_percentages' => $traitPercentages,
-                        'task_description' => $validated['task_description'],
-                        'status' => 'pending',
-                        'workflow_stage' => 'pre_analysis_questions',
-                        'pre_analysis_questions' => $preAnalysis['questions'],
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                    ]);
-                });
+            $promptRun = DatabaseService::retryOnDeadlock(function () use (
+                $userId,
+                $visitorId,
+                $validated,
+                $personalityType,
+                $traitPercentages
+            ) {
+                return PromptRun::create([
+                    'user_id' => $userId,
+                    'visitor_id' => $visitorId,
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
+                    'task_description' => $validated['task_description'],
+                    'status' => 'processing',
+                    'workflow_stage' => 'generating_pre_analysis',
+                ]);
+            });
 
-                return redirect()->route('prompt-builder.show', $promptRun);
-            } else {
-                // Pre-analysis skipped or task is clear - proceed directly to main analysis
-                // workflow_0 should have inferred the context even though no questions were asked
-                $promptRun = DatabaseService::retryOnDeadlock(function () use (
-                    $userId,
-                    $visitorId,
-                    $validated,
-                    $personalityType,
-                    $traitPercentages,
-                    $preAnalysis
-                ) {
-                    return PromptRun::create([
-                        'user_id' => $userId,
-                        'visitor_id' => $visitorId,
-                        'personality_type' => $personalityType,
-                        'trait_percentages' => $traitPercentages,
-                        'task_description' => $validated['task_description'],
-                        'status' => 'processing',
-                        'workflow_stage' => 'submitted',
-                        'pre_analysis_skipped' => true,
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
-                        'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                    ]);
-                });
+            // Dispatch the job to generate pre-analysis questions (Workflow 0)
+            // The job will either show questions or proceed directly to main analysis
+            ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
-                // Dispatch the job to analyse the task asynchronously
-                ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
-
-                return redirect()->route('prompt-builder.show', $promptRun);
-            }
+            return redirect()->route('prompt-builder.show', $promptRun);
 
         } catch (\Exception $e) {
             Log::error('Failed to create prompt run', [
@@ -568,78 +530,33 @@ class PromptBuilderController extends Controller
         $personalityType = $user?->personality_type ?? $parentPromptRun->personality_type;
         $traitPercentages = $user?->trait_percentages ?? $parentPromptRun->trait_percentages;
 
-        // Get user context for workflow optimisation
-        $userContext = $this->getUserContext($request);
-
-        // Run pre-analysis clarity check synchronously on the edited task
-        // This determines if we need Quick Queries for the updated task
-        $preAnalysis = $this->promptService->preAnalyseTask($validated['task_description'], $userContext);
-
+        // Create child prompt run and dispatch async pre-analysis (Workflow 0)
         try {
-            if ($preAnalysis['needs_clarification']) {
-                // Pre-analysis needs clarification - create child with Quick Queries
-                $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
-                    $user,
-                    $visitorId,
-                    $parentPromptRun,
-                    $validated,
-                    $personalityType,
-                    $traitPercentages,
-                    $preAnalysis
-                ) {
-                    return PromptRun::create([
-                        'visitor_id' => $visitorId,
-                        'user_id' => $user?->id,
-                        'parent_id' => $parentPromptRun->id,
-                        'personality_type' => $personalityType,
-                        'trait_percentages' => $traitPercentages,
-                        'task_description' => $validated['task_description'],
-                        'status' => 'pending',
-                        'workflow_stage' => 'pre_analysis_questions',
-                        'pre_analysis_questions' => $preAnalysis['questions'],
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                    ]);
-                });
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $visitorId,
+                $parentPromptRun,
+                $validated,
+                $personalityType,
+                $traitPercentages
+            ) {
+                return PromptRun::create([
+                    'visitor_id' => $visitorId,
+                    'user_id' => $user?->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
+                    'task_description' => $validated['task_description'],
+                    'status' => 'processing',
+                    'workflow_stage' => 'generating_pre_analysis',
+                ]);
+            });
 
-                // Broadcast event to notify frontend that Quick Queries are ready
-                PreAnalysisCompleted::dispatch($childPromptRun);
+            // Dispatch the job to generate pre-analysis questions (Workflow 0)
+            // The job will either show questions or proceed directly to main analysis
+            ProcessPreAnalysis::dispatch($childPromptRun, $this->getJobDatabase($request));
 
-                return redirect()->route('prompt-builder.show', $childPromptRun);
-            } else {
-                // Pre-analysis skipped or task is clear - proceed directly to main analysis
-                $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
-                    $user,
-                    $visitorId,
-                    $parentPromptRun,
-                    $validated,
-                    $personalityType,
-                    $traitPercentages,
-                    $preAnalysis
-                ) {
-                    return PromptRun::create([
-                        'visitor_id' => $visitorId,
-                        'user_id' => $user?->id,
-                        'parent_id' => $parentPromptRun->id,
-                        'personality_type' => $personalityType,
-                        'trait_percentages' => $traitPercentages,
-                        'task_description' => $validated['task_description'],
-                        'status' => 'processing',
-                        'workflow_stage' => 'submitted',
-                        'pre_analysis_skipped' => true,
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'],
-                        'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                    ]);
-                });
-
-                // Dispatch the job to analyse the task asynchronously
-                ProcessTaskAnalysis::dispatch($childPromptRun, null, $this->getJobDatabase($request));
-
-                return redirect()
-                    ->route('prompt-builder.show', $childPromptRun)
-                    ->with('success', 'Analysing your updated task...');
-            }
+            return redirect()->route('prompt-builder.show', $childPromptRun);
         } catch (\Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,

@@ -4,6 +4,7 @@ import ContainerPage from '@/Components/ContainerPage.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkButton from '@/Components/LinkButton.vue';
+import AnalysisProgress from '@/Components/PromptBuilder/AnalysisProgress.vue';
 import AlternativeFrameworks from '@/Components/PromptBuilder/Cards/AlternativeFrameworks.vue';
 import ApiUsage from '@/Components/PromptBuilder/Cards/ApiUsage.vue';
 import ClarifyingQuestions from '@/Components/PromptBuilder/Cards/ClarifyingQuestions.vue';
@@ -18,7 +19,8 @@ import SelectedFramework from '@/Components/PromptBuilder/Cards/SelectedFramewor
 import TaskClassification from '@/Components/PromptBuilder/Cards/TaskClassification.vue';
 import TaskInformation from '@/Components/PromptBuilder/Cards/TaskInformation.vue';
 import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignment.vue';
-import LoadingState from '@/Components/PromptBuilder/LoadingState.vue';
+import GenerationProgress from '@/Components/PromptBuilder/GenerationProgress.vue';
+import PreAnalysisProgress from '@/Components/PromptBuilder/PreAnalysisProgress.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -320,15 +322,21 @@ const handleDelete = () => {
                 class="space-y-4"
                 data-testid="tab-task"
             >
-                <!-- Loading state when analysis is in progress -->
-                <LoadingState
+                <!-- Enhanced loading state when generating pre-analysis questions (Workflow 0) -->
+                <!-- Note: Currently Workflow 0 is synchronous, but this is ready for when it becomes async -->
+                <PreAnalysisProgress
+                    v-if="
+                        promptRun.workflowStage === 'generating_pre_analysis' &&
+                        promptRun.status === 'processing'
+                    "
+                />
+
+                <!-- Enhanced loading state when main analysis is in progress (Workflow 1) -->
+                <AnalysisProgress
                     v-if="
                         promptRun.workflowStage === 'submitted' &&
                         promptRun.status === 'processing'
                     "
-                    variant="blue"
-                    message="Analysing your task..."
-                    sub-message="This usually takes 10-30 seconds"
                 />
 
                 <TaskInformation
@@ -410,15 +418,12 @@ const handleDelete = () => {
                 class="space-y-4"
                 data-testid="tab-questions"
             >
-                <!-- Loading state when generation is in progress -->
-                <LoadingState
+                <!-- Enhanced loading state when generation is in progress -->
+                <GenerationProgress
                     v-if="
                         promptRun.workflowStage === 'generating_prompt' &&
                         promptRun.status === 'processing'
                     "
-                    variant="green"
-                    message="Generating your optimised prompt..."
-                    sub-message="This usually takes 20-40 seconds"
                 />
 
                 <ClarifyingQuestions
