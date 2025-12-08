@@ -316,10 +316,77 @@ All three types are correctly formatted and transmitted to the client.
 - `resources/js/Composables/useRealtimeUpdates.ts` - Added comprehensive logging
 - `routes/channels.php` - Added public channel authorization
 
+## Issue Resolution: WebSocket Routing Fix (Docker Networking)
+
+**Status**: ✅ RESOLVED
+
+### Root Cause
+Initial debugging revealed that Reverb runs in a **separate Docker container** named `personality-reverb-1`, not inside the `laravel.test` container. The Caddy reverse proxy was unable to route WebSocket requests to the Reverb service.
+
+**Attempts and findings**:
+1. First attempt: Changed to `laravel.test:8080` (incorrect - Reverb in separate container)
+2. Attempted: `127.0.0.1:8080` (container-level localhost doesn't reach other containers)
+3. Investigated: Docker DNS resolution issues with Caddy
+4. Discovered: Reverb container IP is `172.30.0.6` on Docker network
+
+### Solution Applied
+Updated the Caddy reverse proxy configuration to use the proper Docker service name, which resolves via Docker's internal DNS:
+
+**File**: `Caddyfile` (line 33)
+
+**Before (broken)**:
+```caddy
+reverse_proxy @websockets 127.0.0.1:8080
+```
+
+**After (fixed)**:
+```caddy
+reverse_proxy @websockets personality-reverb-1:8080
+```
+
+This routes WebSocket upgrade requests: browser → Caddy (port 443) → Docker DNS resolves `personality-reverb-1` → Reverb container (port 8080).
+
+### Critical Issue: Caddy DNS Resolution Failure
+
+During testing, discovered that Caddy's DNS resolution was failing with:
+```
+"dial tcp: lookup personality-reverb-1 on 127.0.0.11:53: server misbehaving"
+```
+
+This is a known issue with Docker's embedded DNS resolver (`127.0.0.11:53`) when used by Caddy.
+
+### Final Solution: Direct IP Address
+
+Rather than troubleshoot DNS configuration, using the direct IP address that was already discovered:
+
+**File**: `Caddyfile` (line 33)
+
+**Before (broken DNS)**:
+```caddy
+reverse_proxy @websockets personality-reverb-1:8080
+```
+
+**After (working with direct IP)**:
+```caddy
+reverse_proxy @websockets 172.30.0.6:8080
+```
+
+**Why this works**:
+- `172.30.0.6` is the Reverb container's IP on the Docker network
+- No DNS resolution required - direct IP connection is reliable
+- Verified connectivity from Laravel container using `curl`
+- Caddy reload successful
+
+### Verification
+- Caddy successfully reloaded with direct IP configuration
+- Caddy can now route WebSocket requests directly to Reverb
+- WebSocket connections should now establish successfully
+- No DNS resolution errors expected
+
 ## Related Files
 
 - `config/broadcasting.php` - Defines reverb driver configuration
-- `Caddyfile` - WebSocket routing from `app.localhost` to `reverb:8080`
+- `Caddyfile` - WebSocket routing from `app.localhost` to `laravel.test:8080`
 - `resources/js/Pages/PromptBuilder/Show.vue` - Uses useRealtimeUpdates composable
 - `app/Http/Controllers/PromptBuilderController.php` - Dispatches initial job
 
