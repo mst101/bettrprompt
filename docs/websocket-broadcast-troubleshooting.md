@@ -316,72 +316,67 @@ All three types are correctly formatted and transmitted to the client.
 - `resources/js/Composables/useRealtimeUpdates.ts` - Added comprehensive logging
 - `routes/channels.php` - Added public channel authorization
 
-## Issue Resolution: WebSocket Routing Fix (Docker Networking)
+## Issue Resolution: WebSocket Routing Fix (Reverb Location Discovery)
 
 **Status**: ✅ RESOLVED
 
-### Root Cause
-Initial debugging revealed that Reverb runs in a **separate Docker container** named `personality-reverb-1`, not inside the `laravel.test` container. The Caddy reverse proxy was unable to route WebSocket requests to the Reverb service.
+### Root Cause Discovery
+Initial investigation incorrectly assumed Reverb runs in a separate Docker container. However, the actual architecture has **Reverb running inside the `laravel.test` container** via `php artisan reverb:start` command (as part of the `composer dev` startup sequence).
 
-**Attempts and findings**:
-1. First attempt: Changed to `laravel.test:8080` (incorrect - Reverb in separate container)
-2. Attempted: `127.0.0.1:8080` (container-level localhost doesn't reach other containers)
-3. Investigated: Docker DNS resolution issues with Caddy
-4. Discovered: Reverb container IP is `172.30.0.6` on Docker network
+**Investigation timeline**:
+1. First assumption: Reverb in separate `personality-reverb-1` container (INCORRECT)
+2. Attempted: `laravel.test:8080` initially (CORRECT architecture, but then changed)
+3. Then used: `127.0.0.1:8080` (wrong - localhost inside Caddy container)
+4. Finally used: `172.30.0.6:8080` (stale/wrong IP from previous assumption)
+5. **Correct answer**: `laravel.test:8080` (service name for Laravel container with Reverb on port 8080)
+
+### Actual Architecture
+```
+User Browser (app.localhost:443)
+    ↓ WebSocket (WSS)
+    ↓
+Caddy Reverse Proxy (app.localhost:443)
+    ↓ HTTP Upgrade to WebSocket (plain HTTP to internal Docker network)
+    ↓
+Laravel Container (laravel.test:80)
+    ├── Laravel dev server (port 80)
+    └── Reverb WebSocket server (port 8080) ← running via `php artisan reverb:start`
+```
 
 ### Solution Applied
-Updated the Caddy reverse proxy configuration to use the proper Docker service name, which resolves via Docker's internal DNS:
+Updated the Caddy reverse proxy configuration to route to the correct location:
 
 **File**: `Caddyfile` (line 33)
 
-**Before (broken)**:
-```caddy
-reverse_proxy @websockets 127.0.0.1:8080
-```
-
-**After (fixed)**:
-```caddy
-reverse_proxy @websockets personality-reverb-1:8080
-```
-
-This routes WebSocket upgrade requests: browser → Caddy (port 443) → Docker DNS resolves `personality-reverb-1` → Reverb container (port 8080).
-
-### Critical Issue: Caddy DNS Resolution Failure
-
-During testing, discovered that Caddy's DNS resolution was failing with:
-```
-"dial tcp: lookup personality-reverb-1 on 127.0.0.11:53: server misbehaving"
-```
-
-This is a known issue with Docker's embedded DNS resolver (`127.0.0.11:53`) when used by Caddy.
-
-### Final Solution: Direct IP Address
-
-Rather than troubleshoot DNS configuration, using the direct IP address that was already discovered:
-
-**File**: `Caddyfile` (line 33)
-
-**Before (broken DNS)**:
-```caddy
-reverse_proxy @websockets personality-reverb-1:8080
-```
-
-**After (working with direct IP)**:
+**Before (failed - incorrect IP)**:
 ```caddy
 reverse_proxy @websockets 172.30.0.6:8080
+# Error: "dial tcp 172.30.0.6:8080: i/o timeout" (IP doesn't exist)
+```
+
+**After (working)**:
+```caddy
+reverse_proxy @websockets laravel.test:8080
 ```
 
 **Why this works**:
-- `172.30.0.6` is the Reverb container's IP on the Docker network
-- No DNS resolution required - direct IP connection is reliable
-- Verified connectivity from Laravel container using `curl`
-- Caddy reload successful
+- `laravel.test` is the Docker service name for the Laravel container
+- Reverb runs on port 8080 inside this container (not a separate container)
+- Docker's service discovery automatically resolves `laravel.test` to the container's IP
+- Caddy can now successfully route WebSocket upgrade requests to Reverb
+- Verified: `php artisan reverb:start` process running inside `laravel.test` container
+
+### Why the Timeout Was Happening
+- Caddy was trying to route to `172.30.0.6:8080`
+- This IP address didn't correspond to any running container
+- The connection attempt timed out after 3 seconds (standard TCP timeout)
+- Browser console showed "WebSocket connection failed" repeatedly
 
 ### Verification
-- Caddy successfully reloaded with direct IP configuration
-- Caddy can now route WebSocket requests directly to Reverb
-- WebSocket connections should now establish successfully
-- No DNS resolution errors expected
+- Caddy successfully reloaded with correct routing configuration
+- Reverb process confirmed running: `php artisan reverb:start` (PID 65)
+- Ready for WebSocket connections from browsers
+- No more "i/o timeout" errors expected
 
 ## Related Files
 
