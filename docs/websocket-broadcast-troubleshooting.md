@@ -321,14 +321,13 @@ All three types are correctly formatted and transmitted to the client.
 **Status**: ✅ RESOLVED
 
 ### Root Cause Discovery
-Initial investigation incorrectly assumed Reverb runs in a separate Docker container. However, the actual architecture has **Reverb running inside the `laravel.test` container** via `php artisan reverb:start` command (as part of the `composer dev` startup sequence).
+Investigation revealed that **Reverb actually runs as a separate Docker container** (`personality-reverb-1`), not inside the `laravel.test` container. This is defined in the docker-compose configuration.
 
-**Investigation timeline**:
-1. First assumption: Reverb in separate `personality-reverb-1` container (INCORRECT)
-2. Attempted: `laravel.test:8080` initially (CORRECT architecture, but then changed)
-3. Then used: `127.0.0.1:8080` (wrong - localhost inside Caddy container)
-4. Finally used: `172.30.0.6:8080` (stale/wrong IP from previous assumption)
-5. **Correct answer**: `laravel.test:8080` (service name for Laravel container with Reverb on port 8080)
+**Initial incorrect assumptions**:
+1. Assumption: Reverb runs inside `laravel.test` container via `php artisan reverb:start`
+2. Attempted: `laravel.test:8080` routing (INCORRECT)
+3. Failed with: `dial tcp: lookup personality-reverb-1 on 127.0.0.11:53: server misbehaving` (DNS resolution issue)
+4. Then tried: `172.30.0.6:8080` (wrong IP that doesn't exist)
 
 ### Actual Architecture
 ```
@@ -336,47 +335,54 @@ User Browser (app.localhost:443)
     ↓ WebSocket (WSS)
     ↓
 Caddy Reverse Proxy (app.localhost:443)
-    ↓ HTTP Upgrade to WebSocket (plain HTTP to internal Docker network)
+    ↓ HTTP Upgrade to WebSocket
     ↓
-Laravel Container (laravel.test:80)
-    ├── Laravel dev server (port 80)
-    └── Reverb WebSocket server (port 8080) ← running via `php artisan reverb:start`
+Reverb Container (personality-reverb-1:8080)
+    ↓ (separate service, not inside laravel.test)
+```
+
+Docker Compose defines Reverb as a separate service:
+```yaml
+reverb:
+  image: sail-8.4/app
+  command: php artisan reverb:start --host=0.0.0.0 --port=8080 --hostname=localhost
+  ports:
+    - '8080:8080'
 ```
 
 ### Solution Applied
-Updated the Caddy reverse proxy configuration to route to the correct location:
+Updated the Caddy reverse proxy configuration to use the correct Docker service name:
 
 **File**: `Caddyfile` (line 33)
 
-**Before (failed - incorrect IP)**:
+**Before (failed - incorrect routing)**:
 ```caddy
-reverse_proxy @websockets 172.30.0.6:8080
-# Error: "dial tcp 172.30.0.6:8080: i/o timeout" (IP doesn't exist)
+reverse_proxy @websockets laravel.test:8080
+# Error: docker-compose resolves to wrong container
 ```
 
 **After (working)**:
 ```caddy
-reverse_proxy @websockets laravel.test:8080
+reverse_proxy @websockets reverb:8080
+# Correctly routes to the separate Reverb service container
 ```
 
 **Why this works**:
-- `laravel.test` is the Docker service name for the Laravel container
-- Reverb runs on port 8080 inside this container (not a separate container)
-- Docker's service discovery automatically resolves `laravel.test` to the container's IP
-- Caddy can now successfully route WebSocket upgrade requests to Reverb
-- Verified: `php artisan reverb:start` process running inside `laravel.test` container
+- `reverb` is the Docker Compose service name for the Reverb container
+- Docker's internal DNS automatically resolves service names to their container IPs
+- Caddy can now successfully route WebSocket upgrade requests to the correct Reverb container
+- The separate container is properly isolated and handles WebSocket connections independently
 
-### Why the Timeout Was Happening
-- Caddy was trying to route to `172.30.0.6:8080`
-- This IP address didn't correspond to any running container
-- The connection attempt timed out after 3 seconds (standard TCP timeout)
-- Browser console showed "WebSocket connection failed" repeatedly
+### Why Previous Attempts Failed
+- **`laravel.test:8080`**: Routes to Laravel container, which doesn't have Reverb listening on 8080
+- **`172.30.0.6:8080`**: Stale/non-existent IP address - causes immediate timeout
+- **`personality-reverb-1:8080`**: Service name too specific; Docker Compose uses short names
 
 ### Verification
-- Caddy successfully reloaded with correct routing configuration
-- Reverb process confirmed running: `php artisan reverb:start` (PID 65)
-- Ready for WebSocket connections from browsers
-- No more "i/o timeout" errors expected
+- Reverb container successfully started: `./vendor/bin/sail up -d reverb`
+- Reverb process confirmed running: `php artisan reverb:start --host=0.0.0.0 --port=8080 --hostname=localhost`
+- Caddy successfully reloaded with correct service routing
+- No more timeout or DNS errors expected
 
 ## Related Files
 
