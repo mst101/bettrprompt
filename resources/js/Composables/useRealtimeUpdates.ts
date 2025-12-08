@@ -43,9 +43,6 @@ export function useRealtimeUpdates(
     const startPolling = () => {
         if (pollInterval) return; // Already polling
 
-        console.log(
-            `[useRealtimeUpdates] Starting polling fallback for ${channelName}`,
-        );
         usingFallback.value = true;
 
         pollInterval = window.setInterval(() => {
@@ -58,55 +55,21 @@ export function useRealtimeUpdates(
             clearInterval(pollInterval);
             pollInterval = null;
             usingFallback.value = false;
-            console.log('[useRealtimeUpdates] Stopped polling fallback');
         }
     };
 
     const setupEcho = () => {
         try {
-            console.log(
-                `[useRealtimeUpdates] Setting up Echo for channel: ${channelName}`,
-            );
-
             channel = window.Echo?.channel(channelName);
 
             if (!channel) {
                 throw new Error('Echo channel could not be created');
             }
 
-            console.log(
-                `[useRealtimeUpdates] Channel created successfully: ${channelName}`,
-            );
-
-            // Log the browser's socket ID and channel info
-            const echoConnector = (window.Echo as any)?.connector;
-            const pusherInstance = echoConnector?.pusher;
-            console.log('[useRealtimeUpdates] Browser connection info:', {
-                channelName: channelName,
-                socketId: pusherInstance?.connection?.socket_id,
-                connectionState: pusherInstance?.connection?.state,
-                channelObject: channel,
-            });
-
-            // Set up event listeners
             Object.entries(events).forEach(([eventName, handler]) => {
-                // Event names from broadcastAs() are used directly without a dot prefix
-                const echoEventName = eventName;
-                console.log(
-                    `[useRealtimeUpdates] Registering listener for event: ${echoEventName}`,
-                );
-
-                // Wrap the handler to add detailed logging
                 const wrappedHandler = (data: unknown) => {
-                    console.log(
-                        `[useRealtimeUpdates] Event listener callback fired for: ${eventName}`,
-                        { receivedData: data },
-                    );
                     try {
                         handler(data);
-                        console.log(
-                            `[useRealtimeUpdates] Event handler completed successfully for: ${eventName}`,
-                        );
                     } catch (error) {
                         console.error(
                             `[useRealtimeUpdates] Error handling ${eventName}:`,
@@ -116,32 +79,19 @@ export function useRealtimeUpdates(
                     }
                 };
 
-                const result = channel!.listen(echoEventName, wrappedHandler);
-                console.log(
-                    `[useRealtimeUpdates] Listener registered (result: ${typeof result})`,
-                    { eventName: echoEventName },
-                );
+                channel!.listen(eventName, wrappedHandler);
             });
 
-            // Handle channel errors
             channel.error((error: Error) => {
                 console.error(
                     '[useRealtimeUpdates] WebSocket channel error:',
                     error,
                 );
-                console.error(
-                    '[useRealtimeUpdates] Error details:',
-                    JSON.stringify(error),
-                );
                 if (!usingFallback.value) {
-                    console.warn(
-                        '[useRealtimeUpdates] Falling back to polling due to channel error',
-                    );
                     startPolling();
                 }
             });
 
-            // Handle subscription errors
             if ('subscriptionError' in channel) {
                 (channel as any).subscriptionError((error: Error) => {
                     console.error(
@@ -152,21 +102,14 @@ export function useRealtimeUpdates(
             }
 
             connected.value = true;
-            console.log(
-                `[useRealtimeUpdates] Successfully connected to channel: ${channelName}`,
-            );
         } catch (error) {
             console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
-            console.error('[useRealtimeUpdates] Falling back to polling...');
             startPolling();
         }
     };
 
     const handleEchoDisconnect = () => {
         if (!usingFallback.value) {
-            console.warn(
-                '[useRealtimeUpdates] Echo disconnected, falling back to polling',
-            );
             connected.value = false;
             startPolling();
         }
@@ -174,9 +117,6 @@ export function useRealtimeUpdates(
 
     const handleEchoReconnect = () => {
         if (usingFallback.value) {
-            console.log(
-                '[useRealtimeUpdates] Echo reconnected, stopping polling',
-            );
             connected.value = true;
             stopPolling();
         }
@@ -188,9 +128,6 @@ export function useRealtimeUpdates(
         try {
             if (window.Echo && channel) {
                 window.Echo.leave(channelName);
-                console.log(
-                    `[useRealtimeUpdates] Left channel: ${channelName}`,
-                );
             }
         } catch (error) {
             console.error('[useRealtimeUpdates] Error leaving channel:', error);
@@ -202,37 +139,17 @@ export function useRealtimeUpdates(
     };
 
     const trySetup = () => {
-        console.log('[useRealtimeUpdates] trySetup called');
-        console.log('[useRealtimeUpdates] channel:', channel);
-        console.log(
-            '[useRealtimeUpdates] window.Echo:',
-            window.Echo ? 'exists' : 'null',
-        );
-
         if (channel || !window.Echo) {
-            console.log(
-                '[useRealtimeUpdates] Skipping setup - channel already exists or Echo not available',
-            );
             return;
         }
 
         const echoConnected = window.isEchoConnected();
-        console.log(
-            '[useRealtimeUpdates] Echo connection status:',
-            echoConnected,
-        );
 
         if (!echoConnected) {
-            console.warn(
-                '[useRealtimeUpdates] Echo not connected yet, waiting while polling',
-            );
             startPolling();
             return;
         }
 
-        console.log(
-            '[useRealtimeUpdates] Echo is connected, setting up channel',
-        );
         setupEcho();
     };
 

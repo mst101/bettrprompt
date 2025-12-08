@@ -32,90 +32,17 @@ function initializeEcho() {
             namespace: null,
         };
 
-        console.log('[Echo Init] Configuration:', {
-            wsHost: reverbConfig.wsHost,
-            wsPort: reverbConfig.wsPort,
-            wssPort: reverbConfig.wssPort,
-            forceTLS: reverbConfig.forceTLS,
-            scheme: import.meta.env.VITE_REVERB_SCHEME,
-        });
-
         echoInstance = new Echo(reverbConfig);
 
         // Access underlying Pusher connection
         const pusher = echoInstance.connector.pusher;
 
-        console.log('[Echo Init] Pusher instance created:', {
-            options: pusher.options,
-            state: pusher.connection.state,
-        });
-
-        // Hook into Pusher's message event to log ALL messages
-        pusher.bind('message', (data: any) => {
-            console.log('[Pusher Message Event]', {
-                event: data.event,
-                channel: data.channel,
-                dataPreview:
-                    typeof data.data === 'string'
-                        ? data.data.substring(0, 100)
-                        : JSON.stringify(data.data).substring(0, 100),
-                fullData: data,
-            });
-        });
-        console.log('[Echo Init] Installed Pusher message event logger');
-
-        // Log the connection info including socket ID
-        console.log('[Echo Init] Pusher connection info:', {
-            socketId: pusher.connection.socket_id,
-            state: pusher.connection.state,
-            transport: pusher.connection.transport,
-        });
-
-        // Handle connection events
         pusher.connection.bind('connected', () => {
-            console.log('[Echo] WebSocket connected successfully');
-            console.log('[Echo] Pusher connection info after connect:', {
-                socketId: pusher.connection.socket_id,
-                state: pusher.connection.state,
-            });
             connectionState = 'connected';
             window.dispatchEvent(new CustomEvent('echo-connected'));
-
-            // Also try to hook into the socket's onmessage if available
-            if (pusher.connection.socket) {
-                console.log(
-                    '[Echo Init] WebSocket socket is available, type:',
-                    typeof pusher.connection.socket,
-                );
-                const originalOnMessage = pusher.connection.socket.onmessage;
-                pusher.connection.socket.onmessage = function (event: Event) {
-                    const wsEvent = event as MessageEvent;
-                    try {
-                        const data = JSON.parse(wsEvent.data);
-                        console.log('[WebSocket onmessage Raw]', {
-                            event: data.event,
-                            channel: data.channel,
-                            fullData: data,
-                        });
-                    } catch {
-                        console.log(
-                            '[WebSocket onmessage] (non-JSON):',
-                            wsEvent.data,
-                        );
-                    }
-                    // Call original handler
-                    if (originalOnMessage) {
-                        return originalOnMessage.call(this, event);
-                    }
-                };
-                console.log(
-                    '[Echo Init] Installed raw WebSocket onmessage logger',
-                );
-            }
         });
 
         pusher.connection.bind('connecting', () => {
-            console.log('[Echo] WebSocket connecting...');
             connectionState = 'connecting';
         });
 
@@ -127,7 +54,6 @@ function initializeEcho() {
 
         pusher.connection.bind('failed', () => {
             console.error('[Echo] WebSocket connection failed');
-            console.error('[Echo] Connection state:', pusher.connection.state);
             connectionState = 'failed';
             window.dispatchEvent(new CustomEvent('echo-failed'));
         });
@@ -141,7 +67,6 @@ function initializeEcho() {
         });
 
         window.Echo = echoInstance;
-        console.log('[Echo Init] Echo initialized successfully');
     } catch (error) {
         console.error('[Echo Init] Failed to initialize Echo:', error);
         connectionState = 'failed';

@@ -20,13 +20,5 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
  * 4. Visitors can only access their own prompt runs (enforced via visitor_id cookie)
  */
 Broadcast::channel('prompt-run.{promptRunId}', function ($user, $promptRunId) {
-    // Allow access to public prompt-run channels for all users (authenticated or not)
-    // The channel name itself ensures isolation (only prompt-run.{id} subscribers receive events)
-    \Illuminate\Support\Facades\Log::info('Channel authorization check', [
-        'channel' => "prompt-run.{$promptRunId}",
-        'user_id' => $user?->id,
-        'is_authenticated' => $user !== null,
-    ]);
-
     return true;
 });

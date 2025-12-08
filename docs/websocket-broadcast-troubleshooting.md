@@ -40,11 +40,11 @@
 - Reason: Laravel’s Pusher broadcaster never adds `body_md5`, so Reverb’s automatic inclusion caused every broadcast to be rejected with `Authentication signature invalid`.
 - Status: keep this patch until Reverb ships the fix; otherwise no events will ever be accepted.
 
-### Temporary Instrumentation — **Safe To Remove After Debugging**
-- Files: `vendor/laravel/reverb/src/Protocols/Pusher/EventDispatcher.php`, `vendor/laravel/reverb/src/Protocols/Pusher/EventHandler.php`, `vendor/laravel/reverb/src/Protocols/Pusher/Channels/Channel.php`, plus `routes/channels.php`.
-- Change: added verbose `Log::info(...)` calls that print subscribe/unsubscribe details, channel lookups, and dispatcher activity so we could correlate browser socket IDs with server state.
-- Reason: helped confirm whether the channel existed and whether broadcasts were routed to the same socket ID.
-- Status: no longer required for day-to-day use; the next commit removes these debug statements so that future `composer update` runs don’t have surprising diffs.
+### Temporary Instrumentation — **Removed Once We Verified The Fix**
+- Files previously patched: `vendor/laravel/reverb/src/Protocols/Pusher/EventDispatcher.php`, `vendor/laravel/reverb/src/Protocols/Pusher/EventHandler.php`, `vendor/laravel/reverb/src/Protocols/Pusher/Channels/Channel.php`, and `routes/channels.php`.
+- Change: those files briefly contained `Log::info(...)` statements that dumped subscription and broadcast metadata so we could align socket IDs between the browser and Reverb.
+- Reason: confirmed whether subscriptions and broadcasts were landing on the same server instance.
+- Status: the debug logs have been removed to keep `vendor/` clean; reference git history (pre-cleanup commit) if deep tracing is ever required again.
 
 ## Related Files
 - `.env` — runtime host/port/scheme for backend broadcasts.
