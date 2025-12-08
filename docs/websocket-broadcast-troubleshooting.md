@@ -257,19 +257,25 @@ Socket ID mismatch between browser and server when using `InteractsWithSockets` 
 - These IDs don't match because `InteractsWithSockets` was trying to exclude a sender socket that doesn't exist in background jobs
 
 ### Solution Applied
-Removed `InteractsWithSockets` trait from `PreAnalysisCompleted` event:
-- The event is dispatched from a background job (not from a WebSocket client)
+Removed `InteractsWithSockets` trait from ALL THREE broadcast events that are dispatched from background jobs:
+- The events are dispatched from background jobs (not from WebSocket clients)
 - There is no socket context to exclude, so the trait is unnecessary
 - Broadcasting now goes to ALL connections on the channel, as intended
 
-**File modified**: `app/Events/PreAnalysisCompleted.php`
+**Files modified**:
+1. `app/Events/PreAnalysisCompleted.php`
+2. `app/Events/AnalysisCompleted.php`
+3. `app/Events/PromptOptimizationCompleted.php`
+
 ```php
-// Before:
+// Before (all three events):
 use Dispatchable, InteractsWithSockets, SerializesModels;
 
-// After:
+// After (all three events):
 use Dispatchable, SerializesModels;
 ```
+
+**Reverb Process**: Restarted fresh on 2025-12-08 to load updated event files (old process was cached in memory)
 
 ### Why This Works
 1. When `InteractsWithSockets` is used on a background-dispatched event, it tries to get the current socket context
@@ -298,13 +304,15 @@ All three types are correctly formatted and transmitted to the client.
 
 ## Files Modified
 
-**To fix the issue:**
-- `app/Events/PreAnalysisCompleted.php` - Removed `InteractsWithSockets` trait to allow broadcasting to all connections
+**To fix the socket ID mismatch issue (all three events)**:
+1. `app/Events/PreAnalysisCompleted.php` - Removed `InteractsWithSockets` trait (broadcast to all connections)
+2. `app/Events/AnalysisCompleted.php` - Removed `InteractsWithSockets` trait (broadcast to all connections)
+3. `app/Events/PromptOptimizationCompleted.php` - Removed `InteractsWithSockets` trait (broadcast to all connections)
 
-**Previously modified (for debugging/fixing earlier issues):**
+**Previously modified (for debugging/fixing earlier issues)**:
 - `config/reverb.php` - Changed hostname configuration to frontend-facing domain
 - `app/Jobs/ProcessPreAnalysis.php` - Added delay before broadcast to ensure subscription
-- `resources/js/bootstrap.ts` - Added Echo initialization logging
+- `resources/js/bootstrap.ts` - Added Echo initialization logging and fixed ESLint error
 - `resources/js/Composables/useRealtimeUpdates.ts` - Added comprehensive logging
 - `routes/channels.php` - Added public channel authorization
 
