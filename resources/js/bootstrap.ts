@@ -29,6 +29,7 @@ function initializeEcho() {
             enabledTransports: ['ws', 'wss'],
             enableLogging: import.meta.env.DEV,
             authEndpoint: '/broadcasting/auth',
+            namespace: null,
         };
 
         console.log('[Echo Init] Configuration:', {
