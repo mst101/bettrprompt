@@ -67,7 +67,8 @@ class ProcessPromptGeneration implements ShouldQueue
                 $this->promptRun->personality_type,
                 $this->promptRun->trait_percentages,
                 $questionAnswers,
-                $userContext
+                $userContext,
+                $this->promptRun->pre_analysis_context
             );
 
             if (! $result['success']) {

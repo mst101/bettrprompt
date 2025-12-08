@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
+use App\Services\GeolocationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -76,8 +77,6 @@ class RegisteredUserController extends Controller
                 }
                 if (! empty($updates)) {
                     $user->update($updates);
-                    // Update profile completion after copying location data
-                    $user->updateProfileCompletion();
                 }
 
                 // Update visitor record
@@ -101,6 +100,46 @@ class RegisteredUserController extends Controller
                 ]);
             }
         }
+
+        // Fallback: If user still doesn't have location data, look it up from IP
+        if (! $user->hasLocationData() && config('geoip.enabled') && config('geoip.features.lookup_on_registration')) {
+            try {
+                $geolocationService = new GeolocationService;
+                $locationData = $geolocationService->lookupIp($request->ip());
+
+                if ($locationData !== null) {
+                    $user->update([
+                        'country_code' => $locationData->countryCode,
+                        'country_name' => $locationData->countryName,
+                        'region' => $locationData->region,
+                        'city' => $locationData->city,
+                        'timezone' => $locationData->timezone,
+                        'currency_code' => $locationData->currencyCode,
+                        'latitude' => $locationData->latitude,
+                        'longitude' => $locationData->longitude,
+                        'language_code' => $locationData->languageCode,
+                        'location_detected_at' => $locationData->detectedAt,
+                        'location_manually_set' => false,
+                        'language_manually_set' => false,
+                    ]);
+
+                    Log::info('Location detected from IP for new user', [
+                        'user_id' => $user->id,
+                        'country' => $locationData->countryCode,
+                        'ip' => $request->ip(),
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to lookup location for new user', [
+                    'user_id' => $user->id,
+                    'ip' => $request->ip(),
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Update profile completion percentage
+        $user->updateProfileCompletion();
 
         Auth::login($user);
 

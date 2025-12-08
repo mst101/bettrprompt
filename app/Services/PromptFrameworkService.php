@@ -17,7 +17,7 @@ class PromptFrameworkService
     }
 
     /**
-     * Pre-Analysis: Quick clarity check before main analysis
+     * Step 0: Pre-Analysis - quick clarity check before main analysis
      * Returns whether clarification is needed and questions if applicable
      * Always returns gracefully - never throws exceptions
      * Note: Does NOT use personality data - only task description
@@ -107,8 +107,6 @@ class PromptFrameworkService
     ): array {
         $payload = [
             'task_description' => $taskDescription,
-            'personality_type' => $personalityType,
-            'trait_percentages' => $traitPercentages,
         ];
 
         // Add pre-analysis context if available (structured JSON)
@@ -121,9 +119,26 @@ class PromptFrameworkService
             $payload['forced_framework_code'] = $forcedFrameworkCode;
         }
 
-        // Add user context if available
+        // Add user context with nested personality data
         if ($userContext !== null) {
+            // Nest personality data under user_context.personality
             $payload['user_context'] = $userContext;
+            $payload['user_context']['personality'] = [
+                'personality_type' => $personalityType,
+                'trait_percentages' => $traitPercentages,
+            ];
+        } else {
+            // If no user context, create one with just personality data
+            $payload['user_context'] = [
+                'location' => null,
+                'professional' => null,
+                'team' => null,
+                'preferences' => null,
+                'personality' => [
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
+                ],
+            ];
         }
 
         try {
@@ -167,7 +182,8 @@ class PromptFrameworkService
         ?string $personalityType,
         ?array $traitPercentages,
         array $questionAnswers,
-        ?array $userContext = null
+        ?array $userContext = null,
+        ?array $preAnalysisContext = null
     ): array {
         $payload = [
             'analysis_data' => [
@@ -178,14 +194,34 @@ class PromptFrameworkService
                 'task_trait_alignment' => $taskTraitAlignment,
             ],
             'original_task_description' => $originalTaskDescription,
-            'personality_type' => $personalityType,
-            'trait_percentages' => $traitPercentages,
             'question_answers' => $questionAnswers,
         ];
 
-        // Add user context if available
+        // Add pre-analysis context if available
+        if ($preAnalysisContext !== null) {
+            $payload['pre_analysis_context'] = $preAnalysisContext;
+        }
+
+        // Add user context with nested personality data
         if ($userContext !== null) {
+            // Nest personality data under user_context.personality
             $payload['user_context'] = $userContext;
+            $payload['user_context']['personality'] = [
+                'personality_type' => $personalityType,
+                'trait_percentages' => $traitPercentages,
+            ];
+        } else {
+            // If no user context, create one with just personality data
+            $payload['user_context'] = [
+                'location' => null,
+                'professional' => null,
+                'team' => null,
+                'preferences' => null,
+                'personality' => [
+                    'personality_type' => $personalityType,
+                    'trait_percentages' => $traitPercentages,
+                ],
+            ];
         }
 
         try {
