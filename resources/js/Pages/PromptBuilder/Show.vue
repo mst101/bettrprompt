@@ -25,10 +25,14 @@ import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
+const page = usePage();
+
+const user = computed(() => page.props.auth?.user);
+const isAdmin = computed(() => user.value?.is_admin ?? false);
 
 defineOptions({
     layout: AppLayout,
@@ -107,8 +111,8 @@ const tabs = computed<Tab[]>(() => {
         });
     }
 
-    // API Usage tab (only shown in advanced mode)
-    if (props.uiComplexity === 'advanced') {
+    // API Usage tab (only shown in advanced mode and for admins)
+    if (props.uiComplexity === 'advanced' && isAdmin.value) {
         allTabs.push({
             id: 'api-usage',
             label: 'API Usage',

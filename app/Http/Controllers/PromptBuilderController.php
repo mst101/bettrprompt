@@ -13,6 +13,7 @@ use App\Models\ClaudeModel;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
+use App\Services\GeolocationService;
 use App\Services\PromptFrameworkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -82,6 +83,48 @@ class PromptBuilderController extends Controller
 
         $personalityType = $validated['personality_type'] ?? $personalityData['personality_type'];
         $traitPercentages = $validated['trait_percentages'] ?? $personalityData['trait_percentages'];
+
+        // For logged-in users: Check if they have location data, if not look it up from IP
+        if ($userId) {
+            $user = auth()->user();
+            if (! $user->hasLocationData() && config('geoip.enabled')) {
+                try {
+                    $geolocationService = new GeolocationService;
+                    $locationData = $geolocationService->lookupIp($request->ip());
+
+                    if ($locationData !== null) {
+                        $user->update([
+                            'country_code' => $locationData->countryCode,
+                            'country_name' => $locationData->countryName,
+                            'region' => $locationData->region,
+                            'city' => $locationData->city,
+                            'timezone' => $locationData->timezone,
+                            'currency_code' => $locationData->currencyCode,
+                            'latitude' => $locationData->latitude,
+                            'longitude' => $locationData->longitude,
+                            'language_code' => $locationData->languageCode,
+                            'location_detected_at' => $locationData->detectedAt,
+                            'location_manually_set' => false,
+                            'language_manually_set' => false,
+                        ]);
+
+                        $user->updateProfileCompletion();
+
+                        Log::info('Location detected from IP for existing user', [
+                            'user_id' => $user->id,
+                            'country' => $locationData->countryCode,
+                            'ip' => $request->ip(),
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to lookup location for existing user', [
+                        'user_id' => $user->id,
+                        'ip' => $request->ip(),
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
 
         // Create a prompt run with initial status
         // Pre-analysis will run asynchronously via ProcessPreAnalysis job

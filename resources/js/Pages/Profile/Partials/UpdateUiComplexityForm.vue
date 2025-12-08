@@ -59,7 +59,7 @@ const submit = () => {
                         name="ui_complexity"
                         value="advanced"
                         label="Advanced"
-                        help-text="Shows all features including task classification, cognitive requirements, personality insights, and API usage details."
+                        help-text="Shows all features including task classification, cognitive requirements, and personality insights."
                         :required="true"
                     />
                 </div>

@@ -356,12 +356,25 @@ const hasSubmittedAnswers = computed(() => {
     );
 });
 
+// Check if answers have been submitted to the server (after reload)
+const hasServerAnswers = computed(() => {
+    if (!props.promptRun.clarifyingAnswers) return false;
+    const answers = props.promptRun.clarifyingAnswers;
+    if (Array.isArray(answers) && answers.length === 0) return false;
+    // At least one answer should be non-null
+    return (
+        Array.isArray(answers) &&
+        answers.some((answer) => answer !== null && answer !== undefined)
+    );
+});
+
 const shouldShowQuestionForm = computed(
     () =>
         hasQuestions.value &&
         currentQuestion.value &&
         !showAllQuestions.value &&
-        !hasSubmittedAnswers.value,
+        !hasSubmittedAnswers.value &&
+        !hasServerAnswers.value,
 );
 
 const bulkSubmitLabel = computed(() =>
@@ -463,7 +476,9 @@ const optionalQuestionsLabel = computed(() => {
         </p>
 
         <AnsweredList
-            v-if="hasSubmittedAnswers && !isEditingAnswers"
+            v-if="
+                (hasSubmittedAnswers || hasServerAnswers) && !isEditingAnswers
+            "
             :questions="allQuestions"
             :answers="promptRun.clarifyingAnswers"
         />

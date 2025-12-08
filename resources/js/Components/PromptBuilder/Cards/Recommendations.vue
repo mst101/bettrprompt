@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Card.vue';
+import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
 
 interface ModelRecommendation {
     rank: number;
@@ -18,44 +19,33 @@ defineProps<Props>();
 
 <template>
     <Card class="space-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">Recommendations</h2>
+        <h2 class="text-lg font-semibold text-indigo-900">Recommendations</h2>
 
         <!-- Model Recommendations -->
         <div v-if="modelRecommendations && modelRecommendations.length > 0">
-            <h3 class="mb-3 text-sm font-medium text-gray-700">
+            <h3 class="mb-3 text-sm font-medium text-indigo-700">
                 Recommended AI Models
             </h3>
             <div class="space-y-3">
                 <div
                     v-for="rec in modelRecommendations"
                     :key="rec.rank"
-                    class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                    class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
                 >
                     <div class="mb-2 flex items-start justify-between">
                         <div class="flex items-center gap-2">
-                            <span
-                                :class="[
-                                    'inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white',
-                                    rec.rank === 1
-                                        ? 'bg-yellow-500'
-                                        : rec.rank === 2
-                                          ? 'bg-gray-400'
-                                          : 'bg-orange-600',
-                                ]"
-                            >
-                                {{ rec.rank }}
-                            </span>
+                            <QuestionNumber class="mr-1" :number="rec.rank" />
                             <div>
-                                <h4 class="font-medium text-gray-900">
+                                <h4 class="font-medium text-indigo-900">
                                     {{ rec.model }}
                                 </h4>
-                                <p class="font-mono text-xs text-gray-500">
+                                <p class="font-mono text-xs text-indigo-600">
                                     {{ rec.model_id }}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-indigo-700">
                         {{ rec.rationale }}
                     </p>
                 </div>
@@ -65,7 +55,7 @@ defineProps<Props>();
         <!-- Iteration Suggestions -->
         <div
             v-if="iterationSuggestions && iterationSuggestions.length > 0"
-            class="rounded-lg border border-blue-200 bg-blue-50 p-4"
+            class="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-4"
         >
             <h3 class="mb-3 text-sm font-medium text-blue-900">
                 Iteration Suggestions
@@ -104,7 +94,7 @@ defineProps<Props>();
                 (!modelRecommendations || modelRecommendations.length === 0) &&
                 (!iterationSuggestions || iterationSuggestions.length === 0)
             "
-            class="text-center text-gray-500"
+            class="text-center text-indigo-500"
         >
             No recommendations available
         </div>
