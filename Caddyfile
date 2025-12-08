@@ -30,7 +30,7 @@ app.localhost {
     @websockets {
         path /app/*
     }
-    reverse_proxy @websockets laravel.test:8080
+    reverse_proxy @websockets reverb:8080
 
     # Regular HTTP traffic to Laravel
     reverse_proxy laravel.test:80
