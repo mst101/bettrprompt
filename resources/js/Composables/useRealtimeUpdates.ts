@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/vue3';
 import type { Channel } from 'laravel-echo';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
 
 interface ReloadOptions {
     only?: string[];
@@ -18,6 +18,7 @@ interface EventHandlers {
  * @param events - Event handlers map
  * @param reloadOptions - Inertia reload options for polling fallback
  * @param pollingInterval - Polling interval in milliseconds (default: 5000)
+ * @param shouldPoll - Optional reactive ref to control when polling should be active
  *
  * @example
  * const { connected, usingFallback } = useRealtimeUpdates(
@@ -26,7 +27,9 @@ interface EventHandlers {
  *         'FrameworkSelected': (data) => console.log('Framework selected', data),
  *         'PromptOptimizationCompleted': (data) => router.reload(),
  *     },
- *     { only: ['promptRun', 'progress'] }
+ *     { only: ['promptRun', 'progress'] },
+ *     5000,
+ *     computed(() => promptRun.status === 'processing')
  * );
  */
 export function useRealtimeUpdates(
@@ -34,6 +37,7 @@ export function useRealtimeUpdates(
     events: EventHandlers,
     reloadOptions?: ReloadOptions,
     pollingInterval: number = 5000,
+    shouldPoll?: Ref<boolean>,
 ) {
     const connected = ref(false);
     const usingFallback = ref(false);
@@ -43,9 +47,20 @@ export function useRealtimeUpdates(
     const startPolling = () => {
         if (pollInterval) return; // Already polling
 
+        // Check if polling should be active (if shouldPoll is provided)
+        if (shouldPoll && !shouldPoll.value) {
+            return;
+        }
+
         usingFallback.value = true;
 
         pollInterval = window.setInterval(() => {
+            // Check if we should still be polling
+            if (shouldPoll && !shouldPoll.value) {
+                stopPolling();
+                return;
+            }
+
             router.reload(reloadOptions);
         }, pollingInterval);
     };
@@ -170,6 +185,21 @@ export function useRealtimeUpdates(
                     }
                 }
             }, 1000);
+        }
+
+        // Watch shouldPoll and start/stop polling accordingly (only if using fallback)
+        if (shouldPoll) {
+            watch(shouldPoll, (newValue) => {
+                if (!usingFallback.value) return; // Only relevant when using fallback
+
+                if (newValue && !pollInterval) {
+                    // Should poll but not currently polling - start it
+                    startPolling();
+                } else if (!newValue && pollInterval) {
+                    // Should not poll but currently polling - stop it
+                    stopPolling();
+                }
+            });
         }
     });
 

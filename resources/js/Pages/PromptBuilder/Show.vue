@@ -186,7 +186,12 @@ const handleProceedToQuestions = async () => {
     activeTab.value = 'questions';
 };
 
-// Real-time updates via Laravel Echo
+// Determine if we should poll for updates (only when workflow is actively processing)
+const shouldPollForUpdates = computed(() => {
+    return props.promptRun.status === 'processing';
+});
+
+// Real-time updates via Laravel Echo with smart polling fallback
 useRealtimeUpdates(
     `prompt-run.${props.promptRun.id}`,
     {
@@ -219,6 +224,8 @@ useRealtimeUpdates(
         },
     },
     { only: ['promptRun'] },
+    5000, // Poll every 5 seconds when WebSockets unavailable
+    shouldPollForUpdates, // Only poll when workflow is processing
 );
 
 // Watch for workflow stage changes and reload if needed (fallback to WebSocket events)
