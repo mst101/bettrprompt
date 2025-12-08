@@ -1,0 +1,240 @@
+[
+    {
+        "success": true,
+        "data": {
+            "optimised_prompt": "You are an expert garden shed designer and construction planner specializing in timber-frame builds. Your role is to help an experienced builder plan and execute a high-quality garden shed project.\n\n## PROJECT CONTEXT\n\nProject Type: Garden shed build from scratch (timber frame)\nPrimary Purpose: Storage for garden tools and equipment\nLocation Constraints: 4m × 2.5m footprint, maximum 2.5m height\nBudget: £500–£1,500\nTimeline: 6 weeks (weekend work only)\nBuilder Profile: Experienced in construction, solo builder, all tools available\nFinish Standard: Polished and finished (not just functional)\nSite Conditions: Well-drained soil\nCompliance: Local building codes and permits apply\n\n## YOUR TASK: DEVELOP A COMPLETE SHED BUILD PLAN\n\nUsing the COAST framework, create a comprehensive plan that addresses Challenge, Objective, Actions, Strategy, and Tactics for this timber-frame shed project.\n\n### CHALLENGE\n\nDefine the core challenge: Design and build a polished, weather-tight timber-frame storage shed within a 4m × 2.5m footprint (max 2.5m height) on well-drained soil, compliant with local building codes, within a £500–£1,500 budget, working solo on weekends over 6 weeks, while maintaining high finish quality.\n\n### OBJECTIVE\n\nState the primary objective: Deliver a structurally sound, aesthetically polished timber-frame shed that:\n- Provides secure, weatherproof storage for garden tools and equipment\n- Fits the specified dimensions and height constraints\n- Complies with all local building codes and permit requirements\n- Achieves a polished, finished appearance (not rough or temporary)\n- Stays within budget and timeline\n- Is built by one person working weekends\n\n### ACTIONS\n\n**CRITICAL REQUIREMENT: Specify concrete, measurable actions with exact details and sequencing.**\n\nBreak the build into specific, sequential phases. For EACH phase, provide:\n\n1. **Exact material specifications** (not just \"timber\" — specify grade, dimensions, fastener types, quantities)\n2. **Precise measurements and dimensions** for every component\n3. **Step-by-step sequencing** (what must be done first, what depends on what)\n4. **Time allocation per phase** (how many weekend sessions per phase)\n5. **Specific tools required** for each phase\n6. **Quality checkpoints** (how to verify each phase meets standards)\n\nExample of required detail level:\n- NOT: \"Build the frame\"\n- YES: \"Cut 4×2 pressure-treated timber posts to 2.4m length (4 posts total). Lay out on level ground in 4m × 2.5m rectangle. Secure corners with 10mm coach bolts (12 bolts total, 3 per corner). Check diagonal measurements (should be 4.27m both directions). Estimated time: 1 weekend session.\"\n\n**Provide a complete phase breakdown** (foundation, frame, walls, roof, doors, finishing) with this level of specificity for every phase.\n\n### STRATEGY\n\nOutline your overall build strategy:\n\n1. **Design approach**: What timber-frame design will you use? (e.g., post-and-beam, stud frame, hybrid)\n2. **Material sourcing strategy**: Where will materials come from? How will you manage delivery/transport?\n3. **Sequencing logic**: Why is this phase order optimal? What dependencies exist?\n4. **Risk mitigation**: What could go wrong at each phase? How will you prevent or handle it?\n5. **Quality assurance**: How will you ensure polished finish standards throughout?\n6. **Permit/compliance strategy**: What permits are needed? How will you document compliance?\n\n### TACTICS\n\nProvide specific tactical decisions:\n\n1. **Foundation choice**: Concrete pad, gravel base, or concrete blocks? Exact specifications.\n2. **Roofing system**: Pitched or flat? Material choice (felt, shingles, corrugated)? Pitch angle if pitched?\n3. **Wall cladding**: Timber boarding, plywood, or other? Finish treatment?\n4. **Door/window specifications**: Size, type, hinges, locking mechanism?\n5. **Finishing details**: Paint/stain colors, trim details, guttering?\n6. **Weekend workflow**: How many hours per weekend? What's the realistic pace?\n\n## COUNTERBALANCE INJECTIONS\n\n**DETAIL SPECIFICATION REQUIREMENT:**\nYour natural preference may be to leave details flexible and \"figure it out as you go.\" This project requires the opposite. Every decision must be specified in advance with exact measurements, material grades, fastener types, and sequencing. This upfront specificity will actually enable faster, cleaner execution and fewer weekend delays.\n\n**STRUCTURE AS ENABLER:**\nFrame the detailed plan not as rigid constraints, but as flexibility checkpoints. Each phase completion point allows you to assess, adjust, and optimize before moving forward. This structured approach prevents costly rework and keeps the 6-week timeline realistic.\n\n**CONCRETE GROUNDING:**\nYour design vision must translate into measurable specifications. For every design choice (e.g., \"timber-frame aesthetic\"), specify:\n- Exact timber dimensions and grades\n- Fastener types and spacing\n- Finish treatments and colors\n- Measurement tolerances\n\nDo not leave these as \"to be determined.\"\n\n## CONSTRAINTS\n\n- Budget: £500–£1,500 (hard limit)\n- Space: 4m × 2.5m footprint, max 2.5m height\n- Timeline: 6 weeks, weekend work only (estimate 8–12 hours per weekend available)\n- Solo builder: No permanent help; plan for tasks that one person can safely execute\n- Compliance: Must meet local building codes and obtain required permits\n- Finish: Polished appearance required (not rough or temporary)\n- Site: Well-drained soil (no drainage issues, but foundation must be appropriate)\n\n## OUTPUT SPECIFICATION\n\nProvide your response in this exact structure:\n\n**1. CHALLENGE STATEMENT** (2–3 sentences)\n\n**2. OBJECTIVE STATEMENT** (3–4 bullet points)\n\n**3. ACTIONS — COMPLETE PHASE BREAKDOWN**\n\nFor each of the following phases, provide the detail level shown in the example above:\n\n- Phase 1: Site Preparation & Foundation\n- Phase 2: Timber Frame & Posts\n- Phase 3: Wall Framing & Cladding\n- Phase 4: Roof Structure & Covering\n- Phase 5: Doors, Windows & Hardware\n- Phase 6: Finishing & Polishing\n\nFor EACH phase include:\n  - Exact materials (with dimensions, grades, quantities)\n  - Step-by-step sequence (numbered)\n  - Time estimate (number of weekend sessions)\n  - Tools required\n  - Quality checkpoints\n  - Common issues & how to prevent them\n\n**4. STRATEGY** (5 subsections as outlined above)\n\n**5. TACTICS** (6 subsections as outlined above)\n\n**6. RISK & CONTINGENCY PLANNING**\n\nIdentify:\n- What could delay the 6-week timeline?\n- What could cause budget overruns?\n- What could compromise finish quality?\n- Specific mitigation for each\n\n**7. PERMIT & COMPLIANCE CHECKLIST**\n\nProvide a checklist of:\n- Permits needed (based on typical UK requirements)\n- Documentation to gather\n- Inspections required\n- How to verify compliance at each phase\n\n## QUALITY CRITERIA\n\nYour plan will be evaluated on:\n\n✓ **Specificity**: Every material, measurement, and step is concrete and measurable (not vague)\n✓ **Sequencing**: Phase order is logical and dependencies are clear\n✓ **Completeness**: All six phases are fully detailed; no gaps or \"figure it out later\" sections\n✓ **Realism**: Timeline, budget, and solo-builder feasibility are realistic for an experienced builder\n✓ **Finish Quality**: Plan explicitly addresses how polished appearance will be achieved\n✓ **Compliance**: Building codes and permit requirements are addressed\n✓ **Risk Awareness**: Potential problems are identified with mitigation strategies\n✓ **Flexibility Checkpoints**: Structure allows for weekend-by-weekend assessment and adjustment\n\nBegin your response with the CHALLENGE STATEMENT.",
+            "metadata": {
+                "framework_used": {
+                    "name": "COAST Framework",
+                    "code": "COAST",
+                    "components": [
+                        "Challenge",
+                        "Objective",
+                        "Actions",
+                        "Strategy",
+                        "Tactics"
+                    ],
+                    "explanation": "COAST was selected for this moderate-complexity project management task. The framework's sequential structure (Challenge → Objective → Actions → Strategy → Tactics) maps naturally to a construction project where each phase builds on previous decisions. The framework also supports the detailed, phase-based planning required by the counterbalancing injections."
+                },
+                "task_trait_alignment": {
+                    "amplified": [
+                        {
+                            "trait": "High T (84%)",
+                            "requirement_aligned": "OBJECTIVE_ANALYSIS",
+                            "how_applied": "Prompt leverages natural analytical strength by requesting evidence-based material choices, logical sequencing, and risk analysis. User's preference for data-driven decisions is positioned as an asset for evaluating timber grades, fastener specifications, and structural calculations."
+                        },
+                        {
+                            "trait": "High A (84%)",
+                            "requirement_aligned": "DECISIVE_RECOMMENDATIONS",
+                            "how_applied": "Prompt capitalizes on assertive confidence by requesting clear, committed decisions at each phase (not hedged options). User's natural decisiveness is framed as enabling faster execution and fewer delays. Confidence in design choices is positioned as appropriate for an experienced builder."
+                        },
+                        {
+                            "trait": "High N (64%)",
+                            "requirement_aligned": "CREATIVE_INNOVATION",
+                            "how_applied": "Prompt invites strategic thinking about design approach, material sourcing, and workflow optimization. User's intuitive strength for seeing patterns and possibilities is leveraged for considering unconventional timber-frame designs and efficiency improvements within constraints."
+                        }
+                    ],
+                    "counterbalanced": [
+                        {
+                            "trait": "High P (57%)",
+                            "requirement_opposed": "DETAILED_EXECUTION_PLANNING",
+                            "reason": "Perceiving preference may lead to underspecifying materials, measurements, or sequencing. User may want to 'figure it out as they go' rather than plan thoroughly upfront. For a polished finish on a 6-week timeline, this approach risks delays, budget overruns, and quality issues.",
+                            "injections_added": [
+                                "CRITICAL REQUIREMENT: Specify concrete, measurable actions with exact details and sequencing.",
+                                "For EACH phase, provide: 1) Exact material specifications (not just 'timber' — specify grade, dimensions, fastener types, quantities) 2) Precise measurements and dimensions for every component 3) Step-by-step sequencing 4) Time allocation per phase 5) Specific tools required 6) Quality checkpoints",
+                                "Example of required detail level: NOT: 'Build the frame' — YES: 'Cut 4×2 pressure-treated timber posts to 2.4m length (4 posts total)...'",
+                                "Provide a complete phase breakdown (foundation, frame, walls, roof, doors, finishing) with this level of specificity for every phase.",
+                                "Every decision must be specified in advance with exact measurements, material grades, fastener types, and sequencing."
+                            ]
+                        },
+                        {
+                            "trait": "High P (57%)",
+                            "requirement_opposed": "STRUCTURED_PLANNING",
+                            "reason": "Perceiving preference may resist rigid organization or detailed checklists. Could skip documentation or planning phases. However, structured planning is essential for solo weekend work and permit compliance.",
+                            "injections_added": [
+                                "STRUCTURE AS ENABLER: Frame the detailed plan not as rigid constraints, but as flexibility checkpoints. Each phase completion point allows you to assess, adjust, and optimize before moving forward. This structured approach prevents costly rework and keeps the 6-week timeline realistic.",
+                                "Flexibility checkpoints: Structure allows for weekend-by-weekend assessment and adjustment."
+                            ]
+                        },
+                        {
+                            "trait": "High N (64%)",
+                            "requirement_opposed": "CONCRETE_DETAIL_SPECIFICATION",
+                            "reason": "Intuitive preference for big-picture concepts may cause user to gloss over concrete, practical details like fastener types, foundation requirements, or tool specifications. For a polished, compliant build, these details are non-negotiable.",
+                            "injections_added": [
+                                "CONCRETE GROUNDING: Your design vision must translate into measurable specifications. For every design choice (e.g., 'timber-frame aesthetic'), specify: Exact timber dimensions and grades, Fastener types and spacing, Finish treatments and colors, Measurement tolerances. Do not leave these as 'to be determined.'",
+                                "Exact materials (with dimensions, grades, quantities) for each phase",
+                                "Precise measurements and dimensions for every component",
+                                "Quality checkpoints (how to verify each phase meets standards)"
+                            ]
+                        }
+                    ],
+                    "neutral": [
+                        {
+                            "trait": "High I (65%)",
+                            "reason": "Introversion/Extraversion is not directly relevant to shed-building task execution, planning, or material decisions. No adjustment needed."
+                        }
+                    ]
+                },
+                "personality_adjustments_summary": [
+                    "AMPLIFIED: High T (84%) — Leveraged analytical strength for evidence-based material choices, logical sequencing, and risk analysis",
+                    "AMPLIFIED: High A (84%) — Leveraged assertive confidence for clear, committed design decisions and decisive execution",
+                    "AMPLIFIED: High N (64%) — Leveraged intuitive strength for strategic design thinking and efficiency optimization",
+                    "COUNTERBALANCED: High P (57%) — Injected explicit requirements for concrete specifications, exact measurements, and detailed sequencing to prevent 'figure it out as you go' approach",
+                    "COUNTERBALANCED: High P (57%) — Reframed structure as 'flexibility checkpoints' rather than rigid constraints to align with Perceiving preference",
+                    "COUNTERBALANCED: High N (64%) — Forced translation of design vision into measurable specifications (timber grades, fastener types, finish treatments) to prevent glossing over practical details"
+                ],
+                "model_recommendations": [
+                    {
+                        "rank": 1,
+                        "model": "Claude 3.5 Sonnet",
+                        "model_id": "claude-3-5-sonnet-20241022",
+                        "rationale": "This prompt requires strong structural reasoning (COAST framework application), detailed technical specification (materials, dimensions, sequencing), and sophisticated counterbalance handling (reframing structure as enabler, forcing concrete grounding of abstract concepts). Sonnet excels at maintaining complex multi-part structures while applying nuanced personality-based adjustments. The counterbalancing injections require the model to understand and apply psychological reframing (P-preference as 'flexibility checkpoints'), which Sonnet handles with precision. Recommended for full-quality output."
+                    },
+                    {
+                        "rank": 2,
+                        "model": "Claude 3 Opus",
+                        "model_id": "claude-3-opus-20250219",
+                        "rationale": "Opus provides equivalent quality to Sonnet for this task and may offer slightly better reasoning for the risk/contingency planning section. Slightly slower and more expensive, but handles complex counterbalancing with equal sophistication. Choose if budget allows and maximum reasoning depth is desired."
+                    },
+                    {
+                        "rank": 3,
+                        "model": "Claude 3 Haiku",
+                        "model_id": "claude-3-5-haiku-20241022",
+                        "rationale": "Budget-conscious option. Haiku can handle the COAST framework and basic counterbalancing, but may struggle with the depth of technical specification required (exact fastener types, material grades, measurement tolerances across six phases). Risk of under-specifying details, which defeats the purpose of the counterbalancing injections. Use only if cost is critical constraint; recommend reviewing output carefully for specification completeness."
+                    }
+                ],
+                "iteration_suggestions": [
+                    "If the initial response under-specifies materials or measurements, iterate with: 'For Phase [X], I need more specificity on [component]. Provide exact dimensions, material grades, fastener types, and quantities. Do not use approximations.'",
+                    "If the response glosses over permit/compliance requirements, iterate with: 'Expand the Permit & Compliance Checklist. Include specific UK building codes that apply, inspection points, and documentation needed for approval.'",
+                    "If the response presents multiple options rather than committed decisions, iterate with: 'For each decision point, provide ONE recommended choice with clear reasoning. Avoid 'you could also' alternatives; commit to the best approach for this specific project.'",
+                    "If the timeline feels unrealistic, iterate with: 'Review the time estimates for each phase. For a solo builder working weekends, are these realistic? Adjust phase breakdown if needed to fit 6 weeks.'",
+                    "If the response doesn't address the 'polished finish' requirement adequately, iterate with: 'Expand the finishing section. How will you achieve a polished appearance? Specify paint/stain colors, trim details, surface treatments, and quality standards for each visible surface.'"
+                ]
+            }
+        },
+        "original_input": {
+            "original_task_description": "I want to build a garden shed.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
+            },
+            "analysis_data": {
+                "task_classification": {
+                    "primary_category": "PROBLEM_SOLVING",
+                    "secondary_category": "CREATION_TECHNICAL",
+                    "complexity": "moderate",
+                    "classification_reasoning": "Building a garden shed involves troubleshooting design decisions, material selection, and step-by-step execution planning. It combines problem-solving (how to build it) with technical creation (specifications, design, materials).",
+                    "content_type": null
+                },
+                "cognitive_requirements": {
+                    "primary": ["DETAIL", "OBJECTIVE", "STRUCTURE"],
+                    "secondary": ["RISK", "EXPLORE"],
+                    "reasoning": "Shed building requires concrete step-by-step planning (DETAIL), logical material/design decisions (OBJECTIVE), clear organization of tasks (STRUCTURE), identification of potential problems (RISK), and consideration of multiple design approaches (EXPLORE)."
+                },
+                "selected_framework": {
+                    "name": "COAST",
+                    "code": "COAST",
+                    "components": [
+                        "Challenge",
+                        "Objective",
+                        "Actions",
+                        "Strategy",
+                        "Tactics"
+                    ],
+                    "rationale": "COAST is ideal for project management and construction planning. It provides structured progression from defining the challenge (what shed do you want?) through objective (end state), actions (concrete steps), strategy (overall approach), and tactics (specific methods). This matches the moderate complexity of a DIY shed build."
+                },
+                "personality_tier": "full",
+                "task_trait_alignment": {
+                    "NOTE": "Analyzing ONLY the user's actual traits: I(65%), N(64%), T(84%), P(57%), A(84%)",
+                    "amplified": [
+                        {
+                            "trait": "High T (84%)",
+                            "requirement_aligned": "OBJECTIVE",
+                            "reason": "Logical, evidence-based material and design decisions are a natural strength. User will naturally evaluate options analytically rather than emotionally."
+                        },
+                        {
+                            "trait": "High A (84%)",
+                            "requirement_aligned": "DECISIVE",
+                            "reason": "Assertive confidence supports making clear design choices and committing to a build plan without excessive second-guessing."
+                        },
+                        {
+                            "trait": "High N (64%)",
+                            "requirement_aligned": "EXPLORE",
+                            "reason": "Intuitive preference for patterns and possibilities means user can naturally consider multiple design approaches and unconventional solutions."
+                        }
+                    ],
+                    "counterbalanced": [
+                        {
+                            "trait": "High P (57%)",
+                            "requirement_opposed": "DETAIL",
+                            "reason": "Perceiving preference may lead to underspecifying materials, measurements, or step-by-step sequencing. User may want to 'figure it out as they go' rather than plan thoroughly upfront.",
+                            "injection": "Prompt must explicitly require: specific material list with dimensions, detailed step-by-step build sequence, timeline with milestones, and contingency planning for common issues."
+                        },
+                        {
+                            "trait": "High P (57%)",
+                            "requirement_opposed": "STRUCTURE",
+                            "reason": "May resist rigid organization or detailed checklists. Could skip documentation or planning phases.",
+                            "injection": "Frame structure as 'flexibility checkpoints' rather than rigid constraints. Present organization as enabling faster iteration, not limiting it."
+                        },
+                        {
+                            "trait": "High N (64%)",
+                            "requirement_opposed": "DETAIL",
+                            "reason": "Intuitive preference for big-picture concepts may cause user to gloss over concrete, practical details like fastener types, foundation requirements, or tool specifications.",
+                            "injection": "Prompt must ground abstract design choices in concrete specifications. Require translation of 'vision' into measurable, specific requirements."
+                        }
+                    ],
+                    "neutral": [
+                        {
+                            "trait": "High I (65%)",
+                            "reason": "Introversion/Extraversion is not directly relevant to shed-building task execution or planning."
+                        }
+                    ]
+                }
+            },
+            "question_answers": [
+                {
+                    "question": "What is the primary purpose of this shed — storage (tools, equipment), workspace (workshop, potting area), or shelter (covered seating, garden retreat)?",
+                    "answer": "Storage for garden tools and equipment"
+                },
+                {
+                    "question": "What are your hard constraints: budget range, available space (dimensions), timeline to completion, and skill level (beginner, intermediate, experienced builder)?",
+                    "answer": "£500 - £1500. I am experienced in construction. 4 x 2.5m and no more than 2.5 m high. 6 weeks timeline"
+                },
+                {
+                    "question": "Are you building from scratch, using a kit, or modifying an existing structure? Do you have a preferred style or aesthetic?",
+                    "answer": "from scratch. timber frame"
+                },
+                {
+                    "question": "What tools do you already own or have access to? Are there tools you'd need to purchase or rent?",
+                    "answer": "I have all tools"
+                },
+                {
+                    "question": "Are there local building codes, zoning restrictions, or permit requirements you need to comply with?",
+                    "answer": "Yes"
+                },
+                {
+                    "question": "What climate or weather conditions will the shed face (rain, snow load, wind, temperature extremes)? What's your soil/ground condition?",
+                    "answer": "Well-drained soil"
+                },
+                {
+                    "question": "Do you want to work solo or with help? How much time per week can you dedicate to this project?",
+                    "answer": "Solo at weekends"
+                },
+                {
+                    "question": "What's your tolerance for imperfection — are you aiming for 'functional and weatherproof' or 'polished and finished'?",
+                    "answer": "Polished"
+                }
+            ]
+        },
+        "api_usage": {
+            "model": "claude-haiku-4-5-20251001",
+            "input_tokens": 10021,
+            "output_tokens": 4244
+        },
+        "error": null
+    }
+]

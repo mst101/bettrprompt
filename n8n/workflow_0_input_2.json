@@ -1,0 +1,54 @@
+[
+    {
+        "headers": {
+            "host": "n8n:5678",
+            "user-agent": "GuzzleHttp/7",
+            "content-type": "application/json",
+            "content-length": "552"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+            "task_description": "I want to build a garden shed.",
+            "user_context": {
+                "location": {
+                    "country": null,
+                    "country_code": null,
+                    "region": null,
+                    "city": null,
+                    "timezone": null,
+                    "currency": null,
+                    "language": null
+                },
+                "professional": {
+                    "job_title": null,
+                    "industry": null,
+                    "experience_level": null,
+                    "company_size": null
+                },
+                "team": {
+                    "size": null,
+                    "role": null,
+                    "work_mode": null
+                },
+                "preferences": {
+                    "budget_consciousness": null,
+                    "preferred_tools": [],
+                    "primary_programming_language": null
+                },
+                "personality": {
+                    "type": "INTP-A",
+                    "trait_percentages": {
+                        "mind": 65,
+                        "energy": 64,
+                        "nature": 84,
+                        "tactics": 57,
+                        "identity": 84
+                    }
+                }
+            }
+        },
+        "webhookUrl": "https://n8n.localhost/webhook/api/n8n/webhook/pre-analysis",
+        "executionMode": "production"
+    }
+]

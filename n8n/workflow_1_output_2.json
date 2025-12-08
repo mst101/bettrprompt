@@ -1,0 +1,165 @@
+[
+    {
+        "success": true,
+        "data": {
+            "task_classification": {
+                "primary_category": "PROBLEM_SOLVING",
+                "secondary_category": "CREATION_TECHNICAL",
+                "complexity": "moderate",
+                "classification_reasoning": "Building a garden shed involves troubleshooting design decisions, material selection, and step-by-step execution planning. It combines problem-solving (how to build it) with technical creation (specifications, design, materials).",
+                "content_type": null
+            },
+            "cognitive_requirements": {
+                "primary": ["DETAIL", "OBJECTIVE", "STRUCTURE"],
+                "secondary": ["RISK", "EXPLORE"],
+                "reasoning": "Shed building requires concrete step-by-step planning (DETAIL), logical material/design decisions (OBJECTIVE), clear organization of tasks (STRUCTURE), identification of potential problems (RISK), and consideration of multiple design approaches (EXPLORE)."
+            },
+            "selected_framework": {
+                "name": "COAST",
+                "code": "COAST",
+                "components": [
+                    "Challenge",
+                    "Objective",
+                    "Actions",
+                    "Strategy",
+                    "Tactics"
+                ],
+                "rationale": "COAST is ideal for project management and construction planning. It provides structured progression from defining the challenge (what shed do you want?) through objective (end state), actions (concrete steps), strategy (overall approach), and tactics (specific methods). This matches the moderate complexity of a DIY shed build."
+            },
+            "alternative_frameworks": [
+                {
+                    "name": "CRISPE",
+                    "code": "CRISPE",
+                    "when_to_use_instead": "If detailed technical specifications and documentation are the priority over project sequencing"
+                },
+                {
+                    "name": "GOPA",
+                    "code": "GOPA",
+                    "when_to_use_instead": "If focus is on goal-setting and obstacle identification rather than full project execution"
+                }
+            ],
+            "personality_tier": "full",
+            "task_trait_alignment": {
+                "NOTE": "Analyzing ONLY the user's actual traits: I(65%), N(64%), T(84%), P(57%), A(84%)",
+                "amplified": [
+                    {
+                        "trait": "High T (84%)",
+                        "requirement_aligned": "OBJECTIVE",
+                        "reason": "Logical, evidence-based material and design decisions are a natural strength. User will naturally evaluate options analytically rather than emotionally."
+                    },
+                    {
+                        "trait": "High A (84%)",
+                        "requirement_aligned": "DECISIVE",
+                        "reason": "Assertive confidence supports making clear design choices and committing to a build plan without excessive second-guessing."
+                    },
+                    {
+                        "trait": "High N (64%)",
+                        "requirement_aligned": "EXPLORE",
+                        "reason": "Intuitive preference for patterns and possibilities means user can naturally consider multiple design approaches and unconventional solutions."
+                    }
+                ],
+                "counterbalanced": [
+                    {
+                        "trait": "High P (57%)",
+                        "requirement_opposed": "DETAIL",
+                        "reason": "Perceiving preference may lead to underspecifying materials, measurements, or step-by-step sequencing. User may want to 'figure it out as they go' rather than plan thoroughly upfront.",
+                        "injection": "Prompt must explicitly require: specific material list with dimensions, detailed step-by-step build sequence, timeline with milestones, and contingency planning for common issues."
+                    },
+                    {
+                        "trait": "High P (57%)",
+                        "requirement_opposed": "STRUCTURE",
+                        "reason": "May resist rigid organization or detailed checklists. Could skip documentation or planning phases.",
+                        "injection": "Frame structure as 'flexibility checkpoints' rather than rigid constraints. Present organization as enabling faster iteration, not limiting it."
+                    },
+                    {
+                        "trait": "High N (64%)",
+                        "requirement_opposed": "DETAIL",
+                        "reason": "Intuitive preference for big-picture concepts may cause user to gloss over concrete, practical details like fastener types, foundation requirements, or tool specifications.",
+                        "injection": "Prompt must ground abstract design choices in concrete specifications. Require translation of 'vision' into measurable, specific requirements."
+                    }
+                ],
+                "neutral": [
+                    {
+                        "trait": "High I (65%)",
+                        "reason": "Introversion/Extraversion is not directly relevant to shed-building task execution or planning."
+                    }
+                ]
+            },
+            "personality_adjustments_preview": [
+                "AMPLIFIED: Leveraging High T analytical strength for material/design decisions and High A confidence for decisive planning",
+                "AMPLIFIED: Using High N openness to explore multiple design approaches and solutions",
+                "COUNTERBALANCED: Injecting explicit requirements for detailed specifications, step-by-step sequencing, and concrete measurements (to offset P and N tendencies toward abstraction)",
+                "COUNTERBALANCED: Framing structure as 'flexibility checkpoints' rather than rigid constraints to align with P preference"
+            ],
+            "clarifying_questions": [
+                {
+                    "id": "Q1",
+                    "question": "What is the primary purpose of this shed — storage (tools, equipment), workspace (workshop, potting area), or shelter (covered seating, garden retreat)?",
+                    "purpose": "Clarify functional requirements that drive design decisions",
+                    "required": true
+                },
+                {
+                    "id": "Q2",
+                    "question": "What are your hard constraints: budget range, available space (dimensions), timeline to completion, and skill level (beginner, intermediate, experienced builder)?",
+                    "purpose": "Define boundaries for design and material selection",
+                    "required": true
+                },
+                {
+                    "id": "Q3",
+                    "question": "Are you building from scratch, using a kit, or modifying an existing structure? Do you have a preferred style or aesthetic?",
+                    "purpose": "Establish starting point and design direction",
+                    "required": true
+                },
+                {
+                    "id": "Q4",
+                    "question": "What tools do you already own or have access to? Are there tools you'd need to purchase or rent?",
+                    "purpose": "Assess feasibility and identify resource gaps",
+                    "required": true
+                },
+                {
+                    "id": "Q5",
+                    "question": "Are there local building codes, zoning restrictions, or permit requirements you need to comply with?",
+                    "purpose": "Identify regulatory constraints before planning",
+                    "required": true
+                },
+                {
+                    "id": "Q6",
+                    "question": "What climate or weather conditions will the shed face (rain, snow load, wind, temperature extremes)? What's your soil/ground condition?",
+                    "purpose": "Determine material durability and foundation requirements",
+                    "required": true
+                },
+                {
+                    "id": "Q7",
+                    "question": "Do you want to work solo or with help? How much time per week can you dedicate to this project?",
+                    "purpose": "Establish realistic timeline and labor approach",
+                    "required": false
+                },
+                {
+                    "id": "Q8",
+                    "question": "What's your tolerance for imperfection — are you aiming for 'functional and weatherproof' or 'polished and finished'?",
+                    "purpose": "Calibrate quality expectations and effort required",
+                    "required": false
+                }
+            ],
+            "question_rationale": "Questions focus on functional purpose, constraints (budget/space/time/skill), design direction, resource availability, regulatory compliance, environmental factors, and quality expectations. These establish the concrete parameters needed to translate the abstract goal into a detailed build plan. Questions avoid asking about personality or general shed knowledge—they target specific project variables. Sequencing moves from purpose → constraints → design → resources → environment → timeline → quality, following logical project planning flow."
+        },
+        "original_input": {
+            "task_description": "I want to build a garden shed.",
+            "personality_type": "INTP-A",
+            "trait_percentages": {
+                "mind": 65,
+                "energy": 64,
+                "nature": 84,
+                "tactics": 57,
+                "identity": 84
+            },
+            "forced_framework_code": null
+        },
+        "api_usage": {
+            "model": "claude-haiku-4-5-20251001",
+            "input_tokens": 16109,
+            "output_tokens": 1894
+        },
+        "error": null
+    }
+]

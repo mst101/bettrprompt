@@ -1,0 +1,32 @@
+[
+    {
+        "headers": {
+            "host": "n8n:5678",
+            "user-agent": "GuzzleHttp/7",
+            "content-type": "application/json",
+            "content-length": "292"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+            "task_description": "I want to dress nicely.",
+            "user_context": {
+                "location": {
+                    "country": "United Kingdom",
+                    "country_code": "GB",
+                    "region": "England",
+                    "city": "London",
+                    "timezone": "Europe/London",
+                    "currency": "GBP",
+                    "language": "en-GB"
+                },
+                "professional": null,
+                "team": null,
+                "preferences": null,
+                "personality": null
+            }
+        },
+        "webhookUrl": "https://n8n.localhost/webhook/api/n8n/webhook/pre-analysis",
+        "executionMode": "production"
+    }
+]
