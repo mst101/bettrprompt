@@ -4,38 +4,27 @@ namespace App\Events;
 
 use App\Models\PromptRun;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class PreAnalysisCompleted implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, SerializesModels;
 
     /**
      * Create a new event instance.
      */
     public function __construct(
         public PromptRun $promptRun
-    ) {
-        Log::info('PreAnalysisCompleted::__construct() called', [
-            'prompt_run_id' => $promptRun->id,
-        ]);
-    }
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
      */
     public function broadcastOn(): Channel
     {
-        $channelName = 'prompt-run.'.$this->promptRun->id;
-        Log::info('PreAnalysisCompleted::broadcastOn() called', [
-            'prompt_run_id' => $this->promptRun->id,
-            'channel' => $channelName,
-        ]);
-        return new Channel($channelName);
+        return new Channel('prompt-run.'.$this->promptRun->id);
     }
 
     /**
@@ -43,10 +32,6 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
-        Log::info('PreAnalysisCompleted::broadcastAs() called', [
-            'prompt_run_id' => $this->promptRun->id,
-            'channel' => 'prompt-run.'.$this->promptRun->id,
-        ]);
         return 'PreAnalysisCompleted';
     }
 
@@ -57,14 +42,10 @@ class PreAnalysisCompleted implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
-        $data = [
+        return [
             'prompt_run_id' => $this->promptRun->id,
             'workflow_stage' => $this->promptRun->workflow_stage,
             'questions_count' => count($this->promptRun->pre_analysis_questions ?? []),
         ];
-        Log::info('PreAnalysisCompleted::broadcastWith() called', [
-            'data' => $data,
-        ]);
-        return $data;
     }
 }

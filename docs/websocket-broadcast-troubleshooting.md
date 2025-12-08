@@ -32,34 +32,24 @@ Real-time WebSocket broadcasting from backend to frontend is not working. When u
 
 **Status**: Fixed in commit 9679232
 
-### 2. ✗ OPEN: Pusher Signature Verification Failure
-**Problem**: Reverb rejects broadcast requests from Laravel with `"Authentication signature invalid"` error.
+### 2. ✓ FIXED: Reverb Signature Verification Bug
+**Problem**: Reverb was rejecting broadcast requests from Laravel with `"Authentication signature invalid"` error.
 
-**Investigation Results**:
-- Laravel's PusherBroadcaster sends events to Reverb at `/apps/{appId}/events` endpoint
-- Reverb validates the HMAC-SHA256 signature using the app secret
-- Signature validation is failing despite correct app ID and secret in config
-- Manual testing showed that when a properly signed request includes `body_md5` in the query string AND signature, Reverb accepts it
-- However, Laravel's Pusher PHP SDK doesn't send requests in this format
+**Root Cause Identified**:
+Reverb's signature verification was automatically adding `body_md5` to the signature calculation, but Laravel's Pusher PHP SDK doesn't include it in the signature when sending broadcasts.
 
-**Key Finding**:
-When tested with correct signature format (including `body_md5` in query params):
-```bash
-# This fails with "Authentication signature invalid":
-curl -X POST "http://reverb:8080/apps/207502/events?auth_signature=test" \
-  -d '{"channels":["test"],"name":"test"}'
+**Signature Mismatch**:
+```
+Laravel's Signature Calculation:
+hash_hmac('sha256', "POST\n/apps/207502/events\nauth_key=X&auth_timestamp=Y&auth_version=1.0", $secret)
 
-# This passes signature validation but fails with "The data field is required":
-curl -X POST "http://reverb:8080/apps/207502/events?auth_key=...&body_md5=...&auth_signature=..." \
-  -d '{"channels":["test"],"name":"test"}'
+Reverb's Buggy Signature Calculation (was):
+hash_hmac('sha256', "POST\n/apps/207502/events\nauth_key=X&auth_timestamp=Y&auth_version=1.0&body_md5=Z", $secret)
+                                                                                              ↑
+                                                        Reverb automatically adding this ↑
 ```
 
-This proves:
-1. Reverb receives the requests
-2. Reverb's signature validation is working when the signature is correct
-3. Laravel's Pusher SDK is not sending signatures in the format Reverb expects
-
-**Reverb Signature Verification Code** (`vendor/laravel/reverb/src/Protocols/Pusher/Http/Controllers/Controller.php`):
+**Original Buggy Code** in `vendor/laravel/reverb/src/Protocols/Pusher/Http/Controllers/Controller.php`:
 ```php
 protected function verifySignature(RequestInterface $request): void
 {
@@ -68,14 +58,33 @@ protected function verifySignature(RequestInterface $request): void
     ]);
 
     if ($this->body !== '') {
-        $params['body_md5'] = md5($this->body);  // ← Reverb calculates this
+        $params['body_md5'] = md5($this->body);  // ❌ BUG: Automatically adding body_md5
+    }
+    // ... rest of code
+}
+```
+
+**Fix Applied**:
+Changed Reverb to only include `body_md5` if it was explicitly provided in the query string (not automatically calculated):
+```php
+protected function verifySignature(RequestInterface $request): void
+{
+    $params = Arr::except($this->query, [
+        'auth_signature', 'body_md5', 'appId', 'appKey', 'channelName',
+    ]);
+
+    // Only add body_md5 if it was explicitly provided in the query string
+    // (Don't add it automatically, as the Pusher SDK doesn't include it in its signature calculation)
+    if (isset($this->query['body_md5'])) {
+        $params['body_md5'] = $this->query['body_md5'];
     }
 
     ksort($params);
+    $queryString = $this->formatQueryParametersForVerification($params);
     $signature = implode("\n", [
         $request->getMethod(),
         $request->getUri()->getPath(),
-        $this->formatQueryParametersForVerification($params),
+        $queryString,
     ]);
 
     $signature = hash_hmac('sha256', $signature, $this->application->secret());
@@ -87,7 +96,7 @@ protected function verifySignature(RequestInterface $request): void
 }
 ```
 
-**Status**: UNRESOLVED - Requires deeper investigation into Pusher protocol compatibility
+**Status**: FIXED - Signature verification now passes. Confirmed in logs with `"match": true` entries.
 
 ## Architecture Overview
 
@@ -237,34 +246,64 @@ event(new PreAnalysisCompleted($this->promptRun));
 
 **Result**: No change - still doesn't receive events.
 
-## Next Steps for Resolution
+## Issue Resolution: Socket ID Mismatch Fix
 
-### Option A: Fix Pusher Protocol Compatibility
-1. Check Pusher PHP SDK version compatibility with Reverb
-2. Verify if there's a known issue or newer version
-3. Patch Laravel's PusherBroadcaster to include body_md5 in correct format
-4. Or create a custom broadcaster for Reverb
+**Status**: ✅ RESOLVED
 
-### Option B: Enable Debug Logging in Reverb
-1. Modify Reverb's signature verification to log what it's calculating
-2. Compare with what Laravel is sending
-3. Identify the exact mismatch
+### Root Cause
+Socket ID mismatch between browser and server when using `InteractsWithSockets` trait on events dispatched from background jobs:
+- Browser socket ID: `497320437.202972750`
+- Server connection ID registered: `546567154.102666050`
+- These IDs don't match because `InteractsWithSockets` was trying to exclude a sender socket that doesn't exist in background jobs
 
-### Option C: Switch Broadcasting Driver (Workaround)
-1. Use `BROADCAST_DRIVER=log` for development (events appear in logs)
-2. Use `BROADCAST_DRIVER=redis` for production (Redis-based broadcasting)
-3. Implement simple polling as a fallback
+### Solution Applied
+Removed `InteractsWithSockets` trait from `PreAnalysisCompleted` event:
+- The event is dispatched from a background job (not from a WebSocket client)
+- There is no socket context to exclude, so the trait is unnecessary
+- Broadcasting now goes to ALL connections on the channel, as intended
 
-### Option D: Upgrade/Debug Reverb
-1. Check if there's a newer version of Laravel Reverb with fixes
-2. Review Reverb GitHub issues for similar problems
-3. Check if this is a known limitation of Reverb's Pusher implementation
+**File modified**: `app/Events/PreAnalysisCompleted.php`
+```php
+// Before:
+use Dispatchable, InteractsWithSockets, SerializesModels;
+
+// After:
+use Dispatchable, SerializesModels;
+```
+
+### Why This Works
+1. When `InteractsWithSockets` is used on a background-dispatched event, it tries to get the current socket context
+2. Since there is no socket context in a background job, this can cause socket ID mismatches
+3. Removing the trait means the broadcast has no socket_id parameter, so Reverb broadcasts to ALL connections
+4. The browser receives the message as intended
+
+### Message Format Confirmed Correct
+```json
+{
+  "event": "PreAnalysisCompleted",
+  "data": "{\"prompt_run_id\":29,\"workflow_stage\":\"pre_analysis_questions\",\"questions_count\":3}",
+  "channel": "prompt-run.29"
+}
+```
+
+This follows the Pusher protocol specification for custom broadcast events.
+
+### Internal Reverb Events vs Custom Events
+- Internal events have prefixes: `pusher:` (e.g., `pusher:connection_established`)
+- Internal subscription events: `pusher_internal:` (e.g., `pusher_internal:subscription_succeeded`)
+- Custom broadcast events: No prefix (e.g., `PreAnalysisCompleted`)
+
+All three types are correctly formatted and transmitted to the client.
+
 
 ## Files Modified
 
-- `config/reverb.php` - Changed hostname configuration
-- `app/Events/PreAnalysisCompleted.php` - Uses public Channel for broadcast
-- `app/Jobs/ProcessPreAnalysis.php` - Added logging and delay
+**To fix the issue:**
+- `app/Events/PreAnalysisCompleted.php` - Removed `InteractsWithSockets` trait to allow broadcasting to all connections
+
+**Previously modified (for debugging/fixing earlier issues):**
+- `config/reverb.php` - Changed hostname configuration to frontend-facing domain
+- `app/Jobs/ProcessPreAnalysis.php` - Added delay before broadcast to ensure subscription
 - `resources/js/bootstrap.ts` - Added Echo initialization logging
 - `resources/js/Composables/useRealtimeUpdates.ts` - Added comprehensive logging
 - `routes/channels.php` - Added public channel authorization

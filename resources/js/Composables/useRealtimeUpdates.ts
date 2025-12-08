@@ -78,6 +78,16 @@ export function useRealtimeUpdates(
                 `[useRealtimeUpdates] Channel created successfully: ${channelName}`,
             );
 
+            // Log the browser's socket ID and channel info
+            const echoConnector = (window.Echo as any)?.connector;
+            const pusherInstance = echoConnector?.pusher;
+            console.log('[useRealtimeUpdates] Browser connection info:', {
+                channelName: channelName,
+                socketId: pusherInstance?.connection?.socket_id,
+                connectionState: pusherInstance?.connection?.state,
+                channelObject: channel,
+            });
+
             // Set up event listeners
             Object.entries(events).forEach(([eventName, handler]) => {
                 // Event names from broadcastAs() are used directly without a dot prefix
@@ -86,20 +96,31 @@ export function useRealtimeUpdates(
                     `[useRealtimeUpdates] Registering listener for event: ${echoEventName}`,
                 );
 
-                channel!.listen(echoEventName, (data: unknown) => {
+                // Wrap the handler to add detailed logging
+                const wrappedHandler = (data: unknown) => {
+                    console.log(
+                        `[useRealtimeUpdates] Event listener callback fired for: ${eventName}`,
+                        { receivedData: data },
+                    );
                     try {
-                        console.log(
-                            `[useRealtimeUpdates] Event received: ${eventName}`,
-                            data,
-                        );
                         handler(data);
+                        console.log(
+                            `[useRealtimeUpdates] Event handler completed successfully for: ${eventName}`,
+                        );
                     } catch (error) {
                         console.error(
                             `[useRealtimeUpdates] Error handling ${eventName}:`,
                             error,
                         );
+                        throw error;
                     }
-                });
+                };
+
+                const result = channel!.listen(echoEventName, wrappedHandler);
+                console.log(
+                    `[useRealtimeUpdates] Listener registered (result: ${typeof result})`,
+                    { eventName: echoEventName },
+                );
             });
 
             // Handle channel errors
