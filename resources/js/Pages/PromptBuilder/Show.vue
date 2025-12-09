@@ -35,28 +35,10 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.is_admin ?? false);
 
-// Ensure isProcessing method exists on promptRun (add it if missing)
-const ensureIsProcessingMethod = () => {
-    if (
-        !props.promptRun.isProcessing ||
-        typeof props.promptRun.isProcessing !== 'function'
-    ) {
-        (props.promptRun as any).isProcessing = function () {
-            return this.workflowStage?.endsWith('_processing') ?? false;
-        };
-    }
-};
-
-// Add method on initial mount
-ensureIsProcessingMethod();
-
-// Re-add method whenever props change (e.g., from router.reload)
-watch(
-    () => props.promptRun,
-    () => {
-        ensureIsProcessingMethod();
-    },
-);
+// Helper computed to check if workflow is currently processing
+const isPromptRunProcessing = computed(() => {
+    return props.promptRun.workflowStage?.endsWith('_processing') ?? false;
+});
 
 defineOptions({
     layout: AppLayout,
@@ -210,7 +192,7 @@ const handleProceedToQuestions = async () => {
 
 // Determine if we should poll for updates (only when workflow is actively processing)
 const shouldPollForUpdates = computed(() => {
-    return props.promptRun.isProcessing();
+    return isPromptRunProcessing.value;
 });
 
 // Real-time updates via Laravel Echo with smart polling fallback
@@ -396,7 +378,7 @@ const handleDelete = () => {
                 <PreAnalysisProgress
                     v-if="
                         promptRun.workflowStage === '0_processing' &&
-                        promptRun.isProcessing()
+                        isPromptRunProcessing
                     "
                 />
 
@@ -404,7 +386,7 @@ const handleDelete = () => {
                 <AnalysisProgress
                     v-if="
                         promptRun.workflowStage === '1_processing' &&
-                        promptRun.isProcessing()
+                        isPromptRunProcessing
                     "
                 />
 
@@ -491,7 +473,7 @@ const handleDelete = () => {
                 <GenerationProgress
                     v-if="
                         promptRun.workflowStage === '2_processing' &&
-                        promptRun.isProcessing()
+                        isPromptRunProcessing
                     "
                 />
 
