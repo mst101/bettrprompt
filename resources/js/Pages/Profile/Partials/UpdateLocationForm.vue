@@ -50,10 +50,10 @@ const timezones = [
 ];
 
 const form = useForm({
-    country_code: props.locationData.countryCode || '',
+    countryCode: props.locationData.countryCode || '',
     timezone: props.locationData.timezone || '',
-    currency_code: props.locationData.currencyCode || '',
-    language_code: props.locationData.languageCode || '',
+    currencyCode: props.locationData.currencyCode || '',
+    languageCode: props.locationData.languageCode || '',
 });
 
 const detectedAtFormatted = computed(() => {
@@ -147,33 +147,33 @@ const clearLocation = () => {
 
                 <!-- Country -->
                 <FormSelect
-                    id="country_code"
-                    v-model="form.country_code"
+                    id="countryCode"
+                    v-model="form.countryCode"
                     label="Country"
                     :options="props.countries"
-                    :error="form.errors.country_code"
+                    :error="form.errors.countryCode"
                     placeholder="Select country"
                     show-placeholder
                 />
 
                 <!-- Currency -->
                 <FormSelect
-                    id="currency_code"
-                    v-model="form.currency_code"
+                    id="currencyCode"
+                    v-model="form.currencyCode"
                     label="Currency"
                     :options="props.currencies"
-                    :error="form.errors.currency_code"
+                    :error="form.errors.currencyCode"
                     placeholder="Select currency"
                     show-placeholder
                 />
 
                 <!-- Language -->
                 <FormSelect
-                    id="language_code"
-                    v-model="form.language_code"
+                    id="languageCode"
+                    v-model="form.languageCode"
                     label="Language"
                     :options="props.languages"
-                    :error="form.errors.language_code"
+                    :error="form.errors.languageCode"
                     placeholder="Select language"
                     show-placeholder
                 />

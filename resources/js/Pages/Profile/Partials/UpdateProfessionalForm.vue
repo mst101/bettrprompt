@@ -31,10 +31,10 @@ const companySizeOptions = [
 ];
 
 const form = useForm({
-    job_title: props.professionalData.jobTitle || '',
+    jobTitle: props.professionalData.jobTitle || '',
     industry: props.professionalData.industry || '',
-    experience_level: props.professionalData.experienceLevel || '',
-    company_size: props.professionalData.companySize || '',
+    experienceLevel: props.professionalData.experienceLevel || '',
+    companySize: props.professionalData.companySize || '',
 });
 
 const submit = () => {
@@ -61,11 +61,11 @@ const submit = () => {
             <div class="grid gap-6 sm:grid-cols-2">
                 <!-- Job Title -->
                 <FormInput
-                    id="job_title"
-                    v-model="form.job_title"
+                    id="jobTitle"
+                    v-model="form.jobTitle"
                     label="Job Title"
                     placeholder="e.g., Software Engineer, Product Manager"
-                    :error="form.errors.job_title"
+                    :error="form.errors.jobTitle"
                     help-text="Your current or primary job title"
                 />
 
@@ -81,22 +81,22 @@ const submit = () => {
 
                 <!-- Experience Level -->
                 <FormSelect
-                    id="experience_level"
-                    v-model="form.experience_level"
+                    id="experienceLevel"
+                    v-model="form.experienceLevel"
                     label="Experience Level"
                     :options="experienceLevelOptions"
-                    :error="form.errors.experience_level"
+                    :error="form.errors.experienceLevel"
                     placeholder="Select your level"
                     show-placeholder
                 />
 
                 <!-- Company Size -->
                 <FormSelect
-                    id="company_size"
-                    v-model="form.company_size"
+                    id="companySize"
+                    v-model="form.companySize"
                     label="Company Size"
                     :options="companySizeOptions"
-                    :error="form.errors.company_size"
+                    :error="form.errors.companySize"
                     placeholder="Select company size"
                     show-placeholder
                 />

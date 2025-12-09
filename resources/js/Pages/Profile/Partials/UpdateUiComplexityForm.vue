@@ -11,7 +11,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const form = useForm({
-    ui_complexity: props.uiComplexity,
+    uiComplexity: props.uiComplexity,
 });
 
 const submit = () => {
@@ -38,15 +38,15 @@ const submit = () => {
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div>
                 <InputLabel
-                    for="ui_complexity"
+                    for="uiComplexity"
                     value="Interface Mode"
                     :required="true"
                 />
                 <div class="mt-3 space-y-3">
                     <FormRadio
                         id="ui-simple"
-                        v-model="form.ui_complexity"
-                        name="ui_complexity"
+                        v-model="form.uiComplexity"
+                        name="uiComplexity"
                         value="simple"
                         label="Simple"
                         help-text="Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details."
@@ -55,8 +55,8 @@ const submit = () => {
 
                     <FormRadio
                         id="ui-advanced"
-                        v-model="form.ui_complexity"
-                        name="ui_complexity"
+                        v-model="form.uiComplexity"
+                        name="uiComplexity"
                         value="advanced"
                         label="Advanced"
                         help-text="Shows all features including task classification, cognitive requirements, and personality insights."

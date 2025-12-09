@@ -67,17 +67,17 @@ const programmingLanguages = [
 ];
 
 const form = useForm({
-    preferred_tools: props.toolsData.preferredTools || [],
-    primary_programming_language:
+    preferredTools: props.toolsData.preferredTools || [],
+    primaryProgrammingLanguage:
         props.toolsData.primaryProgrammingLanguage || '',
 });
 
 const toggleTool = (tool: string) => {
-    const index = form.preferred_tools.indexOf(tool);
+    const index = form.preferredTools.indexOf(tool);
     if (index > -1) {
-        form.preferred_tools.splice(index, 1);
+        form.preferredTools.splice(index, 1);
     } else {
-        form.preferred_tools.push(tool);
+        form.preferredTools.push(tool);
     }
 };
 
@@ -112,7 +112,7 @@ const submit = () => {
                     />
                     <p class="mt-1 text-sm text-gray-600">
                         You've selected
-                        {{ form.preferred_tools.length }} tool(s)
+                        {{ form.preferredTools.length }} tool(s)
                     </p>
                 </div>
 
@@ -134,11 +134,11 @@ const submit = () => {
                                 v-for="tool in tools"
                                 :id="`tool-${tool}`"
                                 :key="tool"
-                                :model-value="form.preferred_tools"
+                                :model-value="form.preferredTools"
                                 :value="tool"
                                 :label="tool"
                                 @update:model-value="
-                                    (value) => (form.preferred_tools = value)
+                                    (value) => (form.preferredTools = value)
                                 "
                             />
                         </div>
@@ -147,11 +147,11 @@ const submit = () => {
 
                 <!-- Selected Tools Display -->
                 <div
-                    v-if="form.preferred_tools.length > 0"
+                    v-if="form.preferredTools.length > 0"
                     class="mt-4 flex flex-wrap gap-2"
                 >
                     <span
-                        v-for="tool in form.preferred_tools"
+                        v-for="tool in form.preferredTools"
                         :key="tool"
                         class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-800"
                     >
@@ -167,17 +167,17 @@ const submit = () => {
                 </div>
 
                 <p
-                    v-if="form.errors.preferred_tools"
+                    v-if="form.errors.preferredTools"
                     class="mt-2 text-sm text-red-600"
                 >
-                    {{ form.errors.preferred_tools }}
+                    {{ form.errors.preferredTools }}
                 </p>
             </div>
 
             <!-- Primary Programming Language -->
             <FormSelect
-                id="primary_programming_language"
-                v-model="form.primary_programming_language"
+                id="primaryProgrammingLanguage"
+                v-model="form.primaryProgrammingLanguage"
                 label="Primary Programming Language"
                 :options="
                     programmingLanguages.map((lang) => ({
@@ -185,7 +185,7 @@ const submit = () => {
                         label: lang,
                     }))
                 "
-                :error="form.errors.primary_programming_language"
+                :error="form.errors.primaryProgrammingLanguage"
                 placeholder="Select language"
                 show-placeholder
             />

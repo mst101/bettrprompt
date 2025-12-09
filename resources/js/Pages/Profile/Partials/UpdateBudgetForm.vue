@@ -41,7 +41,7 @@ const budgetOptions = [
 ];
 
 const form = useForm({
-    budget_consciousness: props.budgetData.budgetConsciousness || '',
+    budgetConsciousness: props.budgetData.budgetConsciousness || '',
 });
 
 const submit = () => {
@@ -80,12 +80,12 @@ const submit = () => {
                         class="rounded-lg border border-gray-200 p-4 hover:border-indigo-300 hover:bg-indigo-50"
                         :class="{
                             'border-indigo-500 bg-indigo-50':
-                                form.budget_consciousness === option.value,
+                                form.budgetConsciousness === option.value,
                         }"
                     >
                         <FormRadio
                             :id="`budget-${option.value}`"
-                            v-model="form.budget_consciousness"
+                            v-model="form.budgetConsciousness"
                             :value="option.value"
                             :name="`budget-${option.value}`"
                             :label="option.label"
@@ -97,10 +97,10 @@ const submit = () => {
                 </div>
 
                 <p
-                    v-if="form.errors.budget_consciousness"
+                    v-if="form.errors.budgetConsciousness"
                     class="mt-2 text-sm text-red-600"
                 >
-                    {{ form.errors.budget_consciousness }}
+                    {{ form.errors.budgetConsciousness }}
                 </p>
             </div>
 

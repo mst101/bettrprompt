@@ -36,9 +36,9 @@ const workModeOptions = [
 ];
 
 const form = useForm({
-    team_size: props.teamData.teamSize || '',
-    team_role: props.teamData.teamRole || '',
-    work_mode: props.teamData.workMode || '',
+    teamSize: props.teamData.teamSize || '',
+    teamRole: props.teamData.teamRole || '',
+    workMode: props.teamData.workMode || '',
 });
 
 const submit = () => {
@@ -65,33 +65,33 @@ const submit = () => {
             <div class="space-y-6 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
                 <!-- Team Size -->
                 <FormSelect
-                    id="team_size"
-                    v-model="form.team_size"
+                    id="teamSize"
+                    v-model="form.teamSize"
                     label="Team Size"
                     :options="teamSizeOptions"
-                    :error="form.errors.team_size"
+                    :error="form.errors.teamSize"
                     placeholder="Select team size"
                     show-placeholder
                 />
 
                 <!-- Team Role -->
                 <FormSelect
-                    id="team_role"
-                    v-model="form.team_role"
+                    id="teamRole"
+                    v-model="form.teamRole"
                     label="Your Role"
                     :options="teamRoleOptions"
-                    :error="form.errors.team_role"
+                    :error="form.errors.teamRole"
                     placeholder="Select your role"
                     show-placeholder
                 />
 
                 <!-- Work Mode -->
                 <FormSelect
-                    id="work_mode"
-                    v-model="form.work_mode"
+                    id="workMode"
+                    v-model="form.workMode"
                     label="Work Mode"
                     :options="workModeOptions"
-                    :error="form.errors.work_mode"
+                    :error="form.errors.workMode"
                     placeholder="Select work mode"
                     show-placeholder
                 />

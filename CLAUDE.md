@@ -23,6 +23,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Always use British English! Only use American English when absolutely necessary i.e. Third-party API endpoints and
   integrations, CSS framework classes (Tailwind CSS), HTML attributes, External library method names.
 
+### Naming Convention: Frontend camelCase ↔ Backend snake_case
+
+**Critical Rule**: All client-side (Vue/TypeScript) variables and properties MUST use camelCase.
+
+**Implementation Pattern**:
+1. Frontend Vue components use camelCase for all variables, props, and data fields
+2. Laravel Resources (e.g., `PromptRunResource`) convert frontend camelCase properties to snake_case for serialization
+3. Form Request classes validate and transform snake_case request bodies to camelCase for TypeScript types
+4. Database columns remain in snake_case (Laravel convention)
+
+**Example**:
+```typescript
+// Frontend (Vue) - camelCase
+const form = reactive({
+  uiComplexity: 'advanced',
+  personalityType: 'INTJ',
+  traitPercentages: { ... }
+});
+
+// Laravel Resource - converts to snake_case
+'uiComplexity' => $this->ui_complexity,
+'personalityType' => $this->personality_type,
+'traitPercentages' => $this->trait_percentages,
+
+// Database - snake_case
+Schema::table('users', fn(Blueprint $table) => {
+  $table->string('ui_complexity')->default('simple');
+  $table->string('personality_type')->nullable();
+  $table->json('trait_percentages')->nullable();
+});
+```
+
+**Forms Using This Pattern**:
+- `UpdateUiComplexityForm` - ui_complexity
+- `UpdateLocationForm` - country, state, city, zipcode
+- `UpdateProfessionalForm` - occupation, industry, workEnvironment
+- `UpdateTeamForm` - teamSize, teamType, teamComposition
+- `UpdateBudgetForm` - monthlyBudget, budgetCurrency
+- `UpdateToolsForm` - preferredTools, toolCategories
+
 ## Development Commands
 
 ### Starting the Development Environment
