@@ -38,7 +38,7 @@ const hasRelations =
                     <span class="text-sm font-medium text-indigo-800">
                         Parent Optimisation
                     </span>
-                    <StatusBadge :status="parent.status" />
+                    <StatusBadge :workflow-stage="parent.workflowStage" />
                 </div>
                 <LinkText
                     class="text-indigo-800 hover:text-indigo-700"
@@ -74,7 +74,7 @@ const hasRelations =
                     class="ml-6 rounded-lg bg-white p-3"
                 >
                     <div class="mb-1 flex items-center gap-2">
-                        <StatusBadge :status="child.status" />
+                        <StatusBadge :workflow-stage="child.workflowStage" />
                     </div>
                     <LinkText
                         class="text-indigo-800 hover:text-indigo-700"

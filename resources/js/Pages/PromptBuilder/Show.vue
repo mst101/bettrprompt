@@ -29,6 +29,7 @@ import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
+
 const page = usePage();
 
 const user = computed(() => page.props.auth?.user);
@@ -143,8 +144,8 @@ const getInitialTab = (): string => {
     // Don't show it during 'submitted' or 'processing' stages
     if (
         props.promptRun.selectedFramework &&
-        (props.promptRun.workflowStage === 'analysis_complete' ||
-            props.promptRun.workflowStage === 'completed') &&
+        (props.promptRun.workflowStage === '1_completed' ||
+            props.promptRun.workflowStage === '2_completed') &&
         props.promptRun.status !== 'processing'
     ) {
         return 'framework';
@@ -188,7 +189,7 @@ const handleProceedToQuestions = async () => {
 
 // Determine if we should poll for updates (only when workflow is actively processing)
 const shouldPollForUpdates = computed(() => {
-    return props.promptRun.status === 'processing';
+    return props.promptRun.isProcessing();
 });
 
 // Real-time updates via Laravel Echo with smart polling fallback
@@ -373,16 +374,16 @@ const handleDelete = () => {
                 <!-- Note: Currently Workflow 0 is synchronous, but this is ready for when it becomes async -->
                 <PreAnalysisProgress
                     v-if="
-                        promptRun.workflowStage === 'generating_pre_analysis' &&
-                        promptRun.status === 'processing'
+                        promptRun.workflowStage === '0_processing' &&
+                        promptRun.isProcessing()
                     "
                 />
 
                 <!-- Enhanced loading state when main analysis is in progress (Workflow 1) -->
                 <AnalysisProgress
                     v-if="
-                        promptRun.workflowStage === 'submitted' &&
-                        promptRun.status === 'processing'
+                        promptRun.workflowStage === '1_processing' &&
+                        promptRun.isProcessing()
                     "
                 />
 
@@ -468,8 +469,8 @@ const handleDelete = () => {
                 <!-- Enhanced loading state when generation is in progress -->
                 <GenerationProgress
                     v-if="
-                        promptRun.workflowStage === 'generating_prompt' &&
-                        promptRun.status === 'processing'
+                        promptRun.workflowStage === '2_processing' &&
+                        promptRun.isProcessing()
                     "
                 />
 

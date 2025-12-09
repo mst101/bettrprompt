@@ -1,30 +1,24 @@
 /**
- * Workflow stage constants for prompt optimization
+ * 9-stage workflow system: 3 workflows × 3 states each
+ * Workflow 0 (Pre-analysis) → Workflow 1 (Analysis) → Workflow 2 (Generation)
  */
 export const WORKFLOW_STAGES = {
-    SUBMITTED: 'submitted',
-    ANALYSIS_COMPLETE: 'analysis_complete',
-    ANSWERING_QUESTIONS: 'answering_questions',
-    GENERATING_PROMPT: 'generating_prompt',
-    COMPLETED: 'completed',
-    FAILED: 'failed',
+    // Workflow 0: Pre-analysis
+    PRE_ANALYSIS_PROCESSING: '0_processing',
+    PRE_ANALYSIS_COMPLETED: '0_completed',
+    PRE_ANALYSIS_FAILED: '0_failed',
+    // Workflow 1: Main analysis
+    ANALYSIS_PROCESSING: '1_processing',
+    ANALYSIS_COMPLETED: '1_completed',
+    ANALYSIS_FAILED: '1_failed',
+    // Workflow 2: Prompt generation
+    GENERATION_PROCESSING: '2_processing',
+    GENERATION_COMPLETED: '2_completed',
+    GENERATION_FAILED: '2_failed',
 } as const;
 
 export type WorkflowStage =
     (typeof WORKFLOW_STAGES)[keyof typeof WORKFLOW_STAGES];
-
-/**
- * Prompt run status constants
- */
-export const PROMPT_RUN_STATUS = {
-    PENDING: 'pending',
-    PROCESSING: 'processing',
-    COMPLETED: 'completed',
-    FAILED: 'failed',
-} as const;
-
-export type PromptRunStatus =
-    (typeof PROMPT_RUN_STATUS)[keyof typeof PROMPT_RUN_STATUS];
 
 /**
  * Personality type constants (MBTI)
@@ -78,19 +72,42 @@ export const PERSONALITY_TYPE_NAMES: Record<PersonalityType, string> = {
  */
 export function getWorkflowStageLabel(stage: WorkflowStage | string): string {
     switch (stage) {
-        case WORKFLOW_STAGES.SUBMITTED:
-            return 'Submitted';
-        case WORKFLOW_STAGES.ANALYSIS_COMPLETE:
+        // Workflow 0: Pre-analysis
+        case WORKFLOW_STAGES.PRE_ANALYSIS_PROCESSING:
+            return 'Pre-Analysis Running';
+        case WORKFLOW_STAGES.PRE_ANALYSIS_COMPLETED:
+            return 'Pre-Analysis Complete';
+        case WORKFLOW_STAGES.PRE_ANALYSIS_FAILED:
+            return 'Pre-Analysis Failed';
+        // Workflow 1: Main analysis
+        case WORKFLOW_STAGES.ANALYSIS_PROCESSING:
+            return 'Analysing Task';
+        case WORKFLOW_STAGES.ANALYSIS_COMPLETED:
             return 'Analysis Complete';
-        case WORKFLOW_STAGES.ANSWERING_QUESTIONS:
-            return 'Answering Questions';
-        case WORKFLOW_STAGES.GENERATING_PROMPT:
+        case WORKFLOW_STAGES.ANALYSIS_FAILED:
+            return 'Analysis Failed';
+        // Workflow 2: Prompt generation
+        case WORKFLOW_STAGES.GENERATION_PROCESSING:
             return 'Generating Prompt';
-        case WORKFLOW_STAGES.COMPLETED:
+        case WORKFLOW_STAGES.GENERATION_COMPLETED:
             return 'Completed';
-        case WORKFLOW_STAGES.FAILED:
-            return 'Failed';
+        case WORKFLOW_STAGES.GENERATION_FAILED:
+            return 'Generation Failed';
         default:
             return stage;
     }
+}
+
+/**
+ * Check if a workflow stage is processing (background job running)
+ */
+export function isProcessingStage(stage: WorkflowStage | string): boolean {
+    return ['0_processing', '1_processing', '2_processing'].includes(stage);
+}
+
+/**
+ * Check if a workflow stage is failed
+ */
+export function isFailedStage(stage: WorkflowStage | string): boolean {
+    return ['0_failed', '1_failed', '2_failed'].includes(stage);
 }

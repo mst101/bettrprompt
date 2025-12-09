@@ -92,8 +92,7 @@ export function createMockPromptRun(
         user_id: number;
         slug: string;
         original_prompt: string;
-        status: string;
-        workflow_stage: string;
+        workflowStage: string;
         selected_framework: string | null;
         framework_reasoning: string | null;
         framework_questions: Array<{
@@ -111,8 +110,7 @@ export function createMockPromptRun(
         user_id: 1,
         slug: 'test-slug',
         original_prompt: 'Test prompt',
-        status: 'processing',
-        workflow_stage: 'submitted',
+        workflowStage: '1_processing',
         selected_framework: null,
         framework_reasoning: null,
         framework_questions: null,

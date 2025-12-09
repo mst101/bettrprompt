@@ -21,7 +21,7 @@ export interface N8nQuestion {
 
 export interface N8nAnalysisResponse {
     prompt_run_id: number;
-    workflow_stage: 'analysis_complete';
+    workflow_stage: '1_completed';
     status: 'processing';
     selected_framework: N8nFramework;
     framework_questions: N8nQuestion[];
@@ -40,14 +40,14 @@ export interface N8nAnalysisResponse {
 
 export interface N8nCompletionResponse {
     prompt_run_id: number;
-    workflow_stage: 'completed';
+    workflow_stage: '2_completed';
     status: 'completed';
     optimized_prompt: string;
 }
 
 export interface N8nErrorResponse {
     prompt_run_id: number;
-    workflow_stage: 'failed';
+    workflow_stage: '0_failed';
     status: 'failed';
     error_message: string;
 }
@@ -383,7 +383,7 @@ export function mockFrameworkSelectionResponse(
 
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'analysis_complete',
+        workflow_stage: '1_completed',
         status: 'processing',
         selected_framework: framework,
         framework_questions: questions,
@@ -438,7 +438,7 @@ export function mockPromptGenerationResponse(
 
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'completed',
+        workflow_stage: '2_completed',
         status: 'completed',
         optimized_prompt: optimizedPrompt,
     };
@@ -451,7 +451,7 @@ export function mockPromptGenerationResponse(
 export function mockTimeoutError(promptRunId: number): N8nErrorResponse {
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'failed',
+        workflow_stage: '0_failed',
         status: 'failed',
         error_message:
             'Workflow execution timeout after 60 seconds. Please try again.',
@@ -465,7 +465,7 @@ export function mockTimeoutError(promptRunId: number): N8nErrorResponse {
 export function mockApiError(promptRunId: number): N8nErrorResponse {
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'failed',
+        workflow_stage: '0_failed',
         status: 'failed',
         error_message:
             'Failed to fetch reference data from API. External service unavailable.',
@@ -482,7 +482,7 @@ export function mockValidationError(
 ): N8nErrorResponse {
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'failed',
+        workflow_stage: '0_failed',
         status: 'failed',
         error_message: `Invalid input: Missing or invalid '${field}' field`,
     };
@@ -495,7 +495,7 @@ export function mockValidationError(
 export function mockRateLimitError(promptRunId: number): N8nErrorResponse {
     return {
         prompt_run_id: promptRunId,
-        workflow_stage: 'failed',
+        workflow_stage: '0_failed',
         status: 'failed',
         error_message:
             'Rate limit exceeded. Please wait before retrying. Try again in 60 seconds.',

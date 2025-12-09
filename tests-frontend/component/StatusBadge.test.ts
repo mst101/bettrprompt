@@ -3,9 +3,9 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
 describe('StatusBadge', () => {
-    it('should render completed status', () => {
+    it('should render completed workflow stage (2_completed)', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'completed' },
+            props: { workflowStage: '2_completed' },
         });
 
         expect(wrapper.text()).toBe('Completed');
@@ -13,19 +13,19 @@ describe('StatusBadge', () => {
         expect(wrapper.classes()).toContain('text-green-800');
     });
 
-    it('should render processing status', () => {
+    it('should render processing workflow stage (1_processing)', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'processing' },
+            props: { workflowStage: '1_processing' },
         });
 
-        expect(wrapper.text()).toBe('Clarifying Questions');
+        expect(wrapper.text()).toContain('Analysing');
         expect(wrapper.classes()).toContain('bg-yellow-100');
         expect(wrapper.classes()).toContain('text-yellow-800');
     });
 
-    it('should render failed status', () => {
+    it('should render failed workflow stage (2_failed)', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'failed' },
+            props: { workflowStage: '2_failed' },
         });
 
         expect(wrapper.text()).toBe('Failed');
@@ -33,9 +33,19 @@ describe('StatusBadge', () => {
         expect(wrapper.classes()).toContain('text-red-800');
     });
 
-    it('should render pending status', () => {
+    it('should render pending workflow stage (1_completed)', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'pending' },
+            props: { workflowStage: '1_completed' },
+        });
+
+        expect(wrapper.text()).toBe('Pending');
+        expect(wrapper.classes()).toContain('bg-gray-100');
+        expect(wrapper.classes()).toContain('text-gray-800');
+    });
+
+    it('should render pre-analysis completed stage (0_completed)', () => {
+        const wrapper = mount(StatusBadge, {
+            props: { workflowStage: '0_completed' },
         });
 
         expect(wrapper.text()).toBe('Pending');
@@ -45,23 +55,25 @@ describe('StatusBadge', () => {
 
     it('should have test ID attribute', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'completed' },
+            props: { workflowStage: '2_completed' },
         });
 
         expect(wrapper.attributes('data-testid')).toBe('status-badge');
     });
 
-    it('should have data-test-status attribute', () => {
+    it('should have data-test-workflow-stage attribute', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'processing' },
+            props: { workflowStage: '1_processing' },
         });
 
-        expect(wrapper.attributes('data-test-status')).toBe('processing');
+        expect(wrapper.attributes('data-test-workflow-stage')).toBe(
+            '1_processing',
+        );
     });
 
     it('should be uppercase', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'completed' },
+            props: { workflowStage: '2_completed' },
         });
 
         expect(wrapper.classes()).toContain('uppercase');
@@ -69,7 +81,7 @@ describe('StatusBadge', () => {
 
     it('should be inline-flex', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'completed' },
+            props: { workflowStage: '2_completed' },
         });
 
         expect(wrapper.classes()).toContain('inline-flex');
@@ -77,18 +89,17 @@ describe('StatusBadge', () => {
 
     it('should have rounded-full class', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'completed' },
+            props: { workflowStage: '2_completed' },
         });
 
         expect(wrapper.classes()).toContain('rounded-full');
     });
 
-    it('should handle custom status', () => {
+    it('should handle unknown workflow stage', () => {
         const wrapper = mount(StatusBadge, {
-            props: { status: 'custom-status' },
+            props: { workflowStage: 'unknown' },
         });
 
-        expect(wrapper.text()).toBe('Custom-status');
         expect(wrapper.classes()).toContain('bg-gray-100');
     });
 });

@@ -137,7 +137,7 @@ export class N8nMockService {
             case 'success':
             default:
                 // Determine response type based on payload
-                if (payload.workflow_stage === 'generating_prompt') {
+                if (payload.workflow_stage === '2_processing') {
                     // Return prompt generation response
                     const frameworkFromPayload = payload.selected_framework;
                     response = mockPromptGenerationResponse(

@@ -245,7 +245,7 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
-                                        column="status"
+                                        column="workflow_stage"
                                         :current-sort="filters.sort_by"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
@@ -328,7 +328,11 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                 <td
                                     class="hidden px-6 py-4 text-sm whitespace-nowrap sm:table-cell"
                                 >
-                                    <StatusBadge :status="promptRun.status" />
+                                    <StatusBadge
+                                        :workflow-stage="
+                                            promptRun.workflowStage
+                                        "
+                                    />
                                 </td>
                                 <td
                                     data-testid="table-cell-date"
@@ -339,7 +343,9 @@ const handleDelete = (promptRunId: number, event: Event) => {
                                     </div>
                                     <div class="mt-1 sm:hidden">
                                         <StatusBadge
-                                            :status="promptRun.status"
+                                            :workflow-stage="
+                                                promptRun.workflowStage
+                                            "
                                         />
                                     </div>
                                     <div class="mt-2">

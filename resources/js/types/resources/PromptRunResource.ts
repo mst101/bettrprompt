@@ -6,6 +6,20 @@
 import type { UserResource, VisitorResource } from '@/types';
 
 /**
+ * 9-stage workflow system
+ */
+export type WorkflowStage =
+    | '0_processing'
+    | '0_completed'
+    | '0_failed'
+    | '1_processing'
+    | '1_completed'
+    | '1_failed'
+    | '2_processing'
+    | '2_completed'
+    | '2_failed';
+
+/**
  * Trait percentages for personality type
  * Maps trait names to their percentage values (0-100)
  */
@@ -46,8 +60,7 @@ export interface PromptRunResource {
     readonly clarifyingAnswers: (string | null)[] | null;
     readonly currentQuestionIndex?: number | null;
     readonly optimizedPrompt: string | null;
-    readonly status: string;
-    readonly workflowStage: string;
+    readonly workflowStage: WorkflowStage;
     readonly errorMessage: string | null;
     readonly completedAt: string | null;
     readonly createdAt: string;
