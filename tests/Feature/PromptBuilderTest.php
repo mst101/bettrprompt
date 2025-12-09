@@ -335,8 +335,8 @@ test('generate creates optimised prompt', function () {
 
     $promptRun->refresh();
     expect($promptRun->optimized_prompt)->toBe('Your optimised prompt here')
-        ->and($promptRun->workflow_stage)->toBe('completed')
-        ->and($promptRun->status)->toBe('completed');
+        ->and($promptRun->workflow_stage)->toBe('2_completed')
+        ->and($promptRun->status)->toBe('2_completed');
 });
 
 test('guests can create prompt runs as visitors', function () {
@@ -413,7 +413,7 @@ test('completed prompt run displays optimized prompt', function () {
     $response->assertInertia(fn ($page) => $page
         ->where('promptRun.optimizedPrompt',
             'This is your personalised, optimised prompt based on your INTJ personality.')
-        ->where('promptRun.workflowStage', 'completed')
+        ->where('promptRun.workflowStage', '2_completed')
     );
 });
 
@@ -517,7 +517,7 @@ test('go back to previous question updates index', function () {
 
     $promptRun->refresh();
     expect($promptRun->current_question_index)->toBe(0)
-        ->and($promptRun->workflow_stage)->toBe('analysis_complete');
+        ->and($promptRun->workflow_stage)->toBe('1_completed');
 });
 
 test('cannot go back from first question', function () {
