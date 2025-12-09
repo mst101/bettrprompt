@@ -170,11 +170,11 @@ class ProfileController extends Controller
     public function updateUiComplexity(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'ui_complexity' => ['required', 'in:simple,advanced'],
+            'uiComplexity' => ['required', 'in:simple,advanced'],
         ]);
 
         $request->user()->update([
-            'ui_complexity' => $validated['ui_complexity'],
+            'ui_complexity' => $validated['uiComplexity'],
         ]);
 
         return Redirect::route('profile.edit')
@@ -231,15 +231,19 @@ class ProfileController extends Controller
     public function updateLocation(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'country_code' => ['nullable', 'string', 'size:2'],
+            'countryCode' => ['nullable', 'string', 'size:2'],
             'timezone' => ['nullable', 'string'],
-            'currency_code' => ['nullable', 'string', 'size:3'],
-            'language_code' => ['nullable', 'string', 'max:5'],
+            'currencyCode' => ['nullable', 'string', 'size:3'],
+            'languageCode' => ['nullable', 'string', 'max:5'],
         ]);
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
-                $request->user()->update($validated + [
+                $request->user()->update([
+                    'country_code' => $validated['countryCode'],
+                    'timezone' => $validated['timezone'],
+                    'currency_code' => $validated['currencyCode'],
+                    'language_code' => $validated['languageCode'],
                     'location_manually_set' => true,
                 ]);
                 $request->user()->updateProfileCompletion();
@@ -263,15 +267,20 @@ class ProfileController extends Controller
     public function updateProfessional(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'job_title' => ['nullable', 'string', 'max:100'],
+            'jobTitle' => ['nullable', 'string', 'max:100'],
             'industry' => ['nullable', 'string', 'max:100'],
-            'experience_level' => ['nullable', 'in:entry,mid,senior,expert'],
-            'company_size' => ['nullable', 'in:solo,small,medium,large,enterprise'],
+            'experienceLevel' => ['nullable', 'in:entry,mid,senior,expert'],
+            'companySize' => ['nullable', 'in:solo,small,medium,large,enterprise'],
         ]);
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
-                $request->user()->update($validated);
+                $request->user()->update([
+                    'job_title' => $validated['jobTitle'],
+                    'industry' => $validated['industry'],
+                    'experience_level' => $validated['experienceLevel'],
+                    'company_size' => $validated['companySize'],
+                ]);
                 $request->user()->updateProfileCompletion();
             });
 
@@ -293,14 +302,18 @@ class ProfileController extends Controller
     public function updateTeam(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'team_size' => ['nullable', 'in:solo,small,medium,large'],
-            'team_role' => ['nullable', 'in:individual,lead,manager,director,executive'],
-            'work_mode' => ['nullable', 'in:office,hybrid,remote,freelance'],
+            'teamSize' => ['nullable', 'in:solo,small,medium,large'],
+            'teamRole' => ['nullable', 'in:individual,lead,manager,director,executive'],
+            'workMode' => ['nullable', 'in:office,hybrid,remote,freelance'],
         ]);
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
-                $request->user()->update($validated);
+                $request->user()->update([
+                    'team_size' => $validated['teamSize'],
+                    'team_role' => $validated['teamRole'],
+                    'work_mode' => $validated['workMode'],
+                ]);
                 $request->user()->updateProfileCompletion();
             });
 
@@ -322,12 +335,14 @@ class ProfileController extends Controller
     public function updateBudget(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'budget_consciousness' => ['nullable', 'in:free_only,free_first,mixed,premium_ok,enterprise'],
+            'budgetConsciousness' => ['nullable', 'in:free_only,free_first,mixed,premium_ok,enterprise'],
         ]);
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
-                $request->user()->update($validated);
+                $request->user()->update([
+                    'budget_consciousness' => $validated['budgetConsciousness'],
+                ]);
                 $request->user()->updateProfileCompletion();
             });
 
@@ -349,14 +364,17 @@ class ProfileController extends Controller
     public function updateTools(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'preferred_tools' => ['nullable', 'array'],
-            'preferred_tools.*' => ['string'],
-            'primary_programming_language' => ['nullable', 'string', 'max:50'],
+            'preferredTools' => ['nullable', 'array'],
+            'preferredTools.*' => ['string'],
+            'primaryProgrammingLanguage' => ['nullable', 'string', 'max:50'],
         ]);
 
         try {
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
-                $request->user()->update($validated);
+                $request->user()->update([
+                    'preferred_tools' => $validated['preferredTools'],
+                    'primary_programming_language' => $validated['primaryProgrammingLanguage'],
+                ]);
                 $request->user()->updateProfileCompletion();
             });
 
