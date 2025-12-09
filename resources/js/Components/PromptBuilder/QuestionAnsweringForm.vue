@@ -90,7 +90,7 @@ const handleTranscription = (text: string) => {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-4">
         <!-- Progress Bar -->
         <div class="flex items-center justify-between text-sm">
             <div class="flex items-center gap-2">
@@ -141,6 +141,7 @@ const handleTranscription = (text: string) => {
             :model-value="answer"
             label="Your Answer"
             :rows="5"
+            sr-only-label
             :disabled="isSubmitting"
             placeholder="Type your answer here or record a quick note..."
             @update:model-value="(value) => emit('update:answer', value)"
@@ -160,7 +161,7 @@ const handleTranscription = (text: string) => {
 
         <!-- Action Buttons -->
         <div
-            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
             <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <ButtonSecondary
@@ -184,7 +185,9 @@ const handleTranscription = (text: string) => {
                 </ButtonSecondary>
             </div>
 
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div
+                class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center"
+            >
                 <ButtonSecondary
                     v-if="!isRequired && currentQuestionNumber < totalQuestions"
                     type="button"

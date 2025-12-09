@@ -1,152 +1,17 @@
-[
-    {
-        "success": true,
-        "data": {
-            "task_classification": {
-                "primary_category": "IDEATION",
-                "secondary_category": "PROBLEM_SOLVING",
-                "complexity": "moderate",
-                "classification_reasoning": "User is seeking to generate ideas and strategies for improving romantic/social success with women. This is fundamentally an ideation task (generating possibilities and approaches) with problem-solving elements (overcoming current obstacles). The vague phrasing suggests exploration of multiple approaches rather than a single decision.",
-                "content_type": null
-            },
-            "cognitive_requirements": {
-                "primary": ["CREATIVE", "EXPLORE"],
-                "secondary": ["OBJECTIVE", "DETAIL"],
-                "reasoning": "IDEATION tasks require creative thinking and exploration of multiple options without premature closure. However, this specific task also needs objective analysis (understanding what actually works vs. myths) and detail (concrete, actionable strategies rather than abstract ideas)."
-            },
-            "selected_framework": {
-                "name": "HMW (How Might We)",
-                "code": "HMW",
-                "components": [
-                    "Problem reframing",
-                    "Constraint-aware ideation",
-                    "Multiple solution pathways"
-                ],
-                "rationale": "HMW is ideal for reframing vague goals into specific, solvable questions. It will help move from 'pull more girls' to specific challenges like 'How might I build genuine confidence?' or 'How might I improve my social skills in specific contexts?' This framework suits the user's high N (pattern-seeking) and high P (exploring possibilities) while grounding ideas in reality."
-            },
-            "alternative_frameworks": [
-                {
-                    "name": "SCAMPER",
-                    "code": "SCAMPER",
-                    "when_to_use_instead": "If user wants to systematically modify existing approaches or habits across multiple dimensions"
-                },
-                {
-                    "name": "What If",
-                    "code": "WHAT_IF",
-                    "when_to_use_instead": "If user prefers scenario-based exploration of different social/dating contexts"
-                }
-            ],
-            "personality_tier": "full",
-            "task_trait_alignment": {
-                "NOTE": "Analyzing ONLY the five traits provided: I(65%), N(64%), T(84%), P(57%), A(84%)",
-                "amplified": [
-                    {
-                        "trait": "High N (64%, weight 0.50)",
-                        "requirement_aligned": "CREATIVE",
-                        "reason": "Intuition naturally sees patterns, possibilities, and unconventional approaches. User can identify non-obvious strategies and see connections between seemingly unrelated social dynamics."
-                    },
-                    {
-                        "trait": "High P (57%, weight 0.25)",
-                        "requirement_aligned": "EXPLORE",
-                        "reason": "Perceiving preference supports open-ended exploration without rushing to a single 'correct' answer. User is comfortable generating multiple approaches and keeping options open."
-                    },
-                    {
-                        "trait": "High A (84%, weight 1.00)",
-                        "requirement_aligned": "CREATIVE",
-                        "reason": "Assertive confidence supports bold, unconventional thinking. User is less likely to self-censor ideas or worry excessively about judgment, enabling more creative ideation."
-                    }
-                ],
-                "counterbalanced": [
-                    {
-                        "trait": "High T (84%, weight 1.00)",
-                        "requirement_opposed": "CREATIVE",
-                        "reason": "High Thinking can default to analytical deconstruction rather than generative creativity. Risk of over-optimizing for logical 'efficiency' rather than exploring emotionally-intelligent or relationship-based approaches that don't follow pure logic."
-                    },
-                    {
-                        "trait": "High T (84%, weight 1.00)",
-                        "requirement_opposed": "EXPLORE",
-                        "reason": "High T may prematurely dismiss ideas as 'illogical' or 'inefficient' before fully exploring them. Can lead to convergence on 'rational' approaches while missing emotional/social dimensions that actually drive attraction."
-                    },
-                    {
-                        "trait": "High I (65%, weight 0.50)",
-                        "requirement_opposed": "EXPLORE",
-                        "reason": "Introversion may limit exploration of social contexts and real-world testing. Risk of staying in theory/analysis mode rather than generating ideas that require social experimentation and feedback."
-                    }
-                ],
-                "neutral": [
-                    {
-                        "trait": "High A (84%, weight 1.00) - Identity dimension",
-                        "reason": "Assertiveness/Turbulence relates to confidence in execution, not to ideation quality. While high A supports bold thinking, it's not directly relevant to generating creative ideas about social dynamics."
-                    }
-                ]
-            },
-            "personality_adjustments_preview": [
-                "AMPLIFIED: Leverage N-strength to identify non-obvious patterns in social/dating dynamics; use P-openness to explore multiple distinct approaches; use A-confidence to consider unconventional strategies without self-censoring",
-                "COUNTERBALANCED: Inject requirement to explore emotionally-intelligent and relationship-based approaches (not just logical optimization); require testing ideas in real social contexts (not just theoretical analysis); explicitly include 'what might I be missing?' reflection to counter T-tendency to dismiss non-logical factors"
-            ],
-            "clarifying_questions": [
-                {
-                    "id": "Q1",
-                    "question": "What does 'pulling more girls' actually mean to you? Are you looking for: more first dates, deeper romantic connections, improved confidence in social settings, or something else?",
-                    "purpose": "Clarify the actual goal beneath the vague phrasing. High-T users often skip this, but the real objective shapes which strategies matter.",
-                    "required": true
-                },
-                {
-                    "id": "Q2",
-                    "question": "What's your current baseline? How often are you meeting women now, and what typically happens (conversations fizzle, no chemistry, logistics issues)?",
-                    "purpose": "Establish starting point to avoid generating irrelevant ideas. Helps distinguish between confidence issues, social skills gaps, or logistical/context problems.",
-                    "required": true
-                },
-                {
-                    "id": "Q3",
-                    "question": "What have you already tried, and what were the results? (Be specific: approaches, contexts, timeframes, outcomes.)",
-                    "purpose": "Avoid regenerating failed strategies. High-T users may have already tested logical approaches; need to know what worked/didn't to build on it.",
-                    "required": true
-                },
-                {
-                    "id": "Q4",
-                    "question": "What social contexts do you currently spend time in? (Work, hobbies, friend groups, online, bars/clubs, etc.)",
-                    "purpose": "Ideas must be grounded in actual environments where you interact. High-I users may have limited social contexts; expanding these may be more valuable than optimizing existing ones.",
-                    "required": true
-                },
-                {
-                    "id": "Q5",
-                    "question": "What role does emotional connection or genuine interest play in what you're looking for? Or are you primarily focused on initial attraction and logistics?",
-                    "purpose": "Counterbalance high-T tendency to optimize for 'efficiency' without considering emotional/relational dimensions. Clarifies whether ideas should emphasize authenticity, vulnerability, or emotional resonance.",
-                    "required": true
-                },
-                {
-                    "id": "Q6",
-                    "question": "Are there any approaches or ideas you've already dismissed as 'not logical' or 'inefficient'? What were they?",
-                    "purpose": "Surface potential blind spots created by high-T analysis. May reveal emotionally-intelligent strategies that don't follow pure logic but actually work.",
-                    "required": false
-                },
-                {
-                    "id": "Q7",
-                    "question": "How comfortable are you with social experimentation and real-world testing? Or do you prefer to plan thoroughly before acting?",
-                    "purpose": "Calibrate ideas to your actual willingness to explore. High-P suggests comfort with experimentation, but high-I may prefer planning. Need to know which resonates.",
-                    "required": false
-                }
-            ],
-            "question_rationale": "Questions prioritize clarifying the vague goal (Q1), establishing baseline and history (Q2-Q3), grounding ideas in real contexts (Q4), and counterbalancing the high-T tendency to dismiss emotionally-intelligent or non-logical approaches (Q5-Q6). Q7 calibrates to the user's actual comfort with experimentation vs. planning. All questions avoid duplicating the minimal pre-analysis context provided."
-        },
-        "original_input": {
-            "task_description": "I want to pull more girls.",
-            "personality_type": "INTP-A",
-            "trait_percentages": {
-                "mind": 65,
-                "energy": 64,
-                "nature": 84,
-                "tactics": 57,
-                "identity": 84
-            },
-            "forced_framework_code": null
-        },
-        "api_usage": {
-            "model": "claude-haiku-4-5-20251001",
-            "input_tokens": 15164,
-            "output_tokens": 2035
-        },
-        "error": null
+{
+    "subject": {
+        "question": "What type of flying are you interested in?",
+        "answer": "travel",
+        "answer_label": "Commercial air travel"
+    },
+    "purpose": {
+        "question": "What is your primary motivation for wanting to fly?",
+        "answer": "career",
+        "answer_label": "Career development"
+    },
+    "detail_level": {
+        "question": "How comprehensive do you want this exploration of flying to be?",
+        "answer": "summary",
+        "answer_label": "Basic overview"
     }
-]
+}

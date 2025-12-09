@@ -405,7 +405,7 @@ const isDisabled = computed(() =>
             </div>
 
             <!-- Action buttons for view mode -->
-            <div class="flex flex-col justify-end gap-3 sm:flex-row">
+            <div class="flex flex-col-reverse justify-end gap-3 sm:flex-row">
                 <ButtonSecondary
                     type="button"
                     class="inline-flex w-full items-center gap-1 sm:w-fit"

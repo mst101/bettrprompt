@@ -116,7 +116,7 @@ const handleTranscription = (index: number, transcript: string) => {
             </div>
         </div>
         <div
-            class="flex flex-col justify-end gap-2 sm:flex-row sm:items-center sm:space-x-2"
+            class="flex flex-col-reverse justify-end gap-2 sm:flex-row sm:items-center sm:space-x-2"
         >
             <ButtonSecondary
                 v-if="showBack"

@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
     helpText: '',
     autofocus: false,
     isSubmitting: false,
+    srOnlyLabel: false,
     textareaClass: '',
 });
 
@@ -35,11 +36,13 @@ defineExpose({ focus });
 
 <template>
     <div v-bind="$attrs" class="relative">
-        <div class="mb-2 flex flex-col justify-between">
+        <div
+            class="mb-2 flex flex-col sm:flex-row sm:items-baseline sm:justify-between"
+        >
             <label
                 v-if="props.label"
                 :for="props.id"
-                class="block text-sm font-medium text-gray-700"
+                class="sr-only block text-sm font-medium text-gray-700"
             >
                 <span class="whitespace-nowrap"
                     >{{ props.label }}
@@ -48,6 +51,7 @@ defineExpose({ focus });
                     ></span
                 >
             </label>
+            &nbsp;
             <div class="mt-2 flex items-center justify-end">
                 <slot name="actions" />
             </div>
