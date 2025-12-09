@@ -71,13 +71,20 @@ const detectedAtFormatted = computed(() => {
 });
 
 const locationSummary = computed(() => {
-    if (!props.locationData.countryName) return 'No location detected';
+    if (!props.locationData.countryName) return 'No location set';
     const parts = [
         props.locationData.city,
         props.locationData.region,
         props.locationData.countryName,
     ].filter(Boolean);
     return parts.join(', ');
+});
+
+const detectionStatus = computed(() => {
+    if (props.locationData.manuallySet) {
+        return 'Updated';
+    }
+    return 'Detected';
 });
 
 const submit = () => {
@@ -131,7 +138,7 @@ const clearLocation = () => {
                         v-if="detectedAtFormatted"
                         class="mt-1 text-xs text-blue-600"
                     >
-                        Detected {{ detectedAtFormatted }}
+                        {{ detectionStatus }} {{ detectedAtFormatted }}
                     </p>
                 </div>
                 <ButtonText id="clear-location-form" @click="clearLocation">
