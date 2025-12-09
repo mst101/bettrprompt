@@ -40,11 +40,10 @@ test('create child with new task description successfully', function () {
     expect($childRun)->not->toBeNull()
         ->and($childRun->task_description)->toBe('Updated task description for child run')
         ->and($childRun->parent_id)->toBe($parentRun->id)
-        ->and($childRun->status)->toBe('processing')
-        ->and($childRun->workflow_stage)->toBe('submitted');
+        ->and($childRun->workflow_stage)->toBe('0_processing');
 
-    // Verify job was dispatched
-    Queue::assertPushed(\App\Jobs\ProcessAnalysis::class);
+    // Verify job was dispatched (ProcessPreAnalysis for Workflow 0)
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('create child validates task description required', function () {

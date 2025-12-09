@@ -82,7 +82,7 @@ export const test = base.extend<TestFixtures>({
     /**
      * promptRunId fixture
      *
-     * Creates a test prompt run in 'submitted' state and provides its ID.
+     * Creates a test prompt run in '1_processing' state and provides its ID.
      *
      * Benefits:
      * - Common setup for tests that need prompt data
@@ -97,8 +97,8 @@ export const test = base.extend<TestFixtures>({
      * ```
      */
     promptRunId: async ({ authenticatedPage }, use) => {
-        // Create a test prompt run in submitted state
-        const id = await createTestPromptRun(authenticatedPage, 'submitted');
+        // Create a test prompt run in analysis processing state
+        const id = await createTestPromptRun(authenticatedPage, '1_processing');
 
         // Provide it to the test
         await use(id);
@@ -113,19 +113,19 @@ export const test = base.extend<TestFixtures>({
  */
 
 /**
- * Setup test with specific prompt run state
+ * Setup test with specific prompt run workflow stage
  *
  * Example:
  * ```typescript
  * test('example', async ({ authenticatedPage }) => {
- *     const promptRunId = await setupPromptRun(authenticatedPage, 'analysis_complete');
+ *     const promptRunId = await setupPromptRun(authenticatedPage, '1_completed');
  *     await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
  * });
  * ```
  */
 export async function setupPromptRun(
     page: Page,
-    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
 ): Promise<number> {
     return await createTestPromptRun(page, state);
 }
@@ -140,14 +140,14 @@ export async function setupPromptRun(
  * test('example', async ({ authenticatedPage }) => {
  *     await setupAndNavigateToPromptRun(
  *         authenticatedPage,
- *         'analysis_complete',
+ *         '1_completed',
  *     );
  * });
  * ```
  */
 export async function setupAndNavigateToPromptRun(
     page: Page,
-    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
 ): Promise<number> {
     const id = await createTestPromptRun(page, state);
     await page.goto(`/prompt-builder/${id}`);
@@ -186,14 +186,14 @@ export async function waitForUIReady(page: Page): Promise<void> {
  * Example:
  * ```typescript
  * test('realtime example', async ({ authenticatedPage }) => {
- *     const id = await setupRealtimeTest(authenticatedPage, 'submitted');
+ *     const id = await setupRealtimeTest(authenticatedPage, '1_processing');
  *     // Now ready to test realtime updates
  * });
  * ```
  */
 export async function setupRealtimeTest(
     page: Page,
-    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
 ): Promise<number> {
     const id = await setupAndNavigateToPromptRun(page, state);
     await waitForUIReady(page);

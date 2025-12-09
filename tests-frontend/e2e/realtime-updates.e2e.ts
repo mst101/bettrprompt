@@ -22,7 +22,7 @@ test.describe('Realtime - Fallback Behavior', () => {
         page,
     }) => {
         // Navigate to a prompt run
-        const promptRunId = await createTestPromptRun(page, 'submitted');
+        const promptRunId = await createTestPromptRun(page, '1_processing');
         await page.goto(`/prompt-builder/${promptRunId}`);
 
         // Disable WebSocket to simulate failure
@@ -42,7 +42,7 @@ test.describe('Realtime - Fallback Behavior', () => {
 
     test('should allow manual refresh as fallback', async ({ page }) => {
         // Create and navigate to prompt run
-        const promptRunId = await createTestPromptRun(page, 'submitted');
+        const promptRunId = await createTestPromptRun(page, '1_processing');
         await page.goto(`/prompt-builder/${promptRunId}`);
 
         // Manually refresh page
@@ -71,7 +71,7 @@ test.describe('Realtime - Channel Cleanup', () => {
         });
 
         // Create and navigate to prompt run
-        const promptRunId = await createTestPromptRun(page, 'submitted');
+        const promptRunId = await createTestPromptRun(page, '1_processing');
         await page.goto(`/prompt-builder/${promptRunId}`);
 
         // Navigate away - channels should cleanup properly
@@ -92,7 +92,7 @@ test.describe('Realtime - Channel Cleanup', () => {
 
         // Navigate to prompt runs multiple times
         for (let i = 0; i < 2; i++) {
-            const promptRunId = await createTestPromptRun(page, 'submitted');
+            const promptRunId = await createTestPromptRun(page, '1_processing');
             await page.goto(`/prompt-builder/${promptRunId}`);
             await page.goto('/prompt-builder-history');
         }
@@ -117,11 +117,8 @@ test.describe('Realtime - Tab Visibility', () => {
     test('should display framework tab for framework-selected state', async ({
         page,
     }) => {
-        // Create prompt with framework already selected
-        const promptRunId = await createTestPromptRun(
-            page,
-            'analysis_complete',
-        );
+        // Create prompt with framework already selected (workflow 1 complete)
+        const promptRunId = await createTestPromptRun(page, '1_completed');
         await page.goto(`/prompt-builder/${promptRunId}`);
 
         // Framework tab should be visible
@@ -132,8 +129,8 @@ test.describe('Realtime - Tab Visibility', () => {
     test('should display optimised prompt tab for completed state', async ({
         page,
     }) => {
-        // Create completed prompt run
-        const promptRunId = await createTestPromptRun(page, 'completed');
+        // Create completed prompt run (workflow 2 complete)
+        const promptRunId = await createTestPromptRun(page, '2_completed');
         await page.goto(`/prompt-builder/${promptRunId}`);
 
         // Optimised prompt tab should be visible
@@ -141,18 +138,26 @@ test.describe('Realtime - Tab Visibility', () => {
         await expect(promptTab).toBeVisible();
     });
 
-    test('should show task tab by default for submitted state', async ({
-        page,
+    test('should show task tab by default for processing state', async ({
+        authenticatedPage,
     }) => {
-        // Create submitted prompt (no framework yet)
-        const promptRunId = await createTestPromptRun(page, 'submitted');
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        // Create processing prompt (workflow 1 in progress, no framework yet)
+        const promptRunId = await createTestPromptRun(
+            authenticatedPage,
+            '1_processing',
+        );
+        await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
+
+        // Wait for page to load
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Task tab should be visible by default
-        const taskTab = page.getByTestId('tab-button-task');
-        await expect(taskTab).toBeVisible();
+        const taskTab = authenticatedPage.getByTestId('tab-button-task');
+        await expect(taskTab).toBeVisible({ timeout: 5000 });
 
-        // Page should have correct title
-        expect(page.url()).toContain(`/prompt-builder/${promptRunId}`);
+        // Page should have correct URL
+        expect(authenticatedPage.url()).toContain(
+            `/prompt-builder/${promptRunId}`,
+        );
     });
 });

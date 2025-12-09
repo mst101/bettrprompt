@@ -35,17 +35,27 @@ class TestBroadcastController extends Controller
 
         $promptRun = PromptRun::findOrFail($promptRunId);
 
-        // Update the prompt run to simulate completed analysis
+        // Update the prompt run to simulate completed analysis (1_completed)
         if (! $promptRun->selected_framework) {
             $promptRun->update([
-                'selected_framework' => 'STAR Method',
-                'framework_reasoning' => 'Test framework selection for E2E testing',
-                'framework_questions' => [
-                    ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
-                    ['id' => 2, 'question' => 'What Action did you take?'],
-                    ['id' => 3, 'question' => 'What was the Result?'],
+                'selected_framework' => [
+                    'name' => 'SMART Goals',
+                    'code' => 'SMART',
+                    'components' => [
+                        'Specific - Clear and well-defined objectives',
+                        'Measurable - Quantifiable success metrics',
+                        'Achievable - Realistic with available resources',
+                        'Relevant - Aligned with broader goals',
+                        'Time-bound - Specific deadline or timeline',
+                    ],
+                    'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
                 ],
-                'workflow_stage' => 'analysis_complete',
+                'framework_questions' => [
+                    'What is the specific goal you want to achieve?',
+                    'How will you measure success?',
+                    'What is your timeline for achieving this goal?',
+                ],
+                'workflow_stage' => '1_completed',
             ]);
 
             $promptRun->refresh();
@@ -88,11 +98,10 @@ class TestBroadcastController extends Controller
             ], 422);
         }
 
-        // Update the prompt run to simulate completed optimisation
+        // Update the prompt run to simulate completed optimisation (2_completed)
         if (! $promptRun->optimized_prompt) {
             $promptRun->update([
-                'status' => 'completed',
-                'workflow_stage' => 'completed',
+                'workflow_stage' => '2_completed',
                 'optimized_prompt' => "# Test Optimised Prompt\n\nThis is a test prompt generated for E2E testing purposes.\n\n## Your Task\n{$promptRun->task_description}\n\n## Recommended Framework\n{$promptRun->selected_framework}\n\nPlease proceed with this structured approach to achieve the best results.",
                 'completed_at' => now(),
             ]);
@@ -134,12 +143,18 @@ class TestBroadcastController extends Controller
     }
 
     /**
-     * Create a test prompt run in a specific state for testing
+     * Create a test prompt run in a specific workflow stage for testing
      *
-     * States supported:
-     * - 'submitted': No framework selected
-     * - 'analysis_complete': Framework selected, no optimised prompt
-     * - 'completed': Full workflow completed
+     * Workflow stages supported:
+     * - '0_processing': Pre-analysis in progress
+     * - '0_completed': Pre-analysis complete with quick queries
+     * - '0_failed': Pre-analysis failed
+     * - '1_processing': Main analysis in progress, no framework selected
+     * - '1_completed': Framework selected, no optimised prompt
+     * - '1_failed': Main analysis failed
+     * - '2_processing': Prompt optimisation in progress
+     * - '2_completed': Full workflow completed with optimised prompt
+     * - '2_failed': Prompt optimisation failed
      */
     public function createTestPromptRun(Request $request): JsonResponse
     {
@@ -148,7 +163,7 @@ class TestBroadcastController extends Controller
             abort(403, 'Unauthorised');
         }
 
-        $state = $request->query('state', 'submitted');
+        $state = $request->query('state', '1_processing');
         $userId = auth()->id();
 
         // Get the first existing visitor, or create a new one if none exist
@@ -160,42 +175,102 @@ class TestBroadcastController extends Controller
         $data = [
             'visitor_id' => $visitor->id,
             'user_id' => $userId,
-            'task_description' => "E2E Test Prompt - State: {$state}",
+            'task_description' => "E2E Test Prompt - Workflow Stage: {$state}",
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'test'],
             'personality_type' => 'INTJ-A',
         ];
 
-        if ($state === 'submitted') {
-            $data['status'] = 'processing';
-            $data['workflow_stage'] = 'submitted';
-        } elseif ($state === 'analysis_complete') {
-            $data['status'] = 'processing';
-            $data['workflow_stage'] = 'analysis_complete';
+        if (in_array($state, ['0_processing', '0_failed'])) {
+            $data['workflow_stage'] = $state;
+            if ($state === '0_failed') {
+                $data['error_message'] = 'Test pre-analysis failure for E2E testing';
+            }
+        } elseif ($state === '0_completed') {
+            $data['workflow_stage'] = '0_completed';
+        } elseif ($state === '1_processing') {
+            $data['workflow_stage'] = '1_processing';
+        } elseif ($state === '1_completed') {
+            $data['workflow_stage'] = '1_completed';
             $data['selected_framework'] = [
-                'name' => 'STAR Method',
-                'code' => 'star',
-                'rationale' => 'Test framework for broadcast testing',
+                'name' => 'SMART Goals',
+                'code' => 'SMART',
+                'components' => [
+                    'Specific - Clear and well-defined objectives',
+                    'Measurable - Quantifiable success metrics',
+                    'Achievable - Realistic with available resources',
+                    'Relevant - Aligned with broader goals',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
-                ['id' => 2, 'question' => 'What Action did you take?'],
-                ['id' => 3, 'question' => 'What was the Result?'],
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
             ];
-        } elseif ($state === 'completed') {
-            $data['status'] = 'completed';
-            $data['workflow_stage'] = 'completed';
+        } elseif ($state === '1_failed') {
+            $data['workflow_stage'] = '1_failed';
+            $data['error_message'] = 'Test main analysis failure for E2E testing';
+        } elseif ($state === '2_processing') {
+            $data['workflow_stage'] = '2_processing';
             $data['selected_framework'] = [
-                'name' => 'STAR Method',
-                'code' => 'star',
-                'rationale' => 'Test framework for broadcast testing',
+                'name' => 'SMART Goals',
+                'code' => 'SMART',
+                'components' => [
+                    'Specific - Clear and well-defined objectives',
+                    'Measurable - Quantifiable success metrics',
+                    'Achievable - Realistic with available resources',
+                    'Relevant - Aligned with broader goals',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                ['id' => 1, 'question' => 'What was the specific Situation or Task?'],
-                ['id' => 2, 'question' => 'What Action did you take?'],
-                ['id' => 3, 'question' => 'What was the Result?'],
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
+            ];
+        } elseif ($state === '2_completed') {
+            $data['workflow_stage'] = '2_completed';
+            $data['selected_framework'] = [
+                'name' => 'SMART Goals',
+                'code' => 'SMART',
+                'components' => [
+                    'Specific - Clear and well-defined objectives',
+                    'Measurable - Quantifiable success metrics',
+                    'Achievable - Realistic with available resources',
+                    'Relevant - Aligned with broader goals',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+            ];
+            $data['framework_questions'] = [
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
             ];
             $data['optimized_prompt'] = 'This is a test optimised prompt.';
             $data['completed_at'] = now();
+        } elseif ($state === '2_failed') {
+            $data['workflow_stage'] = '2_failed';
+            $data['error_message'] = 'Test prompt optimisation failure for E2E testing';
+            $data['selected_framework'] = [
+                'name' => 'SMART Goals',
+                'code' => 'SMART',
+                'components' => [
+                    'Specific - Clear and well-defined objectives',
+                    'Measurable - Quantifiable success metrics',
+                    'Achievable - Realistic with available resources',
+                    'Relevant - Aligned with broader goals',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+            ];
+            $data['framework_questions'] = [
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
+            ];
         }
 
         $promptRun = PromptRun::create($data);

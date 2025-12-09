@@ -109,7 +109,7 @@ class Visitor extends Model
     {
         return $this->promptRuns()
             ->where('status', 'completed')
-            ->where('workflow_stage', 'completed')
+            ->where('workflow_stage', '2_completed')
             ->whereNotNull('optimized_prompt')
             ->exists();
     }

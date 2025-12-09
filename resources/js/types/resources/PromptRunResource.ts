@@ -86,4 +86,10 @@ export interface PromptRunResource {
     readonly user?: UserResource | null;
     readonly parent?: PromptRunResource | null;
     readonly children?: readonly PromptRunResource[];
+
+    /**
+     * Check if this prompt run is in an active processing state
+     * Returns true if any workflow is currently processing
+     */
+    isProcessing(): boolean;
 }

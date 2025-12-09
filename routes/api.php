@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
@@ -92,6 +93,17 @@ Route::post('/n8n/webhook', function (Request $request) {
             }
 
             // Broadcast events if needed
+            if ($request->input('workflow_stage') === '1_completed') {
+                try {
+                    event(new AnalysisCompleted($promptRun));
+                } catch (\Exception $e) {
+                    Log::error('Failed to broadcast AnalysisCompleted event', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
             if ($request->input('workflow_stage') === '2_completed') {
                 try {
                     event(new PromptOptimizationCompleted($promptRun));

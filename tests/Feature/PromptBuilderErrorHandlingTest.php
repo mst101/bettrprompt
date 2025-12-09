@@ -24,7 +24,6 @@ test('analyse handles service failure gracefully', function () {
     // Mock PromptFrameworkService to return failure
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -37,14 +36,17 @@ test('analyse handles service failure gracefully', function () {
     ]);
 
     $response->assertRedirect();
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('analyse handles service success correctly', function () {
     Queue::fake();
 
+    // Mock PromptFrameworkService to return success
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -60,6 +62,9 @@ test('analyse handles service success correctly', function () {
     $this->assertDatabaseHas('prompt_runs', [
         'user_id' => $this->user->id,
     ]);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('answer question rejects invalid workflow stage', function () {
@@ -101,8 +106,7 @@ test('retry handles service failure', function () {
     $response->assertRedirect();
 
     $promptRun->refresh();
-    expect($promptRun->status)->toBe('processing')
-        ->and($promptRun->workflow_stage)->toBe('submitted');
+    expect($promptRun->workflow_stage)->toBe('0_processing');
 });
 
 test('retry resets failed prompt run to processing state', function () {
@@ -128,8 +132,7 @@ test('retry resets failed prompt run to processing state', function () {
     $response->assertRedirect();
 
     $promptRun->refresh();
-    expect($promptRun->status)->toBe('processing')
-        ->and($promptRun->workflow_stage)->toBe('submitted');
+    expect($promptRun->workflow_stage)->toBe('0_processing');
 });
 
 test('user cannot access other users prompt runs', function () {

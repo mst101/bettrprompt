@@ -242,7 +242,7 @@ test.describe('Prompt Builder History - With Data', () => {
             page.getByRole('columnheader', { name: /framework/i }),
         ).toBeVisible();
         await expect(
-            page.getByRole('columnheader', { name: /status/i }),
+            page.getByRole('columnheader', { name: /workflow stage/i }),
         ).toBeVisible();
         await expect(
             page.getByRole('columnheader', { name: /created/i }),
@@ -416,26 +416,26 @@ test.describe('Prompt Builder History - Sorting', () => {
         expect(page.url()).toContain('sort_direction=desc');
     });
 
-    test('should sort by status', async ({ page }) => {
+    test('should sort by workflow stage', async ({ page }) => {
         await page.goto('/prompt-builder-history');
 
         // Desktop size to see all columns
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        // Click status header
-        const statusHeader = page
-            .getByRole('columnheader', { name: /status/i })
+        // Click workflow stage header
+        const workflowStageHeader = page
+            .getByRole('columnheader', { name: /workflow stage|status/i })
             .locator('button');
 
         // Wait for URL to change after clicking
-        const sortPromise = page.waitForURL(/sort_by=status/, {
+        const sortPromise = page.waitForURL(/sort_by=workflow_stage/, {
             timeout: 10000,
         });
-        await statusHeader.click();
+        await workflowStageHeader.click();
         await sortPromise;
 
-        // Should sort by status
-        expect(page.url()).toContain('sort_by=status');
+        // Should sort by workflow_stage
+        expect(page.url()).toContain('sort_by=workflow_stage');
     });
 
     test('should sort by personality type', async ({ page }) => {
@@ -849,7 +849,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Navigate with specific sort and pagination
         await page.goto(
-            '/prompt-builder-history?sort_by=status&sort_direction=asc&per_page=5&page=2',
+            '/prompt-builder-history?sort_by=workflow_stage&sort_direction=asc&per_page=5&page=2',
         );
 
         // Click on a prompt
@@ -873,7 +873,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Should maintain query parameters
         const url = page.url();
-        expect(url).toContain('sort_by=status');
+        expect(url).toContain('sort_by=workflow_stage');
         expect(url).toContain('sort_direction=asc');
         expect(url).toContain('per_page=5');
         expect(url).toContain('page=2');

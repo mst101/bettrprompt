@@ -59,14 +59,12 @@ test('analyse validates task description min length', function () {
 test('analyse creates prompt run successfully', function () {
     $this->actingAs($this->user);
 
-    // Fake the queue so jobs don't actually execute
     Queue::fake();
 
     // Mock PromptFrameworkService to return success
     $this->mock(PromptFrameworkService::class, function ($mock) {
         // First call: preAnalyseTask (returns no clarification needed)
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -85,8 +83,11 @@ test('analyse creates prompt run successfully', function () {
         'task_description' => 'Create a detailed project plan for launching a new product',
         'personality_type' => 'INTJ-A',
 
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => '0_processing',
     ]);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('analyse includes user personality traits', function () {
@@ -94,9 +95,9 @@ test('analyse includes user personality traits', function () {
 
     Queue::fake();
 
+    // Mock PromptFrameworkService
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -115,6 +116,9 @@ test('analyse includes user personality traits', function () {
         'user_id' => $this->user->id,
         'personality_type' => 'INTJ-A',
     ]);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('show displays prompt run details', function () {
@@ -243,7 +247,7 @@ test('answer question saves answer successfully', function () {
 
     $promptRun = promptRunBuilder()
         ->withUser($this->user)
-        ->answeringQuestions(['Question 1', 'Question 2'])
+        ->analysisComplete()
         ->withAnswers([]) // Clear any default answers
         ->build();
 
@@ -264,7 +268,7 @@ test('answer question saves answer successfully', function () {
     expect($promptRun->clarifying_answers)->toHaveCount(2)
         ->and($promptRun->clarifying_answers[0])->toBe('This is my detailed answer to the first question')
         ->and($promptRun->current_question_index)->toBe(1)
-        ->and($promptRun->workflow_stage)->toBe('answering_questions');
+        ->and($promptRun->workflow_stage)->toBe('1_completed');
 });
 
 test('skip question records null answer', function () {
@@ -336,7 +340,7 @@ test('generate creates optimised prompt', function () {
     $promptRun->refresh();
     expect($promptRun->optimized_prompt)->toBe('Your optimised prompt here')
         ->and($promptRun->workflow_stage)->toBe('2_completed')
-        ->and($promptRun->status)->toBe('2_completed');
+        ->and($promptRun->isCompleted())->toBeTrue();
 });
 
 test('guests can create prompt runs as visitors', function () {
@@ -345,7 +349,6 @@ test('guests can create prompt runs as visitors', function () {
     // Mock PromptFrameworkService to return success
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -364,6 +367,9 @@ test('guests can create prompt runs as visitors', function () {
     // Should create successfully and redirect to show page
     $response->assertRedirect();
     expect(PromptRun::where('visitor_id', $visitor->id)->count())->toBe(1);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('user cannot view other users prompt runs', function () {
@@ -425,7 +431,6 @@ test('analyse saves personality tier', function () {
     // Mock PromptFrameworkService to return personality tier
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -442,6 +447,9 @@ test('analyse saves personality tier', function () {
     $this->assertDatabaseHas('prompt_runs', [
         'user_id' => $this->user->id,
     ]);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('show includes personality tier in response', function () {
@@ -475,9 +483,9 @@ test('user without personality type can create prompt run', function () {
 
     Queue::fake();
 
+    // Mock PromptFrameworkService
     $this->mock(PromptFrameworkService::class, function ($mock) {
         $mock->shouldReceive('preAnalyseTask')
-            ->once()
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -495,6 +503,9 @@ test('user without personality type can create prompt run', function () {
         'user_id' => $userWithoutPersonality->id,
         'personality_type' => null,
     ]);
+
+    // Verify pre-analysis job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
 test('go back to previous question updates index', function () {

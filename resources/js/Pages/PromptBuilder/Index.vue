@@ -62,8 +62,16 @@ const form = useForm({
         user.value?.traitPercentages || props.visitorTraitPercentages || null,
 });
 
+const submissionError = ref<string | null>(null);
+
 const submit = () => {
-    form.post(route('prompt-builder.analyse'));
+    submissionError.value = null;
+    form.post(route('prompt-builder.analyse'), {
+        onError: () => {
+            submissionError.value =
+                'Failed to submit prompt. Please check your connection and try again.';
+        },
+    });
 };
 
 const { appendText } = useTextAppend();
@@ -143,6 +151,16 @@ watch(
         <!--            class="max-w-4xl overflow-hidden bg-white text-gray-600 shadow-lg ring-1 ring-gray-100 sm:rounded-lg dark:bg-indigo-50"-->
         <!--        >-->
         <Card>
+            <!-- Error Alert -->
+            <div
+                v-if="submissionError"
+                class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700"
+                role="alert"
+            >
+                <p class="font-medium">Error submitting prompt</p>
+                <p>{{ submissionError }}</p>
+            </div>
+
             <!--            <div class="px-6 sm:p-6">-->
             <PersonalityTypePrompt
                 ref="personalityTypePromptRef"

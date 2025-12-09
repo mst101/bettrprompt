@@ -42,7 +42,7 @@ Each test creates a prompt run with:
 - **Task Description**: Precise technical specification for a healthcare management system
 - **Selected Framework**: The prompt framework chosen by the n8n analysis workflow
 - **Pre-analysis Questions**: Any clarifying questions from the pre-analysis phase
-- **Workflow Stage**: Current stage of processing (submitted, analysis_complete, completed, etc.)
+- **Workflow Stage**: Current stage of processing (0_processing, 0_completed, 1_processing, 1_completed, 2_processing, 2_completed, etc.)
 - **API Usage**: Token counts and usage metrics from each n8n workflow phase
 
 ## Data Location
@@ -52,18 +52,17 @@ All prompt run data is stored in the `personality_data_collection` database in t
 - `selected_framework` - Framework selected by workflow (JSON)
 - `framework_questions` - Clarifying questions for the framework (JSON array)
 - `pre_analysis_questions` - Initial clarifying questions (JSON array)
-- `workflow_stage` - Current processing stage
-- `status` - Current status (pending, processing, completed)
+- `workflow_stage` - Current processing stage (0_processing, 0_completed, 1_processing, 1_completed, 2_processing, 2_completed, etc.)
 - `created_at` - Timestamp of when the test ran
 - `updated_at` - Timestamp of last update
 
 ## Workflow Processing
 
 The n8n workflows process asynchronously:
-1. Test submits task → Prompt run created with `status='processing'` in `personality_data_collection`
-2. Pre-analysis phase → May add clarifying questions (~5-10 seconds)
-3. Main analysis → Selects framework and generates questions (~15-30 seconds)
-4. Prompt optimisation → Generates final prompt (~10-20 seconds)
+1. Test submits task → Prompt run created with `workflow_stage='0_processing'` in `personality_data_collection`
+2. Pre-analysis phase → Updates to `workflow_stage='0_completed'` with clarifying questions (~5-10 seconds)
+3. Main analysis → Transitions to `workflow_stage='1_processing'` then `'1_completed'`, selects framework and generates questions (~15-30 seconds)
+4. Prompt optimisation → Transitions to `workflow_stage='2_processing'` then `'2_completed'`, generates final prompt (~10-20 seconds)
 
 The tests wait up to 90 seconds for workflow completion, but data is persisted immediately to the data collection database regardless.
 

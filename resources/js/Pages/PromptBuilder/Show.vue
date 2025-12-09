@@ -35,6 +35,13 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.is_admin ?? false);
 
+// Add isProcessing method to promptRun resource if it doesn't exist
+if (!props.promptRun.isProcessing) {
+    (props.promptRun as any).isProcessing = function () {
+        return this.workflowStage.endsWith('_processing');
+    };
+}
+
 defineOptions({
     layout: AppLayout,
 });
@@ -169,7 +176,7 @@ const hasRelatedRuns = computed(
 
 // Determine if user should proceed to questions
 const shouldShowProceedButton = computed(() => {
-    if (props.promptRun.workflowStage !== 'analysis_complete') {
+    if (props.promptRun.workflowStage !== '1_completed') {
         return false;
     }
 
@@ -235,10 +242,10 @@ watch(
     (newStage, oldStage) => {
         // When pre-analysis completes (either with questions or proceeding to analysis)
         if (
-            oldStage === 'generating_pre_analysis' &&
-            (newStage === 'pre_analysis_questions' || newStage === 'submitted')
+            oldStage === '0_processing' &&
+            (newStage === '0_completed' || newStage === '1_processing')
         ) {
-            if (newStage === 'pre_analysis_questions') {
+            if (newStage === '0_completed') {
                 // Quick Queries are ready - reload to show them
                 router.reload({
                     only: ['promptRun'],
@@ -246,7 +253,7 @@ watch(
                         activeTab.value = 'task';
                     },
                 });
-            } else if (newStage === 'submitted') {
+            } else if (newStage === '1_processing') {
                 // Proceeding directly to analysis - reload to show AnalysisProgress
                 router.reload({
                     only: ['promptRun'],
@@ -254,7 +261,7 @@ watch(
             }
         }
         // When main analysis completes
-        if (oldStage === 'submitted' && newStage === 'analysis_complete') {
+        if (oldStage === '1_processing' && newStage === '1_completed') {
             router.reload({
                 only: ['promptRun'],
                 onSuccess: () => {

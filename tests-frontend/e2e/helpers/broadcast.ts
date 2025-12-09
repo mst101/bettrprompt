@@ -182,23 +182,38 @@ export async function getPromptRunIdFromUrl(
 }
 
 /**
- * Create a test prompt run in a specific state for testing
+ * Create a test prompt run in a specific workflow stage for testing
  *
- * This endpoint allows tests to create prompts with pre-configured states
+ * This endpoint allows tests to create prompts with pre-configured stages
  * without relying on the prompt history or form submissions.
  *
- * States supported:
- * - 'submitted': No framework selected
- * - 'analysis_complete': Framework selected, no optimised prompt
- * - 'completed': Full workflow completed
+ * Workflow stages supported:
+ * - '0_processing': Pre-analysis in progress
+ * - '0_completed': Pre-analysis complete with quick queries
+ * - '0_failed': Pre-analysis failed
+ * - '1_processing': Main analysis in progress, no framework selected
+ * - '1_completed': Framework selected, no optimised prompt
+ * - '1_failed': Main analysis failed
+ * - '2_processing': Prompt optimisation in progress
+ * - '2_completed': Full workflow completed with optimised prompt
+ * - '2_failed': Prompt optimisation failed
  *
  * @param page - Playwright page object
- * @param state - The state the prompt run should be created in
+ * @param state - The workflow stage the prompt run should be created in
  * @returns Promise resolving to the created prompt run ID
  */
 export async function createTestPromptRun(
     page: Page,
-    state: 'submitted' | 'analysis_complete' | 'completed' = 'submitted',
+    state:
+        | '0_processing'
+        | '0_completed'
+        | '0_failed'
+        | '1_processing'
+        | '1_completed'
+        | '1_failed'
+        | '2_processing'
+        | '2_completed'
+        | '2_failed' = '1_processing',
 ): Promise<number> {
     return await page.evaluate(async (s: string) => {
         const response = await fetch(`/test/create-prompt-run?state=${s}`, {

@@ -90,7 +90,7 @@ export function useRealtimeUpdates(
                             `[useRealtimeUpdates] Error handling ${eventName}:`,
                             error,
                         );
-                        throw error;
+                        // Don't rethrow - allow other handlers to continue processing
                     }
                 };
 

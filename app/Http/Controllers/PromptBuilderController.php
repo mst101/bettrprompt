@@ -897,7 +897,7 @@ class PromptBuilderController extends Controller
             $promptRun->update([
                 'clarifying_answers' => $answers,
                 'current_question_index' => $nextIndex,
-                'workflow_stage' => 'answering_questions',
+                'workflow_stage' => '1_completed',
             ]);
         });
 
@@ -970,7 +970,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that the prompt run is completed
-        if ($promptRun->workflow_stage !== 'completed') {
+        if ($promptRun->workflow_stage !== '2_completed') {
             return back()->with('error', 'Can only edit completed prompt runs.');
         }
 
@@ -1059,7 +1059,7 @@ class PromptBuilderController extends Controller
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $promptRun->task_description,
                     'status' => 'processing',
-                    'workflow_stage' => 'submitted',
+                    'workflow_stage' => '0_processing',
                 ]);
             });
 

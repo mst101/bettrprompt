@@ -8,7 +8,7 @@ import type { Page } from '@playwright/test';
 
 export interface PromptRunData {
     task: string;
-    state: 'submitted' | 'analysis_complete' | 'completed';
+    state: '1_processing' | '1_completed' | '2_completed';
     frameworkName?: string;
     optimizedPrompt?: string;
 }
@@ -32,7 +32,8 @@ export class TestDataBuilder {
     }
 
     /**
-     * Set up a prompt run with a specific state
+     * Set up a prompt run with a specific workflow stage
+     * '1_processing' = Running main analysis, '1_completed' = Ready for framework selection, '2_completed' = Completed
      */
     withPromptRun(state: PromptRunData['state']): this {
         this.promptRunData.state = state;
@@ -67,7 +68,7 @@ export class TestDataBuilder {
      * Create prompt run via test API endpoint
      */
     async createPromptRun(): Promise<number> {
-        const state = this.promptRunData.state || 'submitted';
+        const state = this.promptRunData.state || '1_processing';
         const promptRunId = await this.page.evaluate(async (s: string) => {
             const response = await fetch(`/test/create-prompt-run?state=${s}`, {
                 method: 'POST',
@@ -144,21 +145,21 @@ export class TestDataBuilder {
  */
 export const testDataScenarios = {
     /**
-     * Create a submitted prompt run (no analysis done yet)
+     * Create a prompt run with analysis running (1_processing)
      */
-    async createSubmittedPrompt(
+    async createAnalysisProcessingPrompt(
         page: Page,
         task: string = 'Write a professional email',
     ): Promise<number> {
         const builder = new TestDataBuilder(page);
         return builder
-            .withPromptRun('submitted')
+            .withPromptRun('1_processing')
             .withTask(task)
             .createPromptRun();
     },
 
     /**
-     * Create a prompt run with framework selected
+     * Create a prompt run with framework selected (1_completed)
      */
     async createFrameworkSelectedPrompt(
         page: Page,
@@ -167,14 +168,14 @@ export const testDataScenarios = {
     ): Promise<number> {
         const builder = new TestDataBuilder(page);
         return builder
-            .withPromptRun('analysis_complete')
+            .withPromptRun('1_completed')
             .withTask(task)
             .withFramework(framework)
             .createPromptRun();
     },
 
     /**
-     * Create a completed prompt run
+     * Create a completed prompt run (2_completed)
      */
     async createCompletedPrompt(
         page: Page,
@@ -183,7 +184,7 @@ export const testDataScenarios = {
     ): Promise<number> {
         const builder = new TestDataBuilder(page);
         return builder
-            .withPromptRun('completed')
+            .withPromptRun('2_completed')
             .withTask(task)
             .withOptimizedPrompt(optimizedPrompt)
             .createPromptRun();
@@ -209,13 +210,13 @@ export const testDataScenarios = {
  *
  * // Using the builder directly
  * const promptRunId = await new TestDataBuilder(page)
- *     .withPromptRun('analysis_complete')
+ *     .withPromptRun('1_completed')
  *     .withTask('Write a poem')
  *     .withFramework('Poetic Structure')
  *     .createPromptRun();
  *
  * // Using predefined scenarios
- * const submittedPromptId = await testDataScenarios.createSubmittedPrompt(
+ * const analysisPromptId = await testDataScenarios.createAnalysisProcessingPrompt(
  *     page,
  *     'Write a business proposal'
  * );

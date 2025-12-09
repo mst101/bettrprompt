@@ -75,6 +75,7 @@ FM,O,USD,en-GB,mon,0,Micronesia,Mikronesien,Mikronesien,Micronesia,Micronésie,
 FO,E,EUR,en-GB,mon,0,"Faroe Islands",Færøerne,Färöer,"Islas Feroe","Îles Féroé","Fær Øer, Isole",Færøyene,Faeröer,"Ilhas Faroe",Färöarna
 FR,E,EUR,fr-FR,mon,0,France,Frankrig,Frankreich,Francia,France,Francia,Frankrike,Frankrijk,França,Frankrike
 GA,F,XAF,fr-FR,mon,0,Gabon,Gabon,Gabun,Gabón,Gabon,Gabon,Gabon,Gabon,Gabão,Gabon
+GB,E,GBP,en-GB,mon,1,"United Kingdom",Storbritannien,Großbritannien,"Reino Unido",Royaume-Uni,"Regno Unito",Storbritannia,"Verenigd Koninkrijk","Reino Unido",Storbritannien
 GD,C,XCD,en-GB,mon,1,Grenada,Grenada,Grenada,Grenada,Grenade,Grenada,Grenada,Grenada,Granada,Grenada
 GE,A,GEL,en-GB,mon,0,Georgia,Georgien,Georgien,Georgia,Géorgie,Georgia,Georgia,Georgië,Geórgia,Georgien
 GF,S,EUR,fr-FR,mon,0,"French Guiana","Fransk Guyana",Französisch-Guayana,"Guayana Francesa","Guyane Française","Guyana Francese","Fransk Guyana",Frans-Guyana,"Guiana Francesa","Franska Guyana"
@@ -227,7 +228,6 @@ TW,I,TWD,zh-TW,sun,0,Taiwan,Taiwan,Taiwan,Taiwán,Taïwan,Taiwan,Taiwan,Taiwan
 TZ,F,TZS,en-GB,mon,0,Tanzania,Tanzania,Tansania,Tanzania,Tanzanie,Tanzania,Tanzania,Tanzania,Tanzânia,Tanzania
 UA,E,UAH,uk-UA,mon,0,Ukraine,Ukraine,Ukraine,Ucrania,Ukraine,Ucraina,Ukraina,Oekraïne,Ucrânia,Ukraina
 UG,F,UGX,en-GB,mon,0,Uganda,Uganda,Uganda,Uganda,Ouganda,Uganda,Uganda,Oeganda,Uganda,Uganda
-UK,E,GBP,en-GB,mon,1,"United Kingdom",Storbritannien,Großbritannien,"Reino Unido",Royaume-Uni,"Regno Unito",Storbritannia,"Verenigd Koninkrijk","Reino Unido",Storbritannien
 UM,O,USD,en-US,mon,0,"US Minor Outlying Islands","Amerikanske mindre afsidesliggende øer","US Minor Outlying Islands","Islas ultramarinas menores de EE. UU.","Îles mineures éloignées des États-Unis","Isole minori esterne degli Stati Uniti","Amerikanske mindre utliggende øyer","Amerikaanse ondergeschikte afgelegen eilanden","Ilhas Menores Distantes dos EUA","Amerikanska mindre avlägsna öar"
 US,N,USD,en-US,sun,1,"United States",USA,"Vereinigte Staaten","Estados Unidos",États-Unis,"Stati Uniti","De forente stater","Verenigde Staten","Estados Unidos",USA
 UY,S,UYU,es-ES,mon,0,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguay,Uruguai,Uruguay

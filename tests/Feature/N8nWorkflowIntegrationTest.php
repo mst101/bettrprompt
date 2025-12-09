@@ -38,7 +38,7 @@ test('complete workflow progression from submission to completion', function () 
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('analysis_complete')
+    expect($promptRun->workflow_stage)->toBe('1_completed')
         ->and($promptRun->selected_framework['code'])->toBe('SMART');
 
     // Step 2: User answers questions (simulated)
@@ -55,7 +55,7 @@ test('complete workflow progression from submission to completion', function () 
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('generating_prompt');
+    expect($promptRun->workflow_stage)->toBe('2_processing');
 
     // Step 4: Completion
     webhookPost(createCompletedPayload(
@@ -64,8 +64,7 @@ test('complete workflow progression from submission to completion', function () 
     ));
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('completed')
-        ->and($promptRun->status)->toBe('completed')
+    expect($promptRun->workflow_stage)->toBe('2_completed')
         ->and($promptRun->completed_at)->not->toBeNull()
         ->and($promptRun->optimized_prompt)->toContain('SMART framework');
 });
@@ -116,7 +115,7 @@ test('workflow recovers from failed state', function () {
         ->failed('API timeout error')
         ->build();
 
-    expect($promptRun->status)->toBe('failed')
+    expect($promptRun->isFailed())->toBeTrue()
         ->and($promptRun->error_message)->toContain('timeout');
 
     // Retry: reset to processing
@@ -129,8 +128,7 @@ test('workflow recovers from failed state', function () {
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->status)->toBe('processing')
-        ->and($promptRun->workflow_stage)->toBe('analysis_complete')
+    expect($promptRun->workflow_stage)->toBe('1_completed')
         ->and($promptRun->error_message)->toBeNull();
 });
 
@@ -200,16 +198,16 @@ test('workflow handles multiple concurrent updates correctly', function () {
     // Update first prompt run
     webhookPost(createFrameworkSelectedPayload($promptRun1));
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('analysis_complete');
+    expect($promptRun1->workflow_stage)->toBe('1_completed');
 
     // Update second prompt run independently
     webhookPost(createCompletedPayload($promptRun2));
     $promptRun2->refresh();
-    expect($promptRun2->workflow_stage)->toBe('completed');
+    expect($promptRun2->workflow_stage)->toBe('2_completed');
 
     // First should not be affected
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('analysis_complete')
+    expect($promptRun1->workflow_stage)->toBe('1_completed')
         ->and($promptRun1->id)->not->toBe($promptRun2->id);
 });
 
