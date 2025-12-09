@@ -117,13 +117,13 @@ The `composer dev` command runs these processes concurrently:
 ### Building and Testing
 
 ```bash
-# Run Pest tests
-composer test
-# or directly:
+# Run Pest tests (always use Sail for consistency with Docker environment)
+./vendor/bin/sail test
+# or to run tests directly (not recommended - use sail for consistency)
 php artisan test
 
 # Run specific test file
-php artisan test tests/Feature/ExampleTest.php
+./vendor/bin/sail test tests/Feature/ExampleTest.php
 
 # Build for production (includes SSR build)
 npm run build
@@ -134,6 +134,8 @@ npm run lint
 # Code style (Laravel Pint)
 ./vendor/bin/pint
 ```
+
+**IMPORTANT**: Always use `./vendor/bin/sail` for running tests and Laravel commands to ensure consistency with the Docker environment (PostgreSQL, Redis, etc.). Using `php artisan` directly may fail or produce different results.
 
 ### Initial Setup
 

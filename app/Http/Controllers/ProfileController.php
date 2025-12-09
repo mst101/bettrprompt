@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdateBudgetRequest;
+use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdatePersonalityTypeRequest;
+use App\Http\Requests\UpdateProfessionalRequest;
+use App\Http\Requests\UpdateTeamRequest;
+use App\Http\Requests\UpdateToolsRequest;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Language;
@@ -228,26 +233,17 @@ class ProfileController extends Controller
     /**
      * Update user location information.
      */
-    public function updateLocation(Request $request): RedirectResponse
+    public function updateLocation(UpdateLocationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'countryCode' => ['nullable', 'string', 'size:2'],
-            'region' => ['nullable', 'string', 'max:100'],
-            'city' => ['nullable', 'string', 'max:100'],
-            'timezone' => ['nullable', 'string'],
-            'currencyCode' => ['nullable', 'string', 'size:3'],
-            'languageCode' => ['nullable', 'string', 'max:5'],
-        ]);
-
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'country_code' => $validated['countryCode'],
-                    'region' => $validated['region'],
-                    'city' => $validated['city'],
-                    'timezone' => $validated['timezone'],
-                    'currency_code' => $validated['currencyCode'],
-                    'language_code' => $validated['languageCode'],
+                    'country_code' => $request->validated('country_code'),
+                    'region' => $request->validated('region'),
+                    'city' => $request->validated('city'),
+                    'timezone' => $request->validated('timezone'),
+                    'currency_code' => $request->validated('currency_code'),
+                    'language_code' => $request->validated('language_code'),
                     'location_manually_set' => true,
                 ]);
                 $request->user()->updateProfileCompletion();
@@ -268,22 +264,15 @@ class ProfileController extends Controller
     /**
      * Update user professional context.
      */
-    public function updateProfessional(Request $request): RedirectResponse
+    public function updateProfessional(UpdateProfessionalRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'jobTitle' => ['nullable', 'string', 'max:100'],
-            'industry' => ['nullable', 'string', 'max:100'],
-            'experienceLevel' => ['nullable', 'in:entry,mid,senior,expert'],
-            'companySize' => ['nullable', 'in:solo,small,medium,large,enterprise'],
-        ]);
-
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'job_title' => $validated['jobTitle'],
-                    'industry' => $validated['industry'],
-                    'experience_level' => $validated['experienceLevel'],
-                    'company_size' => $validated['companySize'],
+                    'job_title' => $request->validated('job_title'),
+                    'industry' => $request->validated('industry'),
+                    'experience_level' => $request->validated('experience_level'),
+                    'company_size' => $request->validated('company_size'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -303,20 +292,14 @@ class ProfileController extends Controller
     /**
      * Update user team context.
      */
-    public function updateTeam(Request $request): RedirectResponse
+    public function updateTeam(UpdateTeamRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'teamSize' => ['nullable', 'in:solo,small,medium,large'],
-            'teamRole' => ['nullable', 'in:individual,lead,manager,director,executive'],
-            'workMode' => ['nullable', 'in:office,hybrid,remote,freelance'],
-        ]);
-
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'team_size' => $validated['teamSize'],
-                    'team_role' => $validated['teamRole'],
-                    'work_mode' => $validated['workMode'],
+                    'team_size' => $request->validated('team_size'),
+                    'team_role' => $request->validated('team_role'),
+                    'work_mode' => $request->validated('work_mode'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -336,16 +319,12 @@ class ProfileController extends Controller
     /**
      * Update user budget preferences.
      */
-    public function updateBudget(Request $request): RedirectResponse
+    public function updateBudget(UpdateBudgetRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'budgetConsciousness' => ['nullable', 'in:free_only,free_first,mixed,premium_ok,enterprise'],
-        ]);
-
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'budget_consciousness' => $validated['budgetConsciousness'],
+                    'budget_consciousness' => $request->validated('budget_consciousness'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -365,19 +344,13 @@ class ProfileController extends Controller
     /**
      * Update user tool preferences.
      */
-    public function updateTools(Request $request): RedirectResponse
+    public function updateTools(UpdateToolsRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'preferredTools' => ['nullable', 'array'],
-            'preferredTools.*' => ['string'],
-            'primaryProgrammingLanguage' => ['nullable', 'string', 'max:50'],
-        ]);
-
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'preferred_tools' => $validated['preferredTools'],
-                    'primary_programming_language' => $validated['primaryProgrammingLanguage'],
+                    'preferred_tools' => $request->validated('preferred_tools'),
+                    'primary_programming_language' => $request->validated('primary_programming_language'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
