@@ -356,18 +356,6 @@ const hasSubmittedAnswers = computed(() => {
     );
 });
 
-// Check if answers have been submitted to the server (after reload)
-const hasServerAnswers = computed(() => {
-    if (!props.promptRun.clarifyingAnswers) return false;
-    const answers = props.promptRun.clarifyingAnswers;
-    if (Array.isArray(answers) && answers.length === 0) return false;
-    // At least one answer should be non-null
-    return (
-        Array.isArray(answers) &&
-        answers.some((answer) => answer !== null && answer !== undefined)
-    );
-});
-
 // Check if we're in the generation workflow stage (2_processing, 2_completed, or 2_failed)
 const isInGenerationStage = computed(() => {
     const stage = props.promptRun.workflowStage;
@@ -383,8 +371,7 @@ const shouldShowQuestionForm = computed(
         hasQuestions.value &&
         currentQuestion.value &&
         !showAllQuestions.value &&
-        !hasSubmittedAnswers.value &&
-        !hasServerAnswers.value,
+        !hasSubmittedAnswers.value,
 );
 
 const bulkSubmitLabel = computed(() =>
