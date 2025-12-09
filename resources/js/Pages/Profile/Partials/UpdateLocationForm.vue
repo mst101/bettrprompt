@@ -2,6 +2,7 @@
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
+import FormInput from '@/Components/FormInput.vue';
 import FormSelect from '@/Components/FormSelect.vue';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -51,6 +52,8 @@ const timezones = [
 
 const form = useForm({
     countryCode: props.locationData.countryCode || '',
+    region: props.locationData.region || '',
+    city: props.locationData.city || '',
     timezone: props.locationData.timezone || '',
     currencyCode: props.locationData.currencyCode || '',
     languageCode: props.locationData.languageCode || '',
@@ -69,7 +72,12 @@ const detectedAtFormatted = computed(() => {
 
 const locationSummary = computed(() => {
     if (!props.locationData.countryName) return 'No location detected';
-    return props.locationData.countryName;
+    const parts = [
+        props.locationData.city,
+        props.locationData.region,
+        props.locationData.countryName,
+    ].filter(Boolean);
+    return parts.join(', ');
 });
 
 const submit = () => {
@@ -134,17 +142,6 @@ const clearLocation = () => {
 
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">
-                <!-- Timezone -->
-                <FormSelect
-                    id="timezone"
-                    v-model="form.timezone"
-                    label="Timezone"
-                    :options="timezones"
-                    :error="form.errors.timezone"
-                    placeholder="Select timezone"
-                    show-placeholder
-                />
-
                 <!-- Country -->
                 <FormSelect
                     id="country-code"
@@ -153,6 +150,37 @@ const clearLocation = () => {
                     :options="props.countries"
                     :error="form.errors.countryCode"
                     placeholder="Select country"
+                    show-placeholder
+                />
+
+                <!-- Region -->
+                <FormInput
+                    id="region"
+                    v-model="form.region"
+                    label="Region/State"
+                    placeholder="e.g., California, Lancashire"
+                    :error="form.errors.region"
+                    help-text="State, province, or region"
+                />
+
+                <!-- City -->
+                <FormInput
+                    id="city"
+                    v-model="form.city"
+                    label="City"
+                    placeholder="e.g., San Francisco, London"
+                    :error="form.errors.city"
+                    help-text="Your city"
+                />
+
+                <!-- Timezone -->
+                <FormSelect
+                    id="timezone"
+                    v-model="form.timezone"
+                    label="Timezone"
+                    :options="timezones"
+                    :error="form.errors.timezone"
+                    placeholder="Select timezone"
                     show-placeholder
                 />
 

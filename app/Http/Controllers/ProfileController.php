@@ -232,6 +232,8 @@ class ProfileController extends Controller
     {
         $validated = $request->validate([
             'countryCode' => ['nullable', 'string', 'size:2'],
+            'region' => ['nullable', 'string', 'max:100'],
+            'city' => ['nullable', 'string', 'max:100'],
             'timezone' => ['nullable', 'string'],
             'currencyCode' => ['nullable', 'string', 'size:3'],
             'languageCode' => ['nullable', 'string', 'max:5'],
@@ -241,6 +243,8 @@ class ProfileController extends Controller
             DatabaseService::retryOnDeadlock(function () use ($request, $validated) {
                 $request->user()->update([
                     'country_code' => $validated['countryCode'],
+                    'region' => $validated['region'],
+                    'city' => $validated['city'],
                     'timezone' => $validated['timezone'],
                     'currency_code' => $validated['currencyCode'],
                     'language_code' => $validated['languageCode'],
