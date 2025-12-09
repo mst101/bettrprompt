@@ -147,7 +147,7 @@ const clearLocation = () => {
 
                 <!-- Country -->
                 <FormSelect
-                    id="countryCode"
+                    id="country-code"
                     v-model="form.countryCode"
                     label="Country"
                     :options="props.countries"
@@ -158,7 +158,7 @@ const clearLocation = () => {
 
                 <!-- Currency -->
                 <FormSelect
-                    id="currencyCode"
+                    id="currency-code"
                     v-model="form.currencyCode"
                     label="Currency"
                     :options="props.currencies"
@@ -169,7 +169,7 @@ const clearLocation = () => {
 
                 <!-- Language -->
                 <FormSelect
-                    id="languageCode"
+                    id="language-code"
                     v-model="form.languageCode"
                     label="Language"
                     :options="props.languages"

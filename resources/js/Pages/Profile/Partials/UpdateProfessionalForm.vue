@@ -61,7 +61,7 @@ const submit = () => {
             <div class="grid gap-6 sm:grid-cols-2">
                 <!-- Job Title -->
                 <FormInput
-                    id="jobTitle"
+                    id="job-title"
                     v-model="form.jobTitle"
                     label="Job Title"
                     placeholder="e.g., Software Engineer, Product Manager"
@@ -81,7 +81,7 @@ const submit = () => {
 
                 <!-- Experience Level -->
                 <FormSelect
-                    id="experienceLevel"
+                    id="experience-level"
                     v-model="form.experienceLevel"
                     label="Experience Level"
                     :options="experienceLevelOptions"
@@ -92,7 +92,7 @@ const submit = () => {
 
                 <!-- Company Size -->
                 <FormSelect
-                    id="companySize"
+                    id="company-size"
                     v-model="form.companySize"
                     label="Company Size"
                     :options="companySizeOptions"

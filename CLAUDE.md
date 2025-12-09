@@ -63,6 +63,37 @@ Schema::table('users', fn(Blueprint $table) => {
 - `UpdateBudgetForm` - monthlyBudget, budgetCurrency
 - `UpdateToolsForm` - preferredTools, toolCategories
 
+### HTML Attributes: kebab-case for `id` and `data-testid`
+
+**Critical Rule**: All HTML `id` and `data-testid` attributes MUST use kebab-case (lowercase with hyphens).
+
+**Why**: HTML standards recommend kebab-case for attribute values. It provides:
+- Consistency with web standards
+- Better CSS selector compatibility
+- Easier reading in templates and tests
+- Avoiding confusion with JavaScript camelCase
+
+**Examples**:
+```html
+<!-- ✓ CORRECT - kebab-case -->
+<input id="user-name" />
+<button id="submit-button" />
+<div data-testid="task-tab" />
+<form id="profile-update-form" />
+
+<!-- ✗ WRONG - camelCase or snake_case -->
+<input id="userName" />          <!-- Don't use camelCase -->
+<button id="submitButton" />     <!-- Don't use camelCase -->
+<div data-testid="taskTab" />    <!-- Don't use camelCase -->
+<form id="profile_update_form" /><!-- Don't use snake_case -->
+```
+
+**Components Affected**:
+- All Vue components: `<input id="kebab-case" />`
+- Form components: `FormInput`, `FormSelect`, `FormCheckbox`, etc.
+- Test IDs: `data-testid="kebab-case-name"`
+- Layout components: All header, container, and page elements
+
 ## Development Commands
 
 ### Starting the Development Environment

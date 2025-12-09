@@ -48,7 +48,7 @@ defineExpose({ focus });
         <form class="max-w-4xl space-y-6" @submit.prevent="emit('submit')">
             <!-- Task Description -->
             <FormTextareaWithActions
-                id="taskDescription"
+                id="task-description"
                 ref="taskDescriptionTextarea"
                 :model-value="form.taskDescription"
                 label="Task Description"

@@ -46,7 +46,7 @@ const updatePassword = () => {
 
         <form class="mt-6 space-y-6" @submit.prevent="updatePassword">
             <FormInput
-                id="currentPassword"
+                id="current-password"
                 v-model="form.currentPassword"
                 label="Current Password"
                 type="password"
@@ -64,7 +64,7 @@ const updatePassword = () => {
             />
 
             <FormInput
-                id="passwordConfirmation"
+                id="password-confirmation"
                 v-model="form.passwordConfirmation"
                 label="Confirm Password"
                 type="password"

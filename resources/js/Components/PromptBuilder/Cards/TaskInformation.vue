@@ -165,7 +165,7 @@ watch(
         <!-- Edit Mode -->
         <form v-else @submit.prevent="submit">
             <FormTextarea
-                id="task_description"
+                id="task-description-edit"
                 ref="taskTextareaRef"
                 v-model="form.task_description"
                 label="Edit Task Description"

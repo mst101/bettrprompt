@@ -176,7 +176,7 @@ const saveEdits = () => {
             <!-- Edit Mode -->
             <FormTextarea
                 v-else
-                id="optimized_prompt"
+                id="optimized-prompt"
                 ref="textareaRef"
                 v-model="editedPrompt"
                 data-testid="optimized-prompt-edit"

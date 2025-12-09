@@ -56,7 +56,7 @@ const submit = () => {
         />
 
         <FormInput
-            id="passwordConfirmation"
+            id="password-confirmation"
             v-model="form.passwordConfirmation"
             label="Confirm Password"
             type="password"

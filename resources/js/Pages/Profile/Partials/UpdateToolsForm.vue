@@ -176,7 +176,7 @@ const submit = () => {
 
             <!-- Primary Programming Language -->
             <FormSelect
-                id="primaryProgrammingLanguage"
+                id="primary-programming-language"
                 v-model="form.primaryProgrammingLanguage"
                 label="Primary Programming Language"
                 :options="

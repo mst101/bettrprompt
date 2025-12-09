@@ -65,7 +65,7 @@ const submit = () => {
             <div class="space-y-6 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
                 <!-- Team Size -->
                 <FormSelect
-                    id="teamSize"
+                    id="team-size"
                     v-model="form.teamSize"
                     label="Team Size"
                     :options="teamSizeOptions"
@@ -76,7 +76,7 @@ const submit = () => {
 
                 <!-- Team Role -->
                 <FormSelect
-                    id="teamRole"
+                    id="team-role"
                     v-model="form.teamRole"
                     label="Your Role"
                     :options="teamRoleOptions"
@@ -87,7 +87,7 @@ const submit = () => {
 
                 <!-- Work Mode -->
                 <FormSelect
-                    id="workMode"
+                    id="work-mode"
                     v-model="form.workMode"
                     label="Work Mode"
                     :options="workModeOptions"

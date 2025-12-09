@@ -123,7 +123,7 @@ const submit = () => {
             <!-- Personality Type Selection -->
             <div class="space-y-4">
                 <FormSelect
-                    id="personalityBase"
+                    id="personality-base"
                     v-model="personalityBase"
                     label="Personality Type"
                     :options="personalityTypeOptions"
@@ -242,7 +242,7 @@ const submit = () => {
 
                         <div class="col-span-2">
                             <FormInput
-                                id="identityPercent"
+                                id="identity-percent"
                                 v-model="form.traitPercentages.identity"
                                 type="number"
                                 label="Identity (Assertive/Turbulent)"
