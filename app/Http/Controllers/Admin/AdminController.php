@@ -19,7 +19,7 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'total_prompt_runs' => PromptRun::count(),
             'unique_tasks' => PromptRun::distinct('task_description')->count('task_description'),
-            'completed_runs' => PromptRun::where('status', 'completed')->count(),
+            'completed_runs' => PromptRun::where('workflow_stage', '2_completed')->count(),
         ];
 
         return Inertia::render('Admin/Dashboard', [

@@ -108,7 +108,6 @@ class Visitor extends Model
     public function hasCompletedPrompts(): bool
     {
         return $this->promptRuns()
-            ->where('status', 'completed')
             ->where('workflow_stage', '2_completed')
             ->whereNotNull('optimized_prompt')
             ->exists();
