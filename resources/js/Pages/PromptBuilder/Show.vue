@@ -35,12 +35,28 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.is_admin ?? false);
 
-// Add isProcessing method to promptRun resource if it doesn't exist
-if (!props.promptRun.isProcessing) {
-    (props.promptRun as any).isProcessing = function () {
-        return this.workflowStage.endsWith('_processing');
-    };
-}
+// Ensure isProcessing method exists on promptRun (add it if missing)
+const ensureIsProcessingMethod = () => {
+    if (
+        !props.promptRun.isProcessing ||
+        typeof props.promptRun.isProcessing !== 'function'
+    ) {
+        (props.promptRun as any).isProcessing = function () {
+            return this.workflowStage?.endsWith('_processing') ?? false;
+        };
+    }
+};
+
+// Add method on initial mount
+ensureIsProcessingMethod();
+
+// Re-add method whenever props change (e.g., from router.reload)
+watch(
+    () => props.promptRun,
+    () => {
+        ensureIsProcessingMethod();
+    },
+);
 
 defineOptions({
     layout: AppLayout,
@@ -148,12 +164,10 @@ const getInitialTab = (): string => {
     }
 
     // Only show framework tab if analysis is complete
-    // Don't show it during 'submitted' or 'processing' stages
     if (
         props.promptRun.selectedFramework &&
         (props.promptRun.workflowStage === '1_completed' ||
-            props.promptRun.workflowStage === '2_completed') &&
-        props.promptRun.status !== 'processing'
+            props.promptRun.workflowStage === '2_completed')
     ) {
         return 'framework';
     }
