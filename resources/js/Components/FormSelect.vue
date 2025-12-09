@@ -36,7 +36,7 @@ onMounted(() => {
         <label
             :for="props.id"
             class="block text-sm font-medium text-black"
-            :class="props.labelSrOnly ? '' : 'sr-only'"
+            :class="props.labelSrOnly ? 'sr-only' : ''"
         >
             {{ props.label }}
             <span v-if="props.required" class="text-red-500">*</span>

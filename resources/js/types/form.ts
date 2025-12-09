@@ -70,6 +70,9 @@ export interface FormSelectProps extends BaseFormFieldProps {
 
     /** Whether to show the placeholder option */
     showPlaceholder?: boolean;
+
+    /** Whether to show the label */
+    labelSrOnly?: boolean;
 }
 
 /**

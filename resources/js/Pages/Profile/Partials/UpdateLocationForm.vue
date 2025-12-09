@@ -170,7 +170,6 @@ const clearLocation = () => {
                     label="City"
                     placeholder="e.g., San Francisco, London"
                     :error="form.errors.city"
-                    help-text="Your city"
                 />
 
                 <!-- Timezone -->

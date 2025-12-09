@@ -238,12 +238,12 @@ class ProfileController extends Controller
         try {
             DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'country_code' => $request->validated('country_code'),
+                    'country_code' => $request->validated('countryCode'),
                     'region' => $request->validated('region'),
                     'city' => $request->validated('city'),
                     'timezone' => $request->validated('timezone'),
-                    'currency_code' => $request->validated('currency_code'),
-                    'language_code' => $request->validated('language_code'),
+                    'currency_code' => $request->validated('currencyCode'),
+                    'language_code' => $request->validated('languageCode'),
                     'location_manually_set' => true,
                 ]);
                 $request->user()->updateProfileCompletion();
@@ -269,10 +269,10 @@ class ProfileController extends Controller
         try {
             DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'job_title' => $request->validated('job_title'),
+                    'job_title' => $request->validated('jobTitle'),
                     'industry' => $request->validated('industry'),
-                    'experience_level' => $request->validated('experience_level'),
-                    'company_size' => $request->validated('company_size'),
+                    'experience_level' => $request->validated('experienceLevel'),
+                    'company_size' => $request->validated('companySize'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -297,9 +297,9 @@ class ProfileController extends Controller
         try {
             DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'team_size' => $request->validated('team_size'),
-                    'team_role' => $request->validated('team_role'),
-                    'work_mode' => $request->validated('work_mode'),
+                    'team_size' => $request->validated('teamSize'),
+                    'team_role' => $request->validated('teamRole'),
+                    'work_mode' => $request->validated('workMode'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -324,7 +324,7 @@ class ProfileController extends Controller
         try {
             DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'budget_consciousness' => $request->validated('budget_consciousness'),
+                    'budget_consciousness' => $request->validated('budgetConsciousness'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });
@@ -349,8 +349,8 @@ class ProfileController extends Controller
         try {
             DatabaseService::retryOnDeadlock(function () use ($request) {
                 $request->user()->update([
-                    'preferred_tools' => $request->validated('preferred_tools'),
-                    'primary_programming_language' => $request->validated('primary_programming_language'),
+                    'preferred_tools' => $request->validated('preferredTools'),
+                    'primary_programming_language' => $request->validated('primaryProgrammingLanguage'),
                 ]);
                 $request->user()->updateProfileCompletion();
             });

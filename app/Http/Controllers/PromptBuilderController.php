@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AnswerQuestionRequest;
+use App\Http\Requests\CreateChildFromAnswersRequest;
+use App\Http\Requests\CreateChildFromTaskRequest;
+use App\Http\Requests\GeneratePromptRequest;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
+use App\Http\Requests\SkipQuestionRequest;
+use App\Http\Requests\SubmitPreAnalysisAnswersRequest;
+use App\Http\Requests\SwitchFrameworkRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
+use App\Http\Requests\UpdateQuickQueriesRequest;
 use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunResource;
 use App\Jobs\ProcessAnalysis;
@@ -165,7 +173,7 @@ class PromptBuilderController extends Controller
     /**
      * Submit pre-analysis answers and proceed to analysis (Step 2 → workflow_1)
      */
-    public function submitPreAnalysisAnswers(Request $request, PromptRun $promptRun)
+    public function submitPreAnalysisAnswers(SubmitPreAnalysisAnswersRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
@@ -174,10 +182,7 @@ class PromptBuilderController extends Controller
             return back()->with('error', 'Invalid workflow stage for submitting pre-analysis answers.');
         }
 
-        $validated = $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         try {
             // Build structured pre_analysis_context from answers
@@ -216,7 +221,7 @@ class PromptBuilderController extends Controller
     /**
      * Update quick queries answers and re-analyse (for view-edit mode)
      */
-    public function updateQuickQueries(Request $request, PromptRun $promptRun)
+    public function updateQuickQueries(UpdateQuickQueriesRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
@@ -225,10 +230,7 @@ class PromptBuilderController extends Controller
             return back()->with('error', 'This prompt run does not have quick queries to update.');
         }
 
-        $validated = $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         try {
             // Build structured pre_analysis_context from updated answers
@@ -387,13 +389,11 @@ class PromptBuilderController extends Controller
     /**
      * Step 3: Generate the optimised prompt
      */
-    public function generate(Request $request, PromptRun $promptRun)
+    public function generate(GeneratePromptRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        $validated = $request->validate([
-            'question_answers' => 'required|array',
-        ]);
+        $validated = $request->validated();
 
         try {
             $answers = array_values(
@@ -436,14 +436,11 @@ class PromptBuilderController extends Controller
     /**
      * Submit an answer to a clarifying question (one-at-a-time mode)
      */
-    public function answerQuestion(Request $request, PromptRun $promptRun)
+    public function answerQuestion(AnswerQuestionRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        $validated = $request->validate([
-            'question_index' => 'required|integer|min:0',
-            'answer' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], $validated['answer']);
 
@@ -453,13 +450,11 @@ class PromptBuilderController extends Controller
     /**
      * Skip a clarifying question
      */
-    public function skipQuestion(Request $request, PromptRun $promptRun)
+    public function skipQuestion(SkipQuestionRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        $validated = $request->validate([
-            'question_index' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], null);
 
@@ -544,7 +539,7 @@ class PromptBuilderController extends Controller
     /**
      * Create a child prompt run from edited task description
      */
-    public function createChild(Request $request, PromptRun $parentPromptRun)
+    public function createChild(CreateChildFromTaskRequest $request, PromptRun $parentPromptRun)
     {
         $this->authorizePromptRun($parentPromptRun, $request);
 
@@ -560,9 +555,7 @@ class PromptBuilderController extends Controller
             }
         }
 
-        $validated = $request->validate([
-            'task_description' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $user = auth()->user();
         $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
@@ -610,7 +603,7 @@ class PromptBuilderController extends Controller
     /**
      * Create a child prompt run from edited clarifying answers
      */
-    public function createChildFromAnswers(Request $request, PromptRun $parentPromptRun)
+    public function createChildFromAnswers(CreateChildFromAnswersRequest $request, PromptRun $parentPromptRun)
     {
         $this->authorizePromptRun($parentPromptRun, $request);
 
@@ -630,9 +623,7 @@ class PromptBuilderController extends Controller
             return back()->with('error', 'Parent prompt run does not have clarifying questions.');
         }
 
-        $validated = $request->validate([
-            'clarifying_answers' => 'required|array',
-        ]);
+        $validated = $request->validated();
 
         $clarifyingAnswers = array_values(
             array_map(
@@ -1030,13 +1021,11 @@ class PromptBuilderController extends Controller
     /**
      * Create a child prompt run with a different framework
      */
-    public function switchFramework(Request $request, PromptRun $promptRun)
+    public function switchFramework(SwitchFrameworkRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        $validated = $request->validate([
-            'framework_code' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $user = auth()->user();
         $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);

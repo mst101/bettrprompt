@@ -23,7 +23,8 @@ class AnswerQuestionRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'answer' => 'required|string|max:1000',
+            'question_index' => 'required|integer|min:0',
+            'answer' => 'nullable|string|max:1000',
         ];
     }
 

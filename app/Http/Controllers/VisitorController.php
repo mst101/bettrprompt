@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateVisitorPersonalityRequest;
+use App\Http\Requests\UpdateVisitorUiComplexityRequest;
 use App\Models\Visitor;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class VisitorController extends Controller
 {
     /**
      * Update visitor's UI complexity preference.
      */
-    public function updateUiComplexity(Request $request): RedirectResponse
+    public function updateUiComplexity(UpdateVisitorUiComplexityRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'ui_complexity' => ['required', 'in:simple,advanced'],
-        ]);
+        $validated = $request->validated();
 
         $visitorId = $request->cookie('visitor_id');
 
@@ -34,17 +33,9 @@ class VisitorController extends Controller
     /**
      * Update visitor's personality type.
      */
-    public function updatePersonality(Request $request): RedirectResponse
+    public function updatePersonality(UpdateVisitorPersonalityRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'personalityType' => ['required', 'string', 'max:255'],
-            'traitPercentages' => ['nullable', 'array'],
-            'traitPercentages.mind' => ['nullable', 'integer', 'min:50', 'max:100'],
-            'traitPercentages.energy' => ['nullable', 'integer', 'min:50', 'max:100'],
-            'traitPercentages.nature' => ['nullable', 'integer', 'min:50', 'max:100'],
-            'traitPercentages.tactics' => ['nullable', 'integer', 'min:50', 'max:100'],
-            'traitPercentages.identity' => ['nullable', 'integer', 'min:50', 'max:100'],
-        ]);
+        $validated = $request->validated();
 
         $visitorId = $request->cookie('visitor_id');
 
