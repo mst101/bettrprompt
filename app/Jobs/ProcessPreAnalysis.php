@@ -54,8 +54,7 @@ class ProcessPreAnalysis implements ShouldQueue
                 // Update with questions - user will answer them
                 DatabaseService::retryOnDeadlock(function () use ($preAnalysis) {
                     $this->promptRun->update([
-                        'status' => 'pending',
-                        'workflow_stage' => 'pre_analysis_questions',
+                        'workflow_stage' => '0_completed',
                         'pre_analysis_questions' => $preAnalysis['questions'] ?? [],
                         'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
                         'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
@@ -95,8 +94,7 @@ class ProcessPreAnalysis implements ShouldQueue
                 // No questions needed - proceed directly to main analysis
                 DatabaseService::retryOnDeadlock(function () use ($preAnalysis) {
                     $this->promptRun->update([
-                        'status' => 'processing',
-                        'workflow_stage' => 'submitted',
+                        'workflow_stage' => '1_processing',
                         'pre_analysis_skipped' => true,
                         'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
                         'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
@@ -113,7 +111,7 @@ class ProcessPreAnalysis implements ShouldQueue
                 $this->promptRun->refresh();
 
                 // Dispatch main analysis job (Workflow 1)
-                ProcessTaskAnalysis::dispatch($this->promptRun, null, $this->database);
+                ProcessAnalysis::dispatch($this->promptRun, null, $this->database);
             }
         } catch (Exception $e) {
             Log::error('Exception in ProcessPreAnalysis job', [
@@ -145,8 +143,7 @@ class ProcessPreAnalysis implements ShouldQueue
         // Store the error details
         DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
             $this->promptRun->update([
-                'status' => 'failed',
-                'workflow_stage' => 'failed',
+                'workflow_stage' => '0_failed',
                 'error_message' => $errorMessage,
             ]);
         });

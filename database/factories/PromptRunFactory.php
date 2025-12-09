@@ -38,8 +38,7 @@ class PromptRunFactory extends Factory
                 'identity' => fake()->numberBetween(50, 100),
             ],
             'task_description' => fake()->sentence(),
-            'status' => 'pending',
-            'workflow_stage' => 'submitted',
+            'workflow_stage' => '0_processing',
             'selected_framework' => null,
             'framework_questions' => [],
             'clarifying_answers' => [],
@@ -50,13 +49,12 @@ class PromptRunFactory extends Factory
     }
 
     /**
-     * Indicate that the prompt run is processing.
+     * Indicate that the prompt run is processing (Workflow 1).
      */
     public function processing(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'processing',
-            'workflow_stage' => 'submitted',
+            'workflow_stage' => '1_processing',
         ]);
     }
 
@@ -66,8 +64,7 @@ class PromptRunFactory extends Factory
     public function analysisComplete(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'pending',
-            'workflow_stage' => 'analysis_complete',
+            'workflow_stage' => '1_completed',
             'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
             'framework_questions' => [
                 ['question' => 'What specific outcome do you want?'],
@@ -78,30 +75,12 @@ class PromptRunFactory extends Factory
     }
 
     /**
-     * Indicate that the prompt run is answering questions.
-     */
-    public function answeringQuestions(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'processing',
-            'workflow_stage' => 'answering_questions',
-            'selected_framework' => 'SMART Goals',
-            'framework_questions' => [
-                'What specific outcome do you want?',
-                'How will you measure success?',
-            ],
-            'clarifying_answers' => ['Improve team productivity'],
-        ]);
-    }
-
-    /**
      * Indicate that the prompt run is generating the final prompt.
      */
     public function generatingPrompt(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'processing',
-            'workflow_stage' => 'generating_prompt',
+            'workflow_stage' => '2_processing',
         ]);
     }
 
@@ -111,8 +90,7 @@ class PromptRunFactory extends Factory
     public function completed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'completed',
-            'workflow_stage' => 'completed',
+            'workflow_stage' => '2_completed',
             'optimized_prompt' => 'Here is your optimised prompt...',
             'completed_at' => now(),
         ]);
@@ -124,8 +102,7 @@ class PromptRunFactory extends Factory
     public function failed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'failed',
-            'workflow_stage' => 'failed',
+            'workflow_stage' => '0_failed',
             'error_message' => 'An error occurred during processing.',
         ]);
     }

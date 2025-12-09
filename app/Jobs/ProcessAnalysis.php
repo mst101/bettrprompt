@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 
-class ProcessTaskAnalysis implements ShouldQueue
+class ProcessAnalysis implements ShouldQueue
 {
     use Queueable;
 
@@ -68,8 +68,7 @@ class ProcessTaskAnalysis implements ShouldQueue
             // Update the prompt run with analysis results
             DatabaseService::retryOnDeadlock(function () use ($result) {
                 $this->promptRun->update([
-                    'status' => 'pending',
-                    'workflow_stage' => 'analysis_complete',
+                    'workflow_stage' => '1_completed',
                     'task_classification' => $result['data']['task_classification'] ?? null,
                     'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
                     'selected_framework' => $result['data']['selected_framework'] ?? null,
@@ -102,7 +101,7 @@ class ProcessTaskAnalysis implements ShouldQueue
                 ]);
             }
         } catch (Exception $e) {
-            Log::error('Exception in ProcessTaskAnalysis job', [
+            Log::error('Exception in ProcessAnalysis job', [
                 'prompt_run_id' => $this->promptRun->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -131,8 +130,7 @@ class ProcessTaskAnalysis implements ShouldQueue
         // Store the error details
         DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
             $this->promptRun->update([
-                'status' => 'failed',
-                'workflow_stage' => 'failed',
+                'workflow_stage' => '1_failed',
                 'error_message' => $errorMessage,
             ]);
         });

@@ -38,7 +38,7 @@ class HandleInertiaRequests extends Middleware
             $visitorId = $request->cookie('visitor_id');
             if ($visitorId) {
                 $visitorHasCompletedPrompts = PromptRun::where('visitor_id', $visitorId)
-                    ->where('status', 'completed')
+                    ->completed()
                     ->exists();
             }
         }

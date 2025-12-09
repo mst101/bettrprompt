@@ -49,25 +49,21 @@ class TestPromptRunsSeeder extends Seeder
             if ($status) {
                 match ($status) {
                     'completed' => $promptRun->update([
-                        'status' => 'completed',
-                        'workflow_stage' => 'completed',
+                        'workflow_stage' => '2_completed',
                         'selected_framework' => $frameworks[$i % count($frameworks)] ?? 'SMART Goals',
                         'optimized_prompt' => 'Here is your optimised prompt for: '.$promptRun->task_description,
                         'completed_at' => now(),
                     ]),
                     'processing' => $promptRun->update([
-                        'status' => 'processing',
-                        'workflow_stage' => 'submitted',
+                        'workflow_stage' => '1_processing',
                         'selected_framework' => $frameworks[$i % count($frameworks)],
                     ]),
                     'failed' => $promptRun->update([
-                        'status' => 'failed',
-                        'workflow_stage' => 'failed',
+                        'workflow_stage' => '1_failed',
                         'error_message' => 'An error occurred during processing.',
                     ]),
                     'pending' => $promptRun->update([
-                        'status' => 'pending',
-                        'workflow_stage' => 'submitted',
+                        'workflow_stage' => '1_completed',
                     ]),
                     default => null,
                 };
@@ -78,15 +74,13 @@ class TestPromptRunsSeeder extends Seeder
 
                 match ($randomStatus) {
                     'completed' => $promptRun->update([
-                        'status' => 'completed',
-                        'workflow_stage' => 'completed',
+                        'workflow_stage' => '2_completed',
                         'selected_framework' => $frameworks[$i % count($frameworks)] ?? 'SMART Goals',
                         'optimized_prompt' => 'Here is your optimised prompt for: '.$promptRun->task_description,
                         'completed_at' => now()->subHours($i),
                     ]),
                     'processing' => $promptRun->update([
-                        'status' => 'processing',
-                        'workflow_stage' => 'analysis_complete',
+                        'workflow_stage' => '1_completed',
                         'selected_framework' => $frameworks[$i % count($frameworks)],
                     ]),
                     default => null,

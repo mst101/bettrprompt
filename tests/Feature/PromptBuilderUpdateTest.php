@@ -13,8 +13,7 @@ beforeEach(function () {
 test('update optimised prompt successfully', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+        'workflow_stage' => '2_completed',
         'optimized_prompt' => 'Original prompt text',
     ]);
 
@@ -32,8 +31,7 @@ test('update optimised prompt successfully', function () {
 test('update optimised prompt validates required field', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), []);
@@ -44,8 +42,8 @@ test('update optimised prompt validates required field', function () {
 test('update optimised prompt validates string type', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -58,8 +56,8 @@ test('update optimised prompt validates string type', function () {
 test('update optimised prompt validates max length', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -72,8 +70,8 @@ test('update optimised prompt validates max length', function () {
 test('update optimised prompt only allows completed workflow stage', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'pending',
-        'workflow_stage' => 'answering_questions',
+
+        'workflow_stage' => '1_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -87,8 +85,8 @@ test('update optimised prompt only allows completed workflow stage', function ()
 test('update optimised prompt rejects failed prompt runs', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'failed',
-        'workflow_stage' => 'failed',
+
+        'workflow_stage' => '0_failed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -103,8 +101,8 @@ test('user cannot update other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -117,8 +115,8 @@ test('user cannot update other users prompt runs', function () {
 test('update optimised prompt preserves other fields', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
         'optimized_prompt' => 'Original',
         'task_description' => 'Original task',
         'personality_type' => 'INTJ',
@@ -137,8 +135,8 @@ test('update optimised prompt preserves other fields', function () {
 test('update optimised prompt supports unicode characters', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $unicodeText = 'Hello 你好 مرحبا 🚀';
@@ -154,8 +152,8 @@ test('update optimised prompt supports unicode characters', function () {
 test('update optimised prompt allows newlines and formatting', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $formattedText = "Line 1\n\nLine 2\n\tIndented line";
@@ -176,8 +174,8 @@ test('update optimised prompt requires authentication or ownership', function ()
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->patch(route('prompt-builder.update-prompt', $promptRun), [

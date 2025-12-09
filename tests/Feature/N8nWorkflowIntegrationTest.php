@@ -24,15 +24,15 @@ test('complete workflow progression from submission to completion', function () 
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => 'submitted',
-        'status' => 'processing',
+        'workflow_stage' => '1_processing',
+
     ]);
 
     // Step 1: Framework selected
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'analysis_complete',
-        'status' => 'processing',
+        'workflow_stage' => '1_completed',
+
         'selected_framework' => createSmartFramework(),
         'framework_questions' => createFrameworkQuestions(2),
     ]);
@@ -50,8 +50,8 @@ test('complete workflow progression from submission to completion', function () 
     // Step 3: Prompt generation
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'generating_prompt',
-        'status' => 'processing',
+        'workflow_stage' => '2_processing',
+
     ]);
 
     $promptRun->refresh();
@@ -80,14 +80,14 @@ test('workflow handles user personality during processing', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
         'personality_type' => 'ENFP-A',
-        'workflow_stage' => 'submitted',
+        'workflow_stage' => '1_processing',
         'task_description' => 'Create a marketing campaign for a new product',
     ]);
 
     // Framework selected tailored to ENFP personality
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'selected_framework' => [
             'name' => 'Design Thinking',
             'code' => 'DT',
@@ -122,8 +122,8 @@ test('workflow recovers from failed state', function () {
     // Retry: reset to processing
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'analysis_complete',
-        'status' => 'processing',
+        'workflow_stage' => '1_completed',
+
         'selected_framework' => createSmartFramework(),
         'error_message' => null,
     ]);
@@ -140,7 +140,7 @@ test('workflow broadcasts events at correct milestones', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => 'submitted',
+        'workflow_stage' => '1_processing',
     ]);
 
     // Framework selection triggers analysis completed event
@@ -173,7 +173,7 @@ test('workflow preserves user context through multiple updates', function () {
     // Update workflow but verify user context persists
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'selected_framework' => [
             'name' => 'Waterfall',
             'code' => 'WF',
@@ -224,7 +224,7 @@ test('workflow validates data integrity through updates', function () {
 
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'selected_framework' => $framework,
         'framework_questions' => createFrameworkQuestions(3),
     ]);

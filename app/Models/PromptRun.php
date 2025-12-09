@@ -28,7 +28,6 @@ class PromptRun extends Model
         'clarifying_answers',
         'current_question_index',
         'optimized_prompt',
-        'status',
         'workflow_stage',
         'error_message',
         'completed_at',
@@ -170,5 +169,93 @@ class PromptRun extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Check if the prompt run is actively processing (background job running)
+     */
+    public function isProcessing(): bool
+    {
+        return in_array($this->workflow_stage, [
+            '0_processing',
+            '1_processing',
+            '2_processing',
+        ]);
+    }
+
+    /**
+     * Check if the prompt run is pending (waiting for user input)
+     */
+    public function isPending(): bool
+    {
+        return in_array($this->workflow_stage, [
+            '0_completed',
+            '1_completed',
+        ]);
+    }
+
+    /**
+     * Check if the prompt run is completed successfully
+     */
+    public function isCompleted(): bool
+    {
+        return $this->workflow_stage === '2_completed';
+    }
+
+    /**
+     * Check if the prompt run has failed at any stage
+     */
+    public function isFailed(): bool
+    {
+        return in_array($this->workflow_stage, [
+            '0_failed',
+            '1_failed',
+            '2_failed',
+        ]);
+    }
+
+    /**
+     * Get which workflow failed (0, 1, or 2), or null if not failed
+     */
+    public function getFailedWorkflow(): ?int
+    {
+        return match ($this->workflow_stage) {
+            '0_failed' => 0,
+            '1_failed' => 1,
+            '2_failed' => 2,
+            default => null,
+        };
+    }
+
+    /**
+     * Scope: Query only processing runs
+     */
+    public function scopeProcessing($query)
+    {
+        return $query->whereIn('workflow_stage', [
+            '0_processing',
+            '1_processing',
+            '2_processing',
+        ]);
+    }
+
+    /**
+     * Scope: Query only completed runs
+     */
+    public function scopeCompleted($query)
+    {
+        return $query->where('workflow_stage', '2_completed');
+    }
+
+    /**
+     * Scope: Query only failed runs (any workflow)
+     */
+    public function scopeFailed($query)
+    {
+        return $query->whereIn('workflow_stage', [
+            '0_failed',
+            '1_failed',
+            '2_failed',
+        ]);
     }
 }

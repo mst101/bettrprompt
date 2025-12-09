@@ -27,8 +27,7 @@ Route::post('/n8n/webhook', function (Request $request) {
         // Validate payload structure
         $validator = Validator::make($request->all(), [
             'prompt_run_id' => 'required|integer|exists:prompt_runs,id',
-            'workflow_stage' => 'nullable|string|in:submitted,answering_questions,generating_prompt,completed,failed',
-            'status' => 'nullable|string|in:pending,processing,completed,failed',
+            'workflow_stage' => 'nullable|string|in:0_processing,0_completed,0_failed,1_processing,1_completed,1_failed,2_processing,2_completed,2_failed',
             'selected_framework' => 'nullable|array',
             'selected_framework.name' => 'required_with:selected_framework|string',
             'selected_framework.code' => 'required_with:selected_framework|string',
@@ -81,7 +80,6 @@ Route::post('/n8n/webhook', function (Request $request) {
         try {
             $promptRun->update($request->only([
                 'workflow_stage',
-                'status',
                 'selected_framework',
                 'framework_questions',
                 'optimized_prompt',
@@ -89,12 +87,12 @@ Route::post('/n8n/webhook', function (Request $request) {
             ]));
 
             // Mark as completed if finished
-            if ($request->input('workflow_stage') === 'completed') {
+            if ($request->input('workflow_stage') === '2_completed') {
                 $promptRun->update(['completed_at' => now()]);
             }
 
             // Broadcast events if needed
-            if ($request->input('workflow_stage') === 'completed') {
+            if ($request->input('workflow_stage') === '2_completed') {
                 try {
                     event(new PromptOptimizationCompleted($promptRun));
                 } catch (\Exception $e) {

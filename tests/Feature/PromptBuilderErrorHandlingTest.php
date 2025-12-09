@@ -65,7 +65,7 @@ test('analyse handles service success correctly', function () {
 test('answer question rejects invalid workflow stage', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'completed', // Wrong stage for answering
+        'workflow_stage' => '2_completed', // Wrong stage for answering
         'framework_questions' => [['question' => 'Q1']],
     ]);
 
@@ -83,8 +83,8 @@ test('retry handles service failure', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'failed',
-        'workflow_stage' => 'failed',
+
+        'workflow_stage' => '0_failed',
         'task_description' => 'Failed task',
         'personality_type' => 'INTJ-A',
         'trait_percentages' => [
@@ -110,8 +110,8 @@ test('retry resets failed prompt run to processing state', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'failed',
-        'workflow_stage' => 'failed',
+
+        'workflow_stage' => '0_failed',
         'task_description' => 'Failed task',
         'personality_type' => 'INTJ-A',
         'trait_percentages' => [
@@ -147,7 +147,7 @@ test('user cannot retry other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'status' => 'failed',
+
     ]);
 
     $response = $this->post(route('prompt-builder.retry', $otherRun));
@@ -158,8 +158,8 @@ test('user cannot retry other users prompt runs', function () {
 test('cannot retry non failed prompt runs', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->post(route('prompt-builder.retry', $promptRun));
@@ -173,7 +173,7 @@ test('generate handles requests successfully', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'task_classification' => ['category' => 'planning'],
         'selected_framework' => ['code' => 'SMART'],
         'personality_tier' => 'full',
@@ -196,7 +196,7 @@ test('generate handles requests successfully', function () {
 test('cannot go back past first question', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [['question' => 'Q1']],
         'current_question_index' => 0,
     ]);

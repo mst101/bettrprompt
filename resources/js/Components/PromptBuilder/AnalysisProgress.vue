@@ -107,7 +107,7 @@ onUnmounted(() => {
                 Analysing Your Task
             </h3>
             <p class="mt-2 text-sm text-indigo-600">
-                Please wait while we build the perfect prompt for you
+                Please wait while we determine the best prompt framework for you
             </p>
         </div>
 

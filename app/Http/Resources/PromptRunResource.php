@@ -25,7 +25,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   readonly frameworkQuestions: Array<unknown> | null;
  *   readonly clarifyingAnswers: Array<unknown> | null;
  *   readonly optimizedPrompt: string | null;
- *   readonly status: string;
  *   readonly workflowStage: string;
  *   readonly errorMessage: string | null;
  *   readonly completedAt: string | null;
@@ -85,7 +84,6 @@ class PromptRunResource extends JsonResource
                 : $this->clarifying_answers,
             'currentQuestionIndex' => $this->current_question_index,
             'optimizedPrompt' => $this->optimized_prompt,
-            'status' => $this->status,
             'workflowStage' => $this->workflow_stage,
             'errorMessage' => $this->error_message,
             'completedAt' => $this->completed_at?->format('Y-m-d H:i:s'),

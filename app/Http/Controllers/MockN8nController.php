@@ -36,7 +36,7 @@ class MockN8nController extends Controller
      */
     public function analyse(Request $request): JsonResponse
     {
-        // This would be called by the ProcessTaskAnalysis job
+        // This would be called by the ProcessAnalysis job
         // For now, we don't mock this as the job runs asynchronously
         // and E2E tests check for loading states, not completion
 

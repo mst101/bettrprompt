@@ -32,8 +32,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Framework selection pending',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'processing',
-            'workflow_stage' => 'submitted',
+            'workflow_stage' => '1_processing',
             'personality_type' => 'INTJ-A',
         ]);
 
@@ -44,8 +43,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Waiting for prompt optimisation',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'processing',
-            'workflow_stage' => 'answering_questions',
+            'workflow_stage' => '1_completed',
             'personality_type' => 'ENTJ-A',
             'selected_framework' => [
                 'name' => 'STAR Method',
@@ -66,8 +64,7 @@ class RealtimeBroadcastTestSeeder extends Seeder
             'user_id' => $testUser->id,
             'task_description' => 'Real-time test: Completed workflow example',
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'web'],
-            'status' => 'completed',
-            'workflow_stage' => 'completed',
+            'workflow_stage' => '2_completed',
             'personality_type' => 'INFJ-A',
             'selected_framework' => [
                 'name' => 'STAR Method',

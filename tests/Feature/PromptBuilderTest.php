@@ -84,8 +84,8 @@ test('analyse creates prompt run successfully', function () {
         'user_id' => $this->user->id,
         'task_description' => 'Create a detailed project plan for launching a new product',
         'personality_type' => 'INTJ-A',
-        'status' => 'processing',
-        'workflow_stage' => 'submitted',
+
+        'workflow_stage' => '1_processing',
     ]);
 });
 
@@ -125,7 +125,7 @@ test('show displays prompt run details', function () {
         'task_description' => 'My test task',
         'personality_type' => 'INTJ',
         'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
     ]);
 
     $response = $this->get(route('prompt-builder.show', $promptRun));
@@ -143,7 +143,7 @@ test('show displays current question', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [
             ['question' => 'What is your goal?'],
             ['question' => 'How will you measure success?'],
@@ -167,7 +167,7 @@ test('show returns null when all questions answered', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'generating_prompt',
+        'workflow_stage' => '2_processing',
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -272,7 +272,7 @@ test('skip question records null answer', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -314,7 +314,7 @@ test('generate creates optimised prompt', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -383,7 +383,7 @@ test('user cannot answer other users questions', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'workflow_stage' => 'answering_questions',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [['question' => 'Question 1']],
         'clarifying_answers' => [],
         'current_question_index' => 0,
@@ -402,8 +402,8 @@ test('completed prompt run displays optimized prompt', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'completed',
-        'status' => 'completed',
+        'workflow_stage' => '2_completed',
+
         'optimized_prompt' => 'This is your personalised, optimised prompt based on your INTJ personality.',
     ]);
 
@@ -453,7 +453,7 @@ test('show includes personality tier in response', function () {
         'personality_type' => 'INTJ',
         'selected_framework' => ['code' => 'SMART'],
         'personality_tier' => 'full',
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
     ]);
 
     $response = $this->get(route('prompt-builder.show', $promptRun));
@@ -502,7 +502,7 @@ test('go back to previous question updates index', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'answering_questions',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -525,7 +525,7 @@ test('cannot go back from first question', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'analysis_complete',
+        'workflow_stage' => '1_completed',
         'framework_questions' => [
             ['question' => 'Question 1'],
         ],
@@ -544,8 +544,8 @@ test('update optimized prompt updates successfully', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'completed',
-        'status' => 'completed',
+        'workflow_stage' => '2_completed',
+
         'optimized_prompt' => 'Original prompt',
     ]);
 
@@ -565,8 +565,8 @@ test('cannot update prompt for non-completed runs', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => 'answering_questions',
-        'status' => 'pending',
+        'workflow_stage' => '1_completed',
+
         'optimized_prompt' => null,
     ]);
 

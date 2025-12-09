@@ -6,9 +6,9 @@ use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunResource;
+use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
-use App\Jobs\ProcessTaskAnalysis;
 use App\Models\ClaudeModel;
 use App\Models\PromptRun;
 use App\Models\Visitor;
@@ -142,8 +142,7 @@ class PromptBuilderController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
-                    'status' => 'processing',
-                    'workflow_stage' => 'generating_pre_analysis',
+                    'workflow_stage' => '0_processing',
                 ]);
             });
 
@@ -171,7 +170,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate workflow stage
-        if ($promptRun->workflow_stage !== 'pre_analysis_questions') {
+        if ($promptRun->workflow_stage !== '0_completed') {
             return back()->with('error', 'Invalid workflow stage for submitting pre-analysis answers.');
         }
 
@@ -192,13 +191,12 @@ class PromptBuilderController extends Controller
                 $promptRun->update([
                     'pre_analysis_answers' => $validated['answers'],
                     'pre_analysis_context' => $preAnalysisContext,
-                    'workflow_stage' => 'submitted',
-                    'status' => 'processing',
+                    'workflow_stage' => '1_processing',
                 ]);
             });
 
             // Dispatch workflow_1 (which will enhance + analyse)
-            ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
+            ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
@@ -244,13 +242,12 @@ class PromptBuilderController extends Controller
                 $promptRun->update([
                     'pre_analysis_answers' => $validated['answers'],
                     'pre_analysis_context' => $preAnalysisContext,
-                    'workflow_stage' => 'submitted',
-                    'status' => 'processing',
+                    'workflow_stage' => '1_processing',
                 ]);
             });
 
             // Dispatch workflow_1 again to re-analyse with new answers
-            ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
+            ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
@@ -410,8 +407,7 @@ class PromptBuilderController extends Controller
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
                 $promptRun->update([
                     'clarifying_answers' => $answers,
-                    'status' => 'processing',
-                    'workflow_stage' => 'generating_prompt',
+                    'workflow_stage' => '2_processing',
                 ]);
             });
 
@@ -478,7 +474,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
-        if ($promptRun->workflow_stage !== 'analysis_complete' && $promptRun->workflow_stage !== 'answering_questions') {
+        if ($promptRun->workflow_stage !== '1_completed') {
             return back()->with('error', 'Cannot go back at this stage.');
         }
 
@@ -502,7 +498,6 @@ class PromptBuilderController extends Controller
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $newIndex) {
                 $promptRun->update([
                     'current_question_index' => $newIndex,
-                    'workflow_stage' => $newIndex === 0 ? 'analysis_complete' : 'answering_questions',
                 ]);
             });
 
@@ -591,8 +586,7 @@ class PromptBuilderController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
-                    'status' => 'processing',
-                    'workflow_stage' => 'generating_pre_analysis',
+                    'workflow_stage' => '0_processing',
                 ]);
             });
 
@@ -674,8 +668,7 @@ class PromptBuilderController extends Controller
                     'question_rationale' => $parentPromptRun->question_rationale,
                     'framework_questions' => $parentPromptRun->framework_questions,
                     'clarifying_answers' => $clarifyingAnswers,
-                    'status' => 'processing',
-                    'workflow_stage' => 'generating_prompt',
+                    'workflow_stage' => '2_processing',
                 ]);
             });
 
@@ -705,46 +698,67 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Only allow retry for failed runs
-        if ($promptRun->status !== 'failed') {
+        if (! $promptRun->isFailed()) {
             return back()->with('error', 'Only failed runs can be retried.');
         }
 
         $workflowStage = $promptRun->workflow_stage;
 
         try {
-            // Determine which stage failed and retry from there
-            if ($workflowStage === 'failed' || $workflowStage === 'submitted') {
-                // Analysis failed - retry from beginning
+            // Determine which workflow failed and retry from there
+            $failedWorkflow = $promptRun->getFailedWorkflow();
+
+            if ($failedWorkflow === 0) {
+                // Workflow 0 (pre-analysis) failed - retry from beginning
+                Log::info('Retrying pre-analysis (PromptBuilder)', [
+                    'prompt_run_id' => $promptRun->id,
+                ]);
+
+                DatabaseService::retryOnDeadlock(function () use ($promptRun) {
+                    $promptRun->update([
+                        'workflow_stage' => '0_processing',
+                        'error_message' => null,
+                        'completed_at' => null,
+                    ]);
+                });
+
+                // Dispatch the job to run pre-analysis asynchronously
+                ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
+
+                return redirect()
+                    ->route('prompt-builder.show', $promptRun)
+                    ->with('success', 'Retrying pre-analysis...');
+
+            } elseif ($failedWorkflow === 1) {
+                // Workflow 1 (analysis) failed - retry analysis
                 Log::info('Retrying analysis (PromptBuilder)', [
                     'prompt_run_id' => $promptRun->id,
                 ]);
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'status' => 'processing',
-                        'workflow_stage' => 'submitted',
+                        'workflow_stage' => '1_processing',
                         'error_message' => null,
                         'completed_at' => null,
                     ]);
                 });
 
                 // Dispatch the job to analyse the task asynchronously
-                ProcessTaskAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
+                ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
                     ->with('success', 'Retrying analysis...');
 
-            } elseif ($workflowStage === 'generating_prompt') {
-                // Generation failed - retry generation
+            } elseif ($failedWorkflow === 2) {
+                // Workflow 2 (generation) failed - retry generation
                 Log::info('Retrying generation (PromptBuilder)', [
                     'prompt_run_id' => $promptRun->id,
                 ]);
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'status' => 'processing',
-                        'workflow_stage' => 'generating_prompt',
+                        'workflow_stage' => '2_processing',
                         'error_message' => null,
                     ]);
                 });
@@ -1050,7 +1064,7 @@ class PromptBuilderController extends Controller
             });
 
             // Dispatch the job to analyse the task with the forced framework
-            ProcessTaskAnalysis::dispatch($childPromptRun, $validated['framework_code'],
+            ProcessAnalysis::dispatch($childPromptRun, $validated['framework_code'],
                 $this->getJobDatabase($request));
 
             return redirect()

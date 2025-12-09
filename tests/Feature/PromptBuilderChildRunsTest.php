@@ -25,8 +25,8 @@ test('create child with new task description successfully', function () {
     $parentRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     $response = $this->post(route('prompt-builder.create-child', $parentRun), [
@@ -44,7 +44,7 @@ test('create child with new task description successfully', function () {
         ->and($childRun->workflow_stage)->toBe('submitted');
 
     // Verify job was dispatched
-    Queue::assertPushed(\App\Jobs\ProcessTaskAnalysis::class);
+    Queue::assertPushed(\App\Jobs\ProcessAnalysis::class);
 });
 
 test('create child validates task description required', function () {
@@ -87,8 +87,8 @@ test('create child from edited answers successfully', function () {
         ],
         'clarifying_answers' => ['Old answer 1', 'Old answer 2'],
         'personality_tier' => 'full',
-        'status' => 'completed',
-        'workflow_stage' => 'completed',
+
+        'workflow_stage' => '2_completed',
     ]);
 
     // Mock PromptFrameworkService
@@ -142,7 +142,7 @@ test('create child from answers converts empty strings to null', function () {
             ['question' => 'Question 2'],
         ],
         'personality_tier' => 'full',
-        'status' => 'completed',
+
     ]);
 
     $this->mock(PromptFrameworkService::class, function ($mock) {

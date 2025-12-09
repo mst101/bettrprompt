@@ -89,8 +89,7 @@ class ProcessPromptGeneration implements ShouldQueue
                     'model_recommendations' => $result['data']['model_recommendations'] ?? null,
                     'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
                     'generation_api_usage' => $result['api_usage'] ?? null,
-                    'status' => 'completed',
-                    'workflow_stage' => 'completed',
+                    'workflow_stage' => '2_completed',
                     'completed_at' => now(),
                     'error_message' => null,
                 ]);
@@ -142,8 +141,7 @@ class ProcessPromptGeneration implements ShouldQueue
         // Store the error details
         DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
             $this->promptRun->update([
-                'status' => 'failed',
-                'workflow_stage' => 'failed',
+                'workflow_stage' => '2_failed',
                 'error_message' => $errorMessage,
             ]);
         });

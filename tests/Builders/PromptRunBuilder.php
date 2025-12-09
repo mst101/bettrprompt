@@ -66,31 +66,9 @@ class PromptRunBuilder
         return $this;
     }
 
-    public function submitted(): self
-    {
-        return $this
-            ->pending()
-            ->workflow('submitted');
-    }
-
-    public function processing(): self
-    {
-        $this->attributes['status'] = 'processing';
-
-        return $this;
-    }
-
-    public function pending(): self
-    {
-        $this->attributes['status'] = 'pending';
-
-        return $this;
-    }
-
     public function completed(): self
     {
-        $this->attributes['status'] = 'completed';
-        $this->attributes['workflow_stage'] = 'completed';
+        $this->attributes['workflow_stage'] = '2_completed';
         $this->attributes['completed_at'] = now();
         if (! isset($this->attributes['optimized_prompt'])) {
             $this->attributes['optimized_prompt'] = 'Here is your optimised prompt...';
@@ -99,10 +77,9 @@ class PromptRunBuilder
         return $this;
     }
 
-    public function failed(string $error = 'An error occurred'): self
+    public function failed(string $error = 'An error occurred', int $workflowNumber = 0): self
     {
-        $this->attributes['status'] = 'failed';
-        $this->attributes['workflow_stage'] = 'failed';
+        $this->attributes['workflow_stage'] = "{$workflowNumber}_failed";
         $this->attributes['error_message'] = $error;
 
         return $this;
@@ -118,8 +95,7 @@ class PromptRunBuilder
     public function analysisComplete(): self
     {
         return $this
-            ->pending()
-            ->workflow('analysis_complete')
+            ->workflow('1_completed')
             ->withFramework([
                 'code' => 'SMART',
                 'name' => 'SMART Goals',
@@ -132,22 +108,10 @@ class PromptRunBuilder
             ]);
     }
 
-    public function answeringQuestions(?array $questions = null): self
-    {
-        return $this
-            ->processing()
-            ->workflow('answering_questions')
-            ->withQuestions($questions ?? [
-                'What is your specific goal?',
-                'How will you measure success?',
-            ]);
-    }
-
     public function generatingPrompt(): self
     {
         return $this
-            ->processing()
-            ->workflow('generating_prompt');
+            ->workflow('2_processing');
     }
 
     public function withOptimisedPrompt(string $prompt): self
