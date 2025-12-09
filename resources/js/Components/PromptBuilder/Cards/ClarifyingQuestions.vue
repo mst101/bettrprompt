@@ -368,6 +368,16 @@ const hasServerAnswers = computed(() => {
     );
 });
 
+// Check if we're in the generation workflow stage (2_processing, 2_completed, or 2_failed)
+const isInGenerationStage = computed(() => {
+    const stage = props.promptRun.workflowStage;
+    return (
+        stage === '2_processing' ||
+        stage === '2_completed' ||
+        stage === '2_failed'
+    );
+});
+
 const shouldShowQuestionForm = computed(
     () =>
         hasQuestions.value &&
@@ -476,9 +486,7 @@ const optionalQuestionsLabel = computed(() => {
         </p>
 
         <AnsweredList
-            v-if="
-                (hasSubmittedAnswers || hasServerAnswers) && !isEditingAnswers
-            "
+            v-if="isInGenerationStage"
             :questions="allQuestions"
             :answers="promptRun.clarifyingAnswers"
         />
