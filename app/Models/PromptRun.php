@@ -30,6 +30,9 @@ class PromptRun extends Model
         'optimized_prompt',
         'workflow_stage',
         'error_message',
+        'error_context',
+        'retry_count',
+        'last_error_at',
         'completed_at',
         // Prompt Builder specific fields
         'task_classification',
@@ -57,6 +60,8 @@ class PromptRun extends Model
         'pre_analysis_api_usage' => 'array',
         'framework_questions' => 'array',
         'clarifying_answers' => 'array',
+        'error_context' => 'array',
+        'last_error_at' => 'datetime',
         'completed_at' => 'datetime',
         // Prompt Builder specific casts
         'task_classification' => 'array',

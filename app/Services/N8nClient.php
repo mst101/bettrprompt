@@ -127,6 +127,28 @@ class N8nClient
                         'attempt' => $attempt + 1,
                     ]);
 
+                    // Special handling for rate limits (429)
+                    if ($status === 429) {
+                        Log::warning('N8n workflow hit Anthropic rate limit', [
+                            'path' => $path,
+                            'attempt' => $attempt + 1,
+                        ]);
+
+                        // Extend circuit breaker cooldown for rate limits
+                        Cache::put('n8n_circuit_breaker_open_until', now()->addMinutes(15));
+
+                        $this->recordFailure();
+
+                        return [
+                            'success' => false,
+                            'error' => 'API rate limit reached. Please try again in a few minutes.',
+                            'error_context' => [
+                                'error_type' => 'rate_limit',
+                                'timestamp' => now()->toIso8601String(),
+                            ],
+                        ];
+                    }
+
                     // Don't retry client errors (4xx), only server errors (5xx)
                     if ($status < 500) {
                         $this->recordFailure();
