@@ -127,7 +127,7 @@ test('show displays prompt run details', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_description' => 'My test task',
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
         'workflow_stage' => '1_completed',
     ]);
@@ -458,7 +458,7 @@ test('show includes personality tier in response', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_description' => 'Test task',
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
         'selected_framework' => ['code' => 'SMART'],
         'personality_tier' => 'full',
         'workflow_stage' => '1_completed',

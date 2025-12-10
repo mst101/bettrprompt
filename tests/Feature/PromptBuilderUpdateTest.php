@@ -5,7 +5,7 @@ use App\Models\User;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
     ]);
     $this->actingAs($this->user);
 });
@@ -119,7 +119,7 @@ test('update optimised prompt preserves other fields', function () {
         'workflow_stage' => '2_completed',
         'optimized_prompt' => 'Original',
         'task_description' => 'Original task',
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
     ]);
 
     $this->patch(route('prompt-builder.update-prompt', $promptRun), [
@@ -129,7 +129,7 @@ test('update optimised prompt preserves other fields', function () {
     $promptRun->refresh();
     expect($promptRun->optimized_prompt)->toBe('Updated')
         ->and($promptRun->task_description)->toBe('Original task')
-        ->and($promptRun->personality_type)->toBe('INTJ');
+        ->and($promptRun->personality_type)->toBe('INTJ-A');
 });
 
 test('update optimised prompt supports unicode characters', function () {

@@ -5,7 +5,7 @@ use App\Models\User;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
     ]);
 
     $this->actingAs($this->user);
@@ -34,7 +34,7 @@ test('history page supports sorting by different columns', function ($sortBy) {
     PromptRun::factory()->count(2)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
     ]);
 
     $response = $this->get(route('prompt-builder.history', [
@@ -220,7 +220,7 @@ test('history page handles sorting nulls in personality type', function () {
     PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'personality_type' => 'INTJ',
+        'personality_type' => 'INTJ-A',
     ]);
 
     PromptRun::factory()->create([
