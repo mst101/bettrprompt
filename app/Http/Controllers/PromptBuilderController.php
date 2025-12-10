@@ -1048,7 +1048,7 @@ class PromptBuilderController extends Controller
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $promptRun->task_description,
                     'pre_analysis_context' => $promptRun->pre_analysis_context,
-                    'workflow_stage' => '0_processing',
+                    'workflow_stage' => '1_processing',
                 ]);
             });
 
