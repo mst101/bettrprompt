@@ -754,7 +754,28 @@ test.describe('Prompt Builder - Error Scenarios', () => {
                 name: /optimise.*prompt/i,
             });
 
+            // Wait for the page to navigate to the show page after form submission
+            const navigationPromise = testPage.waitForURL(
+                /\/prompt-builder\/\d+/,
+                {
+                    timeout: 10000,
+                },
+            );
+
             await submitButton.click();
+
+            try {
+                await navigationPromise;
+            } catch {
+                const lastUrl = testPage.url();
+                throw new Error(
+                    `Navigation timeout: Expected to be on /prompt-builder/<id> but got ${lastUrl}`,
+                );
+            }
+
+            // Give the page time to load and polling to detect the error
+            // The webhook update should trigger a page reload via polling
+            await testPage.waitForTimeout(2000);
 
             // Should show rate limit message with retry guidance
             const rateLimitMessage = testPage.locator(
