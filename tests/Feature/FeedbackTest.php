@@ -71,7 +71,7 @@ test('store feedback creates new feedback record', function () {
         'experience_level' => 2, // 1-7 scale (beginner)
         'usefulness' => 4,
         'usage_intent' => 6, // 1-7 scale
-        'suggestions' => 'Could use more examples',
+        'suggestions' => 'Could use more debug',
         'desired_features' => ['templates', 'compare'],
         'desired_features_other' => 'Integration with other tools',
     ]);
@@ -84,7 +84,7 @@ test('store feedback creates new feedback record', function () {
         'experience_level' => 2,
         'usefulness' => 4,
         'usage_intent' => 6,
-        'suggestions' => 'Could use more examples',
+        'suggestions' => 'Could use more debug',
         'desired_features_other' => 'Integration with other tools',
     ]);
 });

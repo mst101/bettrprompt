@@ -7,7 +7,9 @@
 
 ## Overview
 
-This document outlines the plan to transform the current single-step prompt optimisation into an interactive multi-step process where:
+This document outlines the plan to transform the current single-step prompt optimisation into an interactive multi-step
+process where:
+
 1. The system determines the most suitable prompt framework
 2. Users are asked framework-specific clarifying questions (3-5 questions)
 3. Questions are presented one-at-a-time with skip functionality
@@ -17,36 +19,44 @@ This document outlines the plan to transform the current single-step prompt opti
 ## Key Decisions (Approved)
 
 ✅ **Framework Guide**: Use concise summary matrix (~150 lines) instead of full guide (581 lines)
+
 - Reduces token costs by ~75%
 - Faster LLM processing
 - Still provides sufficient context
 
 ✅ **Question Count**: 3-5 questions per flow
+
 - Flexible based on task complexity
 - Balance between depth and user fatigue
 
 ✅ **Skip Functionality**: Yes - users can skip any question
+
 - Optional questions don't block progress
 - Skipped questions marked in database and UI
 
 ✅ **Real-time Updates**: Laravel Reverb WebSockets
+
 - Instant notifications when processing completes
 - Better UX than polling
 - Redis-backed for scalability
 
 ❌ **Progress Saving**: Not needed at this stage
+
 - Simplified implementation
 - Auto-save to localStorage as backup only
 
 ❌ **Framework Override**: Not needed at this stage
+
 - System-selected framework only
 - Can be added in future phase
 
 ❌ **Old Direct Flow**: Removed entirely
+
 - New interactive flow only
 - Simplifies codebase
 
 ✅ **Real-time Implementation**: Laravel Reverb WebSockets
+
 - No polling required
 - Private channels per prompt run
 - Events: FrameworkSelected, PromptOptimizationCompleted
@@ -54,12 +64,14 @@ This document outlines the plan to transform the current single-step prompt opti
 ## Current State Analysis
 
 ### Existing n8n Workflow
+
 - **Flow**: Webhook → Validate Input → Call LLM API → Format Response → Respond to Webhook
 - **Input**: `personality_type`, `trait_percentages`, `task_description`, `prompt_run_id`
 - **Output**: `optimized_prompt`, `model_used`, `tokens_used`
 - **Limitation**: Single-pass, no interactivity
 
 ### Current Database Schema
+
 ```sql
 prompt_runs:
   - id
@@ -77,6 +89,7 @@ prompt_runs:
 ```
 
 ### Current User Flow
+
 1. User visits `/prompt-optimizer`
 2. User fills single form (personality type, optional traits, task description)
 3. Submit triggers n8n webhook
@@ -104,23 +117,27 @@ prompt_runs:
 ### Phase 1: Framework Selection
 
 #### New n8n Workflow: Framework Selector
+
 **Webhook**: `/webhook/select-framework`
 
 **Input**:
+
 - `prompt_run_id`
 - `personality_type`
 - `trait_percentages`
 - `task_description`
 
 **Processing**:
+
 1. Call LLM with system prompt that analyses the task
 2. LLM determines best framework based on:
-   - Task complexity
-   - Output type needed
-   - Personality type considerations
-   - Guidance from `prompt_frameworks_guide.md`
+    - Task complexity
+    - Output type needed
+    - Personality type considerations
+    - Guidance from `prompt_frameworks_guide.md`
 
 **LLM Prompt Structure**:
+
 ```
 System: You are an expert at selecting the most appropriate prompt engineering framework.
 
@@ -147,16 +164,19 @@ Output as JSON:
 ```
 
 **Output**:
+
 - `framework`: Selected framework name
 - `reasoning`: Explanation text
 - `questions`: Array of clarifying questions with metadata
 
 #### Laravel API Endpoint
+
 **Route**: `POST /api/prompt-optimizer/{promptRun}/select-framework`
 
 **Controller Action**: `PromptOptimizerController@selectFramework`
 
 **Responsibilities**:
+
 1. Validate prompt run exists and belongs to user
 2. Call n8n webhook for framework selection
 3. Store framework and questions in database
@@ -212,9 +232,11 @@ public function getTotalQuestionsCount(): int
 #### Frontend Changes
 
 ##### New Vue Component: `QuestionFlow.vue`
+
 Location: `resources/js/Pages/PromptOptimizer/QuestionFlow.vue`
 
 **Features**:
+
 - Display framework selection result with reasoning
 - Show progress indicator (Question 1 of 5)
 - Present one question at a time
@@ -224,6 +246,7 @@ Location: `resources/js/Pages/PromptOptimizer/QuestionFlow.vue`
 - Auto-save answers to prevent data loss
 
 **State Management**:
+
 ```typescript
 interface QuestionFlowState {
     promptRun: PromptRun;
@@ -238,10 +261,12 @@ interface QuestionFlowState {
 ```
 
 ##### Updated `Index.vue`
+
 - Keep existing initial form
 - After submission, redirect to `/prompt-optimizer/{promptRun}/questions`
 
 ##### New Route
+
 ```php
 Route::get('/prompt-optimizer/{promptRun}/questions', [
     PromptOptimizerController::class, 'questions'
@@ -251,9 +276,11 @@ Route::get('/prompt-optimizer/{promptRun}/questions', [
 #### Backend API Endpoints
 
 ##### Answer Question
+
 **Route**: `POST /api/prompt-optimizer/{promptRun}/answer-question`
 
 **Payload**:
+
 ```json
 {
     "question_id": 1,
@@ -262,6 +289,7 @@ Route::get('/prompt-optimizer/{promptRun}/questions', [
 ```
 
 **Responsibilities**:
+
 1. Validate answer (min length, not empty)
 2. Store answer in `clarifying_answers` JSON column
 3. Check if all questions answered
@@ -269,9 +297,11 @@ Route::get('/prompt-optimizer/{promptRun}/questions', [
 5. Return next question or completion status
 
 ##### Get Current State
+
 **Route**: `GET /api/prompt-optimizer/{promptRun}/state`
 
 **Response**:
+
 ```json
 {
     "workflow_stage": "answering_questions",
@@ -298,9 +328,11 @@ Route::get('/prompt-optimizer/{promptRun}/questions', [
 ### Phase 4: Final Prompt Generation
 
 #### Enhanced n8n Workflow: Generate Final Prompt
+
 **Webhook**: `/webhook/generate-final-prompt`
 
 **Input**:
+
 - `prompt_run_id`
 - `personality_type`
 - `trait_percentages`
@@ -309,6 +341,7 @@ Route::get('/prompt-optimizer/{promptRun}/questions', [
 - `clarifying_answers` (array of Q&A pairs)
 
 **Enhanced LLM Prompt**:
+
 ```
 System: You are an expert at crafting AI prompts using the {framework} framework,
 tailored to personality types.
@@ -334,7 +367,9 @@ Return ONLY the optimised prompt text, without preamble or explanation.
 ```
 
 #### Auto-trigger Flow
+
 When last question is answered:
+
 1. Laravel updates `workflow_stage` to `generating_prompt`
 2. Laravel calls n8n `/webhook/generate-final-prompt`
 3. n8n processes and returns optimised prompt
@@ -346,6 +381,7 @@ When last question is answered:
 ### Phase 5: History & Display Updates
 
 #### Updated `Show.vue`
+
 Display additional information:
 
 ```vue
@@ -380,6 +416,7 @@ Display additional information:
 ```
 
 #### Updated `History.vue`
+
 Add column showing framework used:
 
 ```vue
@@ -389,12 +426,15 @@ Add column showing framework used:
 ## Implementation Plan
 
 ### Step 0: Laravel Reverb Setup (PREREQUISITE)
+
 **Duration**: 3-4 hours
 **Status**: Required before all other steps
 
-**Overview**: Laravel Reverb is NOT currently installed. This step sets up WebSocket infrastructure for real-time updates.
+**Overview**: Laravel Reverb is NOT currently installed. This step sets up WebSocket infrastructure for real-time
+updates.
 
 **Files to create/modify**:
+
 - `compose.yaml` - Add Reverb service
 - `.env` and `.env.example` - Add Reverb configuration variables
 - `config/broadcasting.php` - Will be created by install command
@@ -405,6 +445,7 @@ Add column showing framework used:
 - `docs/laravel-reverb-setup.md` - Documentation
 
 **Installation Tasks**:
+
 1. Install Laravel Reverb package:
    ```bash
    composer require laravel/reverb
@@ -511,6 +552,7 @@ Add column showing framework used:
    ```
 
 **Testing**:
+
 1. Start containers: `./vendor/bin/sail up -d`
 2. Start Vite: `npm run dev`
 3. Check Reverb is running: `./vendor/bin/sail ps` (should see reverb service)
@@ -522,6 +564,7 @@ Add column showing framework used:
    ```
 
 **Success Criteria**:
+
 - ✅ Reverb service running in Docker
 - ✅ No connection errors in browser console
 - ✅ Can connect to WebSocket endpoint
@@ -530,27 +573,34 @@ Add column showing framework used:
 ---
 
 ### Step 1: Database Migration
+
 **Files to create/modify**:
+
 - `database/migrations/YYYY_MM_DD_add_framework_fields_to_prompt_runs.php`
 
 **Tasks**:
+
 1. Create migration with new columns
 2. Run migration
 3. Update `PromptRun` model with new fillable fields and casts
 4. Add helper methods to model
 
 **Testing**:
+
 - Create test prompt run with framework data
 - Verify JSON fields store/retrieve correctly
 
 ---
 
 ### Step 2: Framework Selection n8n Workflow
+
 **Files to create/modify**:
+
 - `n8n/Framework Selector.json` (new workflow)
 - `docs/n8n-framework-selector-setup.md` (new documentation)
 
 **Tasks**:
+
 1. Create new n8n workflow with webhook trigger
 2. Add code node to build framework selection prompt
 3. Include framework guide content in prompt context
@@ -560,6 +610,7 @@ Add column showing framework used:
 7. Test with various task types
 
 **Testing**:
+
 - Test with simple task (should select RTF or SPEAR)
 - Test with complex analytical task (should select Chain of Thought)
 - Test with prioritisation task (should select RICE)
@@ -569,12 +620,15 @@ Add column showing framework used:
 ---
 
 ### Step 3: Laravel Backend - Framework Selection
+
 **Files to create/modify**:
+
 - `app/Http/Controllers/PromptOptimizerController.php`
 - `routes/web.php` or `routes/api.php`
 - `app/Services/N8nClient.php` (add new method)
 
 **Tasks**:
+
 1. Add `selectFramework()` method to controller
 2. Create route `POST /api/prompt-optimizer/{promptRun}/select-framework`
 3. Implement N8nClient method to call framework selector webhook
@@ -582,6 +636,7 @@ Add column showing framework used:
 5. Return JSON response with first question
 
 **Testing**:
+
 - Unit test for controller method
 - Test API endpoint with valid prompt run
 - Test with invalid prompt run (should 404)
@@ -590,12 +645,15 @@ Add column showing framework used:
 ---
 
 ### Step 4: Laravel Backend - Q&A Management
+
 **Files to create/modify**:
+
 - `app/Http/Controllers/PromptOptimizerController.php`
 - `app/Http/Requests/AnswerQuestionRequest.php` (new)
 - `routes/api.php`
 
 **Tasks**:
+
 1. Add `answerQuestion()` method to controller
 2. Create validation request class
 3. Create route `POST /api/prompt-optimizer/{promptRun}/answer-question`
@@ -605,10 +663,12 @@ Add column showing framework used:
 7. Return next question or completion status
 
 **Additional endpoints**:
+
 - `GET /api/prompt-optimizer/{promptRun}/state` - Get current state
 - `GET /prompt-optimizer/{promptRun}/questions` - Show questions page
 
 **Testing**:
+
 - Test answering questions in sequence
 - Test answering out of order
 - Test re-answering previous questions
@@ -618,12 +678,15 @@ Add column showing framework used:
 ---
 
 ### Step 5: Frontend - Question Flow Interface
+
 **Files to create/modify**:
+
 - `resources/js/Pages/PromptOptimizer/QuestionFlow.vue` (new)
 - `resources/js/Pages/PromptOptimizer/Index.vue` (modify redirect)
 - `routes/web.php`
 
 **Tasks**:
+
 1. Create `QuestionFlow.vue` component
 2. Implement state management for multi-step form
 3. Add progress indicator
@@ -634,6 +697,7 @@ Add column showing framework used:
 8. Redirect to result page when complete
 
 **Component Features**:
+
 - Framework display with reasoning
 - Progress bar (Question X of Y)
 - Question text with guidance
@@ -644,6 +708,7 @@ Add column showing framework used:
 - "Skip" option for optional questions
 
 **Testing**:
+
 - Manual testing of user flow
 - Test navigation between questions
 - Test auto-save
@@ -653,12 +718,15 @@ Add column showing framework used:
 ---
 
 ### Step 6: Enhanced Final Prompt Generation
+
 **Files to create/modify**:
+
 - `n8n/Prompt Optimiser.json` (modify existing)
 - Update "Validate Input" node to handle new fields
 - Update system prompt to incorporate Q&A
 
 **Tasks**:
+
 1. Modify webhook to accept new fields
 2. Update validation node to include framework and Q&A
 3. Enhance system prompt with framework context
@@ -666,6 +734,7 @@ Add column showing framework used:
 5. Test with various frameworks
 
 **Enhanced prompt structure**:
+
 ```javascript
 const systemPrompt = `You are an expert at crafting AI prompts using prompt engineering frameworks,
 tailored to personality types based on the 16personalities.com framework.
@@ -702,6 +771,7 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 ```
 
 **Testing**:
+
 - Test with RICE framework and prioritisation task
 - Test with SMART framework and goal-setting task
 - Test with BAB framework and marketing task
@@ -710,11 +780,14 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 ---
 
 ### Step 7: Update History and Show Pages
+
 **Files to create/modify**:
+
 - `resources/js/Pages/PromptOptimizer/Show.vue`
 - `resources/js/Pages/PromptOptimizer/History.vue`
 
 **Tasks**:
+
 1. Add framework display section to Show.vue
 2. Add Q&A accordion/section to Show.vue
 3. Add framework column to History.vue
@@ -722,17 +795,20 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 5. Handle old prompt runs without framework data
 
 **Display Features for Show.vue**:
+
 - Collapsible framework reasoning section
 - Styled Q&A pairs with framework component labels
 - Visual distinction between questions
 - Responsive design
 
 **Display Features for History.vue**:
+
 - Framework name column
 - Filter by framework (optional, future enhancement)
 - Sort by date (existing)
 
 **Testing**:
+
 - Test with new prompt runs (with framework data)
 - Test with old prompt runs (without framework data)
 - Test responsive layout
@@ -740,33 +816,35 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 ---
 
 ### Step 8: Error Handling & Edge Cases
+
 **Scenarios to handle**:
 
 1. **LLM fails to return valid JSON**
-   - Fallback: Use default framework (RTF) with generic questions
-   - Log error for debugging
+    - Fallback: Use default framework (RTF) with generic questions
+    - Log error for debugging
 
 2. **User abandons Q&A mid-flow**
-   - Save progress (auto-save handles this)
-   - Allow resume from history page
-   - Add "Resume" button in history
+    - Save progress (auto-save handles this)
+    - Allow resume from history page
+    - Add "Resume" button in history
 
 3. **n8n webhook timeout**
-   - Implement retry logic
-   - Show user-friendly error message
-   - Allow manual retry
+    - Implement retry logic
+    - Show user-friendly error message
+    - Allow manual retry
 
 4. **User navigates away during generation**
-   - Store workflow_stage = 'generating_prompt'
-   - Continue background processing
-   - Poll on history page to detect completion
+    - Store workflow_stage = 'generating_prompt'
+    - Continue background processing
+    - Poll on history page to detect completion
 
 5. **Framework guide context too large**
-   - Extract only relevant framework details
-   - Use summary of guide instead of full text
-   - Optimise token usage
+    - Extract only relevant framework details
+    - Use summary of guide instead of full text
+    - Optimise token usage
 
 **Implementation**:
+
 - Add try-catch blocks
 - Implement fallback mechanisms
 - Add user-facing error messages
@@ -777,27 +855,34 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 ### Step 9: Testing & Quality Assurance
 
 #### Unit Tests
+
 **Files to create**:
+
 - `tests/Unit/Models/PromptRunTest.php`
 - `tests/Unit/Services/N8nClientTest.php`
 
 **Coverage**:
+
 - Test model helper methods
 - Test n8n client framework selection
 - Test answer storage logic
 
 #### Feature Tests
+
 **Files to create**:
+
 - `tests/Feature/FrameworkSelectionTest.php`
 - `tests/Feature/QuestionAnsweringTest.php`
 - `tests/Feature/PromptGenerationTest.php`
 
 **Coverage**:
+
 - Test complete user flow from submission to result
 - Test API endpoints
 - Test data persistence
 
 #### Manual Testing Checklist
+
 - [ ] Submit new prompt optimisation request
 - [ ] Verify framework is selected appropriately
 - [ ] Answer all questions
@@ -813,12 +898,14 @@ Create an optimised AI prompt using the ${selectedFramework} framework.`;
 ### Step 10: Documentation Updates
 
 **Files to update**:
+
 - `docs/QUICK_START.md` - Update user flow
 - `docs/n8n-prompt-optimizer-setup.md` - Add framework selector setup
 - `docs/architecture-changes.md` - Document new flow
 - `README.md` - Update feature list
 
 **New files to create**:
+
 - `docs/n8n-framework-selector-setup.md` - Detailed n8n setup
 - `docs/features/interactive-prompt-optimization.md` - Feature documentation
 - `docs/api/prompt-optimizer-endpoints.md` - API reference
@@ -1028,26 +1115,27 @@ After answering all questions, a complete `prompt_runs` record:
 
 ## Timeline Estimate
 
-| Phase | Tasks | Estimated Time |
-|-------|-------|----------------|
-| **Phase 0**: Laravel Reverb Setup | Install, configure, test WebSockets | 3.5 hours |
-| **Phase 1**: Database Migration | Schema changes, model updates | 2 hours |
-| **Phase 1.5**: Framework Summary Matrix | Create concise guide (~150 lines) | 1 hour |
-| **Phase 2**: n8n Framework Selector | New workflow, testing | 4 hours |
-| **Phase 2.5**: Laravel Events | Create broadcast events, channels | 1.5 hours |
-| **Phase 3**: Backend Framework Selection | API endpoint, n8n integration, events | 3 hours |
-| **Phase 4**: Backend Q&A Management | API endpoints, skip support, events | 4 hours |
-| **Phase 5**: Frontend Question Flow | Vue component, WebSocket listeners, skip button | 6 hours |
-| **Phase 6**: Enhanced Prompt Generation | Update workflow, framework context | 3 hours |
-| **Phase 7**: History & Show Updates | UI updates, skipped questions display | 2 hours |
-| **Phase 8**: Error Handling | WebSocket disconnects, robustness | 2.5 hours |
-| **Phase 9**: Testing | Unit, feature, manual, WebSocket testing | 4 hours |
-| **Phase 10**: Documentation | Update docs, add Reverb guide | 2 hours |
-| **Total** | | **38.5 hours** |
+| Phase                                    | Tasks                                           | Estimated Time |
+|------------------------------------------|-------------------------------------------------|----------------|
+| **Phase 0**: Laravel Reverb Setup        | Install, configure, test WebSockets             | 3.5 hours      |
+| **Phase 1**: Database Migration          | Schema changes, model updates                   | 2 hours        |
+| **Phase 1.5**: Framework Summary Matrix  | Create concise guide (~150 lines)               | 1 hour         |
+| **Phase 2**: n8n Framework Selector      | New workflow, testing                           | 4 hours        |
+| **Phase 2.5**: Laravel Events            | Create broadcast events, channels               | 1.5 hours      |
+| **Phase 3**: Backend Framework Selection | API endpoint, n8n integration, events           | 3 hours        |
+| **Phase 4**: Backend Q&A Management      | API endpoints, skip support, events             | 4 hours        |
+| **Phase 5**: Frontend Question Flow      | Vue component, WebSocket listeners, skip button | 6 hours        |
+| **Phase 6**: Enhanced Prompt Generation  | Update workflow, framework context              | 3 hours        |
+| **Phase 7**: History & Show Updates      | UI updates, skipped questions display           | 2 hours        |
+| **Phase 8**: Error Handling              | WebSocket disconnects, robustness               | 2.5 hours      |
+| **Phase 9**: Testing                     | Unit, feature, manual, WebSocket testing        | 4 hours        |
+| **Phase 10**: Documentation              | Update docs, add Reverb guide                   | 2 hours        |
+| **Total**                                |                                                 | **38.5 hours** |
 
 **Estimated completion**: 5 working days for solo developer
 
 **Time Adjustments from Original Plan**:
+
 - ✅ Added Phase 0 (Reverb): +3.5 hours
 - ✅ Added Framework Matrix creation: +1 hour
 - ✅ Added Laravel Events: +1.5 hours
@@ -1063,27 +1151,33 @@ After answering all questions, a complete `prompt_runs` record:
 ## Risks & Mitigation
 
 ### Risk 1: LLM Framework Selection Inconsistency
+
 **Impact**: Users get different frameworks for similar tasks
 **Probability**: Medium
 **Mitigation**:
+
 - Provide very detailed framework guide to LLM
 - Include examples in prompt
 - Log all selections for review
 - Add manual override option in future
 
 ### Risk 2: Token Costs Increase
+
 **Impact**: Higher API costs due to multiple LLM calls
 **Probability**: High
 **Mitigation**:
+
 - Use cheaper model for framework selection (Haiku)
 - Use Sonnet only for final prompt generation
 - Cache framework guide to reduce context size
 - Monitor costs closely
 
 ### Risk 3: User Abandonment During Q&A
+
 **Impact**: Incomplete prompt runs, user frustration
 **Probability**: Medium
 **Mitigation**:
+
 - Implement auto-save
 - Allow resume from history
 - Keep question count reasonable (3-5 max)
@@ -1091,18 +1185,22 @@ After answering all questions, a complete `prompt_runs` record:
 - Allow skipping optional questions
 
 ### Risk 4: Complex State Management
+
 **Impact**: Bugs, data inconsistency
 **Probability**: Medium
 **Mitigation**:
+
 - Use explicit `workflow_stage` enum
 - Implement state validation
 - Add comprehensive tests
 - Use database transactions where appropriate
 
 ### Risk 5: n8n Workflow Complexity
+
 **Impact**: Difficult to debug, maintain
 **Probability**: Medium
 **Mitigation**:
+
 - Keep workflows modular
 - Add detailed comments in code nodes
 - Document thoroughly
@@ -1113,6 +1211,7 @@ After answering all questions, a complete `prompt_runs` record:
 ## Future Enhancements
 
 ### Phase 2 Features (Post-MVP)
+
 1. **Framework Override**: Allow users to manually select framework
 2. **Question Editing**: Let users refine questions before answering
 3. **Framework Templates**: Pre-saved Q&A for common scenarios
@@ -1123,6 +1222,7 @@ After answering all questions, a complete `prompt_runs` record:
 8. **Prompt Feedback**: "Was this helpful?" rating system
 
 ### Technical Improvements
+
 1. **WebSocket Integration**: Real-time updates instead of polling
 2. **Redis Caching**: Cache framework guide, user sessions
 3. **Queue System**: Background processing for long-running tasks
@@ -1134,16 +1234,19 @@ After answering all questions, a complete `prompt_runs` record:
 ## Success Metrics
 
 ### User Experience
+
 - **Completion Rate**: >80% of users who start Q&A complete it
 - **Time to Completion**: <5 minutes from start to final prompt
 - **User Satisfaction**: >4.0/5.0 rating for prompt quality
 
 ### Technical Performance
+
 - **API Response Time**: <3s for framework selection
 - **Final Prompt Generation**: <10s end-to-end
 - **Error Rate**: <1% of all requests
 
 ### Business Metrics
+
 - **Feature Usage**: >50% of users use new interactive flow vs old direct flow
 - **Prompt Quality**: User feedback indicates improvement over direct flow
 - **Token Efficiency**: Cost per prompt <$0.10
@@ -1153,33 +1256,33 @@ After answering all questions, a complete `prompt_runs` record:
 ## Questions for Review (ANSWERED)
 
 1. **Framework Guide Inclusion**: ✅ Use concise summary matrix (~150 lines)
-   - Decision: Summarise to save ~75% token costs
-   - Claude already knows frameworks from training
+    - Decision: Summarise to save ~75% token costs
+    - Claude already knows frameworks from training
 
 2. **Question Count**: ✅ 3-5 questions per flow
-   - Decision: Flexible based on task complexity
-   - Good balance between depth and user experience
+    - Decision: Flexible based on task complexity
+    - Good balance between depth and user experience
 
 3. **Optional Questions**: ✅ Yes, all questions skippable
-   - Decision: Add "Skip" button to every question
-   - Track skipped questions in database
+    - Decision: Add "Skip" button to every question
+    - Track skipped questions in database
 
 4. **Progress Saving**: ❌ Not at this stage
-   - Decision: Keep it simple
-   - Auto-save to localStorage as backup only
+    - Decision: Keep it simple
+    - Auto-save to localStorage as backup only
 
 5. **Framework Override**: ❌ Not at this stage
-   - Decision: System selection only
-   - Can add in future phase if needed
+    - Decision: System selection only
+    - Can add in future phase if needed
 
 6. **Old vs New Flow**: ❌ Remove old flow entirely
-   - Decision: New interactive flow only
-   - Simplifies codebase and maintenance
+    - Decision: New interactive flow only
+    - Simplifies codebase and maintenance
 
 7. **Real-time Updates**: ✅ Laravel Reverb WebSockets
-   - Decision: Best UX, instant updates
-   - Redis-backed for scalability
-   - Private channels per prompt run
+    - Decision: Best UX, instant updates
+    - Redis-backed for scalability
+    - Private channels per prompt run
 
 ---
 
@@ -1188,6 +1291,7 @@ After answering all questions, a complete `prompt_runs` record:
 **Status**: ✅ APPROVED - Ready for Implementation
 
 **Implementation Order**:
+
 1. ✅ Phase 0: Laravel Reverb Setup (FIRST - prerequisite)
 2. Phase 1: Database Migration
 3. Phase 1.5: Create Framework Summary Matrix
@@ -1210,6 +1314,7 @@ After answering all questions, a complete `prompt_runs` record:
 ## Appendix A: Example Framework Selection Prompts
 
 ### System Prompt for Framework Selection
+
 ```
 You are an expert at selecting the most appropriate prompt engineering framework from a comprehensive list of 57 frameworks.
 
@@ -1266,6 +1371,7 @@ You MUST respond with ONLY valid JSON in this exact format:
 ```
 
 ### Example User Message
+
 ```
 Personality Type: INTJ-A
 Trait Percentages:
@@ -1282,6 +1388,7 @@ Select the most appropriate prompt engineering framework and generate clarifying
 ```
 
 ### Expected Response
+
 ```json
 {
   "framework": "PEE Framework",
@@ -1297,7 +1404,7 @@ Select the most appropriate prompt engineering framework and generate clarifying
       "id": 2,
       "question": "What data, studies, or evidence do you have to support each of your main points?",
       "framework_component": "Evidence",
-      "guidance": "Provide specific statistics, research findings, case studies, or examples. Include sources if available (e.g., 'Stanford study showed...', 'GitLab's 2023 remote work report found...')"
+      "guidance": "Provide specific statistics, research findings, case studies, or debug. Include sources if available (e.g., 'Stanford study showed...', 'GitLab's 2023 remote work report found...')"
     },
     {
       "id": 3,

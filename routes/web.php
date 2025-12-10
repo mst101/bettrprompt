@@ -251,6 +251,25 @@ Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     return response()->json(['success' => false, 'message' => 'Prompt run not found'], 404);
 })->name('test.broadcast-event')->withoutMiddleware('Illuminate\Foundation\Http\Middleware\VerifyCsrfToken');
 
+// Debug n8n workflow - allows inspection of workflow input/output
+// Access at: https://app.localhost/workflow/1 (or workflow/2, workflow/3, etc.)
+Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
+    ->name('debug.workflow.show')
+    ->where('workflowNumber', '[0-9]+');
+
+// Debug API endpoints
+Route::post('/api/debug/workflow/{workflowNumber}/input', [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
+    ->name('debug.workflow.save-input')
+    ->where('workflowNumber', '[0-9]+');
+
+Route::post('/api/debug/workflow/{workflowNumber}/javascript', [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScript'])
+    ->name('debug.workflow.save-javascript')
+    ->where('workflowNumber', '[0-9]+');
+
+Route::post('/api/debug/workflow/{workflowNumber}/execute', [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScript'])
+    ->name('debug.workflow.execute')
+    ->where('workflowNumber', '[0-9]+');
+
 // Mock n8n webhook endpoints for E2E testing
 // These endpoints simulate n8n responses without requiring n8n to be running
 // The .env.e2e file should have N8N_URL=http://localhost (pointing to these routes)
