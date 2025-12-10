@@ -37,11 +37,21 @@ const handleSwitchFramework = (frameworkCode: string) => {
         },
         {
             onSuccess: (page) => {
+                // The response should contain the new promptRun ID in the props
+                const newPromptRunId = page.props.promptRun?.id;
                 console.log(
-                    '[AlternativeFrameworks] Framework switch successful, navigating to:',
-                    page.props.promptRun.id,
+                    '[AlternativeFrameworks] Framework switch successful, new ID:',
+                    newPromptRunId,
                 );
-                // Inertia automatically handles the redirect and navigation
+
+                // Force a fresh navigation to the new promptRun's show page
+                // This ensures the component mounts with completely fresh props
+                if (newPromptRunId) {
+                    router.visit(route('prompt-builder.show', newPromptRunId), {
+                        method: 'get',
+                        preserveScroll: true,
+                    });
+                }
             },
             onError: (errors) => {
                 console.error(
