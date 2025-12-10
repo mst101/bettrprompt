@@ -504,9 +504,9 @@ defineOptions({
                 </p>
                 <p>
                     <strong>Data Protection Enquiries:</strong><br />
-                    {{ COMPANY_INFO.name }}<br />
-                    {{ COMPANY_INFO.registeredAddress }}<br />
-                    Email: {{ COMPANY_INFO.contactEmail }}
+                    <!--                    {{ COMPANY_INFO.name }}<br />-->
+                    <!--                    {{ COMPANY_INFO.registeredAddress }}<br />-->
+                    {{ COMPANY_INFO.contactEmail }}
                 </p>
                 <p>
                     <strong>Supervisory Authority:</strong><br />

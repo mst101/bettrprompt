@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useNotification } from '@/Composables/useNotification';
-import { computed } from 'vue';
+import { computed, TransitionGroup } from 'vue';
 
 const { notifications, remove } = useNotification();
 

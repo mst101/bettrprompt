@@ -329,9 +329,9 @@ defineOptions({
                         contact us at:
                     </p>
                     <p>
-                        {{ COMPANY_INFO.name }}<br />
-                        {{ COMPANY_INFO.registeredAddress }}<br />
-                        Email: {{ COMPANY_INFO.contactEmail }}
+                        <!--                        {{ COMPANY_INFO.name }}<br />-->
+                        <!--                        {{ COMPANY_INFO.registeredAddress }}<br />-->
+                        {{ COMPANY_INFO.contactEmail }}
                     </p>
                 </div>
             </div>
