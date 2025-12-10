@@ -201,7 +201,8 @@ describe('useRealtimeUpdates', () => {
 
     describe('fallback polling', () => {
         it('should start polling when Echo is not available', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
+            // Make Echo unavailable by setting it to undefined
+            global.window.Echo = undefined;
 
             let composableState: any;
 
@@ -273,7 +274,8 @@ describe('useRealtimeUpdates', () => {
         });
 
         it('should stop polling on cleanup', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
+            // Make Echo unavailable to trigger fallback polling
+            global.window.Echo = undefined;
 
             let composableState: any;
 
@@ -477,7 +479,8 @@ describe('useRealtimeUpdates', () => {
         });
 
         it('should stop polling when Echo reconnects', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
+            // Make Echo unavailable initially
+            global.window.Echo = undefined;
             const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
             let composableState: any;
@@ -502,9 +505,11 @@ describe('useRealtimeUpdates', () => {
                     (call: Array<unknown>) => call[0] === 'echo-connected',
                 )?.[1] || null;
 
-            // First make Echo connected
-            global.window.isEchoConnected = vi.fn().mockReturnValue(true);
-            global.window.Echo.channel = vi.fn().mockReturnValue(mockChannel);
+            // Now make Echo available again
+            global.window.Echo = {
+                channel: vi.fn().mockReturnValue(mockChannel),
+                leave: vi.fn(),
+            };
 
             if (reconnectHandler) {
                 (reconnectHandler as () => void)();
@@ -547,7 +552,8 @@ describe('useRealtimeUpdates', () => {
         });
 
         it('should not start polling twice', async () => {
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
+            // Make Echo unavailable to trigger fallback polling
+            global.window.Echo = undefined;
 
             let composableState: any;
 

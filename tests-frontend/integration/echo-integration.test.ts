@@ -221,8 +221,8 @@ describe('Laravel Echo Integration', () => {
 
     describe('reconnection scenarios', () => {
         it('should stop polling when Echo reconnects', async () => {
-            // Start in disconnected state
-            global.window.isEchoConnected = vi.fn().mockReturnValue(false);
+            // Start in disconnected state by making Echo unavailable
+            global.window.Echo = undefined;
 
             let composableState: any;
 
@@ -240,8 +240,8 @@ describe('Laravel Echo Integration', () => {
 
             expect(composableState.usingFallback.value).toBe(true);
 
-            // Simulate Echo reconnection
-            global.window.isEchoConnected = vi.fn().mockReturnValue(true);
+            // Simulate Echo reconnection by restoring it
+            global.window.Echo = mockEcho;
 
             // Create a new component with the new connection state
             let composableState2: any;

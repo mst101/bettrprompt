@@ -154,7 +154,15 @@ export function useRealtimeUpdates(
     };
 
     const trySetup = () => {
-        if (channel || !window.Echo) {
+        if (channel) {
+            return; // Already connected
+        }
+
+        // If Echo is not available, start fallback polling immediately
+        if (!window.Echo) {
+            if (!usingFallback.value) {
+                startPolling();
+            }
             return;
         }
 
