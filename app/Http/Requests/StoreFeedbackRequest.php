@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
+
 class StoreFeedbackRequest extends BaseFormRequest
 {
     /**
@@ -13,6 +15,32 @@ class StoreFeedbackRequest extends BaseFormRequest
     }
 
     /**
+     * Don't convert camelCase to snake_case - we validate against camelCase fields.
+     */
+    protected function shouldConvertCamelCase(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get the validated data, converting camelCase keys to snake_case for database storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function validated(): array
+    {
+        $validated = parent::validated();
+        $converted = [];
+
+        foreach ($validated as $key => $value) {
+            $snakeKey = Str::snake($key);
+            $converted[$snakeKey] = $value;
+        }
+
+        return $converted;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -20,15 +48,15 @@ class StoreFeedbackRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'experience_level' => ['required', 'integer', 'min:1', 'max:7'],
+            'experienceLevel' => ['required', 'integer', 'min:1', 'max:7'],
             'usefulness' => ['required', 'integer', 'min:1', 'max:7'],
-            'usage_intent' => ['required', 'integer', 'min:1', 'max:7'],
+            'usageIntent' => ['required', 'integer', 'min:1', 'max:7'],
             'suggestions' => ['nullable', 'string', 'max:5000'],
-            'desired_features' => ['required', 'array', 'min:1'],
-            'desired_features.*' => [
+            'desiredFeatures' => ['required', 'array', 'min:1'],
+            'desiredFeatures.*' => [
                 'string', 'in:templates,compare,api-integration,collaboration,model-specific,document-upload,other',
             ],
-            'desired_features_other' => ['required_if:desired_features.*,other', 'nullable', 'string', 'max:500'],
+            'desiredFeaturesOther' => ['required_if:desiredFeatures.*,other', 'nullable', 'string', 'max:500'],
         ];
     }
 
@@ -40,12 +68,12 @@ class StoreFeedbackRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'experience_level.required' => 'Please select your experience level (Question 1)',
+            'experienceLevel.required' => 'Please select your experience level (Question 1)',
             'usefulness.required' => 'Please rate how useful the app was (Question 2)',
-            'usage_intent.required' => 'Please indicate your likelihood to use the app again (Question 3)',
-            'desired_features.required' => 'Please select at least one feature you would like to see',
-            'desired_features.min' => 'Please select at least one feature you would like to see',
-            'desired_features_other.required_if' => 'Please describe the feature you selected under "Other"',
+            'usageIntent.required' => 'Please indicate your likelihood to use the app again (Question 3)',
+            'desiredFeatures.required' => 'Please select at least one feature you would like to see',
+            'desiredFeatures.min' => 'Please select at least one feature you would like to see',
+            'desiredFeaturesOther.required_if' => 'Please describe the feature you selected under "Other"',
         ];
     }
 }
