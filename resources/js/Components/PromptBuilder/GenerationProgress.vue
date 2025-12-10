@@ -169,10 +169,10 @@ onUnmounted(() => {
         <!-- Progress State (shown when no error) -->
         <template v-else>
             <div class="text-center">
-                <h3 class="text-lg font-semibold text-green-900">
+                <h3 class="text-lg font-semibold text-indigo-900">
                     Generating Your Optimised Prompt
                 </h3>
-                <p class="mt-2 text-sm text-green-600">
+                <p class="mt-2 text-sm text-indigo-600">
                     Please wait while we craft the perfect prompt for you
                 </p>
             </div>
@@ -184,25 +184,25 @@ onUnmounted(() => {
                     <span>{{ Math.round(progress) }}% complete</span>
                 </div>
                 <div
-                    class="h-3 w-full overflow-hidden rounded-full bg-green-100"
+                    class="h-3 w-full overflow-hidden rounded-full bg-indigo-100"
                 >
                     <div
-                        class="h-full rounded-full bg-green-600 transition-all duration-500"
+                        class="h-full rounded-full bg-indigo-600 transition-all duration-500"
                         :style="{ width: `${progress}%` }"
                     />
                 </div>
             </div>
 
             <!-- Current Activity -->
-            <div class="flex items-start gap-4 rounded-lg bg-green-50 p-4">
+            <div class="flex items-start gap-4 rounded-lg bg-indigo-50 p-4">
                 <div class="mt-0.5">
-                    <LoadingSpinner class="h-5 w-5 text-green-600" />
+                    <LoadingSpinner class="h-5 w-5 text-indigo-600" />
                 </div>
                 <div class="flex-1">
-                    <p class="font-medium text-green-900">
+                    <p class="font-medium text-indigo-900">
                         {{ currentActivity }}
                     </p>
-                    <p class="mt-1 text-sm text-green-600">
+                    <p class="mt-1 text-sm text-indigo-600">
                         {{ currentDescription }}
                     </p>
                 </div>

@@ -90,10 +90,10 @@ onUnmounted(() => {
 <template>
     <Card class="space-y-6">
         <div class="text-center">
-            <h3 class="text-lg font-semibold text-purple-900">
+            <h3 class="text-lg font-semibold text-indigo-900">
                 Analysing your Task
             </h3>
-            <p class="mt-2 text-sm text-purple-600">
+            <p class="mt-2 text-sm text-indigo-600">
                 Initial check to determine if your task needs refining
             </p>
         </div>
@@ -104,24 +104,26 @@ onUnmounted(() => {
                 <span>{{ currentStage }}</span>
                 <span>{{ Math.round(progress) }}% complete</span>
             </div>
-            <div class="h-3 w-full overflow-hidden rounded-full bg-purple-100">
+            <div class="h-3 w-full overflow-hidden rounded-full bg-indigo-100">
                 <div
-                    class="h-full rounded-full bg-purple-600 transition-all duration-500"
+                    class="h-full rounded-full bg-indigo-600 transition-all duration-500"
                     :style="{ width: `${progress}%` }"
                 />
             </div>
         </div>
 
         <!-- Current Activity -->
-        <div class="flex items-start gap-4 rounded-lg bg-purple-50 p-4">
+        <div
+            class="flex items-start gap-4 rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
+        >
             <div class="mt-0.5">
-                <LoadingSpinner class="h-5 w-5 text-purple-600" />
+                <LoadingSpinner class="h-5 w-5 text-indigo-600" />
             </div>
             <div class="flex-1">
-                <p class="font-medium text-purple-900">
+                <p class="font-medium text-indigo-900">
                     {{ currentActivity }}
                 </p>
-                <p class="mt-1 text-sm text-purple-600">
+                <p class="mt-1 text-sm text-indigo-600">
                     {{ currentDescription }}
                 </p>
             </div>
@@ -134,7 +136,7 @@ onUnmounted(() => {
 
         <!-- Pre-Analysis Stages (Educational) -->
         <div
-            class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4"
+            class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <p class="text-xs font-semibold text-indigo-500 uppercase">
                 Quick Query Pipeline
