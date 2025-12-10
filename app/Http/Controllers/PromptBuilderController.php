@@ -910,7 +910,7 @@ class PromptBuilderController extends Controller
         $perPage = max(1, min(100, $perPage));
 
         // Validate sort column
-        $allowedSortColumns = ['created_at', 'personality_type', 'status', 'task_description'];
+        $allowedSortColumns = ['created_at', 'personality_type', 'workflow_stage', 'task_description'];
         if (! in_array($sortBy, $allowedSortColumns)) {
             $sortBy = 'created_at';
         }
@@ -1048,7 +1048,6 @@ class PromptBuilderController extends Controller
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $promptRun->task_description,
                     'pre_analysis_context' => $promptRun->pre_analysis_context,
-                    'status' => 'processing',
                     'workflow_stage' => '0_processing',
                 ]);
             });

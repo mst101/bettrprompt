@@ -44,7 +44,7 @@ class PromptOptimizationCompleted implements ShouldBroadcast
     {
         return [
             'prompt_run_id' => $this->promptRun->id,
-            'status' => $this->promptRun->status,
+            'workflow_stage' => $this->promptRun->workflow_stage,
             'optimized_prompt' => $this->promptRun->optimized_prompt,
             'completed_at' => $this->promptRun->completed_at?->toIso8601String(),
         ];

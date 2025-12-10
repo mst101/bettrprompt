@@ -117,7 +117,7 @@ class TestBroadcastController extends Controller
             'message' => 'PromptOptimizationCompleted event broadcasted',
             'data' => [
                 'prompt_run_id' => $promptRun->id,
-                'status' => $promptRun->status,
+                'workflow_stage' => $promptRun->workflow_stage,
                 'completed_at' => $promptRun->completed_at?->toIso8601String(),
             ],
         ]);
