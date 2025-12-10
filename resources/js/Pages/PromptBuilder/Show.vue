@@ -292,6 +292,24 @@ watch(
             });
         }
     },
+    { immediate: false }, // Don't trigger on initial mount (oldStage will be undefined)
+);
+
+// Explicit handler for AnalysisCompleted event that might fire before watcher
+// This handles the case where the page is redirected and props are immediately '1_processing'
+watch(
+    () => props.promptRun.selectedFramework,
+    (newFramework, oldFramework) => {
+        // If selectedFramework changed from empty to populated while in 1_completed state,
+        // the analysis just completed - switch to framework tab
+        if (
+            newFramework &&
+            !oldFramework &&
+            props.promptRun.workflowStage === '1_completed'
+        ) {
+            activeTab.value = 'framework';
+        }
+    },
 );
 
 // Switch to prompt tab when optimized prompt is returned
