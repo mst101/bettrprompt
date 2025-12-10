@@ -25,6 +25,12 @@ const form = useForm({
 
 const featureOptions = [
     {
+        value: 'document-upload',
+        label: 'Upload documents and/or images',
+        description:
+            'Upload files and images to provide context for prompt generation, e.g., analyse documents or refine prompts based on visual content',
+    },
+    {
         value: 'templates',
         label: 'Prompt templates library',
         description:
