@@ -46,4 +46,15 @@ abstract class BaseFormRequest extends FormRequest
 
         return $converted;
     }
+
+    /**
+     * Convert validated camelCase data to snake_case for database storage.
+     * Useful when validation is done against camelCase field names.
+     *
+     * @return array<string, mixed>
+     */
+    protected function validatedToSnakeCase(): array
+    {
+        return $this->convertCamelCaseToSnakeCase(parent::validated());
+    }
 }

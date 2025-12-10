@@ -52,7 +52,7 @@ class FeedbackController extends Controller
 
     public function store(StoreFeedbackRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validatedToSnakeCase();
 
         DB::table('feedback')->insert([
             'user_id' => auth()->id(),
@@ -73,7 +73,7 @@ class FeedbackController extends Controller
 
     public function update(StoreFeedbackRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validatedToSnakeCase();
 
         DB::table('feedback')
             ->where('user_id', auth()->id())

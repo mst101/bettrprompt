@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Support\Str;
-
 class StoreFeedbackRequest extends BaseFormRequest
 {
     /**
@@ -20,24 +18,6 @@ class StoreFeedbackRequest extends BaseFormRequest
     protected function shouldConvertCamelCase(): bool
     {
         return false;
-    }
-
-    /**
-     * Get the validated data, converting camelCase keys to snake_case for database storage.
-     *
-     * @return array<string, mixed>
-     */
-    public function validated(): array
-    {
-        $validated = parent::validated();
-        $converted = [];
-
-        foreach ($validated as $key => $value) {
-            $snakeKey = Str::snake($key);
-            $converted[$snakeKey] = $value;
-        }
-
-        return $converted;
     }
 
     /**
