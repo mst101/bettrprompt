@@ -56,7 +56,7 @@ class FeedbackController extends Controller
 
         DB::table('feedback')->insert([
             'user_id' => auth()->id(),
-            'personality_type' => auth()->user()->personality_type,
+            'personality_type' => auth()->user()?->personality_type,
             'experience_level' => $validated['experience_level'],
             'usefulness' => $validated['usefulness'],
             'usage_intent' => $validated['usage_intent'],

@@ -35,7 +35,6 @@ test('history page supports sorting by different columns', function ($sortBy) {
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
         'personality_type' => 'INTJ',
-        'status' => 'completed',
     ]);
 
     $response = $this->get(route('prompt-builder.history', [
@@ -48,7 +47,7 @@ test('history page supports sorting by different columns', function ($sortBy) {
         ->where('filters.sort_by', $sortBy)
         ->where('filters.sort_direction', 'asc')
     );
-})->with(['created_at', 'personality_type', 'status', 'task_description']);
+})->with(['created_at', 'personality_type', 'workflow_stage', 'task_description']);
 
 test('history page rejects invalid sort column', function () {
     PromptRun::factory()->create([
@@ -161,7 +160,7 @@ test('history page pagination maintains query parameters', function () {
     ]);
 
     $response = $this->get(route('prompt-builder.history', [
-        'sort_by' => 'status',
+        'sort_by' => 'workflow_stage',
         'sort_direction' => 'asc',
         'per_page' => 5,
         'page' => 2,
@@ -169,7 +168,7 @@ test('history page pagination maintains query parameters', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'status')
+        ->where('filters.sort_by', 'workflow_stage')
         ->where('filters.sort_direction', 'asc')
         ->where('filters.per_page', 5)
     );
