@@ -168,7 +168,7 @@ test('update feedback updates existing feedback record', function () {
         'desired_features_other' => 'New feature idea',
     ]);
 
-    $response->assertRedirect(route('prompt-builder.index'));
+    $response->assertRedirect(route('feedback.show'));
     $response->assertSessionHas('success', 'Thank you for updating your feedback!');
 
     $this->assertDatabaseHas('feedback', [
