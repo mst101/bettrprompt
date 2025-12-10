@@ -22,6 +22,7 @@ import TaskTraitAlignment from '@/Components/PromptBuilder/Cards/TaskTraitAlignm
 import GenerationProgress from '@/Components/PromptBuilder/GenerationProgress.vue';
 import PreAnalysisProgress from '@/Components/PromptBuilder/PreAnalysisProgress.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
+import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/types';
@@ -30,10 +31,22 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
-const page = usePage();
+const page = usePage<{
+    auth?: { user?: User };
+    visitorHasCompletedPrompts?: boolean;
+}>();
 
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.is_admin ?? false);
+const isGuest = computed(() => !user.value);
+
+// Show banner for guests who just completed their first prompt
+const showFirstPromptBanner = computed(
+    () =>
+        isGuest.value &&
+        props.promptRun.optimizedPrompt &&
+        !page.props.visitorHasCompletedPrompts,
+);
 
 // Helper computed to check if workflow is currently processing
 const isPromptRunProcessing = computed(() => {
@@ -638,5 +651,11 @@ onUnmounted(() => {
                 />
             </div>
         </div>
+
+        <!-- First Prompt Banner for Guests -->
+        <VisitorLimitBanner
+            v-if="showFirstPromptBanner"
+            @register="$inertia.visit(route('register'))"
+        />
     </ContainerPage>
 </template>

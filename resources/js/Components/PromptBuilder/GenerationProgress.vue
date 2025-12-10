@@ -194,7 +194,9 @@ onUnmounted(() => {
             </div>
 
             <!-- Current Activity -->
-            <div class="flex items-start gap-4 rounded-lg bg-indigo-50 p-4">
+            <div
+                class="flex items-start gap-4 rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
+            >
                 <div class="mt-0.5">
                     <LoadingSpinner class="h-5 w-5 text-indigo-600" />
                 </div>
@@ -215,7 +217,7 @@ onUnmounted(() => {
 
             <!-- Generation Stages (Educational) -->
             <div
-                class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4"
+                class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
             >
                 <p class="text-xs font-semibold text-indigo-500 uppercase">
                     Generation Pipeline
