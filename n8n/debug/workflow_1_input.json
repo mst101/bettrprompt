@@ -1,0 +1,57 @@
+[
+    {
+        "headers": {
+            "host": "n8n:5678",
+            "user-agent": "GuzzleHttp/7",
+            "content-type": "application/json",
+            "content-length": "872"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+            "task_description": "I want to learn to ride a bicycle",
+            "pre_analysis_context": {
+                "current_skill_level": {
+                    "question": "What is your current cycling experience?",
+                    "answer": "beginner",
+                    "answer_label": "Complete beginner (never ridden)"
+                },
+                "purpose": {
+                    "question": "What is your primary motivation for learning to cycle?",
+                    "answer": "I want to get fit"
+                },
+                "learning_environment": {
+                    "question": "Where do you plan to learn cycling?",
+                    "answer": "park",
+                    "answer_label": "Public park or quiet area"
+                }
+            },
+            "user_context": {
+                "location": {
+                    "country": "United Kingdom",
+                    "country_code": "GB",
+                    "region": "England",
+                    "city": "London",
+                    "timezone": "Europe/London",
+                    "currency": "GBP",
+                    "language": "en-GB"
+                },
+                "professional": null,
+                "team": null,
+                "preferences": null,
+                "personality": {
+                    "personality_type": "ENTP-A",
+                    "trait_percentages": {
+                        "mind": null,
+                        "energy": null,
+                        "nature": null,
+                        "tactics": null,
+                        "identity": null
+                    }
+                }
+            }
+        },
+        "webhookUrl": "https://n8n.localhost/webhook/api/n8n/webhook/analysis",
+        "executionMode": "production"
+    }
+]
