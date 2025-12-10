@@ -26,7 +26,7 @@ class StoreFeedbackRequest extends BaseFormRequest
             'suggestions' => ['nullable', 'string', 'max:5000'],
             'desired_features' => ['required', 'array', 'min:1'],
             'desired_features.*' => [
-                'string', 'in:templates,compare,api-integration,collaboration,model-specific,other',
+                'string', 'in:templates,compare,api-integration,collaboration,model-specific,document-upload,other',
             ],
             'desired_features_other' => ['required_if:desired_features.*,other', 'nullable', 'string', 'max:500'],
         ];
