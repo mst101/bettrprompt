@@ -4,6 +4,17 @@ import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import StageIndicator from '@/Components/PromptBuilder/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
+interface Props {
+    errorMessage?: string | null;
+    onRetry?: () => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = withDefaults(defineProps<Props>(), {
+    errorMessage: null,
+    onRetry: undefined,
+});
+
 // Simulated progress tracking
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
@@ -45,7 +56,7 @@ const stages = [
         label: 'Loading framework details',
         activity: 'Loading framework details',
         description:
-            'Retrieving the structure and examples for your selected framework',
+            'Retrieving the structure and debug for your selected framework',
     },
     {
         id: 1,
@@ -103,64 +114,121 @@ onUnmounted(() => {
 
 <template>
     <Card class="space-y-6">
-        <div class="text-center">
-            <h3 class="text-lg font-semibold text-green-900">
-                Generating Your Optimised Prompt
-            </h3>
-            <p class="mt-2 text-sm text-green-600">
-                Please wait while we craft the perfect prompt for you
-            </p>
+        <!-- Error State -->
+        <div v-if="errorMessage" class="space-y-4">
+            <div class="rounded-lg border border-red-300 bg-red-50 p-4">
+                <div class="flex items-start gap-3">
+                    <div class="mt-0.5">
+                        <svg
+                            class="h-5 w-5 text-red-600"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-red-900">
+                            Prompt Generation Failed
+                        </h3>
+                        <p class="mt-1 text-sm text-red-700">
+                            {{ errorMessage }}
+                        </p>
+                        <p class="mt-3 text-xs text-red-600">
+                            This usually happens when the AI takes too long to
+                            generate the response. Please try again, or if the
+                            problem persists, try with a simpler task
+                            description.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retry Button -->
+            <div class="flex gap-3">
+                <button
+                    v-if="onRetry"
+                    class="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+                    @click="onRetry"
+                >
+                    Retry Generation
+                </button>
+                <button
+                    class="flex-1 rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                    @click="() => window.history.back()"
+                >
+                    Go Back
+                </button>
+            </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="space-y-2">
-            <div class="flex justify-between text-sm text-indigo-600">
-                <span>{{ currentStage }}</span>
-                <span>{{ Math.round(progress) }}% complete</span>
-            </div>
-            <div class="h-3 w-full overflow-hidden rounded-full bg-green-100">
-                <div
-                    class="h-full rounded-full bg-green-600 transition-all duration-500"
-                    :style="{ width: `${progress}%` }"
-                />
-            </div>
-        </div>
-
-        <!-- Current Activity -->
-        <div class="flex items-start gap-4 rounded-lg bg-green-50 p-4">
-            <div class="mt-0.5">
-                <LoadingSpinner class="h-5 w-5 text-green-600" />
-            </div>
-            <div class="flex-1">
-                <p class="font-medium text-green-900">
-                    {{ currentActivity }}
+        <!-- Progress State (shown when no error) -->
+        <template v-else>
+            <div class="text-center">
+                <h3 class="text-lg font-semibold text-green-900">
+                    Generating Your Optimised Prompt
+                </h3>
+                <p class="mt-2 text-sm text-green-600">
+                    Please wait while we craft the perfect prompt for you
                 </p>
-                <p class="mt-1 text-sm text-green-600">
-                    {{ currentDescription }}
-                </p>
             </div>
-        </div>
 
-        <!-- Time Estimate -->
-        <div class="text-center text-sm text-indigo-500">
-            Estimated time remaining: {{ estimatedTimeRemaining }}
-        </div>
-
-        <!-- Generation Stages (Educational) -->
-        <div
-            class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4"
-        >
-            <p class="text-xs font-semibold text-indigo-500 uppercase">
-                Generation Pipeline
-            </p>
+            <!-- Progress Bar -->
             <div class="space-y-2">
-                <StageIndicator
-                    v-for="stage in stages"
-                    :key="stage.id"
-                    :label="stage.label"
-                    :status="getStageStatus(stage.id)"
-                />
+                <div class="flex justify-between text-sm text-indigo-600">
+                    <span>{{ currentStage }}</span>
+                    <span>{{ Math.round(progress) }}% complete</span>
+                </div>
+                <div
+                    class="h-3 w-full overflow-hidden rounded-full bg-green-100"
+                >
+                    <div
+                        class="h-full rounded-full bg-green-600 transition-all duration-500"
+                        :style="{ width: `${progress}%` }"
+                    />
+                </div>
             </div>
-        </div>
+
+            <!-- Current Activity -->
+            <div class="flex items-start gap-4 rounded-lg bg-green-50 p-4">
+                <div class="mt-0.5">
+                    <LoadingSpinner class="h-5 w-5 text-green-600" />
+                </div>
+                <div class="flex-1">
+                    <p class="font-medium text-green-900">
+                        {{ currentActivity }}
+                    </p>
+                    <p class="mt-1 text-sm text-green-600">
+                        {{ currentDescription }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Time Estimate -->
+            <div class="text-center text-sm text-indigo-500">
+                Estimated time remaining: {{ estimatedTimeRemaining }}
+            </div>
+
+            <!-- Generation Stages (Educational) -->
+            <div
+                class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4"
+            >
+                <p class="text-xs font-semibold text-indigo-500 uppercase">
+                    Generation Pipeline
+                </p>
+                <div class="space-y-2">
+                    <StageIndicator
+                        v-for="stage in stages"
+                        :key="stage.id"
+                        :label="stage.label"
+                        :status="getStageStatus(stage.id)"
+                    />
+                </div>
+            </div>
+        </template>
     </Card>
 </template>
