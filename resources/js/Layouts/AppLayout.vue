@@ -12,6 +12,7 @@ import ModalForgotPassword from '@/Components/ModalForgotPassword.vue';
 import ModalLogin from '@/Components/ModalLogin.vue';
 import ModalRegister from '@/Components/ModalRegister.vue';
 import NavLink from '@/Components/NavLink.vue';
+import NotificationCenter from '@/Components/NotificationCenter.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
 import SvgLogo from '@/Icons/SvgLogo.vue';
@@ -426,6 +427,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
             :message="flashMessage.message"
             :type="flashMessage.type"
         />
+
+        <!-- Notification Center -->
+        <NotificationCenter />
 
         <!-- Visitor Limit Banner -->
         <VisitorLimitBanner v-if="showVisitorBanner" @register="openRegister" />

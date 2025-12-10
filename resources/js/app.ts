@@ -6,6 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { useNotification } from './Composables/useNotification';
 import { getCookie, getCsrfToken } from './utils/cookies';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -124,12 +125,16 @@ router.on('error', (event) => {
     if (response?.status === 419) {
         console.warn('Session expired (419 error). Reloading page...');
 
-        // Show a user-friendly message before reloading
-        alert(
+        // Use notification system to display graceful error message
+        const { error } = useNotification();
+        error(
             'Your session has expired. The page will reload to restore your session.',
+            false, // Don't auto-dismiss - let user see the message
         );
 
-        // Reload the page to get a fresh CSRF token
-        window.location.reload();
+        // Reload the page after a short delay to let the notification appear
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     }
 });
