@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('personality_type', 10)->nullable()->comment('Personality type at time of feedback submission');
             $table->unsignedTinyInteger('experience_level')->comment('1-7 scale: novice to experienced');
             $table->unsignedTinyInteger('usefulness')->comment('1-7 scale: not useful to extremely useful');
             $table->unsignedTinyInteger('usage_intent')->comment('1-7 scale: likelihood to use app again when working with AI');
