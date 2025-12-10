@@ -3,12 +3,14 @@ import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import ContainerPage from '@/Components/ContainerPage.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
 import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
 import FormTextarea from '@/Components/FormTextarea.vue';
 import HeaderPage from '@/Components/HeaderPage.vue';
 import LikertScale from '@/Components/LikertScale.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineOptions({
     layout: AppLayout,
@@ -22,6 +24,8 @@ const form = useForm({
     desiredFeatures: [] as string[],
     desiredFeaturesOther: '',
 });
+
+const hasErrors = computed(() => Object.keys(form.errors).length > 0);
 
 const featureOptions = [
     {
@@ -94,9 +98,78 @@ const submit = () => {
                 </p>
             </div>
 
+            <!-- Error Alert -->
+            <div
+                v-if="hasErrors"
+                class="mb-6 rounded-lg border border-red-300 bg-red-50 p-4"
+                role="alert"
+            >
+                <div class="flex items-start gap-3">
+                    <DynamicIcon
+                        name="exclamation-circle"
+                        class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+                    />
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-red-900">
+                            Please correct the errors below
+                        </h3>
+                        <ul
+                            class="mt-2 list-inside list-disc space-y-1 text-sm text-red-700"
+                        >
+                            <li
+                                v-if="form.errors.experienceLevel"
+                                key="experience-level"
+                            >
+                                <strong>Experience level:</strong>
+                                {{ form.errors.experienceLevel }}
+                            </li>
+                            <li v-if="form.errors.usefulness" key="usefulness">
+                                <strong>Usefulness:</strong>
+                                {{ form.errors.usefulness }}
+                            </li>
+                            <li
+                                v-if="form.errors.usageIntent"
+                                key="usage-intent"
+                            >
+                                <strong>Usage likelihood:</strong>
+                                {{ form.errors.usageIntent }}
+                            </li>
+                            <li
+                                v-if="form.errors.suggestions"
+                                key="suggestions"
+                            >
+                                <strong>Suggestions:</strong>
+                                {{ form.errors.suggestions }}
+                            </li>
+                            <li
+                                v-if="form.errors.desiredFeatures"
+                                key="desired-features"
+                            >
+                                <strong>Features:</strong>
+                                {{ form.errors.desiredFeatures }}
+                            </li>
+                            <li
+                                v-if="form.errors.desiredFeaturesOther"
+                                key="desired-features-other"
+                            >
+                                <strong>Feature description:</strong>
+                                {{ form.errors.desiredFeaturesOther }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <form class="space-y-8" @submit.prevent="submit">
                 <!-- Question 1: Experience Level -->
-                <div class="mt-8">
+                <div
+                    class="mt-8 rounded-lg p-4 transition"
+                    :class="
+                        form.errors.experienceLevel
+                            ? 'border-2 border-red-300 bg-red-50'
+                            : ''
+                    "
+                >
                     <label class="mb-4 block text-sm font-medium text-gray-900">
                         1. How experienced are you with AI tools like ChatGPT or
                         Claude?
@@ -116,7 +189,14 @@ const submit = () => {
                 </div>
 
                 <!-- Question 2: Usefulness -->
-                <div class="mt-16">
+                <div
+                    class="mt-16 rounded-lg p-4 transition"
+                    :class="
+                        form.errors.usefulness
+                            ? 'border-2 border-red-300 bg-red-50'
+                            : ''
+                    "
+                >
                     <label class="mb-4 block text-sm font-medium text-gray-900">
                         2. How useful was the app for improving your prompt?
                     </label>
@@ -135,7 +215,14 @@ const submit = () => {
                 </div>
 
                 <!-- Question 3: Usage Intent -->
-                <div class="mt-16">
+                <div
+                    class="mt-16 rounded-lg p-4 transition"
+                    :class="
+                        form.errors.usageIntent
+                            ? 'border-2 border-red-300 bg-red-50'
+                            : ''
+                    "
+                >
                     <label class="mb-4 block text-sm font-medium text-gray-900">
                         3. How likely are you to use this app the next time you
                         need to work with an AI assistant?
@@ -168,13 +255,25 @@ const submit = () => {
                 </div>
 
                 <!-- Question 5: Desired Features -->
-                <div class="mt-16">
+                <div
+                    class="mt-16 rounded-lg p-4 transition"
+                    :class="
+                        form.errors.desiredFeatures ||
+                        form.errors.desiredFeaturesOther
+                            ? 'border-2 border-red-300 bg-red-50'
+                            : ''
+                    "
+                >
                     <label class="mb-4 block text-sm font-medium text-gray-900">
                         5. Which features would you most want to see added next?
                         <span class="font-normal text-gray-600"
-                            >(Select all that apply)</span
+                            >(Select at least one)</span
                         >
                     </label>
+                    <p class="mb-3 text-xs text-gray-600">
+                        If you select "Other", please describe the feature you'd
+                        like to see.
+                    </p>
                     <FormCheckboxGroup
                         v-model="form.desiredFeatures"
                         v-model:other-value="form.desiredFeaturesOther"
@@ -182,6 +281,12 @@ const submit = () => {
                         :disabled="form.processing"
                         :error="form.errors.desiredFeatures"
                     />
+                    <p
+                        v-if="form.errors.desiredFeaturesOther"
+                        class="mt-2 text-sm text-red-600"
+                    >
+                        {{ form.errors.desiredFeaturesOther }}
+                    </p>
                 </div>
 
                 <!-- Submit Buttons -->
