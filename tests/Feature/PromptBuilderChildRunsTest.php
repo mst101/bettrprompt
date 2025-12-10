@@ -239,7 +239,7 @@ test('child prompt run inherits personality from user', function () {
     $parentRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'personality_type' => 'ENFP', // Different from user
+        'personality_type' => 'ENFP-A', // Different from user
         'selected_framework' => ['code' => 'SMART'],
         'framework_questions' => [['question' => 'Q1']],
         'personality_tier' => 'full',
