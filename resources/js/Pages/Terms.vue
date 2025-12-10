@@ -56,7 +56,48 @@ defineOptions({
                         prompts for your use.
                     </p>
 
-                    <h2>3. User Accounts</h2>
+                    <h2>3. Beta/Test Mode Notice</h2>
+                    <p>
+                        The AI Buddy service is currently in beta/test mode. As
+                        a participant in this testing phase, you acknowledge and
+                        agree that:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Data Usage for Improvement:</strong> Any
+                            data you choose to enter into the system may be used
+                            by us to understand user behaviour, improve the
+                            system's functionality, and enhance the quality of
+                            responses. We use this data solely for the purpose
+                            of developing and refining AI Buddy.
+                        </li>
+                        <li>
+                            <strong>Caution Against Sensitive Data:</strong>
+                            Because we are actively testing and improving the
+                            system, you should <strong>not</strong> enter any
+                            personally sensitive, confidential, or proprietary
+                            information. This includes (but is not limited to)
+                            passwords, financial information, health data,
+                            personal identification numbers, or trade secrets.
+                            We cannot guarantee the same level of security and
+                            privacy that a fully released service would provide.
+                        </li>
+                        <li>
+                            <strong>Data Retention and Deletion:</strong> All
+                            data entered during the beta testing phase will be
+                            permanently deleted on 15th January 2026. No data
+                            from this testing period will be retained after this
+                            date.
+                        </li>
+                        <li>
+                            <strong>Free Access Period:</strong> In exchange for
+                            your participation in beta testing, you are granted
+                            free access to use the AI Buddy service without
+                            limitation until 15th January 2026.
+                        </li>
+                    </ul>
+
+                    <h2>4. User Accounts</h2>
                     <p>
                         To access certain features of the Service, you must
                         register for an account. You agree to:
@@ -85,7 +126,7 @@ defineOptions({
                         inaccurate, false, or misleading.
                     </p>
 
-                    <h2>4. Acceptable Use</h2>
+                    <h2>5. Acceptable Use</h2>
                     <p>You agree not to use the Service to:</p>
                     <ul>
                         <li>Violate any applicable laws or regulations</li>
@@ -112,7 +153,7 @@ defineOptions({
                         </li>
                     </ul>
 
-                    <h2>5. Intellectual Property</h2>
+                    <h2>6. Intellectual Property</h2>
                     <p>
                         The Service, including its original content, features,
                         and functionality, is owned by
@@ -128,7 +169,7 @@ defineOptions({
                         to you.
                     </p>
 
-                    <h2>6. Third-Party Services</h2>
+                    <h2>7. Third-Party Services</h2>
                     <p>
                         The Service integrates with and relies upon third-party
                         services, including:
@@ -162,7 +203,7 @@ defineOptions({
                         third-party services.
                     </p>
 
-                    <h2>7. Paid Features and Billing</h2>
+                    <h2>8. Paid Features and Billing</h2>
                     <p>
                         Certain features of the Service may be provided for a
                         fee. You agree to pay all fees associated with your use
@@ -175,7 +216,7 @@ defineOptions({
                         a fee change constitutes acceptance of the new fees.
                     </p>
 
-                    <h2>8. Disclaimer of Warranties</h2>
+                    <h2>9. Disclaimer of Warranties</h2>
                     <p>
                         THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE"
                         WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
@@ -197,7 +238,7 @@ defineOptions({
                         <li>Any errors in the Service will be corrected</li>
                     </ul>
 
-                    <h2>9. Limitation of Liability</h2>
+                    <h2>10. Limitation of Liability</h2>
                     <p>
                         TO THE MAXIMUM EXTENT PERMITTED BY LAW,
                         {{ COMPANY_INFO.name }} SHALL NOT BE LIABLE FOR ANY
@@ -225,7 +266,7 @@ defineOptions({
                         </li>
                     </ul>
 
-                    <h2>10. Indemnification</h2>
+                    <h2>11. Indemnification</h2>
                     <p>
                         You agree to indemnify, defend, and hold harmless
                         {{ COMPANY_INFO.name }}, its officers, directors,
@@ -236,7 +277,7 @@ defineOptions({
                         of these Terms.
                     </p>
 
-                    <h2>11. Modifications to the Service</h2>
+                    <h2>12. Modifications to the Service</h2>
                     <p>
                         We reserve the right to modify, suspend, or discontinue
                         the Service (or any part thereof) at any time with or
@@ -245,7 +286,7 @@ defineOptions({
                         discontinuation of the Service.
                     </p>
 
-                    <h2>12. Changes to Terms</h2>
+                    <h2>13. Changes to Terms</h2>
                     <p>
                         We may revise these Terms from time to time. The most
                         current version will always be posted on this page. By
@@ -253,7 +294,7 @@ defineOptions({
                         effective, you agree to be bound by the revised Terms.
                     </p>
 
-                    <h2>13. Termination</h2>
+                    <h2>14. Termination</h2>
                     <p>
                         We may terminate or suspend your account and access to
                         the Service immediately, without prior notice or
@@ -262,7 +303,7 @@ defineOptions({
                         will immediately cease.
                     </p>
 
-                    <h2>14. Governing Law</h2>
+                    <h2>15. Governing Law</h2>
                     <p>
                         These Terms shall be governed by and construed in
                         accordance with the laws of England and Wales, without
@@ -272,7 +313,7 @@ defineOptions({
                         England and Wales.
                     </p>
 
-                    <h2>15. Severability</h2>
+                    <h2>16. Severability</h2>
                     <p>
                         If any provision of these Terms is held to be
                         unenforceable or invalid, such provision will be changed
@@ -282,7 +323,7 @@ defineOptions({
                         continue in full force and effect.
                     </p>
 
-                    <h2>16. Contact Information</h2>
+                    <h2>17. Contact Information</h2>
                     <p>
                         If you have any questions about these Terms, please
                         contact us at:

@@ -174,6 +174,42 @@ defineOptions({
                     </li>
                 </ul>
 
+                <h2>5.1 Beta/Test Phase Data Usage</h2>
+                <p>
+                    As AI Buddy is currently in beta/test mode, we use your data
+                    in additional ways to improve the system:
+                </p>
+                <ul>
+                    <li>
+                        <strong>System Improvement:</strong> We analyse the data
+                        you choose to enter—including your tasks, personality
+                        traits, and interactions with the system—to understand
+                        how users interact with AI Buddy and to refine our AI
+                        prompt generation algorithms.
+                    </li>
+                    <li>
+                        <strong>Feature Testing:</strong> Your interactions help
+                        us identify bugs, usability issues, and opportunities to
+                        enhance the user experience.
+                    </li>
+                    <li>
+                        <strong>Model Training:</strong> Aggregated, anonymised
+                        data from your usage may be used to train and improve
+                        our AI models, with the goal of providing better, more
+                        personalised prompt suggestions to all users.
+                    </li>
+                </ul>
+                <p>
+                    <strong>Important:</strong> Do not enter sensitive,
+                    confidential, or personally identifiable information into
+                    the system during the beta testing phase. This includes
+                    passwords, financial details, health information, or
+                    proprietary data. Because we are actively testing and
+                    improving the system, we cannot guarantee the same level of
+                    security and privacy as a fully released service. All data
+                    will be permanently deleted on 15th January 2026.
+                </p>
+
                 <h2>6. Third-Party Services and Data Sharing</h2>
                 <p>
                     We share your data with the following third-party services:
@@ -286,12 +322,22 @@ defineOptions({
                 </p>
                 <ul>
                     <li>
+                        <strong>Beta/Test Phase Data:</strong> All data
+                        collected during the beta testing phase will be
+                        permanently deleted on 15th January 2026, regardless of
+                        when your account was created.
+                    </li>
+                    <li>
                         <strong>Account Data:</strong> Retained while your
                         account is active and for up to 90 days after deletion
+                        (except for beta phase data, which will be deleted on
+                        15th January 2026)
                     </li>
                     <li>
                         <strong>Prompt History:</strong> Retained while your
                         account is active, unless you delete specific prompts
+                        (all beta phase data will be deleted on 15th January
+                        2026)
                     </li>
                     <li>
                         <strong>Log Data:</strong> Typically retained for up to
