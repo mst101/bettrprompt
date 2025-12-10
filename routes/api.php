@@ -2,6 +2,7 @@
 
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
+use App\Events\WorkflowFailed;
 use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
@@ -109,6 +110,18 @@ Route::post('/n8n/webhook', function (Request $request) {
                     event(new PromptOptimizationCompleted($promptRun));
                 } catch (\Exception $e) {
                     Log::error('Failed to broadcast PromptOptimizationCompleted event', [
+                        'prompt_run_id' => $promptRun->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
+            // Broadcast failure event if workflow failed
+            if ($request->input('workflow_stage') && str_ends_with($request->input('workflow_stage'), '_failed')) {
+                try {
+                    event(new WorkflowFailed($promptRun));
+                } catch (\Exception $e) {
+                    Log::error('Failed to broadcast WorkflowFailed event', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
                     ]);

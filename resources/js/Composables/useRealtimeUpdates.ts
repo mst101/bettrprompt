@@ -54,6 +54,9 @@ export function useRealtimeUpdates(
 
         usingFallback.value = true;
 
+        // Perform an immediate reload on first poll
+        router.reload(reloadOptions);
+
         pollInterval = window.setInterval(() => {
             // Check if we should still be polling
             if (shouldPoll && !shouldPoll.value) {

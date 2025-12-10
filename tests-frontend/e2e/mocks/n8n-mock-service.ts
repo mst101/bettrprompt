@@ -157,30 +157,37 @@ export class N8nMockService {
                 break;
         }
 
-        // For success scenarios, pass the request through to the actual backend
-        // The backend will process and update the database
-        // We still return our mock response to the client
-        if (this.config.scenario === 'success') {
-            try {
-                // Build the webhook payload with the mock response data
-                const webhookPayload = {
-                    ...payload,
-                    ...response,
-                };
+        // Build the webhook payload with the mock response data
+        const webhookPayload = {
+            ...payload,
+            ...response,
+        };
 
-                // Let the request continue to the actual backend
-                // This ensures the database is updated
-                await route.fallback({
-                    postData: JSON.stringify(webhookPayload),
-                });
+        // For all scenarios (success and error), trigger the webhook endpoint to update the database
+        // Do this BEFORE fulfilling the route so the database is updated first
+        try {
+            // Call the webhook endpoint to update the PromptRun in the database
+            // This simulates n8n calling the application's webhook endpoint
+            const webhookResponse = await this.page.request.post(
+                `${this.getBaseUrl()}/api/n8n/webhook`,
+                {
+                    headers: {
+                        'X-N8N-SECRET':
+                            'cd49e12a01efb4b771cdaba6bd2916e829e8abe961389dc738d0ed24fa344307',
+                        'Content-Type': 'application/json',
+                    },
+                    data: webhookPayload,
+                },
+            );
 
-                // Note: route.fallback() will use the original response from the backend
-                // We don't need to call route.fulfill() in this case
-                return;
-            } catch (error) {
-                console.error('Failed to pass webhook to backend:', error);
-                // Fall through to mock response on error
+            if (!webhookResponse.ok()) {
+                console.error(
+                    'Webhook endpoint returned non-OK status:',
+                    webhookResponse.status(),
+                );
             }
+        } catch (error) {
+            console.error('Failed to call webhook endpoint:', error);
         }
 
         // Return mock response to the client
@@ -196,5 +203,12 @@ export class N8nMockService {
      */
     isActive(): boolean {
         return this.isEnabled;
+    }
+
+    /**
+     * Get the base URL for API calls
+     */
+    private getBaseUrl(): string {
+        return this.page.url().split('/').slice(0, 3).join('/');
     }
 }

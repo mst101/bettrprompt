@@ -40,6 +40,11 @@ const isPromptRunProcessing = computed(() => {
     return props.promptRun.workflowStage?.endsWith('_processing') ?? false;
 });
 
+// Helper computed to check if workflow has failed at any stage
+const hasWorkflowFailed = computed(() => {
+    return props.promptRun.workflowStage?.endsWith('_failed') ?? false;
+});
+
 defineOptions({
     layout: AppLayout,
 });
@@ -252,9 +257,19 @@ useRealtimeUpdates(
                 only: ['promptRun'],
             });
         },
+        WorkflowFailed: () => {
+            // Reload page to show error message
+            router.reload({
+                only: ['promptRun'],
+                onSuccess: () => {
+                    // Stay on Task tab to show error
+                    activeTab.value = 'task';
+                },
+            });
+        },
     },
     { only: ['promptRun'] },
-    5000, // Poll every 5 seconds when WebSockets unavailable
+    1000, // Poll every 1 second when WebSockets unavailable (faster feedback for errors)
     shouldPollForUpdates, // Only poll when workflow is processing
 );
 
@@ -443,6 +458,36 @@ onUnmounted(() => {
                 class="space-y-4"
                 data-testid="tab-task"
             >
+                <!-- Workflow error display for any failed stage -->
+                <div
+                    v-if="hasWorkflowFailed && promptRun.errorMessage"
+                    class="rounded-lg border border-red-300 bg-red-50 p-4"
+                >
+                    <div class="flex items-start gap-3">
+                        <div class="mt-0.5">
+                            <svg
+                                class="h-5 w-5 text-red-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-red-900">
+                                Workflow Failed
+                            </h3>
+                            <p class="mt-1 text-sm text-red-700">
+                                {{ promptRun.errorMessage }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Enhanced loading state when generating pre-analysis questions (Workflow 0) -->
                 <!-- Note: Currently Workflow 0 is synchronous, but this is ready for when it becomes async -->
                 <PreAnalysisProgress
