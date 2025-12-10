@@ -356,9 +356,9 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
-                $uiComplexity = $visitor?->ui_complexity ?? 'simple';
+                $uiComplexity = $visitor?->ui_complexity ?? 'advanced';
             } else {
-                $uiComplexity = 'simple'; // default for visitors
+                $uiComplexity = 'advanced'; // default for visitors
             }
         } else {
             $uiComplexity = auth()->user()->ui_complexity ?? 'advanced';

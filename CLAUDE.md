@@ -49,7 +49,7 @@ const form = reactive({
 
 // Database - snake_case
 Schema::table('users', fn(Blueprint $table) => {
-  $table->string('ui_complexity')->default('simple');
+  $table->string('ui_complexity')->default('advanced');
   $table->string('personality_type')->nullable();
   $table->json('trait_percentages')->nullable();
 });

@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -48,8 +50,46 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->reportable(function (Throwable $e): void {
+            if (!app()->bound('sentry')) {
+                return;
+            }
+
+            \Sentry\configureScope(function ($scope): void {
+                $scope->setContext('circuit_breaker', [
+                    'failures' => Cache::get('n8n_circuit_breaker_failures', 0),
+                    'circuit_open' => Cache::has('n8n_circuit_breaker_open_until'),
+                    'open_until' => Cache::get('n8n_circuit_breaker_open_until'),
+                ]);
+
+                if (Auth::check()) {
+                    $user = Auth::user();
+
+                    $scope->setUser([
+                        'id' => $user?->id,
+                        'email' => $user?->email,
+                        'username' => $user?->name,
+                    ]);
+                }
+
+                if (app()->runningInConsole()) {
+                    $scope->setContext('queue', [
+                        'connection' => config('queue.default'),
+                        'queue' => config('queue.connections.'.config('queue.default').'.queue', 'default'),
+                    ]);
+
+                    $scope->setTag('context', 'queue');
+                } else {
+                    $scope->setTag('context', 'http');
+                }
+            });
+        });
+
         // Handle CSRF token expiration (419 errors)
-        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (
+            \Illuminate\Session\TokenMismatchException $e,
+            \Illuminate\Http\Request $request
+        ) {
             // If it's a logout request and session expired, redirect to home
             if ($request->routeIs('logout')) {
                 return redirect('/')->with('status', 'Your session has expired. You have been logged out.');
