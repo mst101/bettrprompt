@@ -733,9 +733,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         try {
             // Setup the test page with cookies and auth headers
-            // NOTE: acceptCookies sets up route handler for X-Test-Auth header
             await acceptCookies(testPage);
-            // loginAsTestUser will call acceptCookies again, but route handlers accumulate
             await loginAsTestUser(testPage);
 
             // Enable mocking with rate limit scenario
@@ -774,7 +772,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             }
 
             // Give the page time to load and polling to detect the error
-            // The webhook update should trigger a page reload via polling
+            // The MockN8nController updates the database, and polling reloads the page
             await testPage.waitForTimeout(2000);
 
             // Should show rate limit message with retry guidance
