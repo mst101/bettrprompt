@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\UserResource;
-use App\Models\PromptRun;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -37,9 +37,8 @@ class HandleInertiaRequests extends Middleware
         if (! $request->user()) {
             $visitorId = $request->cookie('visitor_id');
             if ($visitorId) {
-                $visitorHasCompletedPrompts = PromptRun::where('visitor_id', $visitorId)
-                    ->completed()
-                    ->exists();
+                $visitor = Visitor::find($visitorId);
+                $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
             }
         }
 
