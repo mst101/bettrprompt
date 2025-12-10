@@ -26,7 +26,7 @@ import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/types';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -190,10 +190,36 @@ const handleProceedToQuestions = async () => {
     activeTab.value = 'questions';
 };
 
-// Determine if we should poll for updates (only when workflow is actively processing)
+// Track if we've recently seen a processing state (allows polling to complete after workflow finishes)
+const hasRecentlyBeenProcessing = ref(false);
+let processingStateTimeout: number | null = null;
+
+// Determine if we should poll for updates
+// Keep polling active for 2 seconds after workflow stops processing to catch the completion event
 const shouldPollForUpdates = computed(() => {
-    return isPromptRunProcessing.value;
+    return hasRecentlyBeenProcessing.value;
 });
+
+// Watch for processing state changes and maintain the hasRecentlyBeenProcessing flag
+watch(
+    () => isPromptRunProcessing.value,
+    (isProcessing) => {
+        if (isProcessing) {
+            // Workflow is processing - start polling
+            hasRecentlyBeenProcessing.value = true;
+            if (processingStateTimeout) {
+                clearTimeout(processingStateTimeout);
+            }
+        } else if (hasRecentlyBeenProcessing.value) {
+            // Workflow stopped processing - keep polling for 2 more seconds to catch completion notification
+            processingStateTimeout = window.setTimeout(() => {
+                hasRecentlyBeenProcessing.value = false;
+                processingStateTimeout = null;
+            }, 2000);
+        }
+    },
+    { immediate: true },
+);
 
 // Real-time updates via Laravel Echo with smart polling fallback
 useRealtimeUpdates(
@@ -321,6 +347,32 @@ const handleDelete = () => {
         },
     });
 };
+
+/**
+ * Retry the prompt generation when it fails
+ */
+const retryGeneration = () => {
+    // Use the existing retry endpoint which handles all workflow failures
+    router.post(
+        route('prompt-builder.retry', props.promptRun.id),
+        {},
+        {
+            onSuccess: () => {
+                // The retry endpoint redirects, so just follow it
+            },
+            onError: () => {
+                alert('Failed to retry generation. Please try again.');
+            },
+        },
+    );
+};
+
+// Cleanup timeout when component unmounts
+onUnmounted(() => {
+    if (processingStateTimeout) {
+        clearTimeout(processingStateTimeout);
+    }
+});
 </script>
 
 <template>
@@ -469,11 +521,22 @@ const handleDelete = () => {
                 class="space-y-4"
                 data-testid="tab-questions"
             >
-                <!-- Enhanced loading state when generation is in progress -->
+                <!-- Enhanced loading state when generation is in progress or failed -->
                 <GenerationProgress
                     v-if="
-                        promptRun.workflowStage === '2_processing' &&
-                        isPromptRunProcessing
+                        (promptRun.workflowStage === '2_processing' &&
+                            isPromptRunProcessing) ||
+                        promptRun.workflowStage === '2_failed'
+                    "
+                    :error-message="
+                        promptRun.workflowStage === '2_failed'
+                            ? promptRun.errorMessage
+                            : null
+                    "
+                    :on-retry="
+                        promptRun.workflowStage === '2_failed'
+                            ? () => retryGeneration()
+                            : undefined
                     "
                 />
 
