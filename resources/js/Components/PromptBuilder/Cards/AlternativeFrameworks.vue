@@ -39,10 +39,6 @@ const handleSwitchFramework = (frameworkCode: string) => {
             onSuccess: (page) => {
                 // The response should contain the new promptRun ID in the props
                 const newPromptRunId = page.props.promptRun?.id;
-                console.log(
-                    '[AlternativeFrameworks] Framework switch successful, new ID:',
-                    newPromptRunId,
-                );
 
                 // Force a fresh navigation to the new promptRun's show page
                 // This ensures the component mounts with completely fresh props
