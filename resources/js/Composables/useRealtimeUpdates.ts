@@ -158,14 +158,16 @@ export function useRealtimeUpdates(
             return;
         }
 
-        const echoConnected = window.isEchoConnected();
-
-        if (!echoConnected) {
-            startPolling();
-            return;
+        // Always try to setup Echo, even if connection state is uncertain
+        // The setupEcho function will handle errors and fallback to polling if needed
+        try {
+            setupEcho();
+        } catch {
+            // setupEcho will call startPolling on error, but ensure we have a fallback
+            if (!usingFallback.value) {
+                startPolling();
+            }
         }
-
-        setupEcho();
     };
 
     onMounted(() => {

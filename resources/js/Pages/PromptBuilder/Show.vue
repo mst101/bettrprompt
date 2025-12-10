@@ -195,7 +195,7 @@ const hasRecentlyBeenProcessing = ref(false);
 let processingStateTimeout: number | null = null;
 
 // Determine if we should poll for updates
-// Keep polling active for 2 seconds after workflow stops processing to catch the completion event
+// Keep polling active for 2 seconds after workflow stops processing to catch completion
 const shouldPollForUpdates = computed(() => {
     return hasRecentlyBeenProcessing.value;
 });
@@ -211,7 +211,7 @@ watch(
                 clearTimeout(processingStateTimeout);
             }
         } else if (hasRecentlyBeenProcessing.value) {
-            // Workflow stopped processing - keep polling for 2 more seconds to catch completion notification
+            // Workflow stopped processing - keep polling for a bit to catch completion notification
             processingStateTimeout = window.setTimeout(() => {
                 hasRecentlyBeenProcessing.value = false;
                 processingStateTimeout = null;
