@@ -40,12 +40,10 @@ const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.is_admin ?? false);
 const isGuest = computed(() => !user.value);
 
-// Show banner for guests who just completed their first prompt
+// Show banner for guests who just completed their prompt
+// We show it if the guest has an optimized prompt available
 const showFirstPromptBanner = computed(
-    () =>
-        isGuest.value &&
-        props.promptRun.optimizedPrompt &&
-        !page.props.visitorHasCompletedPrompts,
+    () => isGuest.value && props.promptRun.optimizedPrompt,
 );
 
 // Helper computed to check if workflow is currently processing
