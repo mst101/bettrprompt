@@ -75,6 +75,12 @@ const featureOptions = [
             'Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences',
     },
     {
+        value: 'document-upload',
+        label: 'Upload documents and/or images',
+        description:
+            'Upload files and images to provide context for prompt generation, e.g., analyse documents or refine prompts based on visual content',
+    },
+    {
         value: 'other',
         label: 'Other',
         description: "Something else? Let us know what you'd like to see!",

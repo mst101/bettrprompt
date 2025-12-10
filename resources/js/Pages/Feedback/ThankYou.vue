@@ -58,7 +58,7 @@ const copyToClipboard = async () => {
                     Thank you for your feedback!
                 </h2>
                 <p class="mt-2 text-gray-600">
-                    Your insights help us improve the service for everyone.
+                    Your insights are much appreciated.
                 </p>
             </div>
         </Card>
