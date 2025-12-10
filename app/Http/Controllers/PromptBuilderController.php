@@ -1059,60 +1059,11 @@ class PromptBuilderController extends Controller
             ProcessAnalysis::dispatch($childPromptRun, $validated['framework_code'],
                 $this->getJobDatabase($request));
 
-            // Load relationships for the response
-            $childPromptRun->load(['parent', 'children']);
-
-            $currentQuestionIndex = $childPromptRun->current_question_index ?? 0;
-
-            // Get current question
-            $currentQuestion = null;
-            if ($childPromptRun->framework_questions && isset($childPromptRun->framework_questions[$currentQuestionIndex])) {
-                $question = $childPromptRun->framework_questions[$currentQuestionIndex];
-                $currentQuestion = is_array($question) ? ($question['question'] ?? null) : $question;
-            }
-
-            // Get the current question's answer
-            $answers = $childPromptRun->clarifying_answers ?? [];
-            $currentQuestionAnswer = $answers[$currentQuestionIndex] ?? null;
-
-            // Check if visitor has already completed a prompt
-            $visitorHasCompletedPrompts = false;
-            $uiComplexity = 'advanced'; // default
-
-            if (! auth()->check()) {
-                $visitorId = $this->getVisitorId($request);
-                if ($visitorId) {
-                    $visitor = Visitor::find($visitorId);
-                    $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
-                    $uiComplexity = $visitor?->ui_complexity ?? 'simple';
-                } else {
-                    $uiComplexity = 'simple';
-                }
-            } else {
-                $uiComplexity = auth()->user()->ui_complexity ?? 'advanced';
-            }
-
-            // Fetch Claude models for cost calculations (only in advanced mode)
-            $claudeModels = [];
-            if ($uiComplexity === 'advanced') {
-                $claudeModels = ClaudeModelResource::collection(
-                    ClaudeModel::active()->orderByDesc('release_date')->get()
-                )->resolve();
-            }
-
-            // Return Inertia response directly instead of redirect
-            return Inertia::render('PromptBuilder/Show', [
-                'promptRun' => PromptRunResource::make($childPromptRun)->resolve(),
-                'currentQuestion' => $currentQuestion,
-                'currentQuestionAnswer' => $currentQuestionAnswer,
-                'progress' => [
-                    'answered' => $currentQuestionIndex,
-                    'total' => count($childPromptRun->framework_questions ?? []),
-                ],
-                'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
-                'uiComplexity' => $uiComplexity,
-                'claudeModels' => $claudeModels,
-            ])->with('success', 'Re-analysing with selected framework...');
+            // Redirect to the new prompt run's show page
+            // Inertia will handle the redirect and fetch the full page data
+            return redirect()
+                ->route('prompt-builder.show', $childPromptRun)
+                ->with('success', 'Re-analysing with selected framework...');
         } catch (\Exception $e) {
             Log::error('Failed to switch framework (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,

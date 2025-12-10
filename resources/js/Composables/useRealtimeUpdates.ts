@@ -125,6 +125,18 @@ export function useRealtimeUpdates(
                 channel!.listen(eventName, wrappedHandler);
             });
 
+            // Add debugging for channel state
+            console.log(
+                '[useRealtimeUpdates] Channel state:',
+                (channel as any)?.state,
+            );
+            if ((channel as any)?.subscribed !== undefined) {
+                console.log(
+                    '[useRealtimeUpdates] Channel subscribed:',
+                    (channel as any).subscribed,
+                );
+            }
+
             channel.error((error: Error) => {
                 console.error(
                     '[useRealtimeUpdates] WebSocket channel error:',

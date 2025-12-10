@@ -37,11 +37,16 @@ const handleSwitchFramework = (frameworkCode: string) => {
         },
         {
             onSuccess: (page) => {
-                // The response should contain the new promptRun ID
-                // Inertia's redirect will automatically navigate to the new URL
                 console.log(
-                    '[AlternativeFrameworks] Framework switch successful',
-                    page,
+                    '[AlternativeFrameworks] Framework switch successful, navigating to:',
+                    page.props.promptRun.id,
+                );
+                // Inertia automatically handles the redirect and navigation
+            },
+            onError: (errors) => {
+                console.error(
+                    '[AlternativeFrameworks] Framework switch failed:',
+                    errors,
                 );
             },
             onFinish: () => {
