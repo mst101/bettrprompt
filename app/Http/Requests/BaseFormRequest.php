@@ -53,7 +53,7 @@ abstract class BaseFormRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    protected function validatedToSnakeCase(): array
+    public function validatedToSnakeCase(): array
     {
         return $this->convertCamelCaseToSnakeCase(parent::validated());
     }
