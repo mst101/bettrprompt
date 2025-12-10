@@ -45,13 +45,24 @@ export function useRealtimeUpdates(
     let channel: Channel | null = null;
 
     const startPolling = () => {
-        if (pollInterval) return; // Already polling
+        if (pollInterval) {
+            console.log(
+                '[useRealtimeUpdates] Polling already active, skipping start',
+            );
+            return; // Already polling
+        }
 
         // Check if polling should be active (if shouldPoll is provided)
         if (shouldPoll && !shouldPoll.value) {
+            console.log(
+                '[useRealtimeUpdates] Polling not active yet (shouldPoll is false)',
+            );
             return;
         }
 
+        console.log(
+            `[useRealtimeUpdates] Starting polling every ${pollingInterval}ms for channel: ${channelName}`,
+        );
         usingFallback.value = true;
 
         pollInterval = window.setInterval(() => {
@@ -61,6 +72,7 @@ export function useRealtimeUpdates(
                 return;
             }
 
+            console.log('[useRealtimeUpdates] Polling reload...');
             router.reload(reloadOptions);
         }, pollingInterval);
     };
@@ -75,15 +87,28 @@ export function useRealtimeUpdates(
 
     const setupEcho = () => {
         try {
+            console.log(
+                '[useRealtimeUpdates] Setting up Echo channel:',
+                channelName,
+            );
             channel = window.Echo?.channel(channelName);
 
             if (!channel) {
                 throw new Error('Echo channel could not be created');
             }
 
+            console.log(
+                `[useRealtimeUpdates] Channel created successfully. Listening for events:`,
+                Object.keys(events),
+            );
+
             Object.entries(events).forEach(([eventName, handler]) => {
                 const wrappedHandler = (data: unknown) => {
                     try {
+                        console.log(
+                            `[useRealtimeUpdates] Event received: ${eventName}`,
+                            data,
+                        );
                         handler(data);
                     } catch (error) {
                         console.error(
@@ -94,6 +119,9 @@ export function useRealtimeUpdates(
                     }
                 };
 
+                console.log(
+                    `[useRealtimeUpdates] Registering listener for ${eventName}`,
+                );
                 channel!.listen(eventName, wrappedHandler);
             });
 
@@ -117,6 +145,10 @@ export function useRealtimeUpdates(
             }
 
             connected.value = true;
+            console.log(
+                '[useRealtimeUpdates] Echo setup complete for channel:',
+                channelName,
+            );
         } catch (error) {
             console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
             startPolling();
@@ -155,8 +187,19 @@ export function useRealtimeUpdates(
 
     const trySetup = () => {
         if (channel || !window.Echo) {
+            if (channel) {
+                console.log(
+                    '[useRealtimeUpdates] Channel already set up, skipping setup',
+                );
+            } else {
+                console.log(
+                    '[useRealtimeUpdates] Echo not available, skipping setup',
+                );
+            }
             return;
         }
+
+        console.log('[useRealtimeUpdates] Attempting to setup Echo...');
 
         // Always try to setup Echo, even if connection state is uncertain
         // The setupEcho function will handle errors and fallback to polling if needed
@@ -171,6 +214,7 @@ export function useRealtimeUpdates(
     };
 
     onMounted(() => {
+        console.log('[useRealtimeUpdates] Mounted for channel:', channelName);
         // Always attach listeners so we can recover once Echo connects
         window.addEventListener('echo-disconnected', handleEchoDisconnect);
         window.addEventListener('echo-connected', handleEchoReconnect);
@@ -179,10 +223,19 @@ export function useRealtimeUpdates(
 
         // If Echo is not ready at mount, keep trying when it becomes available
         if (!channel) {
+            console.log(
+                '[useRealtimeUpdates] Channel not ready at mount, will retry...',
+            );
             const echoCheck = window.setInterval(() => {
                 if (window.Echo) {
+                    console.log(
+                        '[useRealtimeUpdates] Echo available, retrying setup...',
+                    );
                     trySetup();
                     if (channel) {
+                        console.log(
+                            '[useRealtimeUpdates] Channel setup successful',
+                        );
                         clearInterval(echoCheck);
                     }
                 }
@@ -192,7 +245,15 @@ export function useRealtimeUpdates(
         // Watch shouldPoll and start/stop polling accordingly (only if using fallback)
         if (shouldPoll) {
             watch(shouldPoll, (newValue) => {
-                if (!usingFallback.value) return; // Only relevant when using fallback
+                console.log(
+                    `[useRealtimeUpdates] shouldPoll changed to ${newValue} for channel: ${channelName}`,
+                );
+                if (!usingFallback.value) {
+                    console.log(
+                        '[useRealtimeUpdates] Not using fallback, ignoring shouldPoll change',
+                    );
+                    return;
+                } // Only relevant when using fallback
 
                 if (newValue && !pollInterval) {
                     // Should poll but not currently polling - start it
