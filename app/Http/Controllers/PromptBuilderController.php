@@ -1047,7 +1047,10 @@ class PromptBuilderController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $promptRun->task_description,
+                    'pre_analysis_questions' => $promptRun->pre_analysis_questions,
+                    'pre_analysis_answers' => $promptRun->pre_analysis_answers,
                     'pre_analysis_context' => $promptRun->pre_analysis_context,
+                    'pre_analysis_reasoning' => $promptRun->pre_analysis_reasoning,
                     'workflow_stage' => '1_processing',
                 ]);
             });
