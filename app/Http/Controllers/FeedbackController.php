@@ -56,6 +56,7 @@ class FeedbackController extends Controller
 
         DB::table('feedback')->insert([
             'user_id' => auth()->id(),
+            'personality_type' => auth()->user()->personality_type,
             'experience_level' => $validated['experience_level'],
             'usefulness' => $validated['usefulness'],
             'usage_intent' => $validated['usage_intent'],
@@ -92,13 +93,27 @@ class FeedbackController extends Controller
 
     public function thankYou(): Response
     {
-        $user = auth()->user();
-        $personalityType = $user->personality_type;
+        $feedback = DB::table('feedback')
+            ->where('user_id', auth()->id())
+            ->first();
 
-        // Get available PDFs for the user's personality type
+        if (! $feedback) {
+            return redirect()->route('feedback.create');
+        }
+
+        // Use the personality type from when feedback was submitted
+        $personalityType = $feedback->personality_type;
+
+        if (! $personalityType) {
+            return redirect()->route('profile.edit')
+                ->with('error', 'Please complete your personality type profile before downloading resources.');
+        }
+
+        // Get available PDFs for the personality type at time of feedback
         $availablePdfs = PersonalityTypeService::getAvailablePdfs($personalityType);
 
         // Get or generate referral code
+        $user = auth()->user();
         $referralCode = $user->getReferralCode();
         $referralUrl = route('home', ['ref' => $referralCode]);
 
@@ -112,8 +127,21 @@ class FeedbackController extends Controller
 
     public function downloadPdf(string $filename): BinaryFileResponse|RedirectResponse
     {
-        $user = auth()->user();
-        $personalityType = $user->personality_type;
+        // Get the personality type from the user's feedback submission
+        $feedback = DB::table('feedback')
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (! $feedback) {
+            abort(403, 'No feedback found. Please submit feedback before downloading resources.');
+        }
+
+        $personalityType = $feedback->personality_type;
+
+        if (! $personalityType) {
+            abort(403, 'Personality type not set in your feedback record.');
+        }
+
         $folderName = PersonalityTypeService::getFolderName($personalityType);
 
         if (! $folderName) {
@@ -126,7 +154,7 @@ class FeedbackController extends Controller
             abort(404, 'PDF not found');
         }
 
-        // Security check: ensure the file is actually in the user's personality type folder
+        // Security check: ensure the file is actually in the personality type folder from feedback
         $realPath = realpath($filePath);
         $allowedPath = realpath(resource_path("pdf/{$folderName}"));
 
