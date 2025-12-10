@@ -242,7 +242,7 @@ test.describe('Prompt Builder History - With Data', () => {
             page.getByRole('columnheader', { name: /framework/i }),
         ).toBeVisible();
         await expect(
-            page.getByRole('columnheader', { name: /workflow stage/i }),
+            page.getByRole('columnheader', { name: /status/i }),
         ).toBeVisible();
         await expect(
             page.getByRole('columnheader', { name: /created/i }),
