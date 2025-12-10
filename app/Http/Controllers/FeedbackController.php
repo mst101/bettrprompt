@@ -91,7 +91,7 @@ class FeedbackController extends Controller
             ->with('success', 'Thank you for updating your feedback!');
     }
 
-    public function thankYou(): Response
+    public function thankYou(): Response|RedirectResponse
     {
         $feedback = DB::table('feedback')
             ->where('user_id', auth()->id())
