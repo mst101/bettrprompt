@@ -283,12 +283,21 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            // Remove the 'versionId' field if present (n8n will handle versioning)
-            unset($workflow['versionId']);
+            // Build a clean workflow object with only the fields n8n API accepts
+            // The API is strict and rejects additional properties like 'id', 'versionId', 'meta'
+            $cleanWorkflow = [
+                'name' => $workflow['name'] ?? null,
+                'nodes' => $workflow['nodes'] ?? [],
+                'connections' => $workflow['connections'] ?? [],
+                'active' => $workflow['active'] ?? false,
+                'settings' => $workflow['settings'] ?? (object) [],
+                'tags' => $workflow['tags'] ?? [],
+                'pinData' => $workflow['pinData'] ?? (object) [],
+            ];
 
             // Upload to n8n
             $n8nClient = new \App\Services\N8nClient;
-            $result = $n8nClient->updateWorkflow($workflowId, $workflow);
+            $result = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
 
             return response()->json($result);
         } catch (\Exception $e) {
