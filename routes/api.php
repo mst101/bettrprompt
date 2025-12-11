@@ -3,7 +3,6 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
-use App\Http\Controllers\ReferenceController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
@@ -239,12 +238,3 @@ if (config('app.env') === 'e2e') {
         });
     });
 }
-
-Route::prefix('reference')->group(function () {
-    Route::get('framework-taxonomy', [ReferenceController::class, 'frameworkTaxonomy']);
-    Route::get('personality-calibration', [ReferenceController::class, 'personalityCalibration']);
-    Route::get('personality-calibration-smart/{types?}', [ReferenceController::class, 'personalityCalibrationSmart']);
-    Route::get('question-bank', [ReferenceController::class, 'questionBank']);
-    Route::get('prompt-templates', [ReferenceController::class, 'promptTemplates']);
-    Route::get('framework-template/{code}', [ReferenceController::class, 'frameworkTemplate']);
-});
