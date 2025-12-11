@@ -16,45 +16,45 @@ class DebugN8nController extends Controller
         $javascript = null;
         $output = null;
 
-        // Try to load input from n8n directory first, fall back to storage/app/debug
-        $n8nInputFile = base_path("n8n/workflow_{$workflowNumber}_input.json");
-        $debugInputFile = storage_path("app/debug/workflow_{$workflowNumber}_input.json");
-
-        if (file_exists($n8nInputFile)) {
-            $content = json_decode(file_get_contents($n8nInputFile), true);
+        // Load input from storage/app/n8n_debug/input/
+        $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+        if (file_exists($inputFile)) {
+            $content = json_decode(file_get_contents($inputFile), true);
             // Handle array format from n8n (wrap in body if needed)
             if (is_array($content) && isset($content[0]['body'])) {
                 $input = $content[0];
             } else {
                 $input = $content;
             }
-        } elseif (file_exists($debugInputFile)) {
-            $input = json_decode(file_get_contents($debugInputFile), true);
         }
 
-        // Try to load JavaScript from actual n8n workflow file
-        $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
-        if (file_exists($n8nWorkflowFile)) {
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            // Extract the "Prepare Prompt" node JavaScript
-            if (isset($workflow['nodes'])) {
-                foreach ($workflow['nodes'] as $node) {
-                    if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
-                        $javascript = $node['parameters']['jsCode'];
-                        break;
+        // Load JavaScript from storage/app/n8n_debug/prepare_prompt/
+        // If not present, extract from the actual n8n workflow file
+        $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+        if (file_exists($jsFile)) {
+            $javascript = file_get_contents($jsFile);
+        } else {
+            // Extract from n8n workflow and cache it
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (file_exists($n8nWorkflowFile)) {
+                $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+                // Extract the "Prepare Prompt" node JavaScript
+                if (isset($workflow['nodes'])) {
+                    foreach ($workflow['nodes'] as $node) {
+                        if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
+                            $javascript = $node['parameters']['jsCode'];
+                            // Cache it for future use
+                            $this->ensureDebugDirectory('prepare_prompt');
+                            file_put_contents($jsFile, $javascript);
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        // Fall back to storage/app/debug for JavaScript
-        //        $debugJsFile = storage_path("app/debug/workflow_{$workflowNumber}_prepare_prompt.js");
-        //        if (!$javascript && file_exists($debugJsFile)) {
-        //            $javascript = file_get_contents($debugJsFile);
-        //        }
-
-        // Load output from storage
-        $outputFile = storage_path("app/debug/workflow_{$workflowNumber}_output.json");
+        // Load output from storage/app/n8n_debug/output/
+        $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
         if (file_exists($outputFile)) {
             $output = json_decode(file_get_contents($outputFile), true);
         }
@@ -72,22 +72,21 @@ class DebugN8nController extends Controller
      */
     public function saveInput(Request $request, int $workflowNumber)
     {
-        $debugDir = storage_path('app/debug');
+        try {
+            $this->ensureDebugDirectory('input');
+            $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+            file_put_contents($inputFile, json_encode($request->all(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        // Create debug directory if it doesn't exist
-        if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0755, true);
+            return response()->json([
+                'success' => true,
+                'message' => 'Input saved successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to save input: {$e->getMessage()}",
+            ], 500);
         }
-
-        // Save input as JSON
-        $inputFile = "{$debugDir}/workflow_{$workflowNumber}_input.json";
-        file_put_contents($inputFile, json_encode($request->all(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        return response()->json([
-            'success' => true,
-            'message' => "Input saved to workflow_{$workflowNumber}_input.json",
-            'file' => $inputFile,
-        ]);
     }
 
     /**
@@ -95,26 +94,86 @@ class DebugN8nController extends Controller
      */
     public function saveJavaScript(Request $request, int $workflowNumber)
     {
-        $request->validate([
-            'code' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'code' => 'required|string',
+            ]);
 
-        $debugDir = storage_path('app/debug');
+            $this->ensureDebugDirectory('prepare_prompt');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+            file_put_contents($jsFile, $request->input('code'));
 
-        // Create debug directory if it doesn't exist
-        if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0755, true);
+            return response()->json([
+                'success' => true,
+                'message' => 'JavaScript saved successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to save JavaScript: {$e->getMessage()}",
+            ], 500);
         }
+    }
 
-        // Save JavaScript code
-        $jsFile = "{$debugDir}/workflow_{$workflowNumber}_prepare_prompt.js";
-        file_put_contents($jsFile, $request->input('code'));
+    /**
+     * Save JavaScript to the n8n workflow file
+     */
+    public function saveJavaScriptToN8nWorkflow(Request $request, int $workflowNumber)
+    {
+        try {
+            $request->validate([
+                'code' => 'required|string',
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => "JavaScript saved to workflow_{$workflowNumber}_prepare_prompt.js",
-            'file' => $jsFile,
-        ]);
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! isset($workflow['nodes'])) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow format: nodes array not found',
+                ], 400);
+            }
+
+            // Find and update the "Prepare Prompt" node
+            $found = false;
+            foreach ($workflow['nodes'] as &$node) {
+                if ($node['name'] === 'Prepare Prompt') {
+                    $node['parameters']['jsCode'] = $request->input('code');
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (! $found) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow',
+                ], 404);
+            }
+
+            // Write the updated workflow back to file
+            file_put_contents(
+                $n8nWorkflowFile,
+                json_encode($workflow, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'JavaScript updated in n8n workflow successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to save to n8n workflow: {$e->getMessage()}",
+            ], 500);
+        }
     }
 
     /**
@@ -122,61 +181,45 @@ class DebugN8nController extends Controller
      */
     public function executeJavaScript(Request $request, int $workflowNumber)
     {
-        // Try to load input from n8n directory first, fall back to storage/app/debug
-        $n8nInputFile = base_path("n8n/workflow_{$workflowNumber}_input.json");
-        $debugInputFile = storage_path("app/debug/workflow_{$workflowNumber}_input.json");
+        try {
+            // Load input from storage/app/n8n_debug/input/
+            $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
 
-        $inputData = null;
-        if (file_exists($n8nInputFile)) {
-            $content = json_decode(file_get_contents($n8nInputFile), true);
+            if (! file_exists($inputFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Input file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $content = json_decode(file_get_contents($inputFile), true);
             // Handle array format from n8n
+            $inputData = null;
             if (is_array($content) && isset($content[0]['body'])) {
                 $inputData = $content[0];
             } else {
                 $inputData = $content;
             }
-        } elseif (file_exists($debugInputFile)) {
-            $inputData = json_decode(file_get_contents($debugInputFile), true);
-        }
 
-        if ($inputData === null) {
-            return response()->json([
-                'success' => false,
-                'error' => "Input file not found for workflow_{$workflowNumber}",
-            ], 404);
-        }
-
-        // Try to load JavaScript from storage/app/debug first (user-provided takes priority)
-        $javascript = null;
-        $debugJsFile = storage_path("app/debug/workflow_{$workflowNumber}_prepare_prompt.js");
-        if (file_exists($debugJsFile)) {
-            $javascript = file_get_contents($debugJsFile);
-        }
-
-        // Fall back to actual n8n workflow file if no debug file exists
-        if (! $javascript) {
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
-            if (file_exists($n8nWorkflowFile)) {
-                $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-                if (isset($workflow['nodes'])) {
-                    foreach ($workflow['nodes'] as $node) {
-                        if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
-                            $javascript = $node['parameters']['jsCode'];
-                            break;
-                        }
-                    }
-                }
+            if ($inputData === null) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid input format',
+                ], 400);
             }
-        }
 
-        if (! $javascript) {
-            return response()->json([
-                'success' => false,
-                'error' => "JavaScript file not found for workflow_{$workflowNumber}",
-            ], 404);
-        }
+            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
 
-        try {
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "JavaScript file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $javascript = file_get_contents($jsFile);
+
             // Convert JavaScript to use 'var' and remove return statements
             $javascript = $this->normalizeJavaScript($javascript);
 
@@ -201,9 +244,9 @@ class DebugN8nController extends Controller
 
             $result = $output['result'];
 
-            // Save output
-            $debugDir = storage_path('app/debug');
-            $outputFile = "{$debugDir}/workflow_{$workflowNumber}_output.json";
+            // Save output to storage/app/n8n_debug/output/
+            $this->ensureDebugDirectory('output');
+            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
             file_put_contents($outputFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             return response()->json([
@@ -227,6 +270,21 @@ class DebugN8nController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Ensure debug directory structure exists
+     */
+    private function ensureDebugDirectory(string $subdirectory = ''): string
+    {
+        $basePath = storage_path('app/n8n_debug');
+        $fullPath = $subdirectory ? "{$basePath}/{$subdirectory}" : $basePath;
+
+        if (! is_dir($fullPath)) {
+            mkdir($fullPath, 0755, true);
+        }
+
+        return $fullPath;
     }
 
     /**
@@ -330,10 +388,7 @@ class DebugN8nController extends Controller
 
         // Write JavaScript and data to storage directory for debugging
         // Use storage path to avoid temp file cleanup issues
-        $debugDir = storage_path('app/debug');
-        if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0755, true);
-        }
+        $debugDir = $this->ensureDebugDirectory();
 
         $this->tempFilesToCleanup = [];
 

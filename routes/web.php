@@ -258,16 +258,20 @@ Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nControll
     ->where('workflowNumber', '[0-9]+');
 
 // Debug API endpoints
-Route::post('/api/debug/workflow/{workflowNumber}/input', [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
+Route::post('/debug/workflow/{workflowNumber}/input', [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
     ->name('debug.workflow.save-input')
     ->where('workflowNumber', '[0-9]+');
 
-Route::post('/api/debug/workflow/{workflowNumber}/javascript', [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScript'])
+Route::post('/debug/workflow/{workflowNumber}/javascript', [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScript'])
     ->name('debug.workflow.save-javascript')
     ->where('workflowNumber', '[0-9]+');
 
-Route::post('/api/debug/workflow/{workflowNumber}/execute', [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScript'])
+Route::post('/debug/workflow/{workflowNumber}/execute', [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScript'])
     ->name('debug.workflow.execute')
+    ->where('workflowNumber', '[0-9]+');
+
+Route::post('/debug/workflow/{workflowNumber}/save-to-n8n', [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
+    ->name('debug.workflow.save-to-n8n')
     ->where('workflowNumber', '[0-9]+');
 
 // Mock n8n webhook endpoints for E2E testing

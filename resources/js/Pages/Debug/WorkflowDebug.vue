@@ -16,8 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
     output: null,
 });
 
-const fileInput = ref<HTMLInputElement>();
-const fileInputType = ref<'input' | 'javascript'>('input');
 const isExecuting = ref(false);
 const error = ref<string | null>(null);
 
@@ -27,40 +25,6 @@ const output = ref(props.output);
 
 // Modal state for maximized views
 const expandedView = ref<'system' | 'messages' | null>(null);
-
-const handleFileChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        try {
-            const content = e.target?.result as string;
-
-            if (fileInputType.value === 'input') {
-                input.value = JSON.parse(content);
-                saveInputToServer();
-            } else {
-                javascript.value = content;
-                saveJavaScriptToServer();
-            }
-
-            error.value = null;
-        } catch (err) {
-            error.value = `Failed to parse file: ${err instanceof Error ? err.message : 'Unknown error'}`;
-        }
-    };
-
-    reader.readAsText(file);
-    target.value = '';
-};
-
-const openFileInput = (type: 'input' | 'javascript') => {
-    fileInputType.value = type;
-    fileInput.value?.click();
-};
 
 const getCsrfToken = () => {
     const token = document
@@ -96,39 +60,43 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
     return fetch(url, config);
 };
 
-const saveInputToServer = async () => {
-    try {
-        await makeRequest(
-            `/api/debug/workflow/${props.workflowNumber}/input`,
-            'POST',
-            input.value,
-        );
-    } catch (err) {
-        console.error('Failed to save input:', err);
-    }
-};
-
 const saveJavaScriptToServer = async () => {
     try {
-        await makeRequest(
-            `/api/debug/workflow/${props.workflowNumber}/javascript`,
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/javascript`,
             'POST',
             { code: javascript.value },
         );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to save JavaScript';
+        } else {
+            error.value = null;
+        }
     } catch (err) {
-        console.error('Failed to save JavaScript:', err);
+        error.value = `Failed to save JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
 };
 
-// Auto-save JavaScript when it changes (debounced)
-let autoSaveTimeout: ReturnType<typeof setTimeout> | null = null;
-const autoSaveJavaScript = () => {
-    if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
+const saveJavaScriptToN8nWorkflow = async () => {
+    try {
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/save-to-n8n`,
+            'POST',
+            { code: javascript.value },
+        );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to save to n8n workflow';
+        } else {
+            error.value = null;
+            alert('JavaScript code successfully saved to n8n workflow!');
+        }
+    } catch (err) {
+        error.value = `Failed to save to n8n workflow: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
-    autoSaveTimeout = setTimeout(() => {
-        saveJavaScriptToServer();
-    }, 1000); // Save 1 second after user stops typing
 };
 
 const renderMarkdown = (text: string | null | undefined): string => {
@@ -148,7 +116,7 @@ const executeJavaScript = async () => {
 
     try {
         const response = await makeRequest(
-            `/api/debug/workflow/${props.workflowNumber}/execute`,
+            `/debug/workflow/${props.workflowNumber}/execute`,
             'POST',
         );
 
@@ -185,32 +153,25 @@ const executeJavaScript = async () => {
             <div class="mb-8 rounded-lg bg-white p-6 shadow-md">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <button
-                        class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-                        @click="openFileInput('input')"
-                    >
-                        Load Input File
-                    </button>
-                    <button
-                        class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
-                        @click="openFileInput('javascript')"
-                    >
-                        Load JavaScript
-                    </button>
-                    <button
                         :disabled="!javascript || !input"
                         class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
                         @click="executeJavaScript"
                     >
                         {{ isExecuting ? 'Executing...' : 'Execute' }}
                     </button>
+                    <button
+                        class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+                        @click="saveJavaScriptToServer"
+                    >
+                        Save JavaScript
+                    </button>
+                    <button
+                        class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+                        @click="saveJavaScriptToN8nWorkflow"
+                    >
+                        Save to n8n Workflow
+                    </button>
                 </div>
-                <input
-                    ref="fileInput"
-                    type="file"
-                    class="hidden"
-                    :accept="fileInputType === 'javascript' ? '.js' : '.json'"
-                    @change="handleFileChange"
-                />
             </div>
 
             <!-- Error Message -->
@@ -263,8 +224,7 @@ const executeJavaScript = async () => {
                     <textarea
                         v-model="javascript"
                         class="flex-1 resize-none border-0 p-6 font-mono text-xs focus:outline-none"
-                        placeholder="Paste or load JavaScript code here..."
-                        @input="autoSaveJavaScript"
+                        placeholder="Edit JavaScript code here..."
                     ></textarea>
                     <div
                         class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
