@@ -165,6 +165,10 @@ const getAnswerLabel = (
         }
         return option?.label || value;
     }
+    if (question.type === 'number') {
+        // For numeric questions, just return the value as-is
+        return value;
+    }
     return value;
 };
 
@@ -502,7 +506,7 @@ const isDisabled = computed(() =>
                             label="Additional details (optional):"
                             :rows="3"
                             :maxlength="500"
-                            placeholder="Add any additional information or elaboration..."
+                            placeholder="Add any additional information..."
                         ></FormTextarea>
                         <p class="mt-1 text-xs text-indigo-600">
                             {{ (otherResponses[question.id] || '').length }}/500
@@ -593,6 +597,57 @@ const isDisabled = computed(() =>
                             </div>
                         </template>
                     </FormTextareaWithActions>
+                </div>
+
+                <!-- Numeric input questions -->
+                <div v-else-if="question.type === 'number'" class="space-y-3">
+                    <div class="flex gap-3">
+                        <QuestionNumber :number="index + 1" />
+                        <label
+                            class="block flex-1 text-sm font-medium text-indigo-900"
+                        >
+                            {{ question.question }}
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <input
+                            :id="`question-${question.id}`"
+                            :ref="
+                                question.id === firstQuestionId
+                                    ? (el) =>
+                                          (firstAnswerRef = el as HTMLElement)
+                                    : undefined
+                            "
+                            v-model="currentAnswers[question.id]"
+                            type="number"
+                            class="block w-full max-w-xs rounded-lg border border-indigo-200 px-4 py-2 text-indigo-900 placeholder-indigo-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+                            :min="question.min"
+                            :max="question.max"
+                            :placeholder="
+                                question.min && question.max
+                                    ? `Between ${question.min} and ${question.max}`
+                                    : 'Enter a number...'
+                            "
+                        />
+                        <ButtonTrash
+                            :disabled="!currentAnswers[question.id]"
+                            @clear="currentAnswers[question.id] = ''"
+                        />
+                    </div>
+                    <p
+                        v-if="question.min || question.max"
+                        class="text-xs text-indigo-600"
+                    >
+                        <span v-if="question.min && question.max">
+                            Range: {{ question.min }} to {{ question.max }}
+                        </span>
+                        <span v-else-if="question.min">
+                            Minimum: {{ question.min }}
+                        </span>
+                        <span v-else-if="question.max">
+                            Maximum: {{ question.max }}
+                        </span>
+                    </p>
                 </div>
             </div>
 
