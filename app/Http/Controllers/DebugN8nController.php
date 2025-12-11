@@ -430,6 +430,15 @@ const data = JSON.parse(fs.readFileSync(".json_encode($tempDataFile).", 'utf8'))
   'Load Reference Documents': data.reference
 };
 
+// Mock \$input for accessing current node input (workflow 0 style)
+const \$input = {
+  first() {
+    return {
+      json: data.webhook || {}
+    };
+  }
+};
+
 // Execute the workflow code
 try {
   // Load and execute the user's code from file
