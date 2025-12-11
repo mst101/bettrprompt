@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { computed, ref, watch } from 'vue';
@@ -82,6 +83,36 @@ async function loadDocumentContent(doc: Document) {
 }
 
 /**
+ * Get CSRF token from multiple sources
+ */
+function getCsrfToken(): string {
+    const page = usePage();
+
+    // Try Inertia props first
+    if (page.props.csrf_token) {
+        return page.props.csrf_token as string;
+    }
+
+    // Fallback: try meta tag
+    const metaToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
+    if (metaToken) {
+        return metaToken;
+    }
+
+    // Final fallback: try cookie
+    const name = 'XSRF-TOKEN';
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return parts.pop()?.split(';').shift() || '';
+    }
+
+    return '';
+}
+
+/**
  * Save document changes
  */
 async function saveDocument() {
@@ -89,16 +120,15 @@ async function saveDocument() {
 
     isSaving.value = true;
     try {
+        const csrfToken = getCsrfToken();
+
         const response = await fetch(
             `/workflow/docs/api/${selectedDocument.value.type}/${encodeURIComponent(selectedDocument.value.filename)}`,
             {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN':
-                        document
-                            .querySelector('meta[name="csrf-token"]')
-                            ?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN': csrfToken,
                 },
                 body: JSON.stringify({
                     content: content.value,
