@@ -25,11 +25,15 @@ const isExecuting = ref(false);
 const error = ref<string | null>(null);
 
 const input = ref(props.input);
+const inputJson = ref(JSON.stringify(props.input, null, 2));
 const javascript = ref(props.javascript || '');
 const output = ref(props.output);
 
 // Modal state for maximized views
-const expandedView = ref<'system' | 'messages' | null>(null);
+const expandedView = ref<'system' | 'messages' | 'input' | 'javascript' | null>(
+    null,
+);
+const saveMessage = ref<string | null>(null);
 
 const getCsrfToken = () => {
     const token = document
@@ -111,8 +115,63 @@ const renderMarkdown = (text: string | null | undefined): string => {
     return DOMPurify.sanitize(html);
 };
 
+const saveInputData = async () => {
+    try {
+        // Parse the input JSON to validate and wrap in array format
+        let inputData;
+        try {
+            inputData = JSON.parse(inputJson.value);
+        } catch {
+            error.value = 'Invalid JSON in input data';
+            return;
+        }
+
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/input`,
+            'POST',
+            [inputData],
+        );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to save input data';
+        } else {
+            saveMessage.value = 'Input data saved successfully!';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
+            error.value = null;
+        }
+    } catch (err) {
+        error.value = `Failed to save input data: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    }
+};
+
+const saveJavaScriptToFile = async () => {
+    try {
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/javascript`,
+            'POST',
+            { code: javascript.value },
+        );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to save JavaScript code';
+        } else {
+            saveMessage.value = 'JavaScript code saved successfully!';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
+            error.value = null;
+        }
+    } catch (err) {
+        error.value = `Failed to save JavaScript code: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    }
+};
+
 const executeJavaScript = async () => {
-    if (!javascript.value || !input.value) {
+    if (!javascript.value || !inputJson.value) {
         error.value = 'Both input and JavaScript code are required';
         return;
     }
@@ -121,9 +180,19 @@ const executeJavaScript = async () => {
     error.value = null;
 
     try {
+        // Parse the input JSON
+        let inputData;
+        try {
+            inputData = JSON.parse(inputJson.value);
+        } catch {
+            error.value = 'Invalid JSON in input data';
+            return;
+        }
+
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/execute`,
             'POST',
+            { input: inputData },
         );
 
         if (!response.ok) {
@@ -192,29 +261,50 @@ const executeJavaScript = async () => {
             {{ error }}
         </div>
 
+        <!-- Save Message -->
+        <div
+            v-if="saveMessage"
+            class="mb-8 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700"
+        >
+            {{ saveMessage }}
+        </div>
+
         <!-- Three-Column Layout -->
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <!-- Input Column -->
             <div
                 class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
             >
-                <div class="bg-blue-600 px-6 py-4 font-semibold text-white">
-                    Input Data
+                <div
+                    class="flex items-center justify-between bg-blue-600 px-6 py-4 text-white"
+                >
+                    <span class="font-semibold">Input Data</span>
+                    <div class="flex gap-2">
+                        <button
+                            class="rounded bg-blue-700 px-2 py-1 text-xs font-medium hover:bg-blue-800"
+                            title="Expand to full screen"
+                            @click="expandedView = 'input'"
+                        >
+                            ⛶ Expand
+                        </button>
+                        <button
+                            class="rounded bg-blue-700 px-2 py-1 text-xs font-medium hover:bg-blue-800"
+                            title="Save to file"
+                            @click="saveInputData"
+                        >
+                            Save
+                        </button>
+                    </div>
                 </div>
-                <div class="flex-1 overflow-auto p-6">
-                    <pre
-                        v-if="input"
-                        class="text-xs break-words whitespace-pre-wrap text-slate-700"
-                        >{{ JSON.stringify(input, null, 2) }}</pre
-                    >
-                    <p v-else class="text-slate-500 italic">No input loaded</p>
-                </div>
+                <textarea
+                    v-model="inputJson"
+                    class="flex-1 resize-none border-0 p-6 font-mono text-xs focus:outline-none"
+                    placeholder="Enter input data as JSON..."
+                ></textarea>
                 <div
                     class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
                 >
-                    {{
-                        input ? `${JSON.stringify(input).length} bytes` : 'N/A'
-                    }}
+                    {{ inputJson ? `${inputJson.length} characters` : 'N/A' }}
                 </div>
             </div>
 
@@ -222,8 +312,26 @@ const executeJavaScript = async () => {
             <div
                 class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
             >
-                <div class="bg-green-600 px-6 py-4 font-semibold text-white">
-                    JavaScript Code
+                <div
+                    class="flex items-center justify-between bg-green-600 px-6 py-4 text-white"
+                >
+                    <span class="font-semibold">JavaScript Code</span>
+                    <div class="flex gap-2">
+                        <button
+                            class="rounded bg-green-700 px-2 py-1 text-xs font-medium hover:bg-green-800"
+                            title="Expand to full screen"
+                            @click="expandedView = 'javascript'"
+                        >
+                            ⛶ Expand
+                        </button>
+                        <button
+                            class="rounded bg-green-700 px-2 py-1 text-xs font-medium hover:bg-green-800"
+                            title="Save to file"
+                            @click="saveJavaScriptToFile"
+                        >
+                            Save
+                        </button>
+                    </div>
                 </div>
                 <textarea
                     v-model="javascript"
@@ -347,11 +455,11 @@ const executeJavaScript = async () => {
         <!-- Modal: Expanded System Prompt -->
         <div
             v-if="expandedView === 'system'"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="bg-opacity-50 fixed inset-0 z-50 flex h-screen items-center justify-center bg-black p-4"
             @click="expandedView = null"
         >
             <div
-                class="flex max-h-screen w-full max-w-screen flex-col rounded-lg bg-white shadow-lg"
+                class="flex h-screen w-full max-w-screen flex-col rounded-lg bg-white shadow-lg"
                 @click.stop
             >
                 <div
@@ -378,11 +486,11 @@ const executeJavaScript = async () => {
         <!-- Modal: Expanded Messages -->
         <div
             v-if="expandedView === 'messages'"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+            class="bg-opacity-50 fixed inset-0 z-50 flex h-screen items-center justify-center bg-black p-4"
             @click="expandedView = null"
         >
             <div
-                class="flex max-h-screen w-full max-w-4xl flex-col rounded-lg bg-white shadow-lg"
+                class="flex h-screen w-full max-w-4xl flex-col rounded-lg bg-white shadow-lg"
                 @click.stop
             >
                 <div
@@ -420,6 +528,106 @@ const executeJavaScript = async () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Expanded Input Data -->
+        <div
+            v-if="expandedView === 'input'"
+            class="bg-opacity-50 fixed inset-0 z-50 flex h-screen items-center justify-center bg-black p-4"
+            @click="expandedView = null"
+        >
+            <div
+                class="flex h-screen w-full max-w-2xl flex-col rounded-lg bg-white shadow-lg"
+                @click.stop
+            >
+                <div
+                    class="flex items-center justify-between border-b bg-blue-600 px-6 py-4 text-white"
+                >
+                    <h2 class="text-lg font-semibold">Input Data (Expanded)</h2>
+                    <button
+                        class="rounded hover:bg-blue-700"
+                        title="Close"
+                        @click="expandedView = null"
+                    >
+                        ✕
+                    </button>
+                </div>
+                <textarea
+                    v-model="inputJson"
+                    class="flex-1 resize-none border-0 p-6 font-mono text-sm focus:outline-none"
+                    placeholder="Enter input data as JSON..."
+                ></textarea>
+                <div
+                    class="flex items-center justify-between border-t bg-slate-50 px-6 py-3"
+                >
+                    <span class="text-xs text-slate-600">
+                        {{
+                            inputJson ? `${inputJson.length} characters` : 'N/A'
+                        }}
+                    </span>
+                    <button
+                        class="rounded bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                        @click="
+                            saveInputData();
+                            expandedView = null;
+                        "
+                    >
+                        Save and Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Expanded JavaScript Code -->
+        <div
+            v-if="expandedView === 'javascript'"
+            class="bg-opacity-50 fixed inset-0 z-50 flex h-screen items-center justify-center bg-black p-4"
+            @click="expandedView = null"
+        >
+            <div
+                class="flex h-screen w-full max-w-4xl flex-col rounded-lg bg-white shadow-lg"
+                @click.stop
+            >
+                <div
+                    class="flex items-center justify-between border-b bg-green-600 px-6 py-4 text-white"
+                >
+                    <h2 class="text-lg font-semibold">
+                        JavaScript Code (Expanded)
+                    </h2>
+                    <button
+                        class="rounded hover:bg-green-700"
+                        title="Close"
+                        @click="expandedView = null"
+                    >
+                        ✕
+                    </button>
+                </div>
+                <textarea
+                    v-model="javascript"
+                    class="flex-1 resize-none border-0 p-6 font-mono text-sm focus:outline-none"
+                    placeholder="Edit JavaScript code here..."
+                ></textarea>
+                <div
+                    class="flex items-center justify-between border-t bg-slate-50 px-6 py-3"
+                >
+                    <span class="text-xs text-slate-600">
+                        {{
+                            javascript
+                                ? `${javascript.length} characters`
+                                : 'N/A'
+                        }}
+                    </span>
+                    <button
+                        class="rounded bg-green-600 px-3 py-2 text-xs font-medium text-white hover:bg-green-700"
+                        @click="
+                            saveJavaScriptToFile();
+                            expandedView = null;
+                        "
+                    >
+                        Save and Close
+                    </button>
                 </div>
             </div>
         </div>

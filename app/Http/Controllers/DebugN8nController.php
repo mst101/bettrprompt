@@ -245,30 +245,34 @@ class DebugN8nController extends Controller
     public function executeJavaScript(Request $request, int $workflowNumber)
     {
         try {
-            // Load input from storage/app/n8n_debug/input/
-            $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
-
-            if (! file_exists($inputFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Input file not found for workflow_{$workflowNumber}",
-                ], 404);
-            }
-
-            $content = json_decode(file_get_contents($inputFile), true);
-            // Handle array format from n8n
-            $inputData = null;
-            if (is_array($content) && isset($content[0]['body'])) {
-                $inputData = $content[0];
-            } else {
-                $inputData = $content;
-            }
+            // Get input from request or load from storage
+            $inputData = $request->input('input');
 
             if ($inputData === null) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid input format',
-                ], 400);
+                // Fall back to loading from storage/app/n8n_debug/input/
+                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+                if (! file_exists($inputFile)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Input file not found for workflow_{$workflowNumber}",
+                    ], 404);
+                }
+
+                $content = json_decode(file_get_contents($inputFile), true);
+                // Handle array format from n8n
+                if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0];
+                } else {
+                    $inputData = $content;
+                }
+
+                if ($inputData === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input format',
+                    ], 400);
+                }
             }
 
             // Load JavaScript from storage/app/n8n_debug/prepare_prompt/

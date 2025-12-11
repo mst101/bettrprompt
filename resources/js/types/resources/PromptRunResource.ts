@@ -31,6 +31,7 @@ export type TraitPercentages = Record<string, number>;
 export interface PreAnalysisOption {
     value: string;
     label: string;
+    elaborationNeeded?: boolean; // Whether this option needs elaboration/clarification
 }
 
 /**
@@ -41,6 +42,7 @@ export interface PreAnalysisQuestion {
     question: string;
     type: 'choice' | 'text' | 'yes_no';
     options?: PreAnalysisOption[]; // Required for 'choice' and 'yes_no' types
+    elaborationNeeded?: boolean; // For options that need further clarification
 }
 
 export interface PromptRunResource {
