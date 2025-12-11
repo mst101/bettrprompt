@@ -1,4 +1,4 @@
-# Personality Calibration Reference Document
+# Personality Calibration
 
 ## Purpose
 
