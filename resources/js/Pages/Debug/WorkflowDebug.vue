@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { ref } from 'vue';
+
+const props = withDefaults(defineProps<Props>(), {
+    input: null,
+    javascript: null,
+    output: null,
+});
+
+defineOptions({
+    layout: WorkflowLayout,
+});
 
 interface Props {
     workflowNumber: number;
@@ -9,12 +20,6 @@ interface Props {
     javascript?: string | null;
     output?: object | null;
 }
-
-const props = withDefaults(defineProps<Props>(), {
-    input: null,
-    javascript: null,
-    output: null,
-});
 
 const isExecuting = ref(false);
 const error = ref<string | null>(null);
@@ -60,22 +65,23 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
     return fetch(url, config);
 };
 
-const saveJavaScriptToServer = async () => {
+const reloadJavaScriptFromWorkflow = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/javascript`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript`,
             'POST',
-            { code: javascript.value },
         );
 
         const result = await response.json();
         if (!result.success) {
-            error.value = result.error || 'Failed to save JavaScript';
+            error.value =
+                result.error || 'Failed to reload JavaScript from workflow';
         } else {
+            javascript.value = result.code || '';
             error.value = null;
         }
     } catch (err) {
-        error.value = `Failed to save JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        error.value = `Failed to reload JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
 };
 
@@ -142,230 +148,198 @@ const executeJavaScript = async () => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
-        <div class="mx-auto max-w-7xl">
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="mb-2 text-4xl font-bold text-slate-900">
-                    Workflow {{ workflowNumber }} Debug
-                </h1>
-                <p class="text-slate-600">
-                    Inspect workflow input, JavaScript code, and output
-                </p>
-            </div>
+    <div>
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="mb-2 text-4xl font-bold text-slate-900 dark:text-white">
+                Workflow {{ workflowNumber }} Debug
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400">
+                Inspect workflow input, JavaScript code, and output
+            </p>
+        </div>
 
-            <!-- Controls -->
-            <div class="mb-8 rounded-lg bg-white p-6 shadow-md">
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <button
-                        :disabled="!javascript || !input"
-                        class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        @click="executeJavaScript"
-                    >
-                        {{ isExecuting ? 'Executing...' : 'Execute' }}
-                    </button>
-                    <button
-                        class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
-                        @click="saveJavaScriptToServer"
-                    >
-                        Save JavaScript
-                    </button>
-                    <button
-                        class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-                        @click="saveJavaScriptToN8nWorkflow"
-                    >
-                        Save to n8n Workflow
-                    </button>
-                </div>
+        <!-- Controls -->
+        <div class="mb-8 rounded-lg bg-white p-6 shadow-md">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <button
+                    :disabled="!javascript || !input"
+                    class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    @click="executeJavaScript"
+                >
+                    {{ isExecuting ? 'Executing...' : 'Execute' }}
+                </button>
+                <button
+                    class="rounded-lg bg-amber-600 px-4 py-2 text-white transition hover:bg-amber-700"
+                    @click="reloadJavaScriptFromWorkflow"
+                >
+                    Reload from workflow JSON
+                </button>
+                <button
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+                    @click="saveJavaScriptToN8nWorkflow"
+                >
+                    Save to n8n Workflow
+                </button>
             </div>
+        </div>
 
-            <!-- Error Message -->
+        <!-- Error Message -->
+        <div
+            v-if="error"
+            class="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700"
+        >
+            {{ error }}
+        </div>
+
+        <!-- Three-Column Layout -->
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <!-- Input Column -->
             <div
-                v-if="error"
-                class="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700"
+                class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
             >
-                {{ error }}
+                <div class="bg-blue-600 px-6 py-4 font-semibold text-white">
+                    Input Data
+                </div>
+                <div class="flex-1 overflow-auto p-6">
+                    <pre
+                        v-if="input"
+                        class="text-xs break-words whitespace-pre-wrap text-slate-700"
+                        >{{ JSON.stringify(input, null, 2) }}</pre
+                    >
+                    <p v-else class="text-slate-500 italic">No input loaded</p>
+                </div>
+                <div
+                    class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
+                >
+                    {{
+                        input ? `${JSON.stringify(input).length} bytes` : 'N/A'
+                    }}
+                </div>
             </div>
 
-            <!-- Three-Column Layout -->
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                <!-- Input Column -->
-                <div
-                    class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
-                >
-                    <div class="bg-blue-600 px-6 py-4 font-semibold text-white">
-                        Input Data
-                    </div>
-                    <div class="flex-1 overflow-auto p-6">
-                        <pre
-                            v-if="input"
-                            class="text-xs break-words whitespace-pre-wrap text-slate-700"
-                            >{{ JSON.stringify(input, null, 2) }}</pre
-                        >
-                        <p v-else class="text-slate-500 italic">
-                            No input loaded
-                        </p>
-                    </div>
-                    <div
-                        class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
-                    >
-                        {{
-                            input
-                                ? `${JSON.stringify(input).length} bytes`
-                                : 'N/A'
-                        }}
-                    </div>
+            <!-- JavaScript Column -->
+            <div
+                class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
+            >
+                <div class="bg-green-600 px-6 py-4 font-semibold text-white">
+                    JavaScript Code
                 </div>
-
-                <!-- JavaScript Column -->
+                <textarea
+                    v-model="javascript"
+                    class="flex-1 resize-none border-0 p-6 font-mono text-xs focus:outline-none"
+                    placeholder="Edit JavaScript code here..."
+                ></textarea>
                 <div
-                    class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
+                    class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
                 >
-                    <div
-                        class="bg-green-600 px-6 py-4 font-semibold text-white"
-                    >
-                        JavaScript Code
-                    </div>
-                    <textarea
-                        v-model="javascript"
-                        class="flex-1 resize-none border-0 p-6 font-mono text-xs focus:outline-none"
-                        placeholder="Edit JavaScript code here..."
-                    ></textarea>
-                    <div
-                        class="border-t bg-slate-50 px-6 py-2 text-xs text-slate-600"
-                    >
-                        {{
-                            javascript
-                                ? `${javascript.length} characters`
-                                : 'N/A'
-                        }}
-                    </div>
+                    {{ javascript ? `${javascript.length} characters` : 'N/A' }}
                 </div>
+            </div>
 
-                <!-- Output Column -->
-                <div
-                    class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
-                >
-                    <div
-                        class="bg-purple-600 px-6 py-4 font-semibold text-white"
-                    >
-                        Output
-                    </div>
-                    <div class="flex-1 overflow-auto p-6">
-                        <div v-if="output">
-                            <!-- System Prompt -->
-                            <div v-if="output.system" class="mb-6">
-                                <div
-                                    class="mb-2 flex items-center justify-between"
+            <!-- Output Column -->
+            <div
+                class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md"
+            >
+                <div class="bg-purple-600 px-6 py-4 font-semibold text-white">
+                    Output
+                </div>
+                <div class="flex-1 overflow-auto p-6">
+                    <div v-if="output">
+                        <!-- System Prompt -->
+                        <div v-if="output.system" class="mb-6">
+                            <div class="mb-2 flex items-center justify-between">
+                                <h3 class="font-semibold text-slate-900">
+                                    System Prompt
+                                </h3>
+                                <button
+                                    class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
+                                    title="Expand to full screen"
+                                    @click="expandedView = 'system'"
                                 >
-                                    <h3 class="font-semibold text-slate-900">
-                                        System Prompt
-                                    </h3>
-                                    <button
-                                        class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200"
-                                        title="Expand to full screen"
-                                        @click="expandedView = 'system'"
-                                    >
-                                        ⛶ Expand
-                                    </button>
-                                </div>
-                                <div
-                                    class="prose prose-sm max-h-60 overflow-auto rounded border border-slate-200 bg-slate-50 p-3 text-slate-700"
-                                    v-html="renderMarkdown(output.system)"
-                                />
+                                    ⛶ Expand
+                                </button>
                             </div>
+                            <div
+                                class="prose prose-sm max-h-60 overflow-auto rounded border border-slate-200 bg-slate-50 p-3 text-slate-700"
+                                v-html="renderMarkdown(output.system)"
+                            />
+                        </div>
 
-                            <!-- Messages -->
-                            <div v-if="output.messages">
-                                <div
-                                    class="mb-2 flex items-center justify-between"
+                        <!-- Messages -->
+                        <div v-if="output.messages">
+                            <div class="mb-2 flex items-center justify-between">
+                                <h3 class="font-semibold text-slate-900">
+                                    Messages
+                                </h3>
+                                <button
+                                    class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
+                                    title="Expand to full screen"
+                                    @click="expandedView = 'messages'"
                                 >
-                                    <h3 class="font-semibold text-slate-900">
-                                        Messages
-                                    </h3>
-                                    <button
-                                        class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
-                                        title="Expand to full screen"
-                                        @click="expandedView = 'messages'"
-                                    >
-                                        ⛶ Expand
-                                    </button>
-                                </div>
+                                    ⛶ Expand
+                                </button>
+                            </div>
+                            <div
+                                v-if="Array.isArray(output.messages)"
+                                class="space-y-2"
+                            >
                                 <div
-                                    v-if="Array.isArray(output.messages)"
-                                    class="space-y-2"
+                                    v-for="(message, index) in output.messages"
+                                    :key="index"
+                                    class="rounded border border-slate-200 bg-slate-50 p-3"
                                 >
-                                    <div
-                                        v-for="(
-                                            message, index
-                                        ) in output.messages"
-                                        :key="index"
-                                        class="rounded border border-slate-200 bg-slate-50 p-3"
-                                    >
-                                        <div v-if="typeof message === 'object'">
-                                            <p
-                                                class="mb-1 font-mono text-xs text-slate-600"
-                                            >
-                                                Role:
-                                                {{ message.role || 'N/A' }}
-                                            </p>
-                                            <div
-                                                v-if="message.content"
-                                                class="prose prose-sm text-slate-700"
-                                                v-html="
-                                                    renderMarkdown(
-                                                        message.content,
-                                                    )
-                                                "
-                                            />
-                                            <div
-                                                v-else
-                                                class="text-xs text-slate-700"
-                                            >
-                                                {{
-                                                    JSON.stringify(
-                                                        message,
-                                                        null,
-                                                        2,
-                                                    )
-                                                }}
-                                            </div>
-                                        </div>
+                                    <div v-if="typeof message === 'object'">
                                         <p
+                                            class="mb-1 font-mono text-xs text-slate-600"
+                                        >
+                                            Role:
+                                            {{ message.role || 'N/A' }}
+                                        </p>
+                                        <div
+                                            v-if="message.content"
+                                            class="prose prose-sm text-slate-700"
+                                            v-html="
+                                                renderMarkdown(message.content)
+                                            "
+                                        />
+                                        <div
                                             v-else
                                             class="text-xs text-slate-700"
                                         >
-                                            {{ message }}
-                                        </p>
+                                            {{
+                                                JSON.stringify(message, null, 2)
+                                            }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div
-                                    v-else
-                                    class="rounded border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700"
-                                >
-                                    {{
-                                        JSON.stringify(output.messages, null, 2)
-                                    }}
+                                    <p v-else class="text-xs text-slate-700">
+                                        {{ message }}
+                                    </p>
                                 </div>
                             </div>
-
-                            <!-- Full Output (if there's more) -->
-                            <details class="mt-6 cursor-pointer">
-                                <summary class="font-semibold text-slate-900">
-                                    Full Output
-                                </summary>
-                                <div
-                                    class="mt-2 max-h-40 overflow-auto rounded border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700"
-                                >
-                                    {{ JSON.stringify(output, null, 2) }}
-                                </div>
-                            </details>
+                            <div
+                                v-else
+                                class="rounded border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700"
+                            >
+                                {{ JSON.stringify(output.messages, null, 2) }}
+                            </div>
                         </div>
-                        <p v-else class="text-slate-500 italic">
-                            No output yet. Execute the JavaScript to see
-                            results.
-                        </p>
+
+                        <!-- Full Output (if there's more) -->
+                        <details class="mt-6 cursor-pointer">
+                            <summary class="font-semibold text-slate-900">
+                                Full Output
+                            </summary>
+                            <div
+                                class="mt-2 max-h-40 overflow-auto rounded border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700"
+                            >
+                                {{ JSON.stringify(output, null, 2) }}
+                            </div>
+                        </details>
                     </div>
+                    <p v-else class="text-slate-500 italic">
+                        No output yet. Execute the JavaScript to see results.
+                    </p>
                 </div>
             </div>
         </div>

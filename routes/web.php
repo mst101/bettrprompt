@@ -251,8 +251,28 @@ Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     return response()->json(['success' => false, 'message' => 'Prompt run not found'], 404);
 })->name('test.broadcast-event')->withoutMiddleware('Illuminate\Foundation\Http\Middleware\VerifyCsrfToken');
 
+// Workflow management system
+// Workflow index page
+Route::get('/workflow', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
+    ->name('workflow.index');
+
+// Reference documents management
+Route::get('/workflow/docs', [\App\Http\Controllers\ReferenceDocumentsController::class, 'index'])
+    ->name('workflow.docs.index');
+
+Route::get('/workflow/docs/api/list', [\App\Http\Controllers\ReferenceDocumentsController::class, 'list'])
+    ->name('workflow.docs.list');
+
+Route::get('/workflow/docs/api/{type}/{filename}', [\App\Http\Controllers\ReferenceDocumentsController::class, 'show'])
+    ->name('workflow.docs.show')
+    ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
+
+Route::post('/workflow/docs/api/{type}/{filename}', [\App\Http\Controllers\ReferenceDocumentsController::class, 'update'])
+    ->name('workflow.docs.update')
+    ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
+
 // Debug n8n workflow - allows inspection of workflow input/output
-// Access at: https://app.localhost/workflow/1 (or workflow/2, workflow/3, etc.)
+// Access at: https://app.localhost/workflow/0, /workflow/1, /workflow/2
 Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
     ->name('debug.workflow.show')
     ->where('workflowNumber', '[0-9]+');
@@ -264,6 +284,10 @@ Route::post('/debug/workflow/{workflowNumber}/input', [\App\Http\Controllers\Deb
 
 Route::post('/debug/workflow/{workflowNumber}/javascript', [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScript'])
     ->name('debug.workflow.save-javascript')
+    ->where('workflowNumber', '[0-9]+');
+
+Route::post('/debug/workflow/{workflowNumber}/reload-javascript', [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
+    ->name('debug.workflow.reload-javascript')
     ->where('workflowNumber', '[0-9]+');
 
 Route::post('/debug/workflow/{workflowNumber}/execute', [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScript'])

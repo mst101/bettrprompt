@@ -95,6 +95,63 @@ class DebugN8nController extends Controller
     }
 
     /**
+     * Reload JavaScript from the n8n workflow file
+     */
+    public function reloadJavaScriptFromWorkflow(int $workflowNumber)
+    {
+        try {
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! isset($workflow['nodes'])) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow format: nodes array not found',
+                ], 400);
+            }
+
+            // Find and extract the "Prepare Prompt" node JavaScript
+            $javascript = null;
+            foreach ($workflow['nodes'] as $node) {
+                if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
+                    $javascript = $node['parameters']['jsCode'];
+                    break;
+                }
+            }
+
+            if ($javascript === null) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow or has no jsCode',
+                ], 404);
+            }
+
+            // Save the extracted JavaScript to storage
+            $this->ensureDebugDirectory('prepare_prompt');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+            file_put_contents($jsFile, $javascript);
+            chmod($jsFile, 0644);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'JavaScript reloaded from workflow successfully',
+                'code' => $javascript,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to reload JavaScript from workflow: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
      * Save JavaScript code
      */
     public function saveJavaScript(Request $request, int $workflowNumber)
@@ -107,6 +164,7 @@ class DebugN8nController extends Controller
             $this->ensureDebugDirectory('prepare_prompt');
             $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
             file_put_contents($jsFile, $request->input('code'));
+            chmod($jsFile, 0644);
 
             return response()->json([
                 'success' => true,
@@ -225,10 +283,8 @@ class DebugN8nController extends Controller
 
             $javascript = file_get_contents($jsFile);
 
-            // Convert JavaScript to use 'var' and remove return statements
-            $javascript = $this->normalizeJavaScript($javascript);
-
             // Execute the JavaScript using Node.js
+            // Note: We don't normalize JavaScript anymore since buildNodeScript handles modern syntax
             $nodeScript = $this->buildNodeScript($inputData, $javascript);
 
             if (empty($nodeScript)) {
@@ -298,15 +354,16 @@ class DebugN8nController extends Controller
         $referenceDocsPath = resource_path('reference_documents');
 
         $referenceData = [
-            'framework_taxonomy_doc' => null,
-            'personality_calibration_doc' => null,
-            'question_bank_doc' => null,
+            'framework_taxonomy' => null,
+            'personality_calibration' => null,
+            'question_bank' => null,
+            'framework_templates' => [],
         ];
 
         // Load framework taxonomy
         $frameworkFile = "{$referenceDocsPath}/framework_taxonomy.md";
         if (file_exists($frameworkFile)) {
-            $referenceData['framework_taxonomy_doc'] = [
+            $referenceData['framework_taxonomy'] = [
                 'content' => file_get_contents($frameworkFile),
             ];
         }
@@ -314,8 +371,13 @@ class DebugN8nController extends Controller
         // Load personality calibration
         $personalityFile = "{$referenceDocsPath}/personality_calibration.md";
         if (file_exists($personalityFile)) {
-            $referenceData['personality_calibration_doc'] = [
-                'content' => file_get_contents($personalityFile),
+            $personalityContent = file_get_contents($personalityFile);
+            // Support both key names for compatibility with different workflows
+            $referenceData['personality_calibration'] = [
+                'content' => $personalityContent,
+            ];
+            $referenceData['personality_calibration_full'] = [
+                'content' => $personalityContent,
             ];
         }
 
@@ -325,6 +387,16 @@ class DebugN8nController extends Controller
             $referenceData['question_bank_doc'] = [
                 'content' => file_get_contents($questionBankFile),
             ];
+        }
+
+        // Load framework templates from directory
+        $frameworkTemplatesDir = "{$referenceDocsPath}/framework_templates";
+        if (is_dir($frameworkTemplatesDir)) {
+            $templateFiles = glob("{$frameworkTemplatesDir}/*.md");
+            foreach ($templateFiles as $templateFile) {
+                $templateName = strtoupper(str_replace('.md', '', basename($templateFile)));
+                $referenceData['framework_templates'][$templateName] = file_get_contents($templateFile);
+            }
         }
 
         return $referenceData;
@@ -411,8 +483,12 @@ class DebugN8nController extends Controller
         // Debug: Temp files created successfully
 
         // Build the Node.js script with proper file paths
-        // Using concatenation instead of string replacement to avoid escaping issues
-        $nodeScript = "// Mock n8n environment
+        // Properly escape file paths for Node.js string literals
+        $dataFileEscaped = json_encode($tempDataFile);
+        $jsFileEscaped = json_encode($tempJsFile);
+
+        $nodeScript = "(async () => {
+// Mock n8n environment
 const $ = function(nodeName) {
   return {
     first() {
@@ -425,7 +501,7 @@ const $ = function(nodeName) {
 
 // Initialize node data from file
 const fs = require('fs');
-const data = JSON.parse(fs.readFileSync(".json_encode($tempDataFile).", 'utf8'));
+const data = JSON.parse(fs.readFileSync({$dataFileEscaped}, 'utf8'));
 
 // Store node data
 \$._nodeData = {
@@ -445,12 +521,50 @@ const \$input = {
 // Execute the workflow code
 try {
   // Load and execute the user's code from file
-  const userCode = fs.readFileSync(".json_encode($tempJsFile).", 'utf8');
-  eval(userCode);
+  const userCode = fs.readFileSync({$jsFileEscaped}, 'utf8');
 
-  // Capture the results from global scope (don't use 'result' as that's created by the return conversion)
-  const systemValue = typeof system !== 'undefined' ? system : null;
-  const messagesValue = typeof messages !== 'undefined' ? messages : null;
+  // Wrap the code and execute it
+  let evalResult;
+  try {
+    // Try wrapping in an async function to allow return statements
+    evalResult = eval('(async () => { ' + userCode + ' })()');
+    // Need to use Promise since we wrapped it in async
+    evalResult = await evalResult;
+  } catch (e1) {
+    try {
+      // If that fails, try wrapping in parentheses for expression eval
+      evalResult = eval('(' + userCode + ')');
+    } catch (e2) {
+      try {
+        // Last resort: execute the code directly for statements that don't return
+        eval(userCode);
+        evalResult = null;  // Code executed via eval with statements, not expressions
+      } catch (e3) {
+        // All attempts failed, throw the first error
+        throw e1;
+      }
+    }
+  }
+
+  // Check if the result is an array with json object (n8n workflow return format)
+  let systemValue = null;
+  let messagesValue = null;
+
+  if (evalResult) {
+    if (Array.isArray(evalResult) && evalResult[0]?.json) {
+      // Extract from n8n return format: [{ json: { system: '...', messages: [...] } }]
+      systemValue = evalResult[0].json.system || null;
+      messagesValue = evalResult[0].json.messages || null;
+    }
+  }
+
+  // Fall back to looking for global variables
+  if (!systemValue) {
+    systemValue = typeof system !== 'undefined' ? system : null;
+  }
+  if (!messagesValue) {
+    messagesValue = typeof messages !== 'undefined' ? messages : null;
+  }
 
   console.log(JSON.stringify({
     success: true,
@@ -468,7 +582,8 @@ try {
     stack: error.stack
   }));
   process.exit(1);
-}";
+}
+})();";
 
         return $nodeScript;
     }
