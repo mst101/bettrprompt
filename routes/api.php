@@ -40,10 +40,10 @@ Route::post('/n8n/webhook', function (Request $request) {
             'optimized_prompt' => 'nullable|string',
             'error_message' => 'nullable|string|max:1000',
             'error_context' => 'nullable|array',
-            'error_context.error_type' => 'nullable|string|in:timeout,api_error,parsing_error,validation_error,rate_limit',
-            'error_context.failed_node' => 'nullable|string|max:255',
-            'error_context.execution_id' => 'nullable|string|max:255',
-            'error_context.timestamp' => 'nullable|date',
+            'error_context.error_type' => 'nullable|string',
+            'error_context.failed_node' => 'nullable|string',
+            'error_context.execution_id' => 'nullable|string',
+            'error_context.timestamp' => 'nullable|string',
             'retry_count' => 'nullable|integer|min:0|max:10',
         ]);
 

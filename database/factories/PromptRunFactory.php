@@ -39,11 +39,17 @@ class PromptRunFactory extends Factory
             ],
             'task_description' => fake()->sentence(),
             'workflow_stage' => '0_processing',
+            'task_classification' => ['type' => 'analytical', 'complexity' => 'moderate'],
+            'cognitive_requirements' => ['analytical', 'critical-thinking'],
+            'personality_tier' => fake()->randomElement(['full', 'partial', 'none']),
             'selected_framework' => null,
             'framework_questions' => [],
             'clarifying_answers' => [],
             'optimized_prompt' => null,
             'error_message' => null,
+            'error_context' => null,
+            'retry_count' => 0,
+            'last_error_at' => null,
             'completed_at' => null,
         ];
     }

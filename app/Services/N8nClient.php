@@ -86,6 +86,20 @@ class N8nClient
     }
 
     /**
+     * Perform exponential backoff delay between retry attempts
+     * Skipped in testing environment for faster test execution
+     */
+    protected function backoffDelay(int $attempt): void
+    {
+        // Skip sleep in testing environment to speed up tests
+        if (app()->environment('testing')) {
+            return;
+        }
+
+        sleep(pow(2, $attempt));
+    }
+
+    /**
      * Trigger an N8n webhook with retry logic and circuit breaker
      *
      * @param  string  $path  Webhook path (e.g., '/webhook/my-webhook')
@@ -173,7 +187,7 @@ class N8nClient
                     }
 
                     // Exponential backoff
-                    sleep(pow(2, $attempt));
+                    $this->backoffDelay($attempt);
 
                     continue;
                 }
@@ -202,7 +216,7 @@ class N8nClient
                 }
 
                 // Exponential backoff
-                sleep(pow(2, $attempt));
+                $this->backoffDelay($attempt);
 
             } catch (\Illuminate\Http\Client\RequestException $e) {
                 // HTTP request exceptions
@@ -219,7 +233,7 @@ class N8nClient
                     break;
                 }
 
-                sleep(pow(2, $attempt));
+                $this->backoffDelay($attempt);
 
             } catch (\Throwable $e) {
                 // Unexpected errors - don't retry
