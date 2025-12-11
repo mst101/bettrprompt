@@ -298,6 +298,10 @@ Route::post('/debug/workflow/{workflowNumber}/save-to-n8n', [\App\Http\Controlle
     ->name('debug.workflow.save-to-n8n')
     ->where('workflowNumber', '[0-9]+');
 
+Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n', [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToN8n'])
+    ->name('debug.workflow.upload-to-n8n')
+    ->where('workflowNumber', '[0-9]+');
+
 // Mock n8n webhook endpoints for E2E testing
 // These endpoints simulate n8n responses without requiring n8n to be running
 // The .env.e2e file should have N8N_URL=http://localhost (pointing to these routes)

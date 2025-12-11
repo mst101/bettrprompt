@@ -179,6 +179,20 @@ class DebugN8nController extends Controller
     }
 
     /**
+     * Workflow ID mapping
+     */
+    private function getWorkflowId(int $workflowNumber): ?string
+    {
+        $workflowIds = [
+            0 => '97009083-50f0-4ffb-8706-9d7f9fe7f337',
+            1 => 'a992fac0-8f28-4c7b-83d3-4346838bd0c7',
+            2 => '1f561ed1-8368-4f0d-b143-26c6226e0bb0',
+        ];
+
+        return $workflowIds[$workflowNumber] ?? null;
+    }
+
+    /**
      * Save JavaScript to the n8n workflow file
      */
     public function saveJavaScriptToN8nWorkflow(Request $request, int $workflowNumber)
@@ -235,6 +249,57 @@ class DebugN8nController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save to n8n workflow: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
+     * Upload workflow to n8n server
+     */
+    public function uploadWorkflowToN8n(int $workflowNumber)
+    {
+        try {
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflowId = $this->getWorkflowId($workflowNumber);
+            if (! $workflowId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Unknown workflow number: {$workflowNumber}",
+                ], 400);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! $workflow) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow JSON format',
+                ], 400);
+            }
+
+            // Remove the 'versionId' field if present (n8n will handle versioning)
+            unset($workflow['versionId']);
+
+            // Upload to n8n
+            $n8nClient = new \App\Services\N8nClient;
+            $result = $n8nClient->updateWorkflow($workflowId, $workflow);
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Failed to upload workflow to n8n', [
+                'workflowNumber' => $workflowNumber,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to upload workflow: {$e->getMessage()}",
             ], 500);
         }
     }

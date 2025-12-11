@@ -102,10 +102,36 @@ const saveJavaScriptToN8nWorkflow = async () => {
             error.value = result.error || 'Failed to save to n8n workflow';
         } else {
             error.value = null;
-            alert('JavaScript code successfully saved to n8n workflow!');
+            saveMessage.value =
+                'JavaScript saved to workflow file successfully!';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
         }
     } catch (err) {
         error.value = `Failed to save to n8n workflow: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    }
+};
+
+const uploadWorkflowToN8n = async () => {
+    try {
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/upload-to-n8n`,
+            'POST',
+        );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to upload workflow to n8n';
+        } else {
+            error.value = null;
+            saveMessage.value = 'Workflow uploaded to n8n server successfully!';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
+        }
+    } catch (err) {
+        error.value = `Failed to upload workflow to n8n: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
 };
 
@@ -230,7 +256,7 @@ const executeJavaScript = async () => {
 
         <!-- Controls -->
         <div class="mb-8 rounded-lg bg-white p-6 shadow-md">
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <button
                     :disabled="!javascript || !input"
                     class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
@@ -242,13 +268,19 @@ const executeJavaScript = async () => {
                     class="rounded-lg bg-amber-600 px-4 py-2 text-white transition hover:bg-amber-700"
                     @click="reloadJavaScriptFromWorkflow"
                 >
-                    Reload from workflow JSON
+                    Reload from JSON
                 </button>
                 <button
                     class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
                     @click="saveJavaScriptToN8nWorkflow"
                 >
-                    Save to n8n Workflow
+                    Save to File
+                </button>
+                <button
+                    class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+                    @click="uploadWorkflowToN8n"
+                >
+                    Upload to n8n
                 </button>
             </div>
         </div>

@@ -100,6 +100,146 @@ class N8nClient
     }
 
     /**
+     * Update a workflow in n8n via the API
+     *
+     * @param  string  $workflowId  The n8n workflow ID
+     * @param  array  $workflow  The workflow definition
+     * @return array Response with success status and data/error
+     */
+    public function updateWorkflow(string $workflowId, array $workflow): array
+    {
+        // Check circuit breaker
+        if ($this->isCircuitOpen()) {
+            Log::warning('N8n circuit breaker is open, rejecting workflow update request', [
+                'workflowId' => $workflowId,
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'N8n service is temporarily unavailable. Please try again later.',
+            ];
+        }
+
+        $attempt = 0;
+        $lastException = null;
+
+        while ($attempt < $this->maxRetries) {
+            try {
+                $response = Http::timeout($this->timeout)
+                    ->withBasicAuth($this->username, $this->password)
+                    ->put(rtrim($this->baseUrl, '/')."/api/v1/workflows/{$workflowId}", $workflow);
+
+                // Check for HTTP errors
+                if ($response->failed()) {
+                    $status = $response->status();
+
+                    Log::error('N8n workflow update HTTP error', [
+                        'workflowId' => $workflowId,
+                        'status' => $status,
+                        'body' => $response->body(),
+                        'attempt' => $attempt + 1,
+                    ]);
+
+                    // Don't retry client errors (4xx), only server errors (5xx)
+                    if ($status < 500) {
+                        $this->recordFailure();
+
+                        return [
+                            'success' => false,
+                            'error' => 'Failed to update workflow in n8n',
+                            'details' => $response->json(),
+                        ];
+                    }
+
+                    // Retry server errors
+                    $attempt++;
+                    if ($attempt >= $this->maxRetries) {
+                        $this->recordFailure();
+
+                        return [
+                            'success' => false,
+                            'error' => 'Failed to update workflow after multiple attempts',
+                        ];
+                    }
+
+                    // Exponential backoff
+                    $this->backoffDelay($attempt);
+
+                    continue;
+                }
+
+                // Success
+                $this->recordSuccess();
+
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Network/connection errors - retry
+                $attempt++;
+                $lastException = $e;
+
+                Log::warning('N8n connection error updating workflow, retrying', [
+                    'workflowId' => $workflowId,
+                    'attempt' => $attempt,
+                    'error' => $e->getMessage(),
+                ]);
+
+                if ($attempt >= $this->maxRetries) {
+                    break;
+                }
+
+                // Exponential backoff
+                $this->backoffDelay($attempt);
+
+            } catch (\Illuminate\Http\Client\RequestException $e) {
+                // HTTP request exceptions
+                $attempt++;
+                $lastException = $e;
+
+                Log::error('N8n request exception updating workflow', [
+                    'workflowId' => $workflowId,
+                    'attempt' => $attempt,
+                    'error' => $e->getMessage(),
+                ]);
+
+                if ($attempt >= $this->maxRetries) {
+                    break;
+                }
+
+                $this->backoffDelay($attempt);
+
+            } catch (\Throwable $e) {
+                // Unexpected errors - don't retry
+                Log::error('N8n unexpected error updating workflow', [
+                    'workflowId' => $workflowId,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
+                $this->recordFailure();
+                throw $e;
+            }
+        }
+
+        // Max retries exceeded
+        $this->recordFailure();
+
+        Log::error('N8n workflow update failed after all retries', [
+            'workflowId' => $workflowId,
+            'attempts' => $attempt,
+            'last_error' => $lastException?->getMessage(),
+        ]);
+
+        return [
+            'success' => false,
+            'error' => 'N8n service is unavailable. Please try again later.',
+        ];
+    }
+
+    /**
      * Trigger an N8n webhook with retry logic and circuit breaker
      *
      * @param  string  $path  Webhook path (e.g., '/webhook/my-webhook')
