@@ -8,6 +8,11 @@ use Inertia\Inertia;
 class DebugN8nController extends Controller
 {
     /**
+     * @var array List of temporary files to clean up after execution
+     */
+    private array $tempFilesToCleanup = [];
+
+    /**
      * Display the workflow debug page
      */
     public function show(int $workflowNumber)
@@ -262,11 +267,9 @@ class DebugN8nController extends Controller
             ], 500);
         } finally {
             // Clean up temporary files created during execution
-            if (isset($this->tempFilesToCleanup) && is_array($this->tempFilesToCleanup)) {
-                foreach ($this->tempFilesToCleanup as $file) {
-                    if (file_exists($file)) {
-                        unlink($file);
-                    }
+            foreach ($this->tempFilesToCleanup as $file) {
+                if (file_exists($file)) {
+                    unlink($file);
                 }
             }
         }
@@ -490,7 +493,8 @@ try {
             // Note: JS and data files should exist due to buildNodeScript creating them
             // They will be cleaned up after this method returns
 
-            $output = shell_exec("node {$tempFile} 2>&1");
+            // Execute with timeout (30 seconds should be plenty for JS execution)
+            $output = shell_exec("timeout 30 node {$tempFile} 2>&1");
 
             // The output might contain console.log() output before the JSON
             // Find the last JSON object (which should be our result)

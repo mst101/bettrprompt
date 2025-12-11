@@ -120,6 +120,11 @@ const executeJavaScript = async () => {
             'POST',
         );
 
+        if (!response.ok) {
+            error.value = `Server error: ${response.status} ${response.statusText}`;
+            return;
+        }
+
         const result = await response.json();
 
         if (!result.success) {
