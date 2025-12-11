@@ -136,6 +136,15 @@ async function saveDocument() {
             },
         );
 
+        if (!response.ok) {
+            const responseText = await response.text();
+            console.error('Response status:', response.status);
+            console.error('Response body:', responseText);
+            throw new Error(
+                `Server error: ${response.status} ${response.statusText}`,
+            );
+        }
+
         const data = await response.json();
 
         if (data.success) {

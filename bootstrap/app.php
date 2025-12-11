@@ -47,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'test/echo-info',
             'webhook/api/n8n/webhook/*',
             'debug/workflow/*',  // Debug workflow endpoints
+            'workflow/docs/api/*',  // Reference documents API endpoints
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
