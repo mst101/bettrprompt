@@ -14,6 +14,8 @@ class N8nClient
 
     protected string $password;
 
+    protected ?string $apiKey;
+
     protected int $timeout = 30; // seconds
 
     protected int $maxRetries = 3;
@@ -27,6 +29,7 @@ class N8nClient
         $this->baseUrl = config('services.n8n.url');
         $this->username = config('services.n8n.username');
         $this->password = config('services.n8n.password');
+        $this->apiKey = config('services.n8n.api_key');
 
         // Validate configuration
         $this->validateConfiguration();
@@ -39,8 +42,13 @@ class N8nClient
      */
     protected function validateConfiguration(): void
     {
-        if (! $this->baseUrl || ! $this->username || ! $this->password) {
-            throw new \RuntimeException('N8n service is not properly configured. Check N8N_URL, N8N_USERNAME, and N8N_PASSWORD environment variables.');
+        if (! $this->baseUrl) {
+            throw new \RuntimeException('N8n service URL is not configured. Check N8N_INTERNAL_URL environment variable.');
+        }
+
+        // Either API key or basic auth credentials required
+        if (! $this->apiKey && (! $this->username || ! $this->password)) {
+            throw new \RuntimeException('N8n service requires either N8N_API_KEY or (N8N_BASIC_AUTH_USER and N8N_BASIC_AUTH_PASSWORD) environment variables.');
         }
     }
 
@@ -125,9 +133,16 @@ class N8nClient
 
         while ($attempt < $this->maxRetries) {
             try {
-                $response = Http::timeout($this->timeout)
-                    ->withBasicAuth($this->username, $this->password)
-                    ->put(rtrim($this->baseUrl, '/')."/api/v1/workflows/{$workflowId}", $workflow);
+                $http = Http::timeout($this->timeout);
+
+                // Use API key if available, otherwise use basic auth
+                if ($this->apiKey) {
+                    $http = $http->withHeader('X-N8N-API-KEY', $this->apiKey);
+                } else {
+                    $http = $http->withBasicAuth($this->username, $this->password);
+                }
+
+                $response = $http->put(rtrim($this->baseUrl, '/')."/api/v1/workflows/{$workflowId}", $workflow);
 
                 // Check for HTTP errors
                 if ($response->failed()) {

@@ -258,17 +258,17 @@ const executeJavaScript = async () => {
         <div class="mb-8 rounded-lg bg-white p-6 shadow-md">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <button
+                    class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+                    @click="reloadJavaScriptFromWorkflow"
+                >
+                    Reload JS from JSON
+                </button>
+                <button
                     :disabled="!javascript || !input"
                     class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
                     @click="executeJavaScript"
                 >
                     {{ isExecuting ? 'Executing...' : 'Execute' }}
-                </button>
-                <button
-                    class="rounded-lg bg-amber-600 px-4 py-2 text-white transition hover:bg-amber-700"
-                    @click="reloadJavaScriptFromWorkflow"
-                >
-                    Reload from JSON
                 </button>
                 <button
                     class="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
@@ -277,7 +277,7 @@ const executeJavaScript = async () => {
                     Save to File
                 </button>
                 <button
-                    class="rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+                    class="rounded-lg bg-amber-600 px-4 py-2 text-white transition hover:bg-amber-700"
                     @click="uploadWorkflowToN8n"
                 >
                     Upload to n8n

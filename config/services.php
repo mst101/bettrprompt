@@ -39,6 +39,7 @@ return [
         'url' => env('N8N_INTERNAL_URL', 'http://n8n:5678'),
         'username' => env('N8N_BASIC_AUTH_USER'),
         'password' => env('N8N_BASIC_AUTH_PASSWORD'),
+        'api_key' => env('N8N_API_KEY'),
         'webhook_secret' => env('N8N_WEBHOOK_SECRET'),
     ],
 
