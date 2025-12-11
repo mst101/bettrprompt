@@ -149,6 +149,7 @@ const handleTranscription = (text: string) => {
             <template #actions>
                 <ButtonTrash
                     v-if="answer"
+                    class="mr-2"
                     :disabled="isSubmitting"
                     @click="emit('clear')"
                 />

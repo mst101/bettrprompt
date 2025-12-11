@@ -13,7 +13,7 @@ class DebugN8nController extends Controller
     private array $tempFilesToCleanup = [];
 
     /**
-     * Display the workflow debug page
+     * Display the workflow page
      */
     public function show(int $workflowNumber)
     {
@@ -64,7 +64,7 @@ class DebugN8nController extends Controller
             $output = json_decode(file_get_contents($outputFile), true);
         }
 
-        return Inertia::render('Debug/WorkflowDebug', [
+        return Inertia::render('Workflow/Show', [
             'workflowNumber' => $workflowNumber,
             'input' => $input,
             'javascript' => $javascript,

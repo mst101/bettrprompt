@@ -88,7 +88,7 @@ const handleSwitchFramework = (frameworkCode: string) => {
                 <div class="mt-4 sm:whitespace-nowrap">
                     <ButtonSecondary
                         type="button"
-                        class="w-full"
+                        class="w-full focus:ring-offset-indigo-200 dark:bg-indigo-200 dark:hover:bg-indigo-300"
                         :disabled="switchingFramework !== null"
                         :loading="switchingFramework === framework.code"
                         @click="handleSwitchFramework(framework.code)"

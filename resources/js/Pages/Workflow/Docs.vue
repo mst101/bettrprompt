@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import DocumentSidebar from '@/Components/Workflow/DocumentSidebar.vue';
+import InfoSection from '@/Components/Workflow/InfoSection.vue';
+import PageHeader from '@/Components/Workflow/PageHeader.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
@@ -186,22 +189,42 @@ watch(
     },
     { immediate: true },
 );
+
+const infoItems = [
+    {
+        strong: 'Core Documents (3):',
+        text: 'Framework Taxonomy, Personality Calibration, and Question Bank used by workflows',
+    },
+    {
+        strong: 'Framework Templates (64):',
+        text: 'Individual prompting frameworks that can be selected during prompt optimisation',
+    },
+    {
+        strong: 'Save & Embed:',
+        text: 'Clicking "Save & Embed" updates both the markdown file and embeds the content into the relevant n8n workflow JSON files',
+    },
+    {
+        strong: 'Live Preview:',
+        text: 'The right pane shows a rendered markdown preview as you type',
+    },
+];
 </script>
 
 <template>
     <div>
-        <h1 class="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
-            Reference Documents
-        </h1>
+        <PageHeader
+            title="Reference Documents"
+            subtitle="View and edit markdown documents used in n8n workflows"
+        />
 
         <!-- Status Message -->
         <div
             v-if="message"
             class="mb-6 rounded-lg border p-4 transition"
             :class="{
-                'border-green-200 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-200':
+                'border-green-200 bg-green-50 text-green-800':
                     message.type === 'success',
-                'border-red-200 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-200':
+                'border-red-200 bg-red-50 text-red-800':
                     message.type === 'error',
             }"
         >
@@ -211,106 +234,32 @@ watch(
         <!-- Three-Column Layout -->
         <div class="grid gap-6 lg:grid-cols-4">
             <!-- Sidebar: Document List -->
-            <div class="lg:col-span-1">
-                <div class="sticky top-4 space-y-4">
-                    <!-- Core Documents Section -->
-                    <div>
-                        <h2
-                            class="mb-3 text-sm font-semibold text-slate-500 uppercase dark:text-slate-400"
-                        >
-                            Core Documents
-                        </h2>
-                        <div class="space-y-2">
-                            <button
-                                v-for="doc in documents.core"
-                                :key="`${doc.type}-${doc.filename}`"
-                                class="w-full rounded-lg border px-4 py-2 text-left text-sm transition"
-                                :class="{
-                                    'border-blue-300 bg-blue-50 font-medium text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-200':
-                                        selectedDocument?.filename ===
-                                        doc.filename,
-                                    'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700':
-                                        selectedDocument?.filename !==
-                                        doc.filename,
-                                }"
-                                @click="selectedDocument = doc"
-                            >
-                                <div class="truncate font-medium">
-                                    {{ doc.displayName }}
-                                </div>
-                                <div
-                                    class="mt-1 text-xs text-slate-500 dark:text-slate-400"
-                                >
-                                    Used in:
-                                    {{ doc.usedIn.join(', ') || 'None' }}
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Framework Templates Section -->
-                    <div>
-                        <h2
-                            class="mb-3 text-sm font-semibold text-slate-500 uppercase dark:text-slate-400"
-                        >
-                            Framework Templates ({{
-                                documents.framework.length
-                            }})
-                        </h2>
-                        <div class="max-h-96 space-y-2 overflow-y-auto pr-2">
-                            <button
-                                v-for="doc in documents.framework"
-                                :key="`${doc.type}-${doc.filename}`"
-                                class="w-full rounded-lg border px-3 py-2 text-left text-xs transition"
-                                :class="{
-                                    'border-blue-300 bg-blue-50 font-medium text-blue-900 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-200':
-                                        selectedDocument?.filename ===
-                                        doc.filename,
-                                    'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700':
-                                        selectedDocument?.filename !==
-                                        doc.filename,
-                                }"
-                                @click="selectedDocument = doc"
-                            >
-                                <div class="truncate font-medium">
-                                    {{ doc.displayName }}
-                                </div>
-                                <div class="text-slate-500 dark:text-slate-500">
-                                    workflow_2
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <DocumentSidebar
+                :documents="documents"
+                :selected-document="selectedDocument"
+                @select="selectedDocument = $event"
+            />
 
             <!-- Editor and Preview -->
             <div class="lg:col-span-3">
                 <!-- Document Header -->
                 <div
                     v-if="selectedDocument"
-                    class="mb-6 rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800"
+                    class="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-6 dark:bg-indigo-100"
                 >
                     <div class="mb-4 flex items-start justify-between">
                         <div>
-                            <h2
-                                class="text-2xl font-bold text-slate-900 dark:text-white"
-                            >
+                            <h2 class="text-2xl font-bold text-indigo-900">
                                 {{ selectedDocument.displayName }}
                             </h2>
-                            <p
-                                class="mt-1 text-sm text-slate-600 dark:text-slate-400"
-                            >
+                            <p class="mt-1 text-sm text-indigo-600">
                                 <span v-if="selectedDocument.usedIn.length > 0">
                                     Used in:
                                     <strong>{{
                                         selectedDocument.usedIn.join(', ')
                                     }}</strong>
                                 </span>
-                                <span
-                                    v-else
-                                    class="text-slate-500 dark:text-slate-500"
-                                >
+                                <span v-else class="text-indigo-500">
                                     Not used in any workflows
                                 </span>
                             </p>
@@ -329,39 +278,33 @@ watch(
                 <div class="grid gap-6 lg:grid-cols-2">
                     <!-- Editor Pane -->
                     <div
-                        class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"
+                        class="overflow-hidden rounded-lg border border-indigo-200"
                     >
                         <div
-                            class="border-b border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-800"
+                            class="border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
-                            <h3
-                                class="text-sm font-semibold text-slate-700 dark:text-slate-300"
-                            >
+                            <h3 class="text-sm font-semibold">
                                 Markdown Editor
                             </h3>
                         </div>
                         <textarea
                             v-model="content"
-                            class="h-96 w-full resize-none border-0 bg-white p-4 font-mono text-sm dark:bg-slate-900 dark:text-slate-100"
+                            class="h-96 w-full resize-none border-0 bg-indigo-50 p-4 font-mono text-sm text-black dark:bg-indigo-100"
                             placeholder="Edit markdown here..."
                         />
                     </div>
 
                     <!-- Preview Pane -->
                     <div
-                        class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"
+                        class="overflow-hidden rounded-lg border border-indigo-200"
                     >
                         <div
-                            class="border-b border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-800"
+                            class="border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
-                            <h3
-                                class="text-sm font-semibold text-slate-700 dark:text-slate-300"
-                            >
-                                Preview
-                            </h3>
+                            <h3 class="text-sm font-semibold">Preview</h3>
                         </div>
                         <div
-                            class="prose prose-sm dark:prose-invert h-96 w-full overflow-y-auto bg-white p-4 dark:bg-slate-900"
+                            class="prose prose-sm dark:prose-invert h-96 w-full overflow-y-auto bg-indigo-50 p-4 dark:bg-indigo-100"
                             v-html="renderedContent"
                         />
                     </div>
@@ -370,47 +313,10 @@ watch(
         </div>
 
         <!-- Info Section -->
-        <div
-            class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800/50"
-        >
-            <h3
-                class="mb-3 text-lg font-semibold text-slate-900 dark:text-white"
-            >
-                About Reference Documents
-            </h3>
-            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 text-blue-500">•</span>
-                    <span
-                        ><strong>Core Documents (3):</strong> Framework
-                        Taxonomy, Personality Calibration, and Question Bank
-                        used by workflows</span
-                    >
-                </li>
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 text-blue-500">•</span>
-                    <span
-                        ><strong>Framework Templates (64):</strong> Individual
-                        prompting frameworks that can be selected during prompt
-                        optimisation</span
-                    >
-                </li>
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 text-blue-500">•</span>
-                    <span
-                        ><strong>Save & Embed:</strong> Clicking "Save & Embed"
-                        updates both the markdown file and embeds the content
-                        into the relevant n8n workflow JSON files</span
-                    >
-                </li>
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 text-blue-500">•</span>
-                    <span
-                        ><strong>Live Preview:</strong> The right pane shows a
-                        rendered markdown preview as you type</span
-                    >
-                </li>
-            </ul>
-        </div>
+        <InfoSection
+            class="mt-8"
+            title="About Reference Documents"
+            :items="infoItems"
+        />
     </div>
 </template>

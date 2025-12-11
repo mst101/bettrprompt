@@ -1,56 +1,56 @@
 <script setup lang="ts">
+import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import { Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 interface Props {
     title?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-    title: 'Workflow Debug',
+    title: 'Workflow',
+});
+
+// Initialize dark mode from localStorage
+onMounted(() => {
+    const isDark =
+        localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    if (isDark) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
 });
 </script>
 
 <template>
-    <div
-        class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
-    >
+    <div class="min-h-screen bg-indigo-50">
         <!-- Navigation Bar -->
-        <nav
-            class="border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800"
-        >
+        <nav class="border-b border-indigo-200 bg-white shadow-sm">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo/Home -->
                     <div class="flex items-center space-x-4">
                         <Link
                             href="/workflow"
-                            class="text-xl font-bold text-slate-900 transition hover:text-slate-700 dark:text-white dark:hover:text-slate-200"
+                            class="hover:text-indigo-7000 text-xl font-bold text-indigo-900 transition"
                         >
-                            Workflow Debug
+                            Workflow
                         </Link>
                     </div>
 
                     <!-- Navigation Links -->
                     <div class="hidden space-x-1 md:flex">
                         <Link
-                            href="/workflow"
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white':
-                                    $page.url === '/workflow',
-                                'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700':
-                                    $page.url !== '/workflow',
-                            }"
-                        >
-                            Index
-                        </Link>
-                        <Link
                             href="/workflow/0"
                             class="rounded-md px-4 py-2 text-sm font-medium transition"
                             :class="{
-                                'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white':
+                                'bg-indigo-100 text-indigo-900':
                                     $page.url.includes('/workflow/0'),
-                                'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700':
+                                'text-indigo-600 hover:bg-indigo-50':
                                     !$page.url.includes('/workflow/0'),
                             }"
                         >
@@ -60,9 +60,9 @@ withDefaults(defineProps<Props>(), {
                             href="/workflow/1"
                             class="rounded-md px-4 py-2 text-sm font-medium transition"
                             :class="{
-                                'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white':
+                                'bg-indigo-100 text-indigo-900':
                                     $page.url.includes('/workflow/1'),
-                                'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700':
+                                'text-indigo-600 hover:bg-indigo-50':
                                     !$page.url.includes('/workflow/1'),
                             }"
                         >
@@ -72,9 +72,9 @@ withDefaults(defineProps<Props>(), {
                             href="/workflow/2"
                             class="rounded-md px-4 py-2 text-sm font-medium transition"
                             :class="{
-                                'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white':
+                                'bg-indigo-100 text-indigo-900':
                                     $page.url.includes('/workflow/2'),
-                                'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700':
+                                'text-indigo-600 hover:bg-indigo-50':
                                     !$page.url.includes('/workflow/2'),
                             }"
                         >
@@ -84,9 +84,9 @@ withDefaults(defineProps<Props>(), {
                             href="/workflow/docs"
                             class="rounded-md px-4 py-2 text-sm font-medium transition"
                             :class="{
-                                'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white':
+                                'bg-indigo-100 text-indigo-900':
                                     $page.url.includes('/workflow/docs'),
-                                'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700':
+                                'text-indigo-600 hover:bg-indigo-50':
                                     !$page.url.includes('/workflow/docs'),
                             }"
                         >
@@ -94,12 +94,17 @@ withDefaults(defineProps<Props>(), {
                         </Link>
                     </div>
 
-                    <!-- Mobile Menu Button (simplified for now) -->
-                    <div class="md:hidden">
-                        <span
-                            class="text-sm text-slate-600 dark:text-slate-300"
-                            >{{ title }}</span
-                        >
+                    <!-- Right Side Actions -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Dark Mode Toggle -->
+                        <ButtonDarkMode class="size-10 shrink-0 p-2" />
+
+                        <!-- Mobile Menu Button (simplified for now) -->
+                        <div class="md:hidden">
+                            <span class="text-sm text-indigo-600">{{
+                                title
+                            }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
