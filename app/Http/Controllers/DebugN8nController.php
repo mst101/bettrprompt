@@ -33,7 +33,7 @@ class DebugN8nController extends Controller
         }
 
         // Try to load JavaScript from actual n8n workflow file
-        $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}_analysis.json");
+        $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
         if (file_exists($n8nWorkflowFile)) {
             $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
             // Extract the "Prepare Prompt" node JavaScript
@@ -48,10 +48,10 @@ class DebugN8nController extends Controller
         }
 
         // Fall back to storage/app/debug for JavaScript
-        $debugJsFile = storage_path("app/debug/workflow_{$workflowNumber}_prepare_prompt.js");
-        if (! $javascript && file_exists($debugJsFile)) {
-            $javascript = file_get_contents($debugJsFile);
-        }
+        //        $debugJsFile = storage_path("app/debug/workflow_{$workflowNumber}_prepare_prompt.js");
+        //        if (!$javascript && file_exists($debugJsFile)) {
+        //            $javascript = file_get_contents($debugJsFile);
+        //        }
 
         // Load output from storage
         $outputFile = storage_path("app/debug/workflow_{$workflowNumber}_output.json");
@@ -60,7 +60,7 @@ class DebugN8nController extends Controller
         }
 
         return Inertia::render('Debug/WorkflowDebug', [
-            'workflow_number' => $workflowNumber,
+            'workflowNumber' => $workflowNumber,
             'input' => $input,
             'javascript' => $javascript,
             'output' => $output,
@@ -155,7 +155,7 @@ class DebugN8nController extends Controller
 
         // Fall back to actual n8n workflow file if no debug file exists
         if (! $javascript) {
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}_analysis.json");
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
             if (file_exists($n8nWorkflowFile)) {
                 $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
                 if (isset($workflow['nodes'])) {
