@@ -179,14 +179,14 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Workflow ID mapping
+     * Workflow ID mapping (from n8n API)
      */
     private function getWorkflowId(int $workflowNumber): ?string
     {
         $workflowIds = [
-            0 => '97009083-50f0-4ffb-8706-9d7f9fe7f337',
-            1 => 'a992fac0-8f28-4c7b-83d3-4346838bd0c7',
-            2 => '1f561ed1-8368-4f0d-b143-26c6226e0bb0',
+            0 => 'YW4AdQE919uLrpLx',
+            1 => 'bfMRMEHRhwxbr6V9',
+            2 => 'YMvRB5aEeEqeZzO0',
         ];
 
         return $workflowIds[$workflowNumber] ?? null;
@@ -283,16 +283,14 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            // Build a clean workflow object with only the fields n8n API accepts
-            // The API is strict and rejects additional properties like 'id', 'versionId', 'meta'
+            // Build a clean workflow object with only the required fields for n8n API
+            // The PUT /api/v1/workflows/{id} endpoint requires: name, nodes, connections, settings
+            // All other fields are read-only or auto-managed by n8n
             $cleanWorkflow = [
-                'name' => $workflow['name'] ?? null,
+                'name' => $workflow['name'] ?? 'workflow',
                 'nodes' => $workflow['nodes'] ?? [],
                 'connections' => $workflow['connections'] ?? [],
-                'active' => $workflow['active'] ?? false,
                 'settings' => $workflow['settings'] ?? (object) [],
-                'tags' => $workflow['tags'] ?? [],
-                'pinData' => $workflow['pinData'] ?? (object) [],
             ];
 
             // Upload to n8n
