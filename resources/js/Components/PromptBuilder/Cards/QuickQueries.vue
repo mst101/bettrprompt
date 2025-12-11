@@ -127,16 +127,29 @@ const isOtherOption = (label: string): boolean => {
     );
 };
 
-// Check if user has selected an "Other" option
+// Check if user has selected an option that needs elaboration
+// First checks for elaborationNeeded flag from workflow, falls back to detecting "Other" options
 const selectedOtherOption = (question: PreAnalysisQuestion): boolean => {
     const selectedAnswer = currentAnswers.value[question.id];
-    return (
-        selectedAnswer !== undefined &&
-        selectedAnswer !== '' &&
-        question.options?.some(
-            (opt) => opt.value === selectedAnswer && isOtherOption(opt.label),
-        ) === true
+    if (selectedAnswer === undefined || selectedAnswer === '') {
+        return false;
+    }
+
+    const selectedOption = question.options?.find(
+        (opt) => opt.value === selectedAnswer,
     );
+
+    if (!selectedOption) {
+        return false;
+    }
+
+    // Check for elaborationNeeded flag first (from workflow)
+    if ('elaborationNeeded' in selectedOption) {
+        return selectedOption.elaborationNeeded === true;
+    }
+
+    // Fallback: detect "Other" options by label for backwards compatibility
+    return isOtherOption(selectedOption.label);
 };
 
 // Get display label for an answer
@@ -203,11 +216,7 @@ const allAnswersValid = computed(() => {
             return false;
         }
 
-        if (selectedOtherOption(question)) {
-            const otherResponse = otherResponses.value[question.id];
-            return otherResponse && otherResponse.trim().length > 0;
-        }
-
+        // Additional details are optional - users don't have to fill them in
         return true;
     });
 });
@@ -477,7 +486,7 @@ const isDisabled = computed(() =>
                         </label>
                     </div>
 
-                    <!-- "Other" text input for selected option -->
+                    <!-- Additional details textarea for options that need elaboration -->
                     <div
                         v-if="selectedOtherOption(question)"
                         class="bg-indigo-25 rounded-lg border-2 border-indigo-300 p-3"
@@ -490,10 +499,10 @@ const isDisabled = computed(() =>
                                         el as InstanceType<typeof FormTextarea>)
                             "
                             v-model="otherResponses[question.id]"
-                            label="Please specify:"
+                            label="Additional details (optional):"
                             :rows="3"
                             :maxlength="500"
-                            placeholder="Please explain what you meant by 'Other'..."
+                            placeholder="Add any additional information or elaboration..."
                         ></FormTextarea>
                         <p class="mt-1 text-xs text-indigo-600">
                             {{ (otherResponses[question.id] || '').length }}/500

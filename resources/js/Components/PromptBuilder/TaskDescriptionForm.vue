@@ -4,7 +4,7 @@ import ButtonVoiceInput from '@/Components/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import type { InertiaForm } from '@inertiajs/vue3';
-import { defineExpose, ref } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
