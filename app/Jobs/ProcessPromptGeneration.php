@@ -111,8 +111,14 @@ class ProcessPromptGeneration implements ShouldQueue
             $this->promptRun->refresh();
 
             // Broadcast generation completed event
+            Log::info('About to broadcast PromptOptimizationCompleted event', [
+                'prompt_run_id' => $this->promptRun->id,
+            ]);
             try {
                 event(new PromptOptimizationCompleted($this->promptRun));
+                Log::info('PromptOptimizationCompleted event broadcast successfully', [
+                    'prompt_run_id' => $this->promptRun->id,
+                ]);
             } catch (Exception $e) {
                 Log::error('Failed to broadcast PromptOptimizationCompleted event', [
                     'prompt_run_id' => $this->promptRun->id,
