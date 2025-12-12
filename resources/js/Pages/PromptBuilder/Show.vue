@@ -162,12 +162,22 @@ const getInitialTab = (): string => {
         return 'prompt';
     }
 
-    // Only show framework tab if analysis is complete
+    // If analysis is complete and framework is selected
     if (
         props.promptRun.selectedFramework &&
         (props.promptRun.workflowStage === '1_completed' ||
             props.promptRun.workflowStage === '2_completed')
     ) {
+        // Check if user has viewed the framework tab before
+        const storageKey = `promptRun_${props.promptRun.id}_viewedFramework`;
+        const hasViewedFramework = localStorage.getItem(storageKey) === 'true';
+
+        // If they've viewed the framework and questions exist, show questions tab
+        // Otherwise, show framework tab first so they can review the selection
+        if (hasViewedFramework && props.promptRun.frameworkQuestions?.length) {
+            return 'questions';
+        }
+
         return 'framework';
     }
 
@@ -179,6 +189,14 @@ const activeTab = ref<string>(getInitialTab());
 const clarifyingQuestionsRef = ref<InstanceType<
     typeof ClarifyingQuestions
 > | null>(null);
+
+// Track when user views the framework tab
+watch(activeTab, (newTab) => {
+    if (newTab === 'framework') {
+        const storageKey = `promptRun_${props.promptRun.id}_viewedFramework`;
+        localStorage.setItem(storageKey, 'true');
+    }
+});
 
 const hasRelatedRuns = computed(
     () =>
