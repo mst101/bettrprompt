@@ -95,60 +95,66 @@ const saveEdits = () => {
 <template>
     <Card data-testid="optimized-prompt-display">
         <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div class="hidden items-center gap-2 sm:flex">
-                    <div class="rounded-lg bg-green-100 p-2 text-green-600">
-                        <DynamicIcon name="check-circle" class="h-6 w-6" />
-                    </div>
-                    <h3 class="text-lg font-semibold text-indigo-900">
-                        Your Optimised Prompt
-                    </h3>
+            <!-- Header with icon (desktop only) -->
+            <div class="hidden items-center gap-2 sm:flex">
+                <div class="rounded-lg bg-green-100 p-2 text-green-600">
+                    <DynamicIcon name="check-circle" class="h-6 w-6" />
                 </div>
+                <h3 class="text-lg font-semibold text-indigo-900">
+                    Your Optimised Prompt
+                </h3>
+            </div>
 
-                <div
-                    v-if="!isEditing"
-                    class="flex w-full justify-between gap-2 sm:w-auto"
+            <!-- Action Buttons (top - all screens) -->
+            <div
+                v-if="!isEditing"
+                class="flex flex-col gap-2 sm:flex-row sm:justify-end"
+            >
+                <ButtonPrimary
+                    ref="copyButtonRef"
+                    type="button"
+                    class="w-full sm:w-auto"
+                    data-testid="copy-prompt-button"
+                    @click="copyToClipboard(optimizedPrompt)"
                 >
-                    <ButtonSecondary
-                        ref="editButtonRef"
-                        type="button"
-                        data-testid="edit-prompt-button"
-                        @click="startEditing"
-                    >
-                        <DynamicIcon name="edit" class="mr-2 h-4 w-4" />
-                        Edit
-                    </ButtonSecondary>
+                    <DynamicIcon
+                        :name="copied ? 'check' : 'clipboard-copy'"
+                        class="h-5 w-5"
+                    />
+                    {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
+                </ButtonPrimary>
 
-                    <ButtonPrimary
-                        ref="copyButtonRef"
-                        type="button"
-                        data-testid="copy-prompt-button"
-                        @click="copyToClipboard(optimizedPrompt)"
-                    >
-                        <DynamicIcon
-                            :name="copied ? 'check' : 'clipboard-copy'"
-                            class="h-5 w-5"
-                        />
-                        {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
-                    </ButtonPrimary>
-                </div>
+                <ButtonSecondary
+                    ref="editButtonRef"
+                    type="button"
+                    class="w-full sm:w-auto"
+                    data-testid="edit-prompt-button"
+                    @click="startEditing"
+                >
+                    <DynamicIcon name="edit" class="mr-2 h-4 w-4" />
+                    Edit Prompt
+                </ButtonSecondary>
+            </div>
 
-                <div v-else class="flex items-center justify-end gap-3">
-                    <ButtonSecondary
-                        type="button"
-                        data-testid="cancel-edit-button"
-                        @click="cancelEditing"
-                    >
-                        Cancel
-                    </ButtonSecondary>
-                    <ButtonPrimary
-                        type="button"
-                        data-testid="save-edit-button"
-                        @click="saveEdits"
-                    >
-                        Save Changes
-                    </ButtonPrimary>
-                </div>
+            <!-- Edit Mode Buttons (top - all screens) -->
+            <div v-else class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                <ButtonPrimary
+                    type="button"
+                    class="w-full sm:w-auto"
+                    data-testid="save-edit-button"
+                    @click="saveEdits"
+                >
+                    Save Changes
+                </ButtonPrimary>
+
+                <ButtonSecondary
+                    type="button"
+                    class="w-full sm:w-auto"
+                    data-testid="cancel-edit-button"
+                    @click="cancelEditing"
+                >
+                    Cancel
+                </ButtonSecondary>
             </div>
 
             <AIProviderLinks
@@ -186,6 +192,53 @@ const saveEdits = () => {
                 sr-only-label
             />
 
+            <!-- Mobile/Bottom Action Buttons -->
+            <div v-if="!isEditing" class="flex flex-col gap-2 sm:hidden">
+                <ButtonPrimary
+                    type="button"
+                    class="w-full"
+                    data-testid="copy-prompt-button-mobile"
+                    @click="copyToClipboard(optimizedPrompt)"
+                >
+                    <DynamicIcon
+                        :name="copied ? 'check' : 'clipboard-copy'"
+                        class="h-5 w-5"
+                    />
+                    {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
+                </ButtonPrimary>
+
+                <ButtonSecondary
+                    type="button"
+                    class="w-full"
+                    data-testid="edit-prompt-button-mobile"
+                    @click="startEditing"
+                >
+                    <DynamicIcon name="edit" class="mr-2 h-4 w-4" />
+                    Edit Prompt
+                </ButtonSecondary>
+            </div>
+
+            <!-- Mobile Edit Mode Buttons -->
+            <div v-else class="flex flex-col gap-2 sm:hidden">
+                <ButtonPrimary
+                    type="button"
+                    class="w-full"
+                    data-testid="save-edit-button-mobile"
+                    @click="saveEdits"
+                >
+                    Save Changes
+                </ButtonPrimary>
+
+                <ButtonSecondary
+                    type="button"
+                    class="w-full"
+                    data-testid="cancel-edit-button-mobile"
+                    @click="cancelEditing"
+                >
+                    Cancel
+                </ButtonSecondary>
+            </div>
+
             <div class="rounded-lg bg-blue-50 p-4">
                 <p class="text-sm text-blue-900">
                     <strong>💡 Tip:</strong> Copy this prompt and use it with
@@ -193,6 +246,12 @@ const saveEdits = () => {
                     better, more personalised responses!
                 </p>
             </div>
+
+            <AIProviderLinks
+                v-if="!isEditing"
+                :prompt="optimizedPrompt"
+                class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
+            />
         </div>
     </Card>
 </template>

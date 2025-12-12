@@ -105,7 +105,7 @@ const handleProviderClick = async (provider: AIProvider) => {
                 Prompt copied! Opening {{ copiedProvider }}...
             </p>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
             <Button
                 v-for="provider in providers"
                 :key="provider.name"
@@ -113,7 +113,7 @@ const handleProviderClick = async (provider: AIProvider) => {
                 size="sm"
                 type="button"
                 :title="`Open ${provider.name} (prompt copied to clipboard)`"
-                class="group relative border-indigo-200 px-3 py-2 hover:border-indigo-300 hover:shadow-sm"
+                class="group relative justify-center border-indigo-200 px-3 py-2 hover:border-indigo-300 hover:shadow-sm sm:justify-start"
                 @click="handleProviderClick(provider)"
             >
                 <component :is="provider.logo" class="h-6 w-6" />

@@ -48,7 +48,7 @@ const getCircleColor = (index: number, isSelected: boolean) => {
         { border: 'border-teal-600', bg: 'bg-teal-600' }, // 1
         { border: 'border-teal-500', bg: 'bg-teal-500' }, // 2
         { border: 'border-teal-400', bg: 'bg-teal-400' }, // 3
-        { border: 'border-gray-400', bg: 'bg-gray-400' }, // 4
+        { border: 'border-indigo-400', bg: 'bg-indigo-400' }, // 4
         { border: 'border-purple-400', bg: 'bg-purple-400' }, // 5
         { border: 'border-purple-500', bg: 'bg-purple-500' }, // 6
         { border: 'border-purple-600', bg: 'bg-purple-600' }, // 7
@@ -81,7 +81,7 @@ const selectOption = (value: number) => {
                     disabled
                         ? 'cursor-not-allowed opacity-50'
                         : 'cursor-pointer hover:scale-110',
-                    modelValue !== value && 'bg-white',
+                    modelValue !== value && 'bg-indigo-50',
                 ]"
                 :aria-label="`Select option ${value}`"
                 :aria-pressed="modelValue === value"
