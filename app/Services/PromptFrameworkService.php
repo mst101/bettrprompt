@@ -225,10 +225,15 @@ class PromptFrameworkService
         }
 
         try {
+            Log::info('About to call n8n workflow 2', [
+                'url' => "{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate",
+                'timeout_seconds' => 90,
+            ]);
+
             $response = Http::timeout(90)
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $payload);
 
-            Log::info('n8n workflow 2 response', [
+            Log::info('n8n workflow 2 response received', [
                 'status' => $response->status(),
                 'successful' => $response->successful(),
                 'body_preview' => substr($response->body(), 0, 500),
@@ -252,8 +257,31 @@ class PromptFrameworkService
                 'success' => false,
                 'error' => 'Generation workflow failed',
             ];
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('Workflow 2 connection error', [
+                'message' => $e->getMessage(),
+                'url' => "{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate",
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'Failed to connect to n8n: ' . $e->getMessage(),
+            ];
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error('Workflow 2 request error', [
+                'message' => $e->getMessage(),
+                'status' => $e->response?->status(),
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'n8n request failed: ' . $e->getMessage(),
+            ];
         } catch (\Exception $e) {
-            Log::error('Workflow 2 exception', ['message' => $e->getMessage()]);
+            Log::error('Workflow 2 exception', [
+                'message' => $e->getMessage(),
+                'class' => get_class($e),
+            ]);
 
             return [
                 'success' => false,
