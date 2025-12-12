@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdminUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -32,7 +33,12 @@ class UserController extends Controller
             ->withQueryString();
 
         return Inertia::render('Admin/Users/Index', [
-            'users' => $users,
+            'users' => [
+                'data' => AdminUserResource::collection($users->items()),
+                'links' => $users->linkCollection(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+            ],
             'filters' => $request->only('search'),
         ]);
     }

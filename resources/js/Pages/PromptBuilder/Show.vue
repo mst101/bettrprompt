@@ -39,7 +39,7 @@ const page = usePage<{
 }>();
 
 const user = computed(() => page.props.auth?.user);
-const isAdmin = computed(() => user.value?.is_admin ?? false);
+const isAdmin = computed(() => user.value?.isAdmin ?? false);
 const isGuest = computed(() => !user.value);
 
 // Show banner for guests who just completed their prompt

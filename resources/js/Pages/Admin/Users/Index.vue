@@ -13,11 +13,11 @@ interface User {
     id: number;
     name: string;
     email: string;
-    personality_type: string | null;
-    is_admin: boolean;
-    created_at: string;
-    visitors_count: number;
-    prompt_runs_count: number;
+    personalityType: string | null;
+    isAdmin: boolean;
+    createdAt: string;
+    visitorsCount: number;
+    promptRunsCount: number;
 }
 
 interface Props {
@@ -119,7 +119,7 @@ watch(search, debouncedSearch);
                                             {{ user.name }}
                                         </div>
                                         <div
-                                            v-if="user.is_admin"
+                                            v-if="user.isAdmin"
                                             class="text-xs text-indigo-600"
                                         >
                                             Administrator
@@ -134,14 +134,14 @@ watch(search, debouncedSearch);
                                 <span
                                     class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold text-blue-800"
                                 >
-                                    {{ user.visitors_count }}
+                                    {{ user.visitorsCount }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800"
                                 >
-                                    {{ user.prompt_runs_count }}
+                                    {{ user.promptRunsCount }}
                                 </span>
                             </td>
                         </Link>
