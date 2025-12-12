@@ -55,33 +55,23 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         exit 1
     fi
 
-    # Also install for Chrome/Chromium (NSS database)
+    # Chrome/Chromium on Linux requires separate installation
+    echo ""
+    echo "⚠️  IMPORTANT: Chrome on Linux uses its own certificate store!"
+    echo ""
+
     if command -v certutil &> /dev/null; then
-        echo ""
-        echo "🌐 Installing certificate for Chrome/Chromium..."
-
-        # Find Chrome/Chromium profile directories
-        CHROME_DIRS=(
-            "$HOME/.pki/nssdb"
-            "$HOME/.mozilla/firefox/*.default*"
-        )
-
-        for dir in "${CHROME_DIRS[@]}"; do
-            if [ -d "$dir" ] || compgen -G "$dir" > /dev/null; then
-                for profile in $dir; do
-                    if [ -d "$profile" ]; then
-                        certutil -A -n "Caddy Local CA" -t "C,," -i /tmp/caddy-local-ca.crt -d sql:"$profile" 2>/dev/null || true
-                        echo "   ✅ Installed to $profile"
-                    fi
-                done
-            fi
-        done
+        echo "✅ certutil is installed. Run the Chrome-specific script:"
+        echo "   ./scripts/install-chrome-ca.sh"
     else
+        echo "❌ certutil not found. To fix Chrome certificate warnings:"
         echo ""
-        echo "ℹ️  Note: certutil not found. Chrome may still show warnings."
-        echo "   Install libnss3-tools package to add certificate to Chrome's trust store:"
-        echo "   sudo apt install libnss3-tools  # Debian/Ubuntu"
-        echo "   sudo dnf install nss-tools      # Fedora"
+        echo "   1. Install NSS tools:"
+        echo "      sudo apt install libnss3-tools  # Debian/Ubuntu"
+        echo "      sudo dnf install nss-tools      # Fedora"
+        echo ""
+        echo "   2. Run the Chrome-specific script:"
+        echo "      ./scripts/install-chrome-ca.sh"
     fi
 
 else

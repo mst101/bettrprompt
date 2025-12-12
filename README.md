@@ -71,11 +71,25 @@ An intelligent prompt generation system that creates optimised AI prompts custom
    - Vite dev server with HMR
 
 5. **Fix HTTPS certificate warnings** (first time only)
+
+   **For Chrome on Linux:**
+   ```bash
+   # Install NSS tools
+   sudo apt install libnss3-tools
+
+   # Install Caddy's certificate to Chrome
+   ./scripts/install-chrome-ca.sh
+
+   # Completely close Chrome
+   pkill -f chrome
+   ```
+
+   **For macOS or other browsers:**
    ```bash
    ./scripts/install-local-ca.sh
    ```
 
-   Then **completely close and restart Chrome**.
+   Then **wait a few seconds and restart Chrome**.
 
 6. **Access the application**
    - **Main app**: https://app.localhost
@@ -287,7 +301,19 @@ See [CLAUDE.md](./CLAUDE.md) for detailed coding conventions and architecture do
 
 ### "Your connection is not private" in Chrome
 
-Run `./scripts/install-local-ca.sh` and completely restart Chrome.
+**On Linux:**
+```bash
+sudo apt install libnss3-tools
+./scripts/install-chrome-ca.sh
+pkill -f chrome  # Close all Chrome windows
+```
+
+**On macOS:**
+```bash
+./scripts/install-local-ca.sh
+```
+
+Then completely restart Chrome (wait a few seconds after closing).
 
 ### Port already in use
 

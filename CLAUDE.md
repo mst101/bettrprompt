@@ -194,28 +194,39 @@ The n8n dashboard is protected with basic authentication (credentials in Caddyfi
 
 Caddy automatically generates self-signed SSL certificates for local `.localhost` domains. To avoid "Your connection is not private" warnings in Chrome:
 
+**For Chrome/Chromium on Linux (most common):**
+
 ```bash
-# Run the installation script to trust Caddy's CA certificate
+# 1. Install NSS tools (required for Chrome certificate management)
+sudo apt install libnss3-tools
+
+# 2. Run the Chrome-specific installation script
+./scripts/install-chrome-ca.sh
+
+# 3. Completely close ALL Chrome windows
+pkill -f chrome
+
+# 4. Wait a few seconds, then restart Chrome and visit https://app.localhost
+```
+
+**For macOS or other browsers:**
+
+```bash
+# Run the general installation script
 ./scripts/install-local-ca.sh
 ```
 
-This script will:
-1. Extract Caddy's root CA certificate from the Docker container
-2. Install it to your system's trust store (macOS Keychain or Linux ca-certificates)
-3. Install it to Chrome/Chromium's NSS database (Linux only)
+**Why Chrome needs special handling on Linux:**
+Chrome on Linux uses its own NSS certificate database (`~/.pki/nssdb`), separate from the system trust store. Installing the certificate to `/usr/local/share/ca-certificates/` fixes it for `curl`, `wget`, and other system tools, but Chrome requires the certificate to be added to its NSS database using `certutil`.
 
-**After installation:**
-1. Close ALL Chrome/Chromium windows completely
-2. Restart Chrome
-3. Visit https://app.localhost - the warning should be gone
+**Verification:**
+```bash
+# Check if certificate is in Chrome's database
+certutil -L -d sql:$HOME/.pki/nssdb | grep Caddy
 
-**Manual installation (if script fails):**
-1. Extract certificate: `./vendor/bin/sail exec caddy cat /data/caddy/pki/authorities/local/root.crt > caddy-local-ca.crt`
-2. Install to system:
-   - **macOS**: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain caddy-local-ca.crt`
-   - **Linux (Debian/Ubuntu)**: `sudo cp caddy-local-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates`
-   - **Linux (RHEL/Fedora)**: `sudo cp caddy-local-ca.crt /etc/pki/ca-trust/source/anchors/ && sudo update-ca-trust`
-3. For Chrome on Linux, also run: `certutil -A -n "Caddy Local CA" -t "C,," -i caddy-local-ca.crt -d sql:$HOME/.pki/nssdb`
+# Should show something like:
+# Caddy Local Authority - 2025 ECC Root         C,,
+```
 
 ## Database
 
