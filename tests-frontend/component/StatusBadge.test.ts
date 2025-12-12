@@ -33,24 +33,24 @@ describe('StatusBadge', () => {
         expect(wrapper.classes()).toContain('text-red-800');
     });
 
-    it('should render pending workflow stage (1_completed)', () => {
+    it('should render awaiting answers workflow stage (1_completed)', () => {
         const wrapper = mount(StatusBadge, {
             props: { workflowStage: '1_completed' },
         });
 
-        expect(wrapper.text()).toBe('Pending');
-        expect(wrapper.classes()).toContain('bg-gray-100');
-        expect(wrapper.classes()).toContain('text-gray-800');
+        expect(wrapper.text()).toBe('Awaiting Answers');
+        expect(wrapper.classes()).toContain('bg-blue-100');
+        expect(wrapper.classes()).toContain('text-blue-800');
     });
 
-    it('should render pre-analysis completed stage (0_completed)', () => {
+    it('should render awaiting questions stage (0_completed)', () => {
         const wrapper = mount(StatusBadge, {
             props: { workflowStage: '0_completed' },
         });
 
-        expect(wrapper.text()).toBe('Pending');
-        expect(wrapper.classes()).toContain('bg-gray-100');
-        expect(wrapper.classes()).toContain('text-gray-800');
+        expect(wrapper.text()).toBe('Awaiting Questions');
+        expect(wrapper.classes()).toContain('bg-yellow-100');
+        expect(wrapper.classes()).toContain('text-yellow-800');
     });
 
     it('should have test ID attribute', () => {

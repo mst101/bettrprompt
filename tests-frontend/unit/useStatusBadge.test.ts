@@ -35,20 +35,20 @@ describe('useStatusBadge', () => {
         expect(config.colorClass).toBe('bg-red-100 text-red-800');
     });
 
-    it('should return config for pending workflow stage (1_completed)', () => {
+    it('should return config for awaiting answers workflow stage (1_completed)', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('1_completed');
 
-        expect(config.label).toBe('Pending');
-        expect(config.colorClass).toBe('bg-gray-100 text-gray-800');
+        expect(config.label).toBe('Awaiting Answers');
+        expect(config.colorClass).toBe('bg-blue-100 text-blue-800');
     });
 
-    it('should return config for pre-analysis completed stage (0_completed)', () => {
+    it('should return config for awaiting questions stage (0_completed)', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('0_completed');
 
-        expect(config.label).toBe('Pending');
-        expect(config.colorClass).toBe('bg-gray-100 text-gray-800');
+        expect(config.label).toBe('Awaiting Questions');
+        expect(config.colorClass).toBe('bg-yellow-100 text-yellow-800');
     });
 
     it('should handle unknown workflow stage gracefully', () => {
