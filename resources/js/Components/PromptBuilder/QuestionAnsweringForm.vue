@@ -41,7 +41,13 @@ const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
     null,
 );
 
+// Check if we're on a larger screen (sm breakpoint and above)
+const isLargeScreen = () => window.matchMedia('(min-width: 640px)').matches;
+
 const focus = () => {
+    // Only focus on larger screens to avoid keyboard popup on mobile
+    if (!isLargeScreen()) return;
+
     nextTick(() => {
         textareaRef.value?.focus();
     });
@@ -52,7 +58,10 @@ defineExpose({ focus });
 watch(
     () => props.question,
     () => {
-        focus();
+        // Only auto-focus on larger screens to avoid keyboard popup on mobile
+        if (isLargeScreen()) {
+            focus();
+        }
     },
 );
 

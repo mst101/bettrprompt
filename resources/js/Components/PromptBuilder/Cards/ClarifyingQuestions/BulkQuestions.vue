@@ -39,6 +39,9 @@ const textareaRefs = ref<
     (InstanceType<typeof FormTextareaWithActions> | null)[]
 >([]);
 
+// Check if we're on a larger screen (sm breakpoint and above)
+const isLargeScreen = () => window.matchMedia('(min-width: 640px)').matches;
+
 const setTextareaRef = (
     el: InstanceType<typeof FormTextareaWithActions> | null,
     index: number,
@@ -49,6 +52,9 @@ const setTextareaRef = (
 };
 
 const focusFirstTextarea = () => {
+    // Only focus on larger screens to avoid keyboard popup on mobile
+    if (!isLargeScreen()) return;
+
     const firstRef = textareaRefs.value[0];
     if (firstRef) {
         firstRef.focus();
