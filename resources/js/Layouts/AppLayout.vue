@@ -16,6 +16,7 @@ import NavLink from '@/Components/NavLink.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
+import { useSessionTimeout } from '@/Composables/useSessionTimeout';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -41,6 +42,12 @@ const page = usePage<{
 }>();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
+
+// Initialize session timeout tracking for authenticated users
+// This prevents 419 CSRF errors by logging users out before session expires
+if (isAuthenticated.value) {
+    useSessionTimeout();
+}
 
 // Determine logo destination based on admin status and current route
 const logoDestination = computed(() => {
