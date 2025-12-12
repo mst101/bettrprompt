@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/vue3';
 import type { Channel } from 'laravel-echo';
-import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch, type ComputedRef, type Ref } from 'vue';
 
 interface ReloadOptions {
     only?: string[];
@@ -10,11 +10,13 @@ interface EventHandlers {
     [eventName: string]: (data: unknown) => void;
 }
 
+type ChannelNameParam = string | Ref<string> | ComputedRef<string>;
+
 /**
  * Composable for real-time updates via Laravel Echo/WebSockets
  * with automatic fallback to polling if WebSockets fail
  *
- * @param channelName - Echo channel name
+ * @param channelNameParam - Echo channel name (can be string, ref, or computed)
  * @param events - Event handlers map
  * @param reloadOptions - Inertia reload options for polling fallback
  * @param pollingInterval - Polling interval in milliseconds (default: 5000)
@@ -22,7 +24,7 @@ interface EventHandlers {
  *
  * @example
  * const { connected, usingFallback } = useRealtimeUpdates(
- *     `prompt-run.${promptRunId}`,
+ *     computed(() => `prompt-run.${promptRunId.value}`),
  *     {
  *         'FrameworkSelected': (data) => console.log('Framework selected', data),
  *         'PromptOptimizationCompleted': (data) => router.reload(),
@@ -33,12 +35,20 @@ interface EventHandlers {
  * );
  */
 export function useRealtimeUpdates(
-    channelName: string,
+    channelNameParam: ChannelNameParam,
     events: EventHandlers,
     reloadOptions?: ReloadOptions,
     pollingInterval: number = 5000,
     shouldPoll?: Ref<boolean>,
 ) {
+    // Convert string to computed ref for consistent handling
+    const channelNameComputed = computed(() => {
+        if (typeof channelNameParam === 'string') {
+            return channelNameParam;
+        }
+        return channelNameParam.value;
+    });
+    const channelName = computed(() => channelNameComputed.value);
     const connected = ref(false);
     const usingFallback = ref(false);
     let pollInterval: number | null = null;
@@ -235,17 +245,18 @@ export function useRealtimeUpdates(
 
         // Watch for channelName changes (e.g., when router.reload updates props)
         // This is important for partial Inertia reloads that don't unmount/remount the component
-        const unwatch = watch(
-            () => channelName,
+        let previousChannelName = channelName.value;
+        watch(
+            channelName,
             (newChannelName, oldChannelName) => {
-                if (newChannelName && newChannelName !== oldChannelName) {
+                if (newChannelName && newChannelName !== previousChannelName) {
                     console.log(
-                        `[useRealtimeUpdates] Channel name changed from ${oldChannelName} to ${newChannelName}, reconnecting`,
+                        `[useRealtimeUpdates] Channel name changed from ${previousChannelName} to ${newChannelName}, reconnecting`,
                     );
                     // Cleanup old channel and setup new one
                     if (channel) {
                         try {
-                            window.Echo?.leave(oldChannelName || channelName);
+                            window.Echo?.leave(previousChannelName);
                         } catch (error) {
                             console.warn(
                                 '[useRealtimeUpdates] Error leaving old channel during name change:',
@@ -254,6 +265,7 @@ export function useRealtimeUpdates(
                         }
                         channel = null;
                     }
+                    previousChannelName = newChannelName;
                     // Setup new channel
                     trySetup();
                 }
