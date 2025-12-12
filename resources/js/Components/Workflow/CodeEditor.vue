@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonSmall from '@/Components/ButtonSmall.vue';
 import { computed } from 'vue';
 
 interface Props {
@@ -29,21 +30,19 @@ const characterCount = computed(() => {
         <div class="flex items-center justify-between bg-indigo-300 px-6 py-4">
             <span class="font-semibold text-indigo-800">{{ title }}</span>
             <div class="flex gap-2">
-                <button
-                    class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+                <ButtonSmall
                     title="Expand to full screen"
                     @click="emit('expand')"
                 >
                     ⛶ Expand
-                </button>
-                <button
+                </ButtonSmall>
+                <ButtonSmall
                     v-if="!readonly"
-                    class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
                     title="Save to file"
                     @click="emit('save')"
                 >
                     Save
-                </button>
+                </ButtonSmall>
             </div>
         </div>
         <textarea

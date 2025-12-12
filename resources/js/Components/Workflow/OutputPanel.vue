@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonSmall from '@/Components/ButtonSmall.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
@@ -45,13 +46,12 @@ const renderMarkdown = (text: string | null | undefined): string => {
                         <h3 class="font-semibold text-indigo-900">
                             System Prompt
                         </h3>
-                        <button
-                            class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-300"
+                        <ButtonSmall
                             title="Expand to full screen"
                             @click="emit('expandSystem')"
                         >
                             ⛶ Expand
-                        </button>
+                        </ButtonSmall>
                     </div>
                     <div
                         class="prose dark:prose-invert prose-sm max-h-60 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
@@ -63,13 +63,12 @@ const renderMarkdown = (text: string | null | undefined): string => {
                 <div v-if="output.messages">
                     <div class="mb-2 flex items-center justify-between">
                         <h3 class="font-semibold text-indigo-900">Messages</h3>
-                        <button
-                            class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-300"
+                        <ButtonSmall
                             title="Expand to full screen"
                             @click="emit('expandMessages')"
                         >
                             ⛶ Expand
-                        </button>
+                        </ButtonSmall>
                     </div>
                     <div
                         v-if="Array.isArray(output.messages)"
