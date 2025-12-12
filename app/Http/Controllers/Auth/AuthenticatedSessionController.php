@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\VisitorMigrationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,21 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // Migrate visitor data to logged-in user
+        $visitorId = $request->cookie('visitor_id');
+        $claimedCount = 0;
+
+        if ($visitorId) {
+            $user = Auth::user();
+            $migrationService = new VisitorMigrationService;
+            $claimedCount = $migrationService->migrateVisitorToUser($user, $visitorId);
+        }
+
+        // If visitor had completed prompts, redirect to history page
+        if ($claimedCount > 0) {
+            return redirect()->intended(route('prompt-builder.history', absolute: false));
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

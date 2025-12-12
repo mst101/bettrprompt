@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Models\PromptRun;
 use App\Models\User;
-use App\Models\Visitor;
 use App\Services\GeolocationService;
+use App\Services\VisitorMigrationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,61 +43,13 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // Link visitor to newly registered user
+        // Migrate visitor data to newly registered user
         $visitorId = $request->cookie('visitor_id');
         $claimedCount = 0;
 
         if ($visitorId) {
-            $visitor = Visitor::find($visitorId);
-            if ($visitor && ! $visitor->user_id) {
-                // Copy personality data, location data, and referrer from visitor to user
-                $updates = [];
-                if ($visitor->personality_type) {
-                    $updates['personality_type'] = $visitor->personality_type;
-                    $updates['trait_percentages'] = $visitor->trait_percentages;
-                }
-                if ($visitor->referred_by_user_id) {
-                    $updates['referred_by_user_id'] = $visitor->referred_by_user_id;
-                }
-                // Copy location data from visitor
-                if ($visitor->hasLocationData()) {
-                    $updates['country_code'] = $visitor->country_code;
-                    $updates['country_name'] = $visitor->country_name;
-                    $updates['region'] = $visitor->region;
-                    $updates['city'] = $visitor->city;
-                    $updates['timezone'] = $visitor->timezone;
-                    $updates['currency_code'] = $visitor->currency_code;
-                    $updates['latitude'] = $visitor->latitude;
-                    $updates['longitude'] = $visitor->longitude;
-                    $updates['language_code'] = $visitor->language_code;
-                    $updates['location_detected_at'] = $visitor->location_detected_at;
-                    $updates['location_manually_set'] = false; // Auto-detected
-                    $updates['language_manually_set'] = false; // Auto-detected
-                }
-                if (! empty($updates)) {
-                    $user->update($updates);
-                }
-
-                // Update visitor record
-                $visitor->update([
-                    'user_id' => $user->id,
-                    'converted_at' => now(),
-                ]);
-
-                // Claim all guest prompt runs
-                $claimedCount = PromptRun::where('visitor_id', $visitorId)
-                    ->whereNull('user_id')
-                    ->update(['user_id' => $user->id]);
-
-                Log::info('Guest converted to user on registration', [
-                    'user_id' => $user->id,
-                    'visitor_id' => $visitorId,
-                    'claimed_prompt_runs' => $claimedCount,
-                    'copied_personality' => (bool) $visitor->personality_type,
-                    'copied_location' => $visitor->hasLocationData(),
-                    'copied_referrer' => (bool) $visitor->referred_by_user_id,
-                ]);
-            }
+            $migrationService = new VisitorMigrationService;
+            $claimedCount = $migrationService->migrateVisitorToUser($user, $visitorId);
         }
 
         // Fallback: If user still doesn't have location data, look it up from IP
