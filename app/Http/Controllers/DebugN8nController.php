@@ -460,7 +460,7 @@ class DebugN8nController extends Controller
         // Load question bank
         $questionBankFile = "{$referenceDocsPath}/question_bank.md";
         if (file_exists($questionBankFile)) {
-            $referenceData['question_bank_doc'] = [
+            $referenceData['question_bank'] = [
                 'content' => file_get_contents($questionBankFile),
             ];
         }
