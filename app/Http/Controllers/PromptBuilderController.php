@@ -333,7 +333,9 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        $promptRun->load(['parent', 'children']);
+        // Don't load parent/children to avoid oversized response payloads
+        // The frontend can fetch these separately if needed via API calls
+        // $promptRun->load(['parent', 'children']);
 
         $currentQuestionIndex = $promptRun->current_question_index ?? 0;
 

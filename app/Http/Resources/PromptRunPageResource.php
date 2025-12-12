@@ -54,25 +54,20 @@ class PromptRunPageResource extends JsonResource
             'personalityAdjustmentsPreview' => $this->personality_adjustments_preview,
             'questionRationale' => $this->question_rationale,
             'frameworkUsed' => $this->framework_used,
-            // Exclude personalityAdjustmentsSummary (large array)
-            // Exclude modelRecommendations (large array)
-            // Exclude iterationSuggestions (large array)
+            'personalityAdjustmentsSummary' => $this->personality_adjustments_summary,
+            'modelRecommendations' => $this->model_recommendations,
+            'iterationSuggestions' => $this->iteration_suggestions,
             'preAnalysisApiUsage' => $this->pre_analysis_api_usage,
             'analysisApiUsage' => $this->analysis_api_usage,
             'generationApiUsage' => $this->generation_api_usage,
 
-            // Relationships
+            // Relationships - don't include parent/children to avoid oversized payloads
+            // They can be fetched separately if needed
             'user' => $this->whenLoaded('user', function () {
                 return $this->user ? new UserResource($this->user) : null;
             }),
             'visitor' => $this->whenLoaded('visitor', function () {
                 return $this->visitor ? new VisitorResource($this->visitor) : null;
-            }),
-            'parent' => $this->whenLoaded('parent', function () {
-                return $this->parent ? (new PromptRunPageResource($this->parent))->resolve() : null;
-            }),
-            'children' => $this->whenLoaded('children', function () {
-                return $this->children->map(fn ($child) => (new PromptRunPageResource($child))->resolve())->values()->all();
             }),
         ];
     }
