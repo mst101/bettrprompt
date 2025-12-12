@@ -267,3 +267,58 @@ test('child prompt run inherits personality from user', function () {
     expect($childRun->personality_type)->toBe($this->user->personality_type)
         ->and($childRun->trait_percentages)->toBe($this->user->trait_percentages);
 });
+
+test('child from answers inherits pre-analysis information from parent', function () {
+    $this->actingAs($this->user);
+
+    $preAnalysisQuestions = [
+        ['id' => 'q1', 'question' => 'What is your goal?', 'type' => 'text'],
+        ['id' => 'q2', 'question' => 'What is your deadline?', 'type' => 'text'],
+    ];
+
+    $preAnalysisAnswers = [
+        'q1' => 'To build a website',
+        'q2' => 'Next month',
+    ];
+
+    $preAnalysisContext = [
+        'q1' => ['question' => 'What is your goal?', 'answer' => 'To build a website'],
+        'q2' => ['question' => 'What is your deadline?', 'answer' => 'Next month'],
+    ];
+
+    $parentRun = PromptRun::factory()->create([
+        'user_id' => $this->user->id,
+        'task_classification' => ['category' => 'planning'],
+        'selected_framework' => ['code' => 'SMART'],
+        'framework_questions' => [['question' => 'Q1']],
+        'personality_tier' => 'full',
+        'pre_analysis_questions' => $preAnalysisQuestions,
+        'pre_analysis_answers' => $preAnalysisAnswers,
+        'pre_analysis_context' => $preAnalysisContext,
+        'pre_analysis_reasoning' => 'User needs structured guidance',
+    ]);
+
+    $this->mock(PromptFrameworkService::class, function ($mock) {
+        $mock->shouldReceive('generatePrompt')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'data' => [
+                    'optimised_prompt' => 'Prompt',
+                    'framework_used' => ['code' => 'SMART'],
+                ],
+            ]);
+    });
+
+    $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+        'clarifying_answers' => ['New answer'],
+    ]);
+
+    $childRun = PromptRun::where('parent_id', $parentRun->id)->first();
+
+    // Child should inherit all pre-analysis information
+    expect($childRun->pre_analysis_questions)->toBe($preAnalysisQuestions)
+        ->and($childRun->pre_analysis_answers)->toBe($preAnalysisAnswers)
+        ->and($childRun->pre_analysis_context)->toBe($preAnalysisContext)
+        ->and($childRun->pre_analysis_reasoning)->toBe('User needs structured guidance');
+});
