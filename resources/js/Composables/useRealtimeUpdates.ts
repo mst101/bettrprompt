@@ -178,8 +178,16 @@ export function useRealtimeUpdates(
         // from the old channel and reconnect to the new one
         if (channel) {
             try {
+                console.log(
+                    '[useRealtimeUpdates] Leaving old channel to reconnect to new one',
+                );
+                // Force unsubscribe from all events on this channel
+                if ('listeners' in channel && typeof (channel as any).listeners === 'function') {
+                    (channel as any).listeners = {};
+                }
                 window.Echo?.leave(channelName);
                 channel = null;
+                console.log('[useRealtimeUpdates] Old channel cleaned up');
             } catch (error) {
                 console.warn('[useRealtimeUpdates] Error leaving old channel:', error);
                 channel = null;
@@ -224,6 +232,33 @@ export function useRealtimeUpdates(
                 }
             }, 1000);
         }
+
+        // Watch for channelName changes (e.g., when router.reload updates props)
+        // This is important for partial Inertia reloads that don't unmount/remount the component
+        const unwatch = watch(
+            () => channelName,
+            (newChannelName, oldChannelName) => {
+                if (newChannelName && newChannelName !== oldChannelName) {
+                    console.log(
+                        `[useRealtimeUpdates] Channel name changed from ${oldChannelName} to ${newChannelName}, reconnecting`,
+                    );
+                    // Cleanup old channel and setup new one
+                    if (channel) {
+                        try {
+                            window.Echo?.leave(oldChannelName || channelName);
+                        } catch (error) {
+                            console.warn(
+                                '[useRealtimeUpdates] Error leaving old channel during name change:',
+                                error,
+                            );
+                        }
+                        channel = null;
+                    }
+                    // Setup new channel
+                    trySetup();
+                }
+            },
+        );
 
         // Watch shouldPoll and start/stop polling accordingly (only if using fallback)
         if (shouldPoll) {
