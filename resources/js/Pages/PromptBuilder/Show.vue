@@ -412,7 +412,10 @@ watch(activeTab, async (newTab) => {
             only: ['promptRun'],
             onSuccess: async () => {
                 await nextTick();
-                clarifyingQuestionsRef.value?.focus();
+                // Only auto-focus on larger screens (where tabs are shown)
+                if (isLargeScreen()) {
+                    clarifyingQuestionsRef.value?.focus();
+                }
             },
         });
     }
