@@ -376,15 +376,14 @@ const executeJavaScript = async () => {
                 <span class="text-xs text-indigo-600">
                     {{ inputJson ? `${inputJson.length} characters` : 'N/A' }}
                 </span>
-                <button
-                    class="rounded bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-700"
+                <ButtonPrimary
                     @click="
                         saveInputData();
                         expandedView = null;
                     "
                 >
                     Save and Close
-                </button>
+                </ButtonPrimary>
             </div>
         </ExpandableModal>
 
@@ -405,15 +404,14 @@ const executeJavaScript = async () => {
                 <span class="text-xs text-indigo-600">
                     {{ javascript ? `${javascript.length} characters` : 'N/A' }}
                 </span>
-                <button
-                    class="rounded bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-700"
+                <ButtonPrimary
                     @click="
                         saveJavaScriptToFile();
                         expandedView = null;
                     "
                 >
                     Save and Close
-                </button>
+                </ButtonPrimary>
             </div>
         </ExpandableModal>
     </div>

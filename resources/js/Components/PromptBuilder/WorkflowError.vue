@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonDanger from '@/Components/ButtonDanger.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 
 interface Props {
@@ -31,13 +32,13 @@ const emit = defineEmits<{
                     </p>
                 </div>
             </div>
-            <button
-                class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none sm:self-start"
+            <ButtonDanger
+                class="inline-flex shrink-0 items-center gap-2 sm:self-start"
                 @click="emit('retry')"
             >
                 <DynamicIcon name="arrow-path" class="size-4" />
                 Retry Workflow
-            </button>
+            </ButtonDanger>
         </div>
     </div>
 </template>

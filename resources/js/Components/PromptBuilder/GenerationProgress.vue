@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
 import LoadingSpinner from '@/Components/LoadingSpinner.vue';
 import StageIndicator from '@/Components/PromptBuilder/StageIndicator.vue';
@@ -150,19 +152,15 @@ onUnmounted(() => {
 
             <!-- Retry Button -->
             <div class="flex gap-3">
-                <button
-                    v-if="onRetry"
-                    class="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
-                    @click="onRetry"
-                >
+                <ButtonPrimary v-if="onRetry" class="flex-1" @click="onRetry">
                     Retry Generation
-                </button>
-                <button
-                    class="flex-1 rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                </ButtonPrimary>
+                <ButtonSecondary
+                    class="flex-1"
                     @click="() => window.history.back()"
                 >
                     Go Back
-                </button>
+                </ButtonSecondary>
             </div>
         </div>
 

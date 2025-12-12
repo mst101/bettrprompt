@@ -1,3 +1,4 @@
+import ButtonDanger from '@/Components/ButtonDanger.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import WorkflowError from '@/Components/PromptBuilder/WorkflowError.vue';
 import { mount } from '@vue/test-utils';
@@ -59,7 +60,7 @@ describe('WorkflowError', () => {
             props: defaultProps,
         });
 
-        const button = wrapper.find('button');
+        const button = wrapper.findComponent(ButtonDanger);
         expect(button.exists()).toBe(true);
         expect(button.text()).toContain('Retry Workflow');
     });
@@ -69,7 +70,7 @@ describe('WorkflowError', () => {
             props: defaultProps,
         });
 
-        const button = wrapper.find('button');
+        const button = wrapper.findComponent(ButtonDanger);
         await button.trigger('click');
 
         expect(wrapper.emitted('retry')).toBeTruthy();
@@ -111,28 +112,13 @@ describe('WorkflowError', () => {
         expect(innerDiv.classes()).toContain('sm:justify-between');
     });
 
-    it('should have proper button styling', () => {
+    it('should use ButtonDanger component', () => {
         const wrapper = mount(WorkflowError, {
             props: defaultProps,
         });
 
-        const button = wrapper.find('button');
-        expect(button.classes()).toContain('bg-red-600');
-        expect(button.classes()).toContain('hover:bg-red-700');
-        expect(button.classes()).toContain('text-white');
-        expect(button.classes()).toContain('rounded-lg');
-    });
-
-    it('should have focus ring on button', () => {
-        const wrapper = mount(WorkflowError, {
-            props: defaultProps,
-        });
-
-        const button = wrapper.find('button');
-        expect(button.classes()).toContain('focus:ring-2');
-        expect(button.classes()).toContain('focus:ring-red-500');
-        expect(button.classes()).toContain('focus:ring-offset-2');
-        expect(button.classes()).toContain('focus:outline-none');
+        const button = wrapper.findComponent(ButtonDanger);
+        expect(button.exists()).toBe(true);
     });
 
     it('should have shrink-0 on button for responsive layout', () => {
@@ -140,7 +126,7 @@ describe('WorkflowError', () => {
             props: defaultProps,
         });
 
-        const button = wrapper.find('button');
+        const button = wrapper.findComponent(ButtonDanger);
         expect(button.classes()).toContain('shrink-0');
     });
 
