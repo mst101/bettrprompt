@@ -348,14 +348,6 @@ const focus = async () => {
 // Expose focus method for parent components
 defineExpose({ focus });
 
-const hasSubmittedAnswers = computed(() => {
-    if (!questions.value.length) return false;
-    if (answers.value.length < questions.value.length) return false;
-    return answers.value.every(
-        (answer) => answer !== null && answer !== undefined,
-    );
-});
-
 // Check if we're in the generation workflow stage (2_processing, 2_completed, or 2_failed)
 const isInGenerationStage = computed(() => {
     const stage = props.promptRun.workflowStage;
@@ -366,12 +358,26 @@ const isInGenerationStage = computed(() => {
     );
 });
 
+const hasSubmittedAnswers = computed(() => {
+    // If we're in generation stage, answers have definitely been submitted
+    if (isInGenerationStage.value) return true;
+
+    // Otherwise check if all answers are filled (including skipped = null)
+    if (!questions.value.length) return false;
+    if (answers.value.length < questions.value.length) return false;
+
+    // Check if we've addressed all questions (even if some are null/skipped)
+    // The key is that the array is complete, not that all values are non-null
+    return answers.value.length === questions.value.length;
+});
+
 const shouldShowQuestionForm = computed(
     () =>
         hasQuestions.value &&
         currentQuestion.value &&
         !showAllQuestions.value &&
-        !hasSubmittedAnswers.value,
+        !hasSubmittedAnswers.value &&
+        !isInGenerationStage.value,
 );
 
 const bulkSubmitLabel = computed(() =>
@@ -473,7 +479,7 @@ const optionalQuestionsLabel = computed(() => {
         </p>
 
         <AnsweredList
-            v-if="isInGenerationStage"
+            v-if="isInGenerationStage && !isEditingAnswers"
             :questions="allQuestions"
             :answers="promptRun.clarifyingAnswers"
         />
