@@ -38,7 +38,7 @@ const featureOptions = [
         value: 'templates',
         label: 'Prompt templates library',
         description:
-            'Pre-built templates for common use cases (code review, content writing, data analysis, etc.)',
+            'Pre-built templates for common use cases (content writing, data analysis, code review, etc.)',
     },
     {
         value: 'compare',

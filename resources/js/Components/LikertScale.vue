@@ -43,19 +43,51 @@ const getCircleSize = (index: number) => {
 };
 
 const getCircleColor = (index: number, isSelected: boolean) => {
-    // Color gradient from teal/green to purple
+    // Colour gradient from teal/green to purple
     const colors = [
-        { border: 'border-teal-600', bg: 'bg-teal-600' }, // 1
-        { border: 'border-teal-500', bg: 'bg-teal-500' }, // 2
-        { border: 'border-teal-400', bg: 'bg-teal-400' }, // 3
-        { border: 'border-indigo-400', bg: 'bg-indigo-400' }, // 4
-        { border: 'border-purple-400', bg: 'bg-purple-400' }, // 5
-        { border: 'border-purple-500', bg: 'bg-purple-500' }, // 6
-        { border: 'border-purple-600', bg: 'bg-purple-600' }, // 7
+        {
+            border: 'border-teal-600',
+            bg: 'bg-teal-600',
+            hover: 'hover:bg-teal-600',
+        }, // 1
+        {
+            border: 'border-teal-500',
+            bg: 'bg-teal-500',
+            hover: 'hover:bg-teal-500',
+        }, // 2
+        {
+            border: 'border-teal-400',
+            bg: 'bg-teal-400',
+            hover: 'hover:bg-teal-400',
+        }, // 3
+        {
+            border: 'border-indigo-400',
+            bg: 'bg-indigo-400',
+            hover: 'hover:bg-indigo-400',
+        }, // 4
+        {
+            border: 'border-purple-400',
+            bg: 'bg-purple-400',
+            hover: 'hover:bg-purple-400',
+        }, // 5
+        {
+            border: 'border-purple-500',
+            bg: 'bg-purple-500',
+            hover: 'hover:bg-purple-500',
+        }, // 6
+        {
+            border: 'border-purple-600',
+            bg: 'bg-purple-600',
+            hover: 'hover:bg-purple-600',
+        }, // 7
     ];
 
     const color = colors[index] || colors[3];
-    return isSelected ? color.bg : color.border;
+    return {
+        border: color.border,
+        bg: isSelected ? color.bg : '',
+        hover: color.hover,
+    };
 };
 
 const selectOption = (value: number) => {
@@ -77,11 +109,13 @@ const selectOption = (value: number) => {
                 :class="[
                     getCircleSize(index),
                     'rounded-full border-2 transition-all duration-200',
-                    getCircleColor(index, modelValue === value),
+                    getCircleColor(index, modelValue === value).border,
+                    getCircleColor(index, modelValue === value).bg,
+                    getCircleColor(index, modelValue === value).hover,
                     disabled
                         ? 'cursor-not-allowed opacity-50'
                         : 'cursor-pointer hover:scale-110',
-                    modelValue !== value && 'bg-indigo-50',
+                    modelValue !== value && 'bg-white dark:bg-indigo-50',
                 ]"
                 :aria-label="`Select option ${value}`"
                 :aria-pressed="modelValue === value"
