@@ -177,7 +177,7 @@ describe('LinkButton', () => {
 
         const link = wrapper.find('a');
         expect(link.classes()).toContain('focus:ring-offset-2');
-        expect(link.classes()).toContain('focus:ring-offset-gray-100');
+        expect(link.classes()).toContain('focus:ring-offset-indigo-100');
     });
 
     it('should have shadow for primary variant', () => {
