@@ -190,6 +190,33 @@ Caddy acts as a reverse proxy for local development:
 
 The n8n dashboard is protected with basic authentication (credentials in Caddyfile).
 
+#### Fixing HTTPS Certificate Warnings
+
+Caddy automatically generates self-signed SSL certificates for local `.localhost` domains. To avoid "Your connection is not private" warnings in Chrome:
+
+```bash
+# Run the installation script to trust Caddy's CA certificate
+./scripts/install-local-ca.sh
+```
+
+This script will:
+1. Extract Caddy's root CA certificate from the Docker container
+2. Install it to your system's trust store (macOS Keychain or Linux ca-certificates)
+3. Install it to Chrome/Chromium's NSS database (Linux only)
+
+**After installation:**
+1. Close ALL Chrome/Chromium windows completely
+2. Restart Chrome
+3. Visit https://app.localhost - the warning should be gone
+
+**Manual installation (if script fails):**
+1. Extract certificate: `./vendor/bin/sail exec caddy cat /data/caddy/pki/authorities/local/root.crt > caddy-local-ca.crt`
+2. Install to system:
+   - **macOS**: `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain caddy-local-ca.crt`
+   - **Linux (Debian/Ubuntu)**: `sudo cp caddy-local-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates`
+   - **Linux (RHEL/Fedora)**: `sudo cp caddy-local-ca.crt /etc/pki/ca-trust/source/anchors/ && sudo update-ca-trust`
+3. For Chrome on Linux, also run: `certutil -A -n "Caddy Local CA" -t "C,," -i caddy-local-ca.crt -d sql:$HOME/.pki/nssdb`
+
 ## Database
 
 Uses PostgreSQL with standard Laravel migrations in `database/migrations/`. A separate database is automatically created
