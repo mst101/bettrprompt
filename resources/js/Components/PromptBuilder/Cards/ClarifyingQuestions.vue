@@ -362,12 +362,16 @@ const hasSubmittedAnswers = computed(() => {
     // If we're in generation stage, answers have definitely been submitted
     if (isInGenerationStage.value) return true;
 
-    // Otherwise check if all answers are filled (including skipped = null)
+    // Otherwise check if we've actually submitted answers (not just hydrated nulls)
     if (!questions.value.length) return false;
-    if (answers.value.length < questions.value.length) return false;
 
-    // Check if we've addressed all questions (even if some are null/skipped)
-    // The key is that the array is complete, not that all values are non-null
+    // Check if clarifyingAnswers exists in the database
+    // If it's null or empty, answers haven't been submitted yet
+    const originalAnswers = props.promptRun.clarifyingAnswers;
+    if (!originalAnswers || originalAnswers.length === 0) return false;
+
+    // If we have answers from the database, check if the array is complete
+    // The array is complete when we've addressed all questions (even if some are null/skipped)
     return answers.value.length === questions.value.length;
 });
 
