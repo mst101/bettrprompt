@@ -209,6 +209,13 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 >
                                     Feedback
                                 </NavLink>
+                                <NavLink
+                                    v-if="isAdmin"
+                                    :href="route('workflow.index')"
+                                    :active="route().current('workflow.*')"
+                                >
+                                    Workflows
+                                </NavLink>
                             </div>
                         </div>
 
@@ -336,6 +343,17 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         "
                                     >
                                         Feedback
+                                    </ResponsiveNavLink>
+
+                                    <ResponsiveNavLink
+                                        v-if="isAdmin"
+                                        :href="route('workflow.index')"
+                                        :active="route().current('workflow.*')"
+                                        @click="
+                                            showingNavigationDropdown = false
+                                        "
+                                    >
+                                        Workflows
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
