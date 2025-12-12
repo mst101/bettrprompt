@@ -191,10 +191,20 @@ const clarifyingQuestionsRef = ref<InstanceType<
 > | null>(null);
 
 // Track when user views the framework tab
+const markFrameworkAsViewed = () => {
+    const storageKey = `promptRun_${props.promptRun.id}_viewedFramework`;
+    localStorage.setItem(storageKey, 'true');
+};
+
+// Mark as viewed if we're showing the framework tab initially
+if (activeTab.value === 'framework') {
+    markFrameworkAsViewed();
+}
+
+// Also mark as viewed when user switches to the framework tab
 watch(activeTab, (newTab) => {
     if (newTab === 'framework') {
-        const storageKey = `promptRun_${props.promptRun.id}_viewedFramework`;
-        localStorage.setItem(storageKey, 'true');
+        markFrameworkAsViewed();
     }
 });
 
