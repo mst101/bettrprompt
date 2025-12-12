@@ -225,27 +225,11 @@ class PromptFrameworkService
         }
 
         try {
-            Log::info('About to call n8n workflow 2', [
-                'url' => "{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate",
-                'timeout_seconds' => 90,
-            ]);
-
             $response = Http::timeout(90)
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $payload);
 
-            Log::info('n8n workflow 2 response received', [
-                'status' => $response->status(),
-                'successful' => $response->successful(),
-                'body_preview' => substr($response->body(), 0, 500),
-            ]);
-
             if ($response->successful()) {
-                $data = $response->json();
-                Log::info('n8n workflow 2 returned success', [
-                    'has_success_key' => isset($data['success']),
-                    'success_value' => $data['success'] ?? null,
-                ]);
-                return $data;
+                return $response->json();
             }
 
             Log::error('Workflow 2 failed', [

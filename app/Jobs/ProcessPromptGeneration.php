@@ -71,13 +71,6 @@ class ProcessPromptGeneration implements ShouldQueue
                 $this->promptRun->pre_analysis_context
             );
 
-            Log::info('Generation workflow result', [
-                'prompt_run_id' => $this->promptRun->id,
-                'success' => $result['success'] ?? null,
-                'has_error' => isset($result['error']),
-                'error_message' => $result['error']['message'] ?? null,
-                'has_data' => isset($result['data']),
-            ]);
 
             // For async workflows, n8n returns immediately without results
             // The actual results come back via webhook callback
@@ -137,14 +130,8 @@ class ProcessPromptGeneration implements ShouldQueue
             $this->promptRun->refresh();
 
             // Broadcast generation completed event
-            Log::info('About to broadcast PromptOptimizationCompleted event', [
-                'prompt_run_id' => $this->promptRun->id,
-            ]);
             try {
                 event(new PromptOptimizationCompleted($this->promptRun));
-                Log::info('PromptOptimizationCompleted event broadcast successfully', [
-                    'prompt_run_id' => $this->promptRun->id,
-                ]);
             } catch (Exception $e) {
                 Log::error('Failed to broadcast PromptOptimizationCompleted event', [
                     'prompt_run_id' => $this->promptRun->id,

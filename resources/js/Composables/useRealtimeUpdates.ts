@@ -96,20 +96,8 @@ export function useRealtimeUpdates(
                 throw new Error('Echo channel could not be created');
             }
 
-            console.log(
-                `[useRealtimeUpdates] Connected to channel: ${actualChannelName}`,
-            );
-            console.log(
-                `[useRealtimeUpdates] Listening for events:`,
-                Object.keys(events),
-            );
-
             Object.entries(events).forEach(([eventName, handler]) => {
                 const wrappedHandler = (data: unknown) => {
-                    console.log(
-                        `[useRealtimeUpdates] Received event: ${eventName}`,
-                        data,
-                    );
                     try {
                         handler(data);
                     } catch (error) {
@@ -121,9 +109,6 @@ export function useRealtimeUpdates(
                     }
                 };
 
-                console.log(
-                    `[useRealtimeUpdates] Setting up listener for: ${eventName}`,
-                );
                 channel!.listen(eventName, wrappedHandler);
             });
 
@@ -190,16 +175,12 @@ export function useRealtimeUpdates(
         // from the old channel and reconnect to the new one
         if (channel) {
             try {
-                console.log(
-                    '[useRealtimeUpdates] Leaving old channel to reconnect to new one',
-                );
                 // Force unsubscribe from all events on this channel
                 if ('listeners' in channel && typeof (channel as any).listeners === 'function') {
                     (channel as any).listeners = {};
                 }
                 window.Echo?.leave(channelName.value);
                 channel = null;
-                console.log('[useRealtimeUpdates] Old channel cleaned up');
             } catch (error) {
                 console.warn('[useRealtimeUpdates] Error leaving old channel:', error);
                 channel = null;
@@ -250,11 +231,8 @@ export function useRealtimeUpdates(
         let previousChannelName = channelName.value;
         watch(
             channelName,
-            (newChannelName, oldChannelName) => {
+            (newChannelName) => {
                 if (newChannelName && newChannelName !== previousChannelName) {
-                    console.log(
-                        `[useRealtimeUpdates] Channel name changed from ${previousChannelName} to ${newChannelName}, reconnecting`,
-                    );
                     // Cleanup old channel and setup new one
                     if (channel) {
                         try {
