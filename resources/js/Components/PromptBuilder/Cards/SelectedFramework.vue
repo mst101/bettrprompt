@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import Card from '@/Components/Card.vue';
+import { nextTick, ref } from 'vue';
 
 interface Props {
     framework: {
@@ -19,6 +20,16 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     proceed: [];
 }>();
+
+const proceedButtonRef = ref<InstanceType<typeof ButtonPrimary> | null>(null);
+
+// Expose focus method for parent components
+const focus = async () => {
+    await nextTick();
+    proceedButtonRef.value?.focus();
+};
+
+defineExpose({ focus });
 </script>
 
 <template>
@@ -59,7 +70,7 @@ const emit = defineEmits<{
         </div>
 
         <div v-if="showProceedButton" class="flex justify-end pt-2">
-            <ButtonPrimary @click="emit('proceed')">
+            <ButtonPrimary ref="proceedButtonRef" @click="emit('proceed')">
                 Proceed to Questions
             </ButtonPrimary>
         </div>

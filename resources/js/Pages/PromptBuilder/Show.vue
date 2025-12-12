@@ -189,6 +189,13 @@ const activeTab = ref<string>(getInitialTab());
 const clarifyingQuestionsRef = ref<InstanceType<
     typeof ClarifyingQuestions
 > | null>(null);
+const selectedFrameworkRef = ref<InstanceType<typeof SelectedFramework> | null>(
+    null,
+);
+
+// Check if we're on a larger screen (sm breakpoint and above)
+// We use matchMedia to detect screen size at runtime
+const isLargeScreen = () => window.matchMedia('(min-width: 640px)').matches;
 
 // Track when user views the framework tab
 const markFrameworkAsViewed = () => {
@@ -202,9 +209,16 @@ if (activeTab.value === 'framework') {
 }
 
 // Also mark as viewed when user switches to the framework tab
-watch(activeTab, (newTab) => {
+// And focus the "Proceed to Questions" button on larger screens
+watch(activeTab, async (newTab) => {
     if (newTab === 'framework') {
         markFrameworkAsViewed();
+
+        // Focus the proceed button only on larger screens (where tabs are shown)
+        if (isLargeScreen() && shouldShowProceedButton.value) {
+            await nextTick();
+            selectedFrameworkRef.value?.focus();
+        }
     }
 });
 
@@ -568,6 +582,7 @@ onUnmounted(() => {
             >
                 <SelectedFramework
                     v-if="promptRun.selectedFramework"
+                    ref="selectedFrameworkRef"
                     :framework="promptRun.selectedFramework as any"
                     :show-proceed-button="shouldShowProceedButton"
                     @proceed="handleProceedToQuestions"
