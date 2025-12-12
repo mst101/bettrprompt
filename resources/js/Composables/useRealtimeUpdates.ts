@@ -88,14 +88,16 @@ export function useRealtimeUpdates(
 
     const setupEcho = () => {
         try {
-            channel = window.Echo?.channel(channelName);
+            // Use .value to get the actual string from the computed ref
+            const actualChannelName = channelName.value;
+            channel = window.Echo?.channel(actualChannelName);
 
             if (!channel) {
                 throw new Error('Echo channel could not be created');
             }
 
             console.log(
-                `[useRealtimeUpdates] Connected to channel: ${channelName}`,
+                `[useRealtimeUpdates] Connected to channel: ${actualChannelName}`,
             );
             console.log(
                 `[useRealtimeUpdates] Listening for events:`,
@@ -195,7 +197,7 @@ export function useRealtimeUpdates(
                 if ('listeners' in channel && typeof (channel as any).listeners === 'function') {
                     (channel as any).listeners = {};
                 }
-                window.Echo?.leave(channelName);
+                window.Echo?.leave(channelName.value);
                 channel = null;
                 console.log('[useRealtimeUpdates] Old channel cleaned up');
             } catch (error) {
