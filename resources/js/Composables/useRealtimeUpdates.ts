@@ -84,8 +84,20 @@ export function useRealtimeUpdates(
                 throw new Error('Echo channel could not be created');
             }
 
+            console.log(
+                `[useRealtimeUpdates] Connected to channel: ${channelName}`,
+            );
+            console.log(
+                `[useRealtimeUpdates] Listening for events:`,
+                Object.keys(events),
+            );
+
             Object.entries(events).forEach(([eventName, handler]) => {
                 const wrappedHandler = (data: unknown) => {
+                    console.log(
+                        `[useRealtimeUpdates] Received event: ${eventName}`,
+                        data,
+                    );
                     try {
                         handler(data);
                     } catch (error) {
@@ -97,6 +109,9 @@ export function useRealtimeUpdates(
                     }
                 };
 
+                console.log(
+                    `[useRealtimeUpdates] Setting up listener for: ${eventName}`,
+                );
                 channel!.listen(eventName, wrappedHandler);
             });
 
@@ -157,8 +172,18 @@ export function useRealtimeUpdates(
     };
 
     const trySetup = () => {
+        // Always cleanup old channel before setting up new one
+        // This is important when router.reload() is called with partial props (only: [...])
+        // because the component won't unmount/remount, so we need to manually disconnect
+        // from the old channel and reconnect to the new one
         if (channel) {
-            return; // Already connected
+            try {
+                window.Echo?.leave(channelName);
+                channel = null;
+            } catch (error) {
+                console.warn('[useRealtimeUpdates] Error leaving old channel:', error);
+                channel = null;
+            }
         }
 
         // If Echo is not available, start fallback polling immediately
