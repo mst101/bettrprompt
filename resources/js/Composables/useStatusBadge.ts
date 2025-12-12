@@ -38,14 +38,18 @@ export function useStatusBadge() {
             };
         }
 
-        // Pending states: 0_completed, 1_completed (waiting for user)
-        if (
-            workflowStage === '0_completed' ||
-            workflowStage === '1_completed'
-        ) {
+        // Awaiting user action: 0_completed, 1_completed (waiting for user input)
+        if (workflowStage === '0_completed') {
             return {
-                label: 'Pending',
-                colorClass: 'bg-gray-100 text-gray-800',
+                label: 'Awaiting Questions',
+                colorClass: 'bg-blue-100 text-blue-800',
+            };
+        }
+
+        if (workflowStage === '1_completed') {
+            return {
+                label: 'Awaiting Answers',
+                colorClass: 'bg-blue-100 text-blue-800',
             };
         }
 
