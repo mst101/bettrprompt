@@ -71,6 +71,14 @@ class ProcessPromptGeneration implements ShouldQueue
                 $this->promptRun->pre_analysis_context
             );
 
+            Log::info('Generation workflow result', [
+                'prompt_run_id' => $this->promptRun->id,
+                'success' => $result['success'] ?? null,
+                'has_error' => isset($result['error']),
+                'error_message' => $result['error']['message'] ?? null,
+                'has_data' => isset($result['data']),
+            ]);
+
             if (! $result['success']) {
                 $this->handleFailure(
                     $result['error']['message'] ?? 'Generation workflow failed',
