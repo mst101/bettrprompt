@@ -283,7 +283,7 @@ watch(
 
 // Real-time updates via Laravel Echo with smart polling fallback
 useRealtimeUpdates(
-    `prompt-run.${props.promptRun.id}`,
+    computed(() => `prompt-run.${props.promptRun.id}`),
     {
         PreAnalysisCompleted: () => {
             // Reload page to show Quick Queries
