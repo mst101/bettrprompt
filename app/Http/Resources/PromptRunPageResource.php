@@ -61,13 +61,20 @@ class PromptRunPageResource extends JsonResource
             'analysisApiUsage' => $this->analysis_api_usage,
             'generationApiUsage' => $this->generation_api_usage,
 
-            // Relationships - don't include parent/children to avoid oversized payloads
-            // They can be fetched separately if needed
+            // Relationships
             'user' => $this->whenLoaded('user', function () {
                 return $this->user ? new UserResource($this->user) : null;
             }),
             'visitor' => $this->whenLoaded('visitor', function () {
                 return $this->visitor ? new VisitorResource($this->visitor) : null;
+            }),
+            // Include minimal parent/children data for UI links
+            // Full details are fetched on-demand via API
+            'parent' => $this->whenLoaded('parent', function () {
+                return $this->parent ? new PromptRunRelationshipResource($this->parent) : null;
+            }),
+            'children' => $this->whenLoaded('children', function () {
+                return PromptRunRelationshipResource::collection($this->children);
             }),
         ];
     }

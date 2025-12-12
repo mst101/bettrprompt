@@ -333,9 +333,9 @@ class PromptBuilderController extends Controller
     {
         $this->authorizePromptRun($promptRun, $request);
 
-        // Don't load parent/children to avoid oversized response payloads
-        // The frontend can fetch these separately if needed via API calls
-        // $promptRun->load(['parent', 'children']);
+        // Load parent/children relationships (minimal data only via PromptRunRelationshipResource)
+        // Full details are fetched on-demand via API
+        $promptRun->load(['parent', 'children']);
 
         $currentQuestionIndex = $promptRun->current_question_index ?? 0;
 
@@ -1078,5 +1078,17 @@ class PromptBuilderController extends Controller
             return back()
                 ->with('error', 'An error occurred whilst switching frameworks. Please try again.');
         }
+    }
+
+    /**
+     * Get full details of a prompt run (used for on-demand loading of related prompts)
+     */
+    public function getFullDetails(Request $request, PromptRun $promptRun)
+    {
+        $this->authorizePromptRun($promptRun, $request);
+
+        return response()->json([
+            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
+        ]);
     }
 }

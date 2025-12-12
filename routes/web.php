@@ -126,6 +126,8 @@ Route::post('/prompt-builder/{promptRun}/update-quick-queries', [PromptBuilderCo
     ->name('prompt-builder.update-quick-queries');
 Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
     ->name('prompt-builder.show');
+Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
+    ->name('prompt-builder.full-details');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
     ->name('prompt-builder.answer');
 Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])
