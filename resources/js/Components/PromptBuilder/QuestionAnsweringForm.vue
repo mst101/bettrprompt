@@ -96,6 +96,20 @@ const handleTranscription = (text: string) => {
     const updated = appendText(props.answer, text);
     emit('update:answer', updated);
 };
+
+const handleSkip = () => {
+    // If there's an unsaved answer, confirm before skipping
+    if (props.answer.trim()) {
+        if (
+            !confirm(
+                'You have entered an answer to this question. If you skip, your answer will be lost. Are you sure you want to skip?',
+            )
+        ) {
+            return;
+        }
+    }
+    emit('skip');
+};
 </script>
 
 <template>
@@ -189,7 +203,7 @@ const handleTranscription = (text: string) => {
                     type="button"
                     :disabled="isSubmitting"
                     class="w-full sm:w-auto"
-                    @click="emit('skip')"
+                    @click="handleSkip"
                 >
                     Skip Question
                 </ButtonSecondary>
