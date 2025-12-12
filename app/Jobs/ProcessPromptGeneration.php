@@ -79,12 +79,38 @@ class ProcessPromptGeneration implements ShouldQueue
                 'has_data' => isset($result['data']),
             ]);
 
+            // For async workflows, n8n returns immediately without results
+            // The actual results come back via webhook callback
+            // So we don't handle failures here - just leave the workflow_stage as 2_processing
+            // and wait for the webhook to update it
             if (! $result['success']) {
+                // Check if this is just "workflow queued" (async response) vs actual error
+                $errorMsg = $result['error'] ?? $result['error']['message'] ?? 'Unknown error';
+
+                // If n8n returned a 202 Accepted or similar (async), it's not really a failure
+                // The actual result will come via webhook
+                if (strpos($errorMsg, 'Accepted') !== false || strpos($errorMsg, 'queued') !== false) {
+                    Log::info('Workflow 2 queued asynchronously', [
+                        'prompt_run_id' => $this->promptRun->id,
+                        'workflow_stage' => $this->promptRun->workflow_stage,
+                    ]);
+                    return;
+                }
+
                 $this->handleFailure(
-                    $result['error']['message'] ?? 'Generation workflow failed',
+                    $errorMsg,
                     $result
                 );
 
+                return;
+            }
+
+            // If we got actual results back (sync response), update immediately
+            // Otherwise, wait for the webhook callback
+            if (! isset($result['data'])) {
+                Log::info('Workflow 2 returned empty data, waiting for webhook callback', [
+                    'prompt_run_id' => $this->promptRun->id,
+                ]);
                 return;
             }
 
