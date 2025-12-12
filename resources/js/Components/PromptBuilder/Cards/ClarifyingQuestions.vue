@@ -335,12 +335,48 @@ const handleRegister = () => {
     }
 };
 
+// State machine: Determine the current view mode based on workflow stage and UI state
+type ViewMode = 'answering' | 'reviewing' | 'editing' | 'generating';
+
+const viewMode = computed<ViewMode>(() => {
+    // No questions = nothing to show
+    if (!hasQuestions.value) return 'answering';
+
+    const stage = props.promptRun.workflowStage;
+
+    // Stage 2 (generation workflow) - answers have been submitted
+    if (stage.startsWith('2_')) {
+        if (stage === '2_processing') return 'generating';
+        if (isEditingAnswers.value) return 'editing';
+        return 'reviewing';
+    }
+
+    // Stage 1 (analysis workflow) or earlier - user is answering questions
+    return 'answering';
+});
+
+// Derived computed properties based on viewMode
+const shouldShowQuestionForm = computed(() => {
+    return viewMode.value === 'answering' && !showAllQuestions.value;
+});
+
+const shouldShowBulkQuestions = computed(() => {
+    return (
+        (viewMode.value === 'answering' && showAllQuestions.value) ||
+        viewMode.value === 'editing'
+    );
+});
+
+const shouldShowAnsweredList = computed(() => {
+    return viewMode.value === 'reviewing';
+});
+
 // Focus the first textarea - useful when switching to this tab
 const focus = async () => {
     await nextTick();
     if (shouldShowQuestionForm.value) {
         questionFormRef.value?.focus();
-    } else if (showAllQuestions.value || isEditingAnswers.value) {
+    } else if (shouldShowBulkQuestions.value) {
         bulkQuestionsRef.value?.focusFirstTextarea();
     }
 };
@@ -348,44 +384,8 @@ const focus = async () => {
 // Expose focus method for parent components
 defineExpose({ focus });
 
-// Check if we're in the generation workflow stage (2_processing, 2_completed, or 2_failed)
-const isInGenerationStage = computed(() => {
-    const stage = props.promptRun.workflowStage;
-    return (
-        stage === '2_processing' ||
-        stage === '2_completed' ||
-        stage === '2_failed'
-    );
-});
-
-const hasSubmittedAnswers = computed(() => {
-    // If we're in generation stage, answers have definitely been submitted
-    if (isInGenerationStage.value) return true;
-
-    // Otherwise check if we've actually submitted answers (not just hydrated nulls)
-    if (!questions.value.length) return false;
-
-    // Check if clarifyingAnswers exists in the database
-    // If it's null or empty, answers haven't been submitted yet
-    const originalAnswers = props.promptRun.clarifyingAnswers;
-    if (!originalAnswers || originalAnswers.length === 0) return false;
-
-    // If we have answers from the database, check if the array is complete
-    // The array is complete when we've addressed all questions (even if some are null/skipped)
-    return answers.value.length === questions.value.length;
-});
-
-const shouldShowQuestionForm = computed(
-    () =>
-        hasQuestions.value &&
-        currentQuestion.value &&
-        !showAllQuestions.value &&
-        !hasSubmittedAnswers.value &&
-        !isInGenerationStage.value,
-);
-
 const bulkSubmitLabel = computed(() =>
-    isEditingAnswers.value
+    viewMode.value === 'editing'
         ? 'Optimise Prompt with Edited Answers'
         : 'Submit All Answers',
 );
@@ -419,8 +419,9 @@ const optionalQuestionsLabel = computed(() => {
                 v-if="hasQuestions"
                 class="flex w-full flex-col gap-2 sm:w-auto sm:items-end sm:text-right"
             >
+                <!-- Show "Show all questions" toggle when in answering mode -->
                 <div
-                    v-if="!hasSubmittedAnswers"
+                    v-if="viewMode === 'answering'"
                     class="flex flex-col gap-2 sm:flex-row sm:space-x-2"
                 >
                     <ButtonSecondary
@@ -436,9 +437,14 @@ const optionalQuestionsLabel = computed(() => {
                         }}
                     </ButtonSecondary>
                 </div>
-                <div v-if="hasSubmittedAnswers" class="w-full sm:w-auto">
+
+                <!-- Show edit controls when reviewing answers -->
+                <div
+                    v-if="viewMode === 'reviewing' || viewMode === 'editing'"
+                    class="w-full sm:w-auto"
+                >
                     <ButtonSecondary
-                        v-if="!isEditingAnswers"
+                        v-if="viewMode === 'reviewing'"
                         ref="editAnswersButtonRef"
                         type="button"
                         :disabled="isSubmitting"
@@ -448,7 +454,7 @@ const optionalQuestionsLabel = computed(() => {
                         Edit Answers
                     </ButtonSecondary>
                     <div
-                        v-else
+                        v-else-if="viewMode === 'editing'"
                         class="flex flex-col gap-2 sm:flex-row sm:items-center"
                     >
                         <ButtonSecondary
@@ -482,13 +488,14 @@ const optionalQuestionsLabel = computed(() => {
             {{ promptRun.questionRationale }}
         </p>
 
+        <!-- Reviewing mode: Show answered list -->
         <AnsweredList
-            v-if="isInGenerationStage && !isEditingAnswers"
+            v-if="shouldShowAnsweredList"
             :questions="allQuestions"
             :answers="promptRun.clarifyingAnswers"
         />
 
-        <!-- One-at-a-time Question Form -->
+        <!-- Answering mode: One-at-a-time Question Form -->
         <QuestionAnsweringForm
             v-if="shouldShowQuestionForm"
             ref="questionFormRef"
@@ -508,8 +515,9 @@ const optionalQuestionsLabel = computed(() => {
             @toggle-show-all="showAllQuestions = !showAllQuestions"
         />
 
+        <!-- Answering mode (bulk) or Editing mode: Bulk Questions -->
         <BulkQuestions
-            v-else-if="hasQuestions && (showAllQuestions || isEditingAnswers)"
+            v-if="shouldShowBulkQuestions"
             ref="bulkQuestionsRef"
             :questions="allQuestions"
             :answers="answers"
@@ -517,16 +525,18 @@ const optionalQuestionsLabel = computed(() => {
             :optional-questions-label="optionalQuestionsLabel"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
-            :show-back="!isEditingAnswers"
-            :back-label="isEditingAnswers ? 'Cancel edit' : undefined"
+            :show-back="viewMode === 'answering'"
+            :back-label="viewMode === 'editing' ? 'Cancel edit' : undefined"
             @update:answer="
                 (index: number, value: string) => (answers[index] = value)
             "
             @submit-all="
-                isEditingAnswers ? submitEditedAnswers() : submitAllAnswers()
+                viewMode === 'editing'
+                    ? submitEditedAnswers()
+                    : submitAllAnswers()
             "
             @back="
-                isEditingAnswers
+                viewMode === 'editing'
                     ? cancelEditingAnswers()
                     : (showAllQuestions = false)
             "
