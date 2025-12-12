@@ -24,6 +24,7 @@ import PreAnalysisProgress from '@/Components/PromptBuilder/PreAnalysisProgress.
 import WorkflowError from '@/Components/PromptBuilder/WorkflowError.vue';
 import Tabs, { type Tab } from '@/Components/Tabs.vue';
 import VisitorLimitBanner from '@/Components/VisitorLimitBanner.vue';
+import { useAlert } from '@/Composables/useAlert';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/types';
@@ -419,12 +420,16 @@ watch(activeTab, async (newTab) => {
     }
 });
 
-const handleDelete = () => {
-    if (
-        !confirm(
-            'Are you sure you want to delete this prompt run? This action cannot be undone.',
-        )
-    ) {
+const { confirm } = useAlert();
+
+const handleDelete = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to delete this prompt run? This action cannot be undone.',
+        'Delete Prompt Run',
+        { confirmButtonStyle: 'danger', confirmText: 'Delete' },
+    );
+
+    if (!confirmed) {
         return;
     }
 

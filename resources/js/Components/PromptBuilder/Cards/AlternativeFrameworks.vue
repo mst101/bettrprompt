@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import Card from '@/Components/Card.vue';
+import { useAlert } from '@/Composables/useAlert';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -18,13 +19,15 @@ interface Props {
 const props = defineProps<Props>();
 
 const switchingFramework = ref<string | null>(null);
+const { confirm } = useAlert();
 
-const handleSwitchFramework = (frameworkCode: string) => {
-    if (
-        !confirm(
-            'This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?',
-        )
-    ) {
+const handleSwitchFramework = async (frameworkCode: string) => {
+    const confirmed = await confirm(
+        'This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?',
+        'Switch Framework',
+    );
+
+    if (!confirmed) {
         return;
     }
 

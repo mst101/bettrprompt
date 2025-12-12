@@ -7,6 +7,7 @@ import HeaderPage from '@/Components/HeaderPage.vue';
 import LinkButton from '@/Components/LinkButton.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import TableHeaderSortable from '@/Components/TableHeaderSortable.vue';
+import { useAlert } from '@/Composables/useAlert';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/types';
@@ -149,14 +150,18 @@ onMounted(() => {
     }
 });
 
-const handleDelete = (promptRunId: number, event: Event) => {
+const { confirm } = useAlert();
+
+const handleDelete = async (promptRunId: number, event: Event) => {
     event.stopPropagation(); // Prevent row click from firing
 
-    if (
-        !confirm(
-            'Are you sure you want to delete this prompt run? This action cannot be undone.',
-        )
-    ) {
+    const confirmed = await confirm(
+        'Are you sure you want to delete this prompt run? This action cannot be undone.',
+        'Delete Prompt Run',
+        { confirmButtonStyle: 'danger', confirmText: 'Delete' },
+    );
+
+    if (!confirmed) {
         return;
     }
 

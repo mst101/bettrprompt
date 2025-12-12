@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AlertDialog from '@/Components/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/ButtonHamburger.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
@@ -451,5 +452,8 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
         <!-- Visitor Limit Banner -->
         <VisitorLimitBanner v-if="showVisitorBanner" @register="openRegister" />
+
+        <!-- Global Alert Dialog -->
+        <AlertDialog />
     </div>
 </template>

@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import FormInput from '@/Components/FormInput.vue';
 import FormSelect from '@/Components/FormSelect.vue';
+import { useAlert } from '@/Composables/useAlert';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -99,8 +100,16 @@ const detectLocation = () => {
     });
 };
 
-const clearLocation = () => {
-    if (confirm('Are you sure you want to clear all location data?')) {
+const { confirm } = useAlert();
+
+const clearLocation = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear all location data?',
+        'Clear Location',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
         useForm({}).delete(route('profile.location.clear'), {
             preserveScroll: true,
         });

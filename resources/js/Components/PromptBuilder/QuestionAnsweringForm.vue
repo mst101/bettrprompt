@@ -7,6 +7,7 @@ import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/OptionalBadge.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
+import { useAlert } from '@/Composables/useAlert';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -37,6 +38,7 @@ const emit = defineEmits<{
 }>();
 
 const { appendText } = useTextAppend();
+const { confirm } = useAlert();
 const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
     null,
 );
@@ -97,14 +99,16 @@ const handleTranscription = (text: string) => {
     emit('update:answer', updated);
 };
 
-const handleSkip = () => {
+const handleSkip = async () => {
     // If there's an unsaved answer, confirm before skipping
     if (props.answer.trim()) {
-        if (
-            !confirm(
-                'You have entered an answer to this question. If you skip, your answer will be lost. Are you sure you want to skip?',
-            )
-        ) {
+        const confirmed = await confirm(
+            'You have entered an answer to this question. If you skip, your answer will be lost. Are you sure you want to skip?',
+            'Skip Question',
+            { confirmButtonStyle: 'danger', confirmText: 'Skip Answer' },
+        );
+
+        if (!confirmed) {
             return;
         }
     }
