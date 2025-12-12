@@ -41,10 +41,11 @@ class PromptOptimizationCompleted implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
+        // Only send minimal data - don't include optimized_prompt as it can be very large (100KB+)
+        // The frontend will reload the page or fetch full details via API when it receives this notification
         return [
             'prompt_run_id' => $this->promptRun->id,
             'workflow_stage' => $this->promptRun->workflow_stage,
-            'optimized_prompt' => $this->promptRun->optimized_prompt,
             'completed_at' => $this->promptRun->completed_at?->toIso8601String(),
         ];
     }
