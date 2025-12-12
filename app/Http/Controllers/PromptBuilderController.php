@@ -13,6 +13,7 @@ use App\Http\Requests\SwitchFrameworkRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Requests\UpdateQuickQueriesRequest;
 use App\Http\Resources\ClaudeModelResource;
+use App\Http\Resources\PromptRunPageResource;
 use App\Http\Resources\PromptRunResource;
 use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
@@ -373,7 +374,7 @@ class PromptBuilderController extends Controller
         }
 
         return Inertia::render('PromptBuilder/Show', [
-            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
+            'promptRun' => PromptRunPageResource::make($promptRun)->resolve(),
             'currentQuestion' => $currentQuestion,
             'currentQuestionAnswer' => $currentQuestionAnswer,
             'progress' => [
