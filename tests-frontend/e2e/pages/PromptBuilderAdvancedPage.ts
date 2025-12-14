@@ -14,8 +14,10 @@ export class PromptBuilderAdvancedPage {
         await this.page.goto(`/prompt-builder/${id}`);
     }
 
-    async gotoCreateChildPrompt(parentId: number): Promise<void> {
-        await this.page.goto(`/prompt-builder/${parentId}/create-child`);
+    async gotoCreateChildFromTask(parentId: number): Promise<void> {
+        await this.page.goto(
+            `/prompt-builder/${parentId}/create-child-from-task`,
+        );
     }
 
     async gotoCreateChildFromAnswers(parentId: number): Promise<void> {
@@ -24,8 +26,10 @@ export class PromptBuilderAdvancedPage {
         );
     }
 
-    async gotoSwitchFramework(promptId: number): Promise<void> {
-        await this.page.goto(`/prompt-builder/${promptId}/switch-framework`);
+    async gotoCreateChildWithFramework(promptId: number): Promise<void> {
+        await this.page.goto(
+            `/prompt-builder/${promptId}/create-child-with-framework`,
+        );
     }
 
     // ===== URL Utilities =====
@@ -58,10 +62,10 @@ export class PromptBuilderAdvancedPage {
     }
 
     /**
-     * Check if on create-child page
+     * Check if on create-child-from-task page
      */
-    isOnCreateChildPage(): boolean {
-        return this.isOnRoute('create-child');
+    isOnCreateChildFromTaskPage(): boolean {
+        return this.isOnRoute('create-child-from-task');
     }
 
     /**
@@ -72,10 +76,10 @@ export class PromptBuilderAdvancedPage {
     }
 
     /**
-     * Check if on switch-framework page
+     * Check if on create-child-with-framework page
      */
-    isOnSwitchFrameworkPage(): boolean {
-        return this.isOnRoute('switch-framework');
+    isOnCreateChildWithFrameworkPage(): boolean {
+        return this.isOnRoute('create-child-with-framework');
     }
 
     // ===== Common Form Elements =====

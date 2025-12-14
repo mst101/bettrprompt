@@ -34,7 +34,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     switchingFramework.value = frameworkCode;
 
     router.post(
-        route('prompt-builder.switch-framework', props.promptRunId),
+        route('prompt-builder.create-child-with-framework', props.promptRunId),
         {
             framework_code: frameworkCode,
         },

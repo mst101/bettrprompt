@@ -34,9 +34,11 @@ test.describe('Prompt Builder - Child Prompt Creation', () => {
         expect(parentId).toBeTruthy();
 
         if (parentId) {
-            // Try to navigate to create-child page or access the feature
+            // Try to navigate to create-child-from-task page or access the feature
             try {
-                await promptBuilderAdvancedPage.gotoCreateChildPrompt(parentId);
+                await promptBuilderAdvancedPage.gotoCreateChildFromTask(
+                    parentId,
+                );
                 await promptBuilderAdvancedPage.expectPageLoaded();
 
                 // Try to create child with different framework if available
@@ -130,9 +132,11 @@ test.describe('Prompt Builder - Framework Switching', () => {
         expect(promptId).toBeTruthy();
 
         if (promptId) {
-            // Try to navigate to switch-framework page or access feature
+            // Try to navigate to create-child-with-framework page or access feature
             try {
-                await promptBuilderAdvancedPage.gotoSwitchFramework(promptId);
+                await promptBuilderAdvancedPage.gotoCreateChildWithFramework(
+                    promptId,
+                );
                 await promptBuilderAdvancedPage.expectPageLoaded();
 
                 // Try to switch framework if available

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class SwitchFrameworkRequest extends BaseFormRequest
+class CreateChildWithFrameworkRequest extends BaseFormRequest
 {
     /**
      * Get the validation rules that apply to the request.

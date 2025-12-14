@@ -138,13 +138,15 @@ Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class
     ->name('prompt-builder.retry');
 Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
     ->name('prompt-builder.generate');
+Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
+    [PromptBuilderController::class, 'createChild'])
+    ->name('prompt-builder.create-child-from-task');
 Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
     [PromptBuilderController::class, 'createChildFromAnswers'])
     ->name('prompt-builder.create-child-from-answers');
-Route::post('/prompt-builder/{parentPromptRun}/create-child', [PromptBuilderController::class, 'createChild'])
-    ->name('prompt-builder.create-child');
-Route::post('/prompt-builder/{promptRun}/switch-framework', [PromptBuilderController::class, 'switchFramework'])
-    ->name('prompt-builder.switch-framework');
+Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
+    [PromptBuilderController::class, 'switchFramework'])
+    ->name('prompt-builder.create-child-with-framework');
 Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
     ->name('prompt-builder.destroy');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])

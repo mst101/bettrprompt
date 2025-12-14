@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AnswerQuestionRequest;
 use App\Http\Requests\CreateChildFromAnswersRequest;
 use App\Http\Requests\CreateChildFromTaskRequest;
+use App\Http\Requests\CreateChildWithFrameworkRequest;
 use App\Http\Requests\GeneratePromptRequest;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\SkipQuestionRequest;
 use App\Http\Requests\SubmitPreAnalysisAnswersRequest;
-use App\Http\Requests\SwitchFrameworkRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Requests\UpdateQuickQueriesRequest;
 use App\Http\Resources\ClaudeModelResource;
@@ -1028,7 +1028,7 @@ class PromptBuilderController extends Controller
     /**
      * Create a child prompt run with a different framework
      */
-    public function switchFramework(SwitchFrameworkRequest $request, PromptRun $promptRun)
+    public function switchFramework(CreateChildWithFrameworkRequest $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 

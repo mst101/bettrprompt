@@ -80,7 +80,7 @@ const submit = () => {
     }
 
     form.post(
-        route('prompt-builder.create-child', {
+        route('prompt-builder.create-child-from-task', {
             parentPromptRun: props.promptRun.id,
         }),
         {
