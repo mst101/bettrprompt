@@ -56,7 +56,7 @@ const toggleRecording = async () => {
             :class="[
                 isActive
                     ? 'animate-pulse bg-red-600 hover:bg-red-700 focus:animate-pulse focus:ring-red-600'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 focus:ring-indigo-500 dark:bg-indigo-100 dark:hover:bg-indigo-200',
+                    : 'bg-white text-gray-700 hover:bg-gray-50 focus:ring-indigo-500 dark:bg-indigo-100 dark:text-indigo-900 dark:hover:bg-indigo-200',
                 isProcessing || disabled ? 'cursor-not-allowed opacity-50' : '',
             ]"
             :title="
@@ -70,7 +70,9 @@ const toggleRecording = async () => {
                 v-if="!isProcessing"
                 name="microphone"
                 class="h-5 w-5"
-                :class="isActive ? 'text-white' : 'text-gray-600'"
+                :class="
+                    isActive ? 'text-white dark:text-red-800' : 'text-gray-600'
+                "
             />
             <DynamicIcon
                 v-else

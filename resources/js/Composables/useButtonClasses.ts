@@ -17,7 +17,7 @@ export function useButtonClasses(props: ButtonStyleProps) {
             primary:
                 'border-transparent bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 focus:ring-indigo-500',
             secondary:
-                'border-gray-300 bg-white dark:bg-indigo-100 text-gray-700 shadow-xs hover:bg-gray-50 dark:hover:bg-indigo-200 focus:ring-indigo-500',
+                'border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50 dark:bg-indigo-100 dark:text-indigo-900 dark:hover:bg-indigo-200 focus:ring-indigo-500',
             danger: 'border-transparent bg-red-600 text-white shadow-xs hover:bg-red-700 focus:ring-red-500',
         };
 

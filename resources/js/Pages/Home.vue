@@ -106,7 +106,7 @@ defineOptions({
                         <h3 class="text-xl font-bold text-indigo-900">
                             For Analytical Minds
                         </h3>
-                        <p class="mt-4 text-gray-700">
+                        <p class="mt-4 text-indigo-900">
                             If you're a Thinking type who loves data, logic, and
                             structure, you'll get prompts with clear frameworks,
                             measurable outcomes, and systematic approaches.
@@ -117,7 +117,7 @@ defineOptions({
                         <h3 class="text-xl font-bold text-purple-900">
                             For Creative Explorers
                         </h3>
-                        <p class="mt-4 text-gray-700">
+                        <p class="mt-4 text-indigo-900">
                             If you're an Intuitive type who thrives on
                             possibilities and big-picture thinking, you'll get
                             prompts that encourage exploration, connections, and
@@ -129,7 +129,7 @@ defineOptions({
                         <h3 class="text-xl font-bold text-indigo-900">
                             For Everyone in Between
                         </h3>
-                        <p class="mt-4 text-gray-700">
+                        <p class="mt-4 text-indigo-900">
                             With optional trait percentages, AI Buddy calibrates
                             prompts based on trait strength. A highly analytical
                             INTJ (95% Thinking) gets different optimization than

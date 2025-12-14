@@ -14,7 +14,7 @@ defineProps<{
 <template>
     <div
         data-testid="feature-card"
-        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:bg-indigo-50"
+        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:bg-indigo-50 dark:text-indigo-900"
     >
         <div class="flex items-center gap-4">
             <div
@@ -29,7 +29,7 @@ defineProps<{
                 />
             </div>
             <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900">
+                <h3 class="text-lg font-semibold text-indigo-900">
                     {{ title }}
                 </h3>
             </div>
