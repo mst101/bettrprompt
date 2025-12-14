@@ -1,6 +1,5 @@
 import { expect, test } from './fixtures';
 import { acceptCookies, loginAsTestUser } from './helpers/auth';
-import { seedPromptRuns } from './helpers/database';
 import { N8nMockService } from './mocks/n8n-mock-service';
 
 test.describe('Prompt Builder - Unauthenticated', () => {
@@ -302,179 +301,119 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await expect(clarifyingQuestionsCard).toBeVisible({ timeout: 3000 });
     });
 
-    test.skip('should display optimised prompt when complete - Requires framework_questions', async ({
+    test('should display optimised prompt when complete', async ({
         authenticatedPage: page,
     }) => {
-        // Seed a completed prompt for this test to ensure reliable results (2_completed)
-        await seedPromptRuns(1, '2_completed');
+        // Use fixture to create a fully completed prompt (2_completed)
+        const { setupAndNavigateToPromptRun } =
+            await import('./helpers/fixtures');
+        await setupAndNavigateToPromptRun(page, '2_completed');
 
-        // Navigate to prompt builder history to find the completed prompt
-        await page.goto('/prompt-builder-history');
+        // Wait for page to load
+        await page.waitForLoadState('domcontentloaded');
 
-        // Look for any completed prompts in history
-        const completedBadge = page
-            .getByTestId('status-badge')
-            .filter({ hasText: /completed/i })
-            .first();
+        // Should see the Optimised Prompt tab available
+        const optimisedPromptTab = page.getByRole('button', {
+            name: /optimised prompt/i,
+        });
+        await expect(optimisedPromptTab).toBeVisible({ timeout: 5000 });
 
-        const hasCompletedPrompt = await completedBadge
-            .isVisible()
-            .catch(() => false);
+        // Click on the Optimised Prompt tab
+        await optimisedPromptTab.click();
 
-        if (hasCompletedPrompt) {
-            // Click on the completed prompt's row to navigate to it
-            const completedRow = page
-                .locator('tr', { has: completedBadge })
-                .first();
-            await completedRow.click();
+        // Should see the optimised prompt display
+        const optimisedPromptDisplay = page.getByTestId(
+            'optimized-prompt-display',
+        );
+        await expect(optimisedPromptDisplay).toBeVisible({
+            timeout: 5000,
+        });
 
-            // Wait for navigation
-            await page.waitForURL(/\/prompt-builder\/\d+/);
+        // Should see the optimised prompt text
+        const optimisedPromptText = page.getByTestId('optimized-prompt-text');
+        await expect(optimisedPromptText).toBeVisible();
 
-            // Should see the optimised prompt display
-            const optimisedPromptDisplay = page.getByTestId(
-                'optimized-prompt-display',
-            );
-            await expect(optimisedPromptDisplay).toBeVisible({
-                timeout: 5000,
-            });
-
-            // Should see the optimised prompt text
-            const optimisedPromptText = page.getByTestId(
-                'optimized-prompt-text',
-            );
-            await expect(optimisedPromptText).toBeVisible();
-
-            // Should see the copy button
-            const copyButton = page.getByTestId('copy-prompt-button');
-            await expect(copyButton).toBeVisible();
-            await expect(copyButton).toBeEnabled();
-        } else {
-            // No completed prompts yet - test passes as informational
-            expect(true).toBe(true);
-        }
+        // Should see the copy button and it should be enabled
+        const copyButton = page.getByTestId('copy-prompt-button');
+        await expect(copyButton).toBeVisible();
+        await expect(copyButton).toBeEnabled();
     });
 
-    test.skip('should copy optimised prompt to clipboard - Requires completed workflow', async ({
+    test('should copy optimised prompt to clipboard', async ({
         authenticatedPage: page,
     }) => {
-        // Seed a completed prompt for this test (2_completed)
-        await seedPromptRuns(1, '2_completed');
+        // Use fixture to create a fully completed prompt (2_completed)
+        const { setupAndNavigateToPromptRun } =
+            await import('./helpers/fixtures');
+        await setupAndNavigateToPromptRun(page, '2_completed');
 
-        // Navigate to history and find the completed prompt
-        await page.goto('/prompt-builder-history');
+        // Navigate to Optimised Prompt tab
+        const optimisedPromptTab = page.getByRole('button', {
+            name: /optimised prompt/i,
+        });
+        await optimisedPromptTab.click();
 
-        const completedBadge = page
-            .getByTestId('status-badge')
-            .filter({ hasText: /completed/i })
-            .first();
+        // Get the copy button
+        const copyButton = page.getByTestId('copy-prompt-button');
+        await expect(copyButton).toBeVisible({ timeout: 5000 });
 
-        const hasCompletedPrompt = await completedBadge
-            .isVisible()
-            .catch(() => false);
+        // Grant clipboard permissions
+        await page
+            .context()
+            .grantPermissions(['clipboard-read', 'clipboard-write']);
 
-        if (hasCompletedPrompt) {
-            // Navigate to the completed prompt
-            const completedRow = page
-                .locator('tr', { has: completedBadge })
-                .first();
-            await completedRow.click();
-            await page.waitForURL(/\/prompt-builder\/\d+/);
+        // Click the copy button
+        await copyButton.click();
 
-            // Get the prompt text before copying
-            const promptText = page.getByTestId('optimized-prompt-text');
-            const expectedText = await promptText.textContent();
+        // Verify button text changed to "Copied!"
+        await expect(copyButton).toContainText('Copied!');
 
-            // Click the copy button
-            const copyButton = page.getByTestId('copy-prompt-button');
-            await expect(copyButton).toBeVisible();
-
-            // Grant clipboard permissions before clicking
-            await page
-                .context()
-                .grantPermissions(['clipboard-read', 'clipboard-write']);
-
-            await copyButton.click();
-
-            // Verify button text changed to "Copied!"
-            await expect(copyButton).toContainText('Copied!');
-
-            // Try to verify clipboard contains the prompt text
-            // Note: Clipboard API can be flaky in headless browsers
-            try {
-                // Setup the test page with cookies and auth headers
-                await acceptCookies(testPage);
-
-                const clipboardText = await page.evaluate(() =>
-                    navigator.clipboard.readText(),
-                );
-                if (clipboardText) {
-                    expect(clipboardText).toBe(expectedText);
-                }
-            } catch {
-                // Clipboard API might not work in test environment - that's okay
-                // The button state change already confirms copy functionality
-            }
-
-            // Wait for button to reset (2 second timeout in component)
-            await expect(copyButton).toContainText('Copy to Clipboard', {
-                timeout: 3000,
-            });
-        }
+        // Wait for button to reset (2 second timeout in component)
+        await expect(copyButton).toContainText('Copy to Clipboard', {
+            timeout: 3000,
+        });
     });
 
-    test.skip('should allow editing and saving optimised prompt - Requires completed workflow', async ({
-        page,
+    test('should allow editing and saving optimised prompt', async ({
+        authenticatedPage: page,
     }) => {
-        // Seed a completed prompt for this test (2_completed)
-        await seedPromptRuns(1, '2_completed');
+        // Use fixture to create a fully completed prompt (2_completed)
+        const { setupAndNavigateToPromptRun } =
+            await import('./helpers/fixtures');
+        await setupAndNavigateToPromptRun(page, '2_completed');
 
-        // Navigate to the completed prompt
-        await page.goto('/prompt-builder-history');
+        // Navigate to Optimised Prompt tab
+        const optimisedPromptTab = page.getByRole('button', {
+            name: /optimised prompt/i,
+        });
+        await optimisedPromptTab.click();
 
-        const completedBadge = page
-            .getByTestId('status-badge')
-            .filter({ hasText: /completed/i })
+        // Click edit button
+        const editButton = page.getByTestId('edit-prompt-button');
+        await expect(editButton).toBeVisible({ timeout: 5000 });
+        await editButton.click();
+
+        // Find the editable prompt textarea
+        const promptTextarea = page
+            .locator('[data-testid="optimized-prompt-edit"], textarea')
             .first();
+        await expect(promptTextarea).toBeVisible({ timeout: 3000 });
 
-        const hasCompletedPrompt = await completedBadge
-            .isVisible()
-            .catch(() => false);
+        // Edit the prompt
+        const editedText = 'This is my edited prompt for testing.';
+        await promptTextarea.fill(editedText);
 
-        if (hasCompletedPrompt) {
-            // Navigate to the completed prompt
-            const completedRow = page
-                .locator('tr', { has: completedBadge })
-                .first();
-            await completedRow.click();
-            await page.waitForURL(/\/prompt-builder\/\d+/);
+        // Save changes
+        const saveButton = page.getByTestId('save-edit-button');
+        await expect(saveButton).toBeVisible();
+        await saveButton.click();
 
-            // Click edit button
-            const editButton = page.getByTestId('edit-prompt-button');
-            await expect(editButton).toBeVisible();
-            await editButton.click();
+        // Wait briefly for save to complete
+        await page.waitForTimeout(500);
 
-            // Edit the prompt
-            // Use semantic selector instead of hard-coded ID for better maintainability
-            const promptTextarea = page.locator(
-                '[data-testid="optimized-prompt-edit"], #optimized_prompt, textarea[name="prompt"]',
-            );
-            await expect(promptTextarea).toBeVisible();
-
-            const editedText = 'This is my edited prompt for testing';
-            await promptTextarea.fill(editedText);
-
-            // Save changes
-            const saveButton = page.getByTestId('save-edit-button');
-            await expect(saveButton).toBeVisible();
-            await saveButton.click();
-
-            // Wait for save to complete
-
-            // Verify the edited text is now displayed
-            const promptDisplay = page.getByTestId('optimized-prompt-text');
-            await expect(promptDisplay).toContainText(editedText);
-        }
+        // Verify the edited text is now displayed
+        const promptDisplay = page.getByTestId('optimized-prompt-text');
+        await expect(promptDisplay).toContainText(editedText);
     });
 
     test.skip('should view prompt history - Requires completed prompts', async ({
