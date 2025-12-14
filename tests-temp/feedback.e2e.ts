@@ -105,6 +105,7 @@ test.describe('Feedback - Form Field Details', () => {
         await page.goto('/feedback/create');
 
         // Verify all feature options are present
+        await expect(page.getByText(/upload documents/i)).toBeVisible();
         await expect(page.getByText(/prompt templates library/i)).toBeVisible();
         await expect(
             page.getByText(/compare prompt versions side-by-side/i),
@@ -118,7 +119,7 @@ test.describe('Feedback - Form Field Details', () => {
         await expect(
             page.getByText(/ai model-specific optimisation/i),
         ).toBeVisible();
-        await expect(page.getByText(/other/i)).toBeVisible();
+        await expect(page.getByText('Other', { exact: true })).toBeVisible();
     });
 
     test('should show "other" text input when "other" is selected', async ({

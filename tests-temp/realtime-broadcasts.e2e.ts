@@ -1,8 +1,8 @@
-import { expect, test } from './fixtures';
+import { expect, test } from '../tests-frontend/e2e/fixtures';
 import {
     createTestPromptRun,
     triggerAnalysisCompleted,
-} from './helpers/broadcast';
+} from '../tests-frontend/e2e/helpers/broadcast';
 
 /**
  * Real-time Broadcast E2E Tests

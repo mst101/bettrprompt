@@ -1,5 +1,5 @@
-import { expect, test } from './fixtures';
-import { TEST_USER } from './helpers/auth';
+import { expect, test } from '../tests-frontend/e2e/fixtures';
+import { TEST_USER } from '../tests-frontend/e2e/helpers/auth';
 
 test.describe('Profile - Unauthenticated Access', () => {
     test('should redirect to login when accessing profile without auth', async ({

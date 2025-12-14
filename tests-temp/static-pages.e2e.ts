@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { acceptCookies } from './helpers/auth';
+import { acceptCookies } from '../tests-frontend/e2e/helpers/auth';
 
 /**
  * Static Pages E2E Tests (Refactored)

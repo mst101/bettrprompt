@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AnalysisCompleted;
 use App\Events\WorkflowFailed;
 use App\Models\PromptRun;
 use Illuminate\Http\JsonResponse;
@@ -97,7 +98,7 @@ class MockN8nController extends Controller
 
     /**
      * Mock pre-analysis webhook (workflow_0_pre_analysis)
-     * Returns mock response indicating no clarification needed
+     * Returns mock pre-analysis context
      */
     public function preAnalysis(Request $request): JsonResponse
     {
@@ -113,10 +114,9 @@ class MockN8nController extends Controller
             return $this->handleErrorScenario($request, $scenario, '0_processing');
         }
 
-        $taskDescription = $request->input('task_description', '');
-
-        // For E2E tests, always skip pre-analysis questions
-        // This allows tests to proceed directly to the main workflow
+        // For E2E tests, return no clarification needed
+        // Tests will then go directly to the analysis workflow (workflow_1)
+        // which will provide the framework and questions
         return response()->json([
             'success' => true,
             'data' => [
@@ -129,24 +129,112 @@ class MockN8nController extends Controller
     /**
      * Mock analysis webhook (workflow_1)
      * Returns mock framework selection and questions
+     *
+     * NOTE: This endpoint returns the analysis data synchronously.
+     * The ProcessAnalysis job will read this response and update the database,
+     * then broadcast the AnalysisCompleted event.
      */
     public function analyse(Request $request): JsonResponse
     {
         $scenario = $this->getMockScenario($request);
 
+        Log::info('MockN8nController::analyse called', [
+            'scenario' => $scenario,
+            'task_description' => $request->input('task_description'),
+        ]);
+
         // Check if this is an error scenario
         if ($scenario && in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
+            // For error scenarios, we still need to update the DB directly
+            // because the error handling is different
+            $promptRunId = $request->input('prompt_run_id');
+
             return $this->handleErrorScenario($request, $scenario, '1_processing');
         }
 
-        // This would be called by the ProcessAnalysis job
-        // For now, we don't mock this as the job runs asynchronously
-        // and E2E tests check for loading states, not completion
-
-        return response()->json([
+        // Return realistic framework data for E2E testing
+        // ProcessAnalysis job will read this response and update the database
+        $mockResponse = [
             'success' => true,
-            'message' => 'Mock: Analysis queued for processing',
-        ]);
+            'data' => [
+                'task_classification' => [
+                    'primary_category' => 'PROBLEM_SOLVING',
+                    'secondary_category' => null,
+                    'complexity' => 'moderate',
+                    'classification_reasoning' => 'This task requires structured problem-solving with clear steps',
+                    'content_type' => null,
+                ],
+                'cognitive_requirements' => [
+                    'primary' => ['LOGICAL_THINKING', 'SYNTHESIS'],
+                    'secondary' => ['ANALYSIS'],
+                    'reasoning' => 'The task requires logical analysis and synthesis of information',
+                ],
+                'selected_framework' => [
+                    'name' => 'STAR Method',
+                    'code' => 'STAR',
+                    'components' => ['Situation', 'Task', 'Action', 'Result'],
+                    'rationale' => 'The STAR method is ideal for structuring complex narratives and demonstrating outcomes',
+                ],
+                'alternative_frameworks' => [
+                    [
+                        'name' => 'Problem-Solution-Benefit',
+                        'code' => 'PSB',
+                        'when_to_use_instead' => 'When emphasising business value and ROI',
+                    ],
+                ],
+                'personality_tier' => 'full',
+                'task_trait_alignment' => [
+                    'amplified' => [
+                        [
+                            'trait' => 'Extraversion',
+                            'requirement_aligned' => 'COMMUNICATION',
+                            'reason' => 'Strong communicators excel at presenting ideas clearly',
+                        ],
+                    ],
+                    'counterbalanced' => [
+                        [
+                            'trait' => 'Introversion',
+                            'requirement_opposed' => 'AUDIENCE_ENGAGEMENT',
+                            'reason' => 'May need encouragement to engage with audience',
+                            'injection' => 'Include interactive elements and audience connection points',
+                        ],
+                    ],
+                    'neutral' => [
+                        [
+                            'trait' => 'Thinking',
+                            'reason' => 'Thinking preference does not directly impact this task',
+                        ],
+                    ],
+                ],
+                'personality_adjustments_preview' => [
+                    'AMPLIFIED: Leverage clear, logical structure that appeals to analytical thinkers',
+                    'COUNTERBALANCED: Add guidance on connecting with diverse audience perspectives',
+                ],
+                'clarifying_questions' => [
+                    [
+                        'id' => 'Q1',
+                        'question' => 'What is the primary goal or objective you want to achieve?',
+                        'purpose' => 'Understanding the end goal helps shape the framework',
+                        'required' => true,
+                    ],
+                    [
+                        'id' => 'Q2',
+                        'question' => 'Who is your target audience for this?',
+                        'purpose' => 'Audience knowledge helps tailor the tone and complexity',
+                        'required' => true,
+                    ],
+                    [
+                        'id' => 'Q3',
+                        'question' => 'What constraints or limitations should we consider?',
+                        'purpose' => 'Understanding constraints helps identify the most practical approach',
+                        'required' => false,
+                    ],
+                ],
+                'question_rationale' => 'These questions establish context, audience, and constraints which are essential for applying the STAR method effectively',
+            ],
+        ];
+
+        return response()->json($mockResponse);
     }
 
     /**

@@ -405,7 +405,7 @@ const optionalQuestionsLabel = computed(() => {
         @register="handleRegister"
     />
 
-    <Card class="space-y-6">
+    <Card class="space-y-6" data-testid="clarifying-questions">
         <div
             class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start"
         >

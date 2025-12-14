@@ -1,5 +1,5 @@
-import { expect, test } from './fixtures';
-import { createTestPromptRun } from './helpers/broadcast';
+import { expect, test } from '../tests-frontend/e2e/fixtures';
+import { createTestPromptRun } from '../tests-frontend/e2e/helpers/broadcast';
 
 /**
  * Real-time Updates E2E Tests

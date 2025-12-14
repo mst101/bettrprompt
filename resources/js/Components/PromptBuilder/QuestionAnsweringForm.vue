@@ -165,6 +165,7 @@ const handleSkip = async () => {
         <FormTextareaWithActions
             id="answer"
             ref="textareaRef"
+            data-testid="answer-textarea"
             :model-value="answer"
             label="Your Answer"
             :rows="5"
@@ -229,6 +230,7 @@ const handleSkip = async () => {
 
                 <ButtonPrimary
                     type="button"
+                    data-testid="submit-answer-button"
                     :disabled="isSubmitting || !answer.trim()"
                     :loading="isSubmitting"
                     class="w-full sm:w-auto"

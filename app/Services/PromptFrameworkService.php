@@ -143,7 +143,7 @@ class PromptFrameworkService
 
         try {
             $response = Http::timeout(60)
-                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
+                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analyse", $payload);
 
             if ($response->successful()) {
                 return $response->json();
@@ -249,7 +249,7 @@ class PromptFrameworkService
 
             return [
                 'success' => false,
-                'error' => 'Failed to connect to n8n: ' . $e->getMessage(),
+                'error' => 'Failed to connect to n8n: '.$e->getMessage(),
             ];
         } catch (\Illuminate\Http\Client\RequestException $e) {
             Log::error('Workflow 2 request error', [
@@ -259,7 +259,7 @@ class PromptFrameworkService
 
             return [
                 'success' => false,
-                'error' => 'n8n request failed: ' . $e->getMessage(),
+                'error' => 'n8n request failed: '.$e->getMessage(),
             ];
         } catch (\Exception $e) {
             Log::error('Workflow 2 exception', [
