@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { loginWithMockOAuth } from '../tests-frontend/e2e/helpers/auth';
+import { loginWithMockOAuth } from './helpers/auth';
 
 test.describe('Google OAuth Authentication', () => {
     test('should display Google Sign-In button on home page', async ({
@@ -112,7 +112,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
     test('should link Google account to existing email', async ({ page }) => {
         // First, create a user via regular login
         const { loginAsTestUser } =
-            await import('../tests-frontend/e2e/helpers/auth');
+            await import('./helpers/auth');
         await loginAsTestUser(page);
 
         // Then log out

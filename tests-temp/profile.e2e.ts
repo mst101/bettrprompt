@@ -1,5 +1,5 @@
-import { expect, test } from '../tests-frontend/e2e/fixtures';
-import { TEST_USER } from '../tests-frontend/e2e/helpers/auth';
+import { expect, test } from './fixtures';
+import { TEST_USER } from './helpers/auth';
 
 test.describe('Profile - Unauthenticated Access', () => {
     test('should redirect to login when accessing profile without auth', async ({
@@ -14,41 +14,45 @@ test.describe('Profile - Unauthenticated Access', () => {
 });
 
 test.describe('Profile - Authenticated User', () => {
-    test.beforeEach(async ({ authenticatedPage }) => {
-        // User is already authenticated via fixture
-
-        void authenticatedPage;
-    });
-
-    test('should load profile edit page', async ({ page }) => {
-        await page.goto('/profile');
+    test('should load profile edit page', async ({ authenticatedPage }) => {
+        await authenticatedPage.goto('/profile');
 
         // Should see Profile heading from HeaderPage component
-        const heading = page.getByRole('heading', { name: /^profile$/i });
+        const heading = authenticatedPage.getByRole('heading', {
+            name: /^profile$/i,
+        });
         await expect(heading).toBeVisible();
 
         // Verify all sections are visible
         await expect(
-            page.getByRole('heading', { name: /your personality type/i }),
+            authenticatedPage.getByRole('heading', {
+                name: /your personality type/i,
+            }),
         ).toBeVisible();
         await expect(
-            page.getByRole('heading', { name: /profile information/i }),
+            authenticatedPage.getByRole('heading', {
+                name: /profile information/i,
+            }),
         ).toBeVisible();
         await expect(
-            page.getByRole('heading', { name: /update password/i }),
+            authenticatedPage.getByRole('heading', {
+                name: /update password/i,
+            }),
         ).toBeVisible();
         await expect(
-            page.getByRole('heading', { name: /delete account/i }),
+            authenticatedPage.getByRole('heading', { name: /delete account/i }),
         ).toBeVisible();
     });
 
-    test('should display current user information', async ({ page }) => {
-        await page.goto('/profile');
+    test('should display current user information', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
         // Should see name and email fields populated with TEST_USER data
         // Labels may include asterisk for required fields: "Name *"
-        const nameInput = page.getByLabel(/name/i);
-        const emailInput = page.getByLabel(/email/i);
+        const nameInput = authenticatedPage.getByLabel(/name/i);
+        const emailInput = authenticatedPage.getByLabel(/email/i);
 
         await expect(nameInput).toBeVisible();
         await expect(emailInput).toBeVisible();
@@ -62,11 +66,11 @@ test.describe('Profile - Authenticated User', () => {
         expect(emailValue).toMatch(/@/);
     });
 
-    test('should update profile information', async ({ page }) => {
-        await page.goto('/profile');
+    test('should update profile information', async ({ authenticatedPage }) => {
+        await authenticatedPage.goto('/profile');
 
         // Scroll to profile section to ensure elements are visible
-        const profileSection = page
+        const profileSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Profile Information' });
         await profileSection.scrollIntoViewIfNeeded();
@@ -100,17 +104,20 @@ test.describe('Profile - Authenticated User', () => {
         // Extra wait to ensure database write completes
     });
 
-    test('should display personality type section', async ({ page }) => {
-        await page.goto('/profile');
+    test('should display personality type section', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
         // Look for personality type section
-        const personalityHeading = page.getByRole('heading', {
+        const personalityHeading = authenticatedPage.getByRole('heading', {
             name: /your personality type/i,
         });
         await expect(personalityHeading).toBeVisible();
 
         // Should see personality type dropdown (may have asterisk for required)
-        const personalitySelect = page.getByLabel(/personality type/i);
+        const personalitySelect =
+            authenticatedPage.getByLabel(/personality type/i);
         await expect(personalitySelect).toBeVisible();
 
         // Select a personality type to reveal identity options
@@ -119,23 +126,25 @@ test.describe('Profile - Authenticated User', () => {
         // Wait for identity radio buttons to appear
 
         // Should see identity radio buttons
-        const assertiveRadio = page.getByLabel(/assertive \(a\)/i);
-        const turbulentRadio = page.getByLabel(/turbulent \(t\)/i);
+        const assertiveRadio = authenticatedPage.getByLabel(/assertive \(a\)/i);
+        const turbulentRadio = authenticatedPage.getByLabel(/turbulent \(t\)/i);
 
         await expect(assertiveRadio).toBeVisible();
         await expect(turbulentRadio).toBeVisible();
 
         // Check for trait percentages toggle button
-        const toggleButton = page.getByRole('button', {
+        const toggleButton = authenticatedPage.getByRole('button', {
             name: /trait percentages/i,
         });
         await expect(toggleButton).toBeVisible();
     });
 
-    test('should update personality type traits', async ({ page }) => {
-        await page.goto('/profile');
+    test('should update personality type traits', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
-        const personalitySection = page
+        const personalitySection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Your Personality Type' });
 
@@ -199,10 +208,12 @@ test.describe('Profile - Authenticated User', () => {
         await expect(taskCtaButton).toBeVisible({ timeout: 5000 });
     });
 
-    test('should change password successfully', async ({ page }) => {
-        await page.goto('/profile');
+    test('should change password successfully', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
-        const passwordSection = page
+        const passwordSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Update Password' });
 
@@ -243,11 +254,11 @@ test.describe('Profile - Authenticated User', () => {
     });
 
     test('should show validation errors for mismatched passwords', async ({
-        page,
+        authenticatedPage,
     }) => {
-        await page.goto('/profile');
+        await authenticatedPage.goto('/profile');
 
-        const passwordSection = page
+        const passwordSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Update Password' });
 
@@ -279,10 +290,12 @@ test.describe('Profile - Authenticated User', () => {
         await expect(errorMessage).toBeVisible({ timeout: 3000 });
     });
 
-    test('should delete account with confirmation modal', async ({ page }) => {
-        await page.goto('/profile');
+    test('should delete account with confirmation modal', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
-        const deleteSection = page
+        const deleteSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Delete Account' });
 
@@ -299,7 +312,7 @@ test.describe('Profile - Authenticated User', () => {
         // Wait for modal to appear
 
         // Should show confirmation modal with warning text
-        const modal = page.getByRole('dialog');
+        const modal = authenticatedPage.getByRole('dialog');
         await expect(modal).toBeVisible({ timeout: 3000 });
 
         const confirmText = modal.getByText(
@@ -313,7 +326,7 @@ test.describe('Profile - Authenticated User', () => {
         await expect(permanentDeleteText).toBeVisible();
 
         // Cancel the deletion (don't actually delete the account)
-        const cancelButton = page.getByRole('button', {
+        const cancelButton = authenticatedPage.getByRole('button', {
             name: /^cancel$/i,
         });
         await cancelButton.click();
@@ -322,14 +335,16 @@ test.describe('Profile - Authenticated User', () => {
         await expect(confirmText).not.toBeVisible({ timeout: 3000 });
 
         // Should still be on profile page
-        expect(page.url()).toContain('/profile');
+        expect(authenticatedPage.url()).toContain('/profile');
     });
 
-    test('should display user avatar if present', async ({ page }) => {
-        await page.goto('/profile');
+    test('should display user avatar if present', async ({
+        authenticatedPage,
+    }) => {
+        await authenticatedPage.goto('/profile');
 
         // Check for avatar image (may not be implemented yet)
-        const avatar = page
+        const avatar = authenticatedPage
             .locator(
                 'img[alt*="avatar"], img[alt*="profile"], img[alt*="user"]',
             )
@@ -347,11 +362,11 @@ test.describe('Profile - Authenticated User', () => {
     });
 
     test('should validate required fields in profile information', async ({
-        page,
+        authenticatedPage,
     }) => {
-        await page.goto('/profile');
+        await authenticatedPage.goto('/profile');
 
-        const profileSection = page
+        const profileSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Profile Information' });
 
@@ -381,10 +396,10 @@ test.describe('Profile - Authenticated User', () => {
         expect(hasError).toBeTruthy();
     });
 
-    test('should validate email format', async ({ page }) => {
-        await page.goto('/profile');
+    test('should validate email format', async ({ authenticatedPage }) => {
+        await authenticatedPage.goto('/profile');
 
-        const profileSection = page
+        const profileSection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Profile Information' });
 
@@ -412,11 +427,11 @@ test.describe('Profile - Authenticated User', () => {
     });
 
     test('should require both personality type and identity', async ({
-        page,
+        authenticatedPage,
     }) => {
-        await page.goto('/profile');
+        await authenticatedPage.goto('/profile');
 
-        const personalitySection = page
+        const personalitySection = authenticatedPage
             .locator('section')
             .filter({ hasText: 'Your Personality Type' });
 
@@ -443,28 +458,30 @@ test.describe('Profile - Authenticated User', () => {
         await saveButton.click();
 
         // Should still be on profile page (form didn't submit)
-        expect(page.url()).toContain('/profile');
+        expect(authenticatedPage.url()).toContain('/profile');
     });
 
     test('should handle responsive design on mobile viewport', async ({
-        page,
+        authenticatedPage,
     }) => {
         // Set mobile viewport
-        await page.setViewportSize({ width: 375, height: 667 });
+        await authenticatedPage.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/profile');
+        await authenticatedPage.goto('/profile');
 
         // All sections should still be visible and usable
         await expect(
-            page.getByRole('heading', { name: /^profile$/i }),
+            authenticatedPage.getByRole('heading', { name: /^profile$/i }),
         ).toBeVisible();
 
         // Check that forms are still accessible
-        const nameInput = page.getByLabel(/name/i);
+        const nameInput = authenticatedPage.getByLabel(/name/i);
         await expect(nameInput).toBeVisible();
 
         // Check that buttons are visible and clickable
-        const saveButtons = page.getByRole('button', { name: /^save$/i });
+        const saveButtons = authenticatedPage.getByRole('button', {
+            name: /^save$/i,
+        });
         const firstSaveButton = saveButtons.first();
         await expect(firstSaveButton).toBeVisible();
 
