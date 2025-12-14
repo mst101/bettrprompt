@@ -1,8 +1,5 @@
 import { expect, test } from './fixtures';
-import {
-    acceptCookies,
-    loginAsTestUser,
-} from './helpers/auth';
+import { acceptCookies, loginAsTestUser } from './helpers/auth';
 import { N8nMockService } from './mocks/n8n-mock-service';
 
 test.describe('Prompt Builder - Unauthenticated', () => {
@@ -224,10 +221,21 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             // Fill in an answer
             const testAnswer =
                 'This is my comprehensive answer to the clarifying question.';
+
+            // Click to focus the textarea first
+            await answerTextarea.click();
+            await authenticatedPage.waitForTimeout(200);
+
+            // Clear any existing content and fill with our answer
             await answerTextarea.fill(testAnswer);
 
-            // Verify the text was entered
-            await expect(answerTextarea).toHaveValue(testAnswer);
+            // Wait for the input to be processed
+            await authenticatedPage.waitForTimeout(300);
+
+            // Verify the text was entered (with longer timeout for parallel execution)
+            await expect(answerTextarea).toHaveValue(testAnswer, {
+                timeout: 5000,
+            });
         }
 
         // The clarifying questions section should be visible
@@ -418,10 +426,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     }) => {
         const { setupAndNavigateToPromptRun } =
             await import('./helpers/fixtures');
-        const promptRunId = await setupAndNavigateToPromptRun(
-            authenticatedPage,
-            '2_completed',
-        );
+        await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Now navigate to history page
         await authenticatedPage.goto('/prompt-builder-history');
@@ -556,10 +561,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     }) => {
         const { setupAndNavigateToPromptRun } =
             await import('./helpers/fixtures');
-        const promptRunId = await setupAndNavigateToPromptRun(
-            authenticatedPage,
-            '1_completed',
-        );
+        await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
@@ -699,11 +701,8 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
-        // Should display an error message
-        const errorMessage = authenticatedPage.locator('text=/failed|error/i');
-        const hasError = await errorMessage
-            .isVisible({ timeout: 3000 })
-            .catch(() => false);
+        // Should display an error message (or page loaded successfully - both are valid outcomes)
+        authenticatedPage.locator('text=/failed|error/i');
 
         // Either error is displayed, or page loaded successfully (both are valid test outcomes)
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
@@ -733,10 +732,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Should display an error message
-        const errorMessage = authenticatedPage.locator('text=/failed|error/i');
-        const hasError = await errorMessage
-            .isVisible({ timeout: 3000 })
-            .catch(() => false);
+        authenticatedPage.locator('text=/failed|error/i');
 
         // Page should load successfully
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
@@ -767,10 +763,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Should display error
-        const errorMessage = authenticatedPage.locator('text=/failed|error/i');
-        const hasError = await errorMessage
-            .isVisible({ timeout: 3000 })
-            .catch(() => false);
+        authenticatedPage.locator('text=/failed|error/i');
 
         // Now create a successful prompt to simulate successful retry
         const successResponse = await authenticatedPage.request.post(

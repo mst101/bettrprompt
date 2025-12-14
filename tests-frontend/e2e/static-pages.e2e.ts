@@ -61,9 +61,7 @@ for (const page of staticPages) {
             const response = await browserPage.goto(page.path);
             expect(response?.status()).toBe(200);
             expect(browserPage.url()).toContain(page.path);
-            await expect(browserPage).toHaveTitle(
-                new RegExp(page.title, 'i'),
-            );
+            await expect(browserPage).toHaveTitle(new RegExp(page.title, 'i'));
 
             // Verify main heading and semantic structure
             const heading = browserPage.getByRole('heading', {
@@ -191,9 +189,7 @@ test.describe('Cross-Page Navigation', () => {
         expect(page.url()).toContain('/cookies');
     });
 
-    test('should have logo link on all static pages', async ({
-        page,
-    }) => {
+    test('should have logo link on all static pages', async ({ page }) => {
         // Test that logo link exists on each static page
         const staticPagePaths = ['/terms', '/privacy', '/cookies'];
 
@@ -201,7 +197,9 @@ test.describe('Cross-Page Navigation', () => {
             await page.goto(pagePath);
 
             // Verify logo link exists (may be a link or clickable element)
-            const logoLink = page.getByRole('link', { name: /AI Buddy/i }).first();
+            const logoLink = page
+                .getByRole('link', { name: /AI Buddy/i })
+                .first();
             await expect(logoLink).toBeVisible();
         }
     });
@@ -216,11 +214,15 @@ test.describe('Cross-Page Navigation', () => {
 
             const footer = page.locator('footer');
             await expect(footer).toBeVisible();
-            await expect(footer.getByText(/All rights reserved/i)).toBeVisible();
+            await expect(
+                footer.getByText(/All rights reserved/i),
+            ).toBeVisible();
 
             // Verify copyright year
             const currentYear = new Date().getFullYear();
-            await expect(footer.getByText(new RegExp(currentYear.toString()))).toBeVisible();
+            await expect(
+                footer.getByText(new RegExp(currentYear.toString())),
+            ).toBeVisible();
         }
     });
 });
@@ -252,13 +254,21 @@ test.describe('Accessibility and Content Quality', () => {
 
         // Cookies page should have cookie type categories
         await page.goto('/cookies');
-        await expect(page.getByText(/Essential Cookies/i).first()).toBeVisible();
-        await expect(page.getByText(/Functional Cookies/i).first()).toBeVisible();
-        await expect(page.getByText(/Analytics Cookies/i).first()).toBeVisible();
+        await expect(
+            page.getByText(/Essential Cookies/i).first(),
+        ).toBeVisible();
+        await expect(
+            page.getByText(/Functional Cookies/i).first(),
+        ).toBeVisible();
+        await expect(
+            page.getByText(/Analytics Cookies/i).first(),
+        ).toBeVisible();
 
         // Terms page should have readable prose content
         await page.goto('/terms');
-        const proseContent = page.locator('[data-testid="prose-content"], .prose');
+        const proseContent = page.locator(
+            '[data-testid="prose-content"], .prose',
+        );
         await expect(proseContent).toBeVisible();
 
         const paragraphs = proseContent.locator('p');

@@ -111,8 +111,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
 
     test('should link Google account to existing email', async ({ page }) => {
         // First, create a user via regular login
-        const { loginAsTestUser } =
-            await import('./helpers/auth');
+        const { loginAsTestUser } = await import('./helpers/auth');
         await loginAsTestUser(page);
 
         // Then log out

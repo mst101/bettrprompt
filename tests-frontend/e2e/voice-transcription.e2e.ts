@@ -26,9 +26,7 @@ test.describe('Voice Transcription', () => {
         });
 
         // Button might not exist if feature is disabled, but if it does, it should be properly configured
-        const isVisible = await voiceButton
-            .isVisible()
-            .catch(() => false);
+        const isVisible = await voiceButton.isVisible().catch(() => false);
 
         if (isVisible) {
             // Verify button is enabled and has accessibility attributes
@@ -57,12 +55,8 @@ test.describe('Voice Transcription', () => {
             name: /record/i,
         });
 
-        const taskVisible = await taskInput
-            .isVisible()
-            .catch(() => false);
-        const buttonVisible = await voiceButton
-            .isVisible()
-            .catch(() => false);
+        const taskVisible = await taskInput.isVisible().catch(() => false);
+        const buttonVisible = await voiceButton.isVisible().catch(() => false);
 
         // When voice feature is enabled, both task input and voice button should be visible
         if (taskVisible && buttonVisible) {
@@ -89,18 +83,13 @@ test.describe('Voice Transcription', () => {
             await import('./helpers/fixtures');
 
         // Test on processing state (clarifying questions not yet ready)
-        const processingId = await setupAndNavigateToPromptRun(
-            authenticatedPage,
-            '1_processing',
-        );
+        await setupAndNavigateToPromptRun(authenticatedPage, '1_processing');
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         let voiceButton = authenticatedPage.getByRole('button', {
             name: /record/i,
         });
-        let isVisible = await voiceButton
-            .isVisible()
-            .catch(() => false);
+        let isVisible = await voiceButton.isVisible().catch(() => false);
 
         // Voice feature should be available in processing state
         if (isVisible) {
@@ -108,19 +97,14 @@ test.describe('Voice Transcription', () => {
         }
 
         // Test on completed state (framework selected with questions)
-        const completedId = await setupAndNavigateToPromptRun(
-            authenticatedPage,
-            '1_completed',
-        );
+        await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Navigate to clarifying questions tab if it exists
         const clarifyingTab = authenticatedPage.getByRole('button', {
             name: /clarifying questions/i,
         });
-        const tabVisible = await clarifyingTab
-            .isVisible()
-            .catch(() => false);
+        const tabVisible = await clarifyingTab.isVisible().catch(() => false);
 
         if (tabVisible) {
             await clarifyingTab.click();
@@ -129,9 +113,7 @@ test.describe('Voice Transcription', () => {
             voiceButton = authenticatedPage.getByRole('button', {
                 name: /record/i,
             });
-            isVisible = await voiceButton
-                .isVisible()
-                .catch(() => false);
+            isVisible = await voiceButton.isVisible().catch(() => false);
             if (isVisible) {
                 await expect(voiceButton).toBeEnabled();
             }
