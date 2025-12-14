@@ -29,7 +29,7 @@ test('history page displays with default sorting', function () {
     );
 });
 
-test('history page supports sorting by different columns', function ($sortBy) {
+test('history page filters by different sort columns', function ($sortBy) {
     // Create test data
     PromptRun::factory()->count(2)->create([
         'user_id' => $this->user->id,
@@ -83,7 +83,7 @@ test('history page rejects invalid sort direction', function () {
     );
 });
 
-test('history page pagination works correctly', function () {
+test('history page supports pagination', function () {
     // Create 15 PromptBuilder runs
     PromptRun::factory()->count(15)->create([
         'user_id' => $this->user->id,
@@ -137,7 +137,7 @@ test('history page clamps per page to valid bounds', function (int $perPage, int
     [-5, 1],             // Negative, clamps to 1
 ]);
 
-test('history page handles non numeric per page gracefully', function () {
+test('history page handles non-numeric per page gracefully', function () {
     PromptRun::factory()->count(5)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
@@ -153,7 +153,7 @@ test('history page handles non numeric per page gracefully', function () {
     );
 });
 
-test('history page pagination maintains query parameters', function () {
+test('history page maintains query parameters in pagination', function () {
     PromptRun::factory()->count(15)->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
@@ -238,7 +238,7 @@ test('history page handles sorting nulls in personality type', function () {
     $response->assertInertia(fn ($page) => $page->has('promptRuns.data', 2));
 });
 
-test('history page only shows PromptBuilder runs with task classification', function () {
+test('history page filters to PromptBuilder runs with task classification', function () {
     // Create PromptBuilder runs (with task_classification)
     PromptRun::factory()->count(3)->create([
         'user_id' => $this->user->id,

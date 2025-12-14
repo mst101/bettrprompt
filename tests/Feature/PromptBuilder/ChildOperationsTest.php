@@ -17,7 +17,7 @@ beforeEach(function () {
     ]);
 });
 
-test('create child with new task description successfully', function () {
+test('create child from task description creates child successfully', function () {
     Queue::fake();
 
     $this->actingAs($this->user);
@@ -25,11 +25,10 @@ test('create child with new task description successfully', function () {
     $parentRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child', $parentRun), [
+    $response = $this->post(route('prompt-builder.create-child-from-task', $parentRun), [
         'task_description' => 'Updated task description for child run',
     ]);
 
@@ -46,14 +45,14 @@ test('create child with new task description successfully', function () {
     Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
 });
 
-test('create child validates task description required', function () {
+test('create child from task description validates task description required', function () {
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child', $parentRun), []);
+    $response = $this->post(route('prompt-builder.create-child-from-task', $parentRun), []);
 
     $response->assertSessionHasErrors(['task_description']);
 });
@@ -66,14 +65,14 @@ test('user cannot create child of other users prompt run', function () {
         'user_id' => $otherUser->id,
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child', $otherRun), [
+    $response = $this->post(route('prompt-builder.create-child-from-task', $otherRun), [
         'task_description' => 'New task description',
     ]);
 
     $response->assertForbidden();
 });
 
-test('create child from edited answers successfully', function () {
+test('create child from answers creates child successfully', function () {
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -86,7 +85,6 @@ test('create child from edited answers successfully', function () {
         ],
         'clarifying_answers' => ['Old answer 1', 'Old answer 2'],
         'personality_tier' => 'full',
-
         'workflow_stage' => '2_completed',
     ]);
 
@@ -141,7 +139,6 @@ test('create child from answers converts empty strings to null', function () {
             ['question' => 'Question 2'],
         ],
         'personality_tier' => 'full',
-
     ]);
 
     $this->mock(PromptFrameworkService::class, function ($mock) {

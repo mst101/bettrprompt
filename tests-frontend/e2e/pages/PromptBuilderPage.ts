@@ -16,7 +16,7 @@ export class PromptBuilderPage {
 
     get submitButton(): Locator {
         return this.page.getByRole('button', {
-            name: /submit|optimize|generate/i,
+            name: /submit|optimis|generate/i,
         });
     }
 
