@@ -5,6 +5,7 @@ import {
     loginAsTestUser,
     loginWithUniqueName,
 } from '../helpers/auth';
+import { N8nMockService } from '../mocks/n8n-mock-service';
 import { AuthPage } from '../pages/AuthPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
@@ -13,19 +14,25 @@ import { StaticPage } from '../pages/StaticPage';
 
 /**
  * Custom Playwright Test Fixtures
- * Provides pre-configured page objects and authentication states
+ * Provides pre-configured page objects and authentication states with n8n mocking
  * Usage: test('test name', async ({ authPage, page }) => { ... })
+ *
+ * IMPORTANT: All tests using this fixture automatically have n8n mocking enabled.
+ * This prevents any real calls to n8n workflows during tests.
+ * To use a specific scenario, create your own N8nMockService in the test.
  */
 
 type AuthenticatedPageFixture = {
     /**
      * Pre-authenticated page (user is logged in)
      * Automatically logs in before the test runs
+     * NOTE: n8n mocking is automatically enabled
      */
     authenticatedPage: Page;
     /**
      * Pre-authenticated page with a unique user per test
      * Useful for tests that need an empty state or isolated data
+     * NOTE: n8n mocking is automatically enabled
      */
     authenticatedPageWithUniqueUser: Page;
 };
@@ -42,8 +49,44 @@ type TestFixtures = AuthenticatedPageFixture & PageObjectsFixture;
 
 /**
  * Extend Playwright's test with custom fixtures
+ * Includes automatic n8n mocking on the page fixture
  */
 export const test = base.extend<TestFixtures>({
+    /**
+     * Base page fixture with deferred n8n mocking
+     * Mocking is set up on first navigation, not during fixture initialization
+     */
+    page: async ({ page }, use) => {
+        let mockingSetUp = false;
+
+        // Intercept page goto to enable mocking after first navigation
+        const originalGoto = page.goto.bind(page);
+        page.goto = async (url: string, options?: any) => {
+            const response = await originalGoto(url, options);
+
+            // Set up mocking on first navigation (when page has a real URL)
+            if (!mockingSetUp && response && !page.url().includes('about:')) {
+                mockingSetUp = true;
+                const n8nMock = new N8nMockService(page);
+                await n8nMock
+                    .enableMocking({
+                        scenario: 'success',
+                        responseDelay: 100,
+                    })
+                    .catch((err) => {
+                        // Log but don't fail if mocking setup fails
+                        console.warn(
+                            '[N8n Mocking] Failed to enable mocking:',
+                            err.message,
+                        );
+                    });
+            }
+
+            return response;
+        };
+
+        await use(page);
+    },
     /**
      * Fixture: Pre-authenticated page
      * Logs in the test user before each test
