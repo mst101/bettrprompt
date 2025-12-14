@@ -131,18 +131,22 @@ export const test = base.extend<TestFixtures>({
     /**
      * Fixture: PromptBuilderAdvancedPage page object
      * Provides convenient methods for advanced prompt builder interactions
+     * Uses authenticatedPage to ensure user is logged in
      */
-    promptBuilderAdvancedPage: async ({ page }, use) => {
-        const promptBuilderAdvancedPage = new PromptBuilderAdvancedPage(page);
+    promptBuilderAdvancedPage: async ({ authenticatedPage }, use) => {
+        const promptBuilderAdvancedPage = new PromptBuilderAdvancedPage(
+            authenticatedPage,
+        );
         await use(promptBuilderAdvancedPage);
     },
 
     /**
      * Fixture: ProfilePage page object
      * Provides convenient methods for profile page interactions
+     * Uses authenticatedPage to ensure user is logged in
      */
-    profilePage: async ({ page }, use) => {
-        const profilePage = new ProfilePage(page);
+    profilePage: async ({ authenticatedPage }, use) => {
+        const profilePage = new ProfilePage(authenticatedPage);
         await use(profilePage);
     },
 });
