@@ -5,7 +5,6 @@ import {
     loginAsTestUser,
     loginWithUniqueName,
 } from '../helpers/auth';
-import { N8nMockService } from '../mocks/n8n-mock-service';
 import { AuthPage } from '../pages/AuthPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
@@ -53,37 +52,31 @@ type TestFixtures = AuthenticatedPageFixture & PageObjectsFixture;
  */
 export const test = base.extend<TestFixtures>({
     /**
-     * Base page fixture with deferred n8n mocking
-     * Mocking is set up on first navigation, not during fixture initialization
+     * Base page fixture with n8n test mode enabled
+     * Sets an environment flag that the backend can use to return mock responses
      */
     page: async ({ page }, use) => {
-        let mockingSetUp = false;
+        // Set the test flag that the backend will check
+        // The backend's PromptFrameworkService should check for this
+        // and return mock responses instead of calling real n8n
+        await page.addInitScript(() => {
+            // This runs in the browser context and sets a test flag
+            (window as any).__E2E_TEST__ = true;
+        });
 
-        // Intercept page goto to enable mocking after first navigation
-        const originalGoto = page.goto.bind(page);
-        page.goto = async (url: string, options?: any) => {
-            const response = await originalGoto(url, options);
-
-            // Set up mocking on first navigation (when page has a real URL)
-            if (!mockingSetUp && response && !page.url().includes('about:')) {
-                mockingSetUp = true;
-                const n8nMock = new N8nMockService(page);
-                await n8nMock
-                    .enableMocking({
-                        scenario: 'success',
-                        responseDelay: 100,
-                    })
-                    .catch((err) => {
-                        // Log but don't fail if mocking setup fails
-                        console.warn(
-                            '[N8n Mocking] Failed to enable mocking:',
-                            err.message,
-                        );
-                    });
+        // Also intercept requests to n8n domain to see if they're happening
+        await page.on('request', (request) => {
+            if (
+                request.url().includes('n8n') &&
+                !request.url().includes('localhost')
+            ) {
+                console.warn(
+                    '[E2E WARNING] Real n8n HTTP request detected (should be mocked):',
+                    request.method(),
+                    request.url(),
+                );
             }
-
-            return response;
-        };
+        });
 
         await use(page);
     },
