@@ -6,6 +6,8 @@ import {
     loginWithUniqueName,
 } from '../helpers/auth';
 import { AuthPage } from '../pages/AuthPage';
+import { ProfilePage } from '../pages/ProfilePage';
+import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
 import { PromptBuilderPage } from '../pages/PromptBuilderPage';
 import { StaticPage } from '../pages/StaticPage';
 
@@ -31,6 +33,8 @@ type AuthenticatedPageFixture = {
 type PageObjectsFixture = {
     authPage: AuthPage;
     promptBuilderPage: PromptBuilderPage;
+    promptBuilderAdvancedPage: PromptBuilderAdvancedPage;
+    profilePage: ProfilePage;
     staticPage: StaticPage;
 };
 
@@ -122,6 +126,24 @@ export const test = base.extend<TestFixtures>({
     staticPage: async ({ page }, use) => {
         const staticPage = new StaticPage(page);
         await use(staticPage);
+    },
+
+    /**
+     * Fixture: PromptBuilderAdvancedPage page object
+     * Provides convenient methods for advanced prompt builder interactions
+     */
+    promptBuilderAdvancedPage: async ({ page }, use) => {
+        const promptBuilderAdvancedPage = new PromptBuilderAdvancedPage(page);
+        await use(promptBuilderAdvancedPage);
+    },
+
+    /**
+     * Fixture: ProfilePage page object
+     * Provides convenient methods for profile page interactions
+     */
+    profilePage: async ({ page }, use) => {
+        const profilePage = new ProfilePage(page);
+        await use(profilePage);
     },
 });
 
