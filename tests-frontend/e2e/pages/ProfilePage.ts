@@ -10,28 +10,14 @@ export class ProfilePage {
 
     // ===== Navigation =====
 
+    /**
+     * Navigate to profile page
+     * Note: All profile sections are displayed on a single /profile page
+     * There are no separate GET views for /profile/location, /profile/professional, etc.
+     * Those routes only accept PATCH/POST/DELETE for form submissions.
+     */
     async goto(): Promise<void> {
         await this.page.goto('/profile');
-    }
-
-    async gotoLocation(): Promise<void> {
-        await this.page.goto('/profile/location');
-    }
-
-    async gotoProfessional(): Promise<void> {
-        await this.page.goto('/profile/professional');
-    }
-
-    async gotoTeam(): Promise<void> {
-        await this.page.goto('/profile/team');
-    }
-
-    async gotoBudget(): Promise<void> {
-        await this.page.goto('/profile/budget');
-    }
-
-    async gotoTools(): Promise<void> {
-        await this.page.goto('/profile/tools');
     }
 
     // ===== Form Field Helpers =====
@@ -92,12 +78,55 @@ export class ProfilePage {
         await field.fill(value);
 
         if (shouldSave) {
-            await this.save();
+            await this.saveSectionForm(labelPattern);
         }
     }
 
     /**
-     * Save the form and wait for success message
+     * Fill a field within a specific section by section heading
+     */
+    async fillFieldInSection(
+        sectionPattern: string | RegExp,
+        labelPattern: string | RegExp,
+        value: string,
+    ): Promise<void> {
+        const section = this.getSectionByHeading(sectionPattern);
+        const field = section.getByLabel(labelPattern).first();
+        await field.scrollIntoViewIfNeeded();
+        await field.fill(value);
+    }
+
+    /**
+     * Get the save button within a specific section
+     */
+    getSectionSaveButton(sectionPattern: string | RegExp): Locator {
+        const section = this.getSectionByHeading(sectionPattern);
+        return section.getByRole('button', { name: /^save$/i });
+    }
+
+    /**
+     * Save a specific section form
+     */
+    async saveSectionForm(
+        sectionPattern: string | RegExp,
+        timeout: number = 5000,
+    ): Promise<void> {
+        const section = this.getSectionByHeading(sectionPattern);
+        const saveButton = section.getByRole('button', { name: /^save$/i });
+
+        // Scroll section into view
+        await section.scrollIntoViewIfNeeded();
+
+        // Click save button
+        await saveButton.click({ timeout: 5000 });
+
+        // Wait for success message within that section
+        const successMessage = section.getByText(/saved|success|updated/i);
+        await expect(successMessage).toBeVisible({ timeout });
+    }
+
+    /**
+     * Save the form and wait for success message (saves first visible save button)
      */
     async save(timeout: number = 5000): Promise<void> {
         const saveButton = this.getSaveButton();
