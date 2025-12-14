@@ -7,7 +7,7 @@ test.describe('Profile - Location Management', () => {
         await profilePage.goto();
 
         // Check if location section exists on profile page
-        const section = profilePage.getSectionByHeading(/location/i);
+        const section = profilePage.getSectionByHeading(/Location & Language/i);
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
@@ -25,9 +25,8 @@ test.describe('Profile - Professional Information', () => {
         await profilePage.goto();
 
         // Check if professional section exists on profile page
-        const section = profilePage.getSectionByHeading(
-            /professional|occupation|industry/i,
-        );
+        const section =
+            profilePage.getSectionByHeading(/Professional Context/i);
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
@@ -68,7 +67,7 @@ test.describe('Profile - Team Information', () => {
         await profilePage.goto();
 
         // Check if team section exists on profile page
-        const section = profilePage.getSectionByHeading(/team|team size/i);
+        const section = profilePage.getSectionByHeading(/Team & Work Context/i);
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
@@ -102,7 +101,9 @@ test.describe('Profile - Budget Information', () => {
         await profilePage.goto();
 
         // Check if budget section exists on profile page
-        const section = profilePage.getSectionByHeading(/budget|spending/i);
+        const section = profilePage.getSectionByHeading(
+            /Budget & Tool Preferences/i,
+        );
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
@@ -146,9 +147,8 @@ test.describe('Profile - Tools Preferences', () => {
         await profilePage.goto();
 
         // Check if tools section exists on profile page
-        const section = profilePage.getSectionByHeading(
-            /tools|tools preference/i,
-        );
+        const section =
+            profilePage.getSectionByHeading(/Tools & Technologies/i);
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
@@ -187,9 +187,8 @@ test.describe('Profile - UI Complexity Preference', () => {
         await profilePage.goto();
 
         // Check if UI complexity section exists on profile page
-        const section = profilePage.getSectionByHeading(
-            /UI complexity|complexity|interface/i,
-        );
+        const section =
+            profilePage.getSectionByHeading(/Interface Complexity/i);
         const sectionVisible = await section.isVisible().catch(() => false);
         expect(sectionVisible).toBe(true);
     });
