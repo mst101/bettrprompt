@@ -1,6 +1,14 @@
 import { router } from '@inertiajs/vue3';
 import type { Channel } from 'laravel-echo';
-import { computed, onMounted, onUnmounted, ref, watch, type ComputedRef, type Ref } from 'vue';
+import {
+    computed,
+    onMounted,
+    onUnmounted,
+    ref,
+    watch,
+    type ComputedRef,
+    type Ref,
+} from 'vue';
 
 interface ReloadOptions {
     only?: string[];
@@ -157,7 +165,7 @@ export function useRealtimeUpdates(
 
         try {
             if (window.Echo && channel) {
-                window.Echo.leave(channelName);
+                window.Echo.leave(channelName.value);
             }
         } catch (error) {
             console.error('[useRealtimeUpdates] Error leaving channel:', error);
@@ -176,13 +184,19 @@ export function useRealtimeUpdates(
         if (channel) {
             try {
                 // Force unsubscribe from all events on this channel
-                if ('listeners' in channel && typeof (channel as any).listeners === 'function') {
+                if (
+                    'listeners' in channel &&
+                    typeof (channel as any).listeners === 'function'
+                ) {
                     (channel as any).listeners = {};
                 }
                 window.Echo?.leave(channelName.value);
                 channel = null;
             } catch (error) {
-                console.warn('[useRealtimeUpdates] Error leaving old channel:', error);
+                console.warn(
+                    '[useRealtimeUpdates] Error leaving old channel:',
+                    error,
+                );
                 channel = null;
             }
         }
@@ -229,28 +243,25 @@ export function useRealtimeUpdates(
         // Watch for channelName changes (e.g., when router.reload updates props)
         // This is important for partial Inertia reloads that don't unmount/remount the component
         let previousChannelName = channelName.value;
-        watch(
-            channelName,
-            (newChannelName) => {
-                if (newChannelName && newChannelName !== previousChannelName) {
-                    // Cleanup old channel and setup new one
-                    if (channel) {
-                        try {
-                            window.Echo?.leave(previousChannelName);
-                        } catch (error) {
-                            console.warn(
-                                '[useRealtimeUpdates] Error leaving old channel during name change:',
-                                error,
-                            );
-                        }
-                        channel = null;
+        watch(channelName, (newChannelName) => {
+            if (newChannelName && newChannelName !== previousChannelName) {
+                // Cleanup old channel and setup new one
+                if (channel) {
+                    try {
+                        window.Echo?.leave(previousChannelName);
+                    } catch (error) {
+                        console.warn(
+                            '[useRealtimeUpdates] Error leaving old channel during name change:',
+                            error,
+                        );
                     }
-                    previousChannelName = newChannelName;
-                    // Setup new channel
-                    trySetup();
+                    channel = null;
                 }
-            },
-        );
+                previousChannelName = newChannelName;
+                // Setup new channel
+                trySetup();
+            }
+        });
 
         // Watch shouldPoll and start/stop polling accordingly (only if using fallback)
         if (shouldPoll) {
