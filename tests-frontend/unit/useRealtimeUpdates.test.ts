@@ -706,5 +706,82 @@ describe('useRealtimeUpdates', () => {
 
             wrapper.unmount();
         });
+
+        it('should handle channel name changes and resubscribe', async () => {
+            const { ref } = await import('vue');
+            const channelName = ref('initial-channel');
+            const events = {
+                TestEvent: vi.fn(),
+            };
+
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates(channelName, events);
+                    return composableState;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
+
+            await nextTick();
+
+            expect(window.Echo.channel).toHaveBeenCalledWith('initial-channel');
+
+            // Change the channel name
+            channelName.value = 'new-channel';
+
+            await nextTick();
+
+            // Should leave old channel and subscribe to new one
+            expect(window.Echo.leave).toHaveBeenCalledWith('initial-channel');
+            expect(window.Echo.channel).toHaveBeenCalledWith('new-channel');
+
+            wrapper.unmount();
+        });
+
+        it('should handle errors when leaving old channel during name change', async () => {
+            const { ref } = await import('vue');
+            const channelName = ref('initial-channel');
+            const events = {};
+
+            let composableState: any;
+
+            const TestComponent = defineComponent({
+                setup() {
+                    composableState = useRealtimeUpdates(channelName, events);
+                    return composableState;
+                },
+                template: '<div></div>',
+            });
+
+            const wrapper = mount(TestComponent);
+
+            await nextTick();
+
+            // Make Echo.leave throw an error
+            const consoleWarnSpy = vi
+                .spyOn(console, 'warn')
+                .mockImplementation(() => {});
+            vi.mocked(window.Echo.leave).mockImplementation(() => {
+                throw new Error('Leave channel failed');
+            });
+
+            // Change the channel name
+            channelName.value = 'new-channel';
+
+            await nextTick();
+
+            // Should have warned about the error
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('Error leaving old channel'),
+                expect.any(Error),
+            );
+
+            consoleWarnSpy.mockRestore();
+            wrapper.unmount();
+        });
     });
 });

@@ -1,5 +1,8 @@
+import { useSessionTimeout } from '@/Composables/useSessionTimeout';
 import { router } from '@inertiajs/vue3';
+import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { defineComponent, h } from 'vue';
 
 // Mock Inertia router
 vi.mock('@inertiajs/vue3', () => ({
@@ -32,32 +35,27 @@ describe('useSessionTimeout', () => {
         // Mock window.location.href
         delete (window as any).location;
         window.location = { href: '' } as any;
-
-        // Add event listener tracking
-        (window as any)._eventListeners = [];
-        const originalAddEventListener = window.addEventListener;
-        window.addEventListener = vi.fn((event, handler, options) => {
-            (window as any)._eventListeners.push({ event, handler, options });
-            originalAddEventListener.call(window, event, handler, options);
-        }) as any;
     });
 
     afterEach(() => {
         // Restore real timers
         vi.useRealTimers();
-
-        // Clean up event listeners
-        if ((window as any)._eventListeners) {
-            (window as any)._eventListeners.forEach(
-                ({ event, handler }: any) => {
-                    window.removeEventListener(event, handler);
-                },
-            );
-        }
     });
 
+    /**
+     * Helper to mount a test component that uses the composable
+     */
+    function createTestComponent() {
+        return defineComponent({
+            setup() {
+                useSessionTimeout();
+                return () => h('div');
+            },
+        });
+    }
+
     it('should show warning 5 minutes before session expiry', () => {
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to 1 hour 55 minutes (115 minutes)
         const WARNING_TIME = 115 * 60 * 1000;
@@ -68,15 +66,13 @@ describe('useSessionTimeout', () => {
             expect.stringContaining('Your session will expire in 5 minutes'),
             10000,
         );
-
-        cleanup();
     });
 
     it('should perform automatic logout after 2 hours', () => {
         const mockPost = vi.fn();
         vi.mocked(router.post).mockImplementation(mockPost as any);
 
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to exactly 2 hours
         const SESSION_LIFETIME = 120 * 60 * 1000;
@@ -99,12 +95,10 @@ describe('useSessionTimeout', () => {
                 onFinish: expect.any(Function),
             }),
         );
-
-        cleanup();
     });
 
     it('should reset timeout on user activity', () => {
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to 1 hour 50 minutes (close to warning time)
         vi.advanceTimersByTime(110 * 60 * 1000);
@@ -126,17 +120,17 @@ describe('useSessionTimeout', () => {
             expect.stringContaining('Your session will expire in 5 minutes'),
             10000,
         );
-
-        cleanup();
     });
 
     it('should track multiple activity event types', () => {
         const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
 
         activityEvents.forEach((eventType) => {
-            // Create a fresh setup for each event type test
-            const cleanup = setupSessionTimeout();
+            // Reset mocks for each event type test
             mockWarning.mockClear();
+            vi.clearAllTimers();
+
+            mount(createTestComponent());
 
             // Fast-forward to 1 hour 50 minutes (close to warning time but not yet)
             vi.advanceTimersByTime(110 * 60 * 1000);
@@ -158,8 +152,6 @@ describe('useSessionTimeout', () => {
                 ),
                 10000,
             );
-
-            cleanup();
         });
     });
 
@@ -167,7 +159,7 @@ describe('useSessionTimeout', () => {
         const mockPost = vi.fn();
         vi.mocked(router.post).mockImplementation(mockPost as any);
 
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Simulate active user for 6 hours (3x session lifetime)
         // by triggering activity every 60 minutes
@@ -180,8 +172,6 @@ describe('useSessionTimeout', () => {
         // Should never have warned or logged out
         expect(mockWarning).not.toHaveBeenCalled();
         expect(mockPost).not.toHaveBeenCalled();
-
-        cleanup();
     });
 
     it('should redirect to homepage after logout completes', () => {
@@ -194,19 +184,17 @@ describe('useSessionTimeout', () => {
 
         vi.mocked(router.post).mockImplementation(mockPost as any);
 
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to logout time (2 hours + 1.5s logout delay)
         vi.advanceTimersByTime(120 * 60 * 1000 + 1500);
 
         // Should have redirected to homepage
         expect(window.location.href).toBe('/');
-
-        cleanup();
     });
 
     it('should not show multiple warnings', () => {
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to warning time
         vi.advanceTimersByTime(115 * 60 * 1000);
@@ -217,12 +205,10 @@ describe('useSessionTimeout', () => {
         vi.advanceTimersByTime(60 * 1000);
 
         expect(mockWarning).toHaveBeenCalledTimes(1);
-
-        cleanup();
     });
 
     it('should periodically check timeout status', () => {
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to just before warning time
         vi.advanceTimersByTime(114 * 60 * 1000 + 30 * 1000); // 1:54:30
@@ -239,12 +225,10 @@ describe('useSessionTimeout', () => {
 
         // Now warning should be shown
         expect(mockWarning).toHaveBeenCalled();
-
-        cleanup();
     });
 
     it('should handle edge case of warning shown exactly at 115 minutes', () => {
-        const cleanup = setupSessionTimeout();
+        mount(createTestComponent());
 
         // Fast-forward to exactly 115 minutes
         vi.advanceTimersByTime(115 * 60 * 1000);
@@ -254,102 +238,58 @@ describe('useSessionTimeout', () => {
             expect.stringContaining('Your session will expire in 5 minutes'),
             10000,
         );
+    });
 
-        cleanup();
+    it('should cleanup timers and event listeners on component unmount', () => {
+        const wrapper = mount(createTestComponent());
+
+        // Fast-forward to just before warning time
+        vi.advanceTimersByTime(114 * 60 * 1000);
+
+        // Unmount the component (triggers cleanup)
+        wrapper.unmount();
+
+        // Fast-forward past the warning time
+        vi.advanceTimersByTime(2 * 60 * 1000);
+
+        // No warning should be shown because cleanup cleared the timers
+        expect(mockWarning).not.toHaveBeenCalled();
+    });
+
+    it('should cleanup event listeners on component unmount', () => {
+        const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+
+        mount(createTestComponent()).unmount();
+
+        // Should have removed all 4 event listeners (mousedown, keydown, scroll, touchstart)
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'mousedown',
+            expect.any(Function),
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'keydown',
+            expect.any(Function),
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'scroll',
+            expect.any(Function),
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'touchstart',
+            expect.any(Function),
+        );
+
+        removeEventListenerSpy.mockRestore();
+    });
+
+    it('should clear timeout intervals on unmount', () => {
+        const clearIntervalSpy = vi.spyOn(global, 'clearInterval');
+
+        mount(createTestComponent()).unmount();
+
+        // Should have cleared the interval
+        expect(clearIntervalSpy).toHaveBeenCalled();
+
+        clearIntervalSpy.mockRestore();
     });
 });
-
-/**
- * Helper function to manually set up session timeout for testing
- * Returns a cleanup function
- */
-function setupSessionTimeout(): () => void {
-    // Session lifetime constants (matching the composable)
-    const SESSION_LIFETIME_MS = 120 * 60 * 1000;
-    const WARNING_BEFORE_EXPIRY_MS = 5 * 60 * 1000;
-
-    let sessionStartTime = Date.now();
-    let warningShown = false;
-
-    let warningTimer: ReturnType<typeof setTimeout> | null = null;
-    let logoutTimer: ReturnType<typeof setTimeout> | null = null;
-    let activityCheckInterval: ReturnType<typeof setInterval> | null = null;
-
-    const showWarning = () => {
-        if (warningShown) return;
-
-        warningShown = true;
-        mockWarning(
-            'Your session will expire in 5 minutes due to inactivity. Move your mouse or click anywhere to stay logged in.',
-            10000,
-        );
-    };
-
-    const performLogout = () => {
-        mockWarning(
-            'Your session has expired due to inactivity. Logging out...',
-            false,
-        );
-
-        setTimeout(() => {
-            router.post(
-                '/logout',
-                {},
-                {
-                    onFinish: () => {
-                        window.location.href = '/';
-                    },
-                },
-            );
-        }, 1500);
-    };
-
-    const resetTimeout = () => {
-        sessionStartTime = Date.now();
-        warningShown = false;
-
-        if (warningTimer) clearTimeout(warningTimer);
-        if (logoutTimer) clearTimeout(logoutTimer);
-
-        warningTimer = setTimeout(() => {
-            showWarning();
-        }, SESSION_LIFETIME_MS - WARNING_BEFORE_EXPIRY_MS);
-
-        logoutTimer = setTimeout(() => {
-            performLogout();
-        }, SESSION_LIFETIME_MS);
-    };
-
-    const checkTimeout = () => {
-        const elapsed = Date.now() - sessionStartTime;
-        const remaining = SESSION_LIFETIME_MS - elapsed;
-
-        if (remaining <= WARNING_BEFORE_EXPIRY_MS && !warningShown) {
-            showWarning();
-        }
-    };
-
-    // Set initial timers
-    resetTimeout();
-
-    // Track user activity
-    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
-
-    activityEvents.forEach((event) => {
-        window.addEventListener(event, resetTimeout, { passive: true });
-    });
-
-    // Periodically check timeout status
-    activityCheckInterval = setInterval(checkTimeout, 60000);
-
-    // Return cleanup function
-    return () => {
-        if (warningTimer) clearTimeout(warningTimer);
-        if (logoutTimer) clearTimeout(logoutTimer);
-        if (activityCheckInterval) clearInterval(activityCheckInterval);
-
-        activityEvents.forEach((event) => {
-            window.removeEventListener(event, resetTimeout);
-        });
-    };
-}
