@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\MockN8nController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\VisitorController;
@@ -315,3 +316,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.upload-to-n8n')
         ->where('workflowNumber', '[0-9]+');
 });
+
+// Mock n8n webhook endpoints for E2E testing (only in e2e environment)
+// These endpoints simulate n8n responses without requiring n8n to be running.
+// When N8N_URL=http://localhost, PromptFrameworkService calls these instead of real n8n.
+if (config('app.env') === 'e2e') {
+    Route::post('/webhook/api/n8n/webhook/pre-analysis', [MockN8nController::class, 'workflow0'])
+        ->name('test.n8n.workflow0');
+    Route::post('/webhook/api/n8n/webhook/analysis', [MockN8nController::class, 'workflow1'])
+        ->name('test.n8n.workflow1');
+    Route::post('/webhook/api/n8n/webhook/generate', [MockN8nController::class, 'workflow2'])
+        ->name('test.n8n.workflow2');
+}
