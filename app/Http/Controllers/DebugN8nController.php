@@ -1069,20 +1069,22 @@ try {
 
                 $content = json_decode(file_get_contents($inputFile), true);
 
-                // Extract the body from the stored input
-                if (is_array($content) && isset($content[0]['body'])) {
-                    $inputData = $content[0]['body'];
-                } elseif (is_array($content) && count($content) > 0 && is_array($content[0])) {
-                    // If it's an array but doesn't have body, use the first element
-                    $inputData = $content[0];
-                } else {
-                    $inputData = $content;
-                }
-
-                if ($inputData === null) {
+                if (! $content) {
                     return response()->json([
                         'success' => false,
-                        'error' => 'Invalid input format',
+                        'error' => 'Failed to parse input file',
+                    ], 400);
+                }
+
+                // Extract the body from the stored input
+                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
+                // We need to extract just the body field which contains the actual payload
+                if (is_array($content) && count($content) > 0 && is_array($content[0]) && isset($content[0]['body'])) {
+                    $inputData = $content[0]['body'];
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input file format - expected array with body field',
                     ], 400);
                 }
             }
@@ -1094,6 +1096,14 @@ try {
                 2 => '/webhook/api/n8n/webhook/generate',
                 default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
             };
+
+            // Log the payload being sent for debugging
+            \Log::debug('Sending to n8n webhook', [
+                'path' => $webhookPath,
+                'payload_keys' => is_array($inputData) ? array_keys($inputData) : 'not-array',
+                'has_task_description' => is_array($inputData) ? isset($inputData['task_description']) : false,
+                'payload' => is_array($inputData) ? $inputData : $inputData,
+            ]);
 
             // Send the payload to the webhook - it should have fields like task_description, user_context, etc.
             $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
@@ -1233,20 +1243,22 @@ try {
 
                 $content = json_decode(file_get_contents($inputFile), true);
 
-                // Extract the body from the stored input
-                if (is_array($content) && isset($content[0]['body'])) {
-                    $inputData = $content[0]['body'];
-                } elseif (is_array($content) && count($content) > 0 && is_array($content[0])) {
-                    // If it's an array but doesn't have body, use the first element
-                    $inputData = $content[0];
-                } else {
-                    $inputData = $content;
-                }
-
-                if ($inputData === null) {
+                if (! $content) {
                     return response()->json([
                         'success' => false,
-                        'error' => 'Invalid input format',
+                        'error' => 'Failed to parse input file',
+                    ], 400);
+                }
+
+                // Extract the body from the stored input
+                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
+                // We need to extract just the body field which contains the actual payload
+                if (is_array($content) && count($content) > 0 && is_array($content[0]) && isset($content[0]['body'])) {
+                    $inputData = $content[0]['body'];
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input file format - expected array with body field',
                     ], 400);
                 }
             }
