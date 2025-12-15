@@ -236,5 +236,17 @@ if (config('app.env') === 'e2e') {
 
             return response()->json(['cleared' => true]);
         });
+
+        // Mock n8n webhook endpoints for E2E testing
+        // These endpoints simulate n8n responses without requiring n8n to be running.
+        // Usage: Set N8N_URL=http://localhost in .env.e2e to route calls to these endpoints
+        Route::prefix('webhook')->group(function () {
+            Route::post('api/n8n/webhook/pre-analysis', [\App\Http\Controllers\MockN8nController::class, 'preAnalysis'])
+                ->name('test.n8n.pre-analysis');
+            Route::post('api/n8n/webhook/analysis', [\App\Http\Controllers\MockN8nController::class, 'analyse'])
+                ->name('test.n8n.analyse');
+            Route::post('api/n8n/webhook/optimise-prompt', [\App\Http\Controllers\MockN8nController::class, 'optimisePrompt'])
+                ->name('test.n8n.optimise-prompt');
+        });
     });
 }
