@@ -708,7 +708,7 @@ class PromptBuilderController extends Controller
 
             if ($failedWorkflow === 0) {
                 // Workflow 0 (pre-analysis) failed - retry from beginning
-                Log::info('Retrying pre-analysis (PromptBuilder)', [
+                Log::info('Retrying pre-analysis (workflow_0)', [
                     'prompt_run_id' => $promptRun->id,
                 ]);
 
@@ -729,7 +729,7 @@ class PromptBuilderController extends Controller
 
             } elseif ($failedWorkflow === 1) {
                 // Workflow 1 (analysis) failed - retry analysis
-                Log::info('Retrying analysis (PromptBuilder)', [
+                Log::info('Retrying analysis (workflow_1)', [
                     'prompt_run_id' => $promptRun->id,
                 ]);
 
@@ -750,7 +750,7 @@ class PromptBuilderController extends Controller
 
             } elseif ($failedWorkflow === 2) {
                 // Workflow 2 (generation) failed - retry generation
-                Log::info('Retrying generation (PromptBuilder)', [
+                Log::info('Retrying generation (workflow_2)', [
                     'prompt_run_id' => $promptRun->id,
                 ]);
 

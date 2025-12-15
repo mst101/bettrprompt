@@ -444,7 +444,7 @@ const handleDelete = async () => {
 /**
  * Retry the prompt generation when it fails
  */
-const retryGeneration = () => {
+const retryWorkflow = () => {
     // Use the existing retry endpoint which handles all workflow failures
     router.post(
         route('prompt-builder.retry', props.promptRun.id),
@@ -522,7 +522,7 @@ onUnmounted(() => {
                 <WorkflowError
                     v-if="hasWorkflowFailed && promptRun.errorMessage"
                     :error-message="promptRun.errorMessage"
-                    @retry="retryGeneration"
+                    @retry="retryWorkflow"
                 />
 
                 <!-- Enhanced loading state when generating pre-analysis questions (Workflow 0) -->
@@ -643,7 +643,7 @@ onUnmounted(() => {
                     "
                     :on-retry="
                         promptRun.workflowStage === '2_failed'
-                            ? () => retryGeneration()
+                            ? () => retryWorkflow()
                             : undefined
                     "
                 />
