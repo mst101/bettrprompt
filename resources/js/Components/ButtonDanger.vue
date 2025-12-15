@@ -13,7 +13,12 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <Button variant="danger" :disabled="disabled" :type="type">
+    <Button
+        class="text-xs tracking-wider uppercase"
+        variant="danger"
+        :disabled="disabled"
+        :type="type"
+    >
         <slot />
     </Button>
 </template>

@@ -3,7 +3,7 @@ import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useButtonClasses } from '@/Composables/useButtonClasses';
 import { computed, ref, useAttrs } from 'vue';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface Props {

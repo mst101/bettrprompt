@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonStyleProps {
@@ -18,7 +18,9 @@ export function useButtonClasses(props: ButtonStyleProps) {
                 'border-transparent bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 focus:ring-indigo-500',
             secondary:
                 'border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50 dark:bg-indigo-100 dark:text-indigo-900 dark:hover:bg-indigo-200 focus:ring-indigo-500',
-            danger: 'border-transparent bg-red-600 text-white shadow-xs hover:bg-red-700 focus:ring-red-500',
+            danger: 'uppercase border-transparent bg-red-600 text-white shadow-xs hover:bg-red-700 focus:ring-red-500',
+            success:
+                'border-transparent bg-green-500 text-white shadow-xs hover:bg-green-700 focus:ring-green-500',
         };
 
         const sizes = {
