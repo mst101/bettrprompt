@@ -1123,6 +1123,58 @@ try {
     public function executeWorkflowNew(Request $request, int $workflowNumber)
     {
         try {
+            // Get input data from request
+            $inputData = $request->input('input');
+
+            // If inputData came from the request and has envelope fields, extract the body
+            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
+                $inputData = $inputData['body'];
+            }
+
+            if ($inputData === null) {
+                // Fall back to loading from storage
+                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+                if (! file_exists($inputFile)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Input file not found for workflow_{$workflowNumber}",
+                    ], 404);
+                }
+
+                $content = json_decode(file_get_contents($inputFile), true);
+
+                if (! $content) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Failed to parse input file',
+                    ], 400);
+                }
+
+                // Extract the body from the stored input
+                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
+                // We need to extract just the body field which contains the actual payload
+                if (is_array($content) && count($content) > 0 && isset($content[0]['body'])) {
+                    $inputData = $content[0]['body'];
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input file format - expected array with body field',
+                    ], 400);
+                }
+            }
+
+            // Extract task description and user context from input
+            $taskDescription = $inputData['task_description'] ?? null;
+            $userContext = $inputData['user_context'] ?? null;
+
+            if (! $taskDescription) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'task_description is required in input data',
+                ], 400);
+            }
+
             // First, upload the new workflow to n8n to ensure it's up-to-date
             $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
             if (! file_exists($n8nWorkflowFile)) {
@@ -1196,81 +1248,22 @@ try {
                 ], 400);
             }
 
-            // Now execute the workflow by triggering its webhook
-            // Get input data
-            $inputData = $request->input('input');
+            // Use PromptFrameworkService to execute the workflow
+            // For workflow_0 (pre-analysis), workflow_1 (analysis), or workflow_2 (generation)
+            $promptService = new \App\Services\PromptFrameworkService;
 
-            // If inputData came from the request and has envelope fields, extract the body
-            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
-                $inputData = $inputData['body'];
-            }
-
-            if ($inputData === null) {
-                // Fall back to loading from storage
-                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
-
-                if (! file_exists($inputFile)) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => "Input file not found for workflow_{$workflowNumber}",
-                    ], 404);
-                }
-
-                $content = json_decode(file_get_contents($inputFile), true);
-
-                if (! $content) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Failed to parse input file',
-                    ], 400);
-                }
-
-                // Extract the body from the stored input
-                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
-                // We need to extract just the body field which contains the actual payload
-                if (is_array($content) && count($content) > 0 && is_array($content[0]) && isset($content[0]['body'])) {
-                    $inputData = $content[0]['body'];
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Invalid input file format - expected array with body field',
-                    ], 400);
-                }
-            }
-
-            // Trigger the appropriate workflow webhook based on workflow number
-            $webhookPath = match ($workflowNumber) {
-                0 => '/webhook/api/n8n/webhook/pre-analysis',
-                1 => '/webhook/api/n8n/webhook/analysis',
-                2 => '/webhook/api/n8n/webhook/generate',
-                default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
+            $resultData = match ($workflowNumber) {
+                0 => $promptService->preAnalyseTask($taskDescription, $userContext),
+                1 => $promptService->analyseTask(
+                    $taskDescription,
+                    $userContext['personality']['personality_type'] ?? null,
+                    $userContext['personality']['trait_percentages'] ?? null,
+                    null,
+                    null,
+                    $userContext
+                ),
+                default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
             };
-
-            // The n8n workflow JavaScript expects the input wrapped in a 'body' field
-            // because it does: const webhookData = $input.first().json.body || {};
-            // So we need to send: { body: { task_description: "...", user_context: {...} } }
-            $payload = ['body' => $inputData];
-
-            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $payload);
-
-            if (! $webhookResult['success']) {
-                // Log the webhook error but continue (webhook might not be exposed in debug environment)
-                \Log::warning('N8n webhook call failed during new workflow execution', [
-                    'workflowNumber' => $workflowNumber,
-                    'error' => $webhookResult['error'],
-                ]);
-
-                // Return mock response for debugging purposes
-                $resultData = [
-                    'system' => 'Mock system prompt from new version (n8n webhook not available)',
-                    'messages' => [
-                        ['role' => 'user', 'content' => 'This is a mock response. n8n workflows may not be available in this debug environment.'],
-                    ],
-                ];
-            } else {
-                // Get the response data
-                $resultData = $webhookResult['data'] ?? [];
-            }
 
             // Save output to storage
             $this->ensureDebugDirectory('output');
