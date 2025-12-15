@@ -199,7 +199,7 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript code
      */
-    public function saveJavaScript(Request $request, int $workflowNumber)
+    public function saveOldJavaScript(Request $request, int $workflowNumber)
     {
         try {
             $request->validate([
@@ -226,7 +226,7 @@ class DebugN8nController extends Controller
     /**
      * Save new JavaScript code version
      */
-    public function saveJavaScriptNew(Request $request, int $workflowNumber)
+    public function saveNewJavaScript(Request $request, int $workflowNumber)
     {
         try {
             $request->validate([
@@ -326,9 +326,9 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Upload workflow to n8n server
+     * Upload old workflow to n8n server
      */
-    public function uploadWorkflowToN8n(int $workflowNumber)
+    public function uploadOldWorkflowToN8n(int $workflowNumber)
     {
         try {
             $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
@@ -386,7 +386,7 @@ class DebugN8nController extends Controller
     /**
      * Upload new workflow version to n8n server
      */
-    public function uploadWorkflowNewToN8n(int $workflowNumber)
+    public function uploadNewWorkflowToN8n(int $workflowNumber)
     {
         try {
             // Load the new JavaScript version
@@ -471,7 +471,7 @@ class DebugN8nController extends Controller
     /**
      * Execute the JavaScript and return the output
      */
-    public function executeJavaScript(Request $request, int $workflowNumber)
+    public function executeOldJavaScript(Request $request, int $workflowNumber)
     {
         try {
             // Get input from request or load from storage
@@ -567,7 +567,7 @@ class DebugN8nController extends Controller
     /**
      * Execute the new JavaScript version and return the output
      */
-    public function executeJavaScriptNew(Request $request, int $workflowNumber)
+    public function executeNewJavaScript(Request $request, int $workflowNumber)
     {
         try {
             // Get input from request or load from storage
@@ -728,39 +728,6 @@ class DebugN8nController extends Controller
         }
 
         return $referenceData;
-    }
-
-    /**
-     * Convert JavaScript to be compatible with eval() execution
-     * - Replace const/let with var
-     * - Remove return statements
-     * - Convert n8n workflow format to match expected output
-     * - Fix escaped newlines in n8n code
-     */
-    private function normalizeJavaScript(string $code): string
-    {
-        // Fix escaped newlines in n8n workflow code (\\n should be actual newlines)
-        // This happens when n8n stores code with literal \\n in strings
-        $code = str_replace('\\"', '"', $code);
-
-        // Replace const with var
-        $code = preg_replace('/\bconst\s+/', 'var ', $code);
-
-        // Replace let with var
-        $code = preg_replace('/\blet\s+/', 'var ', $code);
-
-        // Remove any return statements (they're invalid at the top level in eval())
-        $code = preg_replace('/\breturn\s+/m', 'var result = ', $code);
-
-        // n8n workflows use systemPrompt and userMessage, but we need system and messages
-        // Add conversion code at the end
-        $code .= "\n\n// Convert n8n format to debug format\n";
-        $code .= "var system = typeof systemPrompt !== 'undefined' ? systemPrompt : null;\n";
-        $code .= "var messages = typeof userMessage !== 'undefined' ? [\n";
-        $code .= "  { role: 'user', content: userMessage }\n";
-        $code .= "] : null;\n";
-
-        return $code;
     }
 
     /**
@@ -1043,8 +1010,11 @@ try {
     /**
      * Execute workflow and return results using PromptFrameworkService
      */
-    private function executeWorkflowWithService(int $workflowNumber, ?string $taskDescription, ?array $userContext): array
-    {
+    private function executeWorkflowWithService(
+        int $workflowNumber,
+        ?string $taskDescription,
+        ?array $userContext
+    ): array {
         $promptService = new \App\Services\PromptFrameworkService;
 
         return match ($workflowNumber) {
@@ -1085,7 +1055,7 @@ try {
     /**
      * Execute the actual n8n workflow for the old version
      */
-    public function executeWorkflow(Request $request, int $workflowNumber)
+    public function executeOldWorkflow(Request $request, int $workflowNumber)
     {
         try {
             $inputData = $this->loadInputData($request, $workflowNumber);
@@ -1127,7 +1097,7 @@ try {
     /**
      * Execute the actual n8n workflow for the new version
      */
-    public function executeWorkflowNew(Request $request, int $workflowNumber)
+    public function executeNewWorkflow(Request $request, int $workflowNumber)
     {
         try {
             $inputData = $this->loadInputData($request, $workflowNumber);
