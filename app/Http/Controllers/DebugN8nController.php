@@ -66,14 +66,14 @@ class DebugN8nController extends Controller
             $javascriptNew = file_get_contents($jsFileNew);
         }
 
-        // Load output from storage/app/n8n_debug/output/
-        $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
+        // Load old output from storage/app/n8n_debug/output/old/
+        $outputFile = storage_path("app/n8n_debug/output/old/workflow_{$workflowNumber}_output.json");
         if (file_exists($outputFile)) {
             $output = json_decode(file_get_contents($outputFile), true);
         }
 
-        // Load new output from storage/app/n8n_debug/output/
-        $outputFileNew = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output_new.json");
+        // Load new output from storage/app/n8n_debug/output/new/
+        $outputFileNew = storage_path("app/n8n_debug/output/new/workflow_{$workflowNumber}_output.json");
         if (file_exists($outputFileNew)) {
             $outputNew = json_decode(file_get_contents($outputFileNew), true);
         }
@@ -1062,14 +1062,24 @@ try {
     }
 
     /**
-     * Save workflow output to storage
+     * Save workflow output to storage and n8n directory
      */
     private function saveWorkflowOutput(int $workflowNumber, array $resultData, bool $isNew = false): void
     {
-        $this->ensureDebugDirectory('output');
-        $suffix = $isNew ? '_new' : '';
-        $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output{$suffix}.json");
-        file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $variant = $isNew ? 'new' : 'old';
+
+        // Save to storage/app/n8n_debug/output/{old|new}/
+        $this->ensureDebugDirectory("output/{$variant}");
+        $debugOutputFile = storage_path("app/n8n_debug/output/{$variant}/workflow_{$workflowNumber}_output.json");
+        file_put_contents($debugOutputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        // Also copy to n8n/{old|new}/output/
+        $n8nOutputDir = base_path("n8n/{$variant}/output");
+        if (! is_dir($n8nOutputDir)) {
+            mkdir($n8nOutputDir, 0755, true);
+        }
+        $n8nOutputFile = "{$n8nOutputDir}/workflow_{$workflowNumber}_output.json";
+        copy($debugOutputFile, $n8nOutputFile);
     }
 
     /**
