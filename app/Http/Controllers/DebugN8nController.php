@@ -1008,51 +1008,6 @@ try {
     public function executeWorkflow(Request $request, int $workflowNumber)
     {
         try {
-            // First, upload the current workflow to n8n to ensure it's up-to-date
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
-            if (! file_exists($n8nWorkflowFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
-                ], 404);
-            }
-
-            $workflowId = $this->getWorkflowId($workflowNumber);
-            if (! $workflowId) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Unknown workflow number: {$workflowNumber}",
-                ], 400);
-            }
-
-            // Upload the workflow to n8n first
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            if (! $workflow) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid workflow JSON format',
-                ], 400);
-            }
-
-            $cleanWorkflow = [
-                'name' => $workflow['name'] ?? 'workflow',
-                'nodes' => $workflow['nodes'] ?? [],
-                'connections' => $workflow['connections'] ?? [],
-                'settings' => $workflow['settings'] ?? (object) [],
-            ];
-
-            $n8nClient = new \App\Services\N8nClient;
-            $uploadResult = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
-
-            if (! $uploadResult['success']) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Failed to upload workflow to n8n before execution',
-                    'details' => $uploadResult,
-                ], 400);
-            }
-
-            // Now execute the workflow by triggering its webhook
             // Get input data from request
             $inputData = $request->input('input');
 
@@ -1089,49 +1044,33 @@ try {
                 }
             }
 
-            // Trigger the appropriate workflow webhook based on workflow number
-            $webhookPath = match ($workflowNumber) {
-                0 => '/webhook/api/n8n/webhook/pre-analysis',
-                1 => '/webhook/api/n8n/webhook/analysis',
-                2 => '/webhook/api/n8n/webhook/generate',
-                default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
-            };
+            // Extract task description and user context from input
+            $taskDescription = $inputData['task_description'] ?? null;
+            $userContext = $inputData['user_context'] ?? null;
 
-            // The n8n workflow JavaScript expects the input wrapped in a 'body' field
-            // because it does: const webhookData = $input.first().json.body || {};
-            // So we need to send: { body: { task_description: "...", user_context: {...} } }
-            $payload = ['body' => $inputData];
-
-            // Log the payload being sent for debugging
-            \Log::debug('Sending to n8n webhook', [
-                'path' => $webhookPath,
-                'payload_keys' => array_keys($payload),
-                'body_keys' => is_array($inputData) ? array_keys($inputData) : 'not-array',
-                'has_task_description' => is_array($inputData) ? isset($inputData['task_description']) : false,
-            ]);
-
-            // Send the payload to the webhook with proper structure
-            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $payload);
-
-            // Check if we got a successful response from n8n
-            if ($webhookResult['success']) {
-                // The webhook returned actual data from n8n
-                $resultData = $webhookResult['data'] ?? [];
-            } else {
-                // Webhook failed - log it
-                \Log::warning('N8n webhook call failed during workflow execution', [
-                    'workflowNumber' => $workflowNumber,
-                    'error' => $webhookResult['error'],
-                ]);
-
-                // Return mock response for debugging purposes
-                $resultData = [
-                    'system' => 'Mock system prompt (n8n webhook not available)',
-                    'messages' => [
-                        ['role' => 'user', 'content' => 'This is a mock response. n8n workflows may not be available in this debug environment.'],
-                    ],
-                ];
+            if (! $taskDescription) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'task_description is required in input data',
+                ], 400);
             }
+
+            // Use PromptFrameworkService to execute the workflow
+            // For workflow_0 (pre-analysis), workflow_1 (analysis), or workflow_2 (generation)
+            $promptService = new \App\Services\PromptFrameworkService;
+
+            $resultData = match ($workflowNumber) {
+                0 => $promptService->preAnalyseTask($taskDescription, $userContext),
+                1 => $promptService->analyseTask(
+                    $taskDescription,
+                    $userContext['personality']['personality_type'] ?? null,
+                    $userContext['personality']['trait_percentages'] ?? null,
+                    null,
+                    null,
+                    $userContext
+                ),
+                default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
+            };
 
             // Save output to storage
             $this->ensureDebugDirectory('output');
