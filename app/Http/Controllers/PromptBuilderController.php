@@ -81,7 +81,7 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Step 1: Analyse task and get clarifying questions
+     * Workflow 0: Analyse task and get quick queries
      */
     public function analyse(PromptBuilderAnalyseRequest $request)
     {
@@ -172,7 +172,7 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Submit pre-analysis answers and proceed to analysis (Step 2 → workflow_1)
+     * Submit pre-analysis answers and proceed to analysis (workflow 0 → workflow_1)
      */
     public function submitPreAnalysisAnswers(SubmitPreAnalysisAnswersRequest $request, PromptRun $promptRun)
     {
@@ -327,7 +327,7 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Step 2: Display prompt run with clarifying questions
+     * Workflow 1: Display prompt run with clarifying questions
      */
     public function show(Request $request, PromptRun $promptRun)
     {
@@ -390,7 +390,7 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Step 3: Generate the optimised prompt
+     * Workflow 2: Generate the optimised prompt
      */
     public function generate(GeneratePromptRequest $request, PromptRun $promptRun)
     {

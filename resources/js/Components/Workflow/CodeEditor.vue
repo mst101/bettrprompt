@@ -7,11 +7,15 @@ interface Props {
     title: string;
     placeholder?: string;
     readonly?: boolean;
+    collapsed?: boolean;
+    showSave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: 'Enter content here...',
     readonly: false,
+    collapsed: false,
+    showSave: true,
 });
 
 const emit = defineEmits<{
@@ -37,7 +41,7 @@ const characterCount = computed(() => {
                     ⛶ Expand
                 </ButtonSmall>
                 <ButtonSmall
-                    v-if="!readonly"
+                    v-if="!readonly && showSave"
                     title="Save to file"
                     @click="emit('save')"
                 >
@@ -45,7 +49,13 @@ const characterCount = computed(() => {
                 </ButtonSmall>
             </div>
         </div>
+        <div v-if="collapsed" class="flex-1 overflow-auto bg-indigo-100 p-6">
+            <p class="text-xs text-indigo-600 italic">
+                Click "Expand" to view or edit this content
+            </p>
+        </div>
         <textarea
+            v-else
             :value="modelValue"
             :placeholder="placeholder"
             :readonly="readonly"

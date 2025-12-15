@@ -2,6 +2,7 @@
 import ButtonSmall from '@/Components/ButtonSmall.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
+import { ref } from 'vue';
 
 interface Message {
     role?: string;
@@ -17,43 +18,108 @@ interface Output {
 
 interface Props {
     output: Output | null;
+    title?: string;
 }
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    title: 'Output',
+});
 
 const emit = defineEmits<{
     expandSystem: [];
     expandMessages: [];
+    updateRawMode: [
+        section: 'system' | 'messages' | 'system-new' | 'messages-new',
+        isRaw: boolean,
+    ];
 }>();
+
+// Track which sections should display raw markdown
+const showRawSystem = ref(false);
+const showRawMessages = ref(false);
 
 const renderMarkdown = (text: string | null | undefined): string => {
     if (!text) return '';
     const html = marked(text) as string;
     return DOMPurify.sanitize(html);
 };
+
+const toggleRawMode = (section: 'system' | 'messages') => {
+    if (section === 'system') {
+        showRawSystem.value = !showRawSystem.value;
+        emit('updateRawMode', 'system', showRawSystem.value);
+    } else {
+        showRawMessages.value = !showRawMessages.value;
+        emit('updateRawMode', 'messages', showRawMessages.value);
+    }
+};
+
+const copyToClipboard = async (text: string | null | undefined) => {
+    if (!text) return;
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (err) {
+        console.error('Failed to copy to clipboard:', err);
+    }
+};
+
+const getMessagesAsText = (messages: Message[] | unknown) => {
+    if (!Array.isArray(messages)) {
+        return JSON.stringify(messages, null, 2);
+    }
+    return messages
+        .map((msg) => {
+            if (typeof msg === 'object' && msg !== null) {
+                if (msg.content) return msg.content;
+                return JSON.stringify(msg, null, 2);
+            }
+            return String(msg);
+        })
+        .join('\n\n');
+};
 </script>
 
 <template>
     <div class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md">
         <div class="bg-indigo-300 px-6 py-4 font-semibold text-indigo-800">
-            Output
+            {{ props.title }}
         </div>
         <div class="flex-1 overflow-auto bg-indigo-100 p-6">
             <div v-if="output">
                 <!-- System Prompt -->
                 <div v-if="output.system" class="mb-6">
                     <div class="mb-2 flex items-center justify-between">
-                        <h3 class="font-semibold text-indigo-900">
-                            System Prompt
-                        </h3>
-                        <ButtonSmall
-                            title="Expand to full screen"
-                            @click="emit('expandSystem')"
-                        >
-                            ⛶ Expand
-                        </ButtonSmall>
+                        <h3 class="font-semibold text-indigo-900">System</h3>
+                        <div class="flex gap-2">
+                            <ButtonSmall
+                                title="Copy to clipboard"
+                                @click="copyToClipboard(output.system)"
+                            >
+                                📋 Copy
+                            </ButtonSmall>
+                            <ButtonSmall
+                                :title="`Switch to ${showRawSystem ? 'formatted' : 'raw'} markdown`"
+                                @click="toggleRawMode('system')"
+                            >
+                                {{ showRawSystem ? '◆ Formatted' : '◇ Raw' }}
+                            </ButtonSmall>
+                            <ButtonSmall
+                                title="Expand to full screen"
+                                @click="emit('expandSystem')"
+                            >
+                                ⛶ Expand
+                            </ButtonSmall>
+                        </div>
                     </div>
                     <div
+                        v-if="showRawSystem"
+                        class="max-h-60 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
+                    >
+                        {{ output.system }}
+                    </div>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div
+                        v-else
                         class="prose dark:prose-invert prose-sm max-h-60 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
                         v-html="renderMarkdown(output.system)"
                     />
@@ -63,12 +129,30 @@ const renderMarkdown = (text: string | null | undefined): string => {
                 <div v-if="output.messages">
                     <div class="mb-2 flex items-center justify-between">
                         <h3 class="font-semibold text-indigo-900">Messages</h3>
-                        <ButtonSmall
-                            title="Expand to full screen"
-                            @click="emit('expandMessages')"
-                        >
-                            ⛶ Expand
-                        </ButtonSmall>
+                        <div class="flex gap-2">
+                            <ButtonSmall
+                                title="Copy to clipboard"
+                                @click="
+                                    copyToClipboard(
+                                        getMessagesAsText(output.messages),
+                                    )
+                                "
+                            >
+                                📋 Copy
+                            </ButtonSmall>
+                            <ButtonSmall
+                                :title="`Switch to ${showRawMessages ? 'formatted' : 'raw'} markdown`"
+                                @click="toggleRawMode('messages')"
+                            >
+                                {{ showRawMessages ? '◆ Formatted' : '◇ Raw' }}
+                            </ButtonSmall>
+                            <ButtonSmall
+                                title="Expand to full screen"
+                                @click="emit('expandMessages')"
+                            >
+                                ⛶ Expand
+                            </ButtonSmall>
+                        </div>
                     </div>
                     <div
                         v-if="Array.isArray(output.messages)"
@@ -80,17 +164,20 @@ const renderMarkdown = (text: string | null | undefined): string => {
                             class="rounded border border-indigo-200 bg-indigo-50 p-3"
                         >
                             <div v-if="typeof message === 'object'">
-                                <p
-                                    class="mb-1 font-mono text-xs text-indigo-600"
-                                >
-                                    Role:
-                                    {{ message.role || 'N/A' }}
-                                </p>
+                                <!-- eslint-disable-next-line vue/no-v-html -->
                                 <div
-                                    v-if="message.content"
+                                    v-if="message.content && !showRawMessages"
                                     class="prose dark:prose-invert prose-sm text-indigo-700"
                                     v-html="renderMarkdown(message.content)"
                                 />
+                                <div
+                                    v-else-if="
+                                        message.content && showRawMessages
+                                    "
+                                    class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
+                                >
+                                    {{ message.content }}
+                                </div>
                                 <div v-else class="text-xs text-indigo-700">
                                     {{ JSON.stringify(message, null, 2) }}
                                 </div>
@@ -114,9 +201,9 @@ const renderMarkdown = (text: string | null | undefined): string => {
                         Full Output
                     </summary>
                     <div
-                        class="mt-2 max-h-40 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
+                        class="mt-2 max-h-96 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
                     >
-                        {{ JSON.stringify(output, null, 2) }}
+                        <pre>{{ JSON.stringify(output, null, 2) }}</pre>
                     </div>
                 </details>
             </div>

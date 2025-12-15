@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ButtonDanger from '@/Components/ButtonDanger.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonSuccess from '@/Components/ButtonSuccess.vue';
@@ -166,52 +165,6 @@ const loadJavaScriptNew = async () => {
         }
     } catch (err) {
         error.value = `Failed to load new JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
-};
-
-const uploadWorkflowToN8n = async () => {
-    try {
-        const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n`,
-            'POST',
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value = result.error || 'Failed to upload workflow to n8n';
-        } else {
-            error.value = null;
-            saveMessage.value = 'Workflow uploaded to n8n server successfully!';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-        }
-    } catch (err) {
-        error.value = `Failed to upload workflow to n8n: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
-};
-
-const uploadWorkflowNewToN8n = async () => {
-    try {
-        const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new`,
-            'POST',
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value =
-                result.error || 'Failed to upload new workflow to n8n';
-        } else {
-            error.value = null;
-            saveMessage.value =
-                'New workflow uploaded to n8n server successfully!';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-        }
-    } catch (err) {
-        error.value = `Failed to upload new workflow to n8n: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
 };
 
@@ -572,25 +525,21 @@ onMounted(async () => {
         <!-- Controls -->
         <div class="space-y-8">
             <!-- Input Data and JavaScript Code Buttons -->
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-8">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
                 <ButtonSecondary @click="expandedView = 'javascript'">
-                    JS (old)
+                    View JavaScript
                 </ButtonSecondary>
 
                 <ButtonPrimary
                     :disabled="!javascript || !input"
                     @click="preparePrompt"
                 >
-                    {{ isExecuting ? 'Executing...' : 'Prepare Prompt (old)' }}
+                    {{ isExecuting ? 'Executing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
                 <ButtonSuccess @click="executeWorkflow">
-                    Execute workflow (old)
+                    Upload to n8n & Execute workflow
                 </ButtonSuccess>
-
-                <ButtonDanger @click="uploadWorkflowToN8n">
-                    Upload to n8n (old)
-                </ButtonDanger>
 
                 <ButtonSecondary
                     @click="
@@ -598,37 +547,31 @@ onMounted(async () => {
                         expandedView = 'javascript-new';
                     "
                 >
-                    JS (new)
+                    View JavaScript
                 </ButtonSecondary>
 
                 <ButtonPrimary
                     :disabled="!javascriptNew || !input"
                     @click="preparePromptNew"
                 >
-                    {{
-                        isExecutingNew ? 'Executing...' : 'Prepare Prompt (new)'
-                    }}
+                    {{ isExecutingNew ? 'Executing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
                 <ButtonSuccess @click="executeWorkflowNew">
-                    Execute workflow (new)
+                    Upload to n8n & Execute workflow
                 </ButtonSuccess>
-
-                <ButtonDanger @click="uploadWorkflowNewToN8n">
-                    Upload to n8n (new)
-                </ButtonDanger>
             </div>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
-                    title="Workflow Prompt (old)"
+                    title="Workflow Prompt (OLD)"
                     :output="output"
                     @expand-system="expandedView = 'system'"
                     @expand-messages="expandedView = 'messages'"
                     @update-raw-mode="handleRawModeUpdate"
                 />
                 <OutputPanel
-                    title="Workflow Prompt (new)"
+                    title="Workflow Prompt (NEW)"
                     :output="outputNew"
                     @expand-system="expandedView = 'system-new'"
                     @expand-messages="expandedView = 'messages-new'"
