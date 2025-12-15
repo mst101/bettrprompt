@@ -1003,72 +1003,90 @@ try {
     }
 
     /**
+     * Load and extract input data from request or file
+     */
+    private function loadInputData(Request $request, int $workflowNumber): ?array
+    {
+        $inputData = $request->input('input');
+
+        // If inputData came from the request and has envelope fields, extract the body
+        if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
+            $inputData = $inputData['body'];
+        }
+
+        if ($inputData === null) {
+            $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+            if (! file_exists($inputFile)) {
+                return null;
+            }
+
+            $content = json_decode(file_get_contents($inputFile), true);
+
+            if (! $content) {
+                return null;
+            }
+
+            // Extract the body from the stored input
+            if (is_array($content) && count($content) > 0 && isset($content[0]['body'])) {
+                $inputData = $content[0]['body'];
+            } elseif (is_array($content) && isset($content['body'])) {
+                $inputData = $content['body'];
+            } else {
+                return null;
+            }
+        }
+
+        return $inputData;
+    }
+
+    /**
+     * Execute workflow and return results using PromptFrameworkService
+     */
+    private function executeWorkflowWithService(int $workflowNumber, ?string $taskDescription, ?array $userContext): array
+    {
+        $promptService = new \App\Services\PromptFrameworkService;
+
+        return match ($workflowNumber) {
+            0 => $promptService->preAnalyseTask($taskDescription, $userContext),
+            1 => $promptService->analyseTask(
+                $taskDescription,
+                $userContext['personality']['personality_type'] ?? null,
+                $userContext['personality']['trait_percentages'] ?? null,
+                null,
+                null,
+                $userContext
+            ),
+            default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
+        };
+    }
+
+    /**
+     * Save workflow output to storage
+     */
+    private function saveWorkflowOutput(int $workflowNumber, array $resultData, bool $isNew = false): void
+    {
+        $this->ensureDebugDirectory('output');
+        $suffix = $isNew ? '_new' : '';
+        $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output{$suffix}.json");
+        file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+
+    /**
      * Execute the actual n8n workflow for the old version
      */
     public function executeWorkflow(Request $request, int $workflowNumber)
     {
         try {
-            // Get input data from request
-            $inputData = $request->input('input');
-
-            // If inputData came from the request and has envelope fields, extract the body
-            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
-                $inputData = $inputData['body'];
-            }
+            $inputData = $this->loadInputData($request, $workflowNumber);
 
             if ($inputData === null) {
-                // Fall back to loading from storage
-                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
-
-                if (! file_exists($inputFile)) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => "Input file not found for workflow_{$workflowNumber}",
-                    ], 404);
-                }
-
-                $content = json_decode(file_get_contents($inputFile), true);
-
-                if (! $content) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Failed to parse input file',
-                    ], 400);
-                }
-
-                // Extract the body from the stored input
-                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
-                // Debug: Check what we actually have
-                $debugInfo = [
-                    'is_array' => is_array($content),
-                    'count' => is_array($content) ? count($content) : 'n/a',
-                    'first_elem_keys' => is_array($content) && count($content) > 0 ? array_keys($content[0]) : 'n/a',
-                    'has_body_field' => is_array($content) && count($content) > 0 && isset($content[0]['body']),
-                ];
-
-                if (is_array($content) && count($content) > 0 && isset($content[0]['body'])) {
-                    $inputData = $content[0]['body'];
-                } elseif (is_array($content) && isset($content['body'])) {
-                    // Handle case where content itself has a body field
-                    $inputData = $content['body'];
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Invalid input file format - expected body field',
-                        'debug' => $debugInfo,
-                    ], 400);
-                }
-            } else {
-                // inputData came from request, set debug info
-                $debugInfo = ['source' => 'request', 'keys' => array_keys($inputData)];
+                return response()->json([
+                    'success' => false,
+                    'error' => "Input file not found for workflow_{$workflowNumber}",
+                ], 404);
             }
 
-            // Ensure debugInfo exists for error response
-            if (! isset($debugInfo)) {
-                $debugInfo = ['source' => 'unknown'];
-            }
-
-            // Extract task description and user context from input
             $taskDescription = $inputData['task_description'] ?? null;
             $userContext = $inputData['user_context'] ?? null;
 
@@ -1076,32 +1094,11 @@ try {
                 return response()->json([
                     'success' => false,
                     'error' => 'task_description is required in input data',
-                    'input_keys' => array_keys($inputData),
-                    'debug_extraction' => $debugInfo,
                 ], 400);
             }
 
-            // Use PromptFrameworkService to execute the workflow
-            // For workflow_0 (pre-analysis), workflow_1 (analysis), or workflow_2 (generation)
-            $promptService = new \App\Services\PromptFrameworkService;
-
-            $resultData = match ($workflowNumber) {
-                0 => $promptService->preAnalyseTask($taskDescription, $userContext),
-                1 => $promptService->analyseTask(
-                    $taskDescription,
-                    $userContext['personality']['personality_type'] ?? null,
-                    $userContext['personality']['trait_percentages'] ?? null,
-                    null,
-                    null,
-                    $userContext
-                ),
-                default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
-            };
-
-            // Save output to storage
-            $this->ensureDebugDirectory('output');
-            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output.json");
-            file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
+            $this->saveWorkflowOutput($workflowNumber, $resultData);
 
             return response()->json([
                 'success' => true,
@@ -1123,48 +1120,15 @@ try {
     public function executeWorkflowNew(Request $request, int $workflowNumber)
     {
         try {
-            // Get input data from request
-            $inputData = $request->input('input');
-
-            // If inputData came from the request and has envelope fields, extract the body
-            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
-                $inputData = $inputData['body'];
-            }
+            $inputData = $this->loadInputData($request, $workflowNumber);
 
             if ($inputData === null) {
-                // Fall back to loading from storage
-                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
-
-                if (! file_exists($inputFile)) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => "Input file not found for workflow_{$workflowNumber}",
-                    ], 404);
-                }
-
-                $content = json_decode(file_get_contents($inputFile), true);
-
-                if (! $content) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Failed to parse input file',
-                    ], 400);
-                }
-
-                // Extract the body from the stored input
-                // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
-                // We need to extract just the body field which contains the actual payload
-                if (is_array($content) && count($content) > 0 && isset($content[0]['body'])) {
-                    $inputData = $content[0]['body'];
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'error' => 'Invalid input file format - expected array with body field',
-                    ], 400);
-                }
+                return response()->json([
+                    'success' => false,
+                    'error' => "Input file not found for workflow_{$workflowNumber}",
+                ], 404);
             }
 
-            // Extract task description and user context from input
             $taskDescription = $inputData['task_description'] ?? null;
             $userContext = $inputData['user_context'] ?? null;
 
@@ -1175,7 +1139,7 @@ try {
                 ], 400);
             }
 
-            // First, upload the new workflow to n8n to ensure it's up-to-date
+            // Upload the new workflow to n8n to ensure it's up-to-date
             $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
@@ -1248,27 +1212,8 @@ try {
                 ], 400);
             }
 
-            // Use PromptFrameworkService to execute the workflow
-            // For workflow_0 (pre-analysis), workflow_1 (analysis), or workflow_2 (generation)
-            $promptService = new \App\Services\PromptFrameworkService;
-
-            $resultData = match ($workflowNumber) {
-                0 => $promptService->preAnalyseTask($taskDescription, $userContext),
-                1 => $promptService->analyseTask(
-                    $taskDescription,
-                    $userContext['personality']['personality_type'] ?? null,
-                    $userContext['personality']['trait_percentages'] ?? null,
-                    null,
-                    null,
-                    $userContext
-                ),
-                default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
-            };
-
-            // Save output to storage
-            $this->ensureDebugDirectory('output');
-            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output_new.json");
-            file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
+            $this->saveWorkflowOutput($workflowNumber, $resultData, true);
 
             return response()->json([
                 'success' => true,
