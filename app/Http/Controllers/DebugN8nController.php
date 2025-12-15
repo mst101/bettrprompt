@@ -1095,10 +1095,15 @@ try {
                 default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
             };
 
+            // Send the payload to the webhook - it should have fields like task_description, user_context, etc.
             $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
 
-            if (! $webhookResult['success']) {
-                // Log the webhook error but continue (webhook might not be exposed in debug environment)
+            // Check if we got a successful response from n8n
+            if ($webhookResult['success']) {
+                // The webhook returned actual data from n8n
+                $resultData = $webhookResult['data'] ?? [];
+            } else {
+                // Webhook failed - log it
                 \Log::warning('N8n webhook call failed during workflow execution', [
                     'workflowNumber' => $workflowNumber,
                     'error' => $webhookResult['error'],
@@ -1111,9 +1116,6 @@ try {
                         ['role' => 'user', 'content' => 'This is a mock response. n8n workflows may not be available in this debug environment.'],
                     ],
                 ];
-            } else {
-                // Get the response data
-                $resultData = $webhookResult['data'] ?? [];
             }
 
             // Save output to storage
