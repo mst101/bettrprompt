@@ -109,7 +109,7 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
 const reloadJavaScriptFromWorkflow = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript-old`,
             'POST',
         );
 
@@ -188,7 +188,7 @@ const executeWorkflow = async () => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-workflow`,
+            `/debug/workflow/${props.workflowNumber}/execute-workflow-old`,
             'POST',
             { input: inputData },
         );
@@ -355,7 +355,7 @@ const saveInputData = async () => {
 const saveJavaScriptToFile = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/javascript`,
+            `/debug/workflow/${props.workflowNumber}/javascript-old`,
             'POST',
             { code: javascript.value },
         );
@@ -421,7 +421,7 @@ const preparePrompt = async () => {
         await saveJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute`,
+            `/debug/workflow/${props.workflowNumber}/execute-old`,
             'POST',
             { input: inputData },
         );
