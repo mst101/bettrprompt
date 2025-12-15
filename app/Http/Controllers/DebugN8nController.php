@@ -18,9 +18,9 @@ class DebugN8nController extends Controller
     public function show(int $workflowNumber)
     {
         $input = null;
-        $javascript = null;
+        $javascriptOld = null;
         $javascriptNew = null;
-        $output = null;
+        $outputOld = null;
         $outputNew = null;
 
         // Load input from storage/app/n8n_debug/input/
@@ -35,11 +35,11 @@ class DebugN8nController extends Controller
             }
         }
 
-        // Load JavaScript from storage/app/n8n_debug/prepare_prompt/
+        // Load old JavaScript from storage/app/n8n_debug/prepare_prompt/old/
         // If not present, extract from the actual n8n workflow file
-        $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+        $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
         if (file_exists($jsFile)) {
-            $javascript = file_get_contents($jsFile);
+            $javascriptOld = file_get_contents($jsFile);
         } else {
             // Extract from n8n workflow and cache it
             $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
@@ -49,10 +49,10 @@ class DebugN8nController extends Controller
                 if (isset($workflow['nodes'])) {
                     foreach ($workflow['nodes'] as $node) {
                         if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
-                            $javascript = $node['parameters']['jsCode'];
+                            $javascriptOld = $node['parameters']['jsCode'];
                             // Cache it for future use
-                            $this->ensureDebugDirectory('prepare_prompt');
-                            file_put_contents($jsFile, $javascript);
+                            $this->ensureDebugDirectory('prepare_prompt/old/');
+                            file_put_contents($jsFile, $javascriptOld);
                             break;
                         }
                     }
@@ -67,9 +67,9 @@ class DebugN8nController extends Controller
         }
 
         // Load old output from storage/app/n8n_debug/output/old/
-        $outputFile = storage_path("app/n8n_debug/output/old/workflow_{$workflowNumber}_output.json");
-        if (file_exists($outputFile)) {
-            $output = json_decode(file_get_contents($outputFile), true);
+        $outputFileOld = storage_path("app/n8n_debug/output/old/workflow_{$workflowNumber}_output.json");
+        if (file_exists($outputFileOld)) {
+            $outputOld = json_decode(file_get_contents($outputFileOld), true);
         }
 
         // Load new output from storage/app/n8n_debug/output/new/
@@ -81,9 +81,9 @@ class DebugN8nController extends Controller
         return Inertia::render('Workflow/Show', [
             'workflowNumber' => $workflowNumber,
             'input' => $input,
-            'javascript' => $javascript,
+            'javascriptOld' => $javascriptOld,
             'javascriptNew' => $javascriptNew,
-            'output' => $output,
+            'outputOld' => $outputOld,
             'outputNew' => $outputNew,
         ]);
     }

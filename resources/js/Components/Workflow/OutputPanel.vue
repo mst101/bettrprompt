@@ -201,7 +201,7 @@ const getMessagesAsText = (messages: Message[] | unknown) => {
                         Full Output
                     </summary>
                     <div
-                        class="mt-2 max-h-96 overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
+                        class="mt-2 max-h-screen overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
                     >
                         <pre>{{ JSON.stringify(output, null, 2) }}</pre>
                     </div>

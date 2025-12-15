@@ -1,0 +1,59 @@
+{
+    "needs_clarification": true,
+    "questions": [
+        {
+            "id": "travel_details",
+            "type": "text",
+            "question": "What specific details do you want to know about planning a birdwatching holiday in the Gambia? (e.g. best time to visit, recommended locations, tour options)"
+        },
+        {
+            "id": "group_type",
+            "type": "choice",
+            "question": "Who will be travelling?",
+            "options": [
+                {
+                    "value": "solo",
+                    "label": "Solo traveller"
+                },
+                {
+                    "value": "couple",
+                    "label": "Couple"
+                },
+                {
+                    "value": "group",
+                    "label": "Group/Family"
+                },
+                {
+                    "value": "birdwatching_club",
+                    "label": "Birdwatching Club"
+                }
+            ]
+        },
+        {
+            "id": "experience_level",
+            "type": "choice",
+            "question": "What is your birdwatching experience level?",
+            "options": [
+                {
+                    "value": "beginner",
+                    "label": "Beginner"
+                },
+                {
+                    "value": "intermediate",
+                    "label": "Intermediate"
+                },
+                {
+                    "value": "expert",
+                    "label": "Expert"
+                }
+            ]
+        }
+    ],
+    "reasoning": "Needs more context about specific birdwatching holiday requirements",
+    "pre_analysis_context": null,
+    "api_usage": {
+        "model": "claude-3-5-haiku-20241022",
+        "input_tokens": 415,
+        "output_tokens": 312
+    }
+}

@@ -11,11 +11,20 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { onMounted, ref } from 'vue';
 
+interface Props {
+    workflowNumber: number;
+    input?: object | null;
+    javascriptOld?: string | null;
+    javascriptNew?: string | null;
+    outputOld?: object | null;
+    outputNew?: object | null;
+}
+
 const props = withDefaults(defineProps<Props>(), {
     input: null,
-    javascript: null,
+    javascriptOld: null,
     javascriptNew: null,
-    output: null,
+    outputOld: null,
     outputNew: null,
 });
 
@@ -23,54 +32,45 @@ defineOptions({
     layout: WorkflowLayout,
 });
 
-interface Props {
-    workflowNumber: number;
-    input?: object | null;
-    javascript?: string | null;
-    javascriptNew?: string | null;
-    output?: object | null;
-    outputNew?: object | null;
-}
-
 const isExecuting = ref(false);
 const isExecutingNew = ref(false);
 const error = ref<string | null>(null);
 
 const input = ref(props.input);
 const inputJson = ref(JSON.stringify(props.input, null, 2));
-const javascriptOld = ref(props.javascript || '');
+const javascriptOld = ref(props.javascriptOld || '');
 const javascriptNew = ref(props.javascriptNew || '');
-const output = ref(props.output);
+const outputOld = ref(props.outputOld);
 const outputNew = ref(props.outputNew);
-const workflowOutput = ref(null);
+const workflowOutputOld = ref(null);
 const workflowOutputNew = ref(null);
 
 // Modal state for maximized views
 const expandedView = ref<
-    | 'system'
-    | 'messages'
-    | 'system-new'
-    | 'messages-new'
-    | 'workflow-system'
-    | 'workflow-messages'
-    | 'workflow-system-new'
-    | 'workflow-messages-new'
     | 'input'
-    | 'javascript'
+    | 'javascript-old'
     | 'javascript-new'
+    | 'messages-old'
+    | 'messages-new'
+    | 'system-old'
+    | 'system-new'
+    | 'workflow-messages-old'
+    | 'workflow-messages-new'
+    | 'workflow-system-old'
+    | 'workflow-system-new'
     | null
 >(null);
 const saveMessage = ref<string | null>(null);
 
 // Track raw vs formatted mode for expanded views
-const rawModeSystem = ref(false);
-const rawModeMessages = ref(false);
-const rawModeSystemNew = ref(false);
+const rawModeMessagesOld = ref(false);
 const rawModeMessagesNew = ref(false);
-const rawModeWorkflowSystem = ref(false);
-const rawModeWorkflowMessages = ref(false);
-const rawModeWorkflowSystemNew = ref(false);
+const rawModeSystemOld = ref(false);
+const rawModeSystemNew = ref(false);
+const rawModeWorkflowMessagesOld = ref(false);
 const rawModeWorkflowMessagesNew = ref(false);
+const rawModeWorkflowSystemOld = ref(false);
+const rawModeWorkflowSystemNew = ref(false);
 
 const getCsrfToken = () => {
     const token = document
@@ -146,7 +146,7 @@ const reloadJavaScriptFromWorkflowAsNew = async () => {
     }
 };
 
-const executeWorkflow = async () => {
+const executeWorkflowOld = async () => {
     if (!inputJson.value) {
         error.value = 'Input data is required';
         return;
@@ -183,7 +183,7 @@ const executeWorkflow = async () => {
             return;
         }
 
-        workflowOutput.value = result.output;
+        workflowOutputOld.value = result.output;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -244,32 +244,32 @@ const renderMarkdown = (text: string | null | undefined): string => {
 
 const handleRawModeUpdate = (
     section:
-        | 'system'
-        | 'messages'
-        | 'system-new'
+        | 'messages-old'
         | 'messages-new'
-        | 'workflow-system'
-        | 'workflow-messages'
-        | 'workflow-system-new'
-        | 'workflow-messages-new',
+        | 'system-old'
+        | 'system-new'
+        | 'workflow-messages-old'
+        | 'workflow-messages-new'
+        | 'workflow-system-old'
+        | 'workflow-system-new',
     isRaw: boolean,
 ) => {
-    if (section === 'system') {
-        rawModeSystem.value = isRaw;
-    } else if (section === 'messages') {
-        rawModeMessages.value = isRaw;
+    if (section === 'system-old') {
+        rawModeSystemOld.value = isRaw;
     } else if (section === 'system-new') {
         rawModeSystemNew.value = isRaw;
+    } else if (section === 'messages-old') {
+        rawModeMessagesOld.value = isRaw;
     } else if (section === 'messages-new') {
         rawModeMessagesNew.value = isRaw;
-    } else if (section === 'workflow-system') {
-        rawModeWorkflowSystem.value = isRaw;
-    } else if (section === 'workflow-messages') {
-        rawModeWorkflowMessages.value = isRaw;
-    } else if (section === 'workflow-system-new') {
-        rawModeWorkflowSystemNew.value = isRaw;
+    } else if (section === 'workflow-messages-old') {
+        rawModeWorkflowMessagesOld.value = isRaw;
     } else if (section === 'workflow-messages-new') {
         rawModeWorkflowMessagesNew.value = isRaw;
+    } else if (section === 'workflow-system-old') {
+        rawModeWorkflowSystemOld.value = isRaw;
+    } else if (section === 'workflow-system-new') {
+        rawModeWorkflowSystemNew.value = isRaw;
     }
 };
 
@@ -330,7 +330,7 @@ const saveInputData = async () => {
     }
 };
 
-const saveJavaScriptToFile = async () => {
+const saveOldJavaScriptToFile = async () => {
     try {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/javascript-old`,
@@ -342,7 +342,7 @@ const saveJavaScriptToFile = async () => {
         if (!result.success) {
             error.value = result.error || 'Failed to save JavaScript code';
         } else {
-            saveMessage.value = 'JavaScript code saved successfully!';
+            saveMessage.value = 'Old JavaScript code saved successfully!';
             setTimeout(() => {
                 saveMessage.value = null;
             }, 3000);
@@ -353,7 +353,7 @@ const saveJavaScriptToFile = async () => {
     }
 };
 
-const saveJavaScriptNewToFile = async () => {
+const saveNewJavaScriptToFile = async () => {
     try {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/javascript-new`,
@@ -376,7 +376,7 @@ const saveJavaScriptNewToFile = async () => {
     }
 };
 
-const preparePrompt = async () => {
+const preparePromptOld = async () => {
     if (!javascriptOld.value || !inputJson.value) {
         error.value = 'Both input and JavaScript code are required';
         return;
@@ -396,7 +396,7 @@ const preparePrompt = async () => {
         }
 
         // Save the old JavaScript to file first
-        await saveJavaScriptToFile();
+        await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/execute-old`,
@@ -416,7 +416,7 @@ const preparePrompt = async () => {
             return;
         }
 
-        output.value = result.output;
+        outputOld.value = result.output;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -444,7 +444,7 @@ const preparePromptNew = async () => {
         }
 
         // Save the new JavaScript to file first
-        await saveJavaScriptNewToFile();
+        await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/execute-new`,
@@ -476,7 +476,7 @@ const preparePromptNew = async () => {
 onMounted(async () => {
     // Execute old version if available
     if (javascriptOld.value && input.value) {
-        await preparePrompt();
+        await preparePromptOld();
     }
 
     // Execute new version if available
@@ -504,19 +504,19 @@ onMounted(async () => {
         <div class="space-y-8">
             <!-- Input Data and JavaScript Code Buttons -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
-                <ButtonSecondary @click="expandedView = 'javascript'">
+                <ButtonSecondary @click="expandedView = 'javascript-old'">
                     View JavaScript (old)
                 </ButtonSecondary>
 
                 <ButtonPrimary
                     :disabled="!javascriptOld || !input"
-                    @click="preparePrompt"
+                    @click="preparePromptOld"
                 >
                     {{ isExecuting ? 'Executing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
-                <ButtonSuccess @click="executeWorkflow">
-                    Upload to n8n & Execute workflow
+                <ButtonSuccess @click="executeWorkflowOld">
+                    Upload to n8n & Execute workflow (old)
                 </ButtonSuccess>
 
                 <ButtonSecondary @click="expandedView = 'javascript-new'">
@@ -531,16 +531,16 @@ onMounted(async () => {
                 </ButtonPrimary>
 
                 <ButtonSuccess @click="executeWorkflowNew">
-                    Upload to n8n & Execute workflow
+                    Upload to n8n & Execute workflow (new)
                 </ButtonSuccess>
             </div>
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
                     title="Workflow Prompt (OLD)"
-                    :output="output"
-                    @expand-system="expandedView = 'system'"
-                    @expand-messages="expandedView = 'messages'"
+                    :output="outputOld"
+                    @expand-system="expandedView = 'system-old'"
+                    @expand-messages="expandedView = 'messages-old'"
                     @update-raw-mode="handleRawModeUpdate"
                 />
                 <OutputPanel
@@ -556,9 +556,9 @@ onMounted(async () => {
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
                     title="Output (old)"
-                    :output="workflowOutput"
-                    @expand-system="expandedView = 'workflow-system'"
-                    @expand-messages="expandedView = 'workflow-messages'"
+                    :output="workflowOutputOld"
+                    @expand-system="expandedView = 'workflow-system-old'"
+                    @expand-messages="expandedView = 'workflow-messages-old'"
                     @update-raw-mode="handleRawModeUpdate"
                 />
                 <OutputPanel
@@ -573,22 +573,22 @@ onMounted(async () => {
 
         <!-- Modal: Expanded System Prompt -->
         <ExpandableModal
-            :show="expandedView === 'system'"
+            :show="expandedView === 'system-old'"
             title="System Prompt (Expanded)"
             @close="expandedView = null"
         >
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="rawModeSystem"
+                        v-if="rawModeSystemOld"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ output?.system }}
+                        {{ outputOld?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(output?.system)"
+                        v-html="renderMarkdown(outputOld?.system)"
                     />
                 </div>
                 <div
@@ -596,15 +596,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            output?.system
-                                ? `${(output.system as string).length} characters`
+                            outputOld?.system
+                                ? `${(outputOld.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(output?.system)"
+                        @click="copyToClipboard(outputOld?.system)"
                     >
                         📋 Copy
                     </button>
@@ -614,28 +614,30 @@ onMounted(async () => {
 
         <!-- Modal: Expanded Messages -->
         <ExpandableModal
-            :show="expandedView === 'messages'"
+            :show="expandedView === 'messages-old'"
             title="Messages (Expanded)"
             @close="expandedView = null"
         >
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(output?.messages)"
+                        v-if="Array.isArray(outputOld?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(message, index) in output?.messages"
+                            v-for="(message, index) in outputOld?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
                             <div
-                                v-if="message.content && !rawModeMessages"
+                                v-if="message.content && !rawModeMessagesOld"
                                 class="prose prose-sm dark:prose-invert max-w-none text-indigo-700"
                                 v-html="renderMarkdown(message.content)"
                             />
                             <div
-                                v-else-if="message.content && rawModeMessages"
+                                v-else-if="
+                                    message.content && rawModeMessagesOld
+                                "
                                 class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                             >
                                 {{ message.content }}
@@ -651,8 +653,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            output?.messages && Array.isArray(output.messages)
-                                ? `${output.messages.length} messages`
+                            outputOld?.messages &&
+                            Array.isArray(outputOld.messages)
+                                ? `${outputOld.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -660,7 +663,9 @@ onMounted(async () => {
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
                         @click="
-                            copyToClipboard(getMessagesAsText(output?.messages))
+                            copyToClipboard(
+                                getMessagesAsText(outputOld?.messages),
+                            )
                         "
                     >
                         📋 Copy
@@ -708,7 +713,7 @@ onMounted(async () => {
 
         <!-- Modal: Expanded JavaScript Code (old) -->
         <ExpandableModal
-            :show="expandedView === 'javascript'"
+            :show="expandedView === 'javascript-old'"
             title="JavaScript Code (old) - Expanded"
             @close="expandedView = null"
         >
@@ -744,7 +749,7 @@ onMounted(async () => {
 
                         <ButtonPrimary
                             @click="
-                                saveJavaScriptToFile();
+                                saveOldJavaScriptToFile();
                                 expandedView = null;
                             "
                         >
@@ -793,7 +798,7 @@ onMounted(async () => {
 
                         <ButtonPrimary
                             @click="
-                                saveJavaScriptNewToFile();
+                                saveNewJavaScriptToFile();
                                 expandedView = null;
                             "
                         >
@@ -909,22 +914,22 @@ onMounted(async () => {
 
         <!-- Modal: Expanded Workflow System Prompt (old) -->
         <ExpandableModal
-            :show="expandedView === 'workflow-system'"
+            :show="expandedView === 'workflow-system-old'"
             title="Workflow System Prompt (old) - Expanded"
             @close="expandedView = null"
         >
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="rawModeWorkflowSystem"
+                        v-if="rawModeWorkflowSystemOld"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ workflowOutput?.system }}
+                        {{ workflowOutputOld?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(workflowOutput?.system)"
+                        v-html="renderMarkdown(workflowOutputOld?.system)"
                     />
                 </div>
                 <div
@@ -932,15 +937,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutput?.system
-                                ? `${(workflowOutput.system as string).length} characters`
+                            workflowOutputOld?.system
+                                ? `${(workflowOutputOld.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(workflowOutput?.system)"
+                        @click="copyToClipboard(workflowOutputOld?.system)"
                     >
                         📋 Copy
                     </button>
@@ -950,31 +955,35 @@ onMounted(async () => {
 
         <!-- Modal: Expanded Workflow Messages (old) -->
         <ExpandableModal
-            :show="expandedView === 'workflow-messages'"
+            :show="expandedView === 'workflow-messages-old'"
             title="Workflow Messages (old) - Expanded"
             @close="expandedView = null"
         >
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(workflowOutput?.messages)"
+                        v-if="Array.isArray(workflowOutputOld?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(message, index) in workflowOutput?.messages"
+                            v-for="(
+                                message, index
+                            ) in workflowOutputOld?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
                             <div
                                 v-if="
-                                    message.content && !rawModeWorkflowMessages
+                                    message.content &&
+                                    !rawModeWorkflowMessagesOld
                                 "
                                 class="prose prose-sm dark:prose-invert max-w-none text-indigo-700"
                                 v-html="renderMarkdown(message.content)"
                             />
                             <div
                                 v-else-if="
-                                    message.content && rawModeWorkflowMessages
+                                    message.content &&
+                                    rawModeWorkflowMessagesOld
                                 "
                                 class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                             >
@@ -991,9 +1000,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutput?.messages &&
-                            Array.isArray(workflowOutput.messages)
-                                ? `${workflowOutput.messages.length} messages`
+                            workflowOutputOld?.messages &&
+                            Array.isArray(workflowOutputOld.messages)
+                                ? `${workflowOutputOld.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -1002,7 +1011,7 @@ onMounted(async () => {
                         title="Copy to clipboard"
                         @click="
                             copyToClipboard(
-                                getMessagesAsText(workflowOutput?.messages),
+                                getMessagesAsText(workflowOutputOld?.messages),
                             )
                         "
                     >

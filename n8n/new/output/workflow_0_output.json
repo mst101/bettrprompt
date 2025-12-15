@@ -1,0 +1,73 @@
+{
+    "needs_clarification": true,
+    "questions": [
+        {
+            "id": "duration",
+            "type": "choice",
+            "question": "How long do you want to spend birdwatching in the Gambia?",
+            "options": [
+                {
+                    "value": "short",
+                    "label": "1-3 days"
+                },
+                {
+                    "value": "medium",
+                    "label": "4-7 days"
+                },
+                {
+                    "value": "long",
+                    "label": "8-14 days"
+                }
+            ]
+        },
+        {
+            "id": "experience_level",
+            "type": "choice",
+            "question": "What is your birdwatching experience level?",
+            "options": [
+                {
+                    "value": "beginner",
+                    "label": "Beginner"
+                },
+                {
+                    "value": "intermediate",
+                    "label": "Intermediate"
+                },
+                {
+                    "value": "expert",
+                    "label": "Expert"
+                }
+            ]
+        },
+        {
+            "id": "travel_companions",
+            "type": "choice",
+            "question": "Who will you be travelling with?",
+            "options": [
+                {
+                    "value": "solo",
+                    "label": "Solo"
+                },
+                {
+                    "value": "partner",
+                    "label": "Partner"
+                },
+                {
+                    "value": "group",
+                    "label": "Birdwatching Group"
+                },
+                {
+                    "value": "family",
+                    "label": "Family"
+                }
+            ]
+        }
+    ],
+    "reasoning": "Need more details about trip specifics and traveller preferences",
+    "pre_analysis_context": null,
+    "api_usage": {
+        "model": "claude-3-5-haiku-20241022",
+        "input_tokens": 415,
+        "output_tokens": 366
+    }
+}
