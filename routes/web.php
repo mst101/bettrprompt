@@ -306,6 +306,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.reload-javascript-old')
         ->where('workflowNumber', '[0-9]+');
 
+    Route::post('/debug/workflow/{workflowNumber}/reload-javascript-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
+        ->name('workflow.reload-javascript-new')
+        ->where('workflowNumber', '[0-9]+');
+
     Route::post('/debug/workflow/{workflowNumber}/execute-old',
         [\App\Http\Controllers\DebugN8nController::class, 'executeOldJavaScript'])
         ->name('workflow.execute-old')

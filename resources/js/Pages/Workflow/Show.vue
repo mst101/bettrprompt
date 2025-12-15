@@ -129,7 +129,7 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
 const reloadJavaScriptFromWorkflowAsNew = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript-old`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript-new`,
             'POST',
         );
 
@@ -139,8 +139,6 @@ const reloadJavaScriptFromWorkflowAsNew = async () => {
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
             javascriptNew.value = result.code || '';
-            // Save the new version to file
-            await saveJavaScriptNewToFile();
             error.value = null;
         }
     } catch (err) {

@@ -168,6 +168,63 @@ class DebugN8nController extends Controller
     }
 
     /**
+     * Reload JavaScript from workflow file and save as new version
+     */
+    public function reloadJavaScriptFromWorkflowAsNew(int $workflowNumber)
+    {
+        try {
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! isset($workflow['nodes'])) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow format: nodes array not found',
+                ], 400);
+            }
+
+            // Find and extract the "Prepare Prompt" node JavaScript
+            $javascript = null;
+            foreach ($workflow['nodes'] as $node) {
+                if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
+                    $javascript = $node['parameters']['jsCode'];
+                    break;
+                }
+            }
+
+            if ($javascript === null) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow or has no jsCode',
+                ], 404);
+            }
+
+            // Save the extracted JavaScript to storage as new version
+            $this->ensureDebugDirectory('prepare_prompt/new');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            file_put_contents($jsFile, $javascript);
+            chmod($jsFile, 0644);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'JavaScript reloaded from workflow and saved as new version',
+                'code' => $javascript,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to reload JavaScript from workflow: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
      * Load JavaScript from the new version directory
      */
     public function loadJavaScriptNew(int $workflowNumber)
