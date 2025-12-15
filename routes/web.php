@@ -321,7 +321,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // The .env.e2e file should have N8N_URL=http://localhost (pointing to these routes)
 Route::post('/webhook/api/n8n/webhook/pre-analysis', [\App\Http\Controllers\MockN8nController::class, 'preAnalysis'])
     ->name('test.n8n.pre-analysis');
-Route::post('/webhook/api/n8n/webhook/analyse', [\App\Http\Controllers\MockN8nController::class, 'analyse'])
+Route::post('/webhook/api/n8n/webhook/analysis', [\App\Http\Controllers\MockN8nController::class, 'analyse'])
     ->name('test.n8n.analyse');
 Route::post('/webhook/api/n8n/webhook/optimise-prompt',
     [\App\Http\Controllers\MockN8nController::class, 'optimisePrompt'])
