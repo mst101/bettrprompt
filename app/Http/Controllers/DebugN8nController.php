@@ -1011,6 +1011,11 @@ try {
             // Get input data from request
             $inputData = $request->input('input');
 
+            // If inputData came from the request and has envelope fields, extract the body
+            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
+                $inputData = $inputData['body'];
+            }
+
             if ($inputData === null) {
                 // Fall back to loading from storage
                 $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
@@ -1033,15 +1038,34 @@ try {
 
                 // Extract the body from the stored input
                 // The stored input file structure is: [{ body: {...}, headers: {...}, ... }]
-                // We need to extract just the body field which contains the actual payload
-                if (is_array($content) && count($content) > 0 && is_array($content[0]) && isset($content[0]['body'])) {
+                // Debug: Check what we actually have
+                $debugInfo = [
+                    'is_array' => is_array($content),
+                    'count' => is_array($content) ? count($content) : 'n/a',
+                    'first_elem_keys' => is_array($content) && count($content) > 0 ? array_keys($content[0]) : 'n/a',
+                    'has_body_field' => is_array($content) && count($content) > 0 && isset($content[0]['body']),
+                ];
+
+                if (is_array($content) && count($content) > 0 && isset($content[0]['body'])) {
                     $inputData = $content[0]['body'];
+                } elseif (is_array($content) && isset($content['body'])) {
+                    // Handle case where content itself has a body field
+                    $inputData = $content['body'];
                 } else {
                     return response()->json([
                         'success' => false,
-                        'error' => 'Invalid input file format - expected array with body field',
+                        'error' => 'Invalid input file format - expected body field',
+                        'debug' => $debugInfo,
                     ], 400);
                 }
+            } else {
+                // inputData came from request, set debug info
+                $debugInfo = ['source' => 'request', 'keys' => array_keys($inputData)];
+            }
+
+            // Ensure debugInfo exists for error response
+            if (! isset($debugInfo)) {
+                $debugInfo = ['source' => 'unknown'];
             }
 
             // Extract task description and user context from input
@@ -1052,6 +1076,8 @@ try {
                 return response()->json([
                     'success' => false,
                     'error' => 'task_description is required in input data',
+                    'input_keys' => array_keys($inputData),
+                    'debug_extraction' => $debugInfo,
                 ], 400);
             }
 
@@ -1173,6 +1199,11 @@ try {
             // Now execute the workflow by triggering its webhook
             // Get input data
             $inputData = $request->input('input');
+
+            // If inputData came from the request and has envelope fields, extract the body
+            if ($inputData !== null && isset($inputData['body']) && ! isset($inputData['task_description'])) {
+                $inputData = $inputData['body'];
+            }
 
             if ($inputData === null) {
                 // Fall back to loading from storage
