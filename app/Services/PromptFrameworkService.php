@@ -239,7 +239,7 @@ class PromptFrameworkService
 
         try {
             $response = Http::timeout(60)
-                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analyse", $payload);
+                ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
 
             if ($response->successful()) {
                 return $response->json();
