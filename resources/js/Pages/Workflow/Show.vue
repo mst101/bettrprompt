@@ -38,7 +38,7 @@ const error = ref<string | null>(null);
 
 const input = ref(props.input);
 const inputJson = ref(JSON.stringify(props.input, null, 2));
-const javascript = ref(props.javascript || '');
+const javascriptOld = ref(props.javascript || '');
 const javascriptNew = ref(props.javascriptNew || '');
 const output = ref(props.output);
 const outputNew = ref(props.outputNew);
@@ -106,7 +106,7 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
     return fetch(url, config);
 };
 
-const reloadJavaScriptFromWorkflow = async () => {
+const reloadJavaScriptFromWorkflowAsOld = async () => {
     try {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/reload-javascript-old`,
@@ -118,7 +118,7 @@ const reloadJavaScriptFromWorkflow = async () => {
             error.value =
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
-            javascript.value = result.code || '';
+            javascriptOld.value = result.code || '';
             error.value = null;
         }
     } catch (err) {
@@ -126,17 +126,17 @@ const reloadJavaScriptFromWorkflow = async () => {
     }
 };
 
-const reloadJavaScriptNewFromWorkflow = async () => {
+const reloadJavaScriptFromWorkflowAsNew = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript-old`,
             'POST',
         );
 
         const result = await response.json();
         if (!result.success) {
             error.value =
-                result.error || 'Failed to reload new JavaScript from workflow';
+                result.error || 'Failed to reload JavaScript from workflow';
         } else {
             javascriptNew.value = result.code || '';
             // Save the new version to file
@@ -144,27 +144,7 @@ const reloadJavaScriptNewFromWorkflow = async () => {
             error.value = null;
         }
     } catch (err) {
-        error.value = `Failed to reload new JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
-};
-
-const loadJavaScriptNew = async () => {
-    try {
-        const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/load-javascript-new`,
-            'POST',
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value =
-                result.error || 'Failed to load new JavaScript version';
-        } else {
-            javascriptNew.value = result.code || '';
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to load new JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        error.value = `Failed to reload JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
     }
 };
 
@@ -357,7 +337,7 @@ const saveJavaScriptToFile = async () => {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/javascript-old`,
             'POST',
-            { code: javascript.value },
+            { code: javascriptOld.value },
         );
 
         const result = await response.json();
@@ -399,7 +379,7 @@ const saveJavaScriptNewToFile = async () => {
 };
 
 const preparePrompt = async () => {
-    if (!javascript.value || !inputJson.value) {
+    if (!javascriptOld.value || !inputJson.value) {
         error.value = 'Both input and JavaScript code are required';
         return;
     }
@@ -497,7 +477,7 @@ const preparePromptNew = async () => {
 // Auto-execute both versions when page loads if they have code
 onMounted(async () => {
     // Execute old version if available
-    if (javascript.value && input.value) {
+    if (javascriptOld.value && input.value) {
         await preparePrompt();
     }
 
@@ -527,11 +507,11 @@ onMounted(async () => {
             <!-- Input Data and JavaScript Code Buttons -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
                 <ButtonSecondary @click="expandedView = 'javascript'">
-                    View JavaScript
+                    View JavaScript (old)
                 </ButtonSecondary>
 
                 <ButtonPrimary
-                    :disabled="!javascript || !input"
+                    :disabled="!javascriptOld || !input"
                     @click="preparePrompt"
                 >
                     {{ isExecuting ? 'Executing...' : 'Prepare Prompt' }}
@@ -541,13 +521,8 @@ onMounted(async () => {
                     Upload to n8n & Execute workflow
                 </ButtonSuccess>
 
-                <ButtonSecondary
-                    @click="
-                        loadJavaScriptNew();
-                        expandedView = 'javascript-new';
-                    "
-                >
-                    View JavaScript
+                <ButtonSecondary @click="expandedView = 'javascript-new'">
+                    View JavaScript (new)
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -741,7 +716,7 @@ onMounted(async () => {
         >
             <div class="flex h-full flex-col">
                 <textarea
-                    v-model="javascript"
+                    v-model="javascriptOld"
                     class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
                     placeholder="Edit JavaScript code here..."
                     style="
@@ -755,8 +730,8 @@ onMounted(async () => {
                 >
                     <span class="ml-4 text-xs text-indigo-600">
                         {{
-                            javascript
-                                ? `${javascript.length} characters`
+                            javascriptOld
+                                ? `${javascriptOld.length} characters`
                                 : 'N/A'
                         }}
                     </span>
@@ -764,9 +739,9 @@ onMounted(async () => {
                     <div>
                         <ButtonSecondary
                             class="mr-2"
-                            @click="reloadJavaScriptFromWorkflow"
+                            @click="reloadJavaScriptFromWorkflowAsOld"
                         >
-                            Reload JS from JSON
+                            Reload JS from JSON (old)
                         </ButtonSecondary>
 
                         <ButtonPrimary
@@ -813,9 +788,9 @@ onMounted(async () => {
                     <div>
                         <ButtonSecondary
                             class="mr-2"
-                            @click="reloadJavaScriptNewFromWorkflow"
+                            @click="reloadJavaScriptFromWorkflowAsNew"
                         >
-                            Reload JS from JSON
+                            Reload JS from JSON (new)
                         </ButtonSecondary>
 
                         <ButtonPrimary
