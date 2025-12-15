@@ -296,14 +296,29 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.save-javascript')
         ->where('workflowNumber', '[0-9]+');
 
+    Route::post('/debug/workflow/{workflowNumber}/javascript-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptNew'])
+        ->name('workflow.save-javascript-new')
+        ->where('workflowNumber', '[0-9]+');
+
     Route::post('/debug/workflow/{workflowNumber}/reload-javascript',
         [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
         ->name('workflow.reload-javascript')
         ->where('workflowNumber', '[0-9]+');
 
+    Route::post('/debug/workflow/{workflowNumber}/load-javascript-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'loadJavaScriptNew'])
+        ->name('workflow.load-javascript-new')
+        ->where('workflowNumber', '[0-9]+');
+
     Route::post('/debug/workflow/{workflowNumber}/execute',
         [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScript'])
         ->name('workflow.execute')
+        ->where('workflowNumber', '[0-9]+');
+
+    Route::post('/debug/workflow/{workflowNumber}/execute-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'executeJavaScriptNew'])
+        ->name('workflow.execute-new')
         ->where('workflowNumber', '[0-9]+');
 
     Route::post('/debug/workflow/{workflowNumber}/save-to-n8n',
@@ -314,6 +329,21 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n',
         [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToN8n'])
         ->name('workflow.upload-to-n8n')
+        ->where('workflowNumber', '[0-9]+');
+
+    Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowNewToN8n'])
+        ->name('workflow.upload-to-n8n-new')
+        ->where('workflowNumber', '[0-9]+');
+
+    Route::post('/debug/workflow/{workflowNumber}/execute-workflow',
+        [\App\Http\Controllers\DebugN8nController::class, 'executeWorkflow'])
+        ->name('workflow.execute-workflow')
+        ->where('workflowNumber', '[0-9]+');
+
+    Route::post('/debug/workflow/{workflowNumber}/execute-workflow-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'executeWorkflowNew'])
+        ->name('workflow.execute-workflow-new')
         ->where('workflowNumber', '[0-9]+');
 });
 

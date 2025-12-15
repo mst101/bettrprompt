@@ -19,7 +19,9 @@ class DebugN8nController extends Controller
     {
         $input = null;
         $javascript = null;
+        $javascriptNew = null;
         $output = null;
+        $outputNew = null;
 
         // Load input from storage/app/n8n_debug/input/
         $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
@@ -58,17 +60,31 @@ class DebugN8nController extends Controller
             }
         }
 
+        // Load new JavaScript from storage/app/n8n_debug/prepare_prompt/new/
+        $jsFileNew = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+        if (file_exists($jsFileNew)) {
+            $javascriptNew = file_get_contents($jsFileNew);
+        }
+
         // Load output from storage/app/n8n_debug/output/
         $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
         if (file_exists($outputFile)) {
             $output = json_decode(file_get_contents($outputFile), true);
         }
 
+        // Load new output from storage/app/n8n_debug/output/
+        $outputFileNew = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output_new.json");
+        if (file_exists($outputFileNew)) {
+            $outputNew = json_decode(file_get_contents($outputFileNew), true);
+        }
+
         return Inertia::render('Workflow/Show', [
             'workflowNumber' => $workflowNumber,
             'input' => $input,
             'javascript' => $javascript,
+            'javascriptNew' => $javascriptNew,
             'output' => $output,
+            'outputNew' => $outputNew,
         ]);
     }
 
@@ -152,6 +168,35 @@ class DebugN8nController extends Controller
     }
 
     /**
+     * Load JavaScript from the new version directory
+     */
+    public function loadJavaScriptNew(int $workflowNumber)
+    {
+        try {
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $javascript = file_get_contents($jsFile);
+
+            return response()->json([
+                'success' => true,
+                'code' => $javascript,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to load new JavaScript: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
      * Save JavaScript code
      */
     public function saveJavaScript(Request $request, int $workflowNumber)
@@ -174,6 +219,33 @@ class DebugN8nController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save JavaScript: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
+     * Save new JavaScript code version
+     */
+    public function saveJavaScriptNew(Request $request, int $workflowNumber)
+    {
+        try {
+            $request->validate([
+                'code' => 'required|string',
+            ]);
+
+            $this->ensureDebugDirectory('prepare_prompt/new');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            file_put_contents($jsFile, $request->input('code'));
+            chmod($jsFile, 0644);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'New JavaScript saved successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to save new JavaScript: {$e->getMessage()}",
             ], 500);
         }
     }
@@ -312,6 +384,91 @@ class DebugN8nController extends Controller
     }
 
     /**
+     * Upload new workflow version to n8n server
+     */
+    public function uploadWorkflowNewToN8n(int $workflowNumber)
+    {
+        try {
+            // Load the new JavaScript version
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $newJavaScript = file_get_contents($jsFile);
+
+            // Load the base workflow file
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflowId = $this->getWorkflowId($workflowNumber);
+            if (! $workflowId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Unknown workflow number: {$workflowNumber}",
+                ], 400);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! $workflow) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow JSON format',
+                ], 400);
+            }
+
+            // Update the "Prepare Prompt" node with the new JavaScript
+            $found = false;
+            foreach ($workflow['nodes'] as &$node) {
+                if ($node['name'] === 'Prepare Prompt') {
+                    $node['parameters']['jsCode'] = $newJavaScript;
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (! $found) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow',
+                ], 404);
+            }
+
+            // Build a clean workflow object with only the required fields for n8n API
+            $cleanWorkflow = [
+                'name' => $workflow['name'] ?? 'workflow',
+                'nodes' => $workflow['nodes'] ?? [],
+                'connections' => $workflow['connections'] ?? [],
+                'settings' => $workflow['settings'] ?? (object) [],
+            ];
+
+            // Upload to n8n
+            $n8nClient = new \App\Services\N8nClient;
+            $result = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Failed to upload new workflow to n8n', [
+                'workflowNumber' => $workflowNumber,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to upload new workflow: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
      * Execute the JavaScript and return the output
      */
     public function executeJavaScript(Request $request, int $workflowNumber)
@@ -384,6 +541,101 @@ class DebugN8nController extends Controller
             // Save output to storage/app/n8n_debug/output/
             $this->ensureDebugDirectory('output');
             $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
+            file_put_contents($outputFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            return response()->json([
+                'success' => true,
+                'output' => $result,
+                'system' => $result['system'] ?? null,
+                'messages' => $result['messages'] ?? null,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        } finally {
+            // Clean up temporary files created during execution
+            foreach ($this->tempFilesToCleanup as $file) {
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Execute the new JavaScript version and return the output
+     */
+    public function executeJavaScriptNew(Request $request, int $workflowNumber)
+    {
+        try {
+            // Get input from request or load from storage
+            $inputData = $request->input('input');
+
+            if ($inputData === null) {
+                // Fall back to loading from storage/app/n8n_debug/input/
+                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+                if (! file_exists($inputFile)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Input file not found for workflow_{$workflowNumber}",
+                    ], 404);
+                }
+
+                $content = json_decode(file_get_contents($inputFile), true);
+                // Handle array format from n8n
+                if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0];
+                } else {
+                    $inputData = $content;
+                }
+
+                if ($inputData === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input format',
+                    ], 400);
+                }
+            }
+
+            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/new/
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $javascript = file_get_contents($jsFile);
+
+            // Execute the JavaScript using Node.js
+            $nodeScript = $this->buildNodeScript($inputData, $javascript);
+
+            if (empty($nodeScript)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Failed to build Node.js script',
+                ], 400);
+            }
+
+            $output = $this->executeNode($nodeScript);
+
+            if (! $output['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $output['error'],
+                ], 400);
+            }
+
+            $result = $output['result'];
+
+            // Save output to storage/app/n8n_debug/output/
+            $this->ensureDebugDirectory('output');
+            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output_new.json");
             file_put_contents($outputFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             return response()->json([
@@ -747,6 +999,261 @@ try {
             // Clean up the wrapper script file
             unlink($tempFile);
             // Note: JS and data files cleanup is handled by executeJavaScript finally block
+        }
+    }
+
+    /**
+     * Execute the actual n8n workflow for the old version
+     */
+    public function executeWorkflow(Request $request, int $workflowNumber)
+    {
+        try {
+            // First, upload the current workflow to n8n to ensure it's up-to-date
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflowId = $this->getWorkflowId($workflowNumber);
+            if (! $workflowId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Unknown workflow number: {$workflowNumber}",
+                ], 400);
+            }
+
+            // Upload the workflow to n8n first
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! $workflow) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow JSON format',
+                ], 400);
+            }
+
+            $cleanWorkflow = [
+                'name' => $workflow['name'] ?? 'workflow',
+                'nodes' => $workflow['nodes'] ?? [],
+                'connections' => $workflow['connections'] ?? [],
+                'settings' => $workflow['settings'] ?? (object) [],
+            ];
+
+            $n8nClient = new \App\Services\N8nClient;
+            $uploadResult = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
+
+            if (! $uploadResult['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Failed to upload workflow to n8n before execution',
+                    'details' => $uploadResult,
+                ], 400);
+            }
+
+            // Now execute the workflow by triggering its webhook
+            // Get input data
+            $inputData = $request->input('input');
+
+            if ($inputData === null) {
+                // Fall back to loading from storage
+                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+                if (! file_exists($inputFile)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Input file not found for workflow_{$workflowNumber}",
+                    ], 404);
+                }
+
+                $content = json_decode(file_get_contents($inputFile), true);
+                if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0];
+                } else {
+                    $inputData = $content;
+                }
+
+                if ($inputData === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input format',
+                    ], 400);
+                }
+            }
+
+            // Trigger the workflow via its webhook
+            $webhookResult = $n8nClient->triggerWebhook("/webhook/workflow_{$workflowNumber}", $inputData);
+
+            if (! $webhookResult['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Failed to execute workflow',
+                    'details' => $webhookResult,
+                ], 400);
+            }
+
+            // Get the response data
+            $resultData = $webhookResult['data'] ?? [];
+
+            // Save output to storage
+            $this->ensureDebugDirectory('output');
+            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output.json");
+            file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            return response()->json([
+                'success' => true,
+                'output' => $resultData,
+                'system' => $resultData['system'] ?? null,
+                'messages' => $resultData['messages'] ?? null,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Execute the actual n8n workflow for the new version
+     */
+    public function executeWorkflowNew(Request $request, int $workflowNumber)
+    {
+        try {
+            // First, upload the new workflow to n8n to ensure it's up-to-date
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflowId = $this->getWorkflowId($workflowNumber);
+            if (! $workflowId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Unknown workflow number: {$workflowNumber}",
+                ], 400);
+            }
+
+            // Load the new JavaScript version
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                ], 404);
+            }
+
+            $newJavaScript = file_get_contents($jsFile);
+
+            // Load and update the workflow with the new JavaScript
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! $workflow) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow JSON format',
+                ], 400);
+            }
+
+            // Update the "Prepare Prompt" node with the new JavaScript
+            $found = false;
+            foreach ($workflow['nodes'] as &$node) {
+                if ($node['name'] === 'Prepare Prompt') {
+                    $node['parameters']['jsCode'] = $newJavaScript;
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (! $found) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow',
+                ], 404);
+            }
+
+            $cleanWorkflow = [
+                'name' => $workflow['name'] ?? 'workflow',
+                'nodes' => $workflow['nodes'] ?? [],
+                'connections' => $workflow['connections'] ?? [],
+                'settings' => $workflow['settings'] ?? (object) [],
+            ];
+
+            // Upload the workflow to n8n first
+            $n8nClient = new \App\Services\N8nClient;
+            $uploadResult = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
+
+            if (! $uploadResult['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Failed to upload new workflow to n8n before execution',
+                    'details' => $uploadResult,
+                ], 400);
+            }
+
+            // Now execute the workflow by triggering its webhook
+            // Get input data
+            $inputData = $request->input('input');
+
+            if ($inputData === null) {
+                // Fall back to loading from storage
+                $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
+
+                if (! file_exists($inputFile)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Input file not found for workflow_{$workflowNumber}",
+                    ], 404);
+                }
+
+                $content = json_decode(file_get_contents($inputFile), true);
+                if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0];
+                } else {
+                    $inputData = $content;
+                }
+
+                if ($inputData === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Invalid input format',
+                    ], 400);
+                }
+            }
+
+            // Trigger the workflow via its webhook
+            $webhookResult = $n8nClient->triggerWebhook("/webhook/workflow_{$workflowNumber}", $inputData);
+
+            if (! $webhookResult['success']) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Failed to execute new workflow',
+                    'details' => $webhookResult,
+                ], 400);
+            }
+
+            // Get the response data
+            $resultData = $webhookResult['data'] ?? [];
+
+            // Save output to storage
+            $this->ensureDebugDirectory('output');
+            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_workflow_output_new.json");
+            file_put_contents($outputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            return response()->json([
+                'success' => true,
+                'output' => $resultData,
+                'system' => $resultData['system'] ?? null,
+                'messages' => $resultData['messages'] ?? null,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }
