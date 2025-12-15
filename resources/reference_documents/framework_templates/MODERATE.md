@@ -6,7 +6,7 @@ Every optimised prompt follows this general structure:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. ROLE ASSIGNMENT (if framework uses roles)                           │
+│ 1. ROLE ASSIGNMENT (if framework uses roles)                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │ 2. CONTEXT BLOCK                                                        │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -26,12 +26,11 @@ Every optimised prompt follows this general structure:
 
 ---
 
-
 ## Moderate Framework Template
 
-**Components**: 
+**Components**:
 
-**Best For**: 
+**Best For**:
 
 **Complexity**: Medium
 

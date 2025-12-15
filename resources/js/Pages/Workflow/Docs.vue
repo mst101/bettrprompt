@@ -293,7 +293,7 @@ const infoItems = [
                                 title="Expand editor"
                                 @click="expandedView = 'editor'"
                             >
-                                ⛶
+                                ⛶ Expand
                             </button>
                         </div>
                         <textarea
@@ -316,7 +316,7 @@ const infoItems = [
                                 title="Expand preview"
                                 @click="expandedView = 'preview'"
                             >
-                                ⛶
+                                ⛶ Expand
                             </button>
                         </div>
                         <div

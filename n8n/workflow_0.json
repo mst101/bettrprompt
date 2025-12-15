@@ -1,165 +1,165 @@
 {
-  "name": "workflow_0",
-  "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "api/n8n/webhook/pre-analysis",
-        "responseMode": "responseNode",
-        "options": {}
-      },
-      "id": "97009083-50f0-4ffb-8706-9d7f9fe7f337",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        464,
-        -352
-      ],
-      "webhookId": "pre-analysis-clarity-check"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Extract input from webhook\nconst webhookData = $input.first().json.body || {};\nconst userContext = webhookData.user_context || null;\n\n// Build user context string for system prompt\nlet userContextString = '';\nif (userContext) {\n  const parts = [];\n\n  // Location context\n  if (userContext.location?.country) {\n    parts.push(`Location: ${userContext.location.country}${userContext.location.city ? ` (${userContext.location.city})` : ''}`);\n    if (userContext.location.timezone) parts.push(`Timezone: ${userContext.location.timezone}`);\n    if (userContext.location.currency) parts.push(`Currency: ${userContext.location.currency}`);\n    if (userContext.location.language) parts.push(`Language: ${userContext.location.language}`);\n  }\n\n  // Professional context\n  if (userContext.professional?.job_title || userContext.professional?.industry) {\n    const prof = userContext.professional;\n    const profParts = [];\n    if (prof.job_title) profParts.push(prof.job_title);\n    if (prof.industry) profParts.push(`in ${prof.industry}`);\n    if (prof.experience_level) profParts.push(`(${prof.experience_level} level)`);\n    if (profParts.length > 0) parts.push(`Professional: ${profParts.join(' ')}`);\n    if (prof.company_size) parts.push(`Company size: ${prof.company_size}`);\n  }\n\n  // Team context\n  if (userContext.team?.size || userContext.team?.role) {\n    const team = userContext.team;\n    const teamParts = [];\n    if (team.size) teamParts.push(`${team.size} team`);\n    if (team.role) teamParts.push(`${team.role} role`);\n    if (team.work_mode) teamParts.push(`(${team.work_mode})`);\n    if (teamParts.length > 0) parts.push(`Team: ${teamParts.join(', ')}`);\n  }\n\n  // Preferences context\n  if (userContext.preferences?.budget) {\n    parts.push(`Budget preference: ${userContext.preferences.budget}`);\n  }\n  if (userContext.preferences?.primary_programming_language) {\n    parts.push(`Primary language: ${userContext.preferences.primary_programming_language}`);\n  }\n\n  // Determine language preference and build language instructions\n  let languageCode = userContext?.location?.language || 'en-GB';\n  let languageInstructions = '';\n  if (languageCode.startsWith('en-US')) {\n    languageInstructions = '\\n\\n# Language Preference: American English\\nRespond using American English conventions: use American spelling (e.g., \"optimized\" not \"optimised\"), American date formats (MM/DD/YYYY), and American terminology.';\n  } else if (languageCode.startsWith('en-')) {\n    languageInstructions = '\\n\\n# Language Preference: British English\\nRespond using British English conventions: use British spelling (e.g., \"optimised\" not \"optimized\"), ISO date formats (DD/MM/YYYY), and British terminology.';\n  } else {\n    languageInstructions = `\\n\\n# Language Preference: ${languageCode}\\nRespond appropriately for users from this locale, adapting terminology and conventions as needed.`;\n  }\n\n  if (parts.length > 0) {\n    userContextString = '\\n\\n# User Context\\n' + parts.map(p => `- ${p}`).join('\\n') + '\\n\\nUse this context to tailor your response appropriately (e.g., use local currency, consider timezone, adjust technical level).';\n  }\n\n  userContextString += languageInstructions;\n}\n\nconst systemPrompt = `You are a clarity assessment assistant for an AI prompt optimisation tool. Your job is to:\n1. Determine if a task description needs clarification\n2. ALWAYS extract/infer structured context (subject, audience, purpose, detail_level)\n\n# Assessment Criteria\nA task needs clarification if it's ambiguous in ANY of these areas:\n1. **Subject/Topic**: Unclear WHAT the task is about (most critical for generic requests)\n2. **Audience**: Unclear who will use/see the output and their technical level\n3. **Purpose**: Unclear WHY this is being created (inform/persuade/document/learn)\n4. **Detail Level**: Unclear depth required (summary/moderate/comprehensive)\n\n# Clear Task Examples (SKIP questions but INFER context)\n- \"Create a Python function to convert CSV to JSON with error handling\"\n  → subject: \"Python CSV to JSON conversion\", audience: \"self\", purpose: \"code_implementation\", detail_level: \"moderate\"\n- \"Write a marketing email for B2B SaaS product launch, professional tone, 200 words\"\n  → subject: \"B2B SaaS product launch\", audience: \"external\", purpose: \"marketing\", detail_level: \"summary\"\n- \"Debug this React component's useState hook initialisation issue\"\n  → subject: \"React useState hook bug\", audience: \"self\", purpose: \"debugging\", detail_level: \"moderate\"\n\n# Ambiguous Task Examples (ASK questions to gather context)\n- \"Help with marketing\" → lacks subject, audience, purpose\n- \"Create a report\" → lacks WHAT ABOUT, audience, detail level\n- \"Write a report\" → lacks SUBJECT/TOPIC (what is the report about?)\n- \"Fix my code\" → lacks scope, language, context\n\n# Decision Guidelines\n**ASK QUESTIONS when:**\n- Task is 1-3 words with no context\n- Missing WHAT ABOUT (subject/topic) - ALWAYS ASK THIS FIRST\n- Missing WHO (audience)\n- Missing WHY (purpose)\n- Missing HOW MUCH (detail level)\n- Generic verbs like \"help\", \"create\", \"write\", \"make\", \"analyse\" without subject\n\n**INFER CONTEXT when:**\n- Task includes specific technical requirements\n- Clear subject/topic AND deliverable\n- Has 10+ words with meaningful details\n\n# Context Fields (ALWAYS include these)\n- **subject**: Main topic/subject matter (string)\n- **audience**: \"self\", \"team\", \"management\", or \"external\"\n- **purpose**: High-level purpose category (string)\n- **detail_level**: \"summary\", \"moderate\", or \"comprehensive\"\n\n# Question Types (if asking questions)\n1. **Multiple Choice** (type: \"choice\") - For categorical options\n2. **Yes/No** (type: \"yes_no\") - For binary decisions\n3. **Text Input** (type: \"text\") - For open-ended information like subject/topic\n\n# Response Format\n\n**If CLEAR (has sufficient context - INFER the context):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": false,\n  \"pre_analysis_context\": {\n    \"subject\": \"[inferred subject]\",\n    \"audience\": \"self\",\n    \"purpose\": \"[inferred purpose]\",\n    \"detail_level\": \"moderate\"\n  },\n  \"reasoning\": \"Your task description provides sufficient context to proceed.\"\n}\n\\`\\`\\`\n\n**If AMBIGUOUS (lacks critical context - ask questions):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": true,\n  \"questions\": [\n    {\n      \"id\": \"subject\",\n      \"type\": \"text\",\n      \"question\": \"What is the main subject or topic?\"\n    },\n    {\n      \"id\": \"audience\",\n      \"type\": \"choice\",\n      \"question\": \"Who is the primary audience?\",\n      \"options\": [\n        { \"value\": \"self\", \"label\": \"For myself\" },\n        { \"value\": \"team\", \"label\": \"My team\" },\n        { \"value\": \"management\", \"label\": \"Senior management\" },\n        { \"value\": \"external\", \"label\": \"External stakeholders\" }\n      ]\n    },\n    {\n      \"id\": \"detail_level\",\n      \"type\": \"choice\",\n      \"question\": \"How detailed should this be?\",\n      \"options\": [\n        { \"value\": \"summary\", \"label\": \"High-level summary\" },\n        { \"value\": \"moderate\", \"label\": \"Moderate detail\" },\n        { \"value\": \"comprehensive\", \"label\": \"Comprehensive and detailed\" }\n      ]\n    }\n  ],\n  \"reasoning\": \"Your task needs clarification on [specific aspects] to generate an optimal prompt.\"\n}\n\\`\\`\\`\n\n# Rules\n1. **ALWAYS return pre_analysis_context** (either inferred or null if asking questions)\n2. **Ask 2-3 questions maximum**\n3. **For generic requests, ALWAYS ask about subject/topic FIRST using type: \"text\"**\n4. **Each question MUST have a \"type\" field: \"choice\", \"text\", or \"yes_no\"**\n5. **\"choice\" and \"yes_no\" questions MUST have \"options\" array (2-4 options)**\n6. **\"text\" questions MUST NOT have \"options\" array**\n7. **Each question must have unique \"id\"** (subject, audience, purpose, detail_level, etc.)\n8. **Be aggressive about asking questions for vague tasks**\n9. **Return ONLY valid JSON, no markdown code blocks**\n10. **When inferring audience, default to \"self\" for technical/code tasks**\n\nRespond with JSON only:${userContextString}`;\n\nconst userMessage = `Analyse this task and determine if clarification is needed:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}`;\n\nreturn [\n  {\n    json: {\n      system: systemPrompt,\n      messages: [\n        {\n          role: 'user',\n          content: userMessage\n        }\n      ]\n    }\n  }\n];\n"
-      },
-      "id": "25c989b7-883e-48c9-9f6c-8a0651c9ac95",
-      "name": "Prepare Prompt",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        688,
-        -352
-      ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.anthropic.com/v1/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "anthropic-version",
-              "value": "2023-06-01"
-            }
-          ]
+    "name": "workflow_0",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "api/n8n/webhook/pre-analysis",
+                "responseMode": "responseNode",
+                "options": []
+            },
+            "id": "97009083-50f0-4ffb-8706-9d7f9fe7f337",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                464,
+                -352
+            ],
+            "webhookId": "pre-analysis-clarity-check"
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  model: 'claude-3-5-haiku-20241022',\n  max_tokens: 500,\n  temperature: 0.3,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
-        "options": {}
-      },
-      "id": "f1e62a97-f17e-4ada-8ffd-15f7ea2d7175",
-      "name": "Call Anthropic API",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        912,
-        -352
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "5u3Dji2E1ZKRUSRX",
-          "name": "Header Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Parse the Claude response and structure it properly\nconst apiResponse = $input.first().json;\nconst executionId = $execution.id || 'unknown';\nconst currentNode = 'Parse & Validate Response';\n\ntry {\n  // Extract text from Anthropic API response\n  let content = apiResponse.content?.[0]?.text || '';\n\n  if (!content) {\n    throw new Error('No content in API response');\n  }\n\n  // Remove any markdown code blocks if present\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n\n  // Claude sometimes generates JSON multiple times with explanation text in between\n  // Find ALL JSON objects and take the LAST one (most complete)\n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  if (jsonObjects.length === 0) {\n    throw new Error('No JSON object found in response');\n  }\n\n  // Take the last JSON object (most complete)\n  const jsonOnly = jsonObjects[jsonObjects.length - 1];\n\n  // Parse JSON response from Claude\n  const parsed = JSON.parse(jsonOnly);\n\n  // Validate response structure\n  if (typeof parsed.needs_clarification !== 'boolean') {\n    throw new Error('Invalid response: missing needs_clarification');\n  }\n\n  // If clarification needed, validate questions\n  if (parsed.needs_clarification) {\n    if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n      throw new Error('Invalid response: needs_clarification=true but no questions provided');\n    }\n\n    // Validate each question\n    for (const q of parsed.questions) {\n      if (!q.id || !q.question || !q.type) {\n        throw new Error('Invalid question structure: missing id, question, or type');\n      }\n\n      if (!['choice', 'text', 'yes_no', 'number'].includes(q.type)) {\n        throw new Error(`Invalid question type: ${q.type}`);\n      }\n\n      if ((q.type === 'choice' || q.type === 'yes_no') && !Array.isArray(q.options)) {\n        throw new Error(`${q.type} question must have options array`);\n      }\n\n      if ((q.type === 'text' || q.type === 'number') && q.options) {\n        throw new Error(`${q.type} question should not have options array`);\n      }\n    }\n\n    // Limit to 3 questions max\n    if (parsed.questions.length > 3) {\n      parsed.questions = parsed.questions.slice(0, 3);\n    }\n  }\n\n  // Validate pre_analysis_context (should always be present now)\n  // If needs_clarification=true, context may be null (will be built from answers)\n  // If needs_clarification=false, context should be present (inferred)\n  if (!parsed.needs_clarification && !parsed.pre_analysis_context) {\n    console.warn('Warning: needs_clarification=false but no pre_analysis_context provided');\n    // Don't fail - just log warning and proceed\n  }\n\n  // Extract API usage data\n  const apiUsage = {\n    model: apiResponse.model || 'claude-3-5-haiku-20241022',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  };\n\n  // Return structured response\n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: parsed.needs_clarification,\n        questions: parsed.questions || null,\n        pre_analysis_context: parsed.pre_analysis_context || null,\n        reasoning: parsed.reasoning || (parsed.needs_clarification ?\n          'These questions will help optimise your prompt.' :\n          'Your task description is clear.')\n      },\n      api_usage: apiUsage\n    }\n  };\n\n} catch (error) {\n  // On any error, gracefully skip pre-analysis\n  console.error('Pre-analysis parsing error:', error.message);\n\n  // Determine error type and failed node\n  const errorType = error.message.includes('No content') ? 'api_error' : 'parsing_error';\n  const failedNode = error.message.includes('No content') ? 'Call Anthropic API' : currentNode;\n\n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: false,\n        pre_analysis_context: null,\n        reasoning: 'Proceeding directly to analysis.'\n      },\n      api_usage: null,\n      error_context: {\n        error_type: errorType,\n        failed_node: failedNode,\n        execution_id: executionId,\n        timestamp: new Date().toISOString(),\n        gracefully_skipped: true\n      }\n    }\n  };\n}"
-      },
-      "id": "641e7a0e-6334-4f2f-b3eb-804758b981d4",
-      "name": "Parse & Validate Response",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1120,
-        -352
-      ]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
-        "options": {
-          "responseHeaders": {
-            "entries": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
+        {
+            "parameters": {
+                "jsCode": "// Extract input from webhook\nconst webhookData = $input.first().json.body || {};\nconst userContext = webhookData.user_context || null;\n\n// Build user context string for system prompt\nlet userContextString = '';\nif (userContext) {\n  const parts = [];\n\n  // Location context\n  if (userContext.location?.country) {\n    parts.push(`Location: ${userContext.location.country}${userContext.location.city ? ` (${userContext.location.city})` : ''}`);\n    if (userContext.location.timezone) parts.push(`Timezone: ${userContext.location.timezone}`);\n    if (userContext.location.currency) parts.push(`Currency: ${userContext.location.currency}`);\n    if (userContext.location.language) parts.push(`Language: ${userContext.location.language}`);\n  }\n\n  // Professional context\n  if (userContext.professional?.job_title || userContext.professional?.industry) {\n    const prof = userContext.professional;\n    const profParts = [];\n    if (prof.job_title) profParts.push(prof.job_title);\n    if (prof.industry) profParts.push(`in ${prof.industry}`);\n    if (prof.experience_level) profParts.push(`(${prof.experience_level} level)`);\n    if (profParts.length > 0) parts.push(`Professional: ${profParts.join(' ')}`);\n    if (prof.company_size) parts.push(`Company size: ${prof.company_size}`);\n  }\n\n  // Team context\n  if (userContext.team?.size || userContext.team?.role) {\n    const team = userContext.team;\n    const teamParts = [];\n    if (team.size) teamParts.push(`${team.size} team`);\n    if (team.role) teamParts.push(`${team.role} role`);\n    if (team.work_mode) teamParts.push(`(${team.work_mode})`);\n    if (teamParts.length > 0) parts.push(`Team: ${teamParts.join(', ')}`);\n  }\n\n  // Preferences context\n  if (userContext.preferences?.budget) {\n    parts.push(`Budget preference: ${userContext.preferences.budget}`);\n  }\n  if (userContext.preferences?.primary_programming_language) {\n    parts.push(`Primary language: ${userContext.preferences.primary_programming_language}`);\n  }\n\n  // Determine language preference and build language instructions\n  let languageCode = userContext?.location?.language || 'en-GB';\n  let languageInstructions = '';\n  if (languageCode.startsWith('en-US')) {\n    languageInstructions = '\\n\\n# Language Preference: American English\\nRespond using American English conventions: use American spelling (e.g., \"optimized\" not \"optimised\"), American date formats (MM/DD/YYYY), and American terminology.';\n  } else if (languageCode.startsWith('en-')) {\n    languageInstructions = '\\n\\n# Language Preference: British English\\nRespond using British English conventions: use British spelling (e.g., \"optimised\" not \"optimized\"), ISO date formats (DD/MM/YYYY), and British terminology.';\n  } else {\n    languageInstructions = `\\n\\n# Language Preference: ${languageCode}\\nRespond appropriately for users from this locale, adapting terminology and conventions as needed.`;\n  }\n\n  if (parts.length > 0) {\n    userContextString = '\\n\\n# User Context\\n' + parts.map(p => `- ${p}`).join('\\n') + '\\n\\nUse this context to tailor your response appropriately (e.g., use local currency, consider timezone, adjust technical level).';\n  }\n\n  userContextString += languageInstructions;\n}\n\nconst systemPrompt = `You are a clarity assessment assistant for an AI prompt optimisation tool. Your job is to:\n1. Determine if a task description needs clarification\n2. ALWAYS extract/infer structured context (subject, audience, purpose, detail_level)\n\n# Assessment Criteria\nA task needs clarification if it's ambiguous in ANY of these areas:\n1. **Subject/Topic**: Unclear WHAT the task is about (most critical for generic requests)\n2. **Audience**: Unclear who will use/see the output and their technical level\n3. **Purpose**: Unclear WHY this is being created (inform/persuade/document/learn)\n4. **Detail Level**: Unclear depth required (summary/moderate/comprehensive)\n\n# Clear Task Examples (SKIP questions but INFER context)\n- \"Create a Python function to convert CSV to JSON with error handling\"\n  \u2192 subject: \"Python CSV to JSON conversion\", audience: \"self\", purpose: \"code_implementation\", detail_level: \"moderate\"\n- \"Write a marketing email for B2B SaaS product launch, professional tone, 200 words\"\n  \u2192 subject: \"B2B SaaS product launch\", audience: \"external\", purpose: \"marketing\", detail_level: \"summary\"\n- \"Debug this React component's useState hook initialisation issue\"\n  \u2192 subject: \"React useState hook bug\", audience: \"self\", purpose: \"debugging\", detail_level: \"moderate\"\n\n# Ambiguous Task Examples (ASK questions to gather context)\n- \"Help with marketing\" \u2192 lacks subject, audience, purpose\n- \"Create a report\" \u2192 lacks WHAT ABOUT, audience, detail level\n- \"Write a report\" \u2192 lacks SUBJECT/TOPIC (what is the report about?)\n- \"Fix my code\" \u2192 lacks scope, language, context\n\n# Decision Guidelines\n**ASK QUESTIONS when:**\n- Task is 1-3 words with no context\n- Missing WHAT ABOUT (subject/topic) - ALWAYS ASK THIS FIRST\n- Missing WHO (audience)\n- Missing WHY (purpose)\n- Missing HOW MUCH (detail level)\n- Generic verbs like \"help\", \"create\", \"write\", \"make\", \"analyse\" without subject\n\n**INFER CONTEXT when:**\n- Task includes specific technical requirements\n- Clear subject/topic AND deliverable\n- Has 10+ words with meaningful details\n\n# Context Fields (ALWAYS include these)\n- **subject**: Main topic/subject matter (string)\n- **audience**: \"self\", \"team\", \"management\", or \"external\"\n- **purpose**: High-level purpose category (string)\n- **detail_level**: \"summary\", \"moderate\", or \"comprehensive\"\n\n# Question Types (if asking questions)\n1. **Multiple Choice** (type: \"choice\") - For categorical options\n2. **Yes/No** (type: \"yes_no\") - For binary decisions\n3. **Text Input** (type: \"text\") - For open-ended information like subject/topic\n\n# Response Format\n\n**If CLEAR (has sufficient context - INFER the context):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": false,\n  \"pre_analysis_context\": {\n    \"subject\": \"[inferred subject]\",\n    \"audience\": \"self\",\n    \"purpose\": \"[inferred purpose]\",\n    \"detail_level\": \"moderate\"\n  },\n  \"reasoning\": \"Your task description provides sufficient context to proceed.\"\n}\n\\`\\`\\`\n\n**If AMBIGUOUS (lacks critical context - ask questions):**\n\\`\\`\\`json\n{\n  \"needs_clarification\": true,\n  \"questions\": [\n    {\n      \"id\": \"subject\",\n      \"type\": \"text\",\n      \"question\": \"What is the main subject or topic?\"\n    },\n    {\n      \"id\": \"audience\",\n      \"type\": \"choice\",\n      \"question\": \"Who is the primary audience?\",\n      \"options\": [\n        { \"value\": \"self\", \"label\": \"For myself\" },\n        { \"value\": \"team\", \"label\": \"My team\" },\n        { \"value\": \"management\", \"label\": \"Senior management\" },\n        { \"value\": \"external\", \"label\": \"External stakeholders\" }\n      ]\n    },\n    {\n      \"id\": \"detail_level\",\n      \"type\": \"choice\",\n      \"question\": \"How detailed should this be?\",\n      \"options\": [\n        { \"value\": \"summary\", \"label\": \"High-level summary\" },\n        { \"value\": \"moderate\", \"label\": \"Moderate detail\" },\n        { \"value\": \"comprehensive\", \"label\": \"Comprehensive and detailed\" }\n      ]\n    }\n  ],\n  \"reasoning\": \"Your task needs clarification on [specific aspects] to generate an optimal prompt.\"\n}\n\\`\\`\\`\n\n# Rules\n1. **ALWAYS return pre_analysis_context** (either inferred or null if asking questions)\n2. **Ask 2-3 questions maximum**\n3. **For generic requests, ALWAYS ask about subject/topic FIRST using type: \"text\"**\n4. **Each question MUST have a \"type\" field: \"choice\", \"text\", or \"yes_no\"**\n5. **\"choice\" and \"yes_no\" questions MUST have \"options\" array (2-4 options)**\n6. **\"text\" questions MUST NOT have \"options\" array**\n7. **Each question must have unique \"id\"** (subject, audience, purpose, detail_level, etc.)\n8. **Be aggressive about asking questions for vague tasks**\n9. **Return ONLY valid JSON, no markdown code blocks**\n10. **When inferring audience, default to \"self\" for technical/code tasks**\n\nRespond with JSON only:${userContextString}`;\n\nconst userMessage = `Analyse this task and determine if clarification is needed:\n\n**Task Description:**\n${webhookData.task_description || 'No task provided'}`;\n\nreturn [\n  {\n    json: {\n      system: systemPrompt,\n      messages: [\n        {\n          role: 'user',\n          content: userMessage\n        }\n      ]\n    }\n  }\n];"
+            },
+            "id": "25c989b7-883e-48c9-9f6c-8a0651c9ac95",
+            "name": "Prepare Prompt",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                688,
+                -352
             ]
-          }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.anthropic.com/v1/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "anthropic-version",
+                            "value": "2023-06-01"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({\n  model: 'claude-3-5-haiku-20241022',\n  max_tokens: 500,\n  temperature: 0.3,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
+                "options": []
+            },
+            "id": "f1e62a97-f17e-4ada-8ffd-15f7ea2d7175",
+            "name": "Call Anthropic API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                912,
+                -352
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "5u3Dji2E1ZKRUSRX",
+                    "name": "Header Auth account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse the Claude response and structure it properly\nconst apiResponse = $input.first().json;\nconst executionId = $execution.id || 'unknown';\nconst currentNode = 'Parse & Validate Response';\n\ntry {\n  // Extract text from Anthropic API response\n  let content = apiResponse.content?.[0]?.text || '';\n\n  if (!content) {\n    throw new Error('No content in API response');\n  }\n\n  // Remove any markdown code blocks if present\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n\n  // Claude sometimes generates JSON multiple times with explanation text in between\n  // Find ALL JSON objects and take the LAST one (most complete)\n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  if (jsonObjects.length === 0) {\n    throw new Error('No JSON object found in response');\n  }\n\n  // Take the last JSON object (most complete)\n  const jsonOnly = jsonObjects[jsonObjects.length - 1];\n\n  // Parse JSON response from Claude\n  const parsed = JSON.parse(jsonOnly);\n\n  // Validate response structure\n  if (typeof parsed.needs_clarification !== 'boolean') {\n    throw new Error('Invalid response: missing needs_clarification');\n  }\n\n  // If clarification needed, validate questions\n  if (parsed.needs_clarification) {\n    if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n      throw new Error('Invalid response: needs_clarification=true but no questions provided');\n    }\n\n    // Validate each question\n    for (const q of parsed.questions) {\n      if (!q.id || !q.question || !q.type) {\n        throw new Error('Invalid question structure: missing id, question, or type');\n      }\n\n      if (!['choice', 'text', 'yes_no', 'number'].includes(q.type)) {\n        throw new Error(`Invalid question type: ${q.type}`);\n      }\n\n      if ((q.type === 'choice' || q.type === 'yes_no') && !Array.isArray(q.options)) {\n        throw new Error(`${q.type} question must have options array`);\n      }\n\n      if ((q.type === 'text' || q.type === 'number') && q.options) {\n        throw new Error(`${q.type} question should not have options array`);\n      }\n    }\n\n    // Limit to 3 questions max\n    if (parsed.questions.length > 3) {\n      parsed.questions = parsed.questions.slice(0, 3);\n    }\n  }\n\n  // Validate pre_analysis_context (should always be present now)\n  // If needs_clarification=true, context may be null (will be built from answers)\n  // If needs_clarification=false, context should be present (inferred)\n  if (!parsed.needs_clarification && !parsed.pre_analysis_context) {\n    console.warn('Warning: needs_clarification=false but no pre_analysis_context provided');\n    // Don't fail - just log warning and proceed\n  }\n\n  // Extract API usage data\n  const apiUsage = {\n    model: apiResponse.model || 'claude-3-5-haiku-20241022',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  };\n\n  // Return structured response\n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: parsed.needs_clarification,\n        questions: parsed.questions || null,\n        pre_analysis_context: parsed.pre_analysis_context || null,\n        reasoning: parsed.reasoning || (parsed.needs_clarification ?\n          'These questions will help optimise your prompt.' :\n          'Your task description is clear.')\n      },\n      api_usage: apiUsage\n    }\n  };\n\n} catch (error) {\n  // On any error, gracefully skip pre-analysis\n  console.error('Pre-analysis parsing error:', error.message);\n\n  // Determine error type and failed node\n  const errorType = error.message.includes('No content') ? 'api_error' : 'parsing_error';\n  const failedNode = error.message.includes('No content') ? 'Call Anthropic API' : currentNode;\n\n  return {\n    json: {\n      success: true,\n      data: {\n        needs_clarification: false,\n        pre_analysis_context: null,\n        reasoning: 'Proceeding directly to analysis.'\n      },\n      api_usage: null,\n      error_context: {\n        error_type: errorType,\n        failed_node: failedNode,\n        execution_id: executionId,\n        timestamp: new Date().toISOString(),\n        gracefully_skipped: true\n      }\n    }\n  };\n}"
+            },
+            "id": "641e7a0e-6334-4f2f-b3eb-804758b981d4",
+            "name": "Parse & Validate Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                -352
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "15906e1c-a51a-4f4b-b927-d832a7805782",
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                1344,
+                -352
+            ]
         }
-      },
-      "id": "15906e1c-a51a-4f4b-b927-d832a7805782",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [
-        1344,
-        -352
-      ]
-    }
-  ],
-  "pinData": {},
-  "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Prepare Prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    ],
+    "pinData": [],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Prompt",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Prompt": {
+            "main": [
+                [
+                    {
+                        "node": "Call Anthropic API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Call Anthropic API": {
+            "main": [
+                [
+                    {
+                        "node": "Parse & Validate Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse & Validate Response": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
     },
-    "Prepare Prompt": {
-      "main": [
-        [
-          {
-            "node": "Call Anthropic API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
     },
-    "Call Anthropic API": {
-      "main": [
-        [
-          {
-            "node": "Parse & Validate Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "versionId": "890ea94d-94ca-4b55-8f5e-6670183e6a6f",
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
     },
-    "Parse & Validate Response": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "890ea94d-94ca-4b55-8f5e-6670183e6a6f",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
-  },
-  "id": "YW4AdQE919uLrpLx",
-  "tags": []
+    "id": "YW4AdQE919uLrpLx",
+    "tags": []
 }

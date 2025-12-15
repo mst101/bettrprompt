@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This document provides templates for constructing optimised prompts using selected frameworks, guidance on applying Task-Trait Alignment (amplification, counterbalancing, neutral), and criteria for recommending AI models.
+This document provides templates for constructing optimised prompts using selected frameworks, guidance on applying
+Task-Trait Alignment (amplification, counterbalancing, neutral), and criteria for recommending AI models.
 
 ---
 
@@ -12,7 +13,7 @@ Every optimised prompt follows this general structure:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. ROLE ASSIGNMENT (if framework uses roles)                           │
+│ 1. ROLE ASSIGNMENT (if framework uses roles)                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │ 2. CONTEXT BLOCK                                                        │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -32,7 +33,8 @@ Every optimised prompt follows this general structure:
 
 ### Key Addition: Counterbalance Injections Section
 
-When Task-Trait Alignment identifies traits that need counterbalancing, those requirements are explicitly injected into the prompt. This ensures the AI output covers dimensions the user might naturally overlook.
+When Task-Trait Alignment identifies traits that need counterbalancing, those requirements are explicitly injected into
+the prompt. This ensures the AI output covers dimensions the user might naturally overlook.
 
 ---
 
@@ -42,31 +44,31 @@ When Task-Trait Alignment identifies traits that need counterbalancing, those re
 
 When a trait is marked for **amplification**, adjust the prompt to play to the user's strengths:
 
-| Amplified Trait | Prompt Adjustments |
-|-----------------|-------------------|
-| High T | Use data-first framing, include metrics, logical structure |
-| High F | Include stakeholder context, meaning, values alignment |
-| High N | Lead with big-picture, include strategic implications |
-| High S | Provide step-by-step structure, concrete examples |
-| High J | Clear sections, definitive recommendations, timelines |
-| High P | Multiple options, flexibility, adaptive paths |
-| High A | Confident language, bold recommendations |
-| High T-identity | Include validation checkpoints, risk acknowledgment |
+| Amplified Trait | Prompt Adjustments                                         |
+|-----------------|------------------------------------------------------------|
+| High T          | Use data-first framing, include metrics, logical structure |
+| High F          | Include stakeholder context, meaning, values alignment     |
+| High N          | Lead with big-picture, include strategic implications      |
+| High S          | Provide step-by-step structure, concrete examples          |
+| High J          | Clear sections, definitive recommendations, timelines      |
+| High P          | Multiple options, flexibility, adaptive paths              |
+| High A          | Confident language, bold recommendations                   |
+| High T-identity | Include validation checkpoints, risk acknowledgment        |
 
 ### Counterbalance Implementation
 
 When a trait is marked for **counterbalancing**, inject explicit requirements the user might skip:
 
-| Counterbalanced Trait | Injected Requirements |
-|----------------------|----------------------|
-| High T (needs empathy) | "Acknowledge the emotional impact on [stakeholder]", "Express appreciation for [relationship]", "Consider how this will make the recipient feel" |
-| High F (needs objectivity) | "Base conclusions on data and evidence", "Separate facts from feelings", "Apply objective criteria" |
-| High N (needs detail) | "Provide specific, actionable steps", "Include dates, owners, and measurable milestones", "Ground each concept in a concrete example" |
-| High S (needs vision) | "Consider the broader strategic implications", "Connect to long-term goals", "Identify patterns across examples" |
-| High J (needs exploration) | "Generate at least [N] alternatives before recommending", "Explore unconventional options", "What hasn't been considered?" |
-| High P (needs decisiveness) | "Provide ONE clear recommendation", "Commit to specific actions", "Limit caveats to essential only" |
-| High A (needs risk awareness) | "Identify what could go wrong", "Include risk mitigation strategies", "Consider the skeptic's perspective" |
-| High T-identity (needs confidence) | "State recommendations confidently", "Use decisive language", "Limit hedging to one sentence maximum" |
+| Counterbalanced Trait              | Injected Requirements                                                                                                                            |
+|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| High T (needs empathy)             | "Acknowledge the emotional impact on [stakeholder]", "Express appreciation for [relationship]", "Consider how this will make the recipient feel" |
+| High F (needs objectivity)         | "Base conclusions on data and evidence", "Separate facts from feelings", "Apply objective criteria"                                              |
+| High N (needs detail)              | "Provide specific, actionable steps", "Include dates, owners, and measurable milestones", "Ground each concept in a concrete example"            |
+| High S (needs vision)              | "Consider the broader strategic implications", "Connect to long-term goals", "Identify patterns across examples"                                 |
+| High J (needs exploration)         | "Generate at least [N] alternatives before recommending", "Explore unconventional options", "What hasn't been considered?"                       |
+| High P (needs decisiveness)        | "Provide ONE clear recommendation", "Commit to specific actions", "Limit caveats to essential only"                                              |
+| High A (needs risk awareness)      | "Identify what could go wrong", "Include risk mitigation strategies", "Consider the skeptic's perspective"                                       |
+| High T-identity (needs confidence) | "State recommendations confidently", "Use decisive language", "Limit hedging to one sentence maximum"                                            |
 
 ### Injection Placement
 
@@ -486,43 +488,43 @@ Write an email that:
 
 ### Model Capability Profiles
 
-| Model | Strengths | Limitations |
-|-------|-----------|-------------|
-| **Claude Opus 4.5** | Nuanced reasoning, long-form analysis, careful instruction-following, ethical judgment, creative writing, excellent at following complex counterbalance instructions | Slower, higher cost |
-| **Claude Sonnet 4.5** | Good balance of capability and speed, reliable structured output | Less nuanced than Opus for complex counterbalancing |
-| **GPT-4 / GPT-4o** | Strong reasoning, excellent code generation, broad knowledge, multimodal | Different style than Claude |
-| **GPT-4o-mini** | Fast, cost-effective, good for simpler tasks | Less capable on complex reasoning |
-| **Gemini 1.5 Pro** | Very long context (1M tokens), strong reasoning | Different interaction patterns |
-| **Gemini 1.5 Flash** | Fast, long context, cost-effective | Less capable than Pro |
-| **DeepSeek R1** | Strong reasoning, especially math/logic, cost-effective | Less established |
+| Model                 | Strengths                                                                                                                                                            | Limitations                                         |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| **Claude Opus 4.5**   | Nuanced reasoning, long-form analysis, careful instruction-following, ethical judgment, creative writing, excellent at following complex counterbalance instructions | Slower, higher cost                                 |
+| **Claude Sonnet 4.5** | Good balance of capability and speed, reliable structured output                                                                                                     | Less nuanced than Opus for complex counterbalancing |
+| **GPT-4 / GPT-4o**    | Strong reasoning, excellent code generation, broad knowledge, multimodal                                                                                             | Different style than Claude                         |
+| **GPT-4o-mini**       | Fast, cost-effective, good for simpler tasks                                                                                                                         | Less capable on complex reasoning                   |
+| **Gemini 1.5 Pro**    | Very long context (1M tokens), strong reasoning                                                                                                                      | Different interaction patterns                      |
+| **Gemini 1.5 Flash**  | Fast, long context, cost-effective                                                                                                                                   | Less capable than Pro                               |
+| **DeepSeek R1**       | Strong reasoning, especially math/logic, cost-effective                                                                                                              | Less established                                    |
 
 ### Task-to-Model Primary Recommendations
 
-| Task Category | Primary Model | Rationale |
-|---------------|---------------|-----------|
-| DECISION | Claude Opus 4.5 | Nuanced trade-off analysis |
-| STRATEGY | Claude Opus 4.5 | Complex multi-factor reasoning |
-| ANALYSIS | Claude Opus 4.5 | Depth of reasoning |
-| CREATION_CONTENT | Claude Opus 4.5 | Writing quality and nuance |
-| CREATION_TECHNICAL | GPT-4 | Strong code generation |
-| IDEATION | Claude Opus 4.5 | Creative breadth |
-| PROBLEM_SOLVING | Claude Opus 4.5 | Logical step-by-step reasoning |
-| LEARNING | Claude Sonnet 4.5 | Clear explanations, good balance |
-| PERSUASION | Claude Opus 4.5 | Nuanced audience understanding |
-| FEEDBACK | Claude Opus 4.5 | Balanced, constructive analysis |
-| RESEARCH | Gemini 1.5 Pro | Long context for document synthesis |
-| GOAL_SETTING | Claude Sonnet 4.5 | Structured output, efficiency |
+| Task Category      | Primary Model     | Rationale                           |
+|--------------------|-------------------|-------------------------------------|
+| DECISION           | Claude Opus 4.5   | Nuanced trade-off analysis          |
+| STRATEGY           | Claude Opus 4.5   | Complex multi-factor reasoning      |
+| ANALYSIS           | Claude Opus 4.5   | Depth of reasoning                  |
+| CREATION_CONTENT   | Claude Opus 4.5   | Writing quality and nuance          |
+| CREATION_TECHNICAL | GPT-4             | Strong code generation              |
+| IDEATION           | Claude Opus 4.5   | Creative breadth                    |
+| PROBLEM_SOLVING    | Claude Opus 4.5   | Logical step-by-step reasoning      |
+| LEARNING           | Claude Sonnet 4.5 | Clear explanations, good balance    |
+| PERSUASION         | Claude Opus 4.5   | Nuanced audience understanding      |
+| FEEDBACK           | Claude Opus 4.5   | Balanced, constructive analysis     |
+| RESEARCH           | Gemini 1.5 Pro    | Long context for document synthesis |
+| GOAL_SETTING       | Claude Sonnet 4.5 | Structured output, efficiency       |
 
 ### Task-Trait Alignment Model Considerations
 
 When significant counterbalancing is required, prefer models better at following nuanced instructions:
 
-| Scenario | Model Adjustment |
-|----------|------------------|
-| Heavy counterbalancing needed (2+ traits) | Prefer Claude Opus 4.5 for nuanced instruction-following |
-| Empathy counterbalance for technical user | Claude Opus 4.5 excels at warm, nuanced communication |
-| Structure counterbalance for creative user | Any capable model handles this well |
-| Simple task, minimal counterbalancing | Sonnet or GPT-4o-mini sufficient |
+| Scenario                                   | Model Adjustment                                         |
+|--------------------------------------------|----------------------------------------------------------|
+| Heavy counterbalancing needed (2+ traits)  | Prefer Claude Opus 4.5 for nuanced instruction-following |
+| Empathy counterbalance for technical user  | Claude Opus 4.5 excels at warm, nuanced communication    |
+| Structure counterbalance for creative user | Any capable model handles this well                      |
+| Simple task, minimal counterbalancing      | Sonnet or GPT-4o-mini sufficient                         |
 
 ---
 

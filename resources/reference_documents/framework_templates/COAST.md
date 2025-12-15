@@ -6,7 +6,7 @@ Every optimised prompt follows this general structure:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. ROLE ASSIGNMENT (if framework uses roles)                           │
+│ 1. ROLE ASSIGNMENT (if framework uses roles)                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │ 2. CONTEXT BLOCK                                                        │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -25,7 +25,6 @@ Every optimised prompt follows this general structure:
 ```
 
 ---
-
 
 ## COAST Framework Template
 
