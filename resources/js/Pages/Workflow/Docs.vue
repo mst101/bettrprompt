@@ -334,32 +334,34 @@ const infoItems = [
             title="Markdown Editor (Expanded)"
             @close="expandedView = null"
         >
-            <textarea
-                v-model="content"
-                class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
-                placeholder="Edit markdown here..."
-                style="
-                    line-height: 1.5;
-                    white-space: pre;
-                    overflow-wrap: normal;
-                "
-            />
-            <div
-                class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
-            >
-                <span class="text-xs text-indigo-600">
-                    {{ content ? `${content.length} characters` : 'N/A' }}
-                </span>
-                <ButtonPrimary
-                    :disabled="isSaving"
-                    :loading="isSaving"
-                    @click="
-                        saveDocument();
-                        expandedView = null;
+            <div class="flex h-full flex-col">
+                <textarea
+                    v-model="content"
+                    class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
+                    placeholder="Edit markdown here..."
+                    style="
+                        line-height: 1.5;
+                        white-space: pre;
+                        overflow-wrap: normal;
                     "
+                />
+                <div
+                    class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                 >
-                    {{ isSaving ? 'Saving...' : 'Save & Embed' }}
-                </ButtonPrimary>
+                    <span class="text-xs text-indigo-600">
+                        {{ content ? `${content.length} characters` : 'N/A' }}
+                    </span>
+                    <ButtonPrimary
+                        :disabled="isSaving"
+                        :loading="isSaving"
+                        @click="
+                            saveDocument();
+                            expandedView = null;
+                        "
+                    >
+                        {{ isSaving ? 'Saving...' : 'Save & Embed' }}
+                    </ButtonPrimary>
+                </div>
             </div>
         </ExpandableModal>
 
