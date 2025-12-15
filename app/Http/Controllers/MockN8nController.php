@@ -97,14 +97,14 @@ class MockN8nController extends Controller
     }
 
     /**
-     * Mock pre-analysis webhook (workflow_0_pre_analysis)
+     * Mock workflow_0 (pre-analysis)
      * Returns mock pre-analysis context
      */
-    public function preAnalysis(Request $request): JsonResponse
+    public function workflow0(Request $request): JsonResponse
     {
         $scenario = $this->getMockScenario($request);
 
-        Log::info('MockN8nController::preAnalysis called', [
+        Log::info('MockN8nController::workflow0 called', [
             'scenario' => $scenario,
             'headers' => $request->headers->all(),
         ]);
@@ -127,18 +127,18 @@ class MockN8nController extends Controller
     }
 
     /**
-     * Mock analysis webhook (workflow_1)
+     * Mock workflow_1 (analysis)
      * Returns mock framework selection and questions
      *
      * NOTE: This endpoint returns the analysis data synchronously.
      * The ProcessAnalysis job will read this response and update the database,
      * then broadcast the AnalysisCompleted event.
      */
-    public function analyse(Request $request): JsonResponse
+    public function workflow1(Request $request): JsonResponse
     {
         $scenario = $this->getMockScenario($request);
 
-        Log::info('MockN8nController::analyse called', [
+        Log::info('MockN8nController::workflow1 called', [
             'scenario' => $scenario,
             'task_description' => $request->input('task_description'),
         ]);
@@ -238,10 +238,10 @@ class MockN8nController extends Controller
     }
 
     /**
-     * Mock prompt optimisation webhook (workflow_2)
+     * Mock workflow_2 (generation/optimisation)
      * Returns mock optimised prompt
      */
-    public function optimisePrompt(Request $request): JsonResponse
+    public function workflow2(Request $request): JsonResponse
     {
         $scenario = $this->getMockScenario($request);
 
@@ -252,7 +252,7 @@ class MockN8nController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Mock: Prompt optimisation queued for processing',
+            'message' => 'Mock: Prompt generation queued for processing',
         ]);
     }
 }
