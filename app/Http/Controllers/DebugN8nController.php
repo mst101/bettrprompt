@@ -1097,16 +1097,21 @@ try {
                 default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
             };
 
+            // The n8n workflow JavaScript expects the input wrapped in a 'body' field
+            // because it does: const webhookData = $input.first().json.body || {};
+            // So we need to send: { body: { task_description: "...", user_context: {...} } }
+            $payload = ['body' => $inputData];
+
             // Log the payload being sent for debugging
             \Log::debug('Sending to n8n webhook', [
                 'path' => $webhookPath,
-                'payload_keys' => is_array($inputData) ? array_keys($inputData) : 'not-array',
+                'payload_keys' => array_keys($payload),
+                'body_keys' => is_array($inputData) ? array_keys($inputData) : 'not-array',
                 'has_task_description' => is_array($inputData) ? isset($inputData['task_description']) : false,
-                'payload' => is_array($inputData) ? $inputData : $inputData,
             ]);
 
-            // Send the payload to the webhook - it should have fields like task_description, user_context, etc.
-            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
+            // Send the payload to the webhook with proper structure
+            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $payload);
 
             // Check if we got a successful response from n8n
             if ($webhookResult['success']) {
@@ -1271,7 +1276,12 @@ try {
                 default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
             };
 
-            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
+            // The n8n workflow JavaScript expects the input wrapped in a 'body' field
+            // because it does: const webhookData = $input.first().json.body || {};
+            // So we need to send: { body: { task_description: "...", user_context: {...} } }
+            $payload = ['body' => $inputData];
+
+            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $payload);
 
             if (! $webhookResult['success']) {
                 // Log the webhook error but continue (webhook might not be exposed in debug environment)
