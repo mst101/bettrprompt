@@ -365,25 +365,34 @@ const executeJavaScript = async () => {
             title="Input Data (Expanded)"
             @close="expandedView = null"
         >
-            <textarea
-                v-model="inputJson"
-                class="flex-1 resize-none border-0 bg-white p-6 font-mono text-sm focus:outline-none"
-                placeholder="Enter input data as JSON..."
-            ></textarea>
-            <div
-                class="flex items-center justify-between border-t bg-indigo-50 px-6 py-3"
-            >
-                <span class="text-xs text-indigo-600">
-                    {{ inputJson ? `${inputJson.length} characters` : 'N/A' }}
-                </span>
-                <ButtonPrimary
-                    @click="
-                        saveInputData();
-                        expandedView = null;
+            <div class="flex h-full flex-col">
+                <textarea
+                    v-model="inputJson"
+                    class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
+                    placeholder="Enter input data as JSON..."
+                    style="
+                        line-height: 1.5;
+                        white-space: pre;
+                        overflow-wrap: normal;
                     "
+                ></textarea>
+                <div
+                    class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                 >
-                    Save and Close
-                </ButtonPrimary>
+                    <span class="text-xs text-indigo-600">
+                        {{
+                            inputJson ? `${inputJson.length} characters` : 'N/A'
+                        }}
+                    </span>
+                    <ButtonPrimary
+                        @click="
+                            saveInputData();
+                            expandedView = null;
+                        "
+                    >
+                        Save and Close
+                    </ButtonPrimary>
+                </div>
             </div>
         </ExpandableModal>
 
@@ -393,25 +402,36 @@ const executeJavaScript = async () => {
             title="JavaScript Code (Expanded)"
             @close="expandedView = null"
         >
-            <textarea
-                v-model="javascript"
-                class="flex-1 resize-none border-0 bg-white p-6 font-mono text-sm focus:outline-none"
-                placeholder="Edit JavaScript code here..."
-            ></textarea>
-            <div
-                class="flex items-center justify-between border-t bg-indigo-50 px-6 py-3"
-            >
-                <span class="text-xs text-indigo-600">
-                    {{ javascript ? `${javascript.length} characters` : 'N/A' }}
-                </span>
-                <ButtonPrimary
-                    @click="
-                        saveJavaScriptToFile();
-                        expandedView = null;
+            <div class="flex h-full flex-col">
+                <textarea
+                    v-model="javascript"
+                    class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
+                    placeholder="Edit JavaScript code here..."
+                    style="
+                        line-height: 1.5;
+                        white-space: pre;
+                        overflow-wrap: normal;
                     "
+                ></textarea>
+                <div
+                    class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                 >
-                    Save and Close
-                </ButtonPrimary>
+                    <span class="text-xs text-indigo-600">
+                        {{
+                            javascript
+                                ? `${javascript.length} characters`
+                                : 'N/A'
+                        }}
+                    </span>
+                    <ButtonPrimary
+                        @click="
+                            saveJavaScriptToFile();
+                            expandedView = null;
+                        "
+                    >
+                        Save and Close
+                    </ButtonPrimary>
+                </div>
             </div>
         </ExpandableModal>
     </div>
