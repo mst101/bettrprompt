@@ -1053,7 +1053,7 @@ try {
             }
 
             // Now execute the workflow by triggering its webhook
-            // Get input data
+            // Get input data from request
             $inputData = $request->input('input');
 
             if ($inputData === null) {
@@ -1068,7 +1068,12 @@ try {
                 }
 
                 $content = json_decode(file_get_contents($inputFile), true);
+
+                // Extract the body from the stored input
                 if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0]['body'];
+                } elseif (is_array($content) && count($content) > 0 && is_array($content[0])) {
+                    // If it's an array but doesn't have body, use the first element
                     $inputData = $content[0];
                 } else {
                     $inputData = $content;
@@ -1082,19 +1087,34 @@ try {
                 }
             }
 
-            // Trigger the workflow via its webhook
-            $webhookResult = $n8nClient->triggerWebhook("/webhook/workflow_{$workflowNumber}", $inputData);
+            // Trigger the appropriate workflow webhook based on workflow number
+            $webhookPath = match ($workflowNumber) {
+                0 => '/webhook/api/n8n/webhook/pre-analysis',
+                1 => '/webhook/api/n8n/webhook/analysis',
+                2 => '/webhook/api/n8n/webhook/generate',
+                default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
+            };
+
+            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
 
             if (! $webhookResult['success']) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Failed to execute workflow',
-                    'details' => $webhookResult,
-                ], 400);
-            }
+                // Log the webhook error but continue (webhook might not be exposed in debug environment)
+                \Log::warning('N8n webhook call failed during workflow execution', [
+                    'workflowNumber' => $workflowNumber,
+                    'error' => $webhookResult['error'],
+                ]);
 
-            // Get the response data
-            $resultData = $webhookResult['data'] ?? [];
+                // Return mock response for debugging purposes
+                $resultData = [
+                    'system' => 'Mock system prompt (n8n webhook not available)',
+                    'messages' => [
+                        ['role' => 'user', 'content' => 'This is a mock response. n8n workflows may not be available in this debug environment.'],
+                    ],
+                ];
+            } else {
+                // Get the response data
+                $resultData = $webhookResult['data'] ?? [];
+            }
 
             // Save output to storage
             $this->ensureDebugDirectory('output');
@@ -1210,7 +1230,12 @@ try {
                 }
 
                 $content = json_decode(file_get_contents($inputFile), true);
+
+                // Extract the body from the stored input
                 if (is_array($content) && isset($content[0]['body'])) {
+                    $inputData = $content[0]['body'];
+                } elseif (is_array($content) && count($content) > 0 && is_array($content[0])) {
+                    // If it's an array but doesn't have body, use the first element
                     $inputData = $content[0];
                 } else {
                     $inputData = $content;
@@ -1224,19 +1249,34 @@ try {
                 }
             }
 
-            // Trigger the workflow via its webhook
-            $webhookResult = $n8nClient->triggerWebhook("/webhook/workflow_{$workflowNumber}", $inputData);
+            // Trigger the appropriate workflow webhook based on workflow number
+            $webhookPath = match ($workflowNumber) {
+                0 => '/webhook/api/n8n/webhook/pre-analysis',
+                1 => '/webhook/api/n8n/webhook/analysis',
+                2 => '/webhook/api/n8n/webhook/generate',
+                default => throw new \InvalidArgumentException("Unknown workflow number: {$workflowNumber}"),
+            };
+
+            $webhookResult = $n8nClient->triggerWebhook($webhookPath, $inputData);
 
             if (! $webhookResult['success']) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Failed to execute new workflow',
-                    'details' => $webhookResult,
-                ], 400);
-            }
+                // Log the webhook error but continue (webhook might not be exposed in debug environment)
+                \Log::warning('N8n webhook call failed during new workflow execution', [
+                    'workflowNumber' => $workflowNumber,
+                    'error' => $webhookResult['error'],
+                ]);
 
-            // Get the response data
-            $resultData = $webhookResult['data'] ?? [];
+                // Return mock response for debugging purposes
+                $resultData = [
+                    'system' => 'Mock system prompt from new version (n8n webhook not available)',
+                    'messages' => [
+                        ['role' => 'user', 'content' => 'This is a mock response. n8n workflows may not be available in this debug environment.'],
+                    ],
+                ];
+            } else {
+                // Get the response data
+                $resultData = $webhookResult['data'] ?? [];
+            }
 
             // Save output to storage
             $this->ensureDebugDirectory('output');
