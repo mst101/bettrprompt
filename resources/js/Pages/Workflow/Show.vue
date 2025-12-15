@@ -324,10 +324,12 @@ const executeJavaScript = async () => {
             title="System Prompt (Expanded)"
             @close="expandedView = null"
         >
-            <div
-                class="prose prose-sm dark:prose-invert flex-1 overflow-auto p-6"
-                v-html="renderMarkdown(output?.system)"
-            />
+            <div class="flex-1 overflow-auto p-6">
+                <div
+                    class="prose prose-sm dark:prose-invert max-w-none"
+                    v-html="renderMarkdown(output?.system)"
+                />
+            </div>
         </ExpandableModal>
 
         <!-- Modal: Expanded Messages -->
@@ -348,7 +350,7 @@ const executeJavaScript = async () => {
                         </p>
                         <div
                             v-if="message.content"
-                            class="prose prose-sm dark:prose-invert text-indigo-700"
+                            class="prose prose-sm dark:prose-invert max-w-none text-indigo-700"
                             v-html="renderMarkdown(message.content)"
                         />
                         <div v-else class="text-sm text-indigo-700">

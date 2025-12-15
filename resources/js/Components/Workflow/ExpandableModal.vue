@@ -67,6 +67,10 @@ const syncScroll = (event: Event) => {
     }
 };
 
+const hasTextarea = () => {
+    return slotContainer.value?.querySelector('textarea') !== null;
+};
+
 const attachScrollListener = () => {
     if (scrollListenerAttached.value) return;
 
@@ -162,8 +166,9 @@ watch(
                 >
                     <!-- Editor with line numbers - flex row -->
                     <div class="flex flex-1 gap-0 overflow-hidden">
-                        <!-- Line numbers column -->
+                        <!-- Line numbers column (only show for textareas) -->
                         <div
+                            v-if="hasTextarea()"
                             ref="lineNumbersContainer"
                             class="scrollbar-hide flex-shrink-0 overflow-x-hidden overflow-y-scroll border-r border-gray-300 bg-gray-100 pr-4 pl-2 text-right font-mono text-sm text-gray-500 select-none"
                             style="
@@ -183,8 +188,8 @@ watch(
                                 {{ n }}
                             </div>
                         </div>
-                        <!-- Content area - maximize textarea -->
-                        <div ref="slotContainer" class="flex-1 overflow-hidden">
+                        <!-- Content area - maximize textarea/content -->
+                        <div ref="slotContainer" class="flex-1 overflow-auto">
                             <slot />
                         </div>
                     </div>
