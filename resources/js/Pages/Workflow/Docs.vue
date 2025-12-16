@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import DocumentSidebar from '@/Components/Workflow/DocumentSidebar.vue';
+import ExpandableModal from '@/Components/Workflow/ExpandableModal.vue';
 import InfoSection from '@/Components/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Workflow/PageHeader.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
@@ -35,6 +36,7 @@ const selectedDocument = ref<Document | null>(null);
 const content = ref('');
 const isSaving = ref(false);
 const message = ref<{ type: 'success' | 'error'; text: string } | null>(null);
+const expandedView = ref<'editor' | 'preview' | null>(null);
 
 // Rendered markdown preview
 const renderedContent = computed(() => {
@@ -281,11 +283,18 @@ const infoItems = [
                         class="overflow-hidden rounded-lg border border-indigo-200"
                     >
                         <div
-                            class="border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
+                            class="flex items-center justify-between border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
                             <h3 class="text-sm font-semibold">
                                 Markdown Editor
                             </h3>
+                            <button
+                                class="rounded px-2 py-1 text-xs hover:bg-indigo-400"
+                                title="Expand editor"
+                                @click="expandedView = 'editor'"
+                            >
+                                ⛶
+                            </button>
                         </div>
                         <textarea
                             v-model="content"
@@ -299,9 +308,16 @@ const infoItems = [
                         class="overflow-hidden rounded-lg border border-indigo-200"
                     >
                         <div
-                            class="border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
+                            class="flex items-center justify-between border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
                             <h3 class="text-sm font-semibold">Preview</h3>
+                            <button
+                                class="rounded px-2 py-1 text-xs hover:bg-indigo-400"
+                                title="Expand preview"
+                                @click="expandedView = 'preview'"
+                            >
+                                ⛶
+                            </button>
                         </div>
                         <div
                             class="prose prose-sm dark:prose-invert h-96 w-full overflow-y-auto bg-indigo-50 p-4 dark:bg-indigo-100"
@@ -311,6 +327,55 @@ const infoItems = [
                 </div>
             </div>
         </div>
+
+        <!-- Modal: Expanded Markdown Editor -->
+        <ExpandableModal
+            :show="expandedView === 'editor'"
+            title="Markdown Editor (Expanded)"
+            @close="expandedView = null"
+        >
+            <textarea
+                v-model="content"
+                class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
+                placeholder="Edit markdown here..."
+                style="
+                    line-height: 1.5;
+                    white-space: pre;
+                    overflow-wrap: normal;
+                "
+            />
+            <div
+                class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
+            >
+                <span class="text-xs text-indigo-600">
+                    {{ content ? `${content.length} characters` : 'N/A' }}
+                </span>
+                <ButtonPrimary
+                    :disabled="isSaving"
+                    :loading="isSaving"
+                    @click="
+                        saveDocument();
+                        expandedView = null;
+                    "
+                >
+                    {{ isSaving ? 'Saving...' : 'Save & Embed' }}
+                </ButtonPrimary>
+            </div>
+        </ExpandableModal>
+
+        <!-- Modal: Expanded Preview -->
+        <ExpandableModal
+            :show="expandedView === 'preview'"
+            title="Preview (Expanded)"
+            @close="expandedView = null"
+        >
+            <div class="flex-1 overflow-auto p-6">
+                <div
+                    class="prose prose-sm dark:prose-invert max-w-none"
+                    v-html="renderedContent"
+                />
+            </div>
+        </ExpandableModal>
 
         <!-- Info Section -->
         <InfoSection

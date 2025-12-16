@@ -142,7 +142,7 @@ watch(
     <Teleport to="body">
         <div
             v-if="show"
-            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-white p-4 text-black"
+            class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-indigo-50 p-4 text-black"
             @click="emit('close')"
         >
             <div
@@ -162,7 +162,7 @@ watch(
                     </button>
                 </div>
                 <div
-                    class="flex flex-1 flex-col gap-0 overflow-hidden bg-white"
+                    class="flex flex-1 flex-col gap-0 overflow-hidden bg-indigo-100"
                 >
                     <!-- Editor with line numbers - flex row -->
                     <div class="flex flex-1 gap-0 overflow-hidden">
@@ -174,8 +174,7 @@ watch(
                             style="
                                 -ms-overflow-style: none;
                                 scrollbar-width: none;
-                                margin-top: 0.5rem;
-                                padding-top: 0.9rem;
+                                padding-top: 1.4rem;
                                 padding-bottom: 1.5rem;
                                 line-height: 1.5;
                             "
