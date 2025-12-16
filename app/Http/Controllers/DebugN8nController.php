@@ -20,8 +20,8 @@ class DebugN8nController extends Controller
         $input = null;
         $javascriptOld = null;
         $javascriptNew = null;
-        $outputOld = null;
-        $outputNew = null;
+        $promptOld = null;
+        $promptNew = null;
 
         // Load input from storage/app/n8n_debug/input/
         $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
@@ -66,16 +66,16 @@ class DebugN8nController extends Controller
             $javascriptNew = file_get_contents($jsFileNew);
         }
 
-        // Load old output from storage/app/n8n_debug/output/old/
-        $outputFileOld = storage_path("app/n8n_debug/output/old/workflow_{$workflowNumber}_output.json");
-        if (file_exists($outputFileOld)) {
-            $outputOld = json_decode(file_get_contents($outputFileOld), true);
+        // Load old prompt from storage/app/n8n_debug/prompt/old/
+        $promptFileOld = storage_path("app/n8n_debug/prompt/old/workflow_{$workflowNumber}_prompt.json");
+        if (file_exists($promptFileOld)) {
+            $promptOld = json_decode(file_get_contents($promptFileOld), true);
         }
 
-        // Load new output from storage/app/n8n_debug/output/new/
-        $outputFileNew = storage_path("app/n8n_debug/output/new/workflow_{$workflowNumber}_output.json");
-        if (file_exists($outputFileNew)) {
-            $outputNew = json_decode(file_get_contents($outputFileNew), true);
+        // Load new prompt from storage/app/n8n_debug/prompt/new/
+        $promptFileNew = storage_path("app/n8n_debug/prompt/new/workflow_{$workflowNumber}_prompt.json");
+        if (file_exists($promptFileNew)) {
+            $promptNew = json_decode(file_get_contents($promptFileNew), true);
         }
 
         return Inertia::render('Workflow/Show', [
@@ -83,8 +83,8 @@ class DebugN8nController extends Controller
             'input' => $input,
             'javascriptOld' => $javascriptOld,
             'javascriptNew' => $javascriptNew,
-            'outputOld' => $outputOld,
-            'outputNew' => $outputNew,
+            'promptOld' => $promptOld,
+            'promptNew' => $promptNew,
         ]);
     }
 
@@ -149,8 +149,8 @@ class DebugN8nController extends Controller
             }
 
             // Save the extracted JavaScript to storage
-            $this->ensureDebugDirectory('prepare_prompt');
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+            $this->ensureDebugDirectory('prepare_prompt/old');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
             file_put_contents($jsFile, $javascript);
             chmod($jsFile, 0644);
 
@@ -263,8 +263,8 @@ class DebugN8nController extends Controller
                 'code' => 'required|string',
             ]);
 
-            $this->ensureDebugDirectory('prepare_prompt');
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+            $this->ensureDebugDirectory('prepare_prompt/old');
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
             file_put_contents($jsFile, $request->input('code'));
             chmod($jsFile, 0644);
 
@@ -526,9 +526,9 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Execute the JavaScript and return the output
+     * Prepare prompt using the old JavaScript version
      */
-    public function executeOldJavaScript(Request $request, int $workflowNumber)
+    public function preparePromptOld(Request $request, int $workflowNumber)
     {
         try {
             // Get input from request or load from storage
@@ -561,8 +561,8 @@ class DebugN8nController extends Controller
                 }
             }
 
-            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/workflow_{$workflowNumber}_prepare_prompt.js");
+            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/old/
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
 
             if (! file_exists($jsFile)) {
                 return response()->json([
@@ -595,14 +595,14 @@ class DebugN8nController extends Controller
 
             $result = $output['result'];
 
-            // Save output to storage/app/n8n_debug/output/
-            $this->ensureDebugDirectory('output');
-            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output.json");
-            file_put_contents($outputFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            // Save prompt to storage/app/n8n_debug/prompt/old/
+            $this->ensureDebugDirectory('prompt/old');
+            $promptFile = storage_path("app/n8n_debug/prompt/old/workflow_{$workflowNumber}_prompt.json");
+            file_put_contents($promptFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             return response()->json([
                 'success' => true,
-                'output' => $result,
+                'prompt' => $result,
                 'system' => $result['system'] ?? null,
                 'messages' => $result['messages'] ?? null,
             ]);
@@ -622,9 +622,9 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Execute the new JavaScript version and return the output
+     * Prepare prompt using the new JavaScript version
      */
-    public function executeNewJavaScript(Request $request, int $workflowNumber)
+    public function preparePromptNew(Request $request, int $workflowNumber)
     {
         try {
             // Get input from request or load from storage
@@ -690,14 +690,14 @@ class DebugN8nController extends Controller
 
             $result = $output['result'];
 
-            // Save output to storage/app/n8n_debug/output/
-            $this->ensureDebugDirectory('output');
-            $outputFile = storage_path("app/n8n_debug/output/workflow_{$workflowNumber}_output_new.json");
-            file_put_contents($outputFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            // Save prompt to storage/app/n8n_debug/prompt/new/
+            $this->ensureDebugDirectory('prompt/new');
+            $promptFile = storage_path("app/n8n_debug/prompt/new/workflow_{$workflowNumber}_prompt.json");
+            file_put_contents($promptFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             return response()->json([
                 'success' => true,
-                'output' => $result,
+                'prompt' => $result,
                 'system' => $result['system'] ?? null,
                 'messages' => $result['messages'] ?? null,
             ]);
