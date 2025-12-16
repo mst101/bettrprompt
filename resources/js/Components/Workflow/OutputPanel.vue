@@ -77,6 +77,13 @@ const getMessagesAsText = (messages: Message[] | unknown) => {
         })
         .join('\n\n');
 };
+
+const getJsonCharacterCount = (data: unknown): string => {
+    if (!data) return '0';
+    const jsonString = JSON.stringify(data, null, 2);
+    const count = jsonString.length;
+    return new Intl.NumberFormat().format(count);
+};
 </script>
 
 <template>
@@ -195,10 +202,10 @@ const getMessagesAsText = (messages: Message[] | unknown) => {
                     </div>
                 </div>
 
-                <!-- Full Output (if there's more) -->
                 <details class="mt-6 cursor-pointer">
                     <summary class="font-semibold text-indigo-900">
-                        Full Output
+                        View JSON ({{ getJsonCharacterCount(output) }}
+                        characters)
                     </summary>
                     <div
                         class="mt-2 max-h-screen overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
