@@ -1,6 +1,5 @@
-import { expect, test } from './fixtures';
+import { expect, setupAndNavigateToPromptRun, test } from './fixtures';
 import { triggerAnalysisCompleted } from './helpers/broadcast';
-import { setupAndNavigateToPromptRun } from './helpers/fixtures';
 
 /**
  * Real-time Broadcast E2E Tests

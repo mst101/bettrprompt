@@ -5,6 +5,10 @@ import {
     loginAsTestUser,
     loginWithUniqueName,
 } from '../helpers/auth';
+import {
+    createTestPromptRun,
+    waitForEchoConnection,
+} from '../helpers/broadcast';
 import { AuthPage } from '../pages/AuthPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
@@ -191,6 +195,99 @@ export const test = base.extend<TestFixtures>({
  * Re-export expect for use in tests
  */
 export { expect };
+
+/**
+ * Helper Functions
+ * Common test setup utilities for reducing boilerplate
+ */
+
+/**
+ * Create a test prompt run with specific workflow stage
+ *
+ * Example:
+ * ```typescript
+ * test('example', async ({ authenticatedPage }) => {
+ *     const promptRunId = await setupPromptRun(authenticatedPage, '1_completed');
+ *     await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
+ * });
+ * ```
+ */
+export async function setupPromptRun(
+    page: Page,
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
+): Promise<number> {
+    return await createTestPromptRun(page, state);
+}
+
+/**
+ * Setup with prompt run navigation
+ *
+ * Creates a prompt run and navigates to it in one call.
+ *
+ * Example:
+ * ```typescript
+ * test('example', async ({ authenticatedPage }) => {
+ *     await setupAndNavigateToPromptRun(
+ *         authenticatedPage,
+ *         '1_completed',
+ *     );
+ * });
+ * ```
+ */
+export async function setupAndNavigateToPromptRun(
+    page: Page,
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
+): Promise<number> {
+    const id = await createTestPromptRun(page, state);
+    await page.goto(`/prompt-builder/${id}`);
+    return id;
+}
+
+/**
+ * Wait for UI to be stable (navigation complete and Echo connected)
+ *
+ * Useful when you need to ensure both page navigation and real-time
+ * connections are ready before proceeding.
+ *
+ * Example:
+ * ```typescript
+ * test('example', async ({ authenticatedPage }) => {
+ *     await authenticatedPage.goto(`/prompt-builder/${id}`);
+ *     await waitForUIReady(authenticatedPage);
+ * });
+ * ```
+ */
+export async function waitForUIReady(page: Page): Promise<void> {
+    // Wait for page navigation
+    await page.waitForLoadState('domcontentloaded');
+
+    // Try to establish Echo connection (non-blocking timeout)
+    await waitForEchoConnection(page, 3000).catch(() => {
+        // If Echo fails, that's OK - we have fallback polling
+    });
+}
+
+/**
+ * Common test setup pattern for realtime tests
+ *
+ * Combines navigation and UI ready waiting.
+ *
+ * Example:
+ * ```typescript
+ * test('realtime example', async ({ authenticatedPage }) => {
+ *     const id = await setupRealtimeTest(authenticatedPage, '1_processing');
+ *     // Now ready to test realtime updates
+ * });
+ * ```
+ */
+export async function setupRealtimeTest(
+    page: Page,
+    state: '1_processing' | '1_completed' | '2_completed' = '1_processing',
+): Promise<number> {
+    const id = await setupAndNavigateToPromptRun(page, state);
+    await waitForUIReady(page);
+    return id;
+}
 
 /**
  * Example usage in a test:

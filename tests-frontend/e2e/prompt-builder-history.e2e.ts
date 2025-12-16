@@ -1,6 +1,5 @@
-import { expect, test } from './fixtures';
+import { expect, setupPromptRun, test } from './fixtures';
 import { execAsync, seedPromptRuns } from './helpers/database';
-import { setupPromptRun } from './helpers/fixtures';
 
 /**
  * Comprehensive e2e tests for the Prompt Builder History page
