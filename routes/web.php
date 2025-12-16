@@ -311,14 +311,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.reload-javascript-new')
         ->where('workflowNumber', '[0-9]+');
 
-    Route::post('/debug/workflow/{workflowNumber}/execute-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'executeOldJavaScript'])
-        ->name('workflow.execute-old')
+    Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-old',
+        [\App\Http\Controllers\DebugN8nController::class, 'preparePromptOld'])
+        ->name('workflow.prepare-prompt-old')
         ->where('workflowNumber', '[0-9]+');
 
-    Route::post('/debug/workflow/{workflowNumber}/execute-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'executeNewJavaScript'])
-        ->name('workflow.execute-new')
+    Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-new',
+        [\App\Http\Controllers\DebugN8nController::class, 'preparePromptNew'])
+        ->name('workflow.prepare-prompt-new')
         ->where('workflowNumber', '[0-9]+');
 
     Route::post('/debug/workflow/{workflowNumber}/save-to-n8n',
