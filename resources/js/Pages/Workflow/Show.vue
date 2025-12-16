@@ -509,7 +509,7 @@ onMounted(async () => {
             <!-- Input Data and JavaScript Code Buttons -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
                 <ButtonSecondary @click="expandedView = 'javascript-old'">
-                    View JavaScript (old)
+                    View JavaScript
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -520,11 +520,11 @@ onMounted(async () => {
                 </ButtonPrimary>
 
                 <ButtonSuccess @click="executeWorkflowOld">
-                    Upload to n8n & Execute workflow (old)
+                    Upload to n8n & Execute workflow
                 </ButtonSuccess>
 
                 <ButtonSecondary @click="expandedView = 'javascript-new'">
-                    View JavaScript (new)
+                    View JavaScript
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -535,7 +535,7 @@ onMounted(async () => {
                 </ButtonPrimary>
 
                 <ButtonSuccess @click="executeWorkflowNew">
-                    Upload to n8n & Execute workflow (new)
+                    Upload to n8n & Execute workflow
                 </ButtonSuccess>
             </div>
 

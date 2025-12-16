@@ -2,58 +2,73 @@
     "needs_clarification": true,
     "questions": [
         {
-            "id": "travel_details",
-            "type": "text",
-            "question": "What specific details do you want to know about planning a birdwatching holiday in the Gambia? (e.g. best time to visit, recommended locations, tour options)"
-        },
-        {
-            "id": "group_type",
+            "id": "detail_level",
             "type": "choice",
-            "question": "Who will be travelling?",
+            "question": "How comprehensive do you want your birdwatching holiday planning to be?",
             "options": [
                 {
-                    "value": "solo",
-                    "label": "Solo traveller"
+                    "value": "summary",
+                    "label": "Basic overview and initial research"
                 },
                 {
-                    "value": "couple",
-                    "label": "Couple"
+                    "value": "moderate",
+                    "label": "Detailed planning with key destinations and logistics"
                 },
                 {
-                    "value": "group",
-                    "label": "Group/Family"
-                },
-                {
-                    "value": "birdwatching_club",
-                    "label": "Birdwatching Club"
+                    "value": "comprehensive",
+                    "label": "Full itinerary with accommodation, travel routes, specific bird species, and expert recommendations"
                 }
             ]
         },
         {
-            "id": "experience_level",
+            "id": "audience",
             "type": "choice",
-            "question": "What is your birdwatching experience level?",
+            "question": "Who is this birdwatching holiday plan for?",
+            "options": [
+                {
+                    "value": "self",
+                    "label": "Planning for myself"
+                },
+                {
+                    "value": "team",
+                    "label": "Planning for a group/birdwatching club"
+                },
+                {
+                    "value": "external",
+                    "label": "Creating a travel guide/recommendation"
+                }
+            ]
+        },
+        {
+            "id": "travel_experience",
+            "type": "choice",
+            "question": "What is your birdwatching and travel experience level?",
             "options": [
                 {
                     "value": "beginner",
-                    "label": "Beginner"
+                    "label": "First international birdwatching trip"
                 },
                 {
                     "value": "intermediate",
-                    "label": "Intermediate"
+                    "label": "Some international travel experience"
                 },
                 {
                     "value": "expert",
-                    "label": "Expert"
+                    "label": "Experienced international birdwatcher"
                 }
             ]
         }
     ],
-    "reasoning": "Needs more context about specific birdwatching holiday requirements",
-    "pre_analysis_context": null,
+    "reasoning": "The task requires clarification on planning depth, personal context, and traveller experience to provide a tailored birdwatching holiday recommendation.",
+    "pre_analysis_context": {
+        "subject": "Birdwatching holiday in the Gambia",
+        "audience": "self",
+        "purpose": "travel_planning",
+        "detail_level": null
+    },
     "api_usage": {
         "model": "claude-3-5-haiku-20241022",
-        "input_tokens": 415,
-        "output_tokens": 312
+        "input_tokens": 1468,
+        "output_tokens": 471
     }
 }

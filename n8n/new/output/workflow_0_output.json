@@ -54,20 +54,20 @@
                 },
                 {
                     "value": "group",
-                    "label": "Birdwatching Group"
+                    "label": "Organised Group"
                 },
                 {
-                    "value": "family",
-                    "label": "Family"
+                    "value": "friends",
+                    "label": "Friends/Family"
                 }
             ]
         }
     ],
-    "reasoning": "Need more details about trip specifics and traveller preferences",
+    "reasoning": "Need more specifics about birdwatching holiday preferences",
     "pre_analysis_context": null,
     "api_usage": {
         "model": "claude-3-5-haiku-20241022",
         "input_tokens": 415,
-        "output_tokens": 366
+        "output_tokens": 365
     }
 }
