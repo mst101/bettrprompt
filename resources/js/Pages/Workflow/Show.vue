@@ -559,18 +559,14 @@ onMounted(async () => {
             <!-- Workflow Output Sections -->
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
-                    title="Output (old)"
+                    title="Output (OLD)"
                     :output="outputOld"
-                    @expand-system="expandedView = 'workflow-system-old'"
-                    @expand-messages="expandedView = 'workflow-messages-old'"
-                    @update-raw-mode="handleRawModeUpdate"
+                    show-raw-json
                 />
                 <OutputPanel
-                    title="Output (new)"
+                    title="Output (NEW)"
                     :output="outputNew"
-                    @expand-system="expandedView = 'workflow-system-new'"
-                    @expand-messages="expandedView = 'workflow-messages-new'"
-                    @update-raw-mode="handleRawModeUpdate"
+                    show-raw-json
                 />
             </div>
         </div>
