@@ -2,25 +2,28 @@
 
 ## Executive Summary
 
-Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **60.0%** (20,615 characters) without affecting output quality.
+Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **60.0%** (20,615 characters) without
+affecting output quality.
 
 ## Token Reduction Results
 
-| Workflow | Original | Optimised | Reduction | Reduction % |
-|----------|----------|-----------|-----------|-------------|
-| Workflow 0 | 8,264 chars | 3,225 chars | 5,039 chars | **61.0%** |
-| Workflow 1 | 15,013 chars | 5,457 chars | 9,556 chars | **63.7%** |
-| Workflow 2 | 11,069 chars | 5,049 chars | 6,020 chars | **54.4%** |
-| **TOTAL** | **34,346** | **13,731** | **20,615** | **60.0%** |
+| Workflow   | Original     | Optimised   | Reduction   | Reduction % |
+|------------|--------------|-------------|-------------|-------------|
+| Workflow 0 | 8,264 chars  | 3,225 chars | 5,039 chars | **61.0%**   |
+| Workflow 1 | 15,013 chars | 5,457 chars | 9,556 chars | **63.7%**   |
+| Workflow 2 | 11,069 chars | 5,049 chars | 6,020 chars | **54.4%**   |
+| **TOTAL**  | **34,346**   | **13,731**  | **20,615**  | **60.0%**   |
 
 ## Optimization Strategies Applied
 
 ### 1. **Code Deduplication**
+
 - **Before:** User context building logic duplicated across all 3 workflows (60-70 lines each)
 - **After:** Refactored into reusable `buildCtx()` helper function (15-20 lines)
 - **Savings:** ~150 lines of duplicated code
 
 ### 2. **Language Instruction Simplification**
+
 - **Before:** Verbose language preference logic with full sentences
   ```javascript
   if (languageCode.startsWith('en-US')) {
@@ -34,6 +37,7 @@ Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **6
 - **Savings:** ~200 characters per workflow
 
 ### 3. **Prompt Text Compression**
+
 - **Before:** Verbose explanatory text
   ```
   "You are a clarity assessment assistant for an AI prompt optimisation tool. Your job is to:
@@ -48,6 +52,7 @@ Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **6
 - **Savings:** ~40% reduction in system prompt length
 
 ### 4. **JSON Example Minimization**
+
 - **Before:** Full verbose JSON examples with comments
   ```json
   {
@@ -57,7 +62,7 @@ Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **6
       "complexity": "simple | moderate | complex",
       "classification_reasoning": "Brief explanation",
       "content_type": "For CREATION_CONTENT only, e.g. customer_email"
-    },
+    }
     // ... many more fields
   }
   ```
@@ -69,18 +74,21 @@ Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **6
 - **Savings:** ~60% reduction in example JSON size
 
 ### 5. **Variable Name Shortening** (Internal Only)
+
 - **Before:** `userContext`, `professionalContext`, `teamParts`
 - **After:** `uc`, `pr`, `tp`
 - **Rationale:** Only affects JavaScript execution, not AI prompt quality
 - **Savings:** ~500 characters across all workflows
 
 ### 6. **Comment Removal**
+
 - **Before:** Extensive inline comments explaining every step
 - **After:** Only critical business logic comments retained
 - **Rationale:** Comments don't affect AI output, only developer understanding
 - **Savings:** ~800 characters
 
 ### 7. **Condensed User Message Building**
+
 - **Before:** Multi-line string concatenation with verbose headers
   ```javascript
   userMessage += `## ANALYSIS FROM WORKFLOW 1\n\n`;
@@ -90,8 +98,10 @@ Optimized all three workflow "Prepare Prompt" nodes to reduce token usage by **6
 - **After:** Compact template with abbreviated headers
   ```javascript
   msg = `## ANALYSIS
+
 Task: ${analysisData.task_classification?.primary_category} (${analysisData.task_classification?.complexity})
 Framework: ${analysisData.selected_framework?.name}`;
+
   ```
 - **Savings:** ~300 characters per workflow
 
@@ -149,15 +159,15 @@ Assuming Claude Sonnet 3.5 pricing (~$3/$15 per 1M input/output tokens):
 ## Implementation Notes
 
 ### Files Created:
-- `n8n/original/workflow_0_prepare_prompt.js` - Original code backup
-- `n8n/original/workflow_1_prepare_prompt.js` - Original code backup
-- `n8n/original/workflow_2_prepare_prompt.js` - Original code backup
-- `n8n/optimised/workflow_0_prepare_prompt.js` - Optimized version
-- `n8n/optimised/workflow_1_prepare_prompt.js` - Optimized version
-- `n8n/optimised/workflow_2_prepare_prompt.js` - Optimized version
+- `n8n/old/workflow_0_prepare_prompt.js` - Original code backup
+- `n8n/old/workflow_1_prepare_prompt.js` - Original code backup
+- `n8n/old/workflow_2_prepare_prompt.js` - Original code backup
+- `n8n/new/workflow_0_prepare_prompt.js` - Optimized version
+- `n8n/new/workflow_1_prepare_prompt.js` - Optimized version
+- `n8n/new/workflow_2_prepare_prompt.js` - Optimized version
 
 ### Deployment Process:
-1. Review optimized code in `n8n/optimised/` directory
+1. Review optimized code in `n8n/new/` directory
 2. Test with sample inputs in n8n debug interface
 3. Compare outputs with originals
 4. If satisfied, copy optimized code to workflow JSON files

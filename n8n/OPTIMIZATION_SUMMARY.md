@@ -79,7 +79,7 @@ Before deployment, verify:
 
 ## Next Steps
 
-1. Review optimized code in `n8n/optimised/` directory
+1. Review optimized code in `n8n/new/` directory
 2. Test with sample inputs in debug interface
 3. Compare outputs side-by-side with originals
 4. Deploy to workflows if satisfied
@@ -89,15 +89,15 @@ Before deployment, verify:
 
 ### Original Backups:
 
-- `n8n/original/javascript/workflow_0_prepare_prompt.js`
-- `n8n/original/javascript/workflow_1_prepare_prompt.js`
-- `n8n/original/javascript/workflow_2_prepare_prompt.js`
+- `n8n/old/javascript/workflow_0_prepare_prompt.js`
+- `n8n/old/javascript/workflow_1_prepare_prompt.js`
+- `n8n/old/javascript/workflow_2_prepare_prompt.js`
 
 ### Optimized Versions:
 
-- `n8n/optimised/javascript/workflow_0_prepare_prompt.js`
-- `n8n/optimised/javascript/workflow_1_prepare_prompt.js`
-- `n8n/optimised/javascript/workflow_2_prepare_prompt.js`
+- `n8n/new/javascript/workflow_0_prepare_prompt.js`
+- `n8n/new/javascript/workflow_1_prepare_prompt.js`
+- `n8n/new/javascript/workflow_2_prepare_prompt.js`
 
 ### Documentation:
 
