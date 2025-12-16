@@ -16,16 +16,16 @@ interface Props {
     input?: object | null;
     javascriptOld?: string | null;
     javascriptNew?: string | null;
-    outputOld?: object | null;
-    outputNew?: object | null;
+    promptOld?: object | null;
+    promptNew?: object | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     input: null,
     javascriptOld: null,
     javascriptNew: null,
-    outputOld: null,
-    outputNew: null,
+    promptOld: null,
+    promptNew: null,
 });
 
 defineOptions({
@@ -40,10 +40,10 @@ const input = ref(props.input);
 const inputJson = ref(JSON.stringify(props.input, null, 2));
 const javascriptOld = ref(props.javascriptOld || '');
 const javascriptNew = ref(props.javascriptNew || '');
-const outputOld = ref(props.outputOld);
-const outputNew = ref(props.outputNew);
-const workflowOutputOld = ref(null);
-const workflowOutputNew = ref(null);
+const promptOld = ref(props.promptOld);
+const promptNew = ref(props.promptNew);
+const workflowOutputOld = ref(props.promptOld);
+const workflowOutputNew = ref(props.promptNew);
 
 // Modal state for maximized views
 const expandedView = ref<
@@ -399,7 +399,7 @@ const preparePromptOld = async () => {
         await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-old`,
+            `/debug/workflow/${props.workflowNumber}/prepare-prompt-old`,
             'POST',
             { input: inputData },
         );
@@ -416,7 +416,7 @@ const preparePromptOld = async () => {
             return;
         }
 
-        outputOld.value = result.output;
+        promptOld.value = result.prompt;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -447,7 +447,7 @@ const preparePromptNew = async () => {
         await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-new`,
+            `/debug/workflow/${props.workflowNumber}/prepare-prompt-new`,
             'POST',
             { input: inputData },
         );
@@ -464,7 +464,7 @@ const preparePromptNew = async () => {
             return;
         }
 
-        outputNew.value = result.output;
+        promptNew.value = result.prompt;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -537,15 +537,15 @@ onMounted(async () => {
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
-                    title="Workflow Prompt (OLD)"
-                    :output="outputOld"
+                    title="Prompt (OLD)"
+                    :output="promptOld"
                     @expand-system="expandedView = 'system-old'"
                     @expand-messages="expandedView = 'messages-old'"
                     @update-raw-mode="handleRawModeUpdate"
                 />
                 <OutputPanel
-                    title="Workflow Prompt (NEW)"
-                    :output="outputNew"
+                    title="Prompt (NEW)"
+                    :output="promptNew"
                     @expand-system="expandedView = 'system-new'"
                     @expand-messages="expandedView = 'messages-new'"
                     @update-raw-mode="handleRawModeUpdate"
@@ -583,12 +583,12 @@ onMounted(async () => {
                         v-if="rawModeSystemOld"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ outputOld?.system }}
+                        {{ promptOld?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(outputOld?.system)"
+                        v-html="renderMarkdown(promptOld?.system)"
                     />
                 </div>
                 <div
@@ -596,15 +596,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            outputOld?.system
-                                ? `${(outputOld.system as string).length} characters`
+                            promptOld?.system
+                                ? `${(promptOld.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(outputOld?.system)"
+                        @click="copyToClipboard(promptOld?.system)"
                     >
                         📋 Copy
                     </button>
@@ -621,11 +621,11 @@ onMounted(async () => {
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(outputOld?.messages)"
+                        v-if="Array.isArray(promptOld?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(message, index) in outputOld?.messages"
+                            v-for="(message, index) in promptOld?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
@@ -653,9 +653,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            outputOld?.messages &&
-                            Array.isArray(outputOld.messages)
-                                ? `${outputOld.messages.length} messages`
+                            promptOld?.messages &&
+                            Array.isArray(promptOld.messages)
+                                ? `${promptOld.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -664,7 +664,7 @@ onMounted(async () => {
                         title="Copy to clipboard"
                         @click="
                             copyToClipboard(
-                                getMessagesAsText(outputOld?.messages),
+                                getMessagesAsText(promptOld?.messages),
                             )
                         "
                     >
@@ -821,12 +821,12 @@ onMounted(async () => {
                         v-if="rawModeSystemNew"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ outputNew?.system }}
+                        {{ promptNew?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(outputNew?.system)"
+                        v-html="renderMarkdown(promptNew?.system)"
                     />
                 </div>
                 <div
@@ -834,15 +834,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            outputNew?.system
-                                ? `${(outputNew.system as string).length} characters`
+                            promptNew?.system
+                                ? `${(promptNew.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(outputNew?.system)"
+                        @click="copyToClipboard(promptNew?.system)"
                     >
                         📋 Copy
                     </button>
@@ -859,11 +859,11 @@ onMounted(async () => {
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(outputNew?.messages)"
+                        v-if="Array.isArray(promptNew?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(message, index) in outputNew?.messages"
+                            v-for="(message, index) in promptNew?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
@@ -891,9 +891,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            outputNew?.messages &&
-                            Array.isArray(outputNew.messages)
-                                ? `${outputNew.messages.length} messages`
+                            promptNew?.messages &&
+                            Array.isArray(promptNew.messages)
+                                ? `${promptNew.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -902,7 +902,7 @@ onMounted(async () => {
                         title="Copy to clipboard"
                         @click="
                             copyToClipboard(
-                                getMessagesAsText(outputNew?.messages),
+                                getMessagesAsText(promptNew?.messages),
                             )
                         "
                     >
