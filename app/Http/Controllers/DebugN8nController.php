@@ -22,6 +22,8 @@ class DebugN8nController extends Controller
         $javascriptNew = null;
         $promptOld = null;
         $promptNew = null;
+        $outputOld = null;
+        $outputNew = null;
 
         // Load input from storage/app/n8n_debug/input/
         $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
@@ -78,6 +80,18 @@ class DebugN8nController extends Controller
             $promptNew = json_decode(file_get_contents($promptFileNew), true);
         }
 
+        // Load old workflow output from storage/app/n8n_debug/output/old/
+        $outputFileOld = storage_path("app/n8n_debug/output/old/workflow_{$workflowNumber}_output.json");
+        if (file_exists($outputFileOld)) {
+            $outputOld = json_decode(file_get_contents($outputFileOld), true);
+        }
+
+        // Load new workflow output from storage/app/n8n_debug/output/new/
+        $outputFileNew = storage_path("app/n8n_debug/output/new/workflow_{$workflowNumber}_output.json");
+        if (file_exists($outputFileNew)) {
+            $outputNew = json_decode(file_get_contents($outputFileNew), true);
+        }
+
         return Inertia::render('Workflow/Show', [
             'workflowNumber' => $workflowNumber,
             'input' => $input,
@@ -85,6 +99,8 @@ class DebugN8nController extends Controller
             'javascriptNew' => $javascriptNew,
             'promptOld' => $promptOld,
             'promptNew' => $promptNew,
+            'outputOld' => $outputOld,
+            'outputNew' => $outputNew,
         ]);
     }
 

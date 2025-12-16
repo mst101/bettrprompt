@@ -18,6 +18,8 @@ interface Props {
     javascriptNew?: string | null;
     promptOld?: object | null;
     promptNew?: object | null;
+    outputOld?: object | null;
+    outputNew?: object | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -26,6 +28,8 @@ const props = withDefaults(defineProps<Props>(), {
     javascriptNew: null,
     promptOld: null,
     promptNew: null,
+    outputOld: null,
+    outputNew: null,
 });
 
 defineOptions({
@@ -42,8 +46,8 @@ const javascriptOld = ref(props.javascriptOld || '');
 const javascriptNew = ref(props.javascriptNew || '');
 const promptOld = ref(props.promptOld);
 const promptNew = ref(props.promptNew);
-const workflowOutputOld = ref(props.promptOld);
-const workflowOutputNew = ref(props.promptNew);
+const outputOld = ref(props.outputOld);
+const outputNew = ref(props.outputNew);
 
 // Modal state for maximized views
 const expandedView = ref<
@@ -183,7 +187,7 @@ const executeWorkflowOld = async () => {
             return;
         }
 
-        workflowOutputOld.value = result.output;
+        outputOld.value = result.output;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -228,7 +232,7 @@ const executeWorkflowNew = async () => {
             return;
         }
 
-        workflowOutputNew.value = result.output;
+        outputNew.value = result.output;
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
@@ -556,14 +560,14 @@ onMounted(async () => {
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <OutputPanel
                     title="Output (old)"
-                    :output="workflowOutputOld"
+                    :output="outputOld"
                     @expand-system="expandedView = 'workflow-system-old'"
                     @expand-messages="expandedView = 'workflow-messages-old'"
                     @update-raw-mode="handleRawModeUpdate"
                 />
                 <OutputPanel
                     title="Output (new)"
-                    :output="workflowOutputNew"
+                    :output="outputNew"
                     @expand-system="expandedView = 'workflow-system-new'"
                     @expand-messages="expandedView = 'workflow-messages-new'"
                     @update-raw-mode="handleRawModeUpdate"
@@ -924,12 +928,12 @@ onMounted(async () => {
                         v-if="rawModeWorkflowSystemOld"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ workflowOutputOld?.system }}
+                        {{ outputOld?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(workflowOutputOld?.system)"
+                        v-html="renderMarkdown(outputOld?.system)"
                     />
                 </div>
                 <div
@@ -937,15 +941,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutputOld?.system
-                                ? `${(workflowOutputOld.system as string).length} characters`
+                            outputOld?.system
+                                ? `${(outputOld.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(workflowOutputOld?.system)"
+                        @click="copyToClipboard(outputOld?.system)"
                     >
                         📋 Copy
                     </button>
@@ -962,13 +966,11 @@ onMounted(async () => {
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(workflowOutputOld?.messages)"
+                        v-if="Array.isArray(outputOld?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(
-                                message, index
-                            ) in workflowOutputOld?.messages"
+                            v-for="(message, index) in outputOld?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
@@ -1000,9 +1002,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutputOld?.messages &&
-                            Array.isArray(workflowOutputOld.messages)
-                                ? `${workflowOutputOld.messages.length} messages`
+                            outputOld?.messages &&
+                            Array.isArray(outputOld.messages)
+                                ? `${outputOld.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -1011,7 +1013,7 @@ onMounted(async () => {
                         title="Copy to clipboard"
                         @click="
                             copyToClipboard(
-                                getMessagesAsText(workflowOutputOld?.messages),
+                                getMessagesAsText(outputOld?.messages),
                             )
                         "
                     >
@@ -1033,12 +1035,12 @@ onMounted(async () => {
                         v-if="rawModeWorkflowSystemNew"
                         class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
                     >
-                        {{ workflowOutputNew?.system }}
+                        {{ outputNew?.system }}
                     </div>
                     <div
                         v-else
                         class="prose prose-sm dark:prose-invert max-w-none"
-                        v-html="renderMarkdown(workflowOutputNew?.system)"
+                        v-html="renderMarkdown(outputNew?.system)"
                     />
                 </div>
                 <div
@@ -1046,15 +1048,15 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutputNew?.system
-                                ? `${(workflowOutputNew.system as string).length} characters`
+                            outputNew?.system
+                                ? `${(outputNew.system as string).length} characters`
                                 : 'N/A'
                         }}
                     </span>
                     <button
                         class="rounded bg-indigo-600 px-3 py-2 text-xs text-white hover:bg-indigo-700"
                         title="Copy to clipboard"
-                        @click="copyToClipboard(workflowOutputNew?.system)"
+                        @click="copyToClipboard(outputNew?.system)"
                     >
                         📋 Copy
                     </button>
@@ -1071,13 +1073,11 @@ onMounted(async () => {
             <div class="flex h-full flex-col">
                 <div class="flex-1 overflow-auto p-6">
                     <div
-                        v-if="Array.isArray(workflowOutputNew?.messages)"
+                        v-if="Array.isArray(outputNew?.messages)"
                         class="space-y-4"
                     >
                         <div
-                            v-for="(
-                                message, index
-                            ) in workflowOutputNew?.messages"
+                            v-for="(message, index) in outputNew?.messages"
                             :key="index"
                             class="rounded border border-indigo-200 bg-indigo-50 p-4"
                         >
@@ -1109,9 +1109,9 @@ onMounted(async () => {
                 >
                     <span class="text-xs text-indigo-600">
                         {{
-                            workflowOutputNew?.messages &&
-                            Array.isArray(workflowOutputNew.messages)
-                                ? `${workflowOutputNew.messages.length} messages`
+                            outputNew?.messages &&
+                            Array.isArray(outputNew.messages)
+                                ? `${outputNew.messages.length} messages`
                                 : 'N/A'
                         }}
                     </span>
@@ -1120,7 +1120,7 @@ onMounted(async () => {
                         title="Copy to clipboard"
                         @click="
                             copyToClipboard(
-                                getMessagesAsText(workflowOutputNew?.messages),
+                                getMessagesAsText(outputNew?.messages),
                             )
                         "
                     >
