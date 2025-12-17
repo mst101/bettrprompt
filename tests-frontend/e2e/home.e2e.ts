@@ -7,7 +7,7 @@ test.describe('Home Page', () => {
         // Wait for page to be fully loaded
 
         // Check that the page title is correct
-        await expect(page).toHaveTitle(/Welcome to AI Buddy/);
+        await expect(page).toHaveTitle(/Welcome to BettrPrompt/);
 
         // Verify main heading is visible
         await expect(

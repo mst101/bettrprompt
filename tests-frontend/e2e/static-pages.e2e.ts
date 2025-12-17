@@ -97,7 +97,7 @@ for (const page of staticPages) {
 
             // Verify logo link exists
             const logoLink = browserPage.getByRole('link', {
-                name: /AI Buddy/i,
+                name: /BettrPrompt/i,
             });
             await expect(logoLink.first()).toBeVisible();
 
@@ -198,7 +198,7 @@ test.describe('Cross-Page Navigation', () => {
 
             // Verify logo link exists (may be a link or clickable element)
             const logoLink = page
-                .getByRole('link', { name: /AI Buddy/i })
+                .getByRole('link', { name: /BettrPrompt/i })
                 .first();
             await expect(logoLink).toBeVisible();
         }

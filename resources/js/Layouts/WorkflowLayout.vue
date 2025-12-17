@@ -59,7 +59,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 class="block h-10 w-auto fill-current text-indigo-600"
                             />
                             <span class="mt-2 text-xl font-bold text-gray-800"
-                                >AI Buddy</span
+                                >BettrPrompt</span
                             >
                         </Link>
                     </div>

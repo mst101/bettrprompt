@@ -1,6 +1,6 @@
 # Project Summary
 
-AI Buddy is an intelligent assistant that creates optimised AI prompts customised to users' personality types and tasks.
+BettrPrompt is an intelligent assistant that creates optimised AI prompts customised to users' personality types and tasks.
 
 ## Purpose
 
@@ -8,7 +8,7 @@ Bridge psychology with AI prompt engineering, helping users get more contextuall
 
 ## What It Does
 
-AI Buddy creates optimised AI prompts customised to your personality type and the specific task you're trying to accomplish. By understanding your personality traits (based on 16personalities.com types) and applying established prompt frameworks, tailored to the task at hand, it generates high-quality prompts that will produce better results from AI systems.
+BettrPrompt creates optimised AI prompts customised to your personality type and the specific task you're trying to accomplish. By understanding your personality traits (based on 16personalities.com types) and applying established prompt frameworks, tailored to the task at hand, it generates high-quality prompts that will produce better results from AI systems.
 
 ## How It Works
 

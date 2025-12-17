@@ -45,7 +45,7 @@ export class StaticPage {
     }
 
     get companyName(): Locator {
-        return this.page.getByText(/AI Buddy Ltd\./i);
+        return this.page.getByText(/BettrPrompt Ltd\./i);
     }
 
     get contactEmail(): Locator {
@@ -64,7 +64,7 @@ export class StaticPage {
 
     async clickLogoToHome(): Promise<void> {
         const logoLink = this.page
-            .getByRole('link', { name: /AI Buddy/i })
+            .getByRole('link', { name: /BettrPrompt/i })
             .first();
         await logoLink.click();
     }

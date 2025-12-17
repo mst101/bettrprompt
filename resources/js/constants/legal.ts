@@ -5,7 +5,7 @@
  */
 
 export const COMPANY_INFO = {
-    name: 'AI Buddy Ltd.',
+    name: 'BettrPrompt Ltd.',
     registeredAddress: '27 East Road, Bromsgrove, Worcs. B60 2NW',
     contactEmail: 'info@hiddengambia.com',
     hostingProvider: 'DigitalOcean Holdings, Inc.',

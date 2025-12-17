@@ -1,4 +1,4 @@
-# AI Buddy - Personalised Prompt Generator
+# BettrPrompt - Personalised Prompt Generator
 
 An intelligent prompt generation system that creates optimised AI prompts customised to your personality type, task requirements, and professional context.
 

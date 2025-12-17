@@ -11,7 +11,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Welcome to AI Buddy" />
+    <Head title="Welcome to BettrPrompt" />
 
     <div class="">
         <!-- Hero Section -->
@@ -35,7 +35,7 @@ defineOptions({
                 <p class="mx-auto mt-6 max-w-2xl text-gray-600 sm:text-xl">
                     Different personality types solve problems differently.
                     Analytical minds need data and structure. Creative minds
-                    need context and possibilities. AI Buddy speaks your
+                    need context and possibilities. BettrPrompt speaks your
                     language - transforming your tasks into optimised prompts
                     that match how
                     <span class="font-bold italic">you</span> think, work, and
@@ -130,11 +130,11 @@ defineOptions({
                             For Everyone in Between
                         </h3>
                         <p class="mt-4 text-indigo-900">
-                            With optional trait percentages, AI Buddy calibrates
-                            prompts based on trait strength. A highly analytical
-                            INTJ (95% Thinking) gets different optimization than
-                            a balanced INTJ (55% Thinking) - because not all
-                            INTJs think alike.
+                            With optional trait percentages, BettrPrompt
+                            calibrates prompts based on trait strength. A highly
+                            analytical INTJ (95% Thinking) gets different
+                            optimization than a balanced INTJ (55% Thinking) -
+                            because not all INTJs think alike.
                         </p>
                     </div>
                 </div>

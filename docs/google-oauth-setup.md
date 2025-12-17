@@ -1,6 +1,6 @@
 # Google OAuth Authentication Setup
 
-This guide walks you through setting up Google OAuth authentication for AI Buddy, allowing users to sign in with their Google accounts.
+This guide walks you through setting up Google OAuth authentication for BettrPrompt, allowing users to sign in with their Google accounts.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This guide walks you through setting up Google OAuth authentication for AI Buddy
 2. Click the project dropdown at the top of the page
 3. Click **"New Project"**
 4. Enter project details:
-   - **Project name**: "AI Buddy" (or your preferred name)
+   - **Project name**: "BettrPrompt" (or your preferred name)
    - **Organisation**: Leave as default or select your organisation
 5. Click **"Create"**
 
@@ -37,7 +37,7 @@ This guide walks you through setting up Google OAuth authentication for AI Buddy
 4. Fill in the required fields:
 
    **App information**:
-   - **App name**: AI Buddy
+   - **App name**: BettrPrompt
    - **User support email**: Your email address
    - **App logo**: (Optional) Upload your application logo
 
@@ -77,7 +77,7 @@ This guide walks you through setting up Google OAuth authentication for AI Buddy
 
    **Application type**: Web application
 
-   **Name**: AI Buddy Web Client (or your preferred name)
+   **Name**: BettrPrompt Web Client (or your preferred name)
 
    **Authorised JavaScript origins**:
    - For local development: `http://localhost`

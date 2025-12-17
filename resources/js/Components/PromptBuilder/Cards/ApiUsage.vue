@@ -10,9 +10,9 @@ interface ApiUsageData {
 }
 
 interface Props {
-    preAnalysisUsage: ApiUsageData | null;
-    analysisUsage: ApiUsageData | null;
-    generationUsage: ApiUsageData | null;
+    preAnalysisUsage: ApiUsageData | ApiUsageData[] | null;
+    analysisUsage: ApiUsageData | ApiUsageData[] | null;
+    generationUsage: ApiUsageData | ApiUsageData[] | null;
     claudeModels?: ClaudeModel[];
 }
 
@@ -20,9 +20,22 @@ const props = withDefaults(defineProps<Props>(), {
     claudeModels: () => [],
 });
 
+// Normalise usage data to array format
+const normaliseUsage = (
+    usage: ApiUsageData | ApiUsageData[] | null,
+): ApiUsageData[] => {
+    if (!usage) return [];
+    if (Array.isArray(usage)) return usage;
+    return [usage];
+};
+
 const totalTokens = (usage: ApiUsageData | null) => {
     if (!usage) return 0;
     return usage.input_tokens + usage.output_tokens;
+};
+
+const totalTokensForArray = (usageArray: ApiUsageData[]): number => {
+    return usageArray.reduce((sum, usage) => sum + totalTokens(usage), 0);
 };
 
 const formatNumber = (num: number) => {
@@ -55,19 +68,31 @@ const calculateCost = (usage: ApiUsageData | null) => {
     return inputCost + outputCost;
 };
 
+const calculateCostForArray = (usageArray: ApiUsageData[]): number => {
+    return usageArray.reduce((sum, usage) => sum + calculateCost(usage), 0);
+};
+
 const grandTotal = () => {
+    const preAnalysisArray = normaliseUsage(props.preAnalysisUsage);
+    const analysisArray = normaliseUsage(props.analysisUsage);
+    const generationArray = normaliseUsage(props.generationUsage);
+
     return (
-        totalTokens(props.preAnalysisUsage) +
-        totalTokens(props.analysisUsage) +
-        totalTokens(props.generationUsage)
+        totalTokensForArray(preAnalysisArray) +
+        totalTokensForArray(analysisArray) +
+        totalTokensForArray(generationArray)
     );
 };
 
 const grandTotalCost = computed(() => {
+    const preAnalysisArray = normaliseUsage(props.preAnalysisUsage);
+    const analysisArray = normaliseUsage(props.analysisUsage);
+    const generationArray = normaliseUsage(props.generationUsage);
+
     return (
-        calculateCost(props.preAnalysisUsage) +
-        calculateCost(props.analysisUsage) +
-        calculateCost(props.generationUsage)
+        calculateCostForArray(preAnalysisArray) +
+        calculateCostForArray(analysisArray) +
+        calculateCostForArray(generationArray)
     );
 });
 
@@ -89,23 +114,33 @@ const hasCostData = computed(() => {
                 Pre-Analysis Workflow
             </h3>
             <!-- Mobile: Stacked layout -->
-            <div class="space-y-2 md:hidden">
+            <div
+                v-for="(usage, index) in normaliseUsage(preAnalysisUsage)"
+                :key="`pre-mobile-${index}`"
+                class="space-y-2 md:hidden"
+            >
+                <div
+                    v-if="normaliseUsage(preAnalysisUsage).length > 1"
+                    class="text-xs font-medium text-indigo-600"
+                >
+                    Pass {{ index + 1 }}
+                </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Model:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ preAnalysisUsage.model }}
+                        {{ usage.model }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Input Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(preAnalysisUsage.input_tokens) }}
+                        {{ formatNumber(usage.input_tokens) }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Output Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(preAnalysisUsage.output_tokens) }}
+                        {{ formatNumber(usage.output_tokens) }}
                     </span>
                 </div>
                 <div
@@ -113,18 +148,22 @@ const hasCostData = computed(() => {
                 >
                     <span class="text-indigo-900">Total:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(totalTokens(preAnalysisUsage)) }}
+                        {{ formatNumber(totalTokens(usage)) }}
                     </span>
                 </div>
                 <div
-                    v-if="hasCostData && calculateCost(preAnalysisUsage) > 0"
+                    v-if="hasCostData && calculateCost(usage) > 0"
                     class="flex justify-between text-sm"
                 >
                     <span class="text-indigo-600">Cost:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatCurrency(calculateCost(preAnalysisUsage)) }}
+                        {{ formatCurrency(calculateCost(usage)) }}
                     </span>
                 </div>
+                <div
+                    v-if="index < normaliseUsage(preAnalysisUsage).length - 1"
+                    class="border-t border-indigo-200"
+                />
             </div>
 
             <!-- Desktop: Table layout -->
@@ -161,40 +200,46 @@ const hasCostData = computed(() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr
+                            v-for="(usage, index) in normaliseUsage(
+                                preAnalysisUsage,
+                            )"
+                            :key="`pre-desktop-${index}`"
+                        >
                             <td class="px-2 py-2 font-mono text-indigo-900">
-                                {{ preAnalysisUsage.model }}
+                                {{ usage.model }}
+                                <span
+                                    v-if="
+                                        normaliseUsage(preAnalysisUsage)
+                                            .length > 1
+                                    "
+                                    class="ml-2 text-xs text-indigo-600"
+                                >
+                                    (Pass {{ index + 1 }})
+                                </span>
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{
-                                    formatNumber(preAnalysisUsage.input_tokens)
-                                }}
+                                {{ formatNumber(usage.input_tokens) }}
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{
-                                    formatNumber(preAnalysisUsage.output_tokens)
-                                }}
+                                {{ formatNumber(usage.output_tokens) }}
                             </td>
                             <td
                                 class="w-24 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{
-                                    formatNumber(totalTokens(preAnalysisUsage))
-                                }}
+                                {{ formatNumber(totalTokens(usage)) }}
                             </td>
                             <td
                                 v-if="hasCostData"
                                 class="w-20 px-2 py-2 text-right font-mono text-indigo-900"
                             >
                                 {{
-                                    calculateCost(preAnalysisUsage) > 0
-                                        ? formatCurrency(
-                                              calculateCost(preAnalysisUsage),
-                                          )
+                                    calculateCost(usage) > 0
+                                        ? formatCurrency(calculateCost(usage))
                                         : '—'
                                 }}
                             </td>
@@ -213,23 +258,33 @@ const hasCostData = computed(() => {
                 Analysis Workflow
             </h3>
             <!-- Mobile: Stacked layout -->
-            <div class="space-y-2 md:hidden">
+            <div
+                v-for="(usage, index) in normaliseUsage(analysisUsage)"
+                :key="`analysis-mobile-${index}`"
+                class="space-y-2 md:hidden"
+            >
+                <div
+                    v-if="normaliseUsage(analysisUsage).length > 1"
+                    class="text-xs font-medium text-indigo-600"
+                >
+                    Pass {{ index + 1 }}
+                </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Model:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ analysisUsage.model }}
+                        {{ usage.model }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Input Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(analysisUsage.input_tokens) }}
+                        {{ formatNumber(usage.input_tokens) }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Output Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(analysisUsage.output_tokens) }}
+                        {{ formatNumber(usage.output_tokens) }}
                     </span>
                 </div>
                 <div
@@ -237,18 +292,22 @@ const hasCostData = computed(() => {
                 >
                     <span class="text-indigo-900">Total:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(totalTokens(analysisUsage)) }}
+                        {{ formatNumber(totalTokens(usage)) }}
                     </span>
                 </div>
                 <div
-                    v-if="hasCostData && calculateCost(analysisUsage) > 0"
+                    v-if="hasCostData && calculateCost(usage) > 0"
                     class="flex justify-between text-sm"
                 >
                     <span class="text-indigo-600">Cost:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatCurrency(calculateCost(analysisUsage)) }}
+                        {{ formatCurrency(calculateCost(usage)) }}
                     </span>
                 </div>
+                <div
+                    v-if="index < normaliseUsage(analysisUsage).length - 1"
+                    class="border-t border-indigo-200"
+                />
             </div>
 
             <!-- Desktop: Table layout -->
@@ -285,34 +344,45 @@ const hasCostData = computed(() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr
+                            v-for="(usage, index) in normaliseUsage(
+                                analysisUsage,
+                            )"
+                            :key="`analysis-desktop-${index}`"
+                        >
                             <td class="px-2 py-2 font-mono text-indigo-900">
-                                {{ analysisUsage.model }}
+                                {{ usage.model }}
+                                <span
+                                    v-if="
+                                        normaliseUsage(analysisUsage).length > 1
+                                    "
+                                    class="ml-2 text-xs text-indigo-600"
+                                >
+                                    (Pass {{ index + 1 }})
+                                </span>
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{ formatNumber(analysisUsage.input_tokens) }}
+                                {{ formatNumber(usage.input_tokens) }}
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{ formatNumber(analysisUsage.output_tokens) }}
+                                {{ formatNumber(usage.output_tokens) }}
                             </td>
                             <td
                                 class="w-24 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{ formatNumber(totalTokens(analysisUsage)) }}
+                                {{ formatNumber(totalTokens(usage)) }}
                             </td>
                             <td
                                 v-if="hasCostData"
                                 class="w-20 px-2 py-2 text-right font-mono text-indigo-900"
                             >
                                 {{
-                                    calculateCost(analysisUsage) > 0
-                                        ? formatCurrency(
-                                              calculateCost(analysisUsage),
-                                          )
+                                    calculateCost(usage) > 0
+                                        ? formatCurrency(calculateCost(usage))
                                         : '—'
                                 }}
                             </td>
@@ -331,23 +401,33 @@ const hasCostData = computed(() => {
                 Generation Workflow
             </h3>
             <!-- Mobile: Stacked layout -->
-            <div class="space-y-2 md:hidden">
+            <div
+                v-for="(usage, index) in normaliseUsage(generationUsage)"
+                :key="`generation-mobile-${index}`"
+                class="space-y-2 md:hidden"
+            >
+                <div
+                    v-if="normaliseUsage(generationUsage).length > 1"
+                    class="text-xs font-medium text-indigo-600"
+                >
+                    Pass {{ index + 1 }}
+                </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Model:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ generationUsage.model }}
+                        {{ usage.model }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Input Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(generationUsage.input_tokens) }}
+                        {{ formatNumber(usage.input_tokens) }}
                     </span>
                 </div>
                 <div class="flex justify-between text-sm">
                     <span class="text-indigo-600">Output Tokens:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(generationUsage.output_tokens) }}
+                        {{ formatNumber(usage.output_tokens) }}
                     </span>
                 </div>
                 <div
@@ -355,18 +435,22 @@ const hasCostData = computed(() => {
                 >
                     <span class="text-indigo-900">Total:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatNumber(totalTokens(generationUsage)) }}
+                        {{ formatNumber(totalTokens(usage)) }}
                     </span>
                 </div>
                 <div
-                    v-if="hasCostData && calculateCost(generationUsage) > 0"
+                    v-if="hasCostData && calculateCost(usage) > 0"
                     class="flex justify-between text-sm"
                 >
                     <span class="text-indigo-600">Cost:</span>
                     <span class="font-mono text-indigo-900">
-                        {{ formatCurrency(calculateCost(generationUsage)) }}
+                        {{ formatCurrency(calculateCost(usage)) }}
                     </span>
                 </div>
+                <div
+                    v-if="index < normaliseUsage(generationUsage).length - 1"
+                    class="border-t border-indigo-200"
+                />
             </div>
 
             <!-- Desktop: Table layout -->
@@ -403,36 +487,46 @@ const hasCostData = computed(() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr
+                            v-for="(usage, index) in normaliseUsage(
+                                generationUsage,
+                            )"
+                            :key="`generation-desktop-${index}`"
+                        >
                             <td class="px-2 py-2 font-mono text-indigo-900">
-                                {{ generationUsage.model }}
+                                {{ usage.model }}
+                                <span
+                                    v-if="
+                                        normaliseUsage(generationUsage).length >
+                                        1
+                                    "
+                                    class="ml-2 text-xs text-indigo-600"
+                                >
+                                    (Pass {{ index + 1 }})
+                                </span>
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{ formatNumber(generationUsage.input_tokens) }}
+                                {{ formatNumber(usage.input_tokens) }}
                             </td>
                             <td
                                 class="w-28 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{
-                                    formatNumber(generationUsage.output_tokens)
-                                }}
+                                {{ formatNumber(usage.output_tokens) }}
                             </td>
                             <td
                                 class="w-24 px-2 py-2 text-right font-mono text-indigo-900"
                             >
-                                {{ formatNumber(totalTokens(generationUsage)) }}
+                                {{ formatNumber(totalTokens(usage)) }}
                             </td>
                             <td
                                 v-if="hasCostData"
                                 class="w-20 px-2 py-2 text-right font-mono text-indigo-900"
                             >
                                 {{
-                                    calculateCost(generationUsage) > 0
-                                        ? formatCurrency(
-                                              calculateCost(generationUsage),
-                                          )
+                                    calculateCost(usage) > 0
+                                        ? formatCurrency(calculateCost(usage))
                                         : '—'
                                 }}
                             </td>
@@ -509,10 +603,24 @@ const hasCostData = computed(() => {
                             >
                                 {{
                                     formatNumber(
-                                        (preAnalysisUsage?.input_tokens || 0) +
-                                            (analysisUsage?.input_tokens || 0) +
-                                            (generationUsage?.input_tokens ||
-                                                0),
+                                        normaliseUsage(preAnalysisUsage).reduce(
+                                            (sum, u) => sum + u.input_tokens,
+                                            0,
+                                        ) +
+                                            normaliseUsage(
+                                                analysisUsage,
+                                            ).reduce(
+                                                (sum, u) =>
+                                                    sum + u.input_tokens,
+                                                0,
+                                            ) +
+                                            normaliseUsage(
+                                                generationUsage,
+                                            ).reduce(
+                                                (sum, u) =>
+                                                    sum + u.input_tokens,
+                                                0,
+                                            ),
                                     )
                                 }}
                             </td>
@@ -521,11 +629,24 @@ const hasCostData = computed(() => {
                             >
                                 {{
                                     formatNumber(
-                                        (preAnalysisUsage?.output_tokens || 0) +
-                                            (analysisUsage?.output_tokens ||
-                                                0) +
-                                            (generationUsage?.output_tokens ||
-                                                0),
+                                        normaliseUsage(preAnalysisUsage).reduce(
+                                            (sum, u) => sum + u.output_tokens,
+                                            0,
+                                        ) +
+                                            normaliseUsage(
+                                                analysisUsage,
+                                            ).reduce(
+                                                (sum, u) =>
+                                                    sum + u.output_tokens,
+                                                0,
+                                            ) +
+                                            normaliseUsage(
+                                                generationUsage,
+                                            ).reduce(
+                                                (sum, u) =>
+                                                    sum + u.output_tokens,
+                                                0,
+                                            ),
                                     )
                                 }}
                             </td>

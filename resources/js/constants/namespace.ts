@@ -1,25 +1,25 @@
 /**
- * AI Buddy namespace constants and utilities.
+ * BettrPrompt namespace constants and utilities.
  *
  * Provides centralized management of prefixes for all frontend storage mechanisms
  * including localStorage, sessionStorage, cookies, and other identifiers.
  */
 
 /**
- * The AI Buddy application prefix.
+ * The BettrPrompt application prefix.
  * Can be overridden via environment variable for different environments.
  */
-export const APP_NAMESPACE = import.meta.env.APP_NAMESPACE || 'aib';
+export const APP_NAMESPACE = import.meta.env.APP_NAMESPACE || 'bp';
 
 /**
- * Generate a namespaced key with the AI Buddy prefix.
+ * Generate a namespaced key with the BettrPrompt prefix.
  *
  * @param key The base key to namespace
  * @returns The namespaced key
  *
  * @example
- * namespaced('consent_state') // returns 'aib_consent_state'
- * namespaced('visitor_id') // returns 'aib_visitor_id'
+ * namespaced('consent_state') // returns 'bp_consent_state'
+ * namespaced('visitor_id') // returns 'bp_visitor_id'
  */
 export function namespaced(key: string): string {
     return `${APP_NAMESPACE}_${key}`;

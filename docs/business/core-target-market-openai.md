@@ -1,6 +1,6 @@
 # Core Target Market Recommendation (OpenAI Personas)
 
-This analysis reviews the personas in docs/business/personas.md and identifies which should be the core target market for AI Buddy. It uses public quantitative signals on AI adoption, willingness to pay, and usage intensity to justify the choice.
+This analysis reviews the personas in docs/business/personas.md and identifies which should be the core target market for BettrPrompt. It uses public quantitative signals on AI adoption, willingness to pay, and usage intensity to justify the choice.
 
 ## Summary Recommendation
 - Prioritise **Persona 2: Marcus Thompson (Frustrated Prompt Dabbler, Quadrant B)** and **Persona 4: James Foster (Resourceful Creator Under Pressure, Quadrant B)** as the core launch market.
@@ -11,7 +11,7 @@ This analysis reviews the personas in docs/business/personas.md and identifies w
 - **Organisational adoption:** McKinsey Global Survey on AI (2024) shows ~65% of organisations report regular GenAI use, up from ~33% in 2023. Functions leading adoption include marketing, sales, and product/operations — the domains of Marcus and James.
 - **Marketing teams:** HubSpot State of AI in Marketing (2024) finds ~64% of marketers use AI tools, with ~38% using them daily for content and copy. This maps tightly to Marcus.
 - **Creator economy scale:** Adobe Future of Creativity Study (2023) estimated ~303M global creators, with ~165M added since 2020. Even focusing on the professional slice, tens of millions of freelance creators and social managers (closest to James) actively seek speed and differentiation.
-- **Willingness to pay:** Industry pricing for marketing/creator AI tools (Jasper, Grammarly Business, Notion AI) commonly sits in the USD 10-40/month range, indicating Marcus and James operate in a spending band that matches AI Buddy’s likely pricing. By contrast, budget sensitivity in Sarah’s and Priya’s cohorts is materially higher.
+- **Willingness to pay:** Industry pricing for marketing/creator AI tools (Jasper, Grammarly Business, Notion AI) commonly sits in the USD 10-40/month range, indicating Marcus and James operate in a spending band that matches BettrPrompt’s likely pricing. By contrast, budget sensitivity in Sarah’s and Priya’s cohorts is materially higher.
 - **Time-to-value:** Marketing and creator roles report 3-10 hours/week saved when GenAI workflows are embedded (various vendor case studies and McKinsey 2024 workflow time-savings estimates). Marcus and James explicitly promise this intensity of use; Sarah and Priya use AI sporadically and may not realise weekly ROI.
 
 ## Fit Analysis by Persona

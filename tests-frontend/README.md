@@ -1,6 +1,6 @@
 # Testing Documentation
 
-This directory contains all frontend and E2E tests for the AI Buddy application.
+This directory contains all frontend and E2E tests for the BettrPrompt application.
 
 ## Testing Stack
 
@@ -205,7 +205,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Home Page', () => {
     test('should load the home page', async ({ page }) => {
         await page.goto('/');
-        await expect(page).toHaveTitle(/Welcome to AI Buddy/);
+        await expect(page).toHaveTitle(/Welcome to BettrPrompt/);
     });
 
     test('should display main heading', async ({ page }) => {

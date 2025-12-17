@@ -1,0 +1,111 @@
+[
+    {
+        "success": true,
+        "data": {
+            "task_classification": {
+                "primary_category": "DECISION",
+                "secondary_category": "ANALYSIS",
+                "complexity": "moderate",
+                "classification_reasoning": "User needs to choose between multiple second-hand car options within constraints (budget £6000, family use, fuel efficiency). This requires comparing alternatives, evaluating trade-offs, and making a final selection—core decision-making activities. Secondary analysis component involves understanding vehicle specifications and market options."
+            },
+            "cognitive_requirements": {
+                "primary": ["OBJECTIVE", "RISK"],
+                "secondary": ["DECISIVE", "EXPLORE"],
+                "reasoning": "OBJECTIVE required for evidence-based evaluation of car specs, reliability ratings, and pricing data. RISK essential for identifying potential issues (hidden damage, maintenance costs, reliability concerns). DECISIVE needed to reach a clear purchase recommendation. EXPLORE valuable for considering multiple options before narrowing down."
+            },
+            "selected_framework": {
+                "name": "Pros and Cons",
+                "code": "PROS_AND_CONS",
+                "rationale": "Straightforward decision-making framework ideal for comparing 2-3 shortlisted vehicles. Allows systematic evaluation of benefits (fuel efficiency, price, condition) against drawbacks (mileage, age, repair history) for each option. Low complexity matches the moderate task complexity and provides clear, actionable output for purchase decision."
+            },
+            "alternative_frameworks": [
+                {
+                    "name": "RICE",
+                    "code": "RICE",
+                    "rationale": "Prioritisation framework (Reach, Impact, Confidence, Effort) can score multiple car options across weighted criteria: fuel efficiency impact, budget reach, confidence in reliability, effort to inspect/purchase.",
+                    "when_to_use_instead": "You should use RICE instead if you have 4+ shortlisted vehicles and want a quantitative scoring system to rank them objectively. This is particularly useful if you're comparing cars across different price points or fuel types where trade-offs are complex."
+                },
+                {
+                    "name": "Tree of Thought",
+                    "code": "TREE_OF_THOUGHT",
+                    "rationale": "Explores decision branches and outcomes systematically. Maps scenarios: e.g., 'If I buy car A, then maintenance costs could be X or Y, leading to outcome Z.' Identifies hidden consequences and optimal paths.",
+                    "when_to_use_instead": "You should use Tree of Thought instead if you want to deeply explore long-term consequences and second-order effects (e.g., resale value, cumulative maintenance costs over 5 years, impact on family needs as they change). This is better for complex financial or lifestyle decisions."
+                },
+                {
+                    "name": "Six Thinking Hats",
+                    "code": "SIX_THINKING_HATS",
+                    "rationale": "Multi-perspective analysis: White (facts/specs), Red (gut feeling/emotional response), Black (risks/problems), Yellow (benefits/optimism), Green (creative alternatives), Blue (decision process). Ensures balanced evaluation.",
+                    "when_to_use_instead": "You should use Six Thinking Hats instead if you want to ensure you're not overlooking emotional factors (does the car feel right?) or creative alternatives (lease vs. buy, different fuel types). This is valuable if you're torn between options or want to challenge your assumptions."
+                }
+            ],
+            "clarifying_questions": [
+                {
+                    "id": "U2",
+                    "question": "What is your acceptable mileage range and age limit for the second-hand car?",
+                    "purpose": "Establish objective criteria for risk assessment and filtering options within budget constraints",
+                    "required": true
+                },
+                {
+                    "id": "U3",
+                    "question": "Do you prefer to buy from a dealer, private seller, or are you open to both?",
+                    "purpose": "Clarify risk tolerance regarding warranty, inspection guarantees, and transaction security",
+                    "required": true
+                },
+                {
+                    "id": "U4",
+                    "question": "What specific fuel efficiency target (MPG) would satisfy your requirement?",
+                    "purpose": "Convert vague preference into measurable decision criteria for objective comparison",
+                    "required": true
+                },
+                {
+                    "id": "U5",
+                    "question": "Are there any non-negotiable features or deal-breakers (e.g., transmission type, safety ratings, seating capacity)?",
+                    "purpose": "Identify constraints that narrow decision space and support decisive framework application",
+                    "required": true
+                },
+                {
+                    "id": "U6",
+                    "question": "How important is vehicle history transparency (service records, accident history, ownership count) in your decision?",
+                    "purpose": "Assess risk mitigation priorities and information-gathering depth needed for INTP analytical approach",
+                    "required": true
+                }
+            ],
+            "question_rationale": "These questions were selected because: (1) DECISION category with RISK as primary cognitive requirement demands objective, measurable criteria—questions U2, U4 establish quantifiable thresholds; (2) PROS_AND_CONS framework requires complete constraint definition—U5 identifies deal-breakers that structure the analysis; (3) INTP-A personality (high logic 65%, high independence 84%, high turbulence 84%) favors data-driven, systematic exploration—U6 addresses information depth preferences; (4) Secondary EXPLORE requirement is satisfied through U3's open-ended dealer/private choice; (5) DECISIVE secondary trait is supported by U5's constraint-setting; (6) Moderate complexity warrants 5 focused questions that reduce ambiguity without overwhelming; (7) Family vehicle + £6009 budget + fuel efficiency preference creates risk context where transaction type (U3) and vehicle condition (U2) are critical differentiators.",
+            "personality_tier": "full",
+            "task_trait_alignment": {
+                "amplified": [
+                    "Logical Analysis (mind 65%): INTP strength directly amplifies OBJECTIVE cognitive requirement; questions U2, U4, U6 leverage preference for data-driven decision-making",
+                    "Independence (nature 84%): High independence supports EXPLORE secondary trait; U3 respects autonomy in choosing transaction channel",
+                    "Turbulence (identity 84%): Drives thorough risk assessment; U6 aligns with tendency to seek comprehensive information before commitment"
+                ],
+                "counterbalanced": [
+                    "Extroversion (energy 64%): Moderate extroversion slightly counterbalances INTP tendency toward isolated research; U3 and U6 encourage external validation (dealer expertise, service records)",
+                    "Assertiveness (tactics 57%): Moderate assertiveness requires structured framework; PROS_AND_CONS with constraint-based filtering (U5) provides decision scaffolding that compensates for lower assertiveness"
+                ],
+                "neutral": [
+                    "Introversion tendency: Task requires independent research phase compatible with INTP preference; no conflict with DECISION category"
+                ]
+            },
+            "personality_adjustments_preview": [
+                "Leverage INTP analytical strength: Provide structured comparison matrix template for pros/cons analysis with weighted criteria (addresses logic preference)",
+                "Support independence: Offer resources for self-directed research (consumer reports, fuel economy databases) rather than prescriptive recommendations",
+                "Mitigate turbulence-driven over-analysis: Set decision deadline and information-gathering cutoff to prevent analysis paralysis",
+                "Compensate for moderate assertiveness: Provide negotiation scripts and confidence-building frameworks for dealer interactions",
+                "Enhance moderate extroversion: Suggest peer review step (trusted friend reviews shortlist) to balance solitary analytical phase"
+            ]
+        },
+        "api_usage": [
+            {
+                "model": "claude-haiku-4-5-20251001",
+                "input_tokens": 5217,
+                "output_tokens": 797
+            },
+            {
+                "model": "claude-haiku-4-5-20251001",
+                "input_tokens": 562,
+                "output_tokens": 1028
+            }
+        ],
+        "error": null
+    }
+]

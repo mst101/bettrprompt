@@ -280,7 +280,7 @@ cat resources/js/Pages/Cookies.vue | head -50
 
 2. **Common issues:**
     - Missing footer with cross-page links
-    - Missing company information ("AI Buddy Ltd.")
+    - Missing company information ("BettrPrompt Ltd.")
     - H1 heading not present
     - Missing "last updated" dates
 

@@ -23,7 +23,7 @@ const closeCookieSettings = () => {
             >
                 <!-- Copyright -->
                 <div class="text-center text-sm text-gray-600 sm:text-left">
-                    © {{ new Date().getFullYear() }} AI Buddy. All rights
+                    © {{ new Date().getFullYear() }} BettrPrompt. All rights
                     reserved.
                 </div>
 

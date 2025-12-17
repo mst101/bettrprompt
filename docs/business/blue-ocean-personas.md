@@ -196,12 +196,12 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Growth without self-betrayal**: "I want to develop without losing my INFP essence"
 - **Belonging need**: "I want to connect with other INFPs who get it"
 
-### How AI Buddy Helps Emma
+### How BettrPrompt Helps Emma
 
 **1. Identity-First Onboarding**
 
 - **Emma's need**: "Recognize my personality as core identity, not optional feature"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Comprehensive INFP-T profile created during signup
     - Full cognitive function stack explained (Fi-Ne-Si-Te)
     - Growth paths specific to INFP development (strengthening Te, managing Fi-Ne loops)
@@ -211,7 +211,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **2. Emotionally Attuned Communication**
 
 - **Emma's need**: "AI responses that feel warm, gentle, values-based (INFP style)"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - All outputs tuned to INFP communication preferences (soft language, emotional nuance)
     - Avoids corporate jargon, directive tone, aggressive productivity advice
     - Validates feelings before offering suggestions: "It's understandable that conflict makes you anxious. Many INFPs
@@ -222,7 +222,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **3. Type-Specific Growth Guidance**
 
 - **Emma's need**: "Help me develop as an INFP, not change into someone else"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - INFP growth framework: Developing auxiliary Ne (explore possibilities), tertiary Si (learn from experience),
       inferior Te (logical structure)
     - Type-specific challenges addressed: Fi-Si loops (rumination), Ne paralysis (too many ideas), Te avoidance (
@@ -234,7 +234,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **4. Persistent Memory of Identity**
 
 - **Emma's need**: "Stop re-explaining my INFP traits every session"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Permanent personality profile stored: INFP-T, cognitive functions, communication preferences
     - Learns over time: Which advice resonates, which tone she prefers, her unique INFP expression
     - Context persistence: "Last time we talked about your anxiety around confrontation at work..."
@@ -244,7 +244,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **5. INFP Community Connection**
 
 - **Emma's need**: "Connect with other INFPs who understand these struggles"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - INFP-specific forum within platform
     - Share prompts/strategies that worked for other INFPs
     - Type-specific content: "How INFPs Can Set Boundaries Without Feeling Guilty"
@@ -254,7 +254,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **6. Work-Life Authenticity Bridge**
 
 - **Emma's need**: "Navigate corporate world without losing my INFP voice"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Email rewriting: Corporate requirement → INFP-authentic version (warm but professional)
     - Meeting prep: "Here's how to contribute as an INFP (thoughtful, prepared, values-led) without forcing
       extroversion"
@@ -279,14 +279,14 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **Testimonial She'd Relate To:**
 
 > "As an INFP-T, I've always felt like I don't fit into 'normal' productivity advice. ChatGPT would tell me to 'be more
-> assertive' or 'network aggressively' - advice that made me feel worse. AI Buddy actually understands how my INFP brain
+> assertive' or 'network aggressively' - advice that made me feel worse. BettrPrompt actually understands how my INFP brain
 > works. The prompts feel like they're written *for me*, not for some generic professional. For the first time, AI feels
 > like it truly gets me."
 > — Emma R., Content Strategist, INFP-T
 
 **Social Proof That Matters:**
 
-- "500+ INFPs using AI Buddy daily"
+- "500+ INFPs using BettrPrompt daily"
 - "Rated 4.9/5 by INFP users"
 - "Featured in r/infp community"
 - "Trusted by personality psychologists"
@@ -330,7 +330,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Use case**: Emma needs to write a difficult email (declining extra work from manager)
 - **Generic ChatGPT attempt**: "I cannot take on additional projects at this time due to capacity constraints."
 - **Emma's reaction**: "This is too direct/cold for me. I'll feel guilty hitting send."
-- **AI Buddy attempt**: Rewrites in INFP-authentic style
+- **BettrPrompt attempt**: Rewrites in INFP-authentic style
     - "I really appreciate you thinking of me for this project - it sounds meaningful. I've been reflecting on my
       current workload, and I want to make sure I'm giving my best to the projects I'm committed to. Taking this on
       right now would mean I couldn't deliver the quality I'd want to. Could we revisit this in a few weeks?"
@@ -347,7 +347,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Engagement triggers**:
     - Push notification: "Daily INFP reflection question ready"
     - Email: "New prompt shared by INFP community"
-    - In-app: "You've used AI Buddy 20 times this month - here's what we've learned about your INFP voice"
+    - In-app: "You've used BettrPrompt 20 times this month - here's what we've learned about your INFP voice"
 - **Sticky features**:
     - Personality alignment score (tracks how authentic outputs feel)
     - INFP community forum (connects with 500+ other INFPs)
@@ -368,7 +368,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 
 - **Continued usage**:
     - Still using daily (journaling, work emails, personal growth)
-    - Emotional dependency: "AI Buddy is like my INFP coach that's always available"
+    - Emotional dependency: "BettrPrompt is like my INFP coach that's always available"
     - Identity integration: "This tool is part of how I stay authentic"
 - **Expansion behaviours**:
     - Tries neurodivergent features (discovers she has ADHD traits too - AI adapts)
@@ -376,7 +376,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
     - Purchases annual plan (saves £40, commits to tool)
 - **Advocacy triggers**:
     - Friend complains about corporate job not fitting personality
-    - Emma: "Have you taken the MBTI test? Try AI Buddy - it's built for INFPs"
+    - Emma: "Have you taken the MBTI test? Try BettrPrompt - it's built for INFPs"
     - Shares in r/infp: "This tool actually understands us"
     - Posts TikTok: "AI that finally speaks INFP" (50K views, 200 sign-ups)
 
@@ -404,14 +404,14 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - Notion: £4
 - **Total**: £114-124/month
 
-**AI Buddy Price Comparison:**
+**BettrPrompt Price Comparison:**
 
 | Alternative         | Monthly Cost               | Usage Frequency    | Cost Per Use |
 |---------------------|----------------------------|--------------------|--------------|
 | **Therapy**         | £80 (fortnightly sessions) | 2 sessions/month   | £40/session  |
 | **ADHD Coaching**   | £200 (monthly)             | 1-2 sessions/month | £100/session |
 | **Self-Help Books** | £20-30                     | 2-3 books/month    | £8/book      |
-| **AI Buddy**        | £20                        | 20-30 uses/month   | £0.67/use    |
+| **BettrPrompt**        | £20                        | 20-30 uses/month   | £0.67/use    |
 
 **Value Justification:**
 
@@ -663,12 +663,12 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Imposter syndrome**: "I'm only successful because I mask my ADHD struggles"
 - **Autonomy threat**: "Don't tell me what to do - my brain rebels against external structure"
 
-### How AI Buddy Helps Alex
+### How BettrPrompt Helps Alex
 
 **1. Neurodivergent Cognitive Profile**
 
 - **Alex's need**: "AI that understands ADHD + INTP brain, not generic professional"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - ADHD-INTP profile created during onboarding
     - Encodes ADHD traits: Hyperfocus patterns, task paralysis triggers, working memory limits
     - Encodes INTP thinking style: Ti-Ne-Si-Fe (internal logic, explore possibilities)
@@ -679,7 +679,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **2. Adaptive State Recognition**
 
 - **Alex's need**: "Detect my current ADHD state (hyperfocus? Low energy? Scattered?)"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Monitors query patterns:
         - Hyperfocus signals: Rapid-fire queries, deep technical questions, time passing unnoticed
         - Scattered signals: Jumping between unrelated topics, incomplete sentences
@@ -694,7 +694,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **3. Executive Function Scaffolding**
 
 - **Alex's need**: "Break tasks into ADHD-manageable chunks (2-3 steps max)"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - ADHD-specific task breakdown:
         - NOT: "Step 1-10 detailed plan"
         - YES: "First micro-step: Open the file. [Done that? Ask for next step.]"
@@ -706,7 +706,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **4. Persistent Working Memory**
 
 - **Alex's need**: "Stop making me re-explain my ADHD needs every session"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Permanent neurodivergent profile: ADHD + INTP traits, communication preferences stored
     - Session context persistence: "Last time you were working on the API refactor. Low energy today?"
     - Learns patterns: "Alex avoids documentation tasks - offer gamification"
@@ -716,7 +716,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **5. Hyperfocus Optimization**
 
 - **Alex's need**: "Recognize my hyperfocus and help me exploit it"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Hyperfocus detection: "I notice you've been coding intensely for 3 hours - you're in the zone. Keep going!"
     - Hyperfocus protection: Responses become ultra-brief (2-3 sentences max) to avoid interruption
     - Hyperfocus reminders: "You've been hyperfocused for 5 hours - remember to hydrate/eat"
@@ -726,7 +726,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **6. Shame-Free Neurodivergent Language**
 
 - **Alex's need**: "Don't tell me to 'just focus' or 'stay organized' - that's neurotypical advice"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Avoids neurotypical productivity language:
         - NOT: "Just start" / "Make a plan" / "Stay disciplined"
         - YES: "Let's find the tiniest first step" / "Flexible structure" / "Work with your brain's wiring"
@@ -739,7 +739,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **7. ADHD-INTP Communication Style**
 
 - **Alex's need**: "Concise, logical, no emotional fluff (INTP) but compassionate (ADHD RSD)"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - INTP analytical tone: Clear logic chains, systematic breakdowns, respects his need for "why"
     - ADHD brevity: 3-5 sentences max, bullet points, no walls of text
     - RSD safety: Avoids phrasing that sounds critical ("You should..." becomes "Consider...")
@@ -749,7 +749,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **8. ADHD Community Connection**
 
 - **Alex's need**: "Connect with other ADHD professionals who get it"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - ADHD-specific forum (neurotypicals not allowed - safe space)
     - Share ADHD-compatible productivity hacks: "Body doubling works for me", "I gamify boring tasks by..."
     - Success stories: "I'm an ADHD software engineer who built a sustainable career - here's my system"
@@ -774,7 +774,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **Testimonial He'd Relate To:**
 
 > "I'm an INTP with ADHD. ChatGPT kept giving me 10-step plans that my brain rejected immediately - task paralysis every
-> time. AI Buddy breaks tasks into ADHD-manageable micro-steps, remembers I need concise responses (my working memory is
+> time. BettrPrompt breaks tasks into ADHD-manageable micro-steps, remembers I need concise responses (my working memory is
 > terrible), and actually *detects* when I'm in hyperfocus to keep responses brief. It's the first AI tool that works
 > with
 > my neurodivergent brain instead of against it. Worth every penny."
@@ -782,7 +782,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 
 **Social Proof That Matters:**
 
-- "1,000+ ADHD professionals using AI Buddy daily"
+- "1,000+ ADHD professionals using BettrPrompt daily"
 - "30% productivity increase (2024 neurodivergent study)"
 - "Featured in r/ADHD community (1.5M members)"
 - "Built with ADHD-specialized psychologists"
@@ -818,28 +818,28 @@ am"). The latter cannot be substituted by custom GPT instructions.
     - "Tone?" → Logical but kind (RSD-aware)
 - **Step 3**: First micro-task (2 minutes)
     - Alex: "I need to update project documentation"
-    - AI Buddy: "That's a boring task - ADHD brains avoid those. Let's gamify it. Micro-step 1: Open the doc
+    - BettrPrompt: "That's a boring task - ADHD brains avoid those. Let's gamify it. Micro-step 1: Open the doc
       file. [Reply 'done' when ready.]"
     - Alex: "done"
-    - AI Buddy: "Nice! Micro-step 2: Write one sentence. Just one. [Reply with the sentence.]"
+    - BettrPrompt: "Nice! Micro-step 2: Write one sentence. Just one. [Reply with the sentence.]"
     - Alex: *writes sentence*
-    - AI Buddy: "Momentum building! You've defeated task initiation. Want micro-step 3?"
+    - BettrPrompt: "Momentum building! You've defeated task initiation. Want micro-step 3?"
 - **Outcome**: Activated user - "This AI *gets* my ADHD brain"
 
 **4. First Success (Day 2)**
 
 - **Use case**: Alex stuck in task paralysis (needs to refactor legacy code - boring)
 - **Previous pattern**: Avoids for weeks, eventually forced to rush under deadline
-- **AI Buddy approach**:
+- **BettrPrompt approach**:
     - Recognizes avoidance: "I notice you've asked about this refactor 3 times but haven't started. ADHD task
       paralysis?"
     - Alex: "Yes. I know it's important but my brain won't let me start."
-    - AI Buddy: "Understood. Let's trick your ADHD brain. Micro-step 1: Open ONE file (not the whole project). Which
+    - BettrPrompt: "Understood. Let's trick your ADHD brain. Micro-step 1: Open ONE file (not the whole project). Which
       file?"
     - Alex: "auth.py"
-    - AI Buddy: "Perfect. Now: Read lines 1-50 only. Nothing else. Report back one thing you noticed."
+    - BettrPrompt: "Perfect. Now: Read lines 1-50 only. Nothing else. Report back one thing you noticed."
     - Alex: *reads* "There's duplicate code in the auth validation"
-    - AI Buddy: "Excellent pattern recognition (INTP strength!). That's interesting, right? Want to fix that tiny
+    - BettrPrompt: "Excellent pattern recognition (INTP strength!). That's interesting, right? Want to fix that tiny
       duplication?"
     - Alex: "Actually yes" *starts refactoring, enters hyperfocus for 4 hours*
 - **Outcome**: Task initiation barrier defeated, ADHD avoidance overcome
@@ -876,15 +876,15 @@ am"). The latter cannot be substituted by custom GPT instructions.
 
 - **Continued usage**:
     - Essential daily tool (task initiation, working memory, hyperfocus optimization)
-    - Dependency: "AI Buddy is my external executive function"
-    - Integration: Part of his ADHD management stack (medication + therapy + AI Buddy)
+    - Dependency: "BettrPrompt is my external executive function"
+    - Integration: Part of his ADHD management stack (medication + therapy + BettrPrompt)
 - **Expansion behaviours**:
     - Partners with girlfriend (also ADHD) - shares strategies
-    - Joins monthly ADHD professional meetup (AI Buddy community feature)
+    - Joins monthly ADHD professional meetup (BettrPrompt community feature)
     - Annual plan (saves £60, commits long-term)
 - **Advocacy triggers**:
     - ADHD friend complains about productivity struggles
-    - Alex: "Have you tried AI Buddy? It's built for ADHD brains, not neurotypical ones"
+    - Alex: "Have you tried BettrPrompt? It's built for ADHD brains, not neurotypical ones"
     - Posts in r/ADHD: "AI tool that actually works with ADHD (not against it)"
     - 500 upvotes, 50 sign-ups from thread
 - **Referral program**: Sends invite links to 5 ADHD colleagues, 3 convert
@@ -897,7 +897,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
     - Deepens neurodivergent exploration (realizes autism traits, adds to profile)
 - **Churn risk**: VERY LOW
     - Cognitive dependency ("I can't function without this external brain")
-    - Performance tied to tool ("My best work happens with AI Buddy support")
+    - Performance tied to tool ("My best work happens with BettrPrompt support")
     - Community investment (active in ADHD forum, friendships formed)
 - **LTV**: £720 over 2 years (£30/month × 24 months)
 
@@ -913,17 +913,17 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - Abandoned subscriptions: £20-30
 - **Total**: £360-370/month
 
-**AI Buddy Price Comparison:**
+**BettrPrompt Price Comparison:**
 | Alternative | Monthly Cost | Usage Frequency | Cost Per Use |
 |-------------|--------------|-----------------|--------------|
 | **ADHD Therapy** | £200 (fortnightly) | 2 sessions/month | £100/session |
 | **ADHD Coaching** | £300 (monthly) | 1-2 sessions/month | £150/session |
 | **Medication** | £120 | Daily | £4/day |
-| **AI Buddy** | £30 | 20-30 uses/day | £0.05/use |
+| **BettrPrompt** | £30 | 20-30 uses/day | £0.05/use |
 
 **Value Justification:**
 
-- **Cognitive ROI**: "AI Buddy is my external executive function - worth more than therapy"
+- **Cognitive ROI**: "BettrPrompt is my external executive function - worth more than therapy"
 - **Frequency advantage**: Available 24/7 vs. therapy once/week
 - **Practical impact**: 40% increase in task completion (measurable productivity gain)
 - **Working memory support**: "AI remembers context I forget - this alone is worth £30"
@@ -1172,12 +1172,12 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Exhaustion**: "Cultural code-switching is draining - I need support, not more work"
 - **Imposter syndrome**: "My accent + cultural differences make me doubt my competence"
 
-### How AI Buddy Helps Yuki
+### How BettrPrompt Helps Yuki
 
 **1. Cultural Personality Framework**
 
 - **Yuki's need**: "Understand that my ISFJ expresses differently in Japanese vs. UK context"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Cultural personality profiles: "Japanese ISFJ-T" vs. "UK ISFJ-T"
     - Encodes cultural psychology:
         - Japanese ISFJ: Collectivist (group harmony), indirect (read context), humble (self-effacing), hierarchical (
@@ -1190,7 +1190,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **2. Context-Aware Code-Switching**
 
 - **Yuki's need**: "Help me adapt communication for Japanese client vs. UK client"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Prompt: "Draft email declining extra work to Japanese manager"
     - AI output (Japanese ISFJ mode):
         - Opens with apology: "I sincerely apologize for any inconvenience..."
@@ -1209,21 +1209,21 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **3. Cultural Translation (Not Just Linguistic)**
 
 - **Yuki's need**: "Translate intent and context, not just words"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Japanese email input: "お忙しいところ恐れ入りますが、ご確認いただけますと幸いです" (Literal: "I'm sorry to bother
       you when busy, but I'd be grateful if you could confirm")
     - Generic translation (ChatGPT): "Sorry to bother you, but please confirm"
-    - AI Buddy translation (cultural): "When you have a moment, could you please confirm? Thank you for your time."
+    - BettrPrompt translation (cultural): "When you have a moment, could you please confirm? Thank you for your time."
     - Rationale: Preserves Japanese politeness (humble request) but adapts to UK directness (clear ask)
 - **Result**: Yuki sounds professional in English without losing her ISFJ warmth
 
 **4. Authenticity Preservation Across Cultures**
 
 - **Yuki's need**: "Help me adapt without betraying my Japanese ISFJ identity"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - UK colleague: "Yuki, speak up more in meetings"
     - Generic AI advice: "Be more assertive - interrupt if needed, claim credit loudly"
-    - AI Buddy (cultural ISFJ advice):
+    - BettrPrompt (cultural ISFJ advice):
         - "Your Japanese ISFJ values (harmony, modesty) are strengths. In UK meetings, you can adapt without losing
           them:"
         - "1. Prepare 2-3 points in advance (ISFJ planning strength) - this gives confidence to speak"
@@ -1237,7 +1237,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **5. Persistent Cultural Memory**
 
 - **Yuki's need**: "Remember my Japanese cultural background - stop making me re-explain"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Profile stores: Japanese native, ISFJ-T, 3 years in UK, working in global consulting, values harmony and modesty
     - AI auto-applies cultural context: All advice considers Japanese ISFJ baseline + UK adaptation layer
     - Learns over time: "Yuki prefers indirect phrasing in Japanese emails, direct-but-warm in UK emails"
@@ -1247,7 +1247,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **6. Cross-Cultural ISFJ Community**
 
 - **Yuki's need**: "Connect with other expats navigating cultural personality expression"
-- **AI Buddy delivers**:
+- **BettrPrompt delivers**:
     - Expat ISFJ forum: Asian expats in Western countries, share code-switching strategies
     - Cultural personality discussions: "How do INFJs express differently in collectivist vs. individualist cultures?"
     - Success stories: "I'm Japanese INFP in US - here's how I stay authentic whilst adapting"
@@ -1272,7 +1272,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 **Testimonial She'd Relate To:**
 
 > "As a Japanese ISFJ working in London, I constantly code-switch between cultures. ChatGPT gives me generic ISFJ advice
-> that assumes I'm Western - 'be more assertive', 'advocate for yourself'. AI Buddy understands that my ISFJ humility is
+> that assumes I'm Western - 'be more assertive', 'advocate for yourself'. BettrPrompt understands that my ISFJ humility is
 > a
 > strength in Japanese context but needs adaptation in UK context. It helps me navigate both cultures without losing who
 > I
@@ -1282,7 +1282,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
 
 **Social Proof That Matters:**
 
-- "500+ expat professionals using AI Buddy"
+- "500+ expat professionals using BettrPrompt"
 - "Supports 15+ cultural contexts (Asian, Latin American, European expats)"
 - "Featured in expat community forums"
 - "Built with cross-cultural psychologists"
@@ -1327,9 +1327,9 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - **Use case**: Yuki needs to give constructive feedback to UK colleague (dreading this - conflict-averse ISFJ +
   Japanese indirect communication training)
 - **Previous approach**: Avoids feedback, or gives it so gently UK colleague doesn't realize it's critical
-- **AI Buddy approach**:
+- **BettrPrompt approach**:
     - Yuki: "I need to tell my UK colleague his report has errors. How do I say this without being rude?"
-    - AI Buddy (cultural ISFJ mode):
+    - BettrPrompt (cultural ISFJ mode):
         - "Your Japanese ISFJ wants to preserve harmony (indirect feedback). UK business culture expects direct
           feedback. Here's a bridge:"
         - "Start with positive: 'I appreciate the effort on this report.'"
@@ -1366,7 +1366,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
     - £25/month = less than 1 cross-cultural coaching session (uses daily)
     - Professional ROI: "I communicate more confidently across cultures"
     - Reduced exhaustion: "Code-switching is less draining with AI support"
-- **Upgrade moment**: Clicks "Upgrade" after particularly stressful cross-cultural misunderstanding that AI Buddy could
+- **Upgrade moment**: Clicks "Upgrade" after particularly stressful cross-cultural misunderstanding that BettrPrompt could
   have prevented
 
 **7. Retention & Advocacy (Months 2-12)**
@@ -1381,7 +1381,7 @@ am"). The latter cannot be substituted by custom GPT instructions.
     - Annual plan (saves £50, commits long-term)
 - **Advocacy triggers**:
     - Japanese friend moving to London asks for advice
-    - Yuki: "Use AI Buddy - it understands Japanese communication style and helps you adapt"
+    - Yuki: "Use BettrPrompt - it understands Japanese communication style and helps you adapt"
     - Posts in Japanese expat Facebook group: "This tool saved me so much cultural stress"
     - LinkedIn post (professional network): "Cross-cultural professionals - this AI tool is invaluable"
 
@@ -1409,13 +1409,13 @@ am"). The latter cannot be substituted by custom GPT instructions.
 - Calm app: £12
 - **Total**: £72/month
 
-**AI Buddy Price Comparison:**
+**BettrPrompt Price Comparison:**
 | Alternative | Monthly Cost | Usage Frequency | Cost Per Use |
 |-------------|--------------|-----------------|--------------|
 | **Cross-Cultural Coaching** | £500 (3 sessions) | Once every 3 months | £167/session |
 | **Translation Services** | £0.10/word | 2,000 words/month | £200/month |
 | **DeepL Pro** | £10 | 10-15 uses/month | £0.67/use |
-| **AI Buddy** | £25 | 20-30 uses/month | £0.83/use |
+| **BettrPrompt** | £25 | 20-30 uses/month | £0.83/use |
 
 **Value Justification:**
 

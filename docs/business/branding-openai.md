@@ -1,11 +1,11 @@
-# Branding & Experience Improvements for AI Buddy (Marcus + James First)
+# Branding & Experience Improvements for BettrPrompt (Marcus + James First)
 
 Goal: sharpen appeal to core Quadrant B personas (Marcus: SaaS marketer; James: creator/SM manager) while staying welcoming to Quadrant A (Sarah, Priya).
 
 ## Brand Direction & Naming
 - Positioning: “Personality-tuned AI copilot for consistent, on-brand outputs.” Emphasise reliability, speed, and voice preservation.
-- Name: “AI Buddy” is friendly for Quadrant A but undersells strategic value for Quadrant B. Consider testing a bolder, credibility-forward variant:
-  - Options to A/B test: “PersonaPrompt,” “Voiceframe,” “PromptPilot,” “Persona Copilot,” or keep “AI Buddy” but pair with a descriptor (e.g., “AI Buddy: Your Voice-Safe Prompt Copilot”).
+- Name: “BettrPrompt” is friendly for Quadrant A but undersells strategic value for Quadrant B. Consider testing a bolder, credibility-forward variant:
+  - Options to A/B test: “PersonaPrompt,” “Voiceframe,” “PromptPilot,” “Persona Copilot,” or keep “BettrPrompt” but pair with a descriptor (e.g., “BettrPrompt: Your Voice-Safe Prompt Copilot”).
 - Tagline candidates (test with ads/landing):
   - “Ship on-brand AI outputs without rewrites.”
   - “Prompts that think like you, write for your brand.”

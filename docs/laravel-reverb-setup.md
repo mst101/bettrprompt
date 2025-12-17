@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-04
 **Status**: ✅ Completed
-**Purpose**: Real-time WebSocket broadcasting for AI Buddy
+**Purpose**: Real-time WebSocket broadcasting for BettrPrompt
 
 ## Overview
 

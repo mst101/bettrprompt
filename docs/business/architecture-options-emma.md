@@ -49,7 +49,7 @@
 ### Option 2: Custom GPT in ChatGPT Marketplace + Community Platform
 
 **How it works:**
-1. User subscribes to "AI Buddy INFP Edition" Custom GPT in ChatGPT marketplace
+1. User subscribes to "BettrPrompt INFP Edition" Custom GPT in ChatGPT marketplace
 2. Custom GPT has personality awareness in system prompt
 3. Separate web platform for community, prompt library, tracking
 4. User pays £10-15/month for community features (Custom GPT itself is free)
@@ -85,11 +85,11 @@
 ### Option 3: Full AI Interaction Layer (Proxy/Wrapper)
 
 **How it works:**
-1. User interacts with AI Buddy interface (web/mobile app)
-2. AI Buddy stores personality profile, context, preferences
-3. When user sends message, AI Buddy makes API call to ChatGPT/Claude/Gemini
-4. Response flows through AI Buddy before displaying to user
-5. AI Buddy adds persistent personality context to every interaction
+1. User interacts with BettrPrompt interface (web/mobile app)
+2. BettrPrompt stores personality profile, context, preferences
+3. When user sends message, BettrPrompt makes API call to ChatGPT/Claude/Gemini
+4. Response flows through BettrPrompt before displaying to user
+5. BettrPrompt adds persistent personality context to every interaction
 
 **Pros:**
 - **Fully satisfies Emma's needs**
@@ -144,7 +144,7 @@ Emma's estimated usage: 5-10 interactions/day, 150-300/month
 ### Phase 1: Custom GPT MVP (2-4 weeks)
 
 **Deliverables:**
-1. "AI Buddy INFP Edition" Custom GPT in ChatGPT marketplace
+1. "BettrPrompt INFP Edition" Custom GPT in ChatGPT marketplace
 2. System prompt encoding INFP-T personality awareness
 3. Landing page explaining value proposition
 4. Link to Custom GPT (free to use)
@@ -225,14 +225,14 @@ Emma's estimated usage: 5-10 interactions/day, 150-300/month
 
 ## Example Custom GPT System Prompt
 
-**Name:** AI Buddy INFP Edition
+**Name:** BettrPrompt INFP Edition
 
 **Description:** An AI assistant that truly understands INFP-T personality types. Get advice that resonates with your authentic self, not generic extroverted strategies.
 
 **System Prompt:**
 
 ```
-You are AI Buddy, an AI assistant specialised in understanding INFP-T personality types (Mediator - Turbulent).
+You are BettrPrompt, an AI assistant specialised in understanding INFP-T personality types (Mediator - Turbulent).
 
 # User Profile
 
@@ -294,7 +294,7 @@ Personality: INFP-T
 - Directive tone ignores Fi need for autonomy
 - Doesn't address why career feels stuck (likely values misalignment)
 
-### ✅ AI Buddy INFP Edition Response
+### ✅ BettrPrompt INFP Edition Response
 "It's completely understandable to feel stuck when your work doesn't align with your deeper values - INFPs need that sense of meaning to thrive.
 
 Before thinking about career moves, let's explore: What aspects of your current role feel most authentic to you? When do you feel most like yourself at work?
@@ -326,7 +326,7 @@ What feels most aligned with who you are?"
 - No acknowledgement of Fi values (harmony, empathy)
 - Assumes assertiveness = healthy (not true for all personalities)
 
-### ✅ AI Buddy INFP Edition Response
+### ✅ BettrPrompt INFP Edition Response
 "Confrontation feels especially hard for INFPs because your Fi values both authenticity *and* emotional harmony - these can feel like they're in conflict.
 
 Here's the INFP reframe: Setting boundaries isn't confrontation, it's **protecting your ability to show up authentically for people you care about**. When you overextend yourself, you can't be present in the deep, meaningful way that matters to you.

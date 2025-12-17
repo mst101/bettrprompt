@@ -1,6 +1,6 @@
 # n8n Workflows
 
-This directory contains n8n workflow JSON files for the AI Buddy application.
+This directory contains n8n workflow JSON files for the BettrPrompt application.
 
 ## Workflows
 

@@ -55,15 +55,15 @@
 
 **1. Distribution Gap**
 - ChatGPT: 100M+ users, integrated experience
-- AI Buddy: Zero users, requires separate login/tool
+- BettrPrompt: Zero users, requires separate login/tool
 
 **2. Switching Cost**
 - Custom GPT: Already using ChatGPT, zero friction
-- AI Buddy: Learn new platform, duplicate effort
+- BettrPrompt: Learn new platform, duplicate effort
 
 **3. Price Comparison**
 - Custom GPT: $0 (free tier) or $20/month (Plus, includes ChatGPT access)
-- AI Buddy: £15-25/month (PLUS they still need ChatGPT subscription)
+- BettrPrompt: £15-25/month (PLUS they still need ChatGPT subscription)
 
 **4. Feature Parity**
 - Custom GPTs can do 80%+ of what we offer

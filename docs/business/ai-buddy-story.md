@@ -1,7 +1,7 @@
-# AI Buddy --- Three Story Concepts for Clear, Compelling Positioning
+# BettrPrompt --- Three Story Concepts for Clear, Compelling Positioning
 
 Below are **three narrative angles** you can use to communicate the
-value of AI Buddy --- especially for users who feel unsure, intimidated,
+value of BettrPrompt --- especially for users who feel unsure, intimidated,
 or confused by AI. Each story includes a core message, user benefit, and
 a potential tagline.
 
@@ -12,7 +12,7 @@ a potential tagline.
 ### **Story Angle**
 
 AI often feels complicated because it speaks a technical language.\
-AI Buddy becomes the *translator* that converts whatever the user is
+BettrPrompt becomes the *translator* that converts whatever the user is
 thinking into a form AI understands instantly.
 
 ### **Why It Resonates**
@@ -23,7 +23,7 @@ This story removes anxiety and gives them confidence.
 ### **User Benefit**
 
 Users simply explain their task as they naturally would.\
-AI Buddy reformulates it into an **optimised, personality-aligned
+BettrPrompt reformulates it into an **optimised, personality-aligned
 prompt** that gets better results.
 
 ### **Tagline Idea**
@@ -37,7 +37,7 @@ prompt** that gets better results.
 ### **Story Angle**
 
 Everyone thinks and communicates differently.\
-AI Buddy adapts to the user's personality style so they don't have to
+BettrPrompt adapts to the user's personality style so they don't have to
 learn how to prompt --- the tool learns *them* instead.
 
 ### **Why It Resonates**
@@ -66,7 +66,7 @@ thinking.
 ### **Story Angle**
 
 Users don't need to understand AI at all.\
-They just tell AI Buddy the task, and it instantly produces the best
+They just tell BettrPrompt the task, and it instantly produces the best
 possible prompt for any AI platform.
 
 ### **Why It Resonates**

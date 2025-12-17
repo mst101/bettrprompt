@@ -85,7 +85,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 class="mt-2 flex flex-col sm:flex-row sm:justify-between sm:space-x-4"
             >
                 <p class="text-sm text-indigo-700">
-                    <span class="font-medium">When to use:</span>
+                    <span class="font-bold">When to use:</span>
                     {{ framework.when_to_use_instead }}
                 </p>
                 <div class="mt-4 sm:whitespace-nowrap">

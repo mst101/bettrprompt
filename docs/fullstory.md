@@ -2,13 +2,13 @@
 
 ## Overview
 
-This document outlines how to effectively use Fullstory to understand user behaviour in the AI Buddy application, identify friction points, and optimise conversion rates.
+This document outlines how to effectively use Fullstory to understand user behaviour in the BettrPrompt application, identify friction points, and optimise conversion rates.
 
 ---
 
 ## Application Context
 
-**AI Buddy** is a Laravel + Inertia.js + Vue 3 application that creates personality-tailored AI prompts based on user tasks and their 16personalities.com personality type. The app uses n8n workflows to select frameworks (SMART, RICE, COAST, etc.) and generate optimised prompts.
+**BettrPrompt** is a Laravel + Inertia.js + Vue 3 application that creates personality-tailored AI prompts based on user tasks and their 16personalities.com personality type. The app uses n8n workflows to select frameworks (SMART, RICE, COAST, etc.) and generate optimised prompts.
 
 ---
 
@@ -617,7 +617,7 @@ interface Window {
 
 ## Summary
 
-Fullstory provides invaluable insights for AI Buddy's complex, multi-stage workflow. Focus tracking on:
+Fullstory provides invaluable insights for BettrPrompt's complex, multi-stage workflow. Focus tracking on:
 
 1. **Multi-step prompt creation flow** (highest friction potential)
 2. **Voice input feature** (innovative but potentially problematic)

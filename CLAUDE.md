@@ -235,5 +235,5 @@ for testing.
 
 ## Project Context
 
-This is an "AI Buddy" application that creates optimised AI prompts customised to personality types (based on
+This is "BettrPrompt", an application that creates optimised AI prompts customised to personality types (based on
 16personalities.com). Documentation in `docs/` folder contains project overview and other reference materials.

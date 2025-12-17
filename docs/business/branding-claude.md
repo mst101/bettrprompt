@@ -1,11 +1,11 @@
-# AI Buddy: Branding & Website Recommendations for Quadrant B Target Market
+# BettrPrompt: Branding & Website Recommendations for Quadrant B Target Market
 
 ## Executive Summary
 
-Based on analysis of our core target market (Quadrant B: Marcus Thompson & James Foster - marketing professionals and creators using AI 3-15x daily), comprehensive competitor research, and current website audit, this document provides actionable recommendations to reposition "AI Buddy" for maximum appeal to our primary audience whilst maintaining accessibility for secondary personas.
+Based on analysis of our core target market (Quadrant B: Marcus Thompson & James Foster - marketing professionals and creators using AI 3-15x daily), comprehensive competitor research, and current website audit, this document provides actionable recommendations to reposition "BettrPrompt" for maximum appeal to our primary audience whilst maintaining accessibility for secondary personas.
 
 **Key Issues Identified:**
-1. **Name Problem**: "AI Buddy" skews too casual/friendly for professional Quadrant B users
+1. **Name Problem**: "BettrPrompt" skews too casual/friendly for professional Quadrant B users
 2. **Messaging Misalignment**: Current copy emphasises personality over professional ROI
 3. **Visual Hierarchy**: Homepage lacks trust signals, social proof, and concrete value demonstration
 4. **Missing Elements**: No prompt library showcase, no time savings calculator, no brand voice examples
@@ -17,7 +17,7 @@ Strategic rebrand to position as a **professional productivity tool** that happe
 
 ## Part 1: Current Branding Audit
 
-### 1.1 Product Name Analysis: "AI Buddy"
+### 1.1 Product Name Analysis: "BettrPrompt"
 
 **Current Perception:**
 - **Positive**: Friendly, approachable, non-intimidating
@@ -33,7 +33,7 @@ Strategic rebrand to position as a **professional productivity tool** that happe
 | **Priya (Analyst)** | Very Low | Unprofessional; signals lack of rigour | 2/10 |
 
 **Problem Statement:**
-"AI Buddy" optimises for Quadrant A (beginners) at the expense of Quadrant B (our primary target market). Marketing professionals (Marcus) need to justify tool adoption to managers and colleagues - "I'm using AI Buddy" creates credibility concerns vs. competitors like "Jasper" or "PromptPerfect".
+"BettrPrompt" optimises for Quadrant A (beginners) at the expense of Quadrant B (our primary target market). Marketing professionals (Marcus) need to justify tool adoption to managers and colleagues - "I'm using BettrPrompt" creates credibility concerns vs. competitors like "Jasper" or "PromptPerfect".
 
 **Competitor Name Comparison:**
 
@@ -43,7 +43,7 @@ Strategic rebrand to position as a **professional productivity tool** that happe
 | **Copy.ai** | Descriptive + ".ai" | High - clear function | Marketing teams |
 | **PromptPerfect** | Descriptive benefit | High - promises quality | Prompt engineers |
 | **Writesonic** | Portmanteau (write+sonic) | Moderate - tech-forward | Content creators |
-| **AI Buddy** | Casual companion | Low - amateur hour | Hobbyists/beginners |
+| **BettrPrompt** | Casual companion | Low - amateur hour | Hobbyists/beginners |
 
 **Evidence from Research:**
 - B2B SaaS naming best practice: "Avoid names that may confuse or alienate your target audience"
@@ -225,11 +225,11 @@ Strategic rebrand to position as a **professional productivity tool** that happe
 
 ---
 
-**Option 4: Keep "AI Buddy" but Reposition**
+**Option 4: Keep "BettrPrompt" but Reposition**
 
 **If name change isn't feasible:**
 
-**New Positioning**: "AI Buddy: Your prompt optimisation partner"
+**New Positioning**: "BettrPrompt: Your prompt optimisation partner"
 **Messaging Shift**: Lead with professional benefits, personality as differentiator (not centerpiece)
 **Visual Identity**: Modernise with darker colours, professional imagery
 
@@ -306,7 +306,7 @@ Strategic rebrand to position as a **professional productivity tool** that happe
 Optimise AI Prompts for Your Personality
 
 Get better AI responses tailored to your unique personality type.
-AI Buddy transforms your tasks into optimised prompts based on the
+BettrPrompt transforms your tasks into optimised prompts based on the
 task you wish to accomplish and your personality.
 ```
 
@@ -1222,7 +1222,7 @@ Examples:
 
 **Decision 1: Name Change**
 - **Option A**: Rebrand to "PromptAlign" (recommended for Quadrant B focus)
-- **Option B**: Keep "AI Buddy" but heavily reposition messaging
+- **Option B**: Keep "BettrPrompt" but heavily reposition messaging
 - **Timeline**: 4-6 weeks if Option A; 1-2 weeks if Option B
 
 **Decision 2: Budget Allocation**

@@ -1,12 +1,12 @@
-# AI Buddy: Customer Personas (Quadrants A + B)
+# BettrPrompt: Customer Personas (Quadrants A + B)
 
-This document defines our target customer personas for the initial launch phase, focusing on **Quadrant A (Curious Beginners)** and **Quadrant B (Emerging Explorers)** from our market segmentation model. These users have low-to-medium AI competency and fragile confidence, representing the primary market opportunity for AI Buddy's personality-first approach to prompt optimisation.
+This document defines our target customer personas for the initial launch phase, focusing on **Quadrant A (Curious Beginners)** and **Quadrant B (Emerging Explorers)** from our market segmentation model. These users have low-to-medium AI competency and fragile confidence, representing the primary market opportunity for BettrPrompt's personality-first approach to prompt optimisation.
 
 ---
 
 ## Executive Summary
 
-We've identified four customer personas across two market quadrants, representing our initial target audience for AI Buddy's personality-first prompt optimisation platform.
+We've identified four customer personas across two market quadrants, representing our initial target audience for BettrPrompt's personality-first prompt optimisation platform.
 
 ### Primary Target Market: Quadrant B (Emerging Explorers)
 
@@ -124,31 +124,31 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 - Frustration when AI outputs require extensive rewriting
 - Desire to prove she can learn new skills for career transition
 
-**How AI Buddy Helps Sarah**
+**How BettrPrompt Helps Sarah**
 
 1. **Personality-First Onboarding**
    - *Sarah's need:* "I want tools that understand how I communicate"
-   - *AI Buddy delivers:* INFP-T-specific prompts matching her values-focused, empathetic style
+   - *BettrPrompt delivers:* INFP-T-specific prompts matching her values-focused, empathetic style
    - *Result:* Prompts feel natural, outputs sound authentic to her voice
 
 2. **Guided Question Flow**
    - *Sarah's need:* "I need hand-holding through the process"
-   - *AI Buddy delivers:* Clarifying questions tailored to her personality type, no guessing required
+   - *BettrPrompt delivers:* Clarifying questions tailored to her personality type, no guessing required
    - *Result:* Confidence to provide right context without fear of missing something
 
 3. **"Confidence Mode" Explanations**
    - *Sarah's need:* "I want to understand *why* this works"
-   - *AI Buddy delivers:* Plain-English explanations of how each prompt component works
+   - *BettrPrompt delivers:* Plain-English explanations of how each prompt component works
    - *Result:* Learning builds over time, reducing dependence on templates
 
 4. **Everyday Templates**
    - *Sarah's need:* "Give me starting points for common tasks"
-   - *AI Buddy delivers:* Pre-built prompts for job applications, cover letters, learning notes
+   - *BettrPrompt delivers:* Pre-built prompts for job applications, cover letters, learning notes
    - *Result:* Quick wins in her career transition tasks
 
 5. **Prompt History & Reuse**
    - *Sarah's need:* "Let me repeat what worked"
-   - *AI Buddy delivers:* Saved prompt library organised by task type
+   - *BettrPrompt delivers:* Saved prompt library organised by task type
    - *Result:* No need to start from scratch each time
 
 **Messaging Cues**
@@ -159,7 +159,7 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 
 **User Journey**
 
-1. **Discovery:** Finds AI Buddy through Reddit thread on career transition tools
+1. **Discovery:** Finds BettrPrompt through Reddit thread on career transition tools
 2. **First Touchpoint:** Lands on homepage, sees "No prompt expertise required" - feels relieved
 3. **Trial:** Signs up, completes personality quiz (loves this part), enters first task: "Help me write a UX portfolio introduction"
 4. **Activation Moment:** Sees clarifying questions adapted to INFP-T style, answers feel natural - first "aha" moment
@@ -224,31 +224,31 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 - Embarrassment if CEO questions content quality: "Did AI write this?"
 - Desire to be seen as strategic marketer, not just prompt copy-paster
 
-**How AI Buddy Helps Marcus**
+**How BettrPrompt Helps Marcus**
 
 1. **Framework Auto-Selection (SMART/COAST/RICE)**
    - *Marcus's need:* "Give me the right structure for each task"
-   - *AI Buddy delivers:* Automatically picks prompt framework based on task type (campaign brief → COAST, ad copy → SMART)
+   - *BettrPrompt delivers:* Automatically picks prompt framework based on task type (campaign brief → COAST, ad copy → SMART)
    - *Result:* Consistent quality without manual framework research
 
 2. **"Confidence Mode" - Prompt Anatomy**
    - *Marcus's need:* "Show me what actually improved the output"
-   - *AI Buddy delivers:* Explanations of which prompt components drive quality (context, tone, constraints)
+   - *BettrPrompt delivers:* Explanations of which prompt components drive quality (context, tone, constraints)
    - *Result:* Learns transferable patterns, becomes better prompter over time
 
 3. **Brand Voice Calibration via Personality**
    - *Marcus's need:* "Keep outputs on-brand across all campaigns"
-   - *AI Buddy delivers:* ENTJ-A personality settings tune prompts for assertive, strategic tone matching brand
+   - *BettrPrompt delivers:* ENTJ-A personality settings tune prompts for assertive, strategic tone matching brand
    - *Result:* Voice consistency without manual rewriting
 
 4. **Prompt History & Organisation**
    - *Marcus's need:* "One place for all my refined prompts"
-   - *AI Buddy delivers:* Searchable prompt library tagged by campaign type, output quality ratings
+   - *BettrPrompt delivers:* Searchable prompt library tagged by campaign type, output quality ratings
    - *Result:* No more scattered snippets, instant access to "prompts that worked"
 
 5. **One-Click Output Preview**
    - *Marcus's need:* "Test prompts faster"
-   - *AI Buddy delivers:* Preview how prompt performs before copying to ChatGPT/Claude
+   - *BettrPrompt delivers:* Preview how prompt performs before copying to ChatGPT/Claude
    - *Result:* Iterate 3x faster, ship higher quality under deadlines
 
 **Messaging Cues**
@@ -262,7 +262,7 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 1. **Discovery:** LinkedIn ad targeting "marketing professionals using ChatGPT"
 2. **First Touchpoint:** Clicks ad, sees "Stop rewriting AI outputs" - immediate pain point recognition
 3. **Trial:** Signs up mid-campaign panic, enters task: "Write email sequence for product launch"
-4. **Activation Moment:** AI Buddy asks clarifying questions about brand voice, target persona - realises he always skips this context
+4. **Activation Moment:** BettrPrompt asks clarifying questions about brand voice, target persona - realises he always skips this context
 5. **First Success:** Generated prompt produces output 80% ready-to-ship (vs. usual 40%) - saves 30 minutes
 6. **Retention:** Uses daily for emails, landing pages, ad copy - builds library of 20+ reusable prompts
 7. **Advocacy:** Shares with marketing Slack group: "Game-changer for prompt consistency"
@@ -324,31 +324,31 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 - Frustration that "everyone else" uses AI confidently whilst she hesitates
 - Desire to stay relevant without compromising research integrity
 
-**How AI Buddy Helps Priya**
+**How BettrPrompt Helps Priya**
 
 1. **Framework-Based Structure (SMART/RICE)**
    - *Priya's need:* "Give me a methodical, repeatable process"
-   - *AI Buddy delivers:* Shows which framework is selected and why, step-by-step prompt construction
+   - *BettrPrompt delivers:* Shows which framework is selected and why, step-by-step prompt construction
    - *Result:* Prompting becomes structured methodology, not guesswork
 
 2. **Transparency in Prompt Anatomy**
    - *Priya's need:* "I need to understand exactly what each part does"
-   - *AI Buddy delivers:* Explains each prompt component's purpose and expected impact on output
+   - *BettrPrompt delivers:* Explains each prompt component's purpose and expected impact on output
    - *Result:* "Black box" becomes transparent, builds trust
 
 3. **ISTJ-T Personality Alignment**
    - *Priya's need:* "Speak my language - precise, evidence-based, structured"
-   - *AI Buddy delivers:* Prompts tuned for detail-oriented, accuracy-focused outputs with source-checking reminders
+   - *BettrPrompt delivers:* Prompts tuned for detail-oriented, accuracy-focused outputs with source-checking reminders
    - *Result:* Outputs match her need for thoroughness and verifiability
 
 4. **Prompt History as Knowledge Base**
    - *Priya's need:* "Document what works for systematic improvement"
-   - *AI Buddy delivers:* Saved prompts with notes on output quality, refinements over time
+   - *BettrPrompt delivers:* Saved prompts with notes on output quality, refinements over time
    - *Result:* Evidence-based prompt optimisation, not trial-and-error
 
 5. **Task-Specific Templates (Research Focus)**
    - *Priya's need:* "Show me how others use AI for research properly"
-   - *AI Buddy delivers:* Pre-built prompts for literature reviews, data summaries, methodology notes (with verification reminders)
+   - *BettrPrompt delivers:* Pre-built prompts for literature reviews, data summaries, methodology notes (with verification reminders)
    - *Result:* Proven starting points reduce risk of "doing it wrong"
 
 **Messaging Cues**
@@ -359,10 +359,10 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 
 **User Journey**
 
-1. **Discovery:** Finds AI Buddy through LinkedIn post by trusted colleague: "For people who need AI to be reliable"
+1. **Discovery:** Finds BettrPrompt through LinkedIn post by trusted colleague: "For people who need AI to be reliable"
 2. **First Touchpoint:** Homepage emphasises frameworks and transparency - skepticism slightly reduced
 3. **Trial:** Signs up cautiously, completes personality quiz (appreciates structured questions)
-4. **Activation Moment:** Enters low-stakes task: "Summarise this policy paper" - sees AI Buddy's step-by-step prompt construction with explanations
+4. **Activation Moment:** Enters low-stakes task: "Summarise this policy paper" - sees BettrPrompt's step-by-step prompt construction with explanations
 5. **First Success:** Uses generated prompt, gets accurate summary, manually verifies sources - matches 95% - first trust increment
 6. **Retention:** Uses conservatively for summaries and literature reviews, always fact-checks, gradually increases usage as confidence builds
 7. **Advocacy:** Recommends to research team with caveat: "Still verify everything, but this makes prompting less arbitrary"
@@ -426,31 +426,31 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 - Fear of losing creative identity if he relies too heavily on AI
 - Desire to be seen as strategic creative, not just "the AI guy"
 
-**How AI Buddy Helps James**
+**How BettrPrompt Helps James**
 
 1. **Client-Organised Prompt Library**
    - *James's need:* "Keep my best prompts organised by client"
-   - *AI Buddy delivers:* Prompt history tagged by client name, content type, output quality
+   - *BettrPrompt delivers:* Prompt history tagged by client name, content type, output quality
    - *Result:* No more scattered snippets, instant access to client-specific prompts
 
 2. **Context Capture - Enter Once, Reuse Forever**
    - *James's need:* "Stop retyping brand guidelines 5x per day"
-   - *AI Buddy delivers:* Clarifying questions capture client context once, saved to prompt template
+   - *BettrPrompt delivers:* Clarifying questions capture client context once, saved to prompt template
    - *Result:* Context switching takes seconds, not minutes
 
 3. **ENFP-T Voice Preservation**
    - *James's need:* "Keep my creative, authentic voice in AI outputs"
-   - *AI Buddy delivers:* Personality-aware prompts tune for enthusiastic, idea-driven, human tone
+   - *BettrPrompt delivers:* Personality-aware prompts tune for enthusiastic, idea-driven, human tone
    - *Result:* First drafts sound like James, editing time cut in half
 
 4. **Brevity/Depth Toggle**
    - *James's need:* "Switch between concise tweets and detailed blog posts"
-   - *AI Buddy delivers:* Framework selection (concise for social, detailed for long-form) with personality trait amplification
+   - *BettrPrompt delivers:* Framework selection (concise for social, detailed for long-form) with personality trait amplification
    - *Result:* Right length for platform without manual prompt tweaking
 
 5. **Framework Auto-Selection**
    - *James's need:* "Pick the right structure per content type automatically"
-   - *AI Buddy delivers:* Recognises "Instagram caption" vs. "LinkedIn article" and applies appropriate framework
+   - *BettrPrompt delivers:* Recognises "Instagram caption" vs. "LinkedIn article" and applies appropriate framework
    - *Result:* No mental overhead choosing SMART vs. COAST vs. RICE
 
 **Messaging Cues**
@@ -464,7 +464,7 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 1. **Discovery:** TikTok video from creator: "This AI tool actually preserves your voice"
 2. **First Touchpoint:** Clicks link, sees "organised prompt library" - immediate pain point recognition
 3. **Trial:** Signs up between client calls, completes personality quiz during lunch break
-4. **Activation Moment:** Enters client brief once, AI Buddy captures context with clarifying questions - "Wait, I can reuse this?"
+4. **Activation Moment:** Enters client brief once, BettrPrompt captures context with clarifying questions - "Wait, I can reuse this?"
 5. **First Success:** Generates Instagram caption prompt, output needs minimal editing - voice preservation works
 6. **Retention:** Uses 10-15x per day for all clients, builds library of 30+ client-specific prompts over two weeks
 7. **Advocacy:** Posts TikTok testimonial: "Finally, AI that doesn't erase my personality"
@@ -478,7 +478,7 @@ Our personality-first approach uniquely addresses the #1 shared pain point (voic
 
 ## Cross-Persona Synthesis: What Quadrants A + B Value
 
-Across all four personas, these shared needs define AI Buddy's core value proposition:
+Across all four personas, these shared needs define BettrPrompt's core value proposition:
 
 ### 1. **Trust & Confidence Over Raw Power**
 - All four fear "doing it wrong" or producing embarrassing outputs
@@ -503,7 +503,7 @@ Across all four personas, these shared needs define AI Buddy's core value propos
 ### 5. **Transparency & Control**
 - "Black box" AI creates distrust, especially for Quadrant A
 - Showing framework selection, prompt anatomy, and reasoning builds confidence
-- They want to understand *how* AI Buddy works, not just that it does
+- They want to understand *how* BettrPrompt works, not just that it does
 
 ### 6. **Repeatable Patterns Over One-Off Magic**
 - Prompt history and organisation matter more than novelty
@@ -544,28 +544,28 @@ Across all four personas, these shared needs define AI Buddy's core value propos
 
 ---
 
-## AI Buddy's Competitive Advantage
+## BettrPrompt's Competitive Advantage
 
-What sets AI Buddy apart from generic prompt builders:
+What sets BettrPrompt apart from generic prompt builders:
 
 1. **Personality-First Architecture**
    - Competitors: "One-size-fits-all" prompts
-   - AI Buddy: 16Personalities integration tunes every prompt to user's communication style
+   - BettrPrompt: 16Personalities integration tunes every prompt to user's communication style
 
 2. **Teaching-While-Building**
    - Competitors: Output prompt, close tab
-   - AI Buddy: Confidence Mode explains *why* prompt works, building user competency
+   - BettrPrompt: Confidence Mode explains *why* prompt works, building user competency
 
 3. **Framework Auto-Selection**
    - Competitors: User must research SMART vs. COAST vs. RICE
-   - AI Buddy: Recognises task type, applies best framework automatically
+   - BettrPrompt: Recognises task type, applies best framework automatically
 
 4. **Organised Prompt Library**
    - Competitors: Copy-paste prompts into notes app
-   - AI Buddy: Searchable, tagged history with quality ratings and reuse
+   - BettrPrompt: Searchable, tagged history with quality ratings and reuse
 
 5. **Clarifying Questions Tailored to Personality**
    - Competitors: Generic "tell us more about your task"
-   - AI Buddy: Questions adapted to INTJ logic vs. ENFP creativity vs. ISTJ structure
+   - BettrPrompt: Questions adapted to INTJ logic vs. ENFP creativity vs. ISTJ structure
 
 This isn't just "another prompt tool" - it's **the bridge between personality psychology and AI adoption**, purpose-built for users who want AI to feel natural, not foreign.

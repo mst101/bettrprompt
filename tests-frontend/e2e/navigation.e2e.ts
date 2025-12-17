@@ -96,7 +96,7 @@ test.describe('Accessibility', () => {
         await page.goto('/');
 
         const title = await page.title();
-        expect(title).toMatch(/AI Buddy|Welcome/i);
+        expect(title).toMatch(/BettrPrompt|Welcome/i);
     });
 
     test('should have accessible form labels', async ({ page }) => {

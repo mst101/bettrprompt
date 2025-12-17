@@ -1,6 +1,6 @@
 # Core Target Market Analysis: Quantitative Research
 
-This analysis evaluates which of our four customer personas represents the optimal core target market for AI Buddy's initial launch, based on comprehensive quantitative data across market size, growth trajectories, economic factors, competitive positioning, and retention potential.
+This analysis evaluates which of our four customer personas represents the optimal core target market for BettrPrompt's initial launch, based on comprehensive quantitative data across market size, growth trajectories, economic factors, competitive positioning, and retention potential.
 
 ---
 
@@ -562,9 +562,9 @@ Research analysts are a niche, high-value segment but require extensive trust-bu
 - **Weakness**: Too technical for knowledge workers
 - **Price**: $50-200+/month
 
-### AI Buddy's Differentiation
+### BettrPrompt's Differentiation
 
-| Feature | Generic Tools | AI Writing Tools | AI Buddy |
+| Feature | Generic Tools | AI Writing Tools | BettrPrompt |
 |---------|--------------|------------------|----------|
 | **Personality Integration** | ❌ | ❌ | ✅ 16Personalities-based |
 | **Framework Auto-Selection** | ❌ | ❌ | ✅ SMART/COAST/RICE |
@@ -649,7 +649,7 @@ Research analysts are a niche, high-value segment but require extensive trust-bu
 **Critical Success Factors:**
 
 - **Fast time-to-value**: Users experience ROI within 1 week
-- **Daily habit formation**: 3-15x daily usage embeds AI Buddy into workflow
+- **Daily habit formation**: 3-15x daily usage embeds BettrPrompt into workflow
 - **Prompt library investment**: 20+ saved prompts within 2 weeks creates switching cost
 - **Clear differentiation**: Personality-first positioning creates defensible market position
 - **Viral coefficient**: Creator community sharing + team expansion drives low-CAC growth

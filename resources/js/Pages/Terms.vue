@@ -37,7 +37,7 @@ defineOptions({
                 >
                     <h2>1. Agreement to Terms</h2>
                     <p>
-                        By accessing and using AI Buddy ("the Service"),
+                        By accessing and using BettrPrompt ("the Service"),
                         operated by
                         {{ COMPANY_INFO.name }} ("we", "us", or "our"), you
                         agree to be bound by these Terms of Use and all
@@ -48,7 +48,7 @@ defineOptions({
 
                     <h2>2. Description of Service</h2>
                     <p>
-                        AI Buddy provides an AI-powered prompt optimisation
+                        BettrPrompt provides an AI-powered prompt optimisation
                         service that creates tailored prompts based on your
                         personality type (as defined by 16personalities.com) and
                         the task you wish to accomplish. The Service uses
@@ -58,9 +58,9 @@ defineOptions({
 
                     <h2>3. Beta/Test Mode Notice</h2>
                     <p>
-                        The AI Buddy service is currently in beta/test mode. As
-                        a participant in this testing phase, you acknowledge and
-                        agree that:
+                        The BettrPrompt service is currently in beta/test mode.
+                        As a participant in this testing phase, you acknowledge
+                        and agree that:
                     </p>
                     <ul>
                         <li>
@@ -69,7 +69,7 @@ defineOptions({
                             by us to understand user behaviour, improve the
                             system's functionality, and enhance the quality of
                             responses. We use this data solely for the purpose
-                            of developing and refining AI Buddy.
+                            of developing and refining BettrPrompt.
                         </li>
                         <li>
                             <strong>Caution Against Sensitive Data:</strong>
@@ -92,7 +92,7 @@ defineOptions({
                         <li>
                             <strong>Free Access Period:</strong> In exchange for
                             your participation in beta testing, you are granted
-                            free access to use the AI Buddy service without
+                            free access to use the BettrPrompt service without
                             limitation until 15th January 2026.
                         </li>
                     </ul>

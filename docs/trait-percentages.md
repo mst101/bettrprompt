@@ -2,7 +2,7 @@
 
 ## Overview
 
-AI Buddy uses trait percentages from 16personalities.com to calibrate prompt optimisation intensity. This document explains how trait percentages work and how they affect framework selection and final prompt generation.
+BettrPrompt uses trait percentages from 16personalities.com to calibrate prompt optimisation intensity. This document explains how trait percentages work and how they affect framework selection and final prompt generation.
 
 ## Understanding Trait Percentages
 

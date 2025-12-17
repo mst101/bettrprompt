@@ -163,7 +163,7 @@ class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark
         For Everyone in Between
     </h3>
     <p class="mt-4 text-gray-700">
-        With optional trait percentages, AI Buddy calibrates
+        With optional trait percentages, BettrPrompt calibrates
         prompts based on trait strength. A highly analytical
         INTJ (95% Thinking) gets different optimization than
         a balanced INTJ (55% Thinking) - because not all

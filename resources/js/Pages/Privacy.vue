@@ -176,15 +176,15 @@ defineOptions({
 
                 <h2>5.1 Beta/Test Phase Data Usage</h2>
                 <p>
-                    As AI Buddy is currently in beta/test mode, we use your data
-                    in additional ways to improve the system:
+                    As BettrPrompt is currently in beta/test mode, we use your
+                    data in additional ways to improve the system:
                 </p>
                 <ul>
                     <li>
                         <strong>System Improvement:</strong> We analyse the data
                         you choose to enter—including your tasks, personality
                         traits, and interactions with the system—to understand
-                        how users interact with AI Buddy and to refine our AI
+                        how users interact with BettrPrompt and to refine our AI
                         prompt generation algorithms.
                     </li>
                     <li>
