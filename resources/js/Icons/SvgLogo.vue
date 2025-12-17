@@ -22,7 +22,7 @@ const sizeClasses = computed(() => {
 
 <template>
     <div class="inline-flex items-center leading-none" :class="sizeClasses">
-        <span class="font-light italic">#bettr</span>
+        <span class="mr-1 font-light italic">#bettr</span>
         <span class="font-semibold">prompt</span>
     </div>
 </template>

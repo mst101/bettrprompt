@@ -38,6 +38,7 @@ defineOptions({
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
+const openLoginModal = inject<() => void>('openLoginModal');
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile
     if (user.value) {
@@ -163,6 +164,7 @@ watch(
 
             <!--            <div class="px-6 sm:p-6">-->
             <PersonalityTypePrompt
+                v-if="user && visitorHasCompletedPrompts"
                 ref="personalityTypePromptRef"
                 :has-personality-type="hasPersonalityType"
                 :is-authenticated="!!user"
@@ -176,6 +178,7 @@ watch(
                 v-if="!user && visitorHasCompletedPrompts"
                 variant="inline"
                 @register="openRegisterModal"
+                @login="openLoginModal"
             />
 
             <TaskDescriptionForm

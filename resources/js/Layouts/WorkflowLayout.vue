@@ -56,11 +56,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             @click="showingNavigationDropdown = false"
                         >
                             <SvgLogo
-                                class="block h-10 w-auto fill-current text-indigo-600"
+                                class="block h-10 w-auto fill-current text-indigo-800"
+                                size="lg"
                             />
-                            <span class="mt-2 text-xl font-bold text-gray-800"
-                                >BettrPrompt</span
-                            >
                         </Link>
                     </div>
 

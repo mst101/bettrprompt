@@ -25,7 +25,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Create an Account" />
 
     <form @submit.prevent="submit">
         <FormInput

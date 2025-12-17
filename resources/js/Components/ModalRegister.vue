@@ -57,7 +57,7 @@ const close = () => {
 <template>
     <BaseAuthModal
         :show="show"
-        title="Register"
+        title="Create your Account"
         :show-google-divider="true"
         @close="close"
         @submit="submit"
@@ -129,7 +129,7 @@ const close = () => {
                 :disabled="form.processing"
                 :loading="form.processing"
             >
-                Register
+                Create Account
             </ButtonPrimary>
         </template>
     </BaseAuthModal>
