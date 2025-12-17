@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
-          content="BettrPrompt creates optimised AI prompts tailored to the task at hand and your personality type. Get better AI responses based on your personality type (INTJ, ENFP, etc.) and the task you want to accomplish.">
+          content="BettrPrompt helps you solve complex problems by transforming vague ideas into structured AI prompts using 60+ proven frameworks. Get better AI results without learning prompt engineering.">
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

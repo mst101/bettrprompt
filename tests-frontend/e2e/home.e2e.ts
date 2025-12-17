@@ -11,7 +11,7 @@ test.describe('Home Page', () => {
 
         // Verify main heading is visible
         await expect(
-            page.getByRole('heading', { name: /Optimise AI Prompts for/ }),
+            page.getByRole('heading', { name: /A Simple Way to Solve/ }),
         ).toBeVisible();
     });
 
@@ -20,14 +20,14 @@ test.describe('Home Page', () => {
 
         // Check for the main heading with gradient text
         const heading = page.getByRole('heading', {
-            name: /Optimise AI Prompts for/,
+            name: /A Simple Way to Solve/,
         });
         await expect(heading).toBeVisible();
 
-        // Verify "Your Personality" span exists (using test ID instead of CSS classes)
+        // Verify "Complex Problems" span exists (using test ID instead of CSS classes)
         const gradientText = page.getByTestId('hero-gradient-text');
         await expect(gradientText).toBeVisible();
-        await expect(gradientText).toContainText('Your Personality');
+        await expect(gradientText).toContainText('Complex Problems');
     });
 
     test('should have navigation elements', async ({ page }) => {
@@ -68,7 +68,7 @@ test.describe('Home Page', () => {
 
         // Verify page still loads and main heading is visible
         await expect(
-            page.getByRole('heading', { name: /Optimise AI Prompts for/ }),
+            page.getByRole('heading', { name: /A Simple Way to Solve/ }),
         ).toBeVisible();
     });
 
