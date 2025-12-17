@@ -60,20 +60,20 @@ watch(
     <div
         v-if="!hasPersonalityType"
         key="no-personality"
-        class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
+        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
     >
         <div class="flex flex-col">
             <div class="flex shrink-0">
                 <DynamicIcon
                     name="information-circle"
-                    class="mr-3 h-5 w-5 text-amber-400"
+                    class="mr-3 h-5 w-5 text-indigo-400"
                 />
-                <h3 class="text-sm font-medium text-amber-800">
+                <h3 class="text-sm font-medium text-indigo-800">
                     Get personalised prompts (optional)
                 </h3>
             </div>
             <div class="sm:ml-3">
-                <div class="mt-2 text-sm text-amber-700">
+                <div class="mt-2 text-sm text-indigo-700">
                     <!-- Authenticated user -->
                     <p v-if="isAuthenticated">
                         For personalised prompts tailored to your communication
@@ -136,13 +136,13 @@ watch(
     <div
         v-else-if="!isAuthenticated && visitorPersonalityType"
         key="has-personality"
-        class="mb-6 rounded-md border border-amber-200 bg-amber-50 p-4"
+        class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
     >
         <div class="flex items-start justify-between">
             <div class="flex flex-1 items-center">
                 <div class="flex-1">
                     <div class="flex items-center justify-between gap-4">
-                        <h3 class="text-sm font-medium text-amber-800">
+                        <h3 class="text-sm font-medium text-indigo-800">
                             Personality Type:
                             <span class="whitespace-nowrap">{{
                                 visitorPersonalityType

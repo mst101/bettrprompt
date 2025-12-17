@@ -12,6 +12,7 @@ withDefaults(defineProps<Props>(), {
 
 defineEmits<{
     (e: 'register'): void;
+    (e: 'login'): void;
 }>();
 </script>
 
@@ -51,7 +52,7 @@ defineEmits<{
     <!-- Inline card variant -->
     <div
         v-else
-        class="mb-6 rounded-lg border-2 border-indigo-200 bg-indigo-50 p-6"
+        class="mb-6 rounded-lg border border-indigo-200 bg-indigo-50 p-6"
     >
         <div class="flex items-start gap-3">
             <DynamicIcon
@@ -70,6 +71,9 @@ defineEmits<{
                 <div class="mt-4 flex gap-3">
                     <ButtonPrimary @click="$emit('register')">
                         Create Free Account
+                    </ButtonPrimary>
+                    <ButtonPrimary @click="$emit('login')">
+                        Log in
                     </ButtonPrimary>
                 </div>
             </div>
