@@ -66,7 +66,7 @@ test.describe('Authentication', () => {
 
         // Verify it's NOT the login modal by checking the submit button text
         const registerSubmitButton = page.getByRole('button', {
-            name: /^register$/i,
+            name: /create account/i,
         });
         await expect(registerSubmitButton).toBeVisible();
     });

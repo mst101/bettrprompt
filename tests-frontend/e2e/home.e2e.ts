@@ -11,7 +11,7 @@ test.describe('Home Page', () => {
 
         // Verify main heading is visible
         await expect(
-            page.getByRole('heading', { name: /A Simple Way to Solve/ }),
+            page.getByRole('heading', { name: /The Simple Way to Solve/ }),
         ).toBeVisible();
     });
 
@@ -20,7 +20,7 @@ test.describe('Home Page', () => {
 
         // Check for the main heading with gradient text
         const heading = page.getByRole('heading', {
-            name: /A Simple Way to Solve/,
+            name: /The Simple Way to Solve/,
         });
         await expect(heading).toBeVisible();
 
@@ -68,7 +68,7 @@ test.describe('Home Page', () => {
 
         // Verify page still loads and main heading is visible
         await expect(
-            page.getByRole('heading', { name: /A Simple Way to Solve/ }),
+            page.getByRole('heading', { name: /The Simple Way to Solve/ }),
         ).toBeVisible();
     });
 
