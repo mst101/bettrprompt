@@ -79,8 +79,7 @@ test.describe('Voice Transcription', () => {
         authenticatedPage,
     }) => {
         // Test voice button on different prompt run states
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
 
         // Test on processing state (clarifying questions not yet ready)
         await setupAndNavigateToPromptRun(authenticatedPage, '1_processing');

@@ -21,7 +21,11 @@ const sizeClasses = computed(() => {
 </script>
 
 <template>
-    <div class="inline-flex items-center leading-none" :class="sizeClasses">
+    <div
+        data-testid="svg-logo"
+        class="inline-flex items-center leading-none"
+        :class="sizeClasses"
+    >
         <span class="mr-1 font-light italic">#bettr</span>
         <span class="font-semibold">prompt</span>
     </div>

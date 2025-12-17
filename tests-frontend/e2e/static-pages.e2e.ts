@@ -95,11 +95,9 @@ for (const page of staticPages) {
             const h2Count = await h2Elements.count();
             expect(h2Count).toBeGreaterThan(3);
 
-            // Verify logo link exists (can be "bettr" or "#bettrprompt")
-            const logoLink = browserPage
-                .locator('a[href="/"]')
-                .filter({ has: browserPage.locator('text=/bettr|prompt/i') });
-            await expect(logoLink.first()).toBeVisible();
+            // Verify logo link exists
+            const logo = browserPage.getByTestId('svg-logo');
+            await expect(logo).toBeVisible();
 
             // Verify footer links
             const footer = browserPage.locator('footer');
@@ -196,11 +194,9 @@ test.describe('Cross-Page Navigation', () => {
         for (const pagePath of staticPagePaths) {
             await page.goto(pagePath);
 
-            // Verify logo link exists (can be "bettr" or "#bettrprompt")
-            const logoLink = page
-                .locator('a[href="/"]')
-                .filter({ has: page.locator('text=/bettr|prompt/i') });
-            await expect(logoLink.first()).toBeVisible();
+            // Verify logo link exists
+            const logo = page.getByTestId('svg-logo');
+            await expect(logo).toBeVisible();
         }
     });
 

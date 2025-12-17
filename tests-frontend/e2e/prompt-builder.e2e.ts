@@ -185,8 +185,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         authenticatedPage,
     }) => {
         // Use setupAndNavigateToPromptRun to create a prompt run with framework already selected
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
         // Wait for page to load
@@ -244,8 +243,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
     test('should skip a question', async ({ authenticatedPage }) => {
         // Use fixture to create a prompt with framework already selected
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         const promptRunId = await setupAndNavigateToPromptRun(
             authenticatedPage,
             '1_completed',
@@ -286,8 +284,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         authenticatedPage,
     }) => {
         // Use fixture to create a fully completed prompt (2_completed)
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Wait for page to load
@@ -326,8 +323,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         authenticatedPage,
     }) => {
         // Use fixture to create a fully completed prompt (2_completed)
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Navigate to Optimised Prompt tab
@@ -361,8 +357,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         authenticatedPage,
     }) => {
         // Use fixture to create a fully completed prompt (2_completed)
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Navigate to Optimised Prompt tab
@@ -424,8 +419,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should navigate from history to a specific prompt', async ({
         authenticatedPage,
     }) => {
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Now navigate to history page
@@ -459,8 +453,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should show voice input button when available', async ({
         authenticatedPage,
     }) => {
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
@@ -494,8 +487,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should navigate back to index from show page', async ({
         authenticatedPage,
     }) => {
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
@@ -522,8 +514,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should show progress indicator when answering questions', async ({
         authenticatedPage,
     }) => {
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
@@ -559,8 +550,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should display task information on show page', async ({
         authenticatedPage,
     }) => {
-        const { setupAndNavigateToPromptRun } =
-            await import('./helpers/fixtures');
+        const { setupAndNavigateToPromptRun } = await import('./fixtures');
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
