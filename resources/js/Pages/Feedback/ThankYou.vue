@@ -14,15 +14,7 @@ defineOptions({
     layout: AppLayout,
 });
 
-interface Pdf {
-    name: string;
-    filename: string;
-}
-
 interface Props {
-    personalityType: string | null;
-    personalityTypeName: string | null;
-    availablePdfs: Pdf[];
     referralUrl: string;
 }
 
@@ -60,43 +52,6 @@ const copyToClipboard = async () => {
                 <p class="mt-2 text-gray-600">
                     Your insights are much appreciated.
                 </p>
-            </div>
-        </Card>
-
-        <!-- PDF Downloads Section -->
-        <Card v-if="personalityTypeName && availablePdfs.length > 0">
-            <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                Your Personality Resources
-            </h3>
-            <p class="mb-4 text-sm text-gray-600">
-                As a {{ personalityType }} ({{ personalityTypeName }}), we've
-                prepared these guides specifically for you:
-            </p>
-
-            <div class="space-y-3">
-                <a
-                    v-for="pdf in availablePdfs"
-                    :key="pdf.filename"
-                    :href="route('feedback.download-pdf', pdf.filename)"
-                    class="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:border-indigo-500 hover:bg-indigo-50"
-                >
-                    <div class="flex items-center">
-                        <DynamicIcon
-                            name="document"
-                            class="mr-3 h-6 w-6 text-indigo-600"
-                        />
-                        <div>
-                            <p class="font-medium text-gray-900">
-                                {{ pdf.name }}
-                            </p>
-                            <p class="text-sm text-gray-500">PDF Guide</p>
-                        </div>
-                    </div>
-                    <DynamicIcon
-                        name="download"
-                        class="h-5 w-5 text-gray-400"
-                    />
-                </a>
             </div>
         </Card>
 
