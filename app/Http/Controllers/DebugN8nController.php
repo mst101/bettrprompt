@@ -329,9 +329,9 @@ class DebugN8nController extends Controller
     private function getWorkflowId(int $workflowNumber): ?string
     {
         $workflowIds = [
-            0 => 'YW4AdQE919uLrpLx',
-            1 => 'bfMRMEHRhwxbr6V9',
-            2 => 'YMvRB5aEeEqeZzO0',
+            0 => 'x2JKq1wrjnpA76R9',
+            1 => 'MGuVYvZDLTa3D09d',
+            2 => 'kbuj1cvHJdjqQjQT',
         ];
 
         return $workflowIds[$workflowNumber] ?? null;

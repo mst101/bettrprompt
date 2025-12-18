@@ -61,7 +61,7 @@
             ],
             "credentials": {
                 "httpHeaderAuth": {
-                    "id": "5u3Dji2E1ZKRUSRX",
+                    "id": "0KM4kQ1SAvHJtLFa",
                     "name": "Header Auth account"
                 }
             }
@@ -160,6 +160,6 @@
         "templateCredsSetupCompleted": true,
         "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
     },
-    "id": "YW4AdQE919uLrpLx",
+    "id": "x2JKq1wrjnpA76R9",
     "tags": []
 }
