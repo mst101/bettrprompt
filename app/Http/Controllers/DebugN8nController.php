@@ -1115,14 +1115,6 @@ try {
         $this->ensureDebugDirectory("output/{$variant}");
         $debugOutputFile = storage_path("app/n8n_debug/output/{$variant}/workflow_{$workflowNumber}_output.json");
         file_put_contents($debugOutputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        // Also copy to n8n/{old|new}/output/
-        $n8nOutputDir = base_path("n8n/{$variant}/output");
-        if (! is_dir($n8nOutputDir)) {
-            mkdir($n8nOutputDir, 0755, true);
-        }
-        $n8nOutputFile = "{$n8nOutputDir}/workflow_{$workflowNumber}_output.json";
-        copy($debugOutputFile, $n8nOutputFile);
     }
 
     /**

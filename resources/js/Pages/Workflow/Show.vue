@@ -37,7 +37,9 @@ defineOptions({
     layout: WorkflowLayout,
 });
 
-const isExecuting = ref(false);
+const isPreparingOld = ref(false);
+const isPreparingNew = ref(false);
+const isExecutingOld = ref(false);
 const isExecutingNew = ref(false);
 const isUploadingOld = ref(false);
 const isUploadingNew = ref(false);
@@ -159,7 +161,7 @@ const executeWorkflowOld = async () => {
         return;
     }
 
-    isExecuting.value = true;
+    isExecutingOld.value = true;
     error.value = null;
 
     try {
@@ -194,7 +196,7 @@ const executeWorkflowOld = async () => {
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
-        isExecuting.value = false;
+        isExecutingOld.value = false;
     }
 };
 
@@ -479,7 +481,7 @@ const preparePromptOld = async () => {
         return;
     }
 
-    isExecuting.value = true;
+    isPreparingOld.value = true;
     error.value = null;
 
     try {
@@ -517,7 +519,7 @@ const preparePromptOld = async () => {
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
-        isExecuting.value = false;
+        isPreparingOld.value = false;
     }
 };
 
@@ -527,7 +529,7 @@ const preparePromptNew = async () => {
         return;
     }
 
-    isExecutingNew.value = true;
+    isPreparingNew.value = true;
     error.value = null;
 
     try {
@@ -565,7 +567,7 @@ const preparePromptNew = async () => {
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
-        isExecutingNew.value = false;
+        isPreparingNew.value = false;
     }
 };
 
@@ -609,7 +611,7 @@ onMounted(async () => {
                     :disabled="!javascriptOld || !input"
                     @click="preparePromptOld"
                 >
-                    {{ isExecuting ? 'Executing...' : 'Prepare Prompt' }}
+                    {{ isPreparingOld ? 'Preparing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
                 <ButtonDanger
@@ -623,7 +625,7 @@ onMounted(async () => {
                     :disabled="!javascriptOld || !input"
                     @click="executeWorkflowOld"
                 >
-                    {{ isExecuting ? 'Executing...' : 'Execute workflow' }}
+                    {{ isExecutingOld ? 'Executing...' : 'Execute workflow' }}
                 </ButtonSuccess>
 
                 <ButtonSecondary @click="expandedView = 'javascript-new'">
@@ -634,7 +636,7 @@ onMounted(async () => {
                     :disabled="!javascriptNew || !input"
                     @click="preparePromptNew"
                 >
-                    {{ isExecutingNew ? 'Executing...' : 'Prepare Prompt' }}
+                    {{ isPreparingNew ? 'Preparing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
                 <ButtonDanger
