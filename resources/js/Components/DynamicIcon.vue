@@ -55,11 +55,12 @@ const iconComponent = computed(() => {
         loadingComponent: {
             render: () =>
                 h('div', {
-                    class: 'size-5 animate-pulse rounded-sm bg-gray-200',
+                    class: 'size-5 animate-pulse rounded-sm bg-indigo-200',
                 }),
         },
         errorComponent: {
-            render: () => h('div', { class: 'size-5 rounded-sm bg-gray-200' }),
+            render: () =>
+                h('div', { class: 'size-5 rounded-sm bg-indigo-200' }),
         },
         delay: 0, // Show loading immediately
         timeout: 3000, // Timeout after 3 seconds
@@ -77,5 +78,5 @@ const iconComponent = computed(() => {
 <template>
     <!-- Forward all attributes (class, style, size, etc.) to the SVG root -->
     <component :is="iconComponent" v-if="iconComponent" v-bind="$attrs" />
-    <div v-else class="size-5 rounded-sm bg-gray-200" />
+    <div v-else class="size-5 rounded-sm bg-indigo-200" />
 </template>

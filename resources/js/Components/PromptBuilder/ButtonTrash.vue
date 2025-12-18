@@ -23,7 +23,7 @@ const emit = defineEmits<{
         :disabled="disabled"
         @click="emit('clear')"
     >
-        <DynamicIcon name="trash" class="h-5 w-5 text-gray-600" />
+        <DynamicIcon name="trash" class="h-5 w-5 text-indigo-800" />
         <span>Clear</span>
     </ButtonSecondary>
 </template>

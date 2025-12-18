@@ -34,7 +34,7 @@ defineExpose({ focus });
 
 <template>
     <div>
-        <p class="mb-6 max-w-4xl text-gray-600">
+        <p class="mb-6 max-w-4xl text-indigo-700">
             Create optimised AI prompts using expert frameworks.
             <span v-if="hasPersonalityType">
                 Prompts will be customised to your personality type and task

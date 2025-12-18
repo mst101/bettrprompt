@@ -162,9 +162,8 @@ watch(
                 <p>{{ submissionError }}</p>
             </div>
 
-            <!--            <div class="px-6 sm:p-6">-->
             <PersonalityTypePrompt
-                v-if="user && visitorHasCompletedPrompts"
+                v-if="!user && !hasPersonalityType"
                 ref="personalityTypePromptRef"
                 :has-personality-type="hasPersonalityType"
                 :is-authenticated="!!user"
@@ -193,7 +192,6 @@ watch(
                     (value) => (form.taskDescription = value)
                 "
             />
-            <!--            </div>-->
         </Card>
     </ContainerPage>
 </template>

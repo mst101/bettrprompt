@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
@@ -89,30 +90,39 @@ watch(
                     </p>
                     <!-- Visitor -->
                     <div v-else>
-                        <p class="mb-2">
-                            For personalised prompts tailored to your
-                            communication style, add your
-                            <a
-                                class="underline underline-offset-2"
-                                href="https://16personalities.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                >16personalities.com</a
-                            >
-                            type. Otherwise, we'll select the best framework
-                            based purely on your task.
-                        </p>
-                        <ButtonText
+                        <div
+                            class="flex flex-col-reverse items-start sm:flex-row sm:items-center"
+                        >
+                            <p class="mb-2">
+                                For personalised prompts tailored to your
+                                communication style, add your
+                                <a
+                                    class="underline underline-offset-2"
+                                    href="https://16personalities.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    >16personalities.com</a
+                                >
+                                type. Otherwise, we'll select the best framework
+                                based purely on your task.
+                            </p>
+                            <div class="shrink-0 sm:ml-4">
+                                <DynamicIcon
+                                    name="personalities"
+                                    class="w-full text-indigo-500 sm:w-64"
+                                />
+                            </div>
+                        </div>
+                        <ButtonPrimary
                             v-if="!showPersonalityForm"
                             id="add-personality-type"
                             ref="addPersonalityButtonRef"
                             type="button"
-                            variant="warning"
-                            class="-m-1"
+                            class="mt-2"
                             @click="showPersonalityForm = true"
                         >
                             Add personality type
-                        </ButtonText>
+                        </ButtonPrimary>
                         <div v-else class="mt-3">
                             <UpdatePersonalityTypeForm
                                 :personality-types="personalityTypes"

@@ -52,11 +52,11 @@ const toggleRecording = async () => {
         <button
             type="button"
             :disabled="isProcessing || disabled"
-            class="inline-flex items-center justify-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors duration-150 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex items-center justify-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition-colors duration-150 focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
             :class="[
                 isActive
                     ? 'animate-pulse bg-red-600 hover:bg-red-700 focus:animate-pulse focus:ring-red-600'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 focus:ring-indigo-500 dark:bg-indigo-100 dark:text-indigo-900 dark:hover:bg-indigo-200',
+                    : 'bg-white text-indigo-700 hover:bg-indigo-50 focus:ring-indigo-500 dark:bg-indigo-100 dark:text-indigo-900 dark:hover:bg-indigo-200',
                 isProcessing || disabled ? 'cursor-not-allowed opacity-50' : '',
             ]"
             :title="
@@ -71,7 +71,9 @@ const toggleRecording = async () => {
                 name="microphone"
                 class="h-5 w-5"
                 :class="
-                    isActive ? 'text-white dark:text-red-800' : 'text-gray-600'
+                    isActive
+                        ? 'text-white dark:text-red-800'
+                        : 'text-indigo-800'
                 "
             />
             <DynamicIcon
