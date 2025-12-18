@@ -1,9 +1,43 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { useNotification } from '@/Composables/useNotification';
-import { computed, TransitionGroup } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed, onMounted, TransitionGroup } from 'vue';
 
-const { notifications, remove } = useNotification();
+const page = usePage();
+const { notifications, remove, add } = useNotification();
+
+// Add server flash messages to the notification queue on mount
+onMounted(() => {
+    const flash = page.props.flash as
+        | { success?: string; warning?: string; error?: string }
+        | undefined;
+
+    if (flash?.success) {
+        add({
+            message: flash.success,
+            type: 'success',
+            autoDismiss: true,
+            dismissDelay: 3000,
+        });
+    }
+    if (flash?.warning) {
+        add({
+            message: flash.warning,
+            type: 'warning',
+            autoDismiss: true,
+            dismissDelay: 4000,
+        });
+    }
+    if (flash?.error) {
+        add({
+            message: flash.error,
+            type: 'error',
+            autoDismiss: true,
+            dismissDelay: 5000,
+        });
+    }
+});
 
 const typeConfig = computed(() => ({
     success: {

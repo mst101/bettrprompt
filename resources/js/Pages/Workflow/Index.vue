@@ -59,7 +59,6 @@ const infoItems = [
                 subtitle="Document Management"
                 description="View, edit, and manage reference documents"
                 icon="📄"
-                color-scheme="amber"
             />
         </div>
 

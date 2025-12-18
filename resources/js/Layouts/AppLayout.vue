@@ -7,7 +7,6 @@ import CookieBanner from '@/Components/CookieBanner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FlashMessage from '@/Components/FlashMessage.vue';
 import Footer from '@/Components/Footer.vue';
 import ModalForgotPassword from '@/Components/ModalForgotPassword.vue';
 import ModalLogin from '@/Components/ModalLogin.vue';
@@ -64,19 +63,6 @@ const logoDestination = computed(() => {
 
     // Non-admin users always go to home/main site
     return route('home');
-});
-
-// Flash messages
-const flashMessage = computed(() => {
-    const flash = page.props.flash as
-        | { success?: string; warning?: string; error?: string }
-        | undefined;
-    if (flash?.success)
-        return { message: flash.success, type: 'success' as const };
-    if (flash?.warning)
-        return { message: flash.warning, type: 'warning' as const };
-    if (flash?.error) return { message: flash.error, type: 'error' as const };
-    return null;
 });
 
 const showingNavigationDropdown = ref(false);
@@ -438,18 +424,8 @@ watch(showingNavigationDropdown, async (isOpen) => {
             ></div>
         </Teleport>
 
-        <!-- Flash Message -->
-        <FlashMessage
-            v-if="flashMessage"
-            :message="flashMessage.message"
-            :type="flashMessage.type"
-        />
-
-        <!-- Notification Center -->
+        <!-- Notification Center (handles both server flash messages and client notifications) -->
         <NotificationCenter />
-
-        <!-- Visitor Limit Banner -->
-        <!--        <VisitorLimitBanner v-if="showVisitorBanner" @register="openRegister" />-->
 
         <!-- Global Alert Dialog -->
         <AlertDialog />
