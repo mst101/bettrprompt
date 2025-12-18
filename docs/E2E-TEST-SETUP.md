@@ -17,7 +17,7 @@ authentication, and the test-specific infrastructure.
 The E2E tests use Playwright to run browser-based tests against the application. To ensure tests are isolated and don't
 affect development data, we use:
 
-- A **separate test database** (`personality_e2e`)
+- A **separate test database** (`bettrprompt_e2e`)
 - **Test-specific middleware** to detect and handle test requests
 - A **test-only authentication endpoint** to bypass the login modal
 - **Global setup** to prepare the database before tests run
@@ -29,7 +29,7 @@ affect development data, we use:
 We maintain two separate PostgreSQL databases:
 
 - **`personality`** - Development database (for local development)
-- **`personality_e2e`** - Test database (for E2E tests only)
+- **`bettrprompt_e2e`** - Test database (for E2E tests only)
 
 This separation ensures:
 
@@ -70,7 +70,7 @@ Before any tests run, Playwright executes the global setup script:
 
 1. **Creates the test database** (if it doesn't exist)
    ```bash
-   CREATE DATABASE personality_e2e
+   CREATE DATABASE bettrprompt_e2e
    ```
 
 2. **Runs all migrations** on the test database
@@ -143,7 +143,7 @@ The `bash -c` wrapper ensures environment variables reach the Docker container.
 Test Run Start
     ↓
 Global Setup (once)
-    ├─ Drop all tables in personality_e2e
+    ├─ Drop all tables in bettrprompt_e2e
     ├─ Run migrations
     └─ Seed with E2eTestSeeder (25 prompt runs)
     ↓
@@ -277,7 +277,7 @@ Using the browser's native `fetch()` API with `credentials: 'include'` ensures:
 **How it works:**
 
 1. **Detects test requests** via `X-Test-Auth` header
-2. **Switches database configuration** to `personality_e2e`
+2. **Switches database configuration** to `bettrprompt_e2e`
 3. **Logs the switch** for debugging
 
 ```php
@@ -285,12 +285,12 @@ public function handle(Request $request, Closure $next): Response
 {
     if ($request->header('X-Test-Auth') === 'playwright-e2e-tests') {
         // Switch to E2E database
-        Config::set('database.connections.pgsql.database', 'personality_e2e');
+        Config::set('database.connections.pgsql.database', 'bettrprompt_e2e');
 
         // Reconnect to apply the new database setting
         app('db')->purge('pgsql');
 
-        Log::info('UseE2eDatabase middleware: Switched to personality_e2e database', [
+        Log::info('UseE2eDatabase middleware: Switched to bettrprompt_e2e database', [
             'url' => $request->url(),
         ]);
     }
@@ -310,13 +310,13 @@ $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 Without this middleware:
 
 - Laravel server uses `DB_DATABASE=bettrprompt` (from `.env`)
-- Tests create data in `personality_e2e`
+- Tests create data in `bettrprompt_e2e`
 - Requests from Playwright would query the wrong database
 - No data would be found, tests would fail
 
 With this middleware:
 
-- All requests with `X-Test-Auth` header use `personality_e2e`
+- All requests with `X-Test-Auth` header use `bettrprompt_e2e`
 - Tests and the application see the same data
 - Database isolation is maintained
 
@@ -441,7 +441,7 @@ Key settings:
       ```
 
 2. **Wrong database**
-    - Check logs for "Switched to personality_e2e database"
+    - Check logs for "Switched to bettrprompt_e2e database"
     - Verify `X-Test-Auth` header is being sent
     - Restart Laravel server after middleware changes
 
@@ -494,7 +494,7 @@ Common issues:
 
 1. **Create database manually:**
    ```bash
-   ./vendor/bin/sail exec pgsql psql -U sail -c "CREATE DATABASE personality_e2e;"
+   ./vendor/bin/sail exec pgsql psql -U sail -c "CREATE DATABASE bettrprompt_e2e;"
    ```
 
 2. **Reset database:**
@@ -511,7 +511,7 @@ Common issues:
 ### Seeder Writing to Wrong Database
 
 **Symptom:** Running `sail artisan db:seed --class=E2eTestSeeder --env=e2e` creates data in `personality` instead of
-`personality_e2e`
+`bettrprompt_e2e`
 
 **Cause:** Laravel's configuration cache prevents the `--env=e2e` flag from loading the correct database configuration
 from `.env.e2e`
@@ -523,7 +523,7 @@ from `.env.e2e`
 ./vendor/bin/sail artisan db:seed --class=E2eTestSeeder --env=e2e --force
 ```
 
-**Verification:** Check the seeder output - it should show "Seeding using connection 'pgsql' (personality_e2e)" not "(
+**Verification:** Check the seeder output - it should show "Seeding using connection 'pgsql' (bettrprompt_e2e)" not "(
 personality)"
 
 ### Environment Variable Issues
@@ -608,7 +608,7 @@ await execAsync(
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  UseE2eDatabase Middleware                           │  │
 │  │  - Detects: X-Test-Auth header                       │  │
-│  │  - Switches: personality → personality_e2e           │  │
+│  │  - Switches: personality → bettrprompt_e2e           │  │
 │  └──────────────────────────────────────────────────────┘  │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  Controllers / Routes                                 │  │
@@ -622,7 +622,7 @@ await execAsync(
 ┌─────────────────────────────────────────────────────────────┐
 │                    PostgreSQL                                │
 │  ┌─────────────────────┐  ┌─────────────────────────────┐  │
-│  │  personality        │  │  personality_e2e             │  │
+│  │  personality        │  │  bettrprompt_e2e             │  │
 │  │  (Development)      │  │  (Tests)                     │  │
 │  │                     │  │                              │  │
 │  │  - Real user data   │  │  - Test user                 │  │

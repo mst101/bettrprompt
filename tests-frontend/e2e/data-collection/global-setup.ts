@@ -50,12 +50,12 @@ async function globalSetup() {
             }
 
             console.log(
-                '🔄 Cloning schema from personality_e2e to bettrprompt_data_collection...',
+                '🔄 Cloning schema from bettrprompt_e2e to bettrprompt_data_collection...',
             );
-            // Clone only the schema (not data) from personality_e2e
+            // Clone only the schema (not data) from bettrprompt_e2e
             try {
                 execSync(
-                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection',
+                    './vendor/bin/sail exec -T pgsql pg_dump -U sail bettrprompt_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection',
                     { stdio: 'inherit', shell: '/bin/bash' },
                 );
                 console.log('✓ Database schema cloned successfully');
@@ -68,11 +68,11 @@ async function globalSetup() {
             }
         } else {
             // Database exists, ensure schema is up-to-date by applying any missing tables/columns
-            // Get schema from personality_e2e and apply only new/modified structures
-            console.log('🔄 Syncing schema from personality_e2e...');
+            // Get schema from bettrprompt_e2e and apply only new/modified structures
+            console.log('🔄 Syncing schema from bettrprompt_e2e...');
             try {
                 execSync(
-                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection 2>&1 | grep -v "already exists" || true',
+                    './vendor/bin/sail exec -T pgsql pg_dump -U sail bettrprompt_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection 2>&1 | grep -v "already exists" || true',
                     { stdio: 'inherit', shell: '/bin/bash' },
                 );
                 console.log('✓ Schema is up-to-date');

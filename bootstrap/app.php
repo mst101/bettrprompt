@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\SwitchDataCollectionDatabase::class);
 
         // Apply UseE2eDatabase middleware globally to detect Playwright test requests
-        // This runs after SwitchDataCollectionDatabase and defaults to personality_e2e for regular E2E tests
+        // This runs after SwitchDataCollectionDatabase and defaults to bettrprompt_e2e for regular E2E tests
         $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 
         $middleware->web(append: [

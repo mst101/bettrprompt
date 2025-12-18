@@ -5,7 +5,7 @@ database.
 
 ## How It Works
 
-1. **Separate Database**: E2E tests use `personality_e2e` database instead of `personality`
+1. **Separate Database**: E2E tests use `bettrprompt_e2e` database instead of `personality`
 2. **Automatic Setup**: The global setup script (`global-setup.ts`) automatically:
     - Creates the test database if it doesn't exist
     - Runs fresh migrations before tests
@@ -50,7 +50,7 @@ If you need to manually interact with the test database:
 
 ```bash
 # Access the test database
-./vendor/bin/sail exec pgsql psql -U sail -d personality_e2e
+./vendor/bin/sail exec pgsql psql -U sail -d bettrprompt_e2e
 
 # Run migrations manually
 ./vendor/bin/sail artisan migrate --env=e2e
@@ -62,7 +62,7 @@ If you need to manually interact with the test database:
 ./vendor/bin/sail artisan db:seed --env=e2e
 
 # Drop the test database
-./vendor/bin/sail exec pgsql psql -U sail -d personality -c "DROP DATABASE personality_e2e;"
+./vendor/bin/sail exec pgsql psql -U sail -d personality -c "DROP DATABASE bettrprompt_e2e;"
 ```
 
 ## Architecture
@@ -77,7 +77,7 @@ If you need to manually interact with the test database:
 
 Each test run:
 
-1. Global setup creates/migrates `personality_e2e` database
+1. Global setup creates/migrates `bettrprompt_e2e` database
 2. Tests run against the test database
 3. Main `personality` database remains untouched
 
@@ -94,7 +94,7 @@ Each test run:
 
 ```bash
 # Drop and recreate
-./vendor/bin/sail exec pgsql psql -U sail -d personality -c "DROP DATABASE IF EXISTS personality_e2e;"
+./vendor/bin/sail exec pgsql psql -U sail -d personality -c "DROP DATABASE IF EXISTS bettrprompt_e2e;"
 ```
 
 ### Migration errors

@@ -19,18 +19,18 @@ class UseE2eDatabase
     {
         // Check if this is a Playwright E2E test request
         if ($request->header('X-Test-Auth') === 'playwright-e2e-tests') {
-            // Only switch to personality_e2e if not already switched to data_collection
+            // Only switch to bettrprompt_e2e if not already switched to data_collection
             // (SwitchDataCollectionDatabase middleware runs first and takes priority)
             $currentDb = Config::get('database.connections.pgsql.database');
             if ($currentDb !== 'bettrprompt_data_collection') {
                 // Switch to the E2E database
-                Config::set('database.connections.pgsql.database', 'personality_e2e');
+                Config::set('database.connections.pgsql.database', 'bettrprompt_e2e');
 
                 // Reconnect to apply the new database setting
                 app('db')->purge('pgsql');
 
                 // Log for debugging
-                \Log::info('UseE2eDatabase middleware: Switched to personality_e2e database', [
+                \Log::info('UseE2eDatabase middleware: Switched to bettrprompt_e2e database', [
                     'url' => $request->url(),
                     'current_db' => Config::get('database.connections.pgsql.database'),
                 ]);

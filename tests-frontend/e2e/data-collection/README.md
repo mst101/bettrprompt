@@ -29,7 +29,7 @@ npx playwright test --config=playwright-data-collection.config.ts --headed
 
 ## Persistent Data Storage
 
-Unlike main e2e tests which reset the database (`personality_e2e`) before each run, data collection tests:
+Unlike main e2e tests which reset the database (`bettrprompt_e2e`) before each run, data collection tests:
 
 - Use a separate **persistent database** (`bettrprompt_data_collection`)
 - Do NOT reset the database between test runs
@@ -37,7 +37,7 @@ Unlike main e2e tests which reset the database (`personality_e2e`) before each r
 - Preserve all workflow responses and n8n data
 
 All requests from data collection tests include the `X-Data-Collection-Test` header, which signals the Laravel
-middleware to use the `bettrprompt_data_collection` database instead of the standard `personality_e2e` database.
+middleware to use the `bettrprompt_data_collection` database instead of the standard `bettrprompt_e2e` database.
 
 ## Collected Data
 
@@ -80,7 +80,7 @@ database regardless.
 
 ## Database Isolation
 
-- **Main E2E Tests** (`npm run test:e2e`): Use `personality_e2e` database (reset before each run)
+- **Main E2E Tests** (`npm run test:e2e`): Use `bettrprompt_e2e` database (reset before each run)
 - **Data Collection Tests** (`npx playwright test --config=playwright-data-collection.config.ts`): Use
   `bettrprompt_data_collection` database (persistent, never reset)
 
