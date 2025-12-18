@@ -109,7 +109,7 @@ watch(
                             <div class="shrink-0 sm:ml-4">
                                 <DynamicIcon
                                     name="personalities"
-                                    class="w-full text-indigo-500 sm:w-64"
+                                    class="w-40 text-indigo-500 sm:w-52"
                                 />
                             </div>
                         </div>
