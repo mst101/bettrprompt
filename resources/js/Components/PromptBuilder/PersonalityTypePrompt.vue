@@ -20,6 +20,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
     (e: 'saved'): void;
+    (e: 'focus-task-description'): void;
 }>();
 
 const { add: addNotification } = useNotification();
@@ -55,6 +56,7 @@ const handleMaybeLater = () => {
         autoDismiss: true,
         dismissDelay: 5000,
     });
+    emit('focus-task-description');
 };
 
 // Watch for hasPersonalityType changes and reset form visibility

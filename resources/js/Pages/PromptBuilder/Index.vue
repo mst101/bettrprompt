@@ -91,6 +91,12 @@ const handlePersonalitySaved = async () => {
     taskDescriptionFormRef.value?.focus();
 };
 
+// Handle focus task description event from personality prompt
+const handleFocusTaskDescription = async () => {
+    await nextTick();
+    taskDescriptionFormRef.value?.focus();
+};
+
 const focusAppropriateElement = async () => {
     await nextTick();
     // Use requestAnimationFrame to wait for all rendering to complete
@@ -171,6 +177,7 @@ watch(
                 :visitor-trait-percentages="visitorTraitPercentages"
                 :personality-types="personalityTypes"
                 @saved="handlePersonalitySaved"
+                @focus-task-description="handleFocusTaskDescription"
             />
 
             <VisitorLimitBanner
