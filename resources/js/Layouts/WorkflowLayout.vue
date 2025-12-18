@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/ButtonHamburger.vue';
+import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link } from '@inertiajs/vue3';
@@ -46,7 +47,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
     <div class="min-h-screen bg-indigo-50">
         <!-- Navigation Bar -->
         <nav class="border-b border-indigo-200 bg-white shadow-sm">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto px-4 sm:px-4">
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo -->
                     <div class="flex shrink-0 items-center">
@@ -64,72 +65,42 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                     <!-- Navigation Links (Desktop) -->
                     <div class="hidden space-x-1 md:flex">
-                        <Link
+                        <NavLink
                             :href="route('workflow.index')"
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-indigo-100 text-indigo-900':
-                                    route().current('workflow.index'),
-                                'text-indigo-600 hover:bg-indigo-50':
-                                    !route().current('workflow.index'),
-                            }"
+                            :active="route().current('workflow.index')"
                         >
                             Index
-                        </Link>
-                        <Link
+                        </NavLink>
+                        <NavLink
                             :href="
                                 route('workflow.show', { workflowNumber: 0 })
                             "
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-indigo-100 text-indigo-900':
-                                    $page.url.includes('/workflow/0'),
-                                'text-indigo-600 hover:bg-indigo-50':
-                                    !$page.url.includes('/workflow/0'),
-                            }"
+                            :active="$page.url.includes('/workflow/0')"
                         >
                             Workflow 0
-                        </Link>
-                        <Link
+                        </NavLink>
+                        <NavLink
                             :href="
                                 route('workflow.show', { workflowNumber: 1 })
                             "
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-indigo-100 text-indigo-900':
-                                    $page.url.includes('/workflow/1'),
-                                'text-indigo-600 hover:bg-indigo-50':
-                                    !$page.url.includes('/workflow/1'),
-                            }"
+                            :active="$page.url.includes('/workflow/1')"
                         >
                             Workflow 1
-                        </Link>
-                        <Link
+                        </NavLink>
+                        <NavLink
                             :href="
                                 route('workflow.show', { workflowNumber: 2 })
                             "
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-indigo-100 text-indigo-900':
-                                    $page.url.includes('/workflow/2'),
-                                'text-indigo-600 hover:bg-indigo-50':
-                                    !$page.url.includes('/workflow/2'),
-                            }"
+                            :active="$page.url.includes('/workflow/2')"
                         >
                             Workflow 2
-                        </Link>
-                        <Link
+                        </NavLink>
+                        <NavLink
                             :href="route('workflow.docs.index')"
-                            class="rounded-md px-4 py-2 text-sm font-medium transition"
-                            :class="{
-                                'bg-indigo-100 text-indigo-900':
-                                    route().current('workflow.docs.index'),
-                                'text-indigo-600 hover:bg-indigo-50':
-                                    !route().current('workflow.docs.index'),
-                            }"
+                            :active="route().current('workflow.docs.index')"
                         >
                             Docs
-                        </Link>
+                        </NavLink>
                     </div>
 
                     <!-- Right Side Actions -->
@@ -234,7 +205,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
         </Teleport>
 
         <!-- Page Content -->
-        <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <main class="max-w-8xl mx-auto px-4 py-8 sm:px-6">
             <slot />
         </main>
     </div>

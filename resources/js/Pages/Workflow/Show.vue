@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ButtonDanger from '@/Components/ButtonDanger.vue';
 import ButtonPrimary from '@/Components/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonSuccess from '@/Components/ButtonSuccess.vue';
@@ -38,6 +39,8 @@ defineOptions({
 
 const isExecuting = ref(false);
 const isExecutingNew = ref(false);
+const isUploadingOld = ref(false);
+const isUploadingNew = ref(false);
 const error = ref<string | null>(null);
 
 const input = ref(props.input);
@@ -237,6 +240,96 @@ const executeWorkflowNew = async () => {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
         isExecutingNew.value = false;
+    }
+};
+
+const uploadWorkflowOld = async () => {
+    if (!inputJson.value) {
+        error.value = 'Input data is required';
+        return;
+    }
+
+    isUploadingOld.value = true;
+    error.value = null;
+
+    try {
+        // Parse the input JSON
+        let inputData;
+        try {
+            inputData = JSON.parse(inputJson.value);
+        } catch {
+            error.value = 'Invalid JSON in input data';
+            return;
+        }
+
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-old`,
+            'POST',
+            { input: inputData },
+        );
+
+        if (!response.ok) {
+            error.value = `Server error: ${response.status} ${response.statusText}`;
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            error.value = result.error || 'Failed to upload workflow to n8n';
+            return;
+        }
+
+        error.value = null;
+    } catch (err) {
+        error.value = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    } finally {
+        isUploadingOld.value = false;
+    }
+};
+
+const uploadWorkflowNew = async () => {
+    if (!inputJson.value) {
+        error.value = 'Input data is required';
+        return;
+    }
+
+    isUploadingNew.value = true;
+    error.value = null;
+
+    try {
+        // Parse the input JSON
+        let inputData;
+        try {
+            inputData = JSON.parse(inputJson.value);
+        } catch {
+            error.value = 'Invalid JSON in input data';
+            return;
+        }
+
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new`,
+            'POST',
+            { input: inputData },
+        );
+
+        if (!response.ok) {
+            error.value = `Server error: ${response.status} ${response.statusText}`;
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            error.value = result.error || 'Failed to upload workflow to n8n';
+            return;
+        }
+
+        error.value = null;
+    } catch (err) {
+        error.value = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    } finally {
+        isUploadingNew.value = false;
     }
 };
 
@@ -507,7 +600,7 @@ onMounted(async () => {
         <!-- Controls -->
         <div class="space-y-8">
             <!-- Input Data and JavaScript Code Buttons -->
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-6">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-8">
                 <ButtonSecondary @click="expandedView = 'javascript-old'">
                     View JavaScript
                 </ButtonSecondary>
@@ -519,8 +612,18 @@ onMounted(async () => {
                     {{ isExecuting ? 'Executing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
-                <ButtonSuccess @click="executeWorkflowOld">
-                    Upload to n8n & Execute workflow
+                <ButtonDanger
+                    :disabled="!javascriptOld || !input"
+                    @click="uploadWorkflowOld"
+                >
+                    {{ isUploadingOld ? 'Uploading...' : 'Upload to n8n' }}
+                </ButtonDanger>
+
+                <ButtonSuccess
+                    :disabled="!javascriptOld || !input"
+                    @click="executeWorkflowOld"
+                >
+                    {{ isExecuting ? 'Executing...' : 'Execute workflow' }}
                 </ButtonSuccess>
 
                 <ButtonSecondary @click="expandedView = 'javascript-new'">
@@ -534,8 +637,18 @@ onMounted(async () => {
                     {{ isExecutingNew ? 'Executing...' : 'Prepare Prompt' }}
                 </ButtonPrimary>
 
-                <ButtonSuccess @click="executeWorkflowNew">
-                    Upload to n8n & Execute workflow
+                <ButtonDanger
+                    :disabled="!javascriptNew || !input"
+                    @click="uploadWorkflowNew"
+                >
+                    {{ isUploadingNew ? 'Uploading...' : 'Upload to n8n' }}
+                </ButtonDanger>
+
+                <ButtonSuccess
+                    :disabled="!javascriptNew || !input"
+                    @click="executeWorkflowNew"
+                >
+                    {{ isExecutingNew ? 'Executing...' : 'Execute workflow' }}
                 </ButtonSuccess>
             </div>
 
