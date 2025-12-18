@@ -136,14 +136,14 @@ const getJsonCharacterCount = (data: unknown): string => {
                         </div>
                         <div
                             v-if="showRawSystem"
-                            class="overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
+                            class="overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 font-mono text-sm wrap-break-word whitespace-pre-wrap text-indigo-700"
                         >
                             {{ output.system }}
                         </div>
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <div
                             v-else
-                            class="prose dark:prose-invert prose-sm overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
+                            class="prose dark:prose-invert prose-sm max-w-none overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
                             v-html="renderMarkdown(output.system)"
                         />
                     </div>
@@ -198,7 +198,7 @@ const getJsonCharacterCount = (data: unknown): string => {
                                         v-if="
                                             message.content && !showRawMessages
                                         "
-                                        class="prose dark:prose-invert prose-sm text-indigo-700"
+                                        class="prose dark:prose-invert prose-sm max-w-none text-indigo-700"
                                         v-html="renderMarkdown(message.content)"
                                     />
                                     <div

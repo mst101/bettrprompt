@@ -2,23 +2,9 @@
     "needs_clarification": true,
     "questions": [
         {
-            "id": "duration",
-            "type": "choice",
-            "question": "How long do you want to spend birdwatching in the Gambia?",
-            "options": [
-                {
-                    "value": "short",
-                    "label": "1-3 days"
-                },
-                {
-                    "value": "medium",
-                    "label": "4-7 days"
-                },
-                {
-                    "value": "long",
-                    "label": "8-14 days"
-                }
-            ]
+            "id": "travel_details",
+            "type": "text",
+            "question": "When are you planning to travel and for how long?"
         },
         {
             "id": "experience_level",
@@ -40,34 +26,35 @@
             ]
         },
         {
-            "id": "travel_companions",
+            "id": "group_type",
             "type": "choice",
-            "question": "Who will you be travelling with?",
+            "question": "Are you travelling solo, as a couple, or in a group?",
             "options": [
                 {
                     "value": "solo",
                     "label": "Solo"
                 },
                 {
-                    "value": "partner",
-                    "label": "Partner"
+                    "value": "couple",
+                    "label": "Couple"
                 },
                 {
                     "value": "group",
-                    "label": "Organised Group"
-                },
-                {
-                    "value": "friends",
-                    "label": "Friends/Family"
+                    "label": "Group"
                 }
             ]
         }
     ],
-    "reasoning": "Need more specifics about birdwatching holiday preferences",
-    "pre_analysis_context": null,
+    "reasoning": "Need more details about travel preferences, experience, and group composition to provide tailored birdwatching holiday planning",
+    "pre_analysis_context": {
+        "subject": "Birdwatching holiday in Gambia",
+        "audience": "self",
+        "purpose": "Plan a birdwatching trip",
+        "detail_level": "comprehensive"
+    },
     "api_usage": {
         "model": "claude-3-5-haiku-20241022",
-        "input_tokens": 415,
-        "output_tokens": 365
+        "input_tokens": 550,
+        "output_tokens": 408
     }
 }
