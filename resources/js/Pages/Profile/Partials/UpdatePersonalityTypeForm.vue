@@ -108,18 +108,36 @@ const submit = () => {
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Your Personality Type
-            </h2>
+        <header
+            class="flex flex-col items-start sm:flex-row sm:justify-between"
+        >
+            <div>
+                <h2 class="text-lg font-medium text-gray-900">
+                    Your Personality Type
+                </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                Update your personality type to get more personalised AI
-                prompts.
-            </p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Update your personality type to get more personalised AI
+                    prompts.
+                </p>
+            </div>
+
+            <div v-if="!visitorMode" class="-ml-4 sm:ml-4">
+                <a
+                    class="underline underline-offset-2"
+                    href="https://16personalities.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <DynamicIcon
+                        name="personalities"
+                        class="my-2 h-16 w-full rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100 sm:mt-0 sm:h-fit sm:w-80"
+                    />
+                </a>
+            </div>
         </header>
 
-        <form class="mt-6 space-y-6" @submit.prevent="submit">
+        <form class="mt-2 space-y-6" @submit.prevent="submit">
             <!-- Personality Type Selection -->
             <div class="space-y-4">
                 <FormSelect
@@ -191,8 +209,7 @@ const submit = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             >16personalities.com</a
-                        >. Your percentages must be 50% or higher for the traits
-                        in your type code ({{ fullPersonalityType }}).
+                        >.
                     </p>
 
                     <div class="grid grid-cols-2 gap-4">

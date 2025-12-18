@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/ButtonSecondary.vue';
 import ButtonText from '@/Components/ButtonText.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import LinkText from '@/Components/LinkText.vue';
+import { useNotification } from '@/Composables/useNotification';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
 import { ref, watch } from 'vue';
 
@@ -21,7 +22,9 @@ const emit = defineEmits<{
     (e: 'saved'): void;
 }>();
 
+const { add: addNotification } = useNotification();
 const showPersonalityForm = ref(false);
+const showPersonalityBox = ref(true);
 const addPersonalityLinkRef = ref<InstanceType<typeof LinkText> | null>(null);
 const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
     null,
@@ -43,13 +46,24 @@ const handlePersonalitySaved = () => {
     emit('saved');
 };
 
+const handleMaybeLater = () => {
+    showPersonalityBox.value = false;
+    addNotification({
+        message:
+            'You can always add your personality type later in the Profile section of your account.',
+        type: 'info',
+        autoDismiss: true,
+        dismissDelay: 5000,
+    });
+};
+
 // Watch for hasPersonalityType changes and reset form visibility
 // This ensures the form is hidden when transitioning from "no personality" to "has personality"
 watch(
     () => props.hasPersonalityType,
     (newValue, oldValue) => {
         // When personality type is added (false -> true), hide the form
-        if (oldValue === false && newValue === true) {
+        if (!oldValue && newValue) {
             showPersonalityForm.value = false;
         }
     },
@@ -59,7 +73,7 @@ watch(
 <template>
     <!-- Info message if no personality type -->
     <div
-        v-if="!hasPersonalityType"
+        v-if="!hasPersonalityType && showPersonalityBox"
         key="no-personality"
         class="mb-6 rounded-md border border-indigo-200 bg-indigo-50 p-4"
     >
@@ -75,67 +89,65 @@ watch(
             </div>
             <div class="sm:ml-3">
                 <div class="mt-2 text-sm text-indigo-700">
-                    <!-- Authenticated user -->
-                    <p v-if="isAuthenticated">
-                        For personalised prompts tailored to your communication
-                        style,
-                        <LinkText
-                            ref="addPersonalityLinkRef"
-                            :href="route('profile.edit')"
-                        >
-                            add your personality type
-                        </LinkText>
-                        to your profile. Otherwise, we'll select the best
-                        framework based purely on your task.
-                    </p>
-                    <!-- Visitor -->
-                    <div v-else>
-                        <div
-                            class="flex flex-col-reverse items-start sm:flex-row sm:items-center"
-                        >
-                            <p class="mb-2">
-                                For personalised prompts tailored to your
-                                communication style, add your
-                                <a
-                                    class="underline underline-offset-2"
-                                    href="https://16personalities.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    >16personalities.com</a
-                                >
-                                type. Otherwise, we'll select the best framework
-                                based purely on your task.
-                            </p>
-                            <div class="shrink-0 sm:ml-4">
+                    <div
+                        class="flex flex-col-reverse items-start sm:flex-row sm:items-center"
+                    >
+                        <p class="mb-2">
+                            For personalised prompts tailored to your way of
+                            thinking and communication style, add your
+                            <a
+                                class="underline underline-offset-2"
+                                href="https://16personalities.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >16personalities.com</a
+                            >
+                            type. Otherwise, we'll select the best framework
+                            based purely on your task.
+                        </p>
+                        <div class="sm:ml-4">
+                            <a
+                                href="https://16personalities.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <DynamicIcon
                                     name="personalities"
-                                    class="w-40 text-indigo-500 sm:w-52"
+                                    class="my-2 h-16 w-full rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100 sm:h-fit sm:w-80"
                                 />
-                            </div>
+                            </a>
                         </div>
+                    </div>
+                    <div
+                        v-if="!showPersonalityForm"
+                        class="mt-2 flex flex-col gap-2 sm:flex-row"
+                    >
                         <ButtonPrimary
-                            v-if="!showPersonalityForm"
                             id="add-personality-type"
                             ref="addPersonalityButtonRef"
                             type="button"
-                            class="mt-2"
+                            class="w-full sm:w-fit"
                             @click="showPersonalityForm = true"
                         >
                             Add personality type
                         </ButtonPrimary>
-                        <div v-else class="mt-3">
-                            <UpdatePersonalityTypeForm
-                                :personality-types="personalityTypes"
-                                :visitor-mode="true"
-                                :visitor-personality-type="
-                                    visitorPersonalityType
-                                "
-                                :visitor-trait-percentages="
-                                    visitorTraitPercentages
-                                "
-                                @saved="handlePersonalitySaved"
-                            />
-                        </div>
+                        <ButtonSecondary
+                            id="maybe-later"
+                            type="button"
+                            class="w-full sm:w-fit"
+                            @click="handleMaybeLater"
+                        >
+                            Maybe later
+                        </ButtonSecondary>
+                    </div>
+                    <div v-else class="mt-3">
+                        <UpdatePersonalityTypeForm
+                            :personality-types="personalityTypes"
+                            :visitor-mode="true"
+                            :visitor-personality-type="visitorPersonalityType"
+                            :visitor-trait-percentages="visitorTraitPercentages"
+                            @saved="handlePersonalitySaved"
+                        />
                     </div>
                 </div>
             </div>

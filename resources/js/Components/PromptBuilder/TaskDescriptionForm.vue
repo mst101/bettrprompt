@@ -77,6 +77,7 @@ defineExpose({ focus });
             <!-- Submit Button -->
             <div class="flex items-center justify-end">
                 <ButtonPrimary
+                    class="w-full sm:w-fit"
                     type="submit"
                     :disabled="
                         form.processing || form.taskDescription.length < 10

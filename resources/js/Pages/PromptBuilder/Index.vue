@@ -163,7 +163,7 @@ watch(
             </div>
 
             <PersonalityTypePrompt
-                v-if="!user && !hasPersonalityType"
+                v-if="!hasPersonalityType"
                 ref="personalityTypePromptRef"
                 :has-personality-type="hasPersonalityType"
                 :is-authenticated="!!user"

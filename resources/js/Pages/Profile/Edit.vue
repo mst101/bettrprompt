@@ -103,10 +103,7 @@ defineOptions({
         <div
             class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
         >
-            <UpdatePersonalityTypeForm
-                :personality-types="personalityTypes"
-                class="max-w-xl"
-            />
+            <UpdatePersonalityTypeForm :personality-types="personalityTypes" />
         </div>
 
         <!-- UI Complexity -->

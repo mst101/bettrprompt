@@ -39,7 +39,7 @@ defineOptions({
                     prompts that get results.
                 </p>
 
-                <!-- CTA Buttons -->
+                <!-- CTA Button -->
                 <div class="mt-10 flex flex-col items-center gap-4">
                     <LinkButton
                         variant="primary"
