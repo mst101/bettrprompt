@@ -136,7 +136,7 @@ watch(
                         <ButtonSecondary
                             id="maybe-later"
                             type="button"
-                            class="w-full sm:w-fit"
+                            class="mt-2 w-full sm:w-fit"
                             @click="handleMaybeLater"
                         >
                             Maybe later

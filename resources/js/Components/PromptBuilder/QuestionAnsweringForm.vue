@@ -233,7 +233,7 @@ const handleSkip = async () => {
                     data-testid="submit-answer-button"
                     :disabled="isSubmitting || !answer.trim()"
                     :loading="isSubmitting"
-                    class="w-full sm:w-auto"
+                    class="h-12 w-full sm:h-fit sm:w-auto"
                     @click="emit('submit')"
                 >
                     {{
