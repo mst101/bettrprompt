@@ -14,6 +14,7 @@
 /.vscode
 /.zed
 /auth.json
+/bootstrap/cache/
 /bootstrap/ssr
 /coverage
 /docs/deployment
