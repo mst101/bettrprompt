@@ -162,7 +162,7 @@ defineOptions({
 
                     <StepCard
                         :number="2"
-                        title="We Analyse and Structure"
+                        title="We Analyse and Ask Relevant Questions"
                         description="Our AI analyses your task type and selects the best framework from our curated library. We then dig deeper by asking targeted questions to build the context needed to craft an effective prompt that captures exactly what you need."
                         bg-colour="bg-purple-600"
                     />

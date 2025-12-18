@@ -1,6 +1,7 @@
 # E2E Test Setup Documentation
 
-This document explains how the end-to-end (E2E) tests work in this application, including database setup, authentication, and the test-specific infrastructure.
+This document explains how the end-to-end (E2E) tests work in this application, including database setup,
+authentication, and the test-specific infrastructure.
 
 ## Table of Contents
 
@@ -13,7 +14,8 @@ This document explains how the end-to-end (E2E) tests work in this application, 
 
 ## Overview
 
-The E2E tests use Playwright to run browser-based tests against the application. To ensure tests are isolated and don't affect development data, we use:
+The E2E tests use Playwright to run browser-based tests against the application. To ensure tests are isolated and don't
+affect development data, we use:
 
 - A **separate test database** (`personality_e2e`)
 - **Test-specific middleware** to detect and handle test requests
@@ -30,6 +32,7 @@ We maintain two separate PostgreSQL databases:
 - **`personality_e2e`** - Test database (for E2E tests only)
 
 This separation ensures:
+
 - Tests don't pollute development data
 - Development work doesn't interfere with test runs
 - Tests can be run repeatedly with predictable state
@@ -42,7 +45,7 @@ Located at the project root, this file configures Laravel to use the test databa
 
 ```bash
 APP_ENV=e2e
-DB_DATABASE=personality_e2e
+DB_DATABASE=bettrprompt_e2e
 CACHE_STORE=array
 QUEUE_CONNECTION=sync
 MAIL_MAILER=array
@@ -50,8 +53,9 @@ MAIL_MAILER=array
 ```
 
 Key differences from `.env`:
+
 - `APP_ENV=e2e` - Identifies this as the test environment
-- `DB_DATABASE=personality_e2e` - Points to the test database
+- `DB_DATABASE=bettrprompt_e2e` - Points to the test database
 - `CACHE_STORE=array` - Uses in-memory cache (no Redis dependency)
 - `QUEUE_CONNECTION=sync` - Processes queues synchronously
 - `MAIL_MAILER=array` - Doesn't send actual emails
@@ -90,14 +94,16 @@ Before any tests run, Playwright executes the global setup script:
 **Runs:** Once during global setup
 
 **Creates:**
+
 - Test user account (`test@example.com` / `password`)
 - 25 varied prompt runs with different:
-  - Statuses (submitted, framework_selected, completed, failed)
-  - Personality types (INTJ-A, ENTJ-A, etc.)
-  - Frameworks (STAR Method, PSB, FAB, etc.)
-  - All with `task_classification` field set for controller filtering
+    - Statuses (submitted, framework_selected, completed, failed)
+    - Personality types (INTJ-A, ENTJ-A, etc.)
+    - Frameworks (STAR Method, PSB, FAB, etc.)
+    - All with `task_classification` field set for controller filtering
 
 **Example test user:**
+
 ```php
 User::create([
     'name' => 'Test User',
@@ -116,6 +122,7 @@ User::create([
 **Purpose:** Add additional test data for specific test scenarios
 
 **Usage:**
+
 ```typescript
 // In a test file
 await seedPromptRuns(15); // Create 15 prompt runs with mixed statuses
@@ -123,6 +130,7 @@ await seedPromptRuns(10, 'completed'); // Create 10 completed prompt runs
 ```
 
 **Important:** This seeder uses the E2E database via:
+
 ```bash
 ./vendor/bin/sail bash -c "SEED_COUNT=15 php artisan db:seed --class=TestPromptRunsSeeder --env=e2e"
 ```
@@ -152,6 +160,7 @@ Test Run End
 ```
 
 **Key Points:**
+
 - Database is **reset once** at the start (not between tests)
 - Tests **share the same database state** (accumulated data)
 - Each test group can add more data via `seedPromptRuns()`
@@ -162,6 +171,7 @@ Test Run End
 ### The Challenge
 
 The application uses a Vue modal for login, which has issues with Playwright automation:
+
 - Modal inputs don't accept programmatic input reliably
 - Vue reactivity causes input focus issues
 - Modal state management interferes with automated testing
@@ -198,6 +208,7 @@ Route::post('/test/login', function (Request $request) {
 ```
 
 **Why it's safe:**
+
 - Requires exact header match: `X-Test-Auth: playwright-e2e-tests`
 - Only accessible in test environment
 - Protected from CSRF (exempted in `bootstrap/app.php`)
@@ -250,6 +261,7 @@ Route::post('/test/login', function (Request $request) {
 **Why use `page.evaluate()`?**
 
 Using the browser's native `fetch()` API with `credentials: 'include'` ensures:
+
 - Session cookies are properly set in the browser context
 - Cookies persist across subsequent page navigations
 - Laravel's session management works correctly
@@ -288,6 +300,7 @@ public function handle(Request $request, Closure $next): Response
 ```
 
 **Registered globally** in `bootstrap/app.php`:
+
 ```php
 $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 ```
@@ -295,12 +308,14 @@ $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 **Why this is needed:**
 
 Without this middleware:
-- Laravel server uses `DB_DATABASE=personality` (from `.env`)
+
+- Laravel server uses `DB_DATABASE=bettrprompt` (from `.env`)
 - Tests create data in `personality_e2e`
 - Requests from Playwright would query the wrong database
 - No data would be found, tests would fail
 
 With this middleware:
+
 - All requests with `X-Test-Auth` header use `personality_e2e`
 - Tests and the application see the same data
 - Database isolation is maintained
@@ -324,6 +339,7 @@ await page.route('**/*', async (route) => {
 ```
 
 This ensures:
+
 - Every HTTP request from the test browser includes the header
 - Middleware detects all test requests
 - Database switching happens automatically
@@ -341,6 +357,7 @@ $middleware->validateCsrfTokens(except: [
 ```
 
 **Why?**
+
 - The endpoint is protected by the `X-Test-Auth` header instead
 - CSRF tokens can be problematic in test contexts
 - Header-based authentication is simpler for automation
@@ -354,6 +371,7 @@ npx playwright test
 ```
 
 This will:
+
 1. Run global setup (create database, migrate, seed)
 2. Execute all test files in parallel
 3. Generate an HTML report
@@ -361,21 +379,25 @@ This will:
 ### Running Specific Tests
 
 **Single test file:**
+
 ```bash
 npx playwright test tests-frontend/e2e/prompt-builder-history.e2e.ts
 ```
 
 **Single test by name:**
+
 ```bash
 npx playwright test --grep "should display history table"
 ```
 
 **Run in headed mode (see browser):**
+
 ```bash
 npx playwright test --headed
 ```
 
 **Run in debug mode (step through):**
+
 ```bash
 npx playwright test --debug
 ```
@@ -387,6 +409,7 @@ npx playwright test --ui
 ```
 
 This opens the Playwright UI where you can:
+
 - Select individual tests to run
 - Watch tests execute in real-time
 - Debug failing tests
@@ -397,6 +420,7 @@ This opens the Playwright UI where you can:
 **File:** `playwright.config.ts`
 
 Key settings:
+
 - `globalSetup: './tests-frontend/e2e/global-setup.ts'` - Runs before all tests
 - `use.baseURL: 'https://app.localhost'` - Test against local server
 - `workers: 1` - Run tests sequentially (important for shared database)
@@ -410,20 +434,20 @@ Key settings:
 **Possible causes:**
 
 1. **Missing `task_classification` field**
-   - The history controller filters: `whereNotNull('task_classification')`
-   - Ensure seeders set this field:
-     ```php
-     'task_classification' => ['type' => 'prompt_builder', 'source' => 'web']
-     ```
+    - The history controller filters: `whereNotNull('task_classification')`
+    - Ensure seeders set this field:
+      ```php
+      'task_classification' => ['type' => 'prompt_builder', 'source' => 'web']
+      ```
 
 2. **Wrong database**
-   - Check logs for "Switched to personality_e2e database"
-   - Verify `X-Test-Auth` header is being sent
-   - Restart Laravel server after middleware changes
+    - Check logs for "Switched to personality_e2e database"
+    - Verify `X-Test-Auth` header is being sent
+    - Restart Laravel server after middleware changes
 
 3. **Seeder not running**
-   - Check global setup output for "Created 25 prompt runs"
-   - Verify `.env.e2e` has correct database name
+    - Check global setup output for "Created 25 prompt runs"
+    - Verify `.env.e2e` has correct database name
 
 ### Authentication Failures
 
@@ -432,16 +456,16 @@ Key settings:
 **Solutions:**
 
 1. **Check session cookies**
-   - Ensure `credentials: 'include'` in fetch call
-   - Verify `page.evaluate()` is used (not `page.request`)
+    - Ensure `credentials: 'include'` in fetch call
+    - Verify `page.evaluate()` is used (not `page.request`)
 
 2. **Verify test user exists**
-   - Check database: `SELECT * FROM users WHERE email = 'test@example.com'`
-   - Ensure E2eTestSeeder ran successfully
+    - Check database: `SELECT * FROM users WHERE email = 'test@example.com'`
+    - Ensure E2eTestSeeder ran successfully
 
 3. **Check middleware**
-   - Laravel server must be restarted after middleware changes
-   - Run: `php artisan config:cache && php artisan route:cache`
+    - Laravel server must be restarted after middleware changes
+    - Run: `php artisan config:cache && php artisan route:cache`
 
 ### JavaScript Errors
 
@@ -450,12 +474,14 @@ Key settings:
 **Check browser console:**
 
 Add to test:
+
 ```typescript
 page.on('console', msg => console.log(msg.text()));
 page.on('pageerror', error => console.log(error.message));
 ```
 
 Common issues:
+
 - Null reference errors (use optional chaining: `obj?.prop`)
 - Missing props from Inertia
 - Vue component rendering errors
@@ -484,17 +510,21 @@ Common issues:
 
 ### Seeder Writing to Wrong Database
 
-**Symptom:** Running `sail artisan db:seed --class=E2eTestSeeder --env=e2e` creates data in `personality` instead of `personality_e2e`
+**Symptom:** Running `sail artisan db:seed --class=E2eTestSeeder --env=e2e` creates data in `personality` instead of
+`personality_e2e`
 
-**Cause:** Laravel's configuration cache prevents the `--env=e2e` flag from loading the correct database configuration from `.env.e2e`
+**Cause:** Laravel's configuration cache prevents the `--env=e2e` flag from loading the correct database configuration
+from `.env.e2e`
 
 **Solution:** Clear the configuration cache first:
+
 ```bash
 ./vendor/bin/sail artisan config:clear
 ./vendor/bin/sail artisan db:seed --class=E2eTestSeeder --env=e2e --force
 ```
 
-**Verification:** Check the seeder output - it should show "Seeding using connection 'pgsql' (personality_e2e)" not "(personality)"
+**Verification:** Check the seeder output - it should show "Seeding using connection 'pgsql' (personality_e2e)" not "(
+personality)"
 
 ### Environment Variable Issues
 
@@ -503,6 +533,7 @@ Common issues:
 **Cause:** Environment variables don't propagate into Docker containers
 
 **Solution:** Use `bash -c` wrapper:
+
 ```typescript
 await execAsync(
     `./vendor/bin/sail bash -c "SEED_COUNT=15 php artisan db:seed --class=TestPromptRunsSeeder --env=e2e"`
@@ -514,9 +545,9 @@ await execAsync(
 ### Writing Tests
 
 1. **Use the shared database state**
-   - Tests run sequentially and share data
-   - Don't assume database is empty
-   - Use assertions that work with existing data
+    - Tests run sequentially and share data
+    - Don't assume database is empty
+    - Use assertions that work with existing data
 
 2. **Add test-specific data when needed**
    ```typescript
@@ -546,7 +577,7 @@ await execAsync(
    ```
 
 2. **Add screenshots** on failure (already configured)
-   - Check `tests-frontend/e2e/results/` for screenshots
+    - Check `tests-frontend/e2e/results/` for screenshots
 
 3. **Log Inertia props**
    ```typescript
@@ -611,4 +642,5 @@ The E2E test setup provides:
 ✅ **Simplicity** - Middleware automatically switches databases
 ✅ **Debugging** - Comprehensive logging and error handling
 
-The key insight: Use a **separate database + special header + middleware** to automatically route test requests to test data while keeping development data safe.
+The key insight: Use a **separate database + special header + middleware** to automatically route test requests to test
+data while keeping development data safe.

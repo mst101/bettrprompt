@@ -13,14 +13,14 @@ class SwitchDataCollectionDatabase
      * Handle an incoming request.
      *
      * When the X-Data-Collection-Test header is present, switch to the
-     * personality_data_collection database instead of personality_e2e.
+     * bettrprompt_data_collection database instead of bettrprompt_e2e.
      * This allows data collection tests to persist data separately.
      */
     public function handle(Request $request, Closure $next)
     {
         if ($request->hasHeader('X-Data-Collection-Test')) {
-            // Switch the default database connection to use personality_data_collection
-            Config::set('database.connections.pgsql.database', 'personality_data_collection');
+            // Switch the default database connection to use bettrprompt_data_collection
+            Config::set('database.connections.pgsql.database', 'bettrprompt_data_collection');
 
             // Reconnect to apply the new database configuration
             DB::purge('pgsql');

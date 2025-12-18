@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * This configuration is specifically for data collection tests which:
  * - Run separately from functional tests
- * - Use a persistent database (personality_data_collection)
+ * - Use a persistent database (bettrprompt_data_collection)
  * - Preserve framework selection data for analysis
  */
 export default defineConfig({

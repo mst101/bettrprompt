@@ -1,12 +1,13 @@
 # BettrPrompt - Personalised Prompt Generator
 
-An intelligent prompt generation system that creates optimised AI prompts customised to your personality type, task requirements, and professional context.
+An intelligent prompt generation system that creates optimised AI prompts customised to your task requirements,
+personality type, and professional context.
 
 ## Features
 
-- **Personality-Based Optimisation**: Tailors prompts to your MBTI personality type (based on 16personalities.com)
 - **Framework Selection**: Choose from 64+ prompt engineering frameworks (CRISPE, Chain of Thought, etc.)
 - **Intelligent Analysis**: AI-powered pre-analysis and task understanding via n8n workflows
+- **Personality-Based Optimisation**: Tailors prompts to your MBTI personality type (based on 16personalities.com)
 - **Real-Time Updates**: WebSocket-powered progress tracking with Laravel Reverb
 - **Comprehensive History**: Track and manage all your generated prompts
 - **SSR Support**: Server-side rendering for improved performance and SEO
@@ -37,7 +38,7 @@ An intelligent prompt generation system that creates optimised AI prompts custom
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd personality
+   cd bettrprompt
    ```
 
 2. **Install dependencies and set up environment**
@@ -46,12 +47,12 @@ An intelligent prompt generation system that creates optimised AI prompts custom
    ```
 
    This runs:
-   - `composer install`
-   - Creates `.env` from `.env.example`
-   - Generates application key
-   - Runs database migrations
-   - `npm install`
-   - Builds frontend assets
+    - `composer install`
+    - Creates `.env` from `.env.example`
+    - Generates application key
+    - Runs database migrations
+    - `npm install`
+    - Builds frontend assets
 
 3. **Start the development environment**
    ```bash
@@ -64,11 +65,11 @@ An intelligent prompt generation system that creates optimised AI prompts custom
    ```
 
    This starts:
-   - Laravel development server (port 80)
-   - Queue worker (Horizon)
-   - WebSocket server (Reverb)
-   - Log viewer (Pail)
-   - Vite dev server with HMR
+    - Laravel development server (port 80)
+    - Queue worker (Horizon)
+    - WebSocket server (Reverb)
+    - Log viewer (Pail)
+    - Vite dev server with HMR
 
 5. **Fix HTTPS certificate warnings** (first time only)
 
@@ -92,9 +93,9 @@ An intelligent prompt generation system that creates optimised AI prompts custom
    Then **wait a few seconds and restart Chrome**.
 
 6. **Access the application**
-   - **Main app**: https://app.localhost
-   - **n8n dashboard**: https://n8n.localhost
-   - **Horizon dashboard**: https://app.localhost/horizon
+    - **Main app**: https://app.localhost
+    - **n8n dashboard**: https://n8n.localhost
+    - **Horizon dashboard**: https://app.localhost/horizon
 
 ## Development
 
@@ -160,19 +161,20 @@ npm run lint
 - **Components**: `resources/js/Components/`
 - **Routing**: Uses Ziggy for Laravel route helpers
 
-The application uses Inertia.js to create a single-page app experience whilst maintaining Laravel's routing and controllers.
+The application uses Inertia.js to create a single-page app experience whilst maintaining Laravel's routing and
+controllers.
 
 ### Backend (Laravel)
 
 - **Controllers**: `app/Http/Controllers/`
 - **Services**: `app/Services/`
-  - `N8nClient` - Handles n8n workflow integration
+    - `N8nClient` - Handles n8n workflow integration
 - **Jobs**: `app/Jobs/` (processed by Horizon)
 - **Resources**: `app/Http/Resources/` (API transformations)
 - **Routes**:
-  - `routes/web.php` - Inertia page routes
-  - `routes/api.php` - API endpoints + n8n webhooks
-  - `routes/auth.php` - Laravel Breeze authentication
+    - `routes/web.php` - Inertia page routes
+    - `routes/api.php` - API endpoints + n8n webhooks
+    - `routes/auth.php` - Laravel Breeze authentication
 
 ### n8n Workflow Integration
 
@@ -183,6 +185,7 @@ The application integrates with n8n for AI-powered prompt generation:
 3. **Workflow 2**: Final prompt generation with metadata
 
 **Configuration** (in `.env`):
+
 ```env
 N8N_URL=http://n8n:5678
 N8N_USERNAME=admin
@@ -191,6 +194,7 @@ N8N_WEBHOOK_SECRET=your-secret-here
 ```
 
 **Webhook Receiver**: POST `/api/n8n/webhook`
+
 - Secured with `X-N8N-SECRET` header verification
 - Processes workflow results and updates database
 
@@ -199,6 +203,7 @@ N8N_WEBHOOK_SECRET=your-secret-here
 Uses PostgreSQL with migrations in `database/migrations/`.
 
 Key tables:
+
 - `users` - User accounts and personality profiles
 - `prompt_runs` - Generated prompts and workflow state
 - `jobs` - Queue jobs (processed by Horizon)
@@ -244,19 +249,25 @@ See [CLAUDE.md](./CLAUDE.md) for manual installation steps if needed.
 - **HTML attributes**: kebab-case for `id` and `data-testid`
 
 **Example**:
+
 ```typescript
 // Frontend (Vue) - camelCase
 const form = reactive({
-  uiComplexity: 'advanced',
-  personalityType: 'INTJ'
+    uiComplexity: 'advanced',
+    personalityType: 'INTJ'
 });
 
 // Laravel Resource - converts to snake_case
-'uiComplexity' => $this->ui_complexity,
-'personalityType' => $this->personality_type,
+'uiComplexity'
+=>
+$this->ui_complexity,
+    'personalityType'
+=>
+$this->personality_type,
 
 // HTML - kebab-case
-<input id="user-name" data-testid="submit-button" />
+    <input id = "user-name"
+data - testid = "submit-button" / >
 ```
 
 See [CLAUDE.md](./CLAUDE.md) for detailed coding conventions and architecture documentation.
@@ -302,6 +313,7 @@ See [CLAUDE.md](./CLAUDE.md) for detailed coding conventions and architecture do
 ### "Your connection is not private" in Chrome
 
 **On Linux:**
+
 ```bash
 sudo apt install libnss3-tools
 ./scripts/install-chrome-ca.sh
@@ -309,6 +321,7 @@ pkill -f chrome  # Close all Chrome windows
 ```
 
 **On macOS:**
+
 ```bash
 ./scripts/install-local-ca.sh
 ```
@@ -318,6 +331,7 @@ Then completely restart Chrome (wait a few seconds after closing).
 ### Port already in use
 
 Stop conflicting services:
+
 ```bash
 sudo lsof -ti:80 | xargs kill -9
 sudo lsof -ti:5678 | xargs kill -9
@@ -326,6 +340,7 @@ sudo lsof -ti:5678 | xargs kill -9
 ### Database connection failed
 
 Ensure PostgreSQL container is running:
+
 ```bash
 ./vendor/bin/sail up -d postgres
 ```
@@ -333,11 +348,13 @@ Ensure PostgreSQL container is running:
 ### Queue jobs not processing
 
 Check Horizon is running:
+
 ```bash
 ./vendor/bin/sail artisan horizon:status
 ```
 
 Or restart it:
+
 ```bash
 composer dev
 ```

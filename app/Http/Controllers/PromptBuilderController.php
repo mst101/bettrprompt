@@ -40,10 +40,10 @@ class PromptBuilderController extends Controller
      */
     private function getJobDatabase(Request $request): ?string
     {
-        // If X-Data-Collection-Test header is present, use personality_data_collection
+        // If X-Data-Collection-Test header is present, use bettrprompt_data_collection
         // This ensures queue jobs save to the same database as the HTTP request
         return $request->hasHeader('X-Data-Collection-Test')
-            ? 'personality_data_collection'
+            ? 'bettrprompt_data_collection'
             : null;
     }
 

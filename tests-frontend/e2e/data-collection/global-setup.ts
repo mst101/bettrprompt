@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
  * Global setup for Data Collection E2E tests
  * This runs once before all data collection tests
  *
- * Data collection tests use a separate persistent database (personality_data_collection)
+ * Data collection tests use a separate persistent database (bettrprompt_data_collection)
  * that is NOT reset between test runs. This preserves all framework selection data for analysis.
  */
 async function globalSetup() {
@@ -15,14 +15,14 @@ async function globalSetup() {
         process.env.APP_ENV = 'e2e';
 
         console.log(
-            '📦 Preparing data collection database (personality_data_collection)...',
+            '📦 Preparing data collection database (bettrprompt_data_collection)...',
         );
 
         // Check if data collection database already exists
         let dbExists = false;
         try {
             execSync(
-                './vendor/bin/sail exec -T pgsql psql -U sail -d personality_data_collection -c "SELECT 1;" 2>/dev/null',
+                './vendor/bin/sail exec -T pgsql psql -U sail -d bettrprompt_data_collection -c "SELECT 1;" 2>/dev/null',
                 { stdio: 'pipe', shell: '/bin/bash' },
             );
             dbExists = true;
@@ -37,7 +37,7 @@ async function globalSetup() {
             // Create the database for the first time
             try {
                 execSync(
-                    './vendor/bin/sail exec -T pgsql psql -U sail -d postgres -c "CREATE DATABASE personality_data_collection;"',
+                    './vendor/bin/sail exec -T pgsql psql -U sail -d postgres -c "CREATE DATABASE bettrprompt_data_collection;"',
                     { stdio: 'inherit', shell: '/bin/bash' },
                 );
                 console.log('✓ Created data collection database');
@@ -50,12 +50,12 @@ async function globalSetup() {
             }
 
             console.log(
-                '🔄 Cloning schema from personality_e2e to personality_data_collection...',
+                '🔄 Cloning schema from personality_e2e to bettrprompt_data_collection...',
             );
             // Clone only the schema (not data) from personality_e2e
             try {
                 execSync(
-                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail personality_data_collection',
+                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection',
                     { stdio: 'inherit', shell: '/bin/bash' },
                 );
                 console.log('✓ Database schema cloned successfully');
@@ -72,7 +72,7 @@ async function globalSetup() {
             console.log('🔄 Syncing schema from personality_e2e...');
             try {
                 execSync(
-                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail personality_data_collection 2>&1 | grep -v "already exists" || true',
+                    './vendor/bin/sail exec -T pgsql pg_dump -U sail personality_e2e --schema-only | ./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection 2>&1 | grep -v "already exists" || true',
                     { stdio: 'inherit', shell: '/bin/bash' },
                 );
                 console.log('✓ Schema is up-to-date');
@@ -89,7 +89,7 @@ async function globalSetup() {
         console.log('🔄 Syncing PostgreSQL sequences...');
         try {
             execSync(
-                `./vendor/bin/sail exec -T pgsql psql -U sail personality_data_collection << 'EOF'
+                `./vendor/bin/sail exec -T pgsql psql -U sail bettrprompt_data_collection << 'EOF'
                 SELECT setval('prompt_runs_id_seq', COALESCE((SELECT MAX(id) FROM prompt_runs), 0) + 1);
                 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 0) + 1);
                 SELECT setval('visitors_id_seq', COALESCE((SELECT MAX(id) FROM visitors), 0) + 1);
@@ -104,7 +104,7 @@ EOF`,
 
         console.log('✅ Data Collection test environment ready!');
         console.log(
-            '📊 Database: personality_data_collection (persisted for analysis)',
+            '📊 Database: bettrprompt_data_collection (persisted for analysis)',
         );
         console.log(
             '⚠️  Data is NOT reset - framework selection data is preserved across test runs',

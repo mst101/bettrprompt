@@ -22,7 +22,7 @@ class UseE2eDatabase
             // Only switch to personality_e2e if not already switched to data_collection
             // (SwitchDataCollectionDatabase middleware runs first and takes priority)
             $currentDb = Config::get('database.connections.pgsql.database');
-            if ($currentDb !== 'personality_data_collection') {
+            if ($currentDb !== 'bettrprompt_data_collection') {
                 // Switch to the E2E database
                 Config::set('database.connections.pgsql.database', 'personality_e2e');
 

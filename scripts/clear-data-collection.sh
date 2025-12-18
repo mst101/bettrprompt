@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Clear Data Collection Database Script
-# Removes all data from the personality_data_collection database except users
+# Removes all data from the bettrprompt_data_collection database except users
 # while preserving the schema for future collection runs
 
 set -e
 
-echo "🗑️  Clearing personality_data_collection database..."
+echo "🗑️  Clearing bettrprompt_data_collection database..."
 
 # Confirm before clearing
 read -p "Are you sure you want to clear all data collection records? (yes/no): " confirm
@@ -15,9 +15,9 @@ if [ "$confirm" != "yes" ]; then
     exit 0
 fi
 
-echo "⏳ Clearing all data from personality_data_collection (except users table)..."
+echo "⏳ Clearing all data from bettrprompt_data_collection (except users table)..."
 
-./vendor/bin/sail exec -T pgsql psql -U sail -d personality_data_collection << EOF
+./vendor/bin/sail exec -T pgsql psql -U sail -d bettrprompt_data_collection << EOF
 -- Disable foreign key constraints
 SET CONSTRAINTS ALL DEFERRED;
 
@@ -40,6 +40,6 @@ SET CONSTRAINTS ALL IMMEDIATE;
 EOF
 
 echo "✅ Data collection database cleared successfully!"
-echo "📊 Database: personality_data_collection"
+echo "📊 Database: bettrprompt_data_collection"
 echo "👥 Users table: Preserved"
 echo "📝 Schema preserved - ready for new data collection runs"
