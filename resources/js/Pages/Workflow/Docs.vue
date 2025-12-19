@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import DocumentSidebar from '@/Components/Workflow/DocumentSidebar.vue';
-import ExpandableModal from '@/Components/Workflow/ExpandableModal.vue';
-import InfoSection from '@/Components/Workflow/InfoSection.vue';
-import PageHeader from '@/Components/Workflow/PageHeader.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import DocumentSidebar from '@/Components/Features/Workflow/DocumentSidebar.vue';
+import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue';
+import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
+import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';

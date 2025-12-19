@@ -1,5 +1,5 @@
-import type { Tab } from '@/Components/Tabs.vue';
-import Tabs from '@/Components/Tabs.vue';
+import type { Tab } from '@/Components/Base/Tabs.vue';
+import Tabs from '@/Components/Base/Tabs.vue';
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

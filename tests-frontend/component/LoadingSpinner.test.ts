@@ -1,4 +1,4 @@
-import LoadingSpinner from '@/Components/LoadingSpinner.vue';
+import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

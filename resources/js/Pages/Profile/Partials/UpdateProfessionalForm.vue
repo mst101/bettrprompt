@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormInput from '@/Components/FormInput.vue';
-import FormSelect from '@/Components/FormSelect.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
+import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import { useForm } from '@inertiajs/vue3';
 
 interface Props {

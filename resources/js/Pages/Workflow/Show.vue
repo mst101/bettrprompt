@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ButtonDanger from '@/Components/ButtonDanger.vue';
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import ButtonSuccess from '@/Components/ButtonSuccess.vue';
-import ExpandableModal from '@/Components/Workflow/ExpandableModal.vue';
-import NotificationToast from '@/Components/Workflow/NotificationToast.vue';
-import OutputPanel from '@/Components/Workflow/OutputPanel.vue';
-import PageHeader from '@/Components/Workflow/PageHeader.vue';
+import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import ButtonSuccess from '@/Components/Base/Button/ButtonSuccess.vue';
+import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue';
+import NotificationToast from '@/Components/Features/Workflow/NotificationToast.vue';
+import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
+import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';

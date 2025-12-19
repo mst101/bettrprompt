@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ButtonDarkMode from '@/Components/ButtonDarkMode.vue';
-import ButtonHamburger from '@/Components/ButtonHamburger.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
+import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
+import NavLink from '@/Components/Base/NavLink.vue';
+import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, watch } from 'vue';

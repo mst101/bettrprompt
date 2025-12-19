@@ -1,4 +1,4 @@
-import Card from '@/Components/Card.vue';
+import Card from '@/Components/Base/Card.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

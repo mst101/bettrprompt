@@ -1,4 +1,4 @@
-import StatusBadge from '@/Components/StatusBadge.vue';
+import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

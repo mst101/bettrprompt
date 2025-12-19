@@ -1,4 +1,4 @@
-import ButtonSmall from '@/Components/ButtonSmall.vue';
+import ButtonSmall from '@/Components/Base/Button/ButtonSmall.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

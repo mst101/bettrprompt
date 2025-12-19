@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import ButtonText from '@/Components/ButtonText.vue';
-import FormInput from '@/Components/FormInput.vue';
-import FormSelect from '@/Components/FormSelect.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
+import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import { useAlert } from '@/Composables/useAlert';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';

@@ -1,4 +1,4 @@
-import LinkButton from '@/Components/LinkButton.vue';
+import LinkButton from '@/Components/Base/LinkButton.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

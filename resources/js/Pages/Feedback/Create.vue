@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import Card from '@/Components/Card.vue';
-import ContainerPage from '@/Components/ContainerPage.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FormCheckboxGroup from '@/Components/FormCheckboxGroup.vue';
-import FormTextarea from '@/Components/FormTextarea.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
-import LikertScale from '@/Components/LikertScale.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import FormCheckboxGroup from '@/Components/Base/Form/FormCheckboxGroup.vue';
+import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
+import LikertScale from '@/Components/Base/LikertScale.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';

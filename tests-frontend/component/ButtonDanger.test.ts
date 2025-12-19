@@ -1,4 +1,4 @@
-import ButtonDanger from '@/Components/ButtonDanger.vue';
+import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

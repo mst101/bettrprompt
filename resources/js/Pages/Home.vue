@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ExampleDemonstration from '@/Components/ExampleDemonstration.vue';
-import FeatureCard from '@/Components/FeatureCard.vue';
-import LinkButton from '@/Components/LinkButton.vue';
-import StepCard from '@/Components/StepCard.vue';
+import LinkButton from '@/Components/Base/LinkButton.vue';
+import ExampleDemonstration from '@/Components/Common/ExampleDemonstration.vue';
+import FeatureCard from '@/Components/Common/FeatureCard.vue';
+import StepCard from '@/Components/Common/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 

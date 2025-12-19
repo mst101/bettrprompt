@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import ButtonText from '@/Components/ButtonText.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FormInput from '@/Components/FormInput.vue';
-import FormRadio from '@/Components/FormRadio.vue';
-import FormSelect from '@/Components/FormSelect.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import LinkButton from '@/Components/LinkButton.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
+import FormRadio from '@/Components/Base/Form/FormRadio.vue';
+import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import InputLabel from '@/Components/Base/InputLabel.vue';
+import LinkButton from '@/Components/Base/LinkButton.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
-import Card from '@/Components/Card.vue';
-import ContainerPage from '@/Components/ContainerPage.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
-import LinkButton from '@/Components/LinkButton.vue';
-import StatusBadge from '@/Components/StatusBadge.vue';
-import TableHeaderSortable from '@/Components/TableHeaderSortable.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import LinkButton from '@/Components/Base/LinkButton.vue';
+import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useAlert } from '@/Composables/useAlert';
 import { useLocalStorage } from '@/Composables/useLocalStorage';
 import AppLayout from '@/Layouts/AppLayout.vue';

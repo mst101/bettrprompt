@@ -1,0 +1,107 @@
+<script setup lang="ts">
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
+import BaseAuthModal from '@/Components/BaseAuthModal.vue';
+import { useForm } from '@inertiajs/vue3';
+import { nextTick, watch } from 'vue';
+
+const props = defineProps<{
+    show: boolean;
+    status?: string;
+}>();
+
+const emit = defineEmits(['close', 'switchToLogin']);
+
+const form = useForm({
+    email: '',
+});
+
+// Focus the first field when modal opens
+watch(
+    () => props.show,
+    async (newValue) => {
+        if (newValue) {
+            await nextTick();
+            const inputElement = document.getElementById(
+                'forgot-password-email',
+            ) as HTMLInputElement;
+            if (inputElement) {
+                inputElement.focus();
+            }
+        }
+    },
+);
+
+const submit = () => {
+    form.post(route('password.email'), {
+        onFinish: () => {
+            // Don't reset email on finish so user can see what they submitted
+        },
+    });
+};
+
+const close = () => {
+    form.reset();
+    form.clearErrors();
+    emit('close');
+};
+</script>
+
+<template>
+    <BaseAuthModal
+        :show="show"
+        title="Forgot Password"
+        :show-google-divider="false"
+        @close="close"
+        @submit="submit"
+    >
+        <template #status>
+            <div class="mt-4 text-sm text-gray-600">
+                Forgot your password? No problem. Just let us know your email
+                address and we will email you a password reset link that will
+                allow you to choose a new one.
+            </div>
+
+            <div
+                v-if="status"
+                class="mt-4 rounded-md bg-green-50 p-3 text-sm font-medium text-green-600"
+            >
+                {{ status }}
+            </div>
+        </template>
+
+        <template #fields>
+            <FormInput
+                id="forgot-password-email"
+                v-model="form.email"
+                label="Email"
+                type="email"
+                :error="form.errors.email"
+                required
+                autofocus
+                autocomplete="username"
+            />
+        </template>
+
+        <template #footer-links>
+            <ButtonText
+                id="switch-to-login"
+                type="button"
+                @click="emit('switchToLogin')"
+            >
+                Back to log in
+            </ButtonText>
+        </template>
+
+        <template #submit-button>
+            <ButtonPrimary
+                type="submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+            >
+                Email Password Reset Link
+            </ButtonPrimary>
+        </template>
+    </BaseAuthModal>
+</template>

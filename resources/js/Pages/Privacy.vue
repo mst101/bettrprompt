@@ -1,7 +1,7 @@
 \
 <script setup lang="ts">
-import ContainerPage from '@/Components/ContainerPage.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { COMPANY_INFO, LEGAL_URLS } from '@/constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';

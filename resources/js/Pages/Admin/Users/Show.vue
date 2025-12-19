@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Card from '@/Components/Card.vue';
-import ContainerPage from '@/Components/ContainerPage.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
+import Card from '@/Components/Base/Card.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 

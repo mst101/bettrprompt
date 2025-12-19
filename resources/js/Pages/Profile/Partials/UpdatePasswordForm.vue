@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormInput from '@/Components/FormInput.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 

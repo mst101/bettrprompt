@@ -1,4 +1,4 @@
-import InputLabel from '@/Components/InputLabel.vue';
+import InputLabel from '@/Components/Base/InputLabel.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

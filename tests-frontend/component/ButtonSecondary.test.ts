@@ -1,4 +1,4 @@
-import ButtonSecondary from '@/Components/ButtonSecondary.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

@@ -1,5 +1,5 @@
-import ButtonHamburger from '@/Components/ButtonHamburger.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
+import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ContainerPage from '@/Components/ContainerPage.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { COOKIE_CATEGORIES } from '@/constants/cookies';
 import { COMPANY_INFO } from '@/constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';

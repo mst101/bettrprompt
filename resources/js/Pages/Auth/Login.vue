@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import FormInput from '@/Components/FormInput.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import Checkbox from '@/Components/Base/Checkbox.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 

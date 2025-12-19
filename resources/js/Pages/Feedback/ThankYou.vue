@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import Card from '@/Components/Card.vue';
-import ContainerPage from '@/Components/ContainerPage.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';

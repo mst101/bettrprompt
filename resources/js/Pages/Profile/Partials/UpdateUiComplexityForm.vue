@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/ButtonPrimary.vue';
-import FormRadio from '@/Components/FormRadio.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import FormRadio from '@/Components/Base/Form/FormRadio.vue';
+import InputLabel from '@/Components/Base/InputLabel.vue';
 import { useForm } from '@inertiajs/vue3';
 
 interface Props {

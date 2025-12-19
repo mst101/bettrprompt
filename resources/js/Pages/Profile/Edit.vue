@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ContainerPage from '@/Components/ContainerPage.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
-import ProfileCompletion from '@/Components/ProfileCompletion.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import ProfileCompletion from '@/Components/Common/ProfileCompletion.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';

@@ -1,4 +1,4 @@
-import FormRadio from '@/Components/FormRadio.vue';
+import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

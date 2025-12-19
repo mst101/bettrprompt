@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import InfoSection from '@/Components/Workflow/InfoSection.vue';
-import PageHeader from '@/Components/Workflow/PageHeader.vue';
-import WorkflowCard from '@/Components/Workflow/WorkflowCard.vue';
+import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
+import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
+import WorkflowCard from '@/Components/Features/Workflow/WorkflowCard.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 
 defineOptions({

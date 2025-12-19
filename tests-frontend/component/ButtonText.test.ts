@@ -1,4 +1,4 @@
-import ButtonText from '@/Components/ButtonText.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 

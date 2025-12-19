@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Card from '@/Components/Card.vue';
-import ContainerPage from '@/Components/ContainerPage.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import FormInput from '@/Components/FormInput.vue';
-import HeaderPage from '@/Components/HeaderPage.vue';
+import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import FormInput from '@/Components/Base/Form/FormInput.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';

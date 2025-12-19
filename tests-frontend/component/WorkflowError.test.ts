@@ -1,6 +1,6 @@
-import ButtonDanger from '@/Components/ButtonDanger.vue';
-import DynamicIcon from '@/Components/DynamicIcon.vue';
-import WorkflowError from '@/Components/PromptBuilder/WorkflowError.vue';
+import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import WorkflowError from '@/Components/Common/WorkflowError.vue';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
