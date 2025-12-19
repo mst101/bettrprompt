@@ -64,7 +64,7 @@ const copyToClipboard = async () => {
                 Know someone who could benefit from personalised AI prompts?
                 Share your unique referral link with them. They can trial the
                 service until
-                <strong>15th January 2026</strong>.
+                <strong>31st January 2026</strong>.
             </p>
 
             <div class="rounded-lg bg-gray-50 p-4">
@@ -108,7 +108,7 @@ const copyToClipboard = async () => {
                         <p class="font-medium">Trial Deadline</p>
                         <p class="mt-1">
                             Friends who sign up using your link can trial the
-                            service until <strong>15th January 2026</strong>.
+                            service until <strong>31st January 2026</strong>.
                             Share via email, WhatsApp, or any other direct
                             messaging platform, but please don't post publicly
                             (as this is still a trial service).

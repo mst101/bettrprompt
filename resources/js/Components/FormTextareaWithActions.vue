@@ -37,13 +37,9 @@ defineExpose({ focus });
 <template>
     <div v-bind="$attrs" class="relative">
         <div
-            class="mb-2 flex flex-col sm:flex-row sm:items-baseline sm:justify-between"
+            class="flex items-end justify-between sm:flex-row sm:justify-between"
         >
-            <label
-                v-if="props.label"
-                :for="props.id"
-                class="sr-only block text-sm font-medium text-gray-700"
-            >
+            <label v-if="props.label" :for="props.id" class="sr-only">
                 <span class="whitespace-nowrap"
                     >{{ props.label }}
                     <span v-if="props.required" class="text-red-500"

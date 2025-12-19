@@ -98,7 +98,7 @@ const handleTranscription = (text: string) => {
 </script>
 
 <template>
-    <div class="space-y-4">
+    <div class="">
         <!-- Progress Bar -->
         <div class="flex items-center justify-between text-sm">
             <div class="flex items-center gap-2">
@@ -111,7 +111,7 @@ const handleTranscription = (text: string) => {
                 {{ Math.round(progressPercent) }}% complete
             </span>
         </div>
-        <div class="h-2 w-full overflow-hidden rounded-full bg-indigo-100">
+        <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-indigo-100">
             <div
                 class="h-full rounded-full bg-indigo-600 transition-all duration-300"
                 :style="{ width: `${progressPercent}%` }"
@@ -119,7 +119,7 @@ const handleTranscription = (text: string) => {
         </div>
 
         <!-- Question -->
-        <div class="space-y-2 rounded-lg bg-indigo-50 p-4">
+        <div class="mt-8 rounded-lg bg-indigo-50 px-4">
             <div class="flex gap-4">
                 <div class="mt-0.5">
                     <QuestionNumber :number="currentQuestionNumber" />
@@ -136,7 +136,7 @@ const handleTranscription = (text: string) => {
             </div>
             <p
                 v-if="questionPurpose"
-                class="mt-2 ml-10 text-sm text-indigo-600"
+                class="mt-4 ml-10 text-sm text-indigo-600"
             >
                 {{ questionPurpose }}
             </p>
@@ -152,7 +152,7 @@ const handleTranscription = (text: string) => {
             :rows="5"
             sr-only-label
             :disabled="isSubmitting"
-            placeholder="Type your answer here or record a quick note..."
+            placeholder="Type your answer here, or record a quick note..."
             @update:model-value="(value) => emit('update:answer', value)"
         >
             <template #actions>
@@ -171,9 +171,9 @@ const handleTranscription = (text: string) => {
 
         <!-- Action Buttons -->
         <div
-            class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between"
+            class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between"
         >
-            <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap">
                 <ButtonSecondary
                     v-if="canGoBack"
                     type="button"
@@ -187,7 +187,7 @@ const handleTranscription = (text: string) => {
             </div>
 
             <div
-                class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center"
+                class="mt-4 flex flex-col-reverse gap-4 sm:flex-row sm:items-center"
             >
                 <ButtonSecondary
                     v-if="!isRequired && currentQuestionNumber < totalQuestions"

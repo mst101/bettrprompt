@@ -157,11 +157,7 @@ const saveEdits = () => {
                 </ButtonSecondary>
             </div>
 
-            <AIProviderLinks
-                v-if="!isEditing"
-                :prompt="optimizedPrompt"
-                class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
-            />
+            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
 
             <!-- View Mode -->
             <div
@@ -239,19 +235,15 @@ const saveEdits = () => {
                 </ButtonSecondary>
             </div>
 
-            <div class="rounded-lg bg-blue-50 p-4">
-                <p class="text-sm text-blue-900">
+            <div class="py-2 text-indigo-800">
+                <p class="text-sm">
                     <strong>💡 Tip:</strong> Copy this prompt and use it with
                     your preferred AI assistant (ChatGPT, Claude, etc.) for
                     better, more personalised responses!
                 </p>
             </div>
 
-            <AIProviderLinks
-                v-if="!isEditing"
-                :prompt="optimizedPrompt"
-                class="rounded-lg bg-indigo-50 p-4 dark:bg-indigo-100"
-            />
+            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
         </div>
     </Card>
 </template>

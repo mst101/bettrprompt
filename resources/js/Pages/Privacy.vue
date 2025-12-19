@@ -207,7 +207,7 @@ defineOptions({
                     proprietary data. Because we are actively testing and
                     improving the system, we cannot guarantee the same level of
                     security and privacy as a fully released service. All data
-                    will be permanently deleted on 15th January 2026.
+                    will be permanently deleted on 31st January 2026.
                 </p>
 
                 <h2>6. Third-Party Services and Data Sharing</h2>
@@ -324,14 +324,14 @@ defineOptions({
                     <li>
                         <strong>Beta/Test Phase Data:</strong> All data
                         collected during the beta testing phase will be
-                        permanently deleted on 15th January 2026, regardless of
+                        permanently deleted on 31st January 2026, regardless of
                         when your account was created.
                     </li>
                     <li>
                         <strong>Account Data:</strong> Retained while your
                         account is active and for up to 90 days after deletion
                         (except for beta phase data, which will be deleted on
-                        15th January 2026)
+                        31st January 2026)
                     </li>
                     <li>
                         <strong>Prompt History:</strong> Retained while your

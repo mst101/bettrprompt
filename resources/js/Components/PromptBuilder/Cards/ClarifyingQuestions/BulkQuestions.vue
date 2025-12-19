@@ -74,27 +74,24 @@ const handleTranscription = (index: number, transcript: string) => {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="mt-10 space-y-16">
         <div v-for="(question, index) in questions" :key="question.id ?? index">
             <div class="flex gap-4">
                 <div class="mt-0.5">
                     <QuestionNumber :number="index + 1" />
                 </div>
-                <div class="flex flex-1 items-start gap-3">
-                    <span class="flex-1 text-sm font-medium text-indigo-900">
+                <div class="flex flex-1 items-start">
+                    <span class="flex-1 text-indigo-900 sm:text-lg">
                         {{ question.question }}
-                        <span
-                            v-if="question.required"
-                            class="ml-1 text-red-500"
-                        >
-                            *
-                        </span>
                     </span>
                     <OptionalBadge v-if="question.required === false" />
                 </div>
             </div>
             <div class="mt-2 space-y-3 sm:mt-0 sm:ml-10">
-                <p v-if="question.purpose" class="text-sm text-indigo-600">
+                <p
+                    v-if="question.purpose"
+                    class="mt-4 mb-0 text-sm text-indigo-600"
+                >
                     {{ question.purpose }}
                 </p>
                 <FormTextareaWithActions
@@ -104,7 +101,7 @@ const handleTranscription = (index: number, transcript: string) => {
                     :label="`Answer ${index + 1}`"
                     :disabled="isSubmitting"
                     :rows="4"
-                    placeholder="Share your answer (leave empty to skip)..."
+                    placeholder="Type your answer here, or record a quick note..."
                     @update:model-value="
                         (value: string) => updateAnswer(index, value)
                     "

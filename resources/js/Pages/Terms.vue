@@ -85,7 +85,7 @@ defineOptions({
                         <li>
                             <strong>Data Retention and Deletion:</strong> All
                             data entered during the beta testing phase will be
-                            permanently deleted on 15th January 2026. No data
+                            permanently deleted on 31st January 2026. No data
                             from this testing period will be retained after this
                             date.
                         </li>
@@ -93,7 +93,7 @@ defineOptions({
                             <strong>Free Access Period:</strong> In exchange for
                             your participation in beta testing, you are granted
                             free access to use the BettrPrompt service without
-                            limitation until 15th January 2026.
+                            limitation until 31st January 2026.
                         </li>
                     </ul>
 
