@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormTextareaProps } from '@/types';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
@@ -41,6 +41,25 @@ const textareaClasses = computed(() => {
 });
 
 const textarea = ref<HTMLTextAreaElement | null>(null);
+const dynamicRows = ref(props.rows);
+
+const updateDynamicRows = async () => {
+    if (!textarea.value) return;
+
+    await nextTick();
+
+    const scrollHeight = textarea.value.scrollHeight;
+    const lineHeight = parseInt(
+        window.getComputedStyle(textarea.value).lineHeight,
+        10,
+    );
+    const rowsNeeded = Math.ceil(scrollHeight / lineHeight);
+
+    // Clamp between 3 (min) and 10 (max)
+    dynamicRows.value = Math.max(3, Math.min(rowsNeeded, 10));
+};
+
+watch(() => props.modelValue, updateDynamicRows);
 
 const focus = (options?: { cursorPosition?: 'start' | 'end' }) => {
     textarea.value?.focus();
@@ -72,7 +91,7 @@ const labelClass = computed(() =>
             :id="props.id"
             ref="textarea"
             :value="props.modelValue"
-            :rows="props.rows"
+            :rows="dynamicRows"
             :placeholder="props.placeholder"
             :required="props.required"
             :disabled="props.disabled"
@@ -80,7 +99,7 @@ const labelClass = computed(() =>
             :autofocus="props.autofocus"
             :aria-label="props.srOnlyLabel ? props.label : undefined"
             v-bind="$attrs"
-            class="placeholder-indigo-700"
+            class="resize-none placeholder-indigo-700"
             :class="textareaClasses"
             @input="
                 emit(
