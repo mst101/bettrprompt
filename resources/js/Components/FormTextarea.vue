@@ -29,7 +29,7 @@ const textareaClasses = computed(() => {
         return props.textareaClass;
     }
     return [
-        'mt-2 block w-full text-indigo-900 rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500 sm:text-sm',
+        'mt-2 sm:text-lg block w-full text-indigo-900 rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500',
         {
             'cursor-not-allowed': props.disabled || props.isSubmitting,
         },

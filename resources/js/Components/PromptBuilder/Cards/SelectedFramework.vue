@@ -53,7 +53,7 @@ defineExpose({ focus });
                 <span
                     v-for="component in framework.components"
                     :key="component"
-                    class="rounded-lg bg-blue-100 px-3 py-1 text-sm text-blue-800 sm:rounded-full"
+                    class="rounded-lg bg-blue-200 px-3 py-1 text-sm text-blue-900 sm:rounded-full dark:bg-blue-300"
                 >
                     {{ component }}
                 </span>

@@ -104,8 +104,8 @@ watch(
                                 rel="noopener noreferrer"
                                 >16personalities.com</a
                             >
-                            type. Otherwise, we'll select the best framework
-                            based purely on your task.
+                            type. Otherwise, we'll select the best framework and
+                            questions based purely on your task.
                         </p>
                         <div class="sm:ml-4">
                             <a

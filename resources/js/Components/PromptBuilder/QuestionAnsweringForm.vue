@@ -7,7 +7,6 @@ import FormTextareaWithActions from '@/Components/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/OptionalBadge.vue';
 import ButtonTrash from '@/Components/PromptBuilder/ButtonTrash.vue';
 import QuestionNumber from '@/Components/PromptBuilder/QuestionNumber.vue';
-import { useAlert } from '@/Composables/useAlert';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -32,13 +31,11 @@ const emit = defineEmits<{
     (e: 'update:answer', value: string): void;
     (e: 'submit'): void;
     (e: 'submit-all'): void;
-    (e: 'skip'): void;
     (e: 'go-back'): void;
     (e: 'clear'): void;
 }>();
 
 const { appendText } = useTextAppend();
-const { confirm } = useAlert();
 const textareaRef = ref<InstanceType<typeof FormTextareaWithActions> | null>(
     null,
 );
@@ -98,22 +95,6 @@ const handleTranscription = (text: string) => {
     const updated = appendText(props.answer, text);
     emit('update:answer', updated);
 };
-
-const handleSkip = async () => {
-    // If there's an unsaved answer, confirm before skipping
-    if (props.answer.trim()) {
-        const confirmed = await confirm(
-            'You have entered an answer to this question. If you skip, your answer will be lost. Are you sure you want to skip?',
-            'Skip Question',
-            { confirmButtonStyle: 'danger', confirmText: 'Skip Answer' },
-        );
-
-        if (!confirmed) {
-            return;
-        }
-    }
-    emit('skip');
-};
 </script>
 
 <template>
@@ -121,12 +102,12 @@ const handleSkip = async () => {
         <!-- Progress Bar -->
         <div class="flex items-center justify-between text-sm">
             <div class="flex items-center gap-2">
-                <span class="font-medium text-gray-700">
+                <span class="font-medium text-indigo-700">
                     Question {{ currentQuestionNumber }} of
                     {{ totalQuestions }}
                 </span>
             </div>
-            <span class="text-gray-600">
+            <span class="text-indigo-700">
                 {{ Math.round(progressPercent) }}% complete
             </span>
         </div>
@@ -144,7 +125,7 @@ const handleSkip = async () => {
                     <QuestionNumber :number="currentQuestionNumber" />
                 </div>
                 <div class="flex flex-1 items-start gap-3">
-                    <span class="flex-1 text-sm font-medium text-indigo-900">
+                    <span class="flex-1 text-indigo-900 sm:text-xl">
                         {{ questionText }}
                         <span v-if="isRequired" class="ml-1 text-red-500">
                             *
@@ -155,7 +136,7 @@ const handleSkip = async () => {
             </div>
             <p
                 v-if="questionPurpose"
-                class="mt-2 ml-10 text-xs text-indigo-600"
+                class="mt-2 ml-10 text-sm text-indigo-600"
             >
                 {{ questionPurpose }}
             </p>
@@ -203,15 +184,6 @@ const handleSkip = async () => {
                     <DynamicIcon name="arrow-left" class="mr-2 h-4 w-4" />
                     Back
                 </ButtonSecondary>
-
-                <ButtonSecondary
-                    type="button"
-                    :disabled="isSubmitting"
-                    class="w-full sm:w-auto"
-                    @click="handleSkip"
-                >
-                    Skip Question
-                </ButtonSecondary>
             </div>
 
             <div
@@ -231,7 +203,7 @@ const handleSkip = async () => {
                 <ButtonPrimary
                     type="button"
                     data-testid="submit-answer-button"
-                    :disabled="isSubmitting || !answer.trim()"
+                    :disabled="isSubmitting"
                     :loading="isSubmitting"
                     class="h-12 w-full sm:h-fit sm:w-auto"
                     @click="emit('submit')"

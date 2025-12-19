@@ -279,7 +279,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             <tr
                                 v-for="promptRun in promptRuns.data"
                                 :key="promptRun.id"
-                                class="cursor-pointer rounded-md hover:bg-indigo-50 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 dark:hover:bg-indigo-100"
+                                class="group duration-150rounded-md cursor-pointer transition-colors hover:bg-indigo-50 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 dark:hover:bg-indigo-100"
                                 tabindex="0"
                                 @click="
                                     $inertia.visit(
@@ -299,7 +299,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 "
                             >
                                 <td
-                                    class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 sm:table-cell"
+                                    class="hidden px-6 py-4 text-sm whitespace-nowrap transition-colors duration-150 group-hover:text-indigo-950 sm:table-cell"
                                 >
                                     <span class="lg:hidden">{{
                                         promptRun.personalityType
@@ -312,7 +312,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </td>
                                 <td
                                     data-testid="table-cell-task"
-                                    class="px-6 py-4 text-sm text-indigo-700"
+                                    class="px-6 py-4 text-sm transition-colors duration-150 group-hover:text-indigo-950"
                                 >
                                     {{
                                         truncateText(
@@ -341,7 +341,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </td>
                                 <td
                                     data-testid="table-cell-date"
-                                    class="px-6 py-4 text-sm whitespace-nowrap text-indigo-500"
+                                    class="px-6 py-4 text-xs whitespace-nowrap text-indigo-700 transition-colors duration-150 group-hover:text-indigo-800"
                                 >
                                     <div>
                                         {{ formatDate(promptRun.createdAt) }}
@@ -356,6 +356,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     <div class="mt-2">
                                         <ButtonSecondary
                                             type="button"
+                                            class="hover:bg-indigo-400! dark:group-hover:bg-indigo-300"
                                             size="sm"
                                             @click="
                                                 handleDelete(
