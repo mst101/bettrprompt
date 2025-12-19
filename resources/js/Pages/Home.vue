@@ -184,7 +184,7 @@ defineOptions({
                     >
                         See BettrPrompt in Action
                     </h2>
-                    <p class="mt-4 text-lg text-gray-600">
+                    <p class="mt-4 text-lg text-indigo-600">
                         Follow along with a real example: creating a marketing
                         strategy
                     </p>

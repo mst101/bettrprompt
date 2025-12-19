@@ -29,26 +29,21 @@ withDefaults(defineProps<Props>(), {
 
             <!-- Stage content -->
             <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900">
+                <h3 class="text-lg font-semibold text-indigo-900">
                     {{ title }}
                 </h3>
-                <p class="mt-1 text-sm text-gray-600">
+                <p class="mt-1 text-sm text-indigo-600">
                     {{ description }}
                 </p>
 
                 <!-- Content panel (example content) -->
-                <div
-                    :class="[
-                        contentBgColour,
-                        'mt-3 rounded-lg border border-indigo-200 p-4',
-                    ]"
-                >
+                <div :class="[contentBgColour, 'mt-3 rounded-lg p-4']">
                     <slot />
                 </div>
             </div>
         </div>
 
         <!-- Connecting line to next stage (hidden for stage 5) -->
-        <div v-if="stage < 5" class="mt-4 ml-5 h-8 w-0.5 bg-gray-300" />
+        <div v-if="stage < 5" class="mt-4 ml-5 h-8 w-0.5 bg-indigo-200" />
     </div>
 </template>

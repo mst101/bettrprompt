@@ -16,9 +16,7 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
                 <label class="text-xs font-medium text-indigo-700"
                     >Your task:</label
                 >
-                <div
-                    class="rounded border border-indigo-300 bg-white p-3 text-sm text-gray-700"
-                >
+                <div class="rounded bg-white p-3 text-sm text-indigo-700">
                     I want to create a marketing strategy for my business
                 </div>
             </div>
@@ -34,12 +32,12 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
         >
             <div class="space-y-3">
                 <div>
-                    <p class="mb-2 text-xs font-medium text-purple-700">
+                    <p class="mb-2 text-xs font-medium text-purple-950">
                         What's your business type?
                     </p>
                     <div class="flex flex-wrap gap-2">
                         <span
-                            class="rounded-full border border-purple-300 px-3 py-1 text-xs text-purple-600"
+                            class="rounded-full px-3 py-1 text-xs text-purple-600"
                             >Solopreneur</span
                         >
                         <span
@@ -47,23 +45,23 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
                             >B2B SaaS</span
                         >
                         <span
-                            class="rounded-full border border-purple-300 px-3 py-1 text-xs text-purple-600"
+                            class="rounded-full px-3 py-1 text-xs text-purple-600"
                             >E-commerce</span
                         >
                     </div>
                 </div>
                 <div>
-                    <p class="mb-2 text-xs font-medium text-purple-700">
+                    <p class="mb-2 text-xs font-medium text-purple-950">
                         Company stage?
                     </p>
                     <div class="space-y-1">
                         <div class="flex items-center gap-2 text-sm">
                             <div
-                                class="flex h-4 w-4 items-center justify-center rounded-full border-2 border-purple-600 bg-purple-600"
+                                class="flex h-4 w-4 items-center justify-center rounded-full bg-purple-600"
                             >
                                 <div class="h-2 w-2 rounded-full bg-white" />
                             </div>
-                            <span class="text-purple-900"
+                            <span class="text-purple-950"
                                 >Early stage startup</span
                             >
                         </div>
@@ -121,32 +119,26 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
         >
             <div class="space-y-3 text-xs">
                 <div>
-                    <p class="mb-1 font-medium text-purple-700">
+                    <p class="mb-1 font-medium text-purple-950">
                         1. Who is your target audience?
                     </p>
-                    <div
-                        class="rounded border border-purple-200 bg-white p-2 text-purple-900"
-                    >
+                    <div class="rounded bg-white p-2 text-purple-950">
                         Mid-size tech companies looking to streamline operations
                     </div>
                 </div>
                 <div>
-                    <p class="mb-1 font-medium text-purple-700">
+                    <p class="mb-1 font-medium text-purple-950">
                         2. What marketing channels do you currently use?
                     </p>
-                    <div
-                        class="rounded border border-purple-200 bg-white p-2 text-purple-900"
-                    >
+                    <div class="rounded bg-white p-2 text-purple-950">
                         Email list, LinkedIn, and some paid ads
                     </div>
                 </div>
                 <div>
-                    <p class="mb-1 font-medium text-purple-700">
+                    <p class="mb-1 font-medium text-purple-950">
                         3. What is your monthly marketing budget?
                     </p>
-                    <div
-                        class="rounded border border-purple-200 bg-white p-2 text-purple-900"
-                    >
+                    <div class="rounded bg-white p-2 text-purple-950">
                         £2,000 - £5,000
                     </div>
                 </div>
@@ -178,9 +170,7 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
                     </svg>
                     Your prompt is ready!
                 </div>
-                <div
-                    class="rounded border border-green-200 bg-white p-2 text-xs text-gray-700"
-                >
+                <div class="rounded bg-white p-2 text-xs text-indigo-800">
                     "Create a comprehensive marketing strategy for a B2B SaaS
                     early-stage startup using the RACE framework (Reach, Act,
                     Convert, Engage). Target audience: mid-size tech companies.
@@ -189,7 +179,7 @@ import ExampleStageCard from '@/Components/ExampleStageCard.vue';
                 </div>
                 <div class="pt-1">
                     <span
-                        class="inline-flex items-center rounded bg-indigo-600 px-3 py-1 text-xs font-medium text-white"
+                        class="inline-flex items-center rounded bg-indigo-600 px-3 py-1 text-xs font-medium tracking-wider text-white uppercase"
                         >Copy Prompt</span
                     >
                 </div>

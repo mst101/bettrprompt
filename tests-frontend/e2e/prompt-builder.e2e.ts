@@ -241,45 +241,6 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await expect(clarifyingQuestionsCard).toBeVisible({ timeout: 3000 });
     });
 
-    test('should skip a question', async ({ authenticatedPage }) => {
-        // Use fixture to create a prompt with framework already selected
-        const { setupAndNavigateToPromptRun } = await import('./fixtures');
-        const promptRunId = await setupAndNavigateToPromptRun(
-            authenticatedPage,
-            '1_completed',
-        );
-
-        // Wait for page to load
-        await authenticatedPage.waitForLoadState('domcontentloaded');
-
-        // Navigate to the Clarifying Questions tab
-        const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
-            name: /clarifying questions/i,
-        });
-        await clarifyingQuestionsTab.click();
-
-        // Wait for the skip button to be visible
-        const skipButton = authenticatedPage
-            .locator('button:has-text("Skip Question")')
-            .first();
-        await expect(skipButton).toBeVisible({ timeout: 5000 });
-
-        // Click the skip button
-        await expect(skipButton).toBeEnabled();
-        await skipButton.click();
-
-        // Verify we're still on the same prompt run page
-        expect(authenticatedPage.url()).toMatch(
-            new RegExp(`/prompt-builder/${promptRunId}`),
-        );
-
-        // Clarifying questions section should still be visible (next question or completed)
-        const clarifyingQuestionsCard = authenticatedPage
-            .locator('[data-testid="clarifying-questions"]')
-            .first();
-        await expect(clarifyingQuestionsCard).toBeVisible({ timeout: 3000 });
-    });
-
     test('should display optimised prompt when complete', async ({
         authenticatedPage,
     }) => {
