@@ -34,7 +34,7 @@ const sizeClasses = computed(() => {
         </div>
         <!-- BETA Badge -->
         <div
-            class="absolute -right-2 -bottom-2.5 rounded bg-yellow-400 px-1.5 py-0.5 text-[12px] font-bold text-yellow-900 shadow-sm"
+            class="absolute -right-2 -bottom-2.5 rounded bg-yellow-400 px-1.5 py-0.5 text-[12px] font-bold tracking-wide text-yellow-50"
         >
             BETA
         </div>

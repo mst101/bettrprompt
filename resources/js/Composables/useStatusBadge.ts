@@ -42,14 +42,14 @@ export function useStatusBadge() {
         if (workflowStage === '0_completed') {
             return {
                 label: 'Awaiting Questions',
-                colorClass: 'bg-yellow-100 text-yellow-800',
+                colorClass: 'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
             };
         }
 
         if (workflowStage === '1_completed') {
             return {
                 label: 'Awaiting Answers',
-                colorClass: 'bg-blue-100 text-blue-800',
+                colorClass: 'bg-blue-500 text-blue-50',
             };
         }
 

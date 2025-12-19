@@ -9,14 +9,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans:
-        Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     /* Colour inversion system for dark mode */
     /* In light mode: colours behave normally */
     /* In dark mode: scales invert (50↔950, 100↔900, 200↔800, etc.) */
-
     /* Black and White */
     --color-white: oklch(1 0 0);
     --color-black: oklch(0 0 0);
@@ -217,17 +215,29 @@
     --color-sky-950: oklch(0.306 0.051 254.604);
 
     /* Blue */
-    --color-blue-50: oklch(0.97 0.014 254.604);
-    --color-blue-100: oklch(0.933 0.032 259.824);
-    --color-blue-200: oklch(0.885 0.063 261.387);
-    --color-blue-300: oklch(0.81 0.109 261.387);
-    --color-blue-400: oklch(0.724 0.155 261.387);
-    --color-blue-500: oklch(0.648 0.177 262.881);
-    --color-blue-600: oklch(0.571 0.179 264.376);
-    --color-blue-700: oklch(0.508 0.165 266.606);
-    --color-blue-800: oklch(0.446 0.136 268.351);
-    --color-blue-900: oklch(0.406 0.109 269.505);
-    --color-blue-950: oklch(0.296 0.07 269.505);
+    /*--color-blue-50: oklch(0.97 0.014 254.604);*/
+    /*--color-blue-100: oklch(0.933 0.032 259.824);*/
+    /*--color-blue-200: oklch(0.885 0.063 261.387);*/
+    /*--color-blue-300: oklch(0.81 0.109 261.387);*/
+    /*--color-blue-400: oklch(0.724 0.155 261.387);*/
+    /*--color-blue-500: oklch(0.648 0.177 262.881);*/
+    /*--color-blue-600: oklch(0.571 0.179 264.376);*/
+    /*--color-blue-700: oklch(0.508 0.165 266.606);*/
+    /*--color-blue-800: oklch(0.446 0.136 268.351);*/
+    /*--color-blue-900: oklch(0.406 0.109 269.505);*/
+    /*--color-blue-950: oklch(0.296 0.07 269.505);*/
+    /* Blue */
+    --color-blue-50: oklch(0.966 0.017 247.99);
+    --color-blue-100: oklch(0.922 0.039 249.43);
+    --color-blue-200: oklch(0.843 0.082 244.51);
+    --color-blue-300: oklch(0.762 0.134 240.01);
+    --color-blue-400: oklch(0.685 0.148 237.31);
+    --color-blue-500: oklch(0.591 0.127 237.01);
+    --color-blue-600: oklch(0.504 0.109 237.7);
+    --color-blue-700: oklch(0.409 0.089 237.52);
+    --color-blue-800: oklch(0.316 0.069 237.35);
+    --color-blue-900: oklch(0.231 0.049 236.92);
+    --color-blue-950: oklch(0.176 0.038 235.69);
 
     /* Indigo */
     --color-indigo-50: oklch(0.962 0.015 272.314);
@@ -511,17 +521,30 @@
         --color-sky-950: oklch(0.977 0.013 236.62);
 
         /* Blue inverted */
-        --color-blue-50: oklch(0.296 0.07 269.505);
-        --color-blue-100: oklch(0.406 0.109 269.505);
-        --color-blue-200: oklch(0.446 0.136 268.351);
-        --color-blue-300: oklch(0.508 0.165 266.606);
-        --color-blue-400: oklch(0.571 0.179 264.376);
-        --color-blue-500: oklch(0.648 0.177 262.881);
-        --color-blue-600: oklch(0.724 0.155 261.387);
-        --color-blue-700: oklch(0.81 0.109 261.387);
-        --color-blue-800: oklch(0.885 0.063 261.387);
-        --color-blue-900: oklch(0.933 0.032 259.824);
-        --color-blue-950: oklch(0.97 0.014 254.604);
+        /*--color-blue-50: oklch(0.296 0.07 269.505);*/
+        /*--color-blue-100: oklch(0.406 0.109 269.505);*/
+        /*--color-blue-200: oklch(0.446 0.136 268.351);*/
+        /*--color-blue-300: oklch(0.508 0.165 266.606);*/
+        /*--color-blue-400: oklch(0.571 0.179 264.376);*/
+        /*--color-blue-500: oklch(0.648 0.177 262.881);*/
+        /*--color-blue-600: oklch(0.724 0.155 261.387);*/
+        /*--color-blue-700: oklch(0.81 0.109 261.387);*/
+        /*--color-blue-800: oklch(0.885 0.063 261.387);*/
+        /*--color-blue-900: oklch(0.933 0.032 259.824);*/
+        /*--color-blue-950: oklch(0.97 0.014 254.604);*/
+
+        /* Blue inverted */
+        --color-blue-50: oklch(0.176 0.038 235.69);
+        --color-blue-100: oklch(0.231 0.049 236.92);
+        --color-blue-200: oklch(0.409 0.089 237.52);
+        --color-blue-300: oklch(0.504 0.109 237.7);
+        --color-blue-400: oklch(0.591 0.127 237.01);
+        --color-blue-500: oklch(0.685 0.148 237.31);
+        --color-blue-600: oklch(0.762 0.134 240.01);
+        --color-blue-700: oklch(0.843 0.082 244.51);
+        --color-blue-800: oklch(0.316 0.069 237.35);
+        --color-blue-900: oklch(0.922 0.039 249.43);
+        --color-blue-950: oklch(0.966 0.017 247.99);
 
         /* Indigo inverted */
         --color-indigo-50: oklch(0.283 0.063 285.885);

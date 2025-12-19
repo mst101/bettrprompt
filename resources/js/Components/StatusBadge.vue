@@ -16,7 +16,7 @@ const config = computed(() => getStatusConfig(props.workflowStage));
     <span
         data-testid="status-badge"
         :data-test-workflow-stage="workflowStage"
-        class="inline-flex rounded-full px-2 py-1 text-xs font-semibold uppercase"
+        class="inline-flex w-40 items-center justify-center rounded-full px-2 py-1 text-xs font-semibold tracking-wide uppercase"
         :class="config.colorClass"
     >
         {{ config.label }}

@@ -59,12 +59,12 @@ const typeConfig = computed(() => ({
         icon: 'x-circle',
     },
     warning: {
-        bgColor: 'bg-amber-50',
-        borderColor: 'border-amber-200',
-        iconColor: 'text-amber-400',
-        textColor: 'text-amber-800',
-        hoverColor: 'hover:bg-amber-100',
-        ringColor: 'focus:ring-amber-600',
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200',
+        iconColor: 'text-yellow-400',
+        textColor: 'text-yellow-800',
+        hoverColor: 'hover:bg-yellow-100',
+        ringColor: 'focus:ring-yellow-600',
         icon: 'exclamation-triangle',
     },
     info: {
