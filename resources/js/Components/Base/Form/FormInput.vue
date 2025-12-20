@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useThemeStore } from '@/Stores/themeStore';
 import type { FormInputProps, Nullable } from '@/Types';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const props = withDefaults(defineProps<FormInputProps>(), {
     modelValue: '',
@@ -25,7 +26,21 @@ defineOptions({
     inheritAttrs: false,
 });
 
+const themeStore = useThemeStore();
 const input = ref<Nullable<HTMLInputElement>>(null);
+
+// Compute autofill styles based on theme
+const autofillStyles = computed(() => {
+    const isDark = themeStore.theme === 'dark';
+    return {
+        '--autofill-text-color': isDark
+            ? 'rgb(224, 231, 255)'
+            : 'rgb(49, 46, 129)',
+        '--autofill-bg-color': isDark
+            ? 'rgb(49, 46, 129)'
+            : 'rgb(238, 235, 254)',
+    };
+});
 
 onMounted(() => {
     if (props.autofocus && input.value) {
@@ -63,6 +78,7 @@ function updateValue(event: Event): void {
             :disabled="disabled"
             :autocomplete="autocomplete"
             v-bind="$attrs"
+            :style="autofillStyles"
             class="mt-1 block w-full rounded-md border-indigo-100 bg-indigo-50 text-indigo-900 placeholder-indigo-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-indigo-100"
             :class="{ 'bg-indigo-100': disabled }"
             @input="updateValue"
@@ -91,24 +107,10 @@ input:-webkit-autofill:active {
     transition:
         background-color 5000s ease-in-out 0s,
         color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: rgb(67, 56, 202) !important; /* indigo-900 */
+    -webkit-text-fill-color: var(--autofill-text-color) !important;
 }
 
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px rgb(238, 235, 254) inset !important; /* indigo-50 */
-}
-
-/* Dark mode autofill styles */
-@media (prefers-color-scheme: dark) {
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus,
-    input:-webkit-autofill:active {
-        -webkit-text-fill-color: rgb(238, 235, 254) !important; /* indigo-50 */
-    }
-
-    input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0 1000px rgb(49, 46, 129) inset !important; /* indigo-900 */
-    }
+    -webkit-box-shadow: 0 0 0 1000px var(--autofill-bg-color) inset !important;
 }
 </style>
