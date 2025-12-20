@@ -72,7 +72,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
             <template #actions>
                 <Link
                     :href="route('admin.tasks.index')"
-                    class="text-sm text-gray-600 hover:text-gray-900"
+                    class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Tasks
                 </Link>
@@ -85,59 +85,59 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                 <h2 class="mb-2 font-semibold text-indigo-900">
                     Task Description:
                 </h2>
-                <p class="text-gray-700">{{ props.taskDescription }}</p>
+                <p class="text-indigo-700">{{ props.taskDescription }}</p>
             </Card>
 
             <!-- Prompt Runs List -->
             <Card>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-indigo-200">
+                        <thead class="bg-indigo-50">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     ID
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     User
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Personality
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Framework
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Status
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Created
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody class="divide-y divide-indigo-200 bg-white">
                             <tr
                                 v-for="run in props.promptRuns.data"
                                 :key="run.id"
-                                class="group cursor-pointer transition hover:bg-gray-50"
+                                class="group cursor-pointer transition hover:bg-indigo-50"
                                 @click="handleRowClick($event, run.id)"
                                 @auxclick.prevent="
                                     handleMiddleClick($event, run.id)
                                 "
                             >
                                 <td
-                                    class="px-6 py-4 text-sm font-medium text-gray-900"
+                                    class="px-6 py-4 text-sm font-medium text-indigo-900"
                                 >
                                     <Link
                                         :href="
@@ -152,31 +152,31 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                         #{{ run.id }}
                                     </Link>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-900">
+                                <td class="px-6 py-4 text-sm text-indigo-900">
                                     <div v-if="run.user">
                                         <div class="font-medium">
                                             {{ run.user.name }}
                                         </div>
-                                        <div class="text-gray-500">
+                                        <div class="text-indigo-500">
                                             {{ run.user.email }}
                                         </div>
                                     </div>
-                                    <span v-else class="text-gray-400">
+                                    <span v-else class="text-indigo-400">
                                         Guest
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-900">
+                                <td class="px-6 py-4 text-sm text-indigo-900">
                                     <span
                                         v-if="run.personalityType"
                                         class="inline-flex rounded-full bg-purple-100 px-2 py-1 text-xs font-semibold text-purple-800"
                                     >
                                         {{ run.personalityType }}
                                     </span>
-                                    <span v-else class="text-gray-400">
+                                    <span v-else class="text-indigo-400">
                                         N/A
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-900">
+                                <td class="px-6 py-4 text-sm text-indigo-900">
                                     {{ run.selectedFramework || 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4">
@@ -190,7 +190,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     </span>
                                 </td>
                                 <td
-                                    class="px-6 py-4 text-sm whitespace-nowrap text-gray-500"
+                                    class="px-6 py-4 text-sm whitespace-nowrap text-indigo-500"
                                 >
                                     {{
                                         new Date(run.createdAt).toLocaleString()
@@ -200,7 +200,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                             <tr v-if="props.promptRuns.data.length === 0">
                                 <td
                                     colspan="6"
-                                    class="px-6 py-4 text-center text-sm text-gray-500"
+                                    class="px-6 py-4 text-center text-sm text-indigo-500"
                                 >
                                     No prompt runs found
                                 </td>
@@ -215,7 +215,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                     class="mt-4 flex items-center justify-between border-t border-indigo-100 px-4 py-3 sm:px-6"
                 >
                     <div>
-                        <p class="text-sm text-gray-700">
+                        <p class="text-sm text-indigo-700">
                             Page
                             <span class="font-medium">{{
                                 props.promptRuns.currentPage
@@ -238,8 +238,8 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 :class="[
                                     link.active
                                         ? 'z-10 bg-indigo-600 text-white'
-                                        : 'bg-white text-gray-700 hover:bg-gray-50',
-                                    'relative inline-flex items-center border border-gray-300 px-4 py-2 text-sm font-medium',
+                                        : 'bg-white text-indigo-700 hover:bg-indigo-50',
+                                    'relative inline-flex items-center border border-indigo-100 px-4 py-2 text-sm font-medium',
                                 ]"
                                 :text="link.label"
                             />

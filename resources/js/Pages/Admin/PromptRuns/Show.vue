@@ -43,7 +43,7 @@ const { getStatusColor } = useWorkflowStageColor();
             <template #actions>
                 <Link
                     :href="route('admin.tasks.index')"
-                    class="text-sm text-gray-600 hover:text-gray-900"
+                    class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Tasks
                 </Link>
@@ -55,7 +55,9 @@ const { getStatusColor } = useWorkflowStageColor();
             <Card>
                 <div class="grid gap-4 md:grid-cols-2">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Status
                         </label>
                         <span
@@ -68,20 +70,24 @@ const { getStatusColor } = useWorkflowStageColor();
                         </span>
                     </div>
                     <div v-if="props.promptRun.user">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             User
                         </label>
                         <div class="mt-1">
-                            <div class="font-medium text-gray-900">
+                            <div class="font-medium text-indigo-900">
                                 {{ props.promptRun.user.name }}
                             </div>
-                            <div class="text-sm text-gray-500">
+                            <div class="text-sm text-indigo-500">
                                 {{ props.promptRun.user.email }}
                             </div>
                         </div>
                     </div>
                     <div v-if="props.promptRun.personalityType">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Personality Type
                         </label>
                         <div class="mt-1">
@@ -93,10 +99,12 @@ const { getStatusColor } = useWorkflowStageColor();
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Created
                         </label>
-                        <div class="mt-1 text-gray-900">
+                        <div class="mt-1 text-indigo-900">
                             {{
                                 new Date(
                                     props.promptRun.createdAt,
@@ -112,7 +120,7 @@ const { getStatusColor } = useWorkflowStageColor();
                 <h2 class="mb-2 font-semibold text-indigo-900">
                     Task Description
                 </h2>
-                <p class="text-gray-700">
+                <p class="text-indigo-700">
                     {{ props.promptRun.taskDescription }}
                 </p>
             </Card>
@@ -131,10 +139,12 @@ const { getStatusColor } = useWorkflowStageColor();
                         </span>
                     </div>
                     <div v-if="props.promptRun.frameworkReasoning">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Reasoning
                         </label>
-                        <p class="mt-1 text-gray-700">
+                        <p class="mt-1 text-indigo-700">
                             {{ props.promptRun.frameworkReasoning }}
                         </p>
                     </div>
@@ -165,11 +175,11 @@ const { getStatusColor } = useWorkflowStageColor();
                             />
                             <div class="flex-1">
                                 <label
-                                    class="block text-sm font-medium text-gray-700"
+                                    class="block text-sm font-medium text-indigo-700"
                                 >
                                     Question {{ index + 1 }}
                                 </label>
-                                <p class="mt-1 text-gray-900">
+                                <p class="mt-1 text-indigo-900">
                                     {{ question }}
                                 </p>
                             </div>
@@ -180,7 +190,7 @@ const { getStatusColor } = useWorkflowStageColor();
                                 props.promptRun.clarifyingAnswers &&
                                 props.promptRun.clarifyingAnswers[index]
                             "
-                            class="mt-3 ml-7 rounded-lg bg-gray-50 p-3"
+                            class="mt-3 ml-7 rounded-lg bg-indigo-50 p-3"
                         >
                             <div class="flex items-start">
                                 <DynamicIcon
@@ -189,11 +199,11 @@ const { getStatusColor } = useWorkflowStageColor();
                                 />
                                 <div class="flex-1">
                                     <label
-                                        class="block text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-indigo-700"
                                     >
                                         Answer
                                     </label>
-                                    <p class="mt-1 text-gray-900">
+                                    <p class="mt-1 text-indigo-900">
                                         {{
                                             props.promptRun.clarifyingAnswers[
                                                 index
@@ -221,9 +231,9 @@ const { getStatusColor } = useWorkflowStageColor();
                 <h2 class="mb-3 font-semibold text-indigo-900">
                     Optimised Prompt
                 </h2>
-                <div class="rounded-lg bg-gray-50 p-4">
+                <div class="rounded-lg bg-indigo-50 p-4">
                     <pre
-                        class="font-mono text-sm whitespace-pre-wrap text-gray-900"
+                        class="font-mono text-sm whitespace-pre-wrap text-indigo-900"
                         >{{ props.promptRun.optimizedPrompt }}</pre
                     >
                 </div>

@@ -91,7 +91,7 @@ const submit = () => {
                 <h2 class="text-base font-semibold text-indigo-900 sm:text-lg">
                     We'd love to hear from you!
                 </h2>
-                <p class="mt-1 text-xs text-gray-600 sm:text-sm">
+                <p class="mt-1 text-xs text-indigo-600 sm:text-sm">
                     Your feedback will help us decide whether to improve this
                     project - or to abandon it!<br />
                     Please be honest.
@@ -172,7 +172,9 @@ const submit = () => {
                             : ''
                     "
                 >
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         1. How experienced are you with AI tools like ChatGPT or
                         Claude?
                     </label>
@@ -199,7 +201,9 @@ const submit = () => {
                             : ''
                     "
                 >
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         2. How useful was the app for improving your prompt?
                     </label>
                     <LikertScale
@@ -225,7 +229,9 @@ const submit = () => {
                             : ''
                     "
                 >
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         3. How likely are you to use this app the next time you
                         need to work with an AI assistant?
                     </label>
@@ -266,13 +272,15 @@ const submit = () => {
                             : ''
                     "
                 >
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         5. Which features would you most want to see added next?
-                        <span class="font-normal text-gray-600"
+                        <span class="font-normal text-indigo-600"
                             >(Select at least one)</span
                         >
                     </label>
-                    <p class="mb-3 text-xs text-gray-600">
+                    <p class="mb-3 text-xs text-indigo-600">
                         If you select "Other", please describe the feature you'd
                         like to see.
                     </p>

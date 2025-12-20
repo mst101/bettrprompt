@@ -27,7 +27,7 @@ const isSorted = (): boolean => {
 
 <template>
     <button
-        class="group inline-flex items-center gap-1 rounded p-1 hover:text-gray-700 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 focus:outline-hidden"
+        class="group inline-flex items-center gap-1 rounded p-1 hover:text-indigo-700 focus:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden"
         @click="emit('sort', column)"
     >
         <slot />
@@ -36,14 +36,14 @@ const isSorted = (): boolean => {
                 class="h-3 w-3 transition-colors"
                 :class="{
                     'text-indigo-600': isSorted() && sortDirection === 'asc',
-                    'text-gray-400': !isSorted() || sortDirection !== 'asc',
+                    'text-indigo-400': !isSorted() || sortDirection !== 'asc',
                 }"
             />
             <SvgChevronDown
                 class="-mt-1 h-3 w-3 transition-colors"
                 :class="{
                     'text-indigo-600': isSorted() && sortDirection === 'desc',
-                    'text-gray-400': !isSorted() || sortDirection !== 'desc',
+                    'text-indigo-400': !isSorted() || sortDirection !== 'desc',
                 }"
             />
         </span>

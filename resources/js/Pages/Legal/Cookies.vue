@@ -16,7 +16,7 @@ defineOptions({
 
     <HeaderPage title="Cookie Policy">
         <template #actions>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-2 text-sm text-indigo-600">
                 Last updated:
                 {{
                     new Date().toLocaleDateString('en-GB', {
@@ -33,7 +33,7 @@ defineOptions({
         <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
             <div class="p-6">
                 <div
-                    class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-gray-700 prose-p:mb-4 prose-p:text-gray-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-gray-600 prose-strong:text-gray-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none"
+                    class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-indigo-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-indigo-700 prose-p:mb-4 prose-p:text-indigo-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-indigo-600 prose-strong:text-indigo-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none"
                 >
                     <h2>1. What Are Cookies?</h2>
                     <p>
@@ -71,11 +71,13 @@ defineOptions({
 
                     <!-- Essential Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-indigo-50 p-6"
                     >
                         <div class="flex items-start justify-between">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-900">
+                                <h3
+                                    class="text-lg font-semibold text-indigo-900"
+                                >
                                     {{ COOKIE_CATEGORIES.essential.name }}
                                 </h3>
                                 <span
@@ -85,7 +87,7 @@ defineOptions({
                                 </span>
                             </div>
                         </div>
-                        <p class="mt-3 text-sm text-gray-700">
+                        <p class="mt-3 text-sm text-indigo-700">
                             {{ COOKIE_CATEGORIES.essential.description }}
                         </p>
                         <div class="mt-4 space-y-3">
@@ -95,13 +97,15 @@ defineOptions({
                                 :key="cookie.name"
                                 class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
-                                <div class="text-sm font-medium text-gray-900">
+                                <div
+                                    class="text-sm font-medium text-indigo-900"
+                                >
                                     {{ cookie.name }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-600">
+                                <div class="mt-1 text-xs text-indigo-600">
                                     {{ cookie.purpose }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500">
+                                <div class="mt-1 text-xs text-indigo-500">
                                     Duration: {{ cookie.duration }}
                                 </div>
                             </div>
@@ -110,12 +114,12 @@ defineOptions({
 
                     <!-- Functional Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-indigo-50 p-6"
                     >
-                        <h3 class="text-lg font-semibold text-gray-900">
+                        <h3 class="text-lg font-semibold text-indigo-900">
                             {{ COOKIE_CATEGORIES.functional.name }}
                         </h3>
-                        <p class="mt-3 text-sm text-gray-700">
+                        <p class="mt-3 text-sm text-indigo-700">
                             {{ COOKIE_CATEGORIES.functional.description }}
                         </p>
                         <div class="mt-4 space-y-3">
@@ -125,13 +129,15 @@ defineOptions({
                                 :key="cookie.name"
                                 class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
-                                <div class="text-sm font-medium text-gray-900">
+                                <div
+                                    class="text-sm font-medium text-indigo-900"
+                                >
                                     {{ cookie.name }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-600">
+                                <div class="mt-1 text-xs text-indigo-600">
                                     {{ cookie.purpose }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500">
+                                <div class="mt-1 text-xs text-indigo-500">
                                     Duration: {{ cookie.duration }}
                                 </div>
                             </div>
@@ -140,12 +146,12 @@ defineOptions({
 
                     <!-- Analytics Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-indigo-50 p-6"
                     >
-                        <h3 class="text-lg font-semibold text-gray-900">
+                        <h3 class="text-lg font-semibold text-indigo-900">
                             {{ COOKIE_CATEGORIES.analytics.name }}
                         </h3>
-                        <p class="mt-3 text-sm text-gray-700">
+                        <p class="mt-3 text-sm text-indigo-700">
                             {{ COOKIE_CATEGORIES.analytics.description }}
                         </p>
                         <div class="mt-4 space-y-3">
@@ -155,13 +161,15 @@ defineOptions({
                                 :key="cookie.name"
                                 class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
-                                <div class="text-sm font-medium text-gray-900">
+                                <div
+                                    class="text-sm font-medium text-indigo-900"
+                                >
                                     {{ cookie.name }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-600">
+                                <div class="mt-1 text-xs text-indigo-600">
                                     {{ cookie.purpose }}
                                 </div>
-                                <div class="mt-1 text-xs text-gray-500">
+                                <div class="mt-1 text-xs text-indigo-500">
                                     Duration: {{ cookie.duration }}
                                 </div>
                             </div>

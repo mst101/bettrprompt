@@ -28,7 +28,7 @@ const emit = defineEmits<{
                     <h3 class="text-lg font-semibold text-indigo-900">
                         You've reached your visitor limit
                     </h3>
-                    <p class="mt-2 text-gray-700">
+                    <p class="mt-2 text-indigo-700">
                         You've already created an optimised prompt as a visitor.
                         To create more prompts and iterate on existing ones,
                         you'll need to create a free account.

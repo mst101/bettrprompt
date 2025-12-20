@@ -76,10 +76,10 @@ const analyticsEnabled = computed({
         <div class="p-6">
             <div class="flex items-start justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">
+                    <h2 class="text-xl font-semibold text-indigo-900">
                         Cookie Settings
                     </h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-indigo-600">
                         Manage your cookie preferences. You can enable or
                         disable different types of cookies below.
                         <LinkText :href="route('cookies')">
@@ -91,13 +91,15 @@ const analyticsEnabled = computed({
 
             <div class="mt-6 space-y-6">
                 <!-- Essential Cookies -->
-                <div class="rounded-lg border border-indigo-100 bg-gray-50 p-4">
+                <div
+                    class="rounded-lg border border-indigo-100 bg-indigo-50 p-4"
+                >
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="font-medium text-gray-900">
+                            <h3 class="font-medium text-indigo-900">
                                 {{ COOKIE_CATEGORIES.essential.name }}
                             </h3>
-                            <p class="mt-1 text-sm text-gray-600">
+                            <p class="mt-1 text-sm text-indigo-600">
                                 {{ COOKIE_CATEGORIES.essential.description }}
                             </p>
                         </div>
@@ -115,10 +117,10 @@ const analyticsEnabled = computed({
                 <div class="rounded-lg border border-indigo-100 p-4">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="font-medium text-gray-900">
+                            <h3 class="font-medium text-indigo-900">
                                 {{ COOKIE_CATEGORIES.functional.name }}
                             </h3>
-                            <p class="mt-1 text-sm text-gray-600">
+                            <p class="mt-1 text-sm text-indigo-600">
                                 {{ COOKIE_CATEGORIES.functional.description }}
                             </p>
                         </div>
@@ -135,10 +137,10 @@ const analyticsEnabled = computed({
                 <div class="rounded-lg border border-indigo-100 p-4">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="font-medium text-gray-900">
+                            <h3 class="font-medium text-indigo-900">
                                 {{ COOKIE_CATEGORIES.analytics.name }}
                             </h3>
-                            <p class="mt-1 text-sm text-gray-600">
+                            <p class="mt-1 text-sm text-indigo-600">
                                 {{ COOKIE_CATEGORIES.analytics.description }}
                             </p>
                         </div>

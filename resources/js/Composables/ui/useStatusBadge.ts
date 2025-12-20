@@ -18,7 +18,7 @@ export function useStatusBadge() {
         if (!workflowStage) {
             return {
                 label: 'Unknown',
-                colorClass: 'bg-gray-100 text-gray-900',
+                colorClass: 'bg-indigo-100 text-indigo-900',
             };
         }
 
@@ -65,7 +65,7 @@ export function useStatusBadge() {
         // Fallback for unknown stages
         return {
             label: getWorkflowStageLabel(workflowStage),
-            colorClass: 'bg-gray-100 text-gray-900',
+            colorClass: 'bg-indigo-100 text-indigo-900',
         };
     };
 

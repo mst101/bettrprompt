@@ -47,11 +47,11 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium text-indigo-900">
                 Professional Context
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-indigo-600">
                 Tell us about your professional background to help optimise
                 prompts for your role.
             </p>

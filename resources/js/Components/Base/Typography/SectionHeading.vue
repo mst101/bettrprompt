@@ -11,7 +11,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const variantClasses = {
-    large: 'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
+    large: 'text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl',
     default: 'text-base sm:text-lg font-semibold text-indigo-900',
     small: 'text-xs sm:text-sm font-medium text-indigo-900',
 };

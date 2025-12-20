@@ -57,7 +57,7 @@ const isChecked = computed({
                 :id="id"
                 v-model="isChecked"
                 type="checkbox"
-                class="size-4 rounded-md border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                class="size-4 rounded-md border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                 :disabled="disabled"
             />
             <label

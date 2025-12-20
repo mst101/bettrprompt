@@ -120,7 +120,7 @@ const formatDate = (dateString: string) => {
                         <h2 class="text-lg font-semibold text-indigo-900">
                             Thank you for your feedback!
                         </h2>
-                        <p class="mt-1 text-sm text-gray-600">
+                        <p class="mt-1 text-sm text-indigo-600">
                             You can update your responses at any time.
                         </p>
                     </div>
@@ -132,7 +132,7 @@ const formatDate = (dateString: string) => {
                         Edit Responses
                     </ButtonSecondary>
                 </div>
-                <p class="mt-2 text-xs text-gray-500">
+                <p class="mt-2 text-xs text-indigo-500">
                     Last updated: {{ formatDate(feedback.updatedAt) }}
                 </p>
             </div>
@@ -140,7 +140,9 @@ const formatDate = (dateString: string) => {
             <form class="space-y-8" @submit.prevent="submit">
                 <!-- Question 1: Experience Level -->
                 <div class="mt-8">
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         1. How experienced are you with AI tools like ChatGPT or
                         Claude?
                     </label>
@@ -160,7 +162,9 @@ const formatDate = (dateString: string) => {
 
                 <!-- Question 2: Usefulness -->
                 <div class="mt-16">
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         2. How useful was the app for improving your prompt?
                     </label>
                     <LikertScale
@@ -179,7 +183,9 @@ const formatDate = (dateString: string) => {
 
                 <!-- Question 3: Usage Intent -->
                 <div class="mt-16">
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         3. How likely are you to use this app the next time you
                         need to work with an AI assistant?
                     </label>
@@ -212,9 +218,11 @@ const formatDate = (dateString: string) => {
 
                 <!-- Question 5: Desired Features -->
                 <div class="mt-16">
-                    <label class="mb-4 block text-sm font-medium text-gray-900">
+                    <label
+                        class="mb-4 block text-sm font-medium text-indigo-900"
+                    >
                         5. Which features would you most want to see added next?
-                        <span class="font-normal text-gray-600"
+                        <span class="font-normal text-indigo-600"
                             >(Select all that apply)</span
                         >
                     </label>

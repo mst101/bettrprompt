@@ -74,7 +74,7 @@ describe('LinkText', () => {
         const link = wrapper.find('a');
         expect(link.classes()).toContain('focus:ring-2');
         expect(link.classes()).toContain('focus:ring-indigo-500');
-        expect(link.classes()).toContain('focus:ring-offset-gray-100');
+        expect(link.classes()).toContain('focus:ring-offset-indigo-100');
         expect(link.classes()).toContain('focus:outline-hidden');
     });
 

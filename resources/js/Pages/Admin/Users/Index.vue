@@ -53,7 +53,7 @@ watch(search, debouncedSearch);
             <template #actions>
                 <Link
                     :href="route('admin.dashboard')"
-                    class="text-sm text-gray-600 hover:text-gray-900"
+                    class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Dashboard
                 </Link>
@@ -65,7 +65,7 @@ watch(search, debouncedSearch);
                 <div class="relative">
                     <DynamicIcon
                         name="search"
-                        class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+                        class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-indigo-400"
                     />
                     <FormInput
                         id="task-search"
@@ -73,49 +73,51 @@ watch(search, debouncedSearch);
                         label=""
                         type="text"
                         placeholder="Search users..."
-                        class="w-full rounded-lg border-gray-300 py-2 pr-4 pl-10"
+                        class="w-full rounded-lg border-indigo-100 py-2 pr-4 pl-10"
                     />
                 </div>
             </Card>
 
             <Card>
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-indigo-200">
+                    <thead class="bg-indigo-50">
                         <tr>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
                                 Name
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
                                 Email
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
                                 Visitors
                             </th>
                             <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
                                 Prompt Runs
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white">
+                    <tbody class="divide-y divide-indigo-200 bg-white">
                         <Link
                             v-for="user in props.users.data"
                             :key="user.id"
                             :href="route('admin.users.show', user.id)"
                             as="tr"
-                            class="cursor-pointer transition hover:bg-gray-50"
+                            class="cursor-pointer transition hover:bg-indigo-50"
                         >
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     <div>
-                                        <div class="font-medium text-gray-900">
+                                        <div
+                                            class="font-medium text-indigo-900"
+                                        >
                                             {{ user.name }}
                                         </div>
                                         <div
@@ -127,7 +129,7 @@ watch(search, debouncedSearch);
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
+                            <td class="px-6 py-4 text-sm text-indigo-500">
                                 {{ user.email }}
                             </td>
                             <td class="px-6 py-4">

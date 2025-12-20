@@ -17,7 +17,7 @@ const paddingClasses = {
 
 <template>
     <div
-        class="max-w-4xl overflow-hidden bg-white text-gray-600 shadow-lg ring-1 ring-gray-100 sm:rounded-lg dark:bg-indigo-50 dark:text-indigo-900"
+        class="max-w-4xl overflow-hidden bg-white text-indigo-600 shadow-lg ring-1 ring-indigo-100 sm:rounded-lg dark:bg-indigo-50 dark:text-indigo-900"
         :class="paddingClasses[padding]"
     >
         <slot />

@@ -34,11 +34,11 @@ const props = defineProps<Props>();
                             <DynamicIcon name="users" class="h-6 w-6" />
                         </div>
                         <div class="ml-4">
-                            <p class="text-xs text-gray-500 sm:text-sm">
+                            <p class="text-xs text-indigo-500 sm:text-sm">
                                 Total Users
                             </p>
                             <p
-                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                                class="text-lg font-semibold text-indigo-900 sm:text-2xl"
                             >
                                 {{ props.stats.total_users }}
                             </p>
@@ -56,11 +56,11 @@ const props = defineProps<Props>();
                             />
                         </div>
                         <div class="ml-4">
-                            <p class="text-xs text-gray-500 sm:text-sm">
+                            <p class="text-xs text-indigo-500 sm:text-sm">
                                 Prompt Runs
                             </p>
                             <p
-                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                                class="text-lg font-semibold text-indigo-900 sm:text-2xl"
                             >
                                 {{ props.stats.total_prompt_runs }}
                             </p>
@@ -77,11 +77,11 @@ const props = defineProps<Props>();
                             <DynamicIcon name="tag" class="h-6 w-6" />
                         </div>
                         <div class="ml-4">
-                            <p class="text-xs text-gray-500 sm:text-sm">
+                            <p class="text-xs text-indigo-500 sm:text-sm">
                                 Unique Tasks
                             </p>
                             <p
-                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                                class="text-lg font-semibold text-indigo-900 sm:text-2xl"
                             >
                                 {{ props.stats.unique_tasks }}
                             </p>
@@ -98,8 +98,10 @@ const props = defineProps<Props>();
                             <DynamicIcon name="check-circle" class="h-6 w-6" />
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-500">Completed Runs</p>
-                            <p class="text-2xl font-semibold text-gray-900">
+                            <p class="text-sm text-indigo-500">
+                                Completed Runs
+                            </p>
+                            <p class="text-2xl font-semibold text-indigo-900">
                                 {{ props.stats.completed_runs }}
                             </p>
                         </div>
@@ -120,16 +122,16 @@ const props = defineProps<Props>();
                                 class="h-8 w-8 text-blue-600"
                             />
                             <div class="ml-4">
-                                <h3 class="font-semibold text-gray-900">
+                                <h3 class="font-semibold text-indigo-900">
                                     Manage Users
                                 </h3>
-                                <p class="text-sm text-gray-500">
+                                <p class="text-sm text-indigo-500">
                                     View and search users
                                 </p>
                             </div>
                             <DynamicIcon
                                 name="chevron-right"
-                                class="ml-auto h-5 w-5 text-gray-400"
+                                class="ml-auto h-5 w-5 text-indigo-400"
                             />
                         </div>
                     </Card>
@@ -146,16 +148,16 @@ const props = defineProps<Props>();
                                 class="h-8 w-8 text-green-600"
                             />
                             <div class="ml-4">
-                                <h3 class="font-semibold text-gray-900">
+                                <h3 class="font-semibold text-indigo-900">
                                     Browse Tasks
                                 </h3>
-                                <p class="text-sm text-gray-500">
+                                <p class="text-sm text-indigo-500">
                                     Filter by task description
                                 </p>
                             </div>
                             <DynamicIcon
                                 name="chevron-right"
-                                class="ml-auto h-5 w-5 text-gray-400"
+                                class="ml-auto h-5 w-5 text-indigo-400"
                             />
                         </div>
                     </Card>

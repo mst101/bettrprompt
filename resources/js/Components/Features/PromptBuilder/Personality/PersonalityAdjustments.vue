@@ -11,28 +11,28 @@ defineProps<Props>();
 
 <template>
     <Card class="space-y-4">
-        <h2 class="text-lg font-semibold text-gray-900">
+        <h2 class="text-lg font-semibold text-indigo-900">
             Personality Adjustments
         </h2>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-gray-700">
+            <h3 class="mb-2 text-sm font-medium text-indigo-700">
                 Adjustment Level
             </h3>
-            <div class="rounded-lg bg-gray-50 p-3">
-                <span class="text-gray-900 capitalize">{{ tier }}</span>
+            <div class="rounded-lg bg-indigo-50 p-3">
+                <span class="text-indigo-900 capitalize">{{ tier }}</span>
             </div>
         </div>
 
         <div v-if="adjustments.length > 0">
-            <h3 class="mb-2 text-sm font-medium text-gray-700">
+            <h3 class="mb-2 text-sm font-medium text-indigo-700">
                 Adjustments Applied
             </h3>
             <ul class="space-y-2">
                 <li
                     v-for="(adjustment, index) in adjustments"
                     :key="index"
-                    class="flex items-start rounded-lg bg-gray-50 p-3"
+                    class="flex items-start rounded-lg bg-indigo-50 p-3"
                 >
                     <svg
                         class="mt-0.5 mr-2 h-5 w-5 shrink-0 text-blue-600"
@@ -47,7 +47,7 @@ defineProps<Props>();
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    <span class="text-gray-900">{{ adjustment }}</span>
+                    <span class="text-indigo-900">{{ adjustment }}</span>
                 </li>
             </ul>
         </div>

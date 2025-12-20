@@ -55,7 +55,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('unknown-stage');
 
-        expect(config.colorClass).toBe('bg-gray-100 text-gray-800');
+        expect(config.colorClass).toBe('bg-indigo-100 text-indigo-800');
     });
 
     it('should handle null workflow stage', () => {
@@ -63,7 +63,7 @@ describe('useStatusBadge', () => {
         const config = getStatusConfig(null as any);
 
         expect(config.label).toBe('Unknown');
-        expect(config.colorClass).toBe('bg-gray-100 text-gray-800');
+        expect(config.colorClass).toBe('bg-indigo-100 text-indigo-800');
     });
 
     it('should handle undefined workflow stage', () => {
@@ -71,7 +71,7 @@ describe('useStatusBadge', () => {
         const config = getStatusConfig(undefined as any);
 
         expect(config.label).toBe('Unknown');
-        expect(config.colorClass).toBe('bg-gray-100 text-gray-800');
+        expect(config.colorClass).toBe('bg-indigo-100 text-indigo-800');
     });
 
     it('should recognise all processing stages', () => {

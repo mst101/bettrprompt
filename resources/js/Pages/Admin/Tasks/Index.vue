@@ -50,7 +50,7 @@ watch(search, debouncedSearch);
             <template #actions>
                 <Link
                     :href="route('admin.dashboard')"
-                    class="text-sm text-gray-600 hover:text-gray-900"
+                    class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Dashboard
                 </Link>
@@ -63,7 +63,7 @@ watch(search, debouncedSearch);
                 <div class="relative">
                     <DynamicIcon
                         name="search"
-                        class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+                        class="pointer-events-none absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-indigo-400"
                     />
                     <FormInput
                         id="search-tasks"
@@ -79,22 +79,22 @@ watch(search, debouncedSearch);
             <!-- Tasks List -->
             <Card>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-indigo-200">
+                        <thead class="bg-indigo-50">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Task Description
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
                                     Runs
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
+                        <tbody class="divide-y divide-indigo-200 bg-white">
                             <Link
                                 v-for="task in props.tasks.data"
                                 :key="task.task_description"
@@ -104,9 +104,9 @@ watch(search, debouncedSearch);
                                     })
                                 "
                                 as="tr"
-                                class="cursor-pointer transition hover:bg-gray-50"
+                                class="cursor-pointer transition hover:bg-indigo-50"
                             >
-                                <td class="px-6 py-4 text-sm text-gray-900">
+                                <td class="px-6 py-4 text-sm text-indigo-900">
                                     {{ task.task_description }}
                                 </td>
                                 <td class="px-6 py-4">
@@ -119,11 +119,11 @@ watch(search, debouncedSearch);
                             </Link>
                             <tr
                                 v-if="props.tasks.data.length === 0"
-                                class="hover:bg-gray-50"
+                                class="hover:bg-indigo-50"
                             >
                                 <td
                                     colspan="2"
-                                    class="px-6 py-4 text-center text-sm text-gray-500"
+                                    class="px-6 py-4 text-center text-sm text-indigo-500"
                                 >
                                     No tasks found
                                 </td>
@@ -141,7 +141,7 @@ watch(search, debouncedSearch);
                         <Link
                             v-if="props.tasks.current_page > 1"
                             :href="props.tasks.links[0].url"
-                            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            class="relative inline-flex items-center rounded-md border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                         >
                             Previous
                         </Link>
@@ -153,7 +153,7 @@ watch(search, debouncedSearch);
                                 props.tasks.links[props.tasks.links.length - 1]
                                     .url
                             "
-                            class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            class="relative ml-3 inline-flex items-center rounded-md border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                         >
                             Next
                         </Link>
@@ -162,7 +162,7 @@ watch(search, debouncedSearch);
                         class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
                     >
                         <div>
-                            <p class="text-sm text-gray-700">
+                            <p class="text-sm text-indigo-700">
                                 Page
                                 <span class="font-medium">{{
                                     props.tasks.current_page
@@ -185,8 +185,8 @@ watch(search, debouncedSearch);
                                     :class="[
                                         link.active
                                             ? 'z-10 bg-indigo-600 text-white'
-                                            : 'bg-white text-gray-700 hover:bg-gray-50',
-                                        'relative inline-flex items-center border border-gray-300 px-4 py-2 text-sm font-medium',
+                                            : 'bg-white text-indigo-700 hover:bg-indigo-50',
+                                        'relative inline-flex items-center border border-indigo-100 px-4 py-2 text-sm font-medium',
                                     ]"
                                     :text="link.label"
                                 />

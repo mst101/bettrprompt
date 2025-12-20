@@ -69,8 +69,8 @@ describe('ButtonText', () => {
         });
 
         const button = wrapper.find('button');
-        expect(button.classes()).toContain('text-gray-600');
-        expect(button.classes()).toContain('hover:text-gray-800');
+        expect(button.classes()).toContain('text-indigo-600');
+        expect(button.classes()).toContain('hover:text-indigo-800');
     });
 
     it('should render danger variant', () => {

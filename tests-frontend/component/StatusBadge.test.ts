@@ -100,6 +100,6 @@ describe('StatusBadge', () => {
             props: { workflowStage: 'unknown' },
         });
 
-        expect(wrapper.classes()).toContain('bg-gray-100');
+        expect(wrapper.classes()).toContain('bg-indigo-100');
     });
 });

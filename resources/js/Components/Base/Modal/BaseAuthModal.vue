@@ -26,7 +26,7 @@ const handleSubmit = () => {
         <div class="relative p-6">
             <ButtonClose @close="handleClose" />
 
-            <h2 class="text-lg font-medium text-gray-900">{{ title }}</h2>
+            <h2 class="text-lg font-medium text-indigo-900">{{ title }}</h2>
 
             <!-- Optional Google sign-in section -->
             <!--            <div v-if="showGoogleDivider" class="mt-6">-->
@@ -34,10 +34,10 @@ const handleSubmit = () => {
 
             <!--                <div class="relative my-6">-->
             <!--                    <div class="absolute inset-0 flex items-center">-->
-            <!--                        <div class="w-full border-t border-gray-300"></div>-->
+            <!--                        <div class="w-full border-t border-indigo-300"></div>-->
             <!--                    </div>-->
             <!--                    <div class="relative flex justify-center text-sm">-->
-            <!--                        <span class="bg-white px-2 text-gray-500"-->
+            <!--                        <span class="bg-white px-2 text-indigo-500"-->
             <!--                            >Or continue with email</span-->
             <!--                        >-->
             <!--                    </div>-->

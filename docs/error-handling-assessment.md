@@ -8,24 +8,29 @@
 
 ## Executive Summary
 
-This report provides a thorough assessment of error handling practices across the entire codebase, identifying strengths, weaknesses, and critical gaps. The analysis covers backend controllers, frontend components, services, API routes, database operations, WebSocket connections, and logging practices.
+This report provides a thorough assessment of error handling practices across the entire codebase, identifying
+strengths, weaknesses, and critical gaps. The analysis covers backend controllers, frontend components, services, API
+routes, database operations, WebSocket connections, and logging practices.
 
 ### Key Findings
 
 **Strengths:**
+
 - PromptOptimizerController demonstrates excellent error handling patterns for N8n integration
 - Voice transcription service includes proper cleanup and environment-aware error messaging
 - Vue composables provide excellent user-facing error handling with specific, actionable messages
 - Consistent use of FormRequest validation classes
 
 **Critical Gaps:**
+
 - Database operations lack error handling throughout the application
 - WebSocket/Echo connections have no error handling or fallback strategy
 - API webhook endpoint lacks try-catch blocks and payload validation
 - Global exception handling is minimal
 - No transaction management for multi-step operations
 
-**Risk Level:** **HIGH** - Multiple critical paths lack proper error handling, particularly in database operations and real-time features.
+**Risk Level:** **HIGH** - Multiple critical paths lack proper error handling, particularly in database operations and
+real-time features.
 
 ---
 
@@ -39,114 +44,123 @@ This report provides a thorough assessment of error handling practices across th
 #### P0 (Critical) - All Complete! 🎉
 
 **✅ P0-1: API Webhook Handler** (Commit: 2a2c711)
+
 - **Status:** COMPLETE
 - **Files:** `routes/api.php`
 - **What was fixed:**
-  - Added comprehensive try-catch with specific exception handling
-  - Full payload validation using Validator facade
-  - Database transaction wrapping for data integrity
-  - Proper error responses (403, 404, 422, 500)
-  - Rate limiting (60 requests per minute)
-  - Detailed logging at all error points
-  - Graceful event broadcasting with error handling
-  - Security logging (IP, user agent on auth failures)
+    - Added comprehensive try-catch with specific exception handling
+    - Full payload validation using Validator facade
+    - Database transaction wrapping for data integrity
+    - Proper error responses (403, 404, 422, 500)
+    - Rate limiting (60 requests per minute)
+    - Detailed logging at all error points
+    - Graceful event broadcasting with error handling
+    - Security logging (IP, user agent on auth failures)
 - **Risk:** CRITICAL → LOW
 
 **✅ P0-2: WebSocket Error Handling** (Commit: b8ae9b7)
+
 - **Status:** COMPLETE
-- **Files:** `resources/js/bootstrap.ts`, `resources/js/types/global.d.ts`, `resources/js/Pages/PromptOptimizer/Show.vue`
+- **Files:** `resources/js/bootstrap.ts`, `resources/js/types/global.d.ts`,
+  `resources/js/Pages/PromptOptimizer/Show.vue`
 - **What was fixed:**
-  - Comprehensive connection state management
-  - Error handling at initialization
-  - Automatic reconnection via Pusher
-  - Polling fallback when WebSockets fail (5-second interval)
-  - Event-driven connection state notifications
-  - Graceful degradation
-  - Proper cleanup on component unmount
-  - Helper functions: `isEchoConnected()`, `getEchoConnectionState()`
+    - Comprehensive connection state management
+    - Error handling at initialization
+    - Automatic reconnection via Pusher
+    - Polling fallback when WebSockets fail (5-second interval)
+    - Event-driven connection state notifications
+    - Graceful degradation
+    - Proper cleanup on component unmount
+    - Helper functions: `isEchoConnected()`, `getEchoConnectionState()`
 - **Risk:** CRITICAL → LOW
 
 #### P1 (High Priority) - 75% Complete
 
 **✅ P1-1: Global Exception Handler** (Commit: f4fca2e)
+
 - **Status:** COMPLETE
 - **Files:** `bootstrap/app.php`, `app/Http/Controllers/Auth/AuthenticatedSessionController.php`
 - **What was fixed:**
-  - Added `TokenMismatchException` handler for 419 errors
-  - Special handling for logout route after session expiry
-  - User-friendly error messages for Inertia requests
-  - Defensive logout error handling with automatic session cleanup
+    - Added `TokenMismatchException` handler for 419 errors
+    - Special handling for logout route after session expiry
+    - User-friendly error messages for Inertia requests
+    - Defensive logout error handling with automatic session cleanup
 - **Risk:** HIGH → LOW
 
 **✅ P1-2: DatabaseService Wrapper** (Commit: f63a1c9)
+
 - **Status:** COMPLETE
 - **Files:** `app/Services/DatabaseService.php` (new)
 - **What was created:**
-  - `retryOnDeadlock()`: Auto-retry with exponential backoff
-  - `transaction()`: Enhanced transaction wrapper with logging
-  - `safeExecute()`: Comprehensive error handling with user-friendly messages
-  - `getUserFriendlyMessage()`: Error code to message translation
-  - `isConstraintViolation()`, `isDeadlock()`: Error type detection
-  - Supports MySQL and PostgreSQL error codes
+    - `retryOnDeadlock()`: Auto-retry with exponential backoff
+    - `transaction()`: Enhanced transaction wrapper with logging
+    - `safeExecute()`: Comprehensive error handling with user-friendly messages
+    - `getUserFriendlyMessage()`: Error code to message translation
+    - `isConstraintViolation()`, `isDeadlock()`: Error type detection
+    - Supports MySQL and PostgreSQL error codes
 - **Impact:** Foundation for all database error handling
 
 **✅ P1-4: ProfileController Error Handling** (Commit: f1733d2)
+
 - **Status:** COMPLETE
 - **Files:** `app/Http/Controllers/ProfileController.php`
 - **What was fixed:**
-  - `update()`: DatabaseService integration with deadlock retry
-  - `updatePersonality()`: DatabaseService integration
-  - `destroy()`: Transaction management with re-login on failure
-  - Comprehensive error logging with context
-  - User-friendly error messages for all failures
+    - `update()`: DatabaseService integration with deadlock retry
+    - `updatePersonality()`: DatabaseService integration
+    - `destroy()`: Transaction management with re-login on failure
+    - Comprehensive error logging with context
+    - User-friendly error messages for all failures
 - **Risk:** HIGH → LOW
 
 **✅ P1-3: PromptOptimizerController** (Latest commit)
+
 - **Status:** COMPLETE
 - **Files:** `app/Http/Controllers/PromptOptimizerController.php`
 - **What was fixed:**
-  - All database operations wrapped in `DatabaseService::retryOnDeadlock()`
-  - Updated all N8n response handling from HTTP format to standardised array format
-  - Added comprehensive error logging with context throughout
-  - Separate `QueryException` and `Throwable` catch blocks
-  - Event broadcasting wrapped in try-catch blocks
-  - Graceful failure handling (mark prompt run as failed on errors)
-  - Protected against undefined variable errors in catch blocks
-  - Methods updated: `store()`, `answerQuestion()`, `skipQuestion()`, `triggerFinalOptimization()`, `retry()`
+    - All database operations wrapped in `DatabaseService::retryOnDeadlock()`
+    - Updated all N8n response handling from HTTP format to standardised array format
+    - Added comprehensive error logging with context throughout
+    - Separate `QueryException` and `Throwable` catch blocks
+    - Event broadcasting wrapped in try-catch blocks
+    - Graceful failure handling (mark prompt run as failed on errors)
+    - Protected against undefined variable errors in catch blocks
+    - Methods updated: `store()`, `answerQuestion()`, `skipQuestion()`, `triggerFinalOptimization()`, `retry()`
 - **Risk:** HIGH → LOW
 
 #### P2 (Medium Priority) - 50% Complete
 
 **✅ P2-2: N8nClient Retry Logic** (Commit: bba3730)
+
 - **Status:** COMPLETE
 - **Files:** `app/Services/N8nClient.php`
 - **What was fixed:**
-  - Automatic retry with exponential backoff (3 attempts)
-  - Circuit breaker pattern (opens after 5 failures, 5-minute cooldown)
-  - 30-second timeout on all requests
-  - Configuration validation on construction
-  - Standardised array response format
-  - Smart retry logic (only 5xx errors, not 4xx)
-  - Comprehensive error logging
+    - Automatic retry with exponential backoff (3 attempts)
+    - Circuit breaker pattern (opens after 5 failures, 5-minute cooldown)
+    - 30-second timeout on all requests
+    - Configuration validation on construction
+    - Standardised array response format
+    - Smart retry logic (only 5xx errors, not 4xx)
+    - Comprehensive error logging
 - **Risk:** MEDIUM → LOW
 
 **✅ P2-1: OAuth Error Handling** (Latest commit)
+
 - **Status:** COMPLETE
 - **Files:** `app/Http/Controllers/Auth/OAuthController.php`
 - **What was fixed:**
-  - Differentiated exception handling (InvalidStateException, ClientException, general Exception)
-  - Added validation of OAuth provider response data (email, ID, format)
-  - Email conflict detection and specific error messages
-  - DatabaseService integration for deadlock retry on user creation/update
-  - Comprehensive logging at all error points (warning/error levels)
-  - Error handling for redirect to OAuth provider
-  - Specific user-friendly error messages for each scenario:
-    - OAuth state expiration
-    - Incomplete data from provider
-    - Invalid email format
-    - Network/provider errors
-    - Database conflicts
-  - Extracted findOrCreateUser() method for better separation of concerns
+    - Differentiated exception handling (InvalidStateException, ClientException, general Exception)
+    - Added validation of OAuth provider response data (email, ID, format)
+    - Email conflict detection and specific error messages
+    - DatabaseService integration for deadlock retry on user creation/update
+    - Comprehensive logging at all error points (warning/error levels)
+    - Error handling for redirect to OAuth provider
+    - Specific user-friendly error messages for each scenario:
+        - OAuth state expiration
+        - Incomplete data from provider
+        - Invalid email format
+        - Network/provider errors
+        - Database conflicts
+    - Extracted findOrCreateUser() method for better separation of concerns
 - **Risk:** MEDIUM → LOW
 
 ### 📊 Progress Statistics
@@ -173,16 +187,16 @@ None! All priority error handling improvements are complete. 🎊
 
 ### 📈 Impact Summary
 
-| Category | Before | After | Risk Reduced |
-|----------|--------|-------|--------------|
-| API Webhooks | No error handling | Full validation & transactions | CRITICAL → LOW |
-| WebSockets | No fallback | Auto-polling fallback | CRITICAL → LOW |
-| Session Expiry | 419 errors | Graceful handling | HIGH → LOW |
-| Database Ops | No retry | Auto-retry deadlocks | HIGH → LOW ✅ |
-| External Services | No retry | 3 retries + circuit breaker | MEDIUM → LOW |
-| Profile Operations | No error handling | Full protection | HIGH → LOW |
-| Prompt Workflow | Partial handling | Complete protection | HIGH → LOW ✅ |
-| OAuth Authentication | Generic errors | Validated & specific errors | MEDIUM → LOW ✅ |
+| Category             | Before            | After                          | Risk Reduced   |
+|----------------------|-------------------|--------------------------------|----------------|
+| API Webhooks         | No error handling | Full validation & transactions | CRITICAL → LOW |
+| WebSockets           | No fallback       | Auto-polling fallback          | CRITICAL → LOW |
+| Session Expiry       | 419 errors        | Graceful handling              | HIGH → LOW     |
+| Database Ops         | No retry          | Auto-retry deadlocks           | HIGH → LOW ✅   |
+| External Services    | No retry          | 3 retries + circuit breaker    | MEDIUM → LOW   |
+| Profile Operations   | No error handling | Full protection                | HIGH → LOW     |
+| Prompt Workflow      | Partial handling  | Complete protection            | HIGH → LOW ✅   |
+| OAuth Authentication | Generic errors    | Validated & specific errors    | MEDIUM → LOW ✅ |
 
 ---
 
@@ -213,12 +227,14 @@ This assessment was conducted through:
 **Location:** `app/Http/Controllers/PromptOptimizerController.php`
 
 **Current Approach:**
+
 - Well-structured try-catch blocks around N8n webhook calls
 - Comprehensive error handling for HTTP failures and exceptions
 - Error details stored in database (`error_message`, `status`, `workflow_stage`)
 - Detailed logging with contextual information
 
 **Strengths:**
+
 ```php
 // Lines 53-140: Excellent error handling pattern
 try {
@@ -256,9 +272,9 @@ try {
 **Identified Gaps:**
 
 1. **Authorization Errors (Line 149)**
-   - **Issue:** Uses generic `abort(403)` with no custom message
-   - **Impact:** Users see generic "403 Forbidden" page instead of helpful message
-   - **Recommendation:** Replace with custom error response
+    - **Issue:** Uses generic `abort(403)` with no custom message
+    - **Impact:** Users see generic "403 Forbidden" page instead of helpful message
+    - **Recommendation:** Replace with custom error response
    ```php
    // Current
    abort(403);
@@ -269,10 +285,10 @@ try {
    ```
 
 2. **History Method (Lines 456-463)**
-   - **Issue:** No error handling for database pagination
-   - **Impact:** Uncaught exception if database query fails
-   - **Risk Level:** Medium
-   - **Recommendation:** Add try-catch wrapper
+    - **Issue:** No error handling for database pagination
+    - **Impact:** Uncaught exception if database query fails
+    - **Risk Level:** Medium
+    - **Recommendation:** Add try-catch wrapper
    ```php
    public function history()
    {
@@ -297,17 +313,17 @@ try {
    ```
 
 3. **Database Operations**
-   - **Issue:** No try-catch around `PromptRun::create()` or `update()` calls
-   - **Impact:** Database failures (connection issues, constraint violations) bubble up as uncaught exceptions
-   - **Risk Level:** High
-   - **Affected Lines:** 36-43, 55-82, 158, 178, etc.
-   - **Recommendation:** Wrap database operations in try-catch or use transactions
+    - **Issue:** No try-catch around `PromptRun::create()` or `update()` calls
+    - **Impact:** Database failures (connection issues, constraint violations) bubble up as uncaught exceptions
+    - **Risk Level:** High
+    - **Affected Lines:** 36-43, 55-82, 158, 178, etc.
+    - **Recommendation:** Wrap database operations in try-catch or use transactions
 
 4. **Event Broadcasting Failures**
-   - **Issue:** `event()` calls (lines 96, 292, 399) not wrapped in error handling
-   - **Impact:** If broadcasting fails, entire request fails
-   - **Risk Level:** Medium
-   - **Recommendation:** Wrap in try-catch with logging
+    - **Issue:** `event()` calls (lines 96, 292, 399) not wrapped in error handling
+    - **Impact:** If broadcasting fails, entire request fails
+    - **Risk Level:** Medium
+    - **Recommendation:** Wrap in try-catch with logging
    ```php
    try {
        event(new FrameworkSelected($promptRun));
@@ -321,16 +337,16 @@ try {
    ```
 
 5. **Race Conditions**
-   - **Issue:** No handling for concurrent updates to the same PromptRun
-   - **Impact:** Last write wins, potential data loss
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Use optimistic locking or database transactions
+    - **Issue:** No handling for concurrent updates to the same PromptRun
+    - **Impact:** Last write wins, potential data loss
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Use optimistic locking or database transactions
 
 6. **Missing Validation**
-   - **Issue:** No validation that `$user->personality_type` exists before creating PromptRun
-   - **Impact:** Could create prompt runs without personality type
-   - **Risk Level:** Medium
-   - **Recommendation:** Add validation in FormRequest
+    - **Issue:** No validation that `$user->personality_type` exists before creating PromptRun
+    - **Impact:** Could create prompt runs without personality type
+    - **Risk Level:** Medium
+    - **Recommendation:** Add validation in FormRequest
 
 ---
 
@@ -339,11 +355,13 @@ try {
 **Location:** `app/Http/Controllers/VoiceTranscriptionController.php`
 
 **Current Approach:**
+
 - Single try-catch block wrapping entire transcription process
 - Temporary file cleanup in both success and error paths
 - Environment-aware error messages (debug vs production)
 
 **Strengths:**
+
 ```php
 // Lines 35-78: Good overall structure
 try {
@@ -379,10 +397,10 @@ try {
 **Identified Gaps:**
 
 1. **File Operations (Line 40)**
-   - **Issue:** `move()` operation not wrapped in try-catch
-   - **Impact:** Filesystem failures (permissions, disk full) cause uncaught exceptions
-   - **Risk Level:** Medium
-   - **Recommendation:** Add specific error handling
+    - **Issue:** `move()` operation not wrapped in try-catch
+    - **Impact:** Filesystem failures (permissions, disk full) cause uncaught exceptions
+    - **Risk Level:** Medium
+    - **Recommendation:** Add specific error handling
    ```php
    try {
        $audioFile->move(dirname($tempPath), basename($tempPath));
@@ -398,10 +416,10 @@ try {
    ```
 
 2. **File Handle Operations (Line 48)**
-   - **Issue:** `fopen()` could fail, no explicit error handling
-   - **Impact:** OpenAI API call fails with unclear error
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Check file handle before use
+    - **Issue:** `fopen()` could fail, no explicit error handling
+    - **Impact:** OpenAI API call fails with unclear error
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Check file handle before use
    ```php
    $fileHandle = fopen($tempPath, 'r');
    if (!$fileHandle) {
@@ -418,16 +436,16 @@ try {
    ```
 
 3. **Validation Approach (Line 17)**
-   - **Issue:** Manual validation instead of FormRequest
-   - **Impact:** Inconsistent with application patterns, harder to test
-   - **Risk Level:** Low (technical debt)
-   - **Recommendation:** Create `TranscribeAudioRequest` FormRequest class
+    - **Issue:** Manual validation instead of FormRequest
+    - **Impact:** Inconsistent with application patterns, harder to test
+    - **Risk Level:** Low (technical debt)
+    - **Recommendation:** Create `TranscribeAudioRequest` FormRequest class
 
 4. **OpenAI API Key Validation**
-   - **Issue:** No validation that API key is configured before attempting transcription
-   - **Impact:** Cryptic error if API key missing
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Add validation
+    - **Issue:** No validation that API key is configured before attempting transcription
+    - **Impact:** Cryptic error if API key missing
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Add validation
    ```php
    if (!config('services.openai.api_key')) {
        \Log::error('OpenAI API key not configured');
@@ -439,10 +457,10 @@ try {
    ```
 
 5. **Rate Limiting**
-   - **Issue:** Only route-level throttle, no handling for OpenAI rate limits
-   - **Impact:** Could hit OpenAI limits unexpectedly
-   - **Risk Level:** Low
-   - **Recommendation:** Catch and handle rate limit exceptions specifically
+    - **Issue:** Only route-level throttle, no handling for OpenAI rate limits
+    - **Impact:** Could hit OpenAI limits unexpectedly
+    - **Risk Level:** Low
+    - **Recommendation:** Catch and handle rate limit exceptions specifically
 
 ---
 
@@ -451,6 +469,7 @@ try {
 **Location:** `app/Http/Controllers/ProfileController.php`
 
 **Current Approach:**
+
 - Relies on FormRequest validation
 - No explicit try-catch blocks
 - Uses Laravel's implicit error handling
@@ -458,9 +477,9 @@ try {
 **Identified Gaps:**
 
 1. **Update Method (Lines 52-62)**
-   - **Issue:** Database `save()` operation has no error handling
-   - **Impact:** Database failures cause uncaught exceptions
-   - **Risk Level:** High
+    - **Issue:** Database `save()` operation has no error handling
+    - **Impact:** Database failures cause uncaught exceptions
+    - **Risk Level:** High
    ```php
    public function update(ProfileUpdateRequest $request): RedirectResponse
    {
@@ -489,16 +508,16 @@ try {
    ```
 
 2. **Update Personality Method (Lines 68-75)**
-   - **Issue:** Database `update()` operation has no error handling
-   - **Impact:** Database failures cause uncaught exceptions
-   - **Risk Level:** High
-   - **Additional Issue:** No validation that personality type is in predefined list
+    - **Issue:** Database `update()` operation has no error handling
+    - **Impact:** Database failures cause uncaught exceptions
+    - **Risk Level:** High
+    - **Additional Issue:** No validation that personality type is in predefined list
 
 3. **Destroy Method (Lines 81-92)**
-   - **Issue:** User deletion could fail, no error handling
-   - **Impact:** User could be logged out but not deleted, causing confusion
-   - **Risk Level:** High
-   - **Recommendation:** Wrap in try-catch and use database transaction
+    - **Issue:** User deletion could fail, no error handling
+    - **Impact:** User could be logged out but not deleted, causing confusion
+    - **Risk Level:** High
+    - **Recommendation:** Wrap in try-catch and use database transaction
    ```php
    public function destroy(Request $request): RedirectResponse
    {
@@ -545,18 +564,20 @@ try {
 **Location:** `app/Http/Controllers/Auth/OAuthController.php`
 
 **Current Approach:**
+
 - Single try-catch wrapping entire OAuth callback
 - Generic error message on failure
 
 **Strengths:**
+
 - Lines 26-61: Try-catch around OAuth flow
 
 **Identified Gaps:**
 
 1. **Redirect to Google (Lines 16-18)**
-   - **Issue:** No error handling around Socialite redirect
-   - **Impact:** Socialite configuration errors cause uncaught exceptions
-   - **Risk Level:** Medium
+    - **Issue:** No error handling around Socialite redirect
+    - **Impact:** Socialite configuration errors cause uncaught exceptions
+    - **Risk Level:** Medium
    ```php
    public function redirectToGoogle()
    {
@@ -574,10 +595,10 @@ try {
    ```
 
 2. **Generic Error Handling (Line 61)**
-   - **Issue:** All failures return same generic message
-   - **Impact:** Difficult to debug issues, poor UX
-   - **Risk Level:** Medium
-   - **Recommendation:** Differentiate error types
+    - **Issue:** All failures return same generic message
+    - **Impact:** Difficult to debug issues, poor UX
+    - **Risk Level:** Medium
+    - **Recommendation:** Differentiate error types
    ```php
    } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
        \Log::warning('OAuth state mismatch', ['error' => $e->getMessage()]);
@@ -597,21 +618,22 @@ try {
    ```
 
 3. **Database Operations**
-   - **Issue:** Multiple database queries (lines 30-51) not individually wrapped
-   - **Impact:** Any database failure returns generic OAuth error
-   - **Risk Level:** Medium
+    - **Issue:** Multiple database queries (lines 30-51) not individually wrapped
+    - **Impact:** Any database failure returns generic OAuth error
+    - **Risk Level:** Medium
 
 4. **Email Conflicts**
-   - **Issue:** No handling for email conflicts when user exists with different provider
-   - **Impact:** Users get generic error if they try to sign in with Google but already have account with email/password
-   - **Risk Level:** Medium
-   - **Recommendation:** Check for existing user by email and handle appropriately
+    - **Issue:** No handling for email conflicts when user exists with different provider
+    - **Impact:** Users get generic error if they try to sign in with Google but already have account with
+      email/password
+    - **Risk Level:** Medium
+    - **Recommendation:** Check for existing user by email and handle appropriately
 
 5. **Data Validation**
-   - **Issue:** No validation of OAuth provider response data
-   - **Impact:** Malformed responses could cause errors
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Validate required fields exist
+    - **Issue:** No validation of OAuth provider response data
+    - **Impact:** Malformed responses could cause errors
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Validate required fields exist
    ```php
    $googleUser = Socialite::driver('google')->user();
 
@@ -631,10 +653,10 @@ try {
 **Identified Gaps:**
 
 1. **User Creation (Lines 35-39)**
-   - **Issue:** No error handling around `User::create()`
-   - **Impact:** Database failures (duplicate email constraint, etc.) cause uncaught exceptions
-   - **Risk Level:** High
-   - **Recommendation:** Add try-catch with user-friendly error messages
+    - **Issue:** No error handling around `User::create()`
+    - **Impact:** Database failures (duplicate email constraint, etc.) cause uncaught exceptions
+    - **Risk Level:** High
+    - **Recommendation:** Add try-catch with user-friendly error messages
    ```php
    public function store(Request $request): RedirectResponse
    {
@@ -679,6 +701,7 @@ try {
 **Location:** `app/Http/Controllers/Auth/AuthenticatedSessionController.php`
 
 **Identified Gaps:**
+
 - Completely relies on Laravel's default error handling
 - No explicit error handling in any method
 - **Risk Level:** Low (Laravel handles this well by default, but custom error messages would improve UX)
@@ -692,11 +715,13 @@ try {
 **Location:** `resources/js/Pages/PromptOptimizer/Index.vue`
 
 **Current Approach:**
+
 - Form validation through Inertia's `useForm`
 - Client-side validation for minimum length
 - Disabled state handling
 
 **Strengths:**
+
 ```vue
 <!-- Lines 157-161: Good error display -->
 <p v-if="form.errors.taskDescription" class="mt-1 text-sm text-red-600">
@@ -714,10 +739,10 @@ try {
 **Identified Gaps:**
 
 1. **Form Submission**
-   - **Issue:** No try-catch around form submission
-   - **Impact:** Relies entirely on Inertia's error handling
-   - **Risk Level:** Low (Inertia handles this, but explicit handling would be better)
-   - **Recommendation:** Add explicit error handling
+    - **Issue:** No try-catch around form submission
+    - **Impact:** Relies entirely on Inertia's error handling
+    - **Risk Level:** Low (Inertia handles this, but explicit handling would be better)
+    - **Recommendation:** Add explicit error handling
    ```typescript
    const submit = async () => {
        try {
@@ -734,10 +759,10 @@ try {
    ```
 
 2. **Network Failures**
-   - **Issue:** No handling for network failures (offline, timeout)
-   - **Impact:** User sees generic error or loading state forever
-   - **Risk Level:** Medium
-   - **Recommendation:** Add network error detection
+    - **Issue:** No handling for network failures (offline, timeout)
+    - **Impact:** User sees generic error or loading state forever
+    - **Risk Level:** Medium
+    - **Recommendation:** Add network error detection
    ```typescript
    form.post(route('prompt-optimizer.store'), {
        onError: (errors) => {
@@ -754,10 +779,10 @@ try {
    ```
 
 3. **Voice Input Errors**
-   - **Issue:** Voice errors shown but form doesn't react to failure state
-   - **Impact:** User might not notice error, no retry mechanism
-   - **Risk Level:** Low
-   - **Recommendation:** Add error state handling in parent component
+    - **Issue:** Voice errors shown but form doesn't react to failure state
+    - **Impact:** User might not notice error, no retry mechanism
+    - **Risk Level:** Low
+    - **Recommendation:** Add error state handling in parent component
 
 ---
 
@@ -766,16 +791,18 @@ try {
 **Location:** `resources/js/Pages/PromptOptimizer/Show.vue`
 
 **Current Approach:**
+
 - Comprehensive error display for failed prompt runs
 - Loading states for different workflow stages
 - Form error handling with `onError` callback
 
 **Strengths:**
+
 ```vue
 <!-- Lines 530-633: Excellent error display UI -->
 <div v-else-if="promptRun.status === 'failed'" class="...">
     <h3 class="text-lg font-semibold text-red-600">Processing Failed</h3>
-    <p class="mt-2 text-sm text-gray-900">
+    <p class="mt-2 text-sm text-indigo-900">
         {{ promptRun.errorMessage || 'An error occurred...' }}
     </p>
 
@@ -819,9 +846,9 @@ const copyToClipboard = async () => {
 **Identified Gaps:**
 
 1. **WebSocket Event Listeners (Lines 137-153) - CRITICAL**
-   - **Issue:** No error handling around Echo event listeners
-   - **Impact:** If Echo connection fails or events fail to parse, entire component could break
-   - **Risk Level:** High
+    - **Issue:** No error handling around Echo event listeners
+    - **Impact:** If Echo connection fails or events fail to parse, entire component could break
+    - **Risk Level:** High
    ```typescript
    // Current
    onMounted(() => {
@@ -880,9 +907,9 @@ const copyToClipboard = async () => {
    ```
 
 2. **Echo Cleanup (Line 155)**
-   - **Issue:** No error handling if Echo not available during unmount
-   - **Impact:** Console errors on component unmount if Echo failed to initialize
-   - **Risk Level:** Low
+    - **Issue:** No error handling if Echo not available during unmount
+    - **Impact:** Console errors on component unmount if Echo failed to initialize
+    - **Risk Level:** Low
    ```typescript
    onUnmounted(() => {
        try {
@@ -896,10 +923,10 @@ const copyToClipboard = async () => {
    ```
 
 3. **No Timeout Handling**
-   - **Issue:** If WebSocket events never arrive, user waits forever
-   - **Impact:** Poor UX, user doesn't know if something failed
-   - **Risk Level:** Medium
-   - **Recommendation:** Implement timeout with polling fallback
+    - **Issue:** If WebSocket events never arrive, user waits forever
+    - **Impact:** Poor UX, user doesn't know if something failed
+    - **Risk Level:** Medium
+    - **Recommendation:** Implement timeout with polling fallback
    ```typescript
    onMounted(() => {
        // Set timeout for initial framework selection
@@ -928,10 +955,10 @@ const copyToClipboard = async () => {
    ```
 
 4. **Clipboard Copy Feedback**
-   - **Issue:** Error logged to console but user not notified
-   - **Impact:** User doesn't know copy failed
-   - **Risk Level:** Low
-   - **Recommendation:** Show error message to user
+    - **Issue:** Error logged to console but user not notified
+    - **Impact:** User doesn't know copy failed
+    - **Risk Level:** Low
+    - **Recommendation:** Show error message to user
    ```typescript
    const copyToClipboard = async () => {
        if (!props.promptRun.optimizedPrompt) return;
@@ -957,10 +984,12 @@ const copyToClipboard = async () => {
 **Location:** `resources/js/Components/VoiceInputButton.vue`
 
 **Current Approach:**
+
 - Delegates error handling to composables
 - Try-catch around recording stop
 
 **Strengths:**
+
 ```typescript
 // Lines 96-101: Error handling for recording
 try {
@@ -971,18 +1000,29 @@ try {
 }
 
 // Lines 167-178: Good error display UI
-<div v-if="displayError" class="...">
-    <DynamicIcon name="exclamation-triangle" class="..." />
-    <span>{{ displayError }}</span>
-</div>
+<div v -
+if= "displayError" class
+= "..." >
+<DynamicIcon name = "exclamation-triangle"
+
+class
+
+= "..." / >
+    <span>{
+{
+    displayError
+}
+}
+</span>
+< /div>
 ```
 
 **Identified Gaps:**
 
 1. **Start Operations**
-   - **Issue:** No try-catch around `startSpeech()` (line 91) and `startRecording()` (line 103)
-   - **Impact:** If start operations fail, error not caught locally
-   - **Risk Level:** Low (composables handle errors, but adding redundancy would be safer)
+    - **Issue:** No try-catch around `startSpeech()` (line 91) and `startRecording()` (line 103)
+    - **Impact:** If start operations fail, error not caught locally
+    - **Risk Level:** Low (composables handle errors, but adding redundancy would be safer)
    ```typescript
    const toggleRecording = async () => {
        if (useSpeechAPI.value) {
@@ -1015,6 +1055,7 @@ try {
 **Location:** `resources/js/Pages/Profile/Partials/UpdatePasswordForm.vue`
 
 **Strengths:**
+
 ```typescript
 // Lines 22-31: Good onError callback
 form.put(route('password.update'), {
@@ -1038,6 +1079,7 @@ form.put(route('password.update'), {
 **Location:** `resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.vue`
 
 **Identified Gaps:**
+
 - No explicit error handling beyond InputError components
 - Relies entirely on Inertia's error handling
 - **Risk Level:** Low (adequate for current use case)
@@ -1051,11 +1093,13 @@ form.put(route('password.update'), {
 **Location:** `app/Services/N8nClient.php`
 
 **Current Approach:**
+
 - Try-catch wrapper around HTTP calls
 - Logging on failure
 - Re-throws exceptions for caller to handle
 
 **Strengths:**
+
 ```php
 // Lines 25-44: Good error handling pattern
 try {
@@ -1094,10 +1138,10 @@ try {
 **Identified Gaps:**
 
 1. **No Retry Logic**
-   - **Issue:** Transient network failures cause immediate failure
-   - **Impact:** Users see errors for temporary network issues
-   - **Risk Level:** Medium
-   - **Recommendation:** Implement retry with exponential backoff
+    - **Issue:** Transient network failures cause immediate failure
+    - **Impact:** Users see errors for temporary network issues
+    - **Risk Level:** Medium
+    - **Recommendation:** Implement retry with exponential backoff
    ```php
    use Illuminate\Support\Facades\Http;
 
@@ -1175,10 +1219,10 @@ try {
    ```
 
 2. **No Timeout Configuration**
-   - **Issue:** No explicit timeout set, uses default (which might be too long)
-   - **Impact:** Users wait too long for failed requests
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Set explicit timeout
+    - **Issue:** No explicit timeout set, uses default (which might be too long)
+    - **Impact:** Users wait too long for failed requests
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Set explicit timeout
    ```php
    $response = Http::timeout(30) // 30 second timeout
        ->withBasicAuth($this->username, $this->password)
@@ -1186,10 +1230,10 @@ try {
    ```
 
 3. **No Circuit Breaker**
-   - **Issue:** If N8n is down, app keeps hammering it with requests
-   - **Impact:** Wastes resources, poor UX, potential rate limiting
-   - **Risk Level:** Medium
-   - **Recommendation:** Implement circuit breaker pattern
+    - **Issue:** If N8n is down, app keeps hammering it with requests
+    - **Impact:** Wastes resources, poor UX, potential rate limiting
+    - **Risk Level:** Medium
+    - **Recommendation:** Implement circuit breaker pattern
    ```php
    use Illuminate\Support\Facades\Cache;
 
@@ -1252,10 +1296,10 @@ try {
    ```
 
 4. **Configuration Validation**
-   - **Issue:** No validation that credentials are configured
-   - **Impact:** Cryptic errors if configuration missing
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Validate in constructor
+    - **Issue:** No validation that credentials are configured
+    - **Impact:** Cryptic errors if configuration missing
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Validate in constructor
    ```php
    public function __construct()
    {
@@ -1278,6 +1322,7 @@ try {
 **Location:** `routes/api.php` (Lines 8-25)
 
 **Current Approach:**
+
 - Basic secret verification
 - Simple logging
 - No try-catch blocks
@@ -1310,20 +1355,20 @@ Route::post('/n8n/webhook', function (Request $request) {
 **Issues:**
 
 1. **No Try-Catch Wrapper**
-   - **Risk Level:** CRITICAL
-   - **Impact:** Any error causes 500 response, N8n workflow fails
+    - **Risk Level:** CRITICAL
+    - **Impact:** Any error causes 500 response, N8n workflow fails
 
 2. **No Payload Validation**
-   - **Risk Level:** HIGH
-   - **Impact:** Malformed data could cause errors or data corruption
+    - **Risk Level:** HIGH
+    - **Impact:** Malformed data could cause errors or data corruption
 
 3. **Silent Failures**
-   - **Risk Level:** HIGH
-   - **Impact:** Update failures not caught, data inconsistency
+    - **Risk Level:** HIGH
+    - **Impact:** Update failures not caught, data inconsistency
 
 4. **No Rate Limiting**
-   - **Risk Level:** MEDIUM
-   - **Impact:** Could be overwhelmed by excessive webhooks
+    - **Risk Level:** MEDIUM
+    - **Impact:** Could be overwhelmed by excessive webhooks
 
 **Recommended Fix:**
 
@@ -1473,9 +1518,9 @@ Route::post('/n8n/webhook', function (Request $request) {
 **Identified Gaps:**
 
 1. **User Resource Serialization**
-   - **Issue:** No error handling if UserResource transformation fails
-   - **Impact:** Entire request fails with 500 error
-   - **Risk Level:** Low-Medium
+    - **Issue:** No error handling if UserResource transformation fails
+    - **Impact:** Entire request fails with 500 error
+    - **Risk Level:** Low-Medium
    ```php
    public function share(Request $request): array
    {
@@ -1517,19 +1562,19 @@ Route::post('/n8n/webhook', function (Request $request) {
 **Missing Patterns:**
 
 1. **No Transaction Wrapping**
-   - Multi-step operations not wrapped in transactions
-   - Risk of partial updates if one operation fails
+    - Multi-step operations not wrapped in transactions
+    - Risk of partial updates if one operation fails
 
 2. **No Handling for:**
-   - Connection failures
-   - Deadlocks
-   - Constraint violations
-   - Timeout errors
-   - Lock wait timeout exceeded
+    - Connection failures
+    - Deadlocks
+    - Constraint violations
+    - Timeout errors
+    - Lock wait timeout exceeded
 
 3. **No Retry Logic**
-   - Transient database failures cause immediate failure
-   - No automatic retry for deadlocks
+    - Transient database failures cause immediate failure
+    - No automatic retry for deadlocks
 
 **Recommendation: Create Database Service Wrapper**
 
@@ -1614,6 +1659,7 @@ DatabaseService::retryOnDeadlock(function () {
 ### 6. Form Validation & Error Display
 
 **Strengths:**
+
 - Consistent use of FormRequest classes
 - Custom validation rules and messages
 - Good use of Inertia error bag
@@ -1651,10 +1697,10 @@ class StorePromptRunRequest extends FormRequest
 **Identified Gaps:**
 
 1. **No Client-Side Validation**
-   - Only HTML5 validation (required, type, etc.)
-   - Could prevent unnecessary server round-trips
-   - **Risk Level:** Low (UX improvement)
-   - **Recommendation:** Add client-side validation for common rules
+    - Only HTML5 validation (required, type, etc.)
+    - Could prevent unnecessary server round-trips
+    - **Risk Level:** Low (UX improvement)
+    - **Recommendation:** Add client-side validation for common rules
    ```typescript
    // In Vue component
    const validateForm = () => {
@@ -1683,25 +1729,27 @@ class StorePromptRunRequest extends FormRequest
    ```
 
 2. **No Debouncing on Form Submissions**
-   - Users could accidentally submit multiple times
-   - **Risk Level:** Low-Medium
-   - **Recommendation:** Disable submit button during processing (already implemented in most forms)
+    - Users could accidentally submit multiple times
+    - **Risk Level:** Low-Medium
+    - **Recommendation:** Disable submit button during processing (already implemented in most forms)
 
 3. **File Upload Validation**
-   - Only backend validation for voice transcription
-   - Could validate file size/type on frontend first
-   - **Risk Level:** Low
+    - Only backend validation for voice transcription
+    - Could validate file size/type on frontend first
+    - **Risk Level:** Low
 
 ---
 
 ### 7. Logging Practices
 
 **Current Approach:**
+
 - Mix of `\Log::info()` and `Log::error()`
 - Some structured logging with context arrays
 - Debug logs in production code
 
 **Strengths:**
+
 - Good context in most log messages
 - Stack traces included in error logs
 - Webhook processing well-logged
@@ -1709,13 +1757,13 @@ class StorePromptRunRequest extends FormRequest
 **Identified Gaps:**
 
 1. **No Centralized Logging Strategy**
-   - Inconsistent log levels
-   - No standard format for log messages
-   - **Recommendation:** Create logging guidelines
+    - Inconsistent log levels
+    - No standard format for log messages
+    - **Recommendation:** Create logging guidelines
 
 2. **Debug Logs in Production**
-   - Lines like `\Log::info('Received webhook', $request->all())` could create noise
-   - **Recommendation:** Use conditional logging
+    - Lines like `\Log::info('Received webhook', $request->all())` could create noise
+    - **Recommendation:** Use conditional logging
    ```php
    if (config('app.debug')) {
        \Log::debug('Detailed webhook payload', $request->all());
@@ -1727,8 +1775,8 @@ class StorePromptRunRequest extends FormRequest
    ```
 
 3. **No Correlation IDs**
-   - Difficult to trace requests across multiple log entries
-   - **Recommendation:** Add request ID to all logs
+    - Difficult to trace requests across multiple log entries
+    - **Recommendation:** Add request ID to all logs
    ```php
    // In middleware
    public function handle(Request $request, Closure $next)
@@ -1746,8 +1794,8 @@ class StorePromptRunRequest extends FormRequest
    ```
 
 4. **No User Context**
-   - Most logs don't include user information
-   - **Recommendation:** Add user context where applicable
+    - Most logs don't include user information
+    - **Recommendation:** Add user context where applicable
    ```php
    \Log::error('Failed to process request', [
        'user_id' => Auth::id(),
@@ -1756,9 +1804,9 @@ class StorePromptRunRequest extends FormRequest
    ```
 
 5. **Authentication Operations Not Logged**
-   - No logging of login attempts, password changes, etc.
-   - **Risk Level:** Medium (security concern)
-   - **Recommendation:** Add security logging
+    - No logging of login attempts, password changes, etc.
+    - **Risk Level:** Medium (security concern)
+    - **Recommendation:** Add security logging
    ```php
    // In AuthenticatedSessionController
    \Log::info('User logged in', [
@@ -1775,8 +1823,8 @@ class StorePromptRunRequest extends FormRequest
    ```
 
 6. **No Alerting on Critical Errors**
-   - Critical errors just logged, no notifications
-   - **Recommendation:** Integrate with monitoring service (Sentry, Bugsnag, etc.)
+    - Critical errors just logged, no notifications
+    - **Recommendation:** Integrate with monitoring service (Sentry, Bugsnag, etc.)
 
 ---
 
@@ -1791,6 +1839,7 @@ class StorePromptRunRequest extends FormRequest
 ```typescript
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+
 window.Pusher = Pusher;
 
 window.Echo = new Echo({
@@ -1807,20 +1856,20 @@ window.Echo = new Echo({
 **CRITICAL GAPS:**
 
 1. **No Error Handling on Initialization**
-   - **Risk Level:** HIGH
-   - **Impact:** If Reverb connection fails, entire app breaks
+    - **Risk Level:** HIGH
+    - **Impact:** If Reverb connection fails, entire app breaks
 
 2. **No Connection State Management**
-   - **Risk Level:** HIGH
-   - **Impact:** No way to know if WebSocket is connected
+    - **Risk Level:** HIGH
+    - **Impact:** No way to know if WebSocket is connected
 
 3. **No Reconnection Logic**
-   - **Risk Level:** HIGH
-   - **Impact:** If connection drops, never reconnects
+    - **Risk Level:** HIGH
+    - **Impact:** If connection drops, never reconnects
 
 4. **No Fallback Strategy**
-   - **Risk Level:** HIGH
-   - **Impact:** Features silently fail if WebSockets unavailable
+    - **Risk Level:** HIGH
+    - **Impact:** Features silently fail if WebSockets unavailable
 
 **Recommended Implementation:**
 
@@ -2040,6 +2089,7 @@ onUnmounted(() => {
 **Location:** `resources/js/Composables/useSpeechRecognition.ts`
 
 **Strengths:**
+
 - Comprehensive error event handling
 - Specific error messages for different failure types
 - Auto-dismiss errors (5 seconds)
@@ -2084,6 +2134,7 @@ recognition.onerror = (event: any) => {
 **Location:** `resources/js/Composables/useAudioRecording.ts`
 
 **Strengths:**
+
 - Error handling for media device access
 - Specific error messages for different failure scenarios
 - Auto-dismiss errors
@@ -2127,6 +2178,7 @@ try {
 **Location:** `bootstrap/app.php`
 
 **Current Implementation:**
+
 ```php
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -2245,26 +2297,26 @@ private static function getDefaultMessage(int $statusCode): string
 ```vue
 <!-- resources/js/Pages/Error.vue -->
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import { Head } from '@inertiajs/vue3';
+    import GuestLayout from '@/Layouts/GuestLayout.vue';
+    import { Head } from '@inertiajs/vue3';
 
-defineProps<{
-    status: number;
-    message: string;
-}>();
+    defineProps<{
+        status: number;
+        message: string;
+    }>();
 
-defineOptions({
-    layout: GuestLayout,
-});
+    defineOptions({
+        layout: GuestLayout,
+    });
 
-const title = (status: number) => {
-    return {
-        403: '403: Forbidden',
-        404: '404: Page Not Found',
-        500: '500: Server Error',
-        503: '503: Service Unavailable',
-    }[status] || `${status}: Error`;
-};
+    const title = (status: number) => {
+        return {
+            403: '403: Forbidden',
+            404: '404: Page Not Found',
+            500: '500: Server Error',
+            503: '503: Service Unavailable',
+        }[status] || `${status}: Error`;
+    };
 </script>
 
 <template>
@@ -2272,8 +2324,8 @@ const title = (status: number) => {
 
     <div class="flex min-h-screen items-centre justify-centre">
         <div class="text-centre">
-            <h1 class="mb-4 text-6xl font-bold text-gray-900">{{ status }}</h1>
-            <p class="mb-8 text-xl text-gray-600">{{ message }}</p>
+            <h1 class="mb-4 text-6xl font-bold text-indigo-900">{{ status }}</h1>
+            <p class="mb-8 text-xl text-indigo-600">{{ message }}</p>
             <a
                 :href="route('home')"
                 class="inline-flex items-centre rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
@@ -2289,23 +2341,24 @@ const title = (status: number) => {
 
 ## Risk Assessment Matrix
 
-| Area | Current Risk | Impact | Likelihood | Priority |
-|------|--------------|--------|------------|----------|
-| **API Webhook Handler** | CRITICAL | High | Medium | P0 |
-| **WebSocket/Echo Initialization** | CRITICAL | High | Medium | P0 |
-| **Database Operations** | HIGH | High | Medium | P1 |
-| **Global Exception Handling** | HIGH | Medium | High | P1 |
-| **OAuth Error Handling** | MEDIUM | Medium | Low | P2 |
-| **Profile Controller Database Ops** | HIGH | Medium | Low | P2 |
-| **N8n Service Retry Logic** | MEDIUM | Medium | Medium | P2 |
-| **WebSocket Event Listeners** | HIGH | High | Low | P2 |
-| **Event Broadcasting** | MEDIUM | Low | Medium | P3 |
-| **File Operations** | MEDIUM | Low | Low | P3 |
-| **History Pagination** | MEDIUM | Low | Low | P3 |
-| **Logging Strategy** | LOW | Low | High | P3 |
-| **Client-Side Validation** | LOW | Low | Low | P4 |
+| Area                                | Current Risk | Impact | Likelihood | Priority |
+|-------------------------------------|--------------|--------|------------|----------|
+| **API Webhook Handler**             | CRITICAL     | High   | Medium     | P0       |
+| **WebSocket/Echo Initialization**   | CRITICAL     | High   | Medium     | P0       |
+| **Database Operations**             | HIGH         | High   | Medium     | P1       |
+| **Global Exception Handling**       | HIGH         | Medium | High       | P1       |
+| **OAuth Error Handling**            | MEDIUM       | Medium | Low        | P2       |
+| **Profile Controller Database Ops** | HIGH         | Medium | Low        | P2       |
+| **N8n Service Retry Logic**         | MEDIUM       | Medium | Medium     | P2       |
+| **WebSocket Event Listeners**       | HIGH         | High   | Low        | P2       |
+| **Event Broadcasting**              | MEDIUM       | Low    | Medium     | P3       |
+| **File Operations**                 | MEDIUM       | Low    | Low        | P3       |
+| **History Pagination**              | MEDIUM       | Low    | Low        | P3       |
+| **Logging Strategy**                | LOW          | Low    | High       | P3       |
+| **Client-Side Validation**          | LOW          | Low    | Low        | P4       |
 
 **Priority Levels:**
+
 - **P0 (Critical):** Fix immediately - production risk
 - **P1 (High):** Fix within 1 week - high risk
 - **P2 (Medium):** Fix within 2 weeks - medium risk
@@ -2323,6 +2376,7 @@ const title = (status: number) => {
 **File:** `routes/api.php`
 
 **Actions:**
+
 - Add try-catch wrapper around entire handler
 - Add payload validation with Validator
 - Add database transaction wrapping
@@ -2340,6 +2394,7 @@ const title = (status: number) => {
 **Files:** `resources/js/bootstrap.ts`, `resources/js/Pages/PromptOptimizer/Show.vue`
 
 **Actions:**
+
 - Add error handling to Echo initialization
 - Implement connection state management
 - Add reconnection logic
@@ -2359,6 +2414,7 @@ const title = (status: number) => {
 **Affected Files:** All controllers with multi-step database operations
 
 **Actions:**
+
 - Create DatabaseService wrapper (see Section 5)
 - Wrap all multi-step operations in transactions
 - Add deadlock retry logic
@@ -2373,6 +2429,7 @@ const title = (status: number) => {
 **File:** `bootstrap/app.php`
 
 **Actions:**
+
 - Define custom exception handling in `withExceptions()` callback
 - Create Error.vue component
 - Handle Inertia-specific errors
@@ -2390,6 +2447,7 @@ const title = (status: number) => {
 **Affected Files:** All controllers
 
 **Actions:**
+
 - Add try-catch around all Eloquent operations
 - Differentiate between different error types
 - Provide user-friendly error messages
@@ -2406,6 +2464,7 @@ const title = (status: number) => {
 **File:** `app/Http/Controllers/Auth/OAuthController.php`
 
 **Actions:**
+
 - Add error handling to `redirectToGoogle()` method
 - Differentiate exception types in callback
 - Add validation of OAuth response data
@@ -2420,6 +2479,7 @@ const title = (status: number) => {
 **File:** `app/Services/N8nClient.php`
 
 **Actions:**
+
 - Implement retry with exponential backoff
 - Add timeout configuration
 - Implement circuit breaker pattern
@@ -2436,6 +2496,7 @@ const title = (status: number) => {
 **File:** `app/Http/Controllers/ProfileController.php`
 
 **Actions:**
+
 - Add try-catch to update() method
 - Add try-catch to updatePersonality() method
 - Wrap destroy() in transaction with proper error handling
@@ -2450,6 +2511,7 @@ const title = (status: number) => {
 #### 9. Improve Logging Strategy
 
 **Actions:**
+
 - Define logging guidelines document
 - Implement request correlation IDs
 - Add user context to all logs
@@ -2465,6 +2527,7 @@ const title = (status: number) => {
 **Files:** All form components
 
 **Actions:**
+
 - Add validation functions to form components
 - Provide immediate feedback on errors
 - Reduce unnecessary server round-trips
@@ -2478,6 +2541,7 @@ const title = (status: number) => {
 **Files:** All controllers that broadcast events
 
 **Actions:**
+
 - Wrap `event()` calls in try-catch
 - Log broadcast failures
 - Don't fail request on broadcast failure
@@ -2493,16 +2557,16 @@ const title = (status: number) => {
 **Focus:** Critical fixes (P0)
 
 - [ ] Day 1-2: Fix API webhook handler
-  - Add try-catch wrapper
-  - Add payload validation
-  - Add transaction wrapping
-  - Test thoroughly
+    - Add try-catch wrapper
+    - Add payload validation
+    - Add transaction wrapping
+    - Test thoroughly
 
 - [ ] Day 3-5: Implement WebSocket error handling
-  - Update bootstrap.ts with connection management
-  - Update Show.vue with fallback polling
-  - Add user notifications
-  - Test connection failures
+    - Update bootstrap.ts with connection management
+    - Update Show.vue with fallback polling
+    - Add user notifications
+    - Test connection failures
 
 ---
 
@@ -2511,14 +2575,14 @@ const title = (status: number) => {
 **Focus:** High priority fixes (P1)
 
 - [ ] Day 1-2: Implement global exception handler
-  - Update bootstrap/app.php
-  - Create Error.vue component
-  - Test various error scenarios
+    - Update bootstrap/app.php
+    - Create Error.vue component
+    - Test various error scenarios
 
 - [ ] Day 3-5: Create DatabaseService wrapper
-  - Implement retry logic for deadlocks
-  - Implement transaction helper
-  - Update documentation
+    - Implement retry logic for deadlocks
+    - Implement transaction helper
+    - Update documentation
 
 ---
 
@@ -2527,15 +2591,15 @@ const title = (status: number) => {
 **Focus:** Database operation error handling (P1)
 
 - [ ] Week 3: Controllers
-  - PromptOptimizerController (already good, minor improvements)
-  - ProfileController
-  - OAuthController
-  - Auth controllers
+    - PromptOptimizerController (already good, minor improvements)
+    - ProfileController
+    - OAuthController
+    - Auth controllers
 
 - [ ] Week 4: Testing & refinement
-  - Test database error scenarios
-  - Test constraint violations
-  - Test transaction rollbacks
+    - Test database error scenarios
+    - Test constraint violations
+    - Test transaction rollbacks
 
 ---
 
@@ -2544,14 +2608,14 @@ const title = (status: number) => {
 **Focus:** Medium priority improvements (P2)
 
 - [ ] Week 5:
-  - Add retry logic to N8nClient
-  - Improve OAuth error handling
-  - Add timeout configurations
+    - Add retry logic to N8nClient
+    - Improve OAuth error handling
+    - Add timeout configurations
 
 - [ ] Week 6:
-  - Implement circuit breaker for N8n
-  - Add configuration validation
-  - Update documentation
+    - Implement circuit breaker for N8n
+    - Add configuration validation
+    - Update documentation
 
 ---
 
@@ -2560,14 +2624,14 @@ const title = (status: number) => {
 **Focus:** Lower priority improvements (P3-P4)
 
 - [ ] Week 7:
-  - Implement logging strategy
-  - Add correlation IDs
-  - Add security logging
+    - Implement logging strategy
+    - Add correlation IDs
+    - Add security logging
 
 - [ ] Week 8:
-  - Add client-side validation
-  - Handle event broadcasting failures
-  - Code cleanup
+    - Add client-side validation
+    - Handle event broadcasting failures
+    - Code cleanup
 
 ---
 
@@ -2576,6 +2640,7 @@ const title = (status: number) => {
 ### Unit Tests
 
 Create unit tests for:
+
 - DatabaseService retry logic
 - N8nClient error handling and retry logic
 - Circuit breaker implementation
@@ -2584,6 +2649,7 @@ Create unit tests for:
 ### Integration Tests
 
 Create integration tests for:
+
 - API webhook handler with various payload scenarios
 - Database transaction rollback scenarios
 - OAuth flow error scenarios
@@ -2594,24 +2660,24 @@ Create integration tests for:
 Test these scenarios manually:
 
 1. **Database Failures:**
-   - Disconnect database during operation
-   - Cause constraint violation
-   - Simulate deadlock
+    - Disconnect database during operation
+    - Cause constraint violation
+    - Simulate deadlock
 
 2. **Network Failures:**
-   - Disconnect network during form submission
-   - Simulate N8n service down
-   - Simulate slow network responses
+    - Disconnect network during form submission
+    - Simulate N8n service down
+    - Simulate slow network responses
 
 3. **WebSocket Failures:**
-   - Disconnect WebSocket during operation
-   - Simulate Reverb service down
-   - Test reconnection scenarios
+    - Disconnect WebSocket during operation
+    - Simulate Reverb service down
+    - Test reconnection scenarios
 
 4. **Error Recovery:**
-   - Test retry button on failed operations
-   - Test form resubmission after errors
-   - Test graceful degradation
+    - Test retry button on failed operations
+    - Test form resubmission after errors
+    - Test graceful degradation
 
 ---
 
@@ -2620,24 +2686,25 @@ Test these scenarios manually:
 ### Recommended Metrics to Track
 
 1. **Error Rates:**
-   - 5xx error rate
-   - Failed webhook processing rate
-   - Database error rate
-   - WebSocket disconnection rate
+    - 5xx error rate
+    - Failed webhook processing rate
+    - Database error rate
+    - WebSocket disconnection rate
 
 2. **Performance:**
-   - Database query times
-   - N8n webhook response times
-   - Failed retry attempts
+    - Database query times
+    - N8n webhook response times
+    - Failed retry attempts
 
 3. **User Experience:**
-   - Form submission success rate
-   - Voice transcription success rate
-   - WebSocket connection uptime
+    - Form submission success rate
+    - Voice transcription success rate
+    - WebSocket connection uptime
 
 ### Alerting Rules
 
 Set up alerts for:
+
 - **Critical:** 5xx error rate > 1%
 - **High:** Database error rate > 0.5%
 - **High:** N8n webhook failure rate > 5%
@@ -2655,7 +2722,8 @@ Set up alerts for:
 
 ## Conclusion
 
-This assessment has identified significant gaps in error handling across the application, particularly in critical areas such as API webhook handling, WebSocket connections, and database operations.
+This assessment has identified significant gaps in error handling across the application, particularly in critical areas
+such as API webhook handling, WebSocket connections, and database operations.
 
 ### Summary of Critical Issues
 
@@ -2911,4 +2979,5 @@ Use this checklist when testing error handling:
 **Review Status:** Draft - Pending Technical Review
 
 **Change Log:**
+
 - v1.0 (2025-11-08): Initial comprehensive assessment

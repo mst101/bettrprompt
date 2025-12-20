@@ -51,7 +51,7 @@ const copyToClipboard = async () => {
                 >
                     Thank you for your feedback!
                 </h1>
-                <p class="mt-2 text-xs text-gray-600 sm:text-sm">
+                <p class="mt-2 text-xs text-indigo-600 sm:text-sm">
                     Your insights are much appreciated.
                 </p>
             </div>
@@ -62,17 +62,17 @@ const copyToClipboard = async () => {
             <h2 class="mb-2 text-base font-semibold text-indigo-900 sm:text-lg">
                 Invite a Friend to Trial
             </h2>
-            <p class="mb-4 text-xs text-gray-600 sm:text-sm">
+            <p class="mb-4 text-xs text-indigo-600 sm:text-sm">
                 Know someone who could benefit from personalised AI prompts?
                 Share your unique referral link with them. They can trial the
                 service until
                 <strong>31st January 2026</strong>.
             </p>
 
-            <div class="rounded-lg bg-gray-50 p-4">
+            <div class="rounded-lg bg-indigo-50 p-4">
                 <label
                     for="referral-url"
-                    class="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                    class="mb-2 block text-xs font-medium text-indigo-700 sm:text-sm"
                 >
                     Your Referral Link
                 </label>
@@ -82,7 +82,7 @@ const copyToClipboard = async () => {
                         type="text"
                         :value="referralUrl"
                         readonly
-                        class="flex-1 rounded-lg border-gray-300 bg-white px-4 py-2 font-mono text-xs text-gray-900 sm:text-sm"
+                        class="flex-1 rounded-lg border-indigo-100 bg-white px-4 py-2 font-mono text-xs text-indigo-900 sm:text-sm"
                     />
                     <ButtonPrimary type="button" @click="copyToClipboard">
                         <DynamicIcon

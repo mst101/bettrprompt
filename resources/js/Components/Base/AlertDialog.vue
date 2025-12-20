@@ -81,7 +81,7 @@ const handleClose = () => {
 
             <!-- Title -->
             <h3
-                class="mt-4 text-center text-base font-semibold text-gray-900 sm:text-lg"
+                class="mt-4 text-center text-base font-semibold text-indigo-900 sm:text-lg"
                 data-testid="alert-title"
             >
                 {{ alertState.title }}
@@ -89,7 +89,7 @@ const handleClose = () => {
 
             <!-- Message -->
             <p
-                class="mt-3 text-center text-sm text-gray-600"
+                class="mt-3 text-center text-sm text-indigo-600"
                 data-testid="alert-message"
             >
                 {{ alertState.message }}

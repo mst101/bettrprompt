@@ -96,7 +96,9 @@ const close = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                    <span class="ms-2 text-sm text-indigo-600"
+                        >Remember me</span
+                    >
                 </label>
             </div>
         </template>

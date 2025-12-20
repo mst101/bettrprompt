@@ -24,11 +24,11 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium text-indigo-900">
                 Interface Complexity
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-indigo-600">
                 Choose how much detail you'd like to see when creating prompts.
                 Simple mode focuses on essential inputs and outputs, whilst
                 advanced mode shows additional technical details and insights.
@@ -82,7 +82,7 @@ const submit = () => {
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
+                        class="text-sm text-indigo-600"
                     >
                         Saved.
                     </p>

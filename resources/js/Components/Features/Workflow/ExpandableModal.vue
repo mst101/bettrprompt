@@ -170,7 +170,7 @@ watch(
                         <div
                             v-if="hasTextarea()"
                             ref="lineNumbersContainer"
-                            class="scrollbar-hide shrink-0 overflow-x-hidden overflow-y-scroll border-r border-gray-300 bg-gray-100 pr-4 pl-2 text-right font-mono text-sm text-gray-500 select-none"
+                            class="scrollbar-hide shrink-0 overflow-x-hidden overflow-y-scroll border-r border-indigo-300 bg-indigo-100 pr-4 pl-2 text-right font-mono text-sm text-indigo-500 select-none"
                             style="
                                 -ms-overflow-style: none;
                                 scrollbar-width: none;

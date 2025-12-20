@@ -32,7 +32,7 @@ defineProps<Props>();
 
 <template>
     <Card class="space-y-6">
-        <h2 class="text-lg font-semibold text-gray-900">
+        <h2 class="text-lg font-semibold text-indigo-900">
             Task-Trait Alignment
         </h2>
 
@@ -55,13 +55,13 @@ defineProps<Props>();
                                 {{ item.trait }}
                             </span>
                             <span
-                                class="ml-2 text-sm font-medium text-gray-900"
+                                class="ml-2 text-sm font-medium text-indigo-900"
                             >
                                 aligns with {{ item.requirement_aligned }}
                             </span>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-700">
+                    <p class="text-sm text-indigo-700">
                         {{ item.reason }}
                     </p>
                 </div>
@@ -90,11 +90,11 @@ defineProps<Props>();
                         >
                             {{ item.trait }}
                         </span>
-                        <span class="ml-2 text-sm font-medium text-gray-900">
+                        <span class="ml-2 text-sm font-medium text-indigo-900">
                             opposes {{ item.requirement_opposed }}
                         </span>
                     </div>
-                    <p class="mb-2 text-sm text-gray-700">
+                    <p class="mb-2 text-sm text-indigo-700">
                         {{ item.reason }}
                     </p>
                     <div
@@ -103,7 +103,7 @@ defineProps<Props>();
                         <p class="text-xs font-medium text-orange-800">
                             Adjustment Applied:
                         </p>
-                        <p class="mt-1 text-sm text-gray-700">
+                        <p class="mt-1 text-sm text-indigo-700">
                             {{ item.injection }}
                         </p>
                     </div>
@@ -115,7 +115,7 @@ defineProps<Props>();
         <div v-if="alignment.neutral && alignment.neutral.length > 0">
             <details class="group">
                 <summary
-                    class="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-900"
+                    class="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-900"
                 >
                     <span
                         class="inline-block transition-transform group-open:rotate-90"
@@ -128,14 +128,14 @@ defineProps<Props>();
                     <div
                         v-for="(item, index) in alignment.neutral"
                         :key="index"
-                        class="rounded-lg border border-indigo-100 bg-gray-50 p-3"
+                        class="rounded-lg border border-indigo-100 bg-indigo-50 p-3"
                     >
                         <span
-                            class="inline-block rounded-full bg-gray-400 px-2 py-0.5 text-xs font-medium text-white"
+                            class="inline-block rounded-full bg-indigo-400 px-2 py-0.5 text-xs font-medium text-white"
                         >
                             {{ item.trait }}
                         </span>
-                        <p class="mt-1 text-sm text-gray-600">
+                        <p class="mt-1 text-sm text-indigo-600">
                             {{ item.reason }}
                         </p>
                     </div>

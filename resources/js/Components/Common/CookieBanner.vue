@@ -36,7 +36,7 @@ const closeSettings = () => {
                 aria-modal="false"
                 aria-label="Cookie consent banner"
             >
-                <div class="bg-gray-800">
+                <div class="bg-indigo-800">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <div
                             class="lg:flex lg:items-center lg:justify-between lg:gap-8"
@@ -48,7 +48,7 @@ const closeSettings = () => {
                                     We use cookies
                                 </h2>
                                 <p
-                                    class="mt-2 text-xs text-gray-300 sm:text-sm"
+                                    class="mt-2 text-xs text-indigo-300 sm:text-sm"
                                 >
                                     We use essential cookies to make our site
                                     work. With your consent, we may also use
@@ -65,21 +65,21 @@ const closeSettings = () => {
                                 class="mt-6 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0"
                             >
                                 <ButtonSecondary
-                                    class="focus:ring-offset-gray-900"
+                                    class="focus:ring-offset-indigo-900"
                                     type="button"
                                     @click="rejectAll"
                                 >
                                     Reject All
                                 </ButtonSecondary>
                                 <ButtonSecondary
-                                    class="focus:ring-offset-gray-900"
+                                    class="focus:ring-offset-indigo-900"
                                     type="button"
                                     @click="openSettings"
                                 >
                                     Customise
                                 </ButtonSecondary>
                                 <ButtonPrimary
-                                    class="focus:ring-offset-gray-900"
+                                    class="focus:ring-offset-indigo-900"
                                     type="button"
                                     @click="acceptAll"
                                 >
