@@ -82,96 +82,71 @@ defineOptions({
 
     <ContainerPage spacing>
         <!-- Profile Completion Progress -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <ProfileCompletion :percentage="profileCompletion" />
-        </div>
+
+        <ProfileCompletion
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :percentage="profileCompletion"
+        />
 
         <!-- Basic Information -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateProfileInformationForm
-                :must-verify-email="mustVerifyEmail"
-                :status="status"
-                class="max-w-xl"
-            />
-        </div>
+        <UpdateProfileInformationForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :must-verify-email="mustVerifyEmail"
+            :status="status"
+        />
 
         <!-- Personality Type -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdatePersonalityTypeForm :personality-types="personalityTypes" />
-        </div>
+        <UpdatePersonalityTypeForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :personality-types="personalityTypes"
+        />
 
         <!-- UI Complexity -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateUiComplexityForm
-                :ui-complexity="uiComplexity"
-                class="max-w-xl"
-            />
-        </div>
+        <UpdateUiComplexityForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :ui-complexity="uiComplexity"
+        />
 
         <!-- Location & Language -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateLocationForm
-                :location-data="locationData"
-                :countries="countries"
-                :currencies="currencies"
-                :languages="languages"
-                class="max-w-2xl"
-            />
-        </div>
+        <UpdateLocationForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :location-data="locationData"
+            :countries="countries"
+            :currencies="currencies"
+            :languages="languages"
+        />
 
         <!-- Professional Context -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateProfessionalForm
-                :professional-data="professionalData"
-                class="max-w-2xl"
-            />
-        </div>
+        <UpdateProfessionalForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :professional-data="professionalData"
+        />
 
         <!-- Team & Work Context -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateTeamForm :team-data="teamData" class="max-w-2xl" />
-        </div>
-
+        <UpdateTeamForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :team-data="teamData"
+        />
         <!-- Budget Preferences -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateBudgetForm :budget-data="budgetData" class="max-w-2xl" />
-        </div>
+        <UpdateBudgetForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :budget-data="budgetData"
+        />
 
         <!-- Tools & Technologies -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdateToolsForm :tools-data="toolsData" class="max-w-4xl" />
-        </div>
+        <UpdateToolsForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :tools-data="toolsData"
+        />
 
         <!-- Password -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <UpdatePasswordForm class="max-w-xl" />
-        </div>
+        <UpdatePasswordForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        />
 
         <!-- Delete Account -->
-        <div
-            class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-        >
-            <DeleteUserForm class="max-w-xl" />
-        </div>
+        <DeleteUserForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+        />
     </ContainerPage>
 </template>

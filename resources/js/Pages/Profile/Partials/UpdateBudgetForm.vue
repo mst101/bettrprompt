@@ -54,11 +54,11 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium text-indigo-900">
                 Budget & Tool Preferences
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-indigo-600">
                 Tell us about your budget for tools and services so we can
                 recommend appropriate solutions.
             </p>
@@ -77,7 +77,7 @@ const submit = () => {
                     <div
                         v-for="option in budgetOptions"
                         :key="option.value"
-                        class="rounded-lg border border-gray-200 p-4 hover:border-indigo-300 hover:bg-indigo-50"
+                        class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 hover:border-indigo-100 hover:bg-indigo-100"
                         :class="{
                             'border-indigo-500 bg-indigo-50':
                                 form.budgetConsciousness === option.value,
@@ -90,7 +90,7 @@ const submit = () => {
                             :name="`budget-${option.value}`"
                             :label="option.label"
                         />
-                        <p class="mt-2 ml-6 text-sm text-gray-600">
+                        <p class="mt-2 ml-6 text-sm text-indigo-600">
                             {{ option.description }}
                         </p>
                     </div>

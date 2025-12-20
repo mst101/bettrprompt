@@ -57,13 +57,13 @@ const isChecked = computed({
                 :id="id"
                 v-model="isChecked"
                 type="checkbox"
-                class="size-4 rounded-md border-gray-300 text-green-600 focus:ring-indigo-500"
+                class="size-4 rounded-md border-gray-300 text-indigo-600 focus:ring-indigo-500"
                 :disabled="disabled"
             />
             <label
                 v-if="label"
                 :for="id"
-                class="ml-2 block text-sm text-indigo-900 sm:text-base"
+                class="ml-2 block px-4 py-1 text-sm text-indigo-900 hover:text-indigo-700 sm:text-base"
             >
                 {{ label }}
             </label>

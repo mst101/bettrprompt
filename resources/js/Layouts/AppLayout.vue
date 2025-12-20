@@ -368,7 +368,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 <div class="space-y-1 pt-2 pb-3">
                                     <button
                                         ref="firstGuestMobileButton"
-                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-indigo-600 transition duration-150 ease-in-out hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800 focus:border-indigo-300 focus:bg-indigo-50 focus:text-indigo-800 focus:outline-hidden"
+                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-indigo-600 transition duration-150 ease-in-out hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-800 focus:border-indigo-100 focus:bg-indigo-50 focus:text-indigo-800 focus:outline-hidden"
                                         @click="
                                             openLogin();
                                             showingNavigationDropdown = false;

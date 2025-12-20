@@ -11,7 +11,7 @@ export interface ButtonStyleProps {
 export function useButtonClasses(props: ButtonStyleProps) {
     return computed(() => {
         const base =
-            'gap-2 tracking-wider uppercase border inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
+            'gap-2 w-full sm:w-fit tracking-wider uppercase border inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
 
         const variants = {
             primary:

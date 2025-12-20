@@ -66,7 +66,7 @@ function updateValue(event: Event): void {
             :disabled="disabled"
             :autocomplete="autocomplete"
             v-bind="$attrs"
-            class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md border-indigo-100 bg-indigo-50 text-indigo-900 placeholder-indigo-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-indigo-100"
             :class="{ 'bg-indigo-100': disabled }"
             @input="updateValue"
             @blur="$emit('blur', $event)"

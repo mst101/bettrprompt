@@ -91,7 +91,7 @@ const analyticsEnabled = computed({
 
             <div class="mt-6 space-y-6">
                 <!-- Essential Cookies -->
-                <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div class="rounded-lg border border-indigo-100 bg-gray-50 p-4">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="font-medium text-gray-900">
@@ -112,7 +112,7 @@ const analyticsEnabled = computed({
                 </div>
 
                 <!-- Functional Cookies -->
-                <div class="rounded-lg border border-gray-200 p-4">
+                <div class="rounded-lg border border-indigo-100 p-4">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="font-medium text-gray-900">
@@ -132,7 +132,7 @@ const analyticsEnabled = computed({
                 </div>
 
                 <!-- Analytics Cookies -->
-                <div class="rounded-lg border border-gray-200 p-4">
+                <div class="rounded-lg border border-indigo-100 p-4">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="font-medium text-gray-900">

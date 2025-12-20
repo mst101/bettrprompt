@@ -91,11 +91,11 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium text-indigo-900">
                 Tools & Technologies
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-indigo-600">
                 Share the tools and programming languages you work with to
                 improve prompt recommendations.
             </p>
@@ -110,7 +110,7 @@ const submit = () => {
                         value="Preferred Tools (Click to select)"
                         :required="false"
                     />
-                    <p class="mt-1 text-sm text-gray-600">
+                    <p class="mt-1 text-sm text-indigo-600">
                         You've selected
                         {{ form.preferredTools.length }} tool(s)
                     </p>
@@ -121,10 +121,10 @@ const submit = () => {
                     <div
                         v-for="(tools, category) in toolCategories"
                         :key="category"
-                        class="rounded-lg border border-gray-200"
+                        class="rounded-lg border border-indigo-200 bg-indigo-50 dark:bg-indigo-100"
                     >
-                        <div class="border-b border-gray-200 px-4 py-3">
-                            <p class="font-medium text-gray-900">
+                        <div class="border-b border-indigo-200 px-4 py-3">
+                            <p class="font-medium text-indigo-900">
                                 {{ category }}
                             </p>
                         </div>
@@ -178,6 +178,7 @@ const submit = () => {
             <FormSelect
                 id="primary-programming-language"
                 v-model="form.primaryProgrammingLanguage"
+                class="max-w-sm"
                 label="Primary Programming Language"
                 :options="
                     programmingLanguages.map((lang) => ({

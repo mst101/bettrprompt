@@ -49,7 +49,7 @@ onMounted(() => {
             :required="props.required"
             :disabled="props.disabled"
             v-bind="$attrs"
-            class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md border-indigo-100 bg-indigo-50 text-indigo-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-indigo-100"
             :class="{ 'cursor-not-allowed bg-indigo-100': props.disabled }"
             @change="
                 emit(

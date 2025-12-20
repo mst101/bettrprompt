@@ -465,7 +465,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 type="number"
                                 min="1"
                                 max="100"
-                                class="w-16 rounded-md border-indigo-300 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-16 rounded-md border-indigo-100 bg-white px-2 py-1 pl-4 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
@@ -518,7 +518,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 type="number"
                                 min="1"
                                 max="100"
-                                class="w-16 rounded-md border-indigo-300 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-16 rounded-md border-indigo-100 bg-white py-1 pl-2 text-center text-sm text-black focus:border-indigo-500 focus:ring-indigo-500"
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
@@ -544,7 +544,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     Previous
                                 </LinkButton>
                                 <span
-                                    class="relative inline-flex items-center border border-indigo-300 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
+                                    class="relative inline-flex items-center border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
                                 >
                                     Page
                                     {{ promptRuns.meta.currentPage }}

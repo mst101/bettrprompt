@@ -71,7 +71,7 @@ defineOptions({
 
                     <!-- Essential Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-gray-200 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
                     >
                         <div class="flex items-start justify-between">
                             <div>
@@ -93,7 +93,7 @@ defineOptions({
                                 v-for="cookie in COOKIE_CATEGORIES.essential
                                     .cookies"
                                 :key="cookie.name"
-                                class="rounded-sm border border-gray-200 bg-white p-3"
+                                class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ cookie.name }}
@@ -110,7 +110,7 @@ defineOptions({
 
                     <!-- Functional Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-gray-200 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
                     >
                         <h3 class="text-lg font-semibold text-gray-900">
                             {{ COOKIE_CATEGORIES.functional.name }}
@@ -123,7 +123,7 @@ defineOptions({
                                 v-for="cookie in COOKIE_CATEGORIES.functional
                                     .cookies"
                                 :key="cookie.name"
-                                class="rounded-sm border border-gray-200 bg-white p-3"
+                                class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ cookie.name }}
@@ -140,7 +140,7 @@ defineOptions({
 
                     <!-- Analytics Cookies -->
                     <div
-                        class="not-prose my-6 rounded-lg border border-gray-200 bg-gray-50 p-6"
+                        class="not-prose my-6 rounded-lg border border-indigo-100 bg-gray-50 p-6"
                     >
                         <h3 class="text-lg font-semibold text-gray-900">
                             {{ COOKIE_CATEGORIES.analytics.name }}
@@ -153,7 +153,7 @@ defineOptions({
                                 v-for="cookie in COOKIE_CATEGORIES.analytics
                                     .cookies"
                                 :key="cookie.name"
-                                class="rounded-sm border border-gray-200 bg-white p-3"
+                                class="rounded-sm border border-indigo-100 bg-white p-3"
                             >
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ cookie.name }}

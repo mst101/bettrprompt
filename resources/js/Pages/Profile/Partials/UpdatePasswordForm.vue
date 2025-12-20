@@ -36,9 +36,9 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Update Password</h2>
+            <h2 class="text-lg font-medium text-indigo-900">Update Password</h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm text-indigo-600">
                 Ensure your account is using a long, random password to stay
                 secure.
             </p>
@@ -48,6 +48,7 @@ const updatePassword = () => {
             <FormInput
                 id="current-password"
                 v-model="form.currentPassword"
+                class="max-w-sm"
                 label="Current Password"
                 type="password"
                 :error="form.errors.currentPassword"
@@ -57,6 +58,7 @@ const updatePassword = () => {
             <FormInput
                 id="password"
                 v-model="form.password"
+                class="max-w-sm"
                 label="New Password"
                 type="password"
                 :error="form.errors.password"
@@ -66,6 +68,7 @@ const updatePassword = () => {
             <FormInput
                 id="password-confirmation"
                 v-model="form.passwordConfirmation"
+                class="max-w-sm"
                 label="Confirm Password"
                 type="password"
                 :error="form.errors.passwordConfirmation"
@@ -89,7 +92,7 @@ const updatePassword = () => {
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
+                        class="text-sm text-indigo-600"
                     >
                         Saved.
                     </p>

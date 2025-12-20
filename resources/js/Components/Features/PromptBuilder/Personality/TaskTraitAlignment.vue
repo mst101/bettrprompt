@@ -128,7 +128,7 @@ defineProps<Props>();
                     <div
                         v-for="(item, index) in alignment.neutral"
                         :key="index"
-                        class="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                        class="rounded-lg border border-indigo-100 bg-gray-50 p-3"
                     >
                         <span
                             class="inline-block rounded-full bg-gray-400 px-2 py-0.5 text-xs font-medium text-white"

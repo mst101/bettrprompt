@@ -53,7 +53,7 @@ describe('Button', () => {
 
             expect(button.classes()).toContain('bg-indigo-50');
             expect(button.classes()).toContain('text-indigo-700');
-            expect(button.classes()).toContain('border-indigo-300');
+            expect(button.classes()).toContain('border-indigo-100');
         });
 
         it('should render danger variant', () => {

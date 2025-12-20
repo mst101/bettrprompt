@@ -39,7 +39,7 @@ const emit = defineEmits<{
                         :key="`${doc.type}-${doc.filename}`"
                         class="w-full rounded-lg border px-4 py-2 text-left text-sm transition"
                         :class="{
-                            'border-indigo-300 bg-indigo-200 font-medium text-indigo-900 dark:bg-indigo-100':
+                            'border-indigo-100 bg-indigo-200 font-medium text-indigo-900 dark:bg-indigo-100':
                                 selectedDocument?.filename === doc.filename,
                             'border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-50 dark:bg-indigo-50':
                                 selectedDocument?.filename !== doc.filename,
@@ -72,7 +72,7 @@ const emit = defineEmits<{
                         :key="`${doc.type}-${doc.filename}`"
                         class="w-full rounded-lg border px-3 py-2 text-left text-xs transition"
                         :class="{
-                            'border-indigo-300 bg-indigo-200 font-medium text-indigo-900 dark:bg-indigo-100':
+                            'border-indigo-100 bg-indigo-200 font-medium text-indigo-900 dark:bg-indigo-100':
                                 selectedDocument?.filename === doc.filename,
                             'border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-50 dark:bg-indigo-50':
                                 selectedDocument?.filename !== doc.filename,

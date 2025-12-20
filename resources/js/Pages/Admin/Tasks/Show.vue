@@ -219,7 +219,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                 <!-- Pagination -->
                 <div
                     v-if="props.promptRuns.lastPage > 1"
-                    class="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6"
+                    class="mt-4 flex items-center justify-between border-t border-indigo-100 px-4 py-3 sm:px-6"
                 >
                     <div>
                         <p class="text-sm text-gray-700">

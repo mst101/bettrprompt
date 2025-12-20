@@ -164,7 +164,7 @@ const getStatusColor = (status: string): string => {
                         v-for="(question, index) in props.prompt_run
                             .frameworkQuestions"
                         :key="index"
-                        class="rounded-lg border border-gray-200 p-4"
+                        class="rounded-lg border border-indigo-100 p-4"
                     >
                         <div class="mb-2 flex items-start">
                             <DynamicIcon

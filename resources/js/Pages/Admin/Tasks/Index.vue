@@ -135,7 +135,7 @@ watch(search, debouncedSearch);
                 <!-- Pagination -->
                 <div
                     v-if="props.tasks.last_page > 1"
-                    class="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6"
+                    class="mt-4 flex items-center justify-between border-t border-indigo-100 px-4 py-3 sm:px-6"
                 >
                     <div class="flex flex-1 justify-between sm:hidden">
                         <Link

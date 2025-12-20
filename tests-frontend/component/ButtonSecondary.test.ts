@@ -26,7 +26,7 @@ describe('ButtonSecondary', () => {
         expect(button.classes()).toContain('inline-flex');
         expect(button.classes()).toContain('rounded-md');
         expect(button.classes()).toContain('bg-indigo-50');
-        expect(button.classes()).toContain('border-indigo-300');
+        expect(button.classes()).toContain('border-indigo-100');
         expect(button.classes()).toContain('text-indigo-700');
     });
 

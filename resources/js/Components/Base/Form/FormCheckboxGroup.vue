@@ -89,7 +89,7 @@ const showOtherInput = computed(() => {
                     :value="option.value"
                     :checked="isChecked(option.value)"
                     :disabled="disabled"
-                    class="mt-1 h-4 w-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                    class="mt-1 h-4 w-4 rounded border-indigo-100 text-indigo-600 focus:ring-indigo-500"
                     @change="toggleOption(option.value)"
                 />
                 <div class="flex-1">

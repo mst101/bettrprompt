@@ -113,11 +113,11 @@ const submit = () => {
             class="flex flex-col items-start sm:flex-row sm:justify-between"
         >
             <div>
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2 class="text-lg font-medium text-indigo-900">
                     Your Personality Type
                 </h2>
 
-                <p class="mt-1 text-sm text-gray-600">
+                <p class="mt-1 text-sm text-indigo-600">
                     Update your personality type to get more personalised AI
                     prompts.
                 </p>
@@ -144,6 +144,7 @@ const submit = () => {
                 <FormSelect
                     id="personality-base"
                     v-model="personalityBase"
+                    class="max-w-sm"
                     label="Personality Type"
                     :options="personalityTypeOptions"
                     :error="form.errors.personalityType"
@@ -202,7 +203,7 @@ const submit = () => {
                 </ButtonText>
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
-                    <p class="text-sm text-gray-600">
+                    <p class="text-sm text-indigo-600">
                         Enter your trait percentages from
                         <LinkText
                             href="https://16personalities.com"
@@ -212,49 +213,45 @@ const submit = () => {
                         >.
                     </p>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="max-w-xs space-y-4">
                         <FormInput
                             id="mind"
                             v-model="form.traitPercentages.mind"
                             type="number"
-                            label="Mind (Introversion/Extraversion)"
+                            label="Introversion/Extraversion"
                             :min="50"
                             :max="100"
-                            placeholder="%"
-                            class="text-right placeholder:text-right"
+                            class="text-right"
                         />
 
                         <FormInput
                             id="energy"
                             v-model="form.traitPercentages.energy"
                             type="number"
-                            label="Energy (Intuitive/Observant)"
+                            label="Intuitive/Observant"
                             :min="50"
                             :max="100"
-                            placeholder="%"
-                            class="text-right placeholder:text-right"
+                            class="text-right"
                         />
 
                         <FormInput
                             id="nature"
                             v-model="form.traitPercentages.nature"
                             type="number"
-                            label="Nature (Thinking/Feeling)"
+                            label="Thinking/Feeling"
                             :min="50"
                             :max="100"
-                            placeholder="%"
-                            class="text-right placeholder:text-right"
+                            class="text-right"
                         />
 
                         <FormInput
                             id="tactics"
                             v-model="form.traitPercentages.tactics"
                             type="number"
-                            label="Tactics (Judging/Prospecting)"
+                            label="Judging/Prospecting"
                             :min="50"
                             :max="100"
-                            placeholder="%"
-                            class="text-right placeholder:text-right"
+                            class="text-right"
                         />
 
                         <div class="col-span-2">
@@ -262,11 +259,10 @@ const submit = () => {
                                 id="identity-percent"
                                 v-model="form.traitPercentages.identity"
                                 type="number"
-                                label="Identity (Assertive/Turbulent)"
+                                label="Assertive/Turbulent"
                                 :min="50"
                                 :max="100"
-                                placeholder="%"
-                                class="text-right placeholder:text-right"
+                                class="text-right"
                             />
                         </div>
                     </div>

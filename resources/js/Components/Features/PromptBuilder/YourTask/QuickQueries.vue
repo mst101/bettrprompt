@@ -478,7 +478,7 @@ const isDisabled = computed(() =>
                                 type="radio"
                                 :name="`question-${question.id}`"
                                 :value="option.value"
-                                class="mt-0.5 h-4 w-4 border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                                class="mt-0.5 h-4 w-4 border-indigo-100 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span class="ml-3 text-sm text-indigo-900">{{
                                 option.label
@@ -489,7 +489,7 @@ const isDisabled = computed(() =>
                     <!-- Additional details textarea for options that need elaboration -->
                     <div
                         v-if="selectedOtherOption(question)"
-                        class="bg-indigo-25 rounded-lg border-2 border-indigo-300 p-3"
+                        class="bg-indigo-25 rounded-lg border-2 border-indigo-100 p-3"
                     >
                         <FormTextarea
                             :id="`other-${question.id}`"
@@ -545,7 +545,7 @@ const isDisabled = computed(() =>
                                 type="radio"
                                 :name="`question-${question.id}`"
                                 :value="option.value"
-                                class="mt-0.5 h-4 w-4 border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                                class="mt-0.5 h-4 w-4 border-indigo-100 text-indigo-600 focus:ring-indigo-500"
                             />
                             <span class="ml-3 text-sm text-indigo-900">{{
                                 option.label
