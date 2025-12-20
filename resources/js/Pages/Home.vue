@@ -75,7 +75,6 @@ defineOptions({
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
-                        dark-text-colour="dark:text-purple-900"
                     />
 
                     <FeatureCard
@@ -102,21 +101,28 @@ defineOptions({
                     class="mt-4 grid gap-8 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3"
                 >
                     <FeatureCard
+                        icon="target"
                         title="Quality Input = Quality Output"
                         description="Vague questions produce generic answers. BettrPrompt helps you articulate precisely what you need, ensuring AI understands your context and delivers relevant, actionable responses instead of surface-level suggestions."
+                        icon-bg-colour="bg-indigo-100"
+                        icon-colour="text-indigo-600"
                     />
 
                     <FeatureCard
+                        icon="sliders"
                         title="Chooses the Right Tool for the Job"
                         description="Our system analyses your task and selects the most appropriate framework from our curated library. You'll see a few carefully chosen alternatives to consider, ensuring the best fit without the paralysis of too many choices."
-                        text-colour="text-purple-900"
+                        icon-bg-colour="bg-purple-100"
+                        icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
-                        dark-text-colour="dark:text-purple-900"
                     />
 
                     <FeatureCard
+                        icon="layers"
                         title="Built on Proven Frameworks"
                         description="Every prompt is structured using established methodologies like SMART, RICE, and Chain of Thought. These aren't experimental approaches—they're time-tested frameworks that professionals use to think through complex problems systematically."
+                        icon-bg-colour="bg-indigo-100"
+                        icon-colour="text-indigo-600"
                     />
                 </div>
             </div>

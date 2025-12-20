@@ -3,27 +3,22 @@
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 
 defineProps<{
-    icon?: string;
+    icon: string;
     title: string;
     description: string;
     iconBgColour?: string;
     iconColour?: string;
     darkBgColour?: string;
-    textColour?: string;
-    darkTextColour?: string;
 }>();
 </script>
 
 <template>
     <div
         data-testid="feature-card"
-        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100"
-        :class="[
-            darkBgColour || 'dark:bg-indigo-50',
-            darkTextColour || 'dark:text-indigo-900',
-        ]"
+        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:text-indigo-900"
+        :class="darkBgColour || 'dark:bg-indigo-50'"
     >
-        <div v-if="icon" class="flex items-center gap-4">
+        <div class="flex items-center gap-4">
             <div
                 :class="[
                     iconBgColour || 'bg-indigo-100',
@@ -41,19 +36,7 @@ defineProps<{
                 </h3>
             </div>
         </div>
-        <div v-else>
-            <h3
-                class="text-xl font-bold"
-                :class="textColour || 'text-indigo-900'"
-            >
-                {{ title }}
-            </h3>
-        </div>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p
-            class="mt-4"
-            :class="icon ? 'text-sm' : 'text-base'"
-            v-html="description"
-        ></p>
+        <p class="mt-4 text-sm" v-html="description"></p>
     </div>
 </template>
