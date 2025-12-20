@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
-import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
@@ -94,21 +94,18 @@ const detectedAtFormatted = computed(() => {
     });
 });
 
-const locationSummary = computed(() => {
-    if (!props.locationData.countryName) return 'No location set';
-    const parts = [
-        props.locationData.city,
-        props.locationData.region,
-        props.locationData.countryName,
-    ].filter(Boolean);
-    return parts.join(', ');
-});
-
 const detectionStatus = computed(() => {
     if (props.locationData.manuallySet) {
         return 'Updated';
     }
     return 'Detected';
+});
+
+const headerTitle = computed(() => {
+    if (!props.locationData.countryName || !detectedAtFormatted.value) {
+        return 'Location & Language';
+    }
+    return `Location & Language - ${detectionStatus.value} ${detectedAtFormatted.value}`;
 });
 
 const submit = () => {
@@ -118,8 +115,26 @@ const submit = () => {
 };
 
 const detectLocation = () => {
-    useForm({}).post(route('profile.location.detect'), {
+    const detectForm = useForm({});
+    detectForm.post(route('profile.location.detect'), {
         preserveScroll: true,
+        onSuccess: (page) => {
+            success('Location detected successfully');
+            // Update form fields with detected location
+            const locationData = page.props
+                .locationData as typeof props.locationData;
+            if (locationData) {
+                form.countryCode = locationData.countryCode || '';
+                form.region = locationData.region || '';
+                form.city = locationData.city || '';
+                form.timezone = locationData.timezone || '';
+                form.currencyCode = locationData.currencyCode || '';
+                form.languageCode = locationData.languageCode || '';
+            }
+        },
+        onError: () => {
+            error('Failed to detect location');
+        },
     });
 };
 
@@ -133,8 +148,22 @@ const clearLocation = async () => {
     );
 
     if (confirmed) {
-        useForm({}).delete(route('profile.location.clear'), {
+        const clearForm = useForm({});
+        clearForm.delete(route('profile.location.clear'), {
             preserveScroll: true,
+            onSuccess: () => {
+                success('Location cleared successfully');
+                // Clear the form fields
+                form.countryCode = '';
+                form.region = '';
+                form.city = '';
+                form.timezone = '';
+                form.currencyCode = '';
+                form.languageCode = '';
+            },
+            onError: () => {
+                error('Failed to clear location');
+            },
         });
     }
 };
@@ -142,42 +171,25 @@ const clearLocation = async () => {
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Location & Language
-            </h2>
+        <header class="flex items-start justify-between">
+            <div>
+                <h2 class="text-lg font-medium text-indigo-900">
+                    {{ headerTitle }}
+                </h2>
 
-            <p class="mt-1 text-sm text-indigo-600">
-                Set your location and language preferences for better optimised
-                AI prompts.
-            </p>
+                <p class="mt-1 text-sm text-indigo-600">
+                    Set your location and language preferences for better
+                    optimised AI prompts.
+                </p>
+            </div>
         </header>
 
-        <!-- Location Status -->
-        <div
+        <ButtonTrash
             v-if="locationData.countryName"
-            class="mt-6 rounded-md bg-blue-50 p-4"
-        >
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm font-medium text-blue-900">
-                        Current Location
-                    </p>
-                    <p class="mt-1 text-sm text-blue-700">
-                        {{ locationSummary }}
-                    </p>
-                    <p
-                        v-if="detectedAtFormatted"
-                        class="mt-1 text-xs text-blue-600"
-                    >
-                        {{ detectionStatus }} {{ detectedAtFormatted }}
-                    </p>
-                </div>
-                <ButtonText id="clear-location-form" @click="clearLocation">
-                    Clear
-                </ButtonText>
-            </div>
-        </div>
+            id="clear-location-form"
+            label="Clear Location"
+            @clear="clearLocation"
+        />
 
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">
