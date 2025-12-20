@@ -120,7 +120,7 @@ const handleProviderClick = async (provider: AIProvider) => {
             >
                 <component
                     :is="provider.logo"
-                    class="mr-2 -ml-1 h-4 w-4 flex-shrink-0"
+                    class="mr-2 -ml-1 h-7 w-7 flex-shrink-0"
                 />
                 <span class="text-xs text-indigo-800">
                     {{ provider.name }}

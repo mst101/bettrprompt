@@ -119,7 +119,7 @@ const saveEdits = () => {
                 >
                     <DynamicIcon
                         :name="copied ? 'check' : 'clipboard-copy'"
-                        class="h-4 w-4"
+                        class="mr-2 -ml-1 h-4 w-4"
                     />
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
@@ -131,7 +131,7 @@ const saveEdits = () => {
                     data-testid="edit-prompt-button"
                     @click="startEditing"
                 >
-                    <DynamicIcon name="edit" class="mr-2 h-4 w-4" />
+                    <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                     Edit Prompt
                 </ButtonSecondary>
             </div>
@@ -198,7 +198,7 @@ const saveEdits = () => {
                 >
                     <DynamicIcon
                         :name="copied ? 'check' : 'clipboard-copy'"
-                        class="h-5 w-5"
+                        class="mr-2 -ml-1 h-5 w-5"
                     />
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
@@ -209,7 +209,7 @@ const saveEdits = () => {
                     data-testid="edit-prompt-button-mobile"
                     @click="startEditing"
                 >
-                    <DynamicIcon name="edit" class="mr-2 h-4 w-4" />
+                    <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                     Edit Prompt
                 </ButtonSecondary>
             </div>
