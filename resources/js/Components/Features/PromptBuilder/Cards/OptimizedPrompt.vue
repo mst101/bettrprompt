@@ -4,7 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
-import AIProviderLinks from '@/Components/Features/AIProviders/AIProviderLinks.vue';
+import AIProviderLinks from '@/Components/Logos/AIProviders/AIProviderLinks.vue';
 import { router } from '@inertiajs/vue3';
 import { ref, watchEffect } from 'vue';
 

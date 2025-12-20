@@ -7,10 +7,11 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// Use Vite's glob import for dynamic loading of icons
-const iconModules = import.meta.glob<{ default: Component }>(
-    '@/Icons/Svg*.vue',
-);
+// Use Vite's glob import for dynamic loading of icons and logos
+const iconModules = {
+    ...import.meta.glob<{ default: Component }>('@/Icons/Svg*.vue'),
+    ...import.meta.glob<{ default: Component }>('@/Components/Logos/*.vue'),
+};
 
 // Convert kebab-case icon name to PascalCase component name
 const kebabToPascal = (str: string): string => {

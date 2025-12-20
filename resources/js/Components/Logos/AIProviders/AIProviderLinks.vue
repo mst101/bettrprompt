@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Button from '@/Components/Base/Button/Button.vue';
-import LogoChatGPT from '@/Components/Features/AIProviders/LogoChatGPT.vue';
-import LogoClaude from '@/Components/Features/AIProviders/LogoClaude.vue';
-import LogoCopilot from '@/Components/Features/AIProviders/LogoCopilot.vue';
-import LogoGemini from '@/Components/Features/AIProviders/LogoGemini.vue';
-import LogoGrok from '@/Components/Features/AIProviders/LogoGrok.vue';
-import LogoMetaAI from '@/Components/Features/AIProviders/LogoMetaAI.vue';
-import LogoPerplexity from '@/Components/Features/AIProviders/LogoPerplexity.vue';
+import LogoChatGPT from '@/Components/Logos/AIProviders/LogoChatGPT.vue';
+import LogoClaude from '@/Components/Logos/AIProviders/LogoClaude.vue';
+import LogoCopilot from '@/Components/Logos/AIProviders/LogoCopilot.vue';
+import LogoGemini from '@/Components/Logos/AIProviders/LogoGemini.vue';
+import LogoGrok from '@/Components/Logos/AIProviders/LogoGrok.vue';
+import LogoMetaAI from '@/Components/Logos/AIProviders/LogoMetaAI.vue';
+import LogoPerplexity from '@/Components/Logos/AIProviders/LogoPerplexity.vue';
 import { ref, type Component } from 'vue';
 
 interface Props {
