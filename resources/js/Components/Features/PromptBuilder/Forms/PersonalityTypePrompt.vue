@@ -4,9 +4,10 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
+import { usePersonalityPromptPreference } from '@/Composables/features/usePersonalityPromptPreference';
 import { useNotification } from '@/Composables/ui/useNotification';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
@@ -24,8 +25,9 @@ const emit = defineEmits<{
 }>();
 
 const { add: addNotification } = useNotification();
+const { dismissPrompt, showPrompt } = usePersonalityPromptPreference();
 const showPersonalityForm = ref(false);
-const showPersonalityBox = ref(true);
+const showPersonalityBox = computed(() => showPrompt.value);
 const addPersonalityLinkRef = ref<InstanceType<typeof LinkText> | null>(null);
 const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
     null,
@@ -48,7 +50,7 @@ const handlePersonalitySaved = () => {
 };
 
 const handleMaybeLater = () => {
-    showPersonalityBox.value = false;
+    dismissPrompt();
     addNotification({
         message:
             'You can always add your personality type later in the Profile section of your account.',
@@ -99,7 +101,7 @@ watch(
                         <h3 class="text-lg font-semibold text-indigo-900">
                             Get personalised prompts (optional)
                         </h3>
-                        <p class="mt-2">
+                        <p class="mt-2 text-sm">
                             For personalised prompts tailored to your way of
                             thinking and communication style, add your
                             <LinkText

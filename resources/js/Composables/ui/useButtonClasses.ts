@@ -11,7 +11,7 @@ export interface ButtonStyleProps {
 export function useButtonClasses(props: ButtonStyleProps) {
     return computed(() => {
         const base =
-            'gap-2 text-xs tracking-wider uppercase border inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
+            'gap-2 tracking-wider uppercase border inline-flex items-center justify-center font-medium transition-colors duration-150 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:ring-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50';
 
         const variants = {
             primary:
@@ -26,7 +26,7 @@ export function useButtonClasses(props: ButtonStyleProps) {
         const sizes = {
             sm: 'rounded-md px-3 py-1.5 text-xs',
             md: 'rounded-md px-4 py-2 text-xs',
-            lg: 'rounded-md px-6 py-3 text-sm',
+            lg: 'rounded-md px-6 py-3 text-base',
         };
 
         const variant = props.variant ?? 'primary';

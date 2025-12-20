@@ -164,7 +164,7 @@ const saveEdits = () => {
                 v-if="!isEditing"
                 data-testid="optimized-prompt-text"
                 :class="[
-                    'rounded-lg py-4 font-mono text-sm leading-relaxed text-indigo-900 transition-colors duration-300 sm:p-6',
+                    'rounded-lg p-4 font-mono text-xs leading-relaxed text-indigo-900 transition-colors duration-300 sm:p-6 sm:text-sm',
                     copied
                         ? 'bg-indigo-200 dark:bg-indigo-300'
                         : 'bg-indigo-50 dark:bg-indigo-100',

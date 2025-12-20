@@ -485,7 +485,6 @@ onUnmounted(() => {
                 <LinkButton
                     :href="route('prompt-builder.index')"
                     variant="primary"
-                    size="md"
                 >
                     CREATE NEW
                 </LinkButton>

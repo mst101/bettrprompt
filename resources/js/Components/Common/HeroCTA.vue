@@ -12,10 +12,9 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-    <div class="mt-10 flex flex-col items-center gap-4">
+    <div class="flex flex-col items-center gap-4">
         <LinkButton
             variant="primary"
-            class="text-sm uppercase sm:text-base lg:text-lg"
             size="lg"
             :href="route('prompt-builder.index')"
         >

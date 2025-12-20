@@ -173,7 +173,7 @@ defineOptions({
             </div>
 
             <!-- CTA Button -->
-            <HeroCTA />
+            <HeroCTA class="my-12 sm:mt-24" />
         </div>
     </div>
 </template>

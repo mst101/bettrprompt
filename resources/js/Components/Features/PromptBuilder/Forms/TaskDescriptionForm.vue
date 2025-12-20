@@ -2,9 +2,11 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonVoiceInput from '@/Components/Base/Button/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
+import LinkText from '@/Components/Base/LinkText.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import type { InertiaForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 interface Props {
     hasPersonalityType: boolean;
@@ -12,13 +14,14 @@ interface Props {
 }
 
 defineProps<Props>();
-
 const emit = defineEmits<{
     (e: 'submit'): void;
     (e: 'transcription', text: string): void;
     (e: 'clear'): void;
     (e: 'update:taskDescription', value: string): void;
 }>();
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
 
 const taskDescriptionTextarea = ref<InstanceType<
     typeof FormTextareaWithActions
@@ -42,6 +45,13 @@ defineExpose({ focus });
             </span>
             <span v-else>
                 Prompts will be optimised for your specific task requirements.
+                <span v-if="isAuthenticated" class="block">
+                    You can further optimise your prompts by adding your
+                    personality type in
+                    <LinkText :href="route('profile.edit')">
+                        your profile settings</LinkText
+                    >.
+                </span>
             </span>
         </p>
 
