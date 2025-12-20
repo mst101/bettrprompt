@@ -63,7 +63,7 @@ defineEmits<{
                 You've reached your visitor limit
             </h3>
         </div>
-        <div class="ml-3">
+        <div>
             <p class="mt-2 text-indigo-700">
                 You've already created an optimised prompt as a visitor. To see
                 your existing prompts, create more prompts, and iterate on

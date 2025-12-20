@@ -46,9 +46,9 @@ const copyToClipboard = async () => {
                     name="check-circle"
                     class="mx-auto h-16 w-16 text-green-600"
                 />
-                <h2 class="mt-4 text-2xl font-semibold text-gray-900">
+                <h1 class="mt-4 text-2xl font-semibold text-indigo-900">
                     Thank you for your feedback!
-                </h2>
+                </h1>
                 <p class="mt-2 text-gray-600">
                     Your insights are much appreciated.
                 </p>
@@ -57,9 +57,9 @@ const copyToClipboard = async () => {
 
         <!-- Referral Section -->
         <Card>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900">
+            <h2 class="mb-2 text-lg font-semibold text-indigo-900">
                 Invite a Friend to Trial
-            </h3>
+            </h2>
             <p class="mb-4 text-sm text-gray-600">
                 Know someone who could benefit from personalised AI prompts?
                 Share your unique referral link with them. They can trial the

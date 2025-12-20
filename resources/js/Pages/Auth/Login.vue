@@ -32,6 +32,10 @@ const submit = () => {
 <template>
     <Head title="Log in" />
 
+    <h1 class="mb-6 text-2xl font-bold text-indigo-900">
+        Log in to Your Account
+    </h1>
+
     <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
         {{ status }}
     </div>

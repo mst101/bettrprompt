@@ -86,7 +86,7 @@ describe('ButtonHamburger', () => {
         const button = wrapper.find('button');
         expect(button.classes()).toContain('rounded-md');
         expect(button.classes()).toContain('cursor-pointer');
-        expect(button.classes()).toContain('text-gray-600');
+        expect(button.classes()).toContain('text-indigo-600');
         expect(button.classes()).toContain('p-2');
     });
 
@@ -98,8 +98,8 @@ describe('ButtonHamburger', () => {
         });
 
         const button = wrapper.find('button');
-        expect(button.classes()).toContain('hover:bg-gray-100');
-        expect(button.classes()).toContain('hover:text-gray-800');
+        expect(button.classes()).toContain('hover:bg-indigo-50');
+        expect(button.classes()).toContain('hover:text-indigo-800');
     });
 
     it('should have active styling classes', () => {
@@ -110,7 +110,7 @@ describe('ButtonHamburger', () => {
         });
 
         const button = wrapper.find('button');
-        expect(button.classes()).toContain('active:text-black');
+        expect(button.classes()).toContain('active:text-indigo-900');
     });
 
     it('should have focus ring classes', () => {

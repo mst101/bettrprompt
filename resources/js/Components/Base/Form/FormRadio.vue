@@ -45,15 +45,15 @@ function updateValue(): void {
             />
             <span
                 v-if="label"
-                class="ml-2 text-sm text-gray-700"
-                :class="{ 'text-gray-400': disabled }"
+                class="ml-2 text-sm text-indigo-900"
+                :class="{ 'text-indigo-300': disabled }"
             >
                 {{ label }}
             </span>
             <slot v-else />
         </label>
 
-        <p v-if="helpText" class="mt-1 ml-6 text-xs text-gray-500">
+        <p v-if="helpText" class="mt-1 ml-6 text-xs text-indigo-600">
             {{ helpText }}
         </p>
 

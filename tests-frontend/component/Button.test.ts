@@ -51,9 +51,9 @@ describe('Button', () => {
             });
             const button = wrapper.find('button');
 
-            expect(button.classes()).toContain('bg-white');
-            expect(button.classes()).toContain('text-gray-700');
-            expect(button.classes()).toContain('border-gray-300');
+            expect(button.classes()).toContain('bg-indigo-50');
+            expect(button.classes()).toContain('text-indigo-700');
+            expect(button.classes()).toContain('border-indigo-300');
         });
 
         it('should render danger variant', () => {

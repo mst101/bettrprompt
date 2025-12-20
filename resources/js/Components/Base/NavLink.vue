@@ -9,8 +9,8 @@ const props = defineProps<{
 
 const classes = computed(() =>
     props.active
-        ? 'border-indigo-400 text-gray-900'
-        : 'border-transparent text-gray-500 hover:text-gray-700 focus:text-gray-700',
+        ? 'border-indigo-400 text-indigo-900'
+        : 'border-transparent text-indigo-500 hover:text-indigo-700 focus:text-indigo-700',
 );
 </script>
 

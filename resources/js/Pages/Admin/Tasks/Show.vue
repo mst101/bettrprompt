@@ -89,9 +89,9 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
         <ContainerPage>
             <!-- Task Description -->
             <Card class="mb-6">
-                <h3 class="mb-2 font-semibold text-gray-900">
+                <h2 class="mb-2 font-semibold text-indigo-900">
                     Task Description:
-                </h3>
+                </h2>
                 <p class="text-gray-700">{{ props.taskDescription }}</p>
             </Card>
 

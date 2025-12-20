@@ -76,7 +76,7 @@ const focus = (options?: { cursorPosition?: 'start' | 'end' }) => {
 defineExpose({ focus });
 
 const labelClass = computed(() =>
-    props.srOnlyLabel ? 'sr-only' : 'block text-sm font-medium text-black',
+    props.srOnlyLabel ? 'sr-only' : 'block text-sm font-medium text-indigo-900',
 );
 </script>
 

@@ -219,7 +219,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-500 transition duration-150 ease-in-out hover:text-indigo-700 focus:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{
@@ -368,7 +368,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 <div class="space-y-1 pt-2 pb-3">
                                     <button
                                         ref="firstGuestMobileButton"
-                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:border-gray-300 focus:bg-gray-50 focus:text-gray-800 focus:outline-hidden"
+                                        class="block w-full border-l-4 border-transparent py-2 ps-3 pe-4 text-start text-base font-medium text-indigo-600 transition duration-150 ease-in-out hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800 focus:border-indigo-300 focus:bg-indigo-50 focus:text-indigo-800 focus:outline-hidden"
                                         @click="
                                             openLogin();
                                             showingNavigationDropdown = false;

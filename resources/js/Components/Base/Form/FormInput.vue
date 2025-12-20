@@ -46,7 +46,7 @@ function updateValue(event: Event): void {
 
 <template>
     <div>
-        <label :for="id" class="block text-sm font-medium text-black">
+        <label :for="id" class="block text-sm font-medium text-indigo-900">
             {{ label }}
             <span v-if="required" class="text-red-500">*</span>
         </label>
@@ -63,14 +63,14 @@ function updateValue(event: Event): void {
             :disabled="disabled"
             :autocomplete="autocomplete"
             v-bind="$attrs"
-            class="mt-1 block w-full rounded-md border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            :class="{ 'bg-gray-50': disabled }"
+            class="mt-1 block w-full rounded-md border-indigo-300 bg-indigo-50 text-indigo-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            :class="{ 'bg-indigo-100': disabled }"
             @input="updateValue"
             @blur="$emit('blur', $event)"
             @focus="$emit('focus', $event)"
         />
 
-        <p v-if="helpText" class="mt-1 text-xs text-gray-500">
+        <p v-if="helpText" class="mt-1 text-xs text-indigo-600">
             {{ helpText }}
         </p>
 
@@ -83,7 +83,7 @@ function updateValue(event: Event): void {
 </template>
 
 <style scoped>
-/* Override browser autofill styles to maintain white background and black text */
+/* Override browser autofill styles to maintain indigo background and text */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -91,5 +91,10 @@ input:-webkit-autofill:active {
     transition:
         background-color 5000s ease-in-out 0s,
         color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: rgb(67, 56, 202) !important; /* indigo-900 */
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px rgb(238, 235, 254) inset !important; /* indigo-50 */
 }
 </style>

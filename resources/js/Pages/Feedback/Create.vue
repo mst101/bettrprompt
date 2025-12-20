@@ -88,9 +88,9 @@ const submit = () => {
     <ContainerPage>
         <Card>
             <div class="mb-6">
-                <h3 class="text-lg font-semibold text-gray-900">
+                <h2 class="text-lg font-semibold text-indigo-900">
                     We'd love to hear from you!
-                </h3>
+                </h2>
                 <p class="mt-1 text-sm text-gray-600">
                     Your feedback will help us decide whether to improve this
                     project - or to abandon it!<br />

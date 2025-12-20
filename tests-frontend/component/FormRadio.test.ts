@@ -148,8 +148,8 @@ describe('FormRadio', () => {
             },
         });
 
-        const label = wrapper.find('.text-gray-700');
-        expect(label.classes()).toContain('text-gray-400');
+        const label = wrapper.find('.text-indigo-900');
+        expect(label.classes()).toContain('text-indigo-300');
     });
 
     it('should support required prop', () => {

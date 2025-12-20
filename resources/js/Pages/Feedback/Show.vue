@@ -117,9 +117,9 @@ const formatDate = (dateString: string) => {
             <div class="mb-6">
                 <div class="flex items-start justify-between">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">
+                        <h2 class="text-lg font-semibold text-indigo-900">
                             Thank you for your feedback!
-                        </h3>
+                        </h2>
                         <p class="mt-1 text-sm text-gray-600">
                             You can update your responses at any time.
                         </p>

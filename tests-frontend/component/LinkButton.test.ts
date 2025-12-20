@@ -66,9 +66,9 @@ describe('LinkButton', () => {
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('border-gray-300');
-        expect(link.classes()).toContain('bg-white');
-        expect(link.classes()).toContain('text-gray-700');
+        expect(link.classes()).toContain('border-indigo-300');
+        expect(link.classes()).toContain('bg-indigo-50');
+        expect(link.classes()).toContain('text-indigo-700');
         expect(link.classes()).toContain('rounded-md');
     });
 
@@ -141,7 +141,7 @@ describe('LinkButton', () => {
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('hover:bg-gray-50');
+        expect(link.classes()).toContain('hover:bg-indigo-100');
     });
 
     it('should have hover styling for primary variant', () => {

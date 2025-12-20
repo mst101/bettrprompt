@@ -27,6 +27,8 @@ const submit = () => {
 <template>
     <Head title="Create an Account" />
 
+    <h1 class="mb-6 text-2xl font-bold text-indigo-900">Create an Account</h1>
+
     <form @submit.prevent="submit">
         <FormInput
             id="name"

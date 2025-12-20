@@ -117,9 +117,9 @@ const getStatusColor = (status: string): string => {
 
             <!-- Task Description -->
             <Card>
-                <h3 class="mb-2 font-semibold text-gray-900">
+                <h2 class="mb-2 font-semibold text-indigo-900">
                     Task Description
-                </h3>
+                </h2>
                 <p class="text-gray-700">
                     {{ props.promptRun.taskDescription }}
                 </p>
@@ -127,9 +127,9 @@ const getStatusColor = (status: string): string => {
 
             <!-- Framework Selection -->
             <Card v-if="props.promptRun.selectedFramework">
-                <h3 class="mb-3 font-semibold text-gray-900">
+                <h2 class="mb-3 font-semibold text-indigo-900">
                     Selected Framework
-                </h3>
+                </h2>
                 <div class="space-y-3">
                     <div>
                         <span
@@ -156,9 +156,9 @@ const getStatusColor = (status: string): string => {
                     props.promptRun.frameworkQuestions.length > 0
                 "
             >
-                <h3 class="mb-4 font-semibold text-gray-900">
+                <h2 class="mb-4 font-semibold text-indigo-900">
                     Clarifying Questions & Answers
-                </h3>
+                </h2>
                 <div class="space-y-4">
                     <div
                         v-for="(question, index) in props.prompt_run
@@ -226,9 +226,9 @@ const getStatusColor = (status: string): string => {
 
             <!-- Optimised Prompt -->
             <Card v-if="props.promptRun.optimizedPrompt">
-                <h3 class="mb-3 font-semibold text-gray-900">
+                <h2 class="mb-3 font-semibold text-indigo-900">
                     Optimised Prompt
-                </h3>
+                </h2>
                 <div class="rounded-lg bg-gray-50 p-4">
                     <pre
                         class="font-mono text-sm whitespace-pre-wrap text-gray-900"
