@@ -12,7 +12,7 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-    <div class="my-12 flex flex-col items-center">
+    <div class="my-10 flex flex-col items-center sm:my-16">
         <LinkButton
             variant="primary"
             size="md"

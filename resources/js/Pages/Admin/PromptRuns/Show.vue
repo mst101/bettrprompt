@@ -3,6 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -15,8 +16,7 @@ interface PromptRun {
     frameworkQuestions: string[] | null;
     clarifyingAnswers: string[] | null;
     optimizedPrompt: string | null;
-    status: string;
-    workflowStage: string | null;
+    workflowStage: string;
     createdAt: string;
     completedAt: string | null;
     user: {
@@ -32,15 +32,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const getStatusColor = (status: string): string => {
-    const colors: Record<string, string> = {
-        pending: 'bg-gray-100 text-gray-800',
-        processing: 'bg-blue-100 text-blue-800',
-        completed: 'bg-green-100 text-green-800',
-        failed: 'bg-red-100 text-red-800',
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-};
+const { getStatusColor } = useWorkflowStageColor();
 </script>
 
 <template>
@@ -69,10 +61,10 @@ const getStatusColor = (status: string): string => {
                         <span
                             :class="[
                                 'mt-1 inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                getStatusColor(props.promptRun.status),
+                                getStatusColor(props.promptRun.workflowStage),
                             ]"
                         >
-                            {{ props.promptRun.status }}
+                            {{ props.promptRun.workflowStage }}
                         </span>
                     </div>
                     <div v-if="props.promptRun.user">
