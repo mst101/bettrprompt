@@ -35,12 +35,11 @@ Route::get('/cookies', function () {
 Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
+// Commented out the original dashboard route and the redundant alias
+// Users now navigate directly to /prompt-builder instead
 // Route::get('/dashboard', function () {
 //    return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboard', [PromptBuilderController::class, 'index'])
-    ->name('dashboard');
 
 // Feedback routes (no authentication required)
 Route::get('/feedback/create', [FeedbackController::class, 'create'])
