@@ -476,7 +476,7 @@ onUnmounted(() => {
             <div class="space-x-4">
                 <ButtonSecondary
                     type="button"
-                    class="!hidden sm:!inline-flex"
+                    class="hidden! sm:inline-flex!"
                     @click="handleDelete"
                 >
                     <DynamicIcon name="trash" class="h-4 w-4" />
@@ -485,7 +485,7 @@ onUnmounted(() => {
                 <LinkButton
                     :href="route('prompt-builder.index')"
                     variant="primary"
-                    size="sm"
+                    size="md"
                 >
                     CREATE NEW
                 </LinkButton>
