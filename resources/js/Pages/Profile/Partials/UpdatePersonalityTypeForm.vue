@@ -128,19 +128,42 @@ const { confirm } = useAlert();
 const clearPersonality = async () => {
     const confirmed = await confirm(
         'Are you sure you want to clear all personality information?',
-        'Clear Personality',
+        'Clear Personality Information',
         { confirmButtonStyle: 'danger', confirmText: 'Clear' },
     );
 
     if (confirmed) {
-        personalityBase.value = '';
-        identity.value = '';
-        form.traitPercentages.mind = null;
-        form.traitPercentages.energy = null;
-        form.traitPercentages.nature = null;
-        form.traitPercentages.tactics = null;
-        form.traitPercentages.identity = null;
-        success('Personality information cleared');
+        const clearForm = useForm({
+            personalityType: '',
+            traitPercentages: {
+                mind: null,
+                energy: null,
+                nature: null,
+                tactics: null,
+                identity: null,
+            },
+        });
+
+        const routeName = props.visitorMode
+            ? 'visitor.personality.update'
+            : 'profile.personality.update';
+
+        clearForm.patch(route(routeName), {
+            preserveScroll: true,
+            onSuccess: () => {
+                personalityBase.value = '';
+                identity.value = '';
+                form.traitPercentages.mind = null;
+                form.traitPercentages.energy = null;
+                form.traitPercentages.nature = null;
+                form.traitPercentages.tactics = null;
+                form.traitPercentages.identity = null;
+                success('Personality information cleared');
+            },
+            onError: () => {
+                error('Failed to clear personality information');
+            },
+        });
     }
 };
 </script>
@@ -219,13 +242,12 @@ const clearPersonality = async () => {
                 </div>
 
                 <!-- Selected Personality Display -->
-                <div v-if="fullPersonalityType">
-                    <p
-                        class="rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
-                    >
-                        Selected: {{ fullPersonalityType }}
-                    </p>
-                </div>
+                <p
+                    v-if="fullPersonalityType"
+                    class="max-w-sm rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
+                >
+                    Selected: {{ fullPersonalityType }}
+                </p>
             </div>
 
             <!-- Optional Trait Percentages -->
@@ -350,7 +372,7 @@ const clearPersonality = async () => {
 
                 <ButtonTrash
                     v-if="personalityBase"
-                    label="Clear Personality"
+                    label="Clear Personality Info"
                     @clear="clearPersonality"
                 />
 
