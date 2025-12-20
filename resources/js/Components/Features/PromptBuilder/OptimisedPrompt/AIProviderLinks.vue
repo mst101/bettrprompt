@@ -118,8 +118,11 @@ const handleProviderClick = async (provider: AIProvider) => {
                 class="group relative justify-center bg-indigo-50! px-3 py-2 hover:bg-indigo-100! sm:justify-start dark:bg-indigo-100! dark:hover:bg-indigo-200!"
                 @click="handleProviderClick(provider)"
             >
-                <component :is="provider.logo" class="h-6 w-6" />
-                <span class="mt-1 text-xs text-indigo-800">
+                <component
+                    :is="provider.logo"
+                    class="mr-2 -ml-1 h-4 w-4 flex-shrink-0"
+                />
+                <span class="text-xs text-indigo-800">
                     {{ provider.name }}
                 </span>
                 <span
