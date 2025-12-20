@@ -8,6 +8,8 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
@@ -120,6 +122,25 @@ const submit = () => {
         },
     });
 };
+
+const { confirm } = useAlert();
+
+const clearTraitPercentages = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear all trait percentages?',
+        'Clear Trait Percentages',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
+        form.traitPercentages.mind = null;
+        form.traitPercentages.energy = null;
+        form.traitPercentages.nature = null;
+        form.traitPercentages.tactics = null;
+        form.traitPercentages.identity = null;
+        success('Trait percentages cleared');
+    }
+};
 </script>
 
 <template>
@@ -196,11 +217,10 @@ const submit = () => {
                 </div>
 
                 <!-- Selected Personality Display -->
-                <div
-                    v-if="fullPersonalityType"
-                    class="rounded-md bg-indigo-50 p-3"
-                >
-                    <p class="text-sm font-medium text-indigo-900">
+                <div v-if="fullPersonalityType">
+                    <p
+                        class="rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
+                    >
                         Selected: {{ fullPersonalityType }}
                     </p>
                 </div>
@@ -218,7 +238,7 @@ const submit = () => {
                 </ButtonText>
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
-                    <p class="text-sm text-indigo-600">
+                    <p class="text-indigo-600">
                         Enter your trait percentages from
                         <LinkText
                             href="https://16personalities.com"
@@ -237,10 +257,10 @@ const submit = () => {
                                 label="Introversion/Extraversion"
                                 :min="50"
                                 :max="100"
-                                class="pr-8 text-right"
+                                class="pr-6 text-right text-lg!"
                             />
                             <span
-                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
                             >
                                 %
                             </span>
@@ -254,10 +274,10 @@ const submit = () => {
                                 label="Intuitive/Observant"
                                 :min="50"
                                 :max="100"
-                                class="pr-8 text-right"
+                                class="pr-6 text-right text-lg!"
                             />
                             <span
-                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
                             >
                                 %
                             </span>
@@ -271,10 +291,10 @@ const submit = () => {
                                 label="Thinking/Feeling"
                                 :min="50"
                                 :max="100"
-                                class="pr-8 text-right"
+                                class="pr-6 text-right text-lg!"
                             />
                             <span
-                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
                             >
                                 %
                             </span>
@@ -288,16 +308,16 @@ const submit = () => {
                                 label="Judging/Prospecting"
                                 :min="50"
                                 :max="100"
-                                class="pr-8 text-right"
+                                class="pr-6 text-right text-lg!"
                             />
                             <span
-                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
                             >
                                 %
                             </span>
                         </div>
 
-                        <div class="relative col-span-2">
+                        <div class="relative">
                             <FormInput
                                 id="identity-percent"
                                 v-model="form.traitPercentages.identity"
@@ -305,10 +325,10 @@ const submit = () => {
                                 label="Assertive/Turbulent"
                                 :min="50"
                                 :max="100"
-                                class="pr-8 text-right"
+                                class="pr-6 text-right text-lg!"
                             />
                             <span
-                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
                             >
                                 %
                             </span>
@@ -317,7 +337,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -325,6 +345,12 @@ const submit = () => {
                 >
                     Save
                 </ButtonPrimary>
+
+                <ButtonTrash
+                    v-if="personalityBase && showTraitPercentages"
+                    label="Clear Trait Percentages"
+                    @clear="clearTraitPercentages"
+                />
 
                 <!-- Persist CTA after a successful save in this session -->
                 <Transition
