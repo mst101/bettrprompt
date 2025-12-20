@@ -40,7 +40,7 @@ function updateValue(): void {
                 :value="value"
                 :required="required"
                 :disabled="disabled"
-                class="h-4 w-4 border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                class="h-4 w-4 border-indigo-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-50"
                 @change="updateValue"
             />
             <span

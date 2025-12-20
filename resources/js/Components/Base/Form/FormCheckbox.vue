@@ -52,7 +52,7 @@ function handleChange(event: Event): void {
                 :checked="isCheckedValue()"
                 type="checkbox"
                 :name="name"
-                class="size-4 rounded-md border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                class="size-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0"
                 :disabled="disabled"
                 @change="handleChange"
             />
