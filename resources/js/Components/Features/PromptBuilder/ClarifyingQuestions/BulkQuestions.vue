@@ -100,7 +100,6 @@ const handleTranscription = (index: number, transcript: string) => {
                     :model-value="answers[index] ?? ''"
                     :label="`Answer ${index + 1}`"
                     :disabled="isSubmitting"
-                    :rows="4"
                     placeholder="Type your answer here, or record a quick note..."
                     @update:model-value="
                         (value: string) => updateAnswer(index, value)

@@ -46,17 +46,50 @@ const dynamicRows = ref(props.rows);
 const updateDynamicRows = async () => {
     if (!textarea.value) return;
 
+    // Capture current display size before we change it for measurement
+    const previousDisplay = dynamicRows.value;
+
+    // Measure content height at rows=1 to avoid height inflation from rows="3" reserved space
+    dynamicRows.value = 1;
+
     await nextTick();
 
-    const scrollHeight = textarea.value.scrollHeight;
-    const lineHeight = parseInt(
-        window.getComputedStyle(textarea.value).lineHeight,
-        10,
-    );
-    const rowsNeeded = Math.ceil(scrollHeight / lineHeight);
+    const textareaElement = textarea.value;
+    const scrollHeight = textareaElement.scrollHeight;
+    const styles = window.getComputedStyle(textareaElement);
+
+    // Get padding and borders to calculate actual content height
+    const paddingTop = parseInt(styles.paddingTop, 10) || 0;
+    const paddingBottom = parseInt(styles.paddingBottom, 10) || 0;
+    const borderTopWidth = parseInt(styles.borderTopWidth, 10) || 0;
+    const borderBottomWidth = parseInt(styles.borderBottomWidth, 10) || 0;
+
+    const totalPadding =
+        paddingTop + paddingBottom + borderTopWidth + borderBottomWidth;
+    const contentHeight = Math.max(0, scrollHeight - totalPadding);
+
+    const lineHeight = parseInt(styles.lineHeight, 10) || 20;
+
+    // Calculate rows of content as decimal for precise threshold checking
+    const rowsOfContent = contentHeight / lineHeight;
+
+    // Expand when content fills the second-to-last row (~100%)
+    // Example: at 3 rows displayed, expand when content needs >2.0 rows (after row 2 fills)
+    // Use 0.9 to expand slightly after the second-to-last row fills for smooth UX
+    const expandThreshold = previousDisplay - 0.9;
+    const shrinkThreshold = previousDisplay - 1.9; // Shrink with 1 row of hysteresis
+
+    let rowsToDisplay = previousDisplay;
+    if (rowsOfContent >= expandThreshold) {
+        // Content is filling the second-to-last row, expand to next row
+        rowsToDisplay = Math.min(previousDisplay + 1, 10);
+    } else if (previousDisplay > 3 && rowsOfContent <= shrinkThreshold) {
+        // Content has shrunk enough to no longer need current display size, shrink by 1
+        rowsToDisplay = previousDisplay - 1;
+    }
 
     // Clamp between 3 (min) and 10 (max)
-    dynamicRows.value = Math.max(3, Math.min(rowsNeeded, 10));
+    dynamicRows.value = Math.max(3, Math.min(rowsToDisplay, 10));
 };
 
 watch(() => props.modelValue, updateDynamicRows);

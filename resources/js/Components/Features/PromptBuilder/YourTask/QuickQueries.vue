@@ -572,7 +572,6 @@ const isDisabled = computed(() =>
                         "
                         v-model="currentAnswers[question.id]"
                         :label="`Answer ${index + 1}`"
-                        :rows="3"
                         placeholder="Type your answer here..."
                     >
                         <template #actions>

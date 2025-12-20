@@ -149,7 +149,6 @@ const handleTranscription = (text: string) => {
             data-testid="answer-textarea"
             :model-value="answer"
             label="Your Answer"
-            :rows="5"
             sr-only-label
             :disabled="isSubmitting"
             placeholder="Type your answer here, or record a quick note..."
