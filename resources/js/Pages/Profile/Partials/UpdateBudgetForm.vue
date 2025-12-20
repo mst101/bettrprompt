@@ -77,11 +77,12 @@ const submit = () => {
                     <div
                         v-for="option in budgetOptions"
                         :key="option.value"
-                        class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 hover:border-indigo-100 hover:bg-indigo-100"
+                        class="cursor-pointer rounded-lg border border-indigo-200 bg-indigo-50 p-4 hover:border-indigo-100 hover:bg-indigo-100"
                         :class="{
                             'border-indigo-500 bg-indigo-50':
                                 form.budgetConsciousness === option.value,
                         }"
+                        @click="form.budgetConsciousness = option.value"
                     >
                         <FormRadio
                             :id="`budget-${option.value}`"
