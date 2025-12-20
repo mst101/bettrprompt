@@ -17,7 +17,7 @@ const classes = computed(() =>
 <template>
     <Link
         :href="href"
-        class="rounded-md p-3 text-sm leading-5 font-medium transition duration-150 ease-in-out focus:ring-2 focus:ring-indigo-500 focus:outline-hidden focus:outline-none"
+        class="rounded-md p-3 text-sm leading-5 font-medium transition duration-150 ease-in-out focus:ring-2 focus:ring-indigo-500 focus:outline-hidden focus:outline-none sm:text-base"
         :class="classes"
     >
         <slot />

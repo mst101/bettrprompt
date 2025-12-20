@@ -93,10 +93,12 @@ const showOtherInput = computed(() => {
                     @change="toggleOption(option.value)"
                 />
                 <div class="flex-1">
-                    <div class="text-sm font-medium text-indigo-900">
+                    <div
+                        class="text-sm font-medium text-indigo-900 sm:text-base"
+                    >
                         {{ option.label }}
                     </div>
-                    <div class="mt-1 text-sm text-indigo-700">
+                    <div class="mt-1 text-sm text-indigo-700 sm:text-base">
                         {{ option.description }}
                     </div>
                 </div>
@@ -124,7 +126,7 @@ const showOtherInput = computed(() => {
                     :maxlength="500"
                     @update:model-value="emit('update:otherValue', $event)"
                 />
-                <div class="mt-1 text-right text-xs text-indigo-500">
+                <div class="mt-1 text-right text-xs text-indigo-500 sm:text-sm">
                     {{ otherValue.length }} / 500 characters
                 </div>
             </div>

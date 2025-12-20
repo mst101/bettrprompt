@@ -15,7 +15,7 @@ defineProps<{
 <template>
     <div
         data-testid="feature-card"
-        class="rounded-lg bg-white p-6 text-gray-600 shadow-lg ring-1 ring-gray-100 dark:text-indigo-900"
+        class="rounded-lg bg-white p-6 text-indigo-900 shadow-lg dark:text-indigo-900"
         :class="darkBgColour || 'dark:bg-indigo-50'"
     >
         <div class="flex items-center gap-4">
@@ -37,6 +37,6 @@ defineProps<{
             </div>
         </div>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="mt-4 text-sm" v-html="description"></p>
+        <p class="mt-4 text-sm sm:text-base" v-html="description"></p>
     </div>
 </template>

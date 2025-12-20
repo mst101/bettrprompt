@@ -63,18 +63,18 @@ const isChecked = computed({
             <label
                 v-if="label"
                 :for="id"
-                class="ml-2 block text-sm text-indigo-900"
+                class="ml-2 block text-sm text-indigo-900 sm:text-base"
             >
                 {{ label }}
             </label>
             <slot v-else />
         </div>
 
-        <p v-if="helpText" class="mt-1 text-xs text-indigo-600">
+        <p v-if="helpText" class="mt-1 text-xs text-indigo-600 sm:text-sm">
             {{ helpText }}
         </p>
 
-        <div v-if="error" class="mt-1 text-sm text-red-600">
+        <div v-if="error" class="mt-1 text-sm text-red-600 sm:text-base">
             {{ error }}
         </div>
     </div>

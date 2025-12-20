@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), {
         :type="type"
         :disabled="disabled"
         :title="title"
-        class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-300 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 focus:ring-offset-indigo-100 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        class="rounded bg-indigo-200 px-2 py-1 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-300 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 focus:ring-offset-indigo-100 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
     >
         <slot />
     </button>

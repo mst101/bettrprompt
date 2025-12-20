@@ -135,7 +135,7 @@ defineOptions({
                     >
                         How It Works
                     </h2>
-                    <p class="mt-4 text-lg text-indigo-600">
+                    <p class="mt-4 text-lg text-indigo-700">
                         Three simple steps to better AI prompts
                     </p>
                 </div>

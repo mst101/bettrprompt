@@ -35,7 +35,7 @@ onMounted(() => {
     <div>
         <label
             :for="props.id"
-            class="block text-sm font-medium text-indigo-900"
+            class="block text-sm font-medium text-indigo-900 sm:text-base"
             :class="props.labelSrOnly ? 'sr-only' : ''"
         >
             {{ props.label }}
@@ -70,11 +70,14 @@ onMounted(() => {
             </option>
         </select>
 
-        <p v-if="props.helpText" class="mt-1 text-xs text-indigo-600">
+        <p
+            v-if="props.helpText"
+            class="mt-1 text-xs text-indigo-600 sm:text-sm"
+        >
             {{ props.helpText }}
         </p>
 
-        <p v-if="props.error" class="mt-1 text-sm text-red-600">
+        <p v-if="props.error" class="mt-1 text-sm text-red-600 sm:text-base">
             {{ props.error }}
         </p>
     </div>
