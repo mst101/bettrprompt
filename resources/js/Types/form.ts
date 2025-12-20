@@ -40,6 +40,9 @@ export interface FormInputProps extends BaseFormFieldProps {
     /** Input type (text, email, password, number, etc.) */
     type?: string;
 
+    /** Show % after input */
+    isPercentage?: boolean;
+
     /** Autocomplete attribute value */
     autocomplete?: string;
 

@@ -119,7 +119,7 @@ const handleTranscription = (text: string) => {
         </div>
 
         <!-- Question -->
-        <div class="mt-8 rounded-lg bg-indigo-50 px-4">
+        <div class="mt-8 rounded-lg bg-indigo-50 p-4">
             <div class="flex gap-4">
                 <div class="mt-0.5">
                     <QuestionNumber :number="currentQuestionNumber" />

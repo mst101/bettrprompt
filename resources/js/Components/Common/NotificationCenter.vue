@@ -101,7 +101,7 @@ const getTypeConfig = (type: string) => {
             <div
                 v-for="notification in notifications"
                 :key="notification.id"
-                class="rounded-md border p-4 shadow-lg"
+                class="rounded-lg border p-4 shadow-lg"
                 :class="[
                     getTypeConfig(notification.type).bgColor,
                     getTypeConfig(notification.type).borderColor,
@@ -125,7 +125,7 @@ const getTypeConfig = (type: string) => {
                     </div>
                     <button
                         type="button"
-                        class="ml-3 inline-flex shrink-0 rounded-md p-1.5"
+                        class="ml-3 inline-flex shrink-0 rounded-lg p-1.5"
                         :class="[
                             getTypeConfig(notification.type).bgColor,
                             getTypeConfig(notification.type).iconColor,

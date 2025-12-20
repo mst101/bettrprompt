@@ -229,47 +229,75 @@ const submit = () => {
                     </p>
 
                     <div class="max-w-xs space-y-4">
-                        <FormInput
-                            id="mind"
-                            v-model="form.traitPercentages.mind"
-                            type="number"
-                            label="Introversion/Extraversion"
-                            :min="50"
-                            :max="100"
-                            class="text-right"
-                        />
+                        <div class="relative">
+                            <FormInput
+                                id="mind"
+                                v-model="form.traitPercentages.mind"
+                                type="number"
+                                label="Introversion/Extraversion"
+                                :min="50"
+                                :max="100"
+                                class="pr-8 text-right"
+                            />
+                            <span
+                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                            >
+                                %
+                            </span>
+                        </div>
 
-                        <FormInput
-                            id="energy"
-                            v-model="form.traitPercentages.energy"
-                            type="number"
-                            label="Intuitive/Observant"
-                            :min="50"
-                            :max="100"
-                            class="text-right"
-                        />
+                        <div class="relative">
+                            <FormInput
+                                id="energy"
+                                v-model="form.traitPercentages.energy"
+                                type="number"
+                                label="Intuitive/Observant"
+                                :min="50"
+                                :max="100"
+                                class="pr-8 text-right"
+                            />
+                            <span
+                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                            >
+                                %
+                            </span>
+                        </div>
 
-                        <FormInput
-                            id="nature"
-                            v-model="form.traitPercentages.nature"
-                            type="number"
-                            label="Thinking/Feeling"
-                            :min="50"
-                            :max="100"
-                            class="text-right"
-                        />
+                        <div class="relative">
+                            <FormInput
+                                id="nature"
+                                v-model="form.traitPercentages.nature"
+                                type="number"
+                                label="Thinking/Feeling"
+                                :min="50"
+                                :max="100"
+                                class="pr-8 text-right"
+                            />
+                            <span
+                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                            >
+                                %
+                            </span>
+                        </div>
 
-                        <FormInput
-                            id="tactics"
-                            v-model="form.traitPercentages.tactics"
-                            type="number"
-                            label="Judging/Prospecting"
-                            :min="50"
-                            :max="100"
-                            class="text-right"
-                        />
+                        <div class="relative">
+                            <FormInput
+                                id="tactics"
+                                v-model="form.traitPercentages.tactics"
+                                type="number"
+                                label="Judging/Prospecting"
+                                :min="50"
+                                :max="100"
+                                class="pr-8 text-right"
+                            />
+                            <span
+                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                            >
+                                %
+                            </span>
+                        </div>
 
-                        <div class="col-span-2">
+                        <div class="relative col-span-2">
                             <FormInput
                                 id="identity-percent"
                                 v-model="form.traitPercentages.identity"
@@ -277,8 +305,13 @@ const submit = () => {
                                 label="Assertive/Turbulent"
                                 :min="50"
                                 :max="100"
-                                class="text-right"
+                                class="pr-8 text-right"
                             />
+                            <span
+                                class="pointer-events-none absolute top-10 right-3 text-sm text-indigo-600"
+                            >
+                                %
+                            </span>
                         </div>
                     </div>
                 </div>
