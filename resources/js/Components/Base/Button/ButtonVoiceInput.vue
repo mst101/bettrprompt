@@ -52,6 +52,11 @@ const toggleRecording = async () => {
         <button
             type="button"
             :disabled="isProcessing || disabled"
+            :aria-label="
+                isActive
+                    ? 'Stop recording'
+                    : 'Record voice input using your microphone'
+            "
             class="inline-flex items-center justify-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition-colors duration-150 focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
             :class="[
                 isActive
