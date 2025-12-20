@@ -479,7 +479,7 @@ onUnmounted(() => {
                     class="hidden! sm:inline-flex!"
                     @click="handleDelete"
                 >
-                    <DynamicIcon name="trash" class="h-4 w-4" />
+                    <DynamicIcon name="trash" class="mr-2 -ml-1 h-4 w-4" />
                     Delete
                 </ButtonSecondary>
                 <LinkButton

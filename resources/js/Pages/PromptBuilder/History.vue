@@ -367,7 +367,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         >
                                             <DynamicIcon
                                                 name="trash"
-                                                class="h-4 w-4"
+                                                class="mr-2 -ml-1 h-4 w-4"
                                             />
                                             Delete
                                         </ButtonSecondary>
