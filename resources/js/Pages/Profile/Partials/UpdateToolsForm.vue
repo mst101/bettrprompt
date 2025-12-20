@@ -134,12 +134,9 @@ const submit = () => {
                                 v-for="tool in tools"
                                 :id="`tool-${tool}`"
                                 :key="tool"
-                                :model-value="form.preferredTools"
+                                v-model="form.preferredTools"
                                 :value="tool"
                                 :label="tool"
-                                @update:model-value="
-                                    (value) => (form.preferredTools = value)
-                                "
                             />
                         </div>
                     </div>
