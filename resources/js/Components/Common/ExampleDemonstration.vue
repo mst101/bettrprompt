@@ -156,7 +156,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     />
                     Your prompt is ready!
                 </div>
-                <div class="rounded bg-white p-2 text-indigo-800">
+                <div class="rounded bg-white p-2 text-sm text-indigo-800">
                     "Create a comprehensive marketing strategy for a B2B SaaS
                     early-stage startup using the RACE framework (Reach, Act,
                     Convert, Engage). Target audience: mid-size tech companies.

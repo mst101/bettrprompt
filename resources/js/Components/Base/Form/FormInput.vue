@@ -97,4 +97,18 @@ input:-webkit-autofill:active {
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px rgb(238, 235, 254) inset !important; /* indigo-50 */
 }
+
+/* Dark mode autofill styles */
+@media (prefers-color-scheme: dark) {
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: rgb(238, 235, 254) !important; /* indigo-50 */
+    }
+
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px rgb(49, 46, 129) inset !important; /* indigo-900 */
+    }
+}
 </style>
