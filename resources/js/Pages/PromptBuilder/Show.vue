@@ -473,7 +473,7 @@ onUnmounted(() => {
 
     <HeaderPage title="Prompt Builder">
         <template #actions>
-            <div class="space-x-4">
+            <div class="flex items-center space-x-4">
                 <ButtonSecondary
                     type="button"
                     class="hidden! sm:inline-flex!"
