@@ -84,6 +84,7 @@ watch(
                 <div class="flex flex-col items-start gap-4 sm:flex-row">
                     <div class="sm:-ml-4">
                         <a
+                            class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
                             href="https://16personalities.com"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -101,12 +102,11 @@ watch(
                         <p class="mt-2">
                             For personalised prompts tailored to your way of
                             thinking and communication style, add your
-                            <a
-                                class="underline underline-offset-2"
+                            <LinkText
                                 href="https://16personalities.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                >16personalities.com</a
+                                >16personalities.com</LinkText
                             >
                             type. Otherwise, we'll select the best framework and
                             questions based purely on your task.

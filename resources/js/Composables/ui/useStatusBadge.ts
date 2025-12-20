@@ -18,7 +18,7 @@ export function useStatusBadge() {
         if (!workflowStage) {
             return {
                 label: 'Unknown',
-                colorClass: 'bg-gray-100 text-gray-800',
+                colorClass: 'bg-gray-100 text-gray-900',
             };
         }
 
@@ -26,7 +26,7 @@ export function useStatusBadge() {
         if (workflowStage === '2_completed') {
             return {
                 label: 'Completed',
-                colorClass: 'bg-green-100 text-green-800',
+                colorClass: 'bg-green-100 text-green-900',
             };
         }
 
@@ -34,7 +34,7 @@ export function useStatusBadge() {
         if (isProcessingStage(workflowStage)) {
             return {
                 label: getWorkflowStageLabel(workflowStage),
-                colorClass: 'bg-yellow-100 text-yellow-800',
+                colorClass: 'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
             };
         }
 
@@ -42,14 +42,15 @@ export function useStatusBadge() {
         if (workflowStage === '0_completed') {
             return {
                 label: 'Awaiting Questions',
-                colorClass: 'bg-yellow-100 text-yellow-800',
+                colorClass: 'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
             };
         }
 
         if (workflowStage === '1_completed') {
             return {
                 label: 'Awaiting Answers',
-                colorClass: 'bg-blue-100 text-blue-800',
+                colorClass:
+                    'bg-blue-200 text-blue-800 dark:bg-blue-400 dark:text-blue-900',
             };
         }
 
@@ -57,14 +58,14 @@ export function useStatusBadge() {
         if (isFailedStage(workflowStage)) {
             return {
                 label: 'Failed',
-                colorClass: 'bg-red-100 text-red-800',
+                colorClass: 'bg-red-100 text-red-900',
             };
         }
 
         // Fallback for unknown stages
         return {
             label: getWorkflowStageLabel(workflowStage),
-            colorClass: 'bg-gray-100 text-gray-800',
+            colorClass: 'bg-gray-100 text-gray-900',
         };
     };
 

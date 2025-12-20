@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import LinkButton from '@/Components/Base/LinkButton.vue';
 import ExampleDemonstration from '@/Components/Common/ExampleDemonstration.vue';
 import FeatureCard from '@/Components/Common/FeatureCard.vue';
+import HeroCTA from '@/Components/Common/HeroCTA.vue';
 import StepCard from '@/Components/Common/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
@@ -42,20 +42,7 @@ defineOptions({
                 </p>
 
                 <!-- CTA Button -->
-                <div class="mt-10 flex flex-col items-center gap-4">
-                    <LinkButton
-                        variant="primary"
-                        class="text-sm uppercase sm:text-base lg:text-lg"
-                        size="lg"
-                        :href="route('prompt-builder.index')"
-                    >
-                        {{
-                            $page.props.auth?.user
-                                ? 'Try It Now'
-                                : 'Get Started for Free'
-                        }}
-                    </LinkButton>
-                </div>
+                <HeroCTA />
             </div>
 
             <!-- Features Grid -->
@@ -184,6 +171,9 @@ defineOptions({
                     <ExampleDemonstration />
                 </div>
             </div>
+
+            <!-- CTA Button -->
+            <HeroCTA />
         </div>
     </div>
 </template>

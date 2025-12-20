@@ -180,7 +180,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
     <HeaderPage title="Prompt History">
         <template #actions>
             <LinkButton :href="route('prompt-builder.index')" variant="primary">
-                Create New
+                CREATE NEW
             </LinkButton>
         </template>
     </HeaderPage>
@@ -356,7 +356,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     <div class="mt-2">
                                         <ButtonSecondary
                                             type="button"
-                                            class="hover:bg-indigo-400! dark:group-hover:bg-indigo-300"
+                                            class="group-hover:border-indigo-200 dark:group-hover:bg-indigo-300 dark:hover:bg-indigo-400!"
                                             size="sm"
                                             @click="
                                                 handleDelete(
@@ -367,7 +367,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         >
                                             <DynamicIcon
                                                 name="trash"
-                                                class="h-3 w-3"
+                                                class="h-4 w-4"
                                             />
                                             Delete
                                         </ButtonSecondary>

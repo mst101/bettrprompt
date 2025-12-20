@@ -32,9 +32,10 @@ withDefaults(defineProps<Props>(), {
                 <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
                     {{ title }}
                 </h3>
-                <p class="mt-1 text-xs text-indigo-600 sm:text-sm">
-                    {{ description }}
-                </p>
+                <p
+                    class="mt-1 text-sm text-indigo-600 sm:text-base"
+                    v-html="description"
+                ></p>
 
                 <!-- Content panel (example content) -->
                 <div :class="[contentBgColour, 'mt-3 rounded-lg p-4']">

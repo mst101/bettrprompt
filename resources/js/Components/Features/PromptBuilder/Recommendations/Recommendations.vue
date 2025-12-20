@@ -71,7 +71,7 @@ defineProps<Props>();
                     class="flex items-start text-sm text-blue-900"
                 >
                     <svg
-                        class="mt-0.5 mr-2 h-5 w-5 flex-shrink-0 text-blue-600"
+                        class="mt-0.5 mr-2 h-5 w-5 shrink-0 text-blue-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

@@ -169,7 +169,7 @@ const getStatusColor = (status: string): string => {
                         <div class="mb-2 flex items-start">
                             <DynamicIcon
                                 name="help-circle"
-                                class="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-blue-600"
+                                class="mt-1 mr-2 h-5 w-5 shrink-0 text-blue-600"
                             />
                             <div class="flex-1">
                                 <label
@@ -193,7 +193,7 @@ const getStatusColor = (status: string): string => {
                             <div class="flex items-start">
                                 <DynamicIcon
                                     name="check-circle"
-                                    class="mt-1 mr-2 h-5 w-5 flex-shrink-0 text-green-600"
+                                    class="mt-1 mr-2 h-5 w-5 shrink-0 text-green-600"
                                 />
                                 <div class="flex-1">
                                     <label

@@ -104,7 +104,7 @@ const copyToClipboard = async () => {
                 <div class="flex">
                     <DynamicIcon
                         name="information-circle"
-                        class="mr-3 h-5 w-5 flex-shrink-0 text-blue-600"
+                        class="mr-3 h-5 w-5 shrink-0 text-blue-600"
                     />
                     <div class="text-xs text-blue-800 sm:text-sm">
                         <p class="font-medium">Trial Deadline</p>

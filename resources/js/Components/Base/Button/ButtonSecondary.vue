@@ -24,7 +24,6 @@ defineExpose({ focus });
 <template>
     <Button
         ref="buttonRef"
-        class="text-xs tracking-wider uppercase sm:text-sm"
         variant="secondary"
         :disabled="disabled"
         :type="type"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
+import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt/AIProviderLinks.vue';
 </script>
 
 <template>
@@ -8,7 +9,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
         <ExampleStageCard
             :stage="1"
             title="Enter Your Task"
-            description="Start with a simple description"
+            description="Describe what you want to achieve <span class='text-xs sm:text-sm'>(the more information you provide, the better)</span>"
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -35,30 +36,22 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
             <div class="space-y-3">
                 <div>
                     <p
-                        class="mb-2 text-xs font-medium text-purple-950 sm:text-sm"
+                        class="mb-2 text-sm font-medium text-purple-950 sm:text-base"
                     >
-                        What's your business type?
+                        What's your business type? Please specify industry, or
+                        product/service.
                     </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span
-                            class="rounded-full px-3 py-1 text-xs text-purple-600"
-                            >Solopreneur</span
-                        >
-                        <span
-                            class="rounded-full bg-purple-600 px-3 py-1 text-xs text-white"
-                            >B2B SaaS</span
-                        >
-                        <span
-                            class="rounded-full px-3 py-1 text-xs text-purple-600"
-                            >E-commerce</span
-                        >
+                    <div
+                        class="rounded bg-white p-2 text-xs text-indigo-800 sm:text-sm"
+                    >
+                        We create
                     </div>
                 </div>
                 <div>
                     <p
-                        class="mb-2 text-xs font-medium text-purple-950 sm:text-sm"
+                        class="mb-2 text-sm font-medium text-purple-950 sm:text-base"
                     >
-                        Company stage?
+                        Who is the target audience for this marketing strategy?
                     </p>
                     <div class="space-y-1">
                         <div class="flex items-center gap-2 text-xs sm:text-sm">
@@ -92,23 +85,23 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
                 </div>
                 <div class="flex flex-wrap gap-1">
                     <span
-                        class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800"
+                        class="rounded-lg bg-blue-200 px-3 py-1 text-sm text-blue-900 sm:rounded-full dark:bg-blue-300"
                         >Reach</span
                     >
                     <span
-                        class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800"
+                        class="rounded-lg bg-blue-200 px-3 py-1 text-sm text-blue-900 sm:rounded-full dark:bg-blue-300"
                         >Act</span
                     >
                     <span
-                        class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800"
+                        class="rounded-lg bg-blue-200 px-3 py-1 text-sm text-blue-900 sm:rounded-full dark:bg-blue-300"
                         >Convert</span
                     >
                     <span
-                        class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800"
+                        class="rounded-lg bg-blue-200 px-3 py-1 text-sm text-blue-900 sm:rounded-full dark:bg-blue-300"
                         >Engage</span
                     >
                 </div>
-                <p class="text-xs text-indigo-700">
+                <p class="text-sm text-indigo-700 sm:text-base">
                     Best for creating customer-focused marketing strategies that
                     drive measurable results
                 </p>
@@ -123,7 +116,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
             bg-colour="bg-purple-600"
             content-bg-colour="bg-purple-50"
         >
-            <div class="space-y-3 text-xs">
+            <div class="space-y-3 text-sm sm:text-base">
                 <div>
                     <p class="mb-1 font-medium text-purple-950">
                         1. Who is your target audience?
@@ -156,12 +149,12 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
             :stage="5"
             title="Receive Your Optimised Prompt"
             description="Copy and use in any AI tool"
-            bg-colour="bg-green-600"
-            content-bg-colour="bg-green-50"
+            bg-colour="bg-indigo-600"
+            content-bg-colour="bg-indigo-50"
         >
             <div class="space-y-2">
                 <div
-                    class="flex items-center gap-2 text-xs font-medium text-green-700 sm:text-sm"
+                    class="flex items-center gap-2 text-sm font-medium text-indigo-700 sm:text-base"
                 >
                     <svg
                         class="h-5 w-5"
@@ -176,7 +169,9 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
                     </svg>
                     Your prompt is ready!
                 </div>
-                <div class="rounded bg-white p-2 text-xs text-indigo-800">
+                <div
+                    class="rounded bg-white p-2 text-xs text-indigo-800 sm:text-sm"
+                >
                     "Create a comprehensive marketing strategy for a B2B SaaS
                     early-stage startup using the RACE framework (Reach, Act,
                     Convert, Engage). Target audience: mid-size tech companies.
@@ -184,10 +179,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
                     - £5,000/month..."
                 </div>
                 <div class="pt-1">
-                    <span
-                        class="inline-flex items-center rounded bg-indigo-600 px-3 py-1 text-xs font-medium tracking-wider text-white uppercase"
-                        >Copy Prompt</span
-                    >
+                    <AIProviderLinks prompt="" />
                 </div>
             </div>
         </ExampleStageCard>

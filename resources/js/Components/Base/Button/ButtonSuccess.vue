@@ -22,13 +22,7 @@ defineExpose({ focus });
 </script>
 
 <template>
-    <Button
-        ref="buttonRef"
-        class="text-xs tracking-wider uppercase"
-        variant="success"
-        :disabled="disabled"
-        :type="type"
-    >
+    <Button ref="buttonRef" variant="success" :disabled="disabled" :type="type">
         <slot />
     </Button>
 </template>

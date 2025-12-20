@@ -346,7 +346,7 @@ const infoItems = [
                     "
                 />
                 <div
-                    class="flex flex-shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
+                    class="flex shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                 >
                     <span class="text-xs text-indigo-600">
                         {{ content ? `${content.length} characters` : 'N/A' }}

@@ -11,7 +11,7 @@ defineProps<{
 <template>
     <div class="flex items-center gap-3">
         <div
-            class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full"
+            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
             :class="{
                 'bg-indigo-200': status === 'pending',
                 'bg-indigo-600': status === 'active',

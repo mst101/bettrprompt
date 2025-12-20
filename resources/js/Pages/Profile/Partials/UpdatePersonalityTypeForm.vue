@@ -7,6 +7,7 @@ import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
+import LinkText from '@/Components/Base/LinkText.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -124,7 +125,7 @@ const submit = () => {
 
             <div v-if="!visitorMode" class="-ml-4 sm:ml-4">
                 <a
-                    class="underline underline-offset-2"
+                    class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
                     href="https://16personalities.com"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -203,12 +204,11 @@ const submit = () => {
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                     <p class="text-sm text-gray-600">
                         Enter your trait percentages from
-                        <a
-                            class="underline underline-offset-2"
+                        <LinkText
                             href="https://16personalities.com"
                             target="_blank"
                             rel="noopener noreferrer"
-                            >16personalities.com</a
+                            >16personalities.com</LinkText
                         >.
                     </p>
 

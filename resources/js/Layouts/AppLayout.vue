@@ -219,7 +219,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-500 transition duration-150 ease-in-out hover:text-indigo-700 focus:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                                                 aria-label="User menu"
                                             >
                                                 {{

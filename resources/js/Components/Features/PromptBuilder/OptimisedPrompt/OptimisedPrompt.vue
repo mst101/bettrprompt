@@ -119,7 +119,7 @@ const saveEdits = () => {
                 >
                     <DynamicIcon
                         :name="copied ? 'check' : 'clipboard-copy'"
-                        class="h-5 w-5"
+                        class="h-4 w-4"
                     />
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
@@ -182,7 +182,7 @@ const saveEdits = () => {
                 ref="textareaRef"
                 v-model="editedPrompt"
                 data-testid="optimized-prompt-edit"
-                class="space-y-4 font-mono text-sm sm:p-6"
+                class="space-y-4 font-mono text-sm! sm:p-6"
                 label="Optimised Prompt"
                 :rows="15"
                 sr-only-label
@@ -233,14 +233,6 @@ const saveEdits = () => {
                 >
                     Cancel
                 </ButtonSecondary>
-            </div>
-
-            <div class="py-2 text-indigo-800">
-                <p class="text-sm">
-                    <strong>💡 Tip:</strong> Copy this prompt and use it with
-                    your preferred AI assistant (ChatGPT, Claude, etc.) for
-                    better, more personalised responses!
-                </p>
             </div>
 
             <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />

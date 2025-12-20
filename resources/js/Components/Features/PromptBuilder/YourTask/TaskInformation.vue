@@ -159,7 +159,6 @@ watch(
             :sr-only-label="true"
             :disabled="true"
             required
-            :rows="4"
         />
 
         <!-- Edit Mode -->
@@ -170,7 +169,6 @@ watch(
                 v-model="form.task_description"
                 label="Edit Task Description"
                 :sr-only-label="true"
-                :rows="4"
                 :error="form.errors.task_description"
                 required
                 placeholder="Describe the task you want to create a prompt for..."
