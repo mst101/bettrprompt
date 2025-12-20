@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
+import LinkText from '@/Components/Base/LinkText.vue';
 import { ref } from 'vue';
 import CookieSettings from './CookieSettings.vue';
-import LinkText from './LinkText.vue';
 
 const showCookieSettings = ref(false);
 

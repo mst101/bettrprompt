@@ -2,9 +2,9 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
-import BaseAuthModal from '@/Components/BaseAuthModal.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, watch } from 'vue';
+import BaseAuthModal from './BaseAuthModal.vue';
 
 const props = defineProps<{
     show: boolean;

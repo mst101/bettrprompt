@@ -3,7 +3,7 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
-import StageIndicator from '@/Components/Features/PromptBuilder/StageIndicator.vue';
+import StageIndicator from '@/Components/Common/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 interface Props {

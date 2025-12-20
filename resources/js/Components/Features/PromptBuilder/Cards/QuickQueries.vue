@@ -6,7 +6,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
-import ButtonTrash from '@/Components/Features/PromptBuilder/ButtonTrash.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import type {

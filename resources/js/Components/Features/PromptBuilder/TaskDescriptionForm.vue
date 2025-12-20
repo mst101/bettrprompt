@@ -2,7 +2,7 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonVoiceInput from '@/Components/Base/Button/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
-import ButtonTrash from '@/Components/Features/PromptBuilder/ButtonTrash.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import type { InertiaForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 

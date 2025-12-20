@@ -6,6 +6,7 @@ import Tabs, { type Tab } from '@/Components/Base/Tabs.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
+import WorkflowError from '@/Components/Common/WorkflowError.vue';
 import AnalysisProgress from '@/Components/Features/PromptBuilder/AnalysisProgress.vue';
 import AlternativeFrameworks from '@/Components/Features/PromptBuilder/Cards/AlternativeFrameworks.vue';
 import ApiUsage from '@/Components/Features/PromptBuilder/Cards/ApiUsage.vue';
@@ -23,7 +24,6 @@ import TaskInformation from '@/Components/Features/PromptBuilder/Cards/TaskInfor
 import TaskTraitAlignment from '@/Components/Features/PromptBuilder/Cards/TaskTraitAlignment.vue';
 import GenerationProgress from '@/Components/Features/PromptBuilder/GenerationProgress.vue';
 import PreAnalysisProgress from '@/Components/Features/PromptBuilder/PreAnalysisProgress.vue';
-import WorkflowError from '@/Components/Features/PromptBuilder/WorkflowError.vue';
 import { useAlert } from '@/Composables/useAlert';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
