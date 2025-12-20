@@ -12,6 +12,7 @@ interface Props {
     disabled?: boolean;
     type?: 'button' | 'submit' | 'reset';
     loading?: boolean;
+    icon?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     type: 'button',
     loading: false,
+    icon: '',
 });
 
 const buttonClasses = useButtonClasses(props);
@@ -50,11 +52,20 @@ defineExpose({ focus });
         :disabled="disabled || loading"
         :class="mergedClasses"
     >
-        <DynamicIcon
-            v-if="loading"
-            name="arrow-path-spin"
-            class="mr-2 -ml-1 h-4 w-4 animate-spin"
-        />
-        <slot />
+        <span class="flex items-center">
+            <!-- Reserve space for icon during loading to maintain width -->
+            <span
+                v-if="loading || icon"
+                class="mr-2 -ml-1 h-4 w-4 flex-shrink-0"
+            >
+                <DynamicIcon
+                    v-if="loading"
+                    name="arrow-path-spin"
+                    class="h-4 w-4 animate-spin"
+                />
+                <DynamicIcon v-else-if="icon" :name="icon" class="h-4 w-4" />
+            </span>
+            <slot />
+        </span>
     </button>
 </template>

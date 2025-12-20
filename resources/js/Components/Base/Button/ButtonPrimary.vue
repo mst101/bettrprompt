@@ -6,12 +6,14 @@ interface Props {
     disabled?: boolean;
     type?: 'button' | 'submit' | 'reset';
     loading?: boolean;
+    icon?: string;
 }
 
 withDefaults(defineProps<Props>(), {
     disabled: false,
     type: 'button',
     loading: false,
+    icon: '',
 });
 
 const buttonRef = ref<InstanceType<typeof Button> | null>(null);
@@ -30,6 +32,7 @@ defineExpose({ focus });
         :disabled="disabled"
         :type="type"
         :loading="loading"
+        :icon="icon"
     >
         <slot />
     </Button>

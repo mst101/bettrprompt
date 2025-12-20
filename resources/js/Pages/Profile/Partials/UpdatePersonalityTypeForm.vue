@@ -366,11 +366,8 @@ const clearPersonality = async () => {
                     type="submit"
                     :disabled="form.processing"
                     :loading="form.processing"
+                    icon="download"
                 >
-                    <DynamicIcon
-                        name="arrow-down-tray"
-                        class="mr-2 -ml-1 h-4 w-4"
-                    />
                     Save
                 </ButtonPrimary>
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
-import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
@@ -127,11 +126,8 @@ const submit = () => {
                     type="submit"
                     :disabled="form.processing"
                     :loading="form.processing"
+                    icon="download"
                 >
-                    <DynamicIcon
-                        name="arrow-down-tray"
-                        class="mr-2 -ml-1 h-4 w-4"
-                    />
                     Save Team Context
                 </ButtonPrimary>
             </div>

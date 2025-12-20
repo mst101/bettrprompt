@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
-import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
@@ -95,11 +94,8 @@ const submit = () => {
                     type="submit"
                     :disabled="form.processing"
                     :loading="form.processing"
+                    icon="download"
                 >
-                    <DynamicIcon
-                        name="arrow-down-tray"
-                        class="mr-2 -ml-1 h-4 w-4"
-                    />
                     Save
                 </ButtonPrimary>
             </div>
