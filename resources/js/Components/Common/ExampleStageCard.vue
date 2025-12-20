@@ -29,10 +29,10 @@ withDefaults(defineProps<Props>(), {
 
             <!-- Stage content -->
             <div class="flex-1">
-                <h3 class="text-lg font-semibold text-indigo-900">
+                <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
                     {{ title }}
                 </h3>
-                <p class="mt-1 text-sm text-indigo-600">
+                <p class="mt-1 text-xs text-indigo-600 sm:text-sm">
                     {{ description }}
                 </p>
 

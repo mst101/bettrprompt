@@ -34,8 +34,12 @@ const props = defineProps<Props>();
                             <DynamicIcon name="users" class="h-6 w-6" />
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-500">Total Users</p>
-                            <p class="text-2xl font-semibold text-gray-900">
+                            <p class="text-xs text-gray-500 sm:text-sm">
+                                Total Users
+                            </p>
+                            <p
+                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                            >
                                 {{ props.stats.total_users }}
                             </p>
                         </div>
@@ -52,8 +56,12 @@ const props = defineProps<Props>();
                             />
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-500">Prompt Runs</p>
-                            <p class="text-2xl font-semibold text-gray-900">
+                            <p class="text-xs text-gray-500 sm:text-sm">
+                                Prompt Runs
+                            </p>
+                            <p
+                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                            >
                                 {{ props.stats.total_prompt_runs }}
                             </p>
                         </div>
@@ -69,8 +77,12 @@ const props = defineProps<Props>();
                             <DynamicIcon name="tag" class="h-6 w-6" />
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-500">Unique Tasks</p>
-                            <p class="text-2xl font-semibold text-gray-900">
+                            <p class="text-xs text-gray-500 sm:text-sm">
+                                Unique Tasks
+                            </p>
+                            <p
+                                class="text-lg font-semibold text-gray-900 sm:text-2xl"
+                            >
                                 {{ props.stats.unique_tasks }}
                             </p>
                         </div>

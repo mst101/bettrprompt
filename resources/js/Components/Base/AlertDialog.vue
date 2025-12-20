@@ -81,7 +81,7 @@ const handleClose = () => {
 
             <!-- Title -->
             <h3
-                class="mt-4 text-center text-lg font-semibold text-gray-900"
+                class="mt-4 text-center text-base font-semibold text-gray-900 sm:text-lg"
                 data-testid="alert-title"
             >
                 {{ alertState.title }}

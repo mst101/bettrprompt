@@ -117,7 +117,7 @@ const getTypeConfig = (type: string) => {
                     </div>
                     <div class="ml-3 flex-1">
                         <p
-                            class="text-sm font-medium"
+                            class="text-xs font-medium sm:text-sm"
                             :class="getTypeConfig(notification.type).textColor"
                         >
                             {{ notification.message }}

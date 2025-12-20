@@ -32,7 +32,9 @@ const submit = () => {
 <template>
     <Head title="Reset Password" />
 
-    <h1 class="mb-6 text-2xl font-bold text-indigo-900">Create New Password</h1>
+    <h1 class="mb-6 text-lg font-bold text-indigo-900 sm:text-2xl">
+        Create New Password
+    </h1>
 
     <form @submit.prevent="submit">
         <FormInput

@@ -24,15 +24,20 @@ const submit = () => {
 <template>
     <Head title="Forgot Password" />
 
-    <h1 class="mb-6 text-2xl font-bold text-indigo-900">Reset Your Password</h1>
+    <h1 class="mb-6 text-lg font-bold text-indigo-900 sm:text-2xl">
+        Reset Your Password
+    </h1>
 
-    <div class="mb-4 text-sm text-gray-600">
+    <div class="mb-4 text-xs text-gray-600 sm:text-sm">
         Forgot your password? No problem. Just let us know your email address
         and we will email you a password reset link that will allow you to
         choose a new one.
     </div>
 
-    <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+    <div
+        v-if="status"
+        class="mb-4 text-xs font-medium text-green-600 sm:text-sm"
+    >
         {{ status }}
     </div>
 

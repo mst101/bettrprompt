@@ -42,10 +42,14 @@ const closeSettings = () => {
                             class="lg:flex lg:items-center lg:justify-between lg:gap-8"
                         >
                             <div class="flex-1">
-                                <h2 class="text-lg font-semibold text-white">
+                                <h2
+                                    class="text-base font-semibold text-white sm:text-lg"
+                                >
                                     We use cookies
                                 </h2>
-                                <p class="mt-2 text-sm text-gray-300">
+                                <p
+                                    class="mt-2 text-xs text-gray-300 sm:text-sm"
+                                >
                                     We use essential cookies to make our site
                                     work. With your consent, we may also use
                                     non-essential cookies to improve user

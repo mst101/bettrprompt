@@ -66,7 +66,7 @@ const selectTab = (tabId: string) => {
                     activeTab === tab.id
                         ? 'border-indigo-500 text-indigo-600'
                         : 'border-transparent text-indigo-500 hover:border-indigo-300 hover:text-indigo-700',
-                    'group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
+                    'group inline-flex items-center border-b-2 px-1 py-4 text-xs font-medium transition-colors sm:text-sm',
                     'focus:rounded-t-md focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden',
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"

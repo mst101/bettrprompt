@@ -13,10 +13,12 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
             content-bg-colour="bg-indigo-50"
         >
             <div class="space-y-2">
-                <label class="text-xs font-medium text-indigo-700"
+                <label class="text-xs font-medium text-indigo-700 sm:text-sm"
                     >Your task:</label
                 >
-                <div class="rounded bg-white p-3 text-sm text-indigo-700">
+                <div
+                    class="rounded bg-white p-3 text-xs text-indigo-700 sm:text-sm"
+                >
                     I want to create a marketing strategy for my business
                 </div>
             </div>
@@ -32,7 +34,9 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
         >
             <div class="space-y-3">
                 <div>
-                    <p class="mb-2 text-xs font-medium text-purple-950">
+                    <p
+                        class="mb-2 text-xs font-medium text-purple-950 sm:text-sm"
+                    >
                         What's your business type?
                     </p>
                     <div class="flex flex-wrap gap-2">
@@ -51,11 +55,13 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
                     </div>
                 </div>
                 <div>
-                    <p class="mb-2 text-xs font-medium text-purple-950">
+                    <p
+                        class="mb-2 text-xs font-medium text-purple-950 sm:text-sm"
+                    >
                         Company stage?
                     </p>
                     <div class="space-y-1">
-                        <div class="flex items-center gap-2 text-sm">
+                        <div class="flex items-center gap-2 text-xs sm:text-sm">
                             <div
                                 class="flex h-4 w-4 items-center justify-center rounded-full bg-purple-600"
                             >
@@ -80,7 +86,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
         >
             <div class="space-y-2">
                 <div
-                    class="rounded bg-indigo-100 p-2 text-sm font-medium text-indigo-900"
+                    class="rounded bg-indigo-100 p-2 text-xs font-medium text-indigo-900 sm:text-sm"
                 >
                     RACE Framework
                 </div>
@@ -155,7 +161,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
         >
             <div class="space-y-2">
                 <div
-                    class="flex items-center gap-2 text-sm font-medium text-green-700"
+                    class="flex items-center gap-2 text-xs font-medium text-green-700 sm:text-sm"
                 >
                     <svg
                         class="h-5 w-5"

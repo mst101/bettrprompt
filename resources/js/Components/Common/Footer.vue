@@ -22,7 +22,9 @@ const closeCookieSettings = () => {
                 class="flex flex-col items-center justify-between gap-4 sm:flex-row"
             >
                 <!-- Copyright -->
-                <div class="text-center text-sm text-gray-600 sm:text-left">
+                <div
+                    class="text-center text-xs text-gray-600 sm:text-left sm:text-sm"
+                >
                     © {{ new Date().getFullYear() }} BettrPrompt. All rights
                     reserved.
                 </div>

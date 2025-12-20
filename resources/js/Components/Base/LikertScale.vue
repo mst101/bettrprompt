@@ -125,10 +125,10 @@ const selectOption = (value: number) => {
 
         <!-- Labels -->
         <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-teal-600">{{
+            <span class="text-xs font-medium text-teal-600 sm:text-sm">{{
                 leftLabel
             }}</span>
-            <span class="text-sm font-medium text-purple-600">{{
+            <span class="text-xs font-medium text-purple-600 sm:text-sm">{{
                 rightLabel
             }}</span>
         </div>

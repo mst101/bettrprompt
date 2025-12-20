@@ -88,10 +88,10 @@ const submit = () => {
     <ContainerPage>
         <Card>
             <div class="mb-6">
-                <h2 class="text-lg font-semibold text-indigo-900">
+                <h2 class="text-base font-semibold text-indigo-900 sm:text-lg">
                     We'd love to hear from you!
                 </h2>
-                <p class="mt-1 text-sm text-gray-600">
+                <p class="mt-1 text-xs text-gray-600 sm:text-sm">
                     Your feedback will help us decide whether to improve this
                     project - or to abandon it!<br />
                     Please be honest.
@@ -110,11 +110,13 @@ const submit = () => {
                         class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
                     />
                     <div class="flex-1">
-                        <h3 class="font-semibold text-red-900">
+                        <h3
+                            class="text-sm font-semibold text-red-900 sm:text-base"
+                        >
                             Please correct the errors below
                         </h3>
                         <ul
-                            class="mt-2 list-inside list-disc space-y-1 text-sm text-red-700"
+                            class="mt-2 list-inside list-disc space-y-1 text-xs text-red-700 sm:text-sm"
                         >
                             <li
                                 v-if="form.errors.experienceLevel"

@@ -22,7 +22,7 @@ defineOptions({
             <div class="text-center">
                 <!-- Main Heading -->
                 <h1
-                    class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-5xl lg:text-6xl"
+                    class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl lg:text-5xl xl:text-6xl"
                 >
                     The Simple Way to Solve
                     <span
@@ -33,7 +33,9 @@ defineOptions({
                 </h1>
 
                 <!-- Subheading -->
-                <p class="mx-auto mt-6 max-w-2xl text-indigo-600 sm:text-xl">
+                <p
+                    class="mx-auto mt-6 max-w-2xl text-sm sm:text-base lg:text-lg"
+                >
                     Great AI results start with great questions. BettrPrompt
                     transforms your messy, half-formed ideas into structured
                     prompts that get results.
@@ -43,7 +45,7 @@ defineOptions({
                 <div class="mt-10 flex flex-col items-center gap-4">
                     <LinkButton
                         variant="primary"
-                        class="text-lg uppercase"
+                        class="text-sm uppercase sm:text-base lg:text-lg"
                         size="lg"
                         :href="route('prompt-builder.index')"
                     >
@@ -91,7 +93,7 @@ defineOptions({
             <div class="mt-12 sm:mt-24">
                 <div class="text-center">
                     <h2
-                        class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl"
+                        class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
                         Why BettrPrompt Works
                     </h2>

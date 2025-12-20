@@ -32,11 +32,14 @@ const submit = () => {
 <template>
     <Head title="Log in" />
 
-    <h1 class="mb-6 text-2xl font-bold text-indigo-900">
+    <h1 class="mb-6 text-lg font-bold text-indigo-900 sm:text-2xl">
         Log in to Your Account
     </h1>
 
-    <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+    <div
+        v-if="status"
+        class="mb-4 text-xs font-medium text-green-600 sm:text-sm"
+    >
         {{ status }}
     </div>
 
@@ -66,7 +69,9 @@ const submit = () => {
         <div class="mt-4 block">
             <label class="flex items-center">
                 <Checkbox v-model:checked="form.remember" name="remember" />
-                <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                <span class="ms-2 text-xs text-gray-600 sm:text-sm"
+                    >Remember me</span
+                >
             </label>
         </div>
 

@@ -25,7 +25,7 @@ const headingTag = (level: 2 | 3 | 4) => {
 <template>
     <component
         :is="headingTag(level)"
-        class="text-lg font-semibold text-indigo-900"
+        class="text-base font-semibold text-indigo-900 sm:text-lg"
     >
         {{ title }}
     </component>

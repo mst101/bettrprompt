@@ -19,7 +19,7 @@ const variantClasses = {
 <template>
     <div>
         <h1 :class="variantClasses[variant]">{{ title }}</h1>
-        <p v-if="subtitle" class="mt-4 text-lg text-indigo-600">
+        <p v-if="subtitle" class="mt-4 text-sm text-indigo-600 sm:text-lg">
             {{ subtitle }}
         </p>
     </div>

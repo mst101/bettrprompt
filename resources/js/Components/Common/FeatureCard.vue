@@ -31,7 +31,7 @@ defineProps<{
                 />
             </div>
             <div class="flex-1">
-                <h3 class="text-lg font-semibold text-indigo-900">
+                <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
                     {{ title }}
                 </h3>
             </div>

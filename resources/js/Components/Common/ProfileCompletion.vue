@@ -27,8 +27,10 @@ const getCompletionLabel = (percentage: number) => {
 <template>
     <div class="space-y-2">
         <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-gray-900">Profile Completion</p>
-            <span class="text-sm font-medium text-gray-600">
+            <p class="text-xs font-medium text-gray-900 sm:text-sm">
+                Profile Completion
+            </p>
+            <span class="text-xs font-medium text-gray-600 sm:text-sm">
                 {{ percentage }}%
             </span>
         </div>
@@ -41,7 +43,7 @@ const getCompletionLabel = (percentage: number) => {
             />
         </div>
 
-        <p class="text-xs text-gray-500">
+        <p class="text-xs text-gray-500 sm:text-sm">
             {{ getCompletionLabel(percentage) }}
         </p>
     </div>
