@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
+const { success, error } = useNotification();
 
 const form = useForm({
     currentPassword: '',
@@ -18,15 +20,18 @@ const updatePassword = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
+            success('Password updated successfully');
         },
         onError: () => {
             if (form.errors.password) {
                 form.reset('password', 'passwordConfirmation');
                 passwordInput.value?.focus();
+                error(String(form.errors.password));
             }
             if (form.errors.currentPassword) {
                 form.reset('currentPassword');
                 currentPasswordInput.value?.focus();
+                error(String(form.errors.currentPassword));
             }
         },
     });
@@ -83,20 +88,6 @@ const updatePassword = () => {
                 >
                     Save
                 </ButtonPrimary>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-indigo-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
             </div>
         </form>
     </section>

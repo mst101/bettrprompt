@@ -2,17 +2,41 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
     uiComplexity: 'simple' | 'advanced';
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 const form = useForm({
     uiComplexity: props.uiComplexity,
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Interface complexity updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.patch(route('profile.ui-complexity.update'), {
@@ -73,20 +97,6 @@ const submit = () => {
                 >
                     Save
                 </ButtonPrimary>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-indigo-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
             </div>
         </form>
     </section>

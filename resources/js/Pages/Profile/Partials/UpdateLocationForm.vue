@@ -5,8 +5,9 @@ import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 interface SelectOption {
     value: string;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 // Common timezones (still using common ones as not in database)
 const timezones = [
@@ -59,6 +61,27 @@ const form = useForm({
     currencyCode: props.locationData.currencyCode || '',
     languageCode: props.locationData.languageCode || '',
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Location updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const detectedAtFormatted = computed(() => {
     if (!props.locationData.detectedAt) return null;

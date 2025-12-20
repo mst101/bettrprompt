@@ -8,6 +8,7 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 }>();
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+const { success, error } = useNotification();
 
 // Load from user data or visitor props
 const savedPersonalityType = props.visitorMode
@@ -84,6 +86,18 @@ watch(fullPersonalityType, (newValue) => {
     form.personalityType = newValue;
 });
 
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
+
 const submit = () => {
     const routeName = props.visitorMode
         ? 'visitor.personality.update'
@@ -92,6 +106,7 @@ const submit = () => {
     form.patch(route(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
+            success('Personality type updated successfully');
             emit('saved');
             if (!props.visitorMode) {
                 // Show CTA after saving (only for authenticated users)

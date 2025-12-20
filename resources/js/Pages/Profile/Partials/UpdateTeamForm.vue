@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
     teamData: {
@@ -12,6 +14,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 const teamSizeOptions = [
     { value: 'solo', label: 'Just Me (Solo)' },
@@ -40,6 +43,27 @@ const form = useForm({
     teamRole: props.teamData.teamRole || '',
     workMode: props.teamData.workMode || '',
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Team context updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.patch(route('profile.team.update'), {

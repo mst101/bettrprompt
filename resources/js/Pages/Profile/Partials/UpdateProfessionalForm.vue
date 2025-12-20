@@ -2,7 +2,9 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
     professionalData: {
@@ -14,6 +16,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 const experienceLevelOptions = [
     { value: 'entry', label: 'Entry Level' },
@@ -36,6 +39,27 @@ const form = useForm({
     experienceLevel: props.professionalData.experienceLevel || '',
     companySize: props.professionalData.companySize || '',
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Professional information updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.patch(route('profile.professional.update'), {

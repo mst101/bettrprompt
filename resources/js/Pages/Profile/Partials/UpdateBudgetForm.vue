@@ -2,7 +2,9 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
     budgetData: {
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 const budgetOptions = [
     {
@@ -43,6 +46,27 @@ const budgetOptions = [
 const form = useForm({
     budgetConsciousness: props.budgetData.budgetConsciousness || '',
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Budget preferences updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const submit = () => {
     form.patch(route('profile.budget.update'), {

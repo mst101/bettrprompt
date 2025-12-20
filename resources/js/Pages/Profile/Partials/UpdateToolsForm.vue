@@ -3,7 +3,9 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 interface Props {
     toolsData: {
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { success, error } = useNotification();
 
 const toolCategories = {
     'Operating Systems': ['Windows', 'macOS', 'Linux', 'Ubuntu', 'Fedora'],
@@ -71,6 +74,27 @@ const form = useForm({
     primaryProgrammingLanguage:
         props.toolsData.primaryProgrammingLanguage || '',
 });
+
+watch(
+    () => form.recentlySuccessful,
+    (value) => {
+        if (value) {
+            success('Tools & languages updated successfully');
+        }
+    },
+);
+
+watch(
+    () => Object.keys(form.errors).length > 0,
+    (hasErrors) => {
+        if (hasErrors) {
+            const errorMessage = Object.values(form.errors)[0];
+            if (typeof errorMessage === 'string') {
+                error(errorMessage);
+            }
+        }
+    },
+);
 
 const toggleTool = (tool: string) => {
     const index = form.preferredTools.indexOf(tool);
