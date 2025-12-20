@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
@@ -218,6 +219,10 @@ const submit = () => {
                     :disabled="form.processing"
                     :loading="form.processing"
                 >
+                    <DynamicIcon
+                        name="arrow-down-tray"
+                        class="mr-2 -ml-1 h-4 w-4"
+                    />
                     Save Tools & Languages
                 </ButtonPrimary>
             </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
@@ -263,6 +264,10 @@ const clearLocation = async () => {
                     :disabled="form.processing"
                     :loading="form.processing"
                 >
+                    <DynamicIcon
+                        name="arrow-down-tray"
+                        class="mr-2 -ml-1 h-4 w-4"
+                    />
                     Save Location
                 </ButtonPrimary>
 
