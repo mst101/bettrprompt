@@ -18,10 +18,10 @@ defineProps<{
         >
             {{ number }}
         </div>
-        <h3 class="mt-4 text-lg font-semibold text-gray-900 sm:mt-6">
+        <h3 class="mt-4 text-lg font-semibold text-indigo-900 sm:mt-6">
             {{ title }}
         </h3>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="mt-2 text-sm text-gray-600" v-html="description"></p>
+        <p class="mt-2 text-sm text-indigo-700" v-html="description"></p>
     </div>
 </template>

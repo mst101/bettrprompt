@@ -22,7 +22,7 @@ defineOptions({
             <div class="text-center">
                 <!-- Main Heading -->
                 <h1
-                    class="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
+                    class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-5xl lg:text-6xl"
                 >
                     The Simple Way to Solve
                     <span
@@ -33,7 +33,7 @@ defineOptions({
                 </h1>
 
                 <!-- Subheading -->
-                <p class="mx-auto mt-6 max-w-2xl text-gray-600 sm:text-xl">
+                <p class="mx-auto mt-6 max-w-2xl text-indigo-600 sm:text-xl">
                     Great AI results start with great questions. BettrPrompt
                     transforms your messy, half-formed ideas into structured
                     prompts that get results.
@@ -74,6 +74,8 @@ defineOptions({
                         description="Don't know where to start? BettrPrompt asks the right clarifying questions to uncover what you actually need—turning vague ideas into actionable prompts."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
+                        dark-bg-colour="dark:bg-purple-50"
+                        dark-text-colour="dark:text-purple-900"
                     />
 
                     <FeatureCard
@@ -90,7 +92,7 @@ defineOptions({
             <div class="mt-12 sm:mt-24">
                 <div class="text-center">
                     <h2
-                        class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+                        class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl"
                     >
                         Why BettrPrompt Works
                     </h2>
@@ -99,55 +101,35 @@ defineOptions({
                 <div
                     class="mt-4 grid gap-8 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3"
                 >
-                    <div class="rounded-lg bg-indigo-50 p-8">
-                        <h3 class="text-xl font-bold text-indigo-900">
-                            Quality Input = Quality Output
-                        </h3>
-                        <p class="mt-4 text-indigo-900">
-                            Vague questions produce generic answers. BettrPrompt
-                            helps you articulate precisely what you need,
-                            ensuring AI understands your context and delivers
-                            relevant, actionable responses instead of
-                            surface-level suggestions.
-                        </p>
-                    </div>
+                    <FeatureCard
+                        title="Quality Input = Quality Output"
+                        description="Vague questions produce generic answers. BettrPrompt helps you articulate precisely what you need, ensuring AI understands your context and delivers relevant, actionable responses instead of surface-level suggestions."
+                    />
 
-                    <div class="rounded-lg bg-purple-50 p-8">
-                        <h3 class="text-xl font-bold text-purple-900">
-                            Chooses the Right Tool for the Job
-                        </h3>
-                        <p class="mt-4 text-purple-900">
-                            Our system analyses your task and selects the most
-                            appropriate framework from our curated library.
-                            You'll see a few carefully chosen alternatives to
-                            consider, ensuring the best fit without the
-                            paralysis of too many choices.
-                        </p>
-                    </div>
+                    <FeatureCard
+                        title="Chooses the Right Tool for the Job"
+                        description="Our system analyses your task and selects the most appropriate framework from our curated library. You'll see a few carefully chosen alternatives to consider, ensuring the best fit without the paralysis of too many choices."
+                        text-colour="text-purple-900"
+                        dark-bg-colour="dark:bg-purple-50"
+                        dark-text-colour="dark:text-purple-900"
+                    />
 
-                    <div class="rounded-lg bg-indigo-50 p-8">
-                        <h3 class="text-xl font-bold text-indigo-900">
-                            Built on Proven Frameworks
-                        </h3>
-                        <p class="mt-4 text-indigo-900">
-                            Every prompt is structured using established
-                            methodologies like SMART, RICE, and Chain of
-                            Thought. These aren't experimental
-                            approaches—they're time-tested frameworks that
-                            professionals use to think through complex problems
-                            systematically.
-                        </p>
-                    </div>
+                    <FeatureCard
+                        title="Built on Proven Frameworks"
+                        description="Every prompt is structured using established methodologies like SMART, RICE, and Chain of Thought. These aren't experimental approaches—they're time-tested frameworks that professionals use to think through complex problems systematically."
+                    />
                 </div>
             </div>
 
             <!-- How It Works -->
             <div class="mt-12 sm:mt-24">
                 <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                    <h2
+                        class="text-3xl font-bold tracking-tight text-indigo-900"
+                    >
                         How It Works
                     </h2>
-                    <p class="mt-4 text-lg text-gray-600">
+                    <p class="mt-4 text-lg text-indigo-600">
                         Three simple steps to better AI prompts
                     </p>
                 </div>
@@ -180,7 +162,7 @@ defineOptions({
             <div class="mt-12 sm:mt-24">
                 <div class="text-center">
                     <h2
-                        class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+                        class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl"
                     >
                         See BettrPrompt in Action
                     </h2>
