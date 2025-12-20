@@ -13,19 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('Auth/Register');
-    }
-
     /**
      * Handle an incoming registration request.
      *
@@ -94,11 +84,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Redirect to history page if visitor had completed prompts, otherwise to dashboard
+        // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
         if ($claimedCount > 0) {
             return redirect(route('prompt-builder.history', absolute: false));
         }
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('prompt-builder.index', absolute: false));
     }
 }
