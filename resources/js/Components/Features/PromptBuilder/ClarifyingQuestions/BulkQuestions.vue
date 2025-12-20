@@ -6,8 +6,8 @@ import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActi
 import OptionalBadge from '@/Components/Common/OptionalBadge.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
+import type { ClarifyingQuestion } from '@/types/models/ClarifyingQuestion';
 import { ref } from 'vue';
-import type { ClarifyingQuestion } from './clarifyingQuestion.ts';
 
 const props = withDefaults(
     defineProps<{

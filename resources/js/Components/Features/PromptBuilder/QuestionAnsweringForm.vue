@@ -10,7 +10,7 @@ import QuestionNumber from '@/Components/Features/PromptBuilder/QuestionNumber.v
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { computed, nextTick, ref, watch } from 'vue';
 
-import type { ClarifyingQuestion } from '@/Components/Features/PromptBuilder/ClarifyingQuestions/clarifyingQuestion';
+import type { ClarifyingQuestion } from '@/types/models/ClarifyingQuestion';
 
 interface Props {
     question: ClarifyingQuestion | string;

@@ -1,5 +1,6 @@
 // Auto-generated index file for model types
 
+export * from './ClarifyingQuestion';
 export * from './ClaudeModel';
 export * from './Country';
 export * from './Currency';

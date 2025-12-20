@@ -5,12 +5,12 @@ import Card from '@/Components/Base/Card.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/QuestionAnsweringForm.vue';
 import type { PromptRunResource } from '@/types';
+import type { ClarifyingQuestion } from '@/types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
 import AnsweredList from './AnsweredList.vue';
 import BulkQuestions from './BulkQuestions.vue';
-import type { ClarifyingQuestion } from './clarifyingQuestion.ts';
 
 interface Props {
     promptRun: PromptRunResource;
