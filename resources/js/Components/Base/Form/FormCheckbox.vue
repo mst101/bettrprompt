@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 interface Props {
     id: string;
     modelValue?: boolean | unknown[];
-    value?: string | number | boolean;
+    value?: string | number | boolean | null;
     label?: string;
     disabled?: boolean;
     error?: string;
@@ -26,30 +24,24 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean | unknown[]): void;
 }>();
 
-const isChecked = computed({
-    get() {
-        if (Array.isArray(props.modelValue)) {
-            return props.modelValue.includes(props.value);
-        }
-        return props.modelValue;
-    },
-    set(checked) {
-        if (Array.isArray(props.modelValue)) {
-            const updatedValue = [...props.modelValue];
-            if (checked) {
-                updatedValue.push(props.value);
-            } else {
-                const index = updatedValue.indexOf(props.value);
-                if (index !== -1) {
-                    updatedValue.splice(index, 1);
-                }
-            }
-            emit('update:modelValue', updatedValue);
-        } else {
-            emit('update:modelValue', checked);
-        }
-    },
-});
+function isCheckedValue(): boolean {
+    if (Array.isArray(props.modelValue)) {
+        return props.modelValue.includes(props.value);
+    }
+    return props.modelValue;
+}
+
+function handleChange(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (Array.isArray(props.modelValue)) {
+        const updatedValue = checked
+            ? [...new Set([...props.modelValue, props.value])]
+            : props.modelValue.filter((v) => v !== props.value);
+        emit('update:modelValue', updatedValue);
+    } else {
+        emit('update:modelValue', checked);
+    }
+}
 </script>
 
 <template>
@@ -57,11 +49,12 @@ const isChecked = computed({
         <div class="flex items-center">
             <input
                 :id="id"
-                v-model="isChecked"
+                :checked="isCheckedValue()"
                 type="checkbox"
                 :name="name"
                 class="size-4 rounded-md border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                 :disabled="disabled"
+                @change="handleChange"
             />
             <label
                 v-if="label"
