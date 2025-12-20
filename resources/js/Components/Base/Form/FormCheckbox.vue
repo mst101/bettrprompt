@@ -9,6 +9,7 @@ interface Props {
     disabled?: boolean;
     error?: string;
     helpText?: string;
+    name?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     error: '',
     helpText: '',
+    name: '',
 });
 
 const emit = defineEmits<{
@@ -57,6 +59,7 @@ const isChecked = computed({
                 :id="id"
                 v-model="isChecked"
                 type="checkbox"
+                :name="name"
                 class="size-4 rounded-md border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                 :disabled="disabled"
             />

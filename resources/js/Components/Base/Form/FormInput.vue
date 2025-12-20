@@ -34,11 +34,11 @@ const autofillStyles = computed(() => {
     const isDark = themeStore.theme === 'dark';
     return {
         '--autofill-text-color': isDark
-            ? 'rgb(224, 231, 255)'
-            : 'rgb(49, 46, 129)',
+            ? 'rgb(224, 231, 254)'
+            : 'rgb(64, 60, 118)',
         '--autofill-bg-color': isDark
-            ? 'rgb(49, 46, 129)'
-            : 'rgb(238, 235, 254)',
+            ? 'rgb(64, 60, 118)'
+            : 'rgb(239, 242, 253)',
     };
 });
 
