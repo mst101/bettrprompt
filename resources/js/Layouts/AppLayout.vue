@@ -149,7 +149,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
             <nav class="bg-white shadow-xs shadow-indigo-50">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
+                    <div class="flex h-18 justify-between">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">

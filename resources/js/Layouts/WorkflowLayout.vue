@@ -48,7 +48,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <!-- Navigation Bar -->
         <nav class="border-b border-indigo-200 bg-white shadow-sm">
             <div class="max-w-8xl mx-auto px-4 sm:px-4">
-                <div class="flex h-16 items-center justify-between">
+                <div class="flex h-18 items-center justify-between">
                     <!-- Logo -->
                     <div class="flex shrink-0 items-center">
                         <Link
