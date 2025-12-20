@@ -125,20 +125,22 @@ const submit = () => {
 
 const { confirm } = useAlert();
 
-const clearTraitPercentages = async () => {
+const clearPersonality = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all trait percentages?',
-        'Clear Trait Percentages',
+        'Are you sure you want to clear all personality information?',
+        'Clear Personality',
         { confirmButtonStyle: 'danger', confirmText: 'Clear' },
     );
 
     if (confirmed) {
+        personalityBase.value = '';
+        identity.value = '';
         form.traitPercentages.mind = null;
         form.traitPercentages.energy = null;
         form.traitPercentages.nature = null;
         form.traitPercentages.tactics = null;
         form.traitPercentages.identity = null;
-        success('Trait percentages cleared');
+        success('Personality information cleared');
     }
 };
 </script>
@@ -347,9 +349,9 @@ const clearTraitPercentages = async () => {
                 </ButtonPrimary>
 
                 <ButtonTrash
-                    v-if="personalityBase && showTraitPercentages"
-                    label="Clear Trait Percentages"
-                    @clear="clearTraitPercentages"
+                    v-if="personalityBase"
+                    label="Clear Personality"
+                    @clear="clearPersonality"
                 />
 
                 <!-- Persist CTA after a successful save in this session -->
