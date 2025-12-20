@@ -9,7 +9,7 @@ interface PromptRun {
     id: number;
     personalityType: string | null;
     selectedFramework: string | null;
-    status: string;
+    workflowStage: string;
     createdAt: string;
     user: {
         id: number;
@@ -30,14 +30,15 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const getStatusColor = (status: string): string => {
+const getStatusColor = (workflowStage: string): string => {
+    // Extract the status part from workflow stage (e.g., "1_processing" -> "processing")
+    const statusPart = workflowStage.split('_').pop() || '';
     const colors: Record<string, string> = {
-        pending: 'bg-gray-100 text-gray-800',
         processing: 'bg-blue-100 text-blue-800',
         completed: 'bg-green-100 text-green-800',
         failed: 'bg-red-100 text-red-800',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[statusPart] || 'bg-gray-100 text-gray-800';
 };
 
 const handleRowClick = (event: MouseEvent, runId: number): void => {
@@ -190,10 +191,10 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     <span
                                         :class="[
                                             'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
-                                            getStatusColor(run.status),
+                                            getStatusColor(run.workflowStage),
                                         ]"
                                     >
-                                        {{ run.status }}
+                                        {{ run.workflowStage }}
                                     </span>
                                 </td>
                                 <td

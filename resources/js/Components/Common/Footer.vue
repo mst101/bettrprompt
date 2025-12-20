@@ -16,14 +16,14 @@ const closeCookieSettings = () => {
 </script>
 
 <template>
-    <footer class="border-t border-indigo-100 bg-white">
+    <footer class="border-t border-indigo-100 bg-white dark:border-indigo-50">
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div
                 class="flex flex-col items-center justify-between gap-4 sm:flex-row"
             >
                 <!-- Copyright -->
                 <div
-                    class="text-center text-xs text-gray-600 sm:text-left sm:text-sm"
+                    class="text-center text-xs text-indigo-800 sm:text-left sm:text-sm"
                 >
                     © {{ new Date().getFullYear() }} BettrPrompt. All rights
                     reserved.

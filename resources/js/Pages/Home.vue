@@ -34,7 +34,7 @@ defineOptions({
 
                 <!-- Subheading -->
                 <p
-                    class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-lg"
+                    class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-xl"
                 >
                     Great AI results start with great questions. BettrPrompt
                     transforms your messy, half-formed ideas into structured
@@ -46,7 +46,7 @@ defineOptions({
             </div>
 
             <!-- Features Grid -->
-            <div class="mt-8 sm:mt-24">
+            <div class="mt-8 sm:mt-16">
                 <h2 class="sr-only">Features</h2>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
