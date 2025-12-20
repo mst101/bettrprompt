@@ -5,11 +5,13 @@ import { ref } from 'vue';
 interface Props {
     disabled?: boolean;
     type?: 'button' | 'submit' | 'reset';
+    icon?: string;
 }
 
 withDefaults(defineProps<Props>(), {
     disabled: false,
     type: 'button',
+    icon: '',
 });
 
 const buttonRef = ref<InstanceType<typeof Button> | null>(null);
@@ -27,6 +29,7 @@ defineExpose({ focus });
         variant="secondary"
         :disabled="disabled"
         :type="type"
+        :icon="icon"
     >
         <slot />
     </Button>

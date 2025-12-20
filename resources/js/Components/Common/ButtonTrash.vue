@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
-import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 
 interface Props {
     disabled?: boolean;
@@ -23,9 +22,9 @@ const emit = defineEmits<{
         size="sm"
         :title="`${label} text`"
         :disabled="disabled"
+        icon="trash"
         @click="emit('clear')"
     >
-        <DynamicIcon name="trash" class="h-5 w-5 text-indigo-800" />
-        <span>{{ label }}</span>
+        {{ label }}
     </ButtonSecondary>
 </template>

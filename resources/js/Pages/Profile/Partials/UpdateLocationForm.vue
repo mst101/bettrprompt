@@ -270,6 +270,7 @@ const clearLocation = async () => {
                 <ButtonSecondary
                     type="button"
                     :disabled="form.processing"
+                    icon="sparkles"
                     @click="detectLocation"
                 >
                     Auto-Detect

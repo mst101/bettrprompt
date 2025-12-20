@@ -193,7 +193,7 @@ const clearPersonality = async () => {
                 >
                     <DynamicIcon
                         name="personalities"
-                        class="my-2 h-16 w-full rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100 sm:mt-0 sm:h-fit sm:w-80"
+                        class="my-2 h-20 w-full rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100 sm:mt-0 sm:h-fit sm:w-80"
                     />
                 </a>
             </div>
