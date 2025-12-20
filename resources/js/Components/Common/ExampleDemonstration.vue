@@ -37,7 +37,8 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         product/service.
                     </p>
                     <div class="rounded bg-white p-2 text-indigo-800">
-                        We create
+                        B2B SaaS startup offering project management and team
+                        collaboration tools
                     </div>
                 </div>
                 <div>
@@ -110,10 +111,12 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
             <div class="space-y-3">
                 <div>
                     <p class="mb-1 font-medium text-purple-950">
-                        1. Who is your target audience?
+                        1. What's your main customer acquisition challenge right
+                        now?
                     </p>
                     <div class="rounded bg-white p-2 text-purple-950">
-                        Mid-size tech companies looking to streamline operations
+                        Low brand awareness in a crowded market; struggling to
+                        reach decision-makers
                     </div>
                 </div>
                 <div>
