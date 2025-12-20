@@ -1,5 +1,5 @@
-import { useCookieConsent } from '@/Composables/useCookieConsent';
-import type { CookiePreferences } from '@/constants/cookies';
+import { useCookieConsent } from '@/Composables/features/useCookieConsent';
+import type { CookiePreferences } from '@/Constants/cookies';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useCookieConsent', () => {

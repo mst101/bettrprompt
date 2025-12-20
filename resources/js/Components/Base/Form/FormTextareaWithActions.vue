@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
-import type { FormTextareaProps } from '@/types';
+import type { FormTextareaProps } from '@/Types';
 import { ref } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {

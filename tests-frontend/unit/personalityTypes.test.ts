@@ -1,7 +1,7 @@
 import {
     getFullPersonalityType,
     getPersonalityTypeName,
-} from '@/utils/personalityTypes';
+} from '@/Utils/data/personalityTypes';
 import { describe, expect, it } from 'vitest';
 
 describe('personalityTypes utilities', () => {

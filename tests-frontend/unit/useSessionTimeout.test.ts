@@ -1,4 +1,4 @@
-import { useSessionTimeout } from '@/Composables/useSessionTimeout';
+import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import { router } from '@inertiajs/vue3';
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +15,7 @@ vi.mock('@inertiajs/vue3', () => ({
 const mockWarning = vi.fn();
 const mockError = vi.fn();
 
-vi.mock('@/Composables/useNotification', () => ({
+vi.mock('@/Composables/ui/useNotification', () => ({
     useNotification: () => ({
         warning: mockWarning,
         error: mockError,

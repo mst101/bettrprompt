@@ -3,9 +3,9 @@ import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
-import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/PersonalityTypePrompt.vue';
-import TaskDescriptionForm from '@/Components/Features/PromptBuilder/TaskDescriptionForm.vue';
-import { useTextAppend } from '@/Composables/useTextAppend';
+import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/Forms/PersonalityTypePrompt.vue';
+import TaskDescriptionForm from '@/Components/Features/PromptBuilder/Forms/TaskDescriptionForm.vue';
+import { useTextAppend } from '@/Composables/features/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import {

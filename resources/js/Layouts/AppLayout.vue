@@ -14,7 +14,7 @@ import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
 import CookieBanner from '@/Components/Common/CookieBanner.vue';
 import Footer from '@/Components/Common/Footer.vue';
 import NotificationCenter from '@/Components/Common/NotificationCenter.vue';
-import { useSessionTimeout } from '@/Composables/useSessionTimeout';
+import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {

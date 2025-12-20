@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { useStatusBadge, type StatusType } from '@/Composables/useStatusBadge';
+import {
+    useStatusBadge,
+    type StatusType,
+} from '@/Composables/ui/useStatusBadge';
 import { computed } from 'vue';
 
 interface Props {

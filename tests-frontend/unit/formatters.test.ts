@@ -1,4 +1,4 @@
-import { formatDate, truncateText } from '@/utils/formatters';
+import { formatDate, truncateText } from '@/Utils/formatting/formatters';
 import { describe, expect, it } from 'vitest';
 
 describe('formatters utilities', () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormInputProps, Nullable } from '@/types';
+import type { FormInputProps, Nullable } from '@/Types';
 import { onMounted, ref } from 'vue';
 
 const props = withDefaults(defineProps<FormInputProps>(), {

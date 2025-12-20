@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@/Composables/useLocalStorage';
+import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 

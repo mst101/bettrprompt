@@ -149,7 +149,7 @@ const getStatusColor = (status: string): string => {
                 </div>
             </Card>
 
-            <!-- Clarifying ClarifyingQuestions & Answers -->
+            <!-- Clarifying Questions & Answers -->
             <Card
                 v-if="
                     props.promptRun.frameworkQuestions &&

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormSelectProps, Nullable } from '@/types';
+import type { FormSelectProps, Nullable } from '@/Types';
 import { onMounted, ref } from 'vue';
 
 const props = withDefaults(defineProps<FormSelectProps>(), {

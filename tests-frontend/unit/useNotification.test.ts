@@ -1,4 +1,4 @@
-import { useNotification } from '@/Composables/useNotification';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useNotification', () => {

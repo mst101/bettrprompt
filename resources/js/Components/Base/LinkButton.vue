@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useButtonClasses } from '@/Composables/useButtonClasses';
+import { useButtonClasses } from '@/Composables/ui/useButtonClasses';
 import { Link } from '@inertiajs/vue3';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';

@@ -1,4 +1,4 @@
-import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
+import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';

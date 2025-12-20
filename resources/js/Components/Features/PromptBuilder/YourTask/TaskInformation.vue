@@ -6,8 +6,8 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
-import { useTextAppend } from '@/Composables/useTextAppend';
-import type { PromptRunResource } from '@/types';
+import { useTextAppend } from '@/Composables/features/useTextAppend';
+import type { PromptRunResource } from '@/Types';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
 

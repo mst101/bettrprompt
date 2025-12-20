@@ -4,7 +4,7 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
-import { useAlert } from '@/Composables/useAlert';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { computed } from 'vue';
 
 const { alertState, closeAlert } = useAlert();

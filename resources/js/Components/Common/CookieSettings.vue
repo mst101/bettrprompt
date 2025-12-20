@@ -4,8 +4,8 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import FormToggle from '@/Components/Base/Form/FormToggle.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
-import { useCookieConsent } from '@/Composables/useCookieConsent';
-import { COOKIE_CATEGORIES, type CookiePreferences } from '@/constants/cookies';
+import { useCookieConsent } from '@/Composables/features/useCookieConsent';
+import { COOKIE_CATEGORIES, type CookiePreferences } from '@/Constants/cookies';
 import { computed, ref, watch } from 'vue';
 
 interface Props {

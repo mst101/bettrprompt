@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormTextareaProps } from '@/types';
+import type { FormTextareaProps } from '@/Types';
 import { computed, nextTick, ref, watch } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {

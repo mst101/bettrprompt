@@ -3,8 +3,8 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
-import type { PromptRunResource } from '@/types';
-import { truncateText } from '@/utils/formatters';
+import type { PromptRunResource } from '@/Types';
+import { truncateText } from '@/Utils/formatting/formatters';
 
 interface Props {
     parent?: PromptRunResource | null;

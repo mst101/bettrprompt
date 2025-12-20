@@ -109,7 +109,7 @@ import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
             </div>
         </ExampleStageCard>
 
-        <!-- Stage 4: Clarifying ClarifyingQuestions -->
+        <!-- Stage 4: Clarifying Questions -->
         <ExampleStageCard
             :stage="4"
             title="Answer Clarifying Questions"

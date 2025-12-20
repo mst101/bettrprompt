@@ -7,12 +7,12 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
-import QuestionNumber from '@/Components/Features/PromptBuilder/QuestionNumber.vue';
-import { useTextAppend } from '@/Composables/useTextAppend';
+import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
+import { useTextAppend } from '@/Composables/features/useTextAppend';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
-} from '@/types/resources/PromptRunResource';
+} from '@/Types/resources/PromptRunResource';
 import { router, useForm } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch, watchEffect } from 'vue';
 

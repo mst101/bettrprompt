@@ -7,27 +7,27 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
 import WorkflowError from '@/Components/Common/WorkflowError.vue';
-import AnalysisProgress from '@/Components/Features/PromptBuilder/AnalysisProgress.vue';
-import ApiUsage from '@/Components/Features/PromptBuilder/ApiUsage/Index.vue';
-import ClarifyingQuestions from '@/Components/Features/PromptBuilder/ClarifyingQuestions/Index.vue';
+import ApiUsage from '@/Components/Features/PromptBuilder/ApiUsage/ApiUsage.vue';
+import ClarifyingQuestions from '@/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue';
 import AlternativeFrameworks from '@/Components/Features/PromptBuilder/Framework/AlternativeFrameworks.vue';
 import SelectedFramework from '@/Components/Features/PromptBuilder/Framework/SelectedFramework.vue';
-import GenerationProgress from '@/Components/Features/PromptBuilder/GenerationProgress.vue';
-import OptimizedPrompt from '@/Components/Features/PromptBuilder/OptimisedPrompt/Index.vue';
+import OptimizedPrompt from '@/Components/Features/PromptBuilder/OptimisedPrompt/OptimisedPrompt.vue';
 import PersonalityAdjustments from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustmentsSummary.vue';
 import TaskTraitAlignment from '@/Components/Features/PromptBuilder/Personality/TaskTraitAlignment.vue';
-import PreAnalysisProgress from '@/Components/Features/PromptBuilder/PreAnalysisProgress.vue';
-import Recommendations from '@/Components/Features/PromptBuilder/Recommendations/Index.vue';
+import AnalysisProgress from '@/Components/Features/PromptBuilder/Progress/AnalysisProgress.vue';
+import GenerationProgress from '@/Components/Features/PromptBuilder/Progress/GenerationProgress.vue';
+import PreAnalysisProgress from '@/Components/Features/PromptBuilder/Progress/PreAnalysisProgress.vue';
+import Recommendations from '@/Components/Features/PromptBuilder/Recommendations/Recommendations.vue';
 import CognitiveRequirements from '@/Components/Features/PromptBuilder/YourTask/CognitiveRequirements.vue';
 import QuickQueries from '@/Components/Features/PromptBuilder/YourTask/QuickQueries.vue';
 import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
-import { useAlert } from '@/Composables/useAlert';
-import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
+import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
+import { useAlert } from '@/Composables/ui/useAlert';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { ClaudeModel, PromptRunResource } from '@/types';
+import type { ClaudeModel, PromptRunResource } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 
@@ -118,7 +118,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'questions',
-            label: 'Clarifying ClarifyingQuestions',
+            label: 'Clarifying Questions',
             icon: 'question-mark-circle',
         });
     }

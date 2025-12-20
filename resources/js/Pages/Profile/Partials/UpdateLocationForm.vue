@@ -4,7 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
-import { useAlert } from '@/Composables/useAlert';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 

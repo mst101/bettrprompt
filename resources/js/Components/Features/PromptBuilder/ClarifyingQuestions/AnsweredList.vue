@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClarifyingQuestion } from '@/types/models/ClarifyingQuestion';
+import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 
 defineProps<{
     questions: ClarifyingQuestion[];

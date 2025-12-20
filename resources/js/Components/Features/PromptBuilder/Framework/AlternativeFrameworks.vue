@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
-import { useAlert } from '@/Composables/useAlert';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 

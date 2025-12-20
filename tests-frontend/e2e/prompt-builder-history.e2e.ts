@@ -672,7 +672,7 @@ test.describe('Prompt Builder History - Navigation', () => {
         expect(page.url()).toContain('/prompt-builder');
     });
 
-    test('should show Clarifying ClarifyingQuestions tab when Framework has been viewed before', async ({
+    test('should show Clarifying Questions tab when Framework has been viewed before', async ({
         authenticatedPage,
     }) => {
         // Create a prompt run in completed state (without navigating to it yet)
@@ -693,13 +693,13 @@ test.describe('Prompt Builder History - Navigation', () => {
         // Now navigate to prompt details - the component will check the localStorage flag on mount
         await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
 
-        // Should see the Clarifying ClarifyingQuestions tab content displayed
+        // Should see the Clarifying Questions tab content displayed
         const clarifyingQuestionsContent = authenticatedPage.locator(
             '[data-testid="tab-questions"]',
         );
         await expect(clarifyingQuestionsContent).toBeVisible();
 
-        // Verify the Clarifying ClarifyingQuestions tab button is styled as active
+        // Verify the Clarifying Questions tab button is styled as active
         const clarifyingQuestionsButton = authenticatedPage.locator(
             '[data-testid="tab-button-questions"]',
         );

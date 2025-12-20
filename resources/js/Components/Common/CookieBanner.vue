@@ -2,7 +2,7 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
-import { useCookieConsent } from '@/Composables/useCookieConsent';
+import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import { ref } from 'vue';
 import CookieSettings from './CookieSettings.vue';
 

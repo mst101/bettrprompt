@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import { useThemeStore } from '@/stores/themeStore';
+import { useThemeStore } from '@/Stores/themeStore';
 import { computed } from 'vue';
 
 const themeStore = useThemeStore();

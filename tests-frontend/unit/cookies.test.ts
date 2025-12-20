@@ -1,4 +1,4 @@
-import { getCookie, getCsrfToken } from '@/utils/cookies';
+import { getCookie, getCsrfToken } from '@/Utils/cookies';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('cookies utilities', () => {

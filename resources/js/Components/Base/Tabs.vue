@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
-import type { SelectOption } from '@/types';
+import type { SelectOption } from '@/Types';
 import { computed } from 'vue';
 
 export interface Tab {

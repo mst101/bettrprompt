@@ -20,15 +20,15 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/terms', function () {
-    return Inertia::render('Terms');
+    return Inertia::render('Legal/Terms');
 })->name('terms');
 
 Route::get('/privacy', function () {
-    return Inertia::render('Privacy');
+    return Inertia::render('Legal/Privacy');
 })->name('privacy');
 
 Route::get('/cookies', function () {
-    return Inertia::render('Cookies');
+    return Inertia::render('Legal/Cookies');
 })->name('cookies');
 
 // Google OAuth routes

@@ -7,12 +7,12 @@ import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
-import { useAlert } from '@/Composables/useAlert';
-import { useLocalStorage } from '@/Composables/useLocalStorage';
+import { useLocalStorage } from '@/Composables/data/useLocalStorage';
+import { useAlert } from '@/Composables/ui/useAlert';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { Paginated, PromptRunResource } from '@/types';
-import { formatDate, truncateText } from '@/utils/formatters';
-import { getFullPersonalityType } from '@/utils/personalityTypes';
+import type { Paginated, PromptRunResource } from '@/Types';
+import { getFullPersonalityType } from '@/Utils/data/personalityTypes';
+import { formatDate, truncateText } from '@/Utils/formatting/formatters';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 

@@ -194,7 +194,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
-        // Click on the Clarifying ClarifyingQuestions tab
+        // Click on the Clarifying Questions tab
         const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
             name: /clarifying questions/i,
         });
@@ -419,7 +419,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Navigate to Clarifying ClarifyingQuestions tab
+        // Navigate to Clarifying Questions tab
         const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
             name: /clarifying questions/i,
         });
@@ -480,7 +480,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Navigate to Clarifying ClarifyingQuestions tab
+        // Navigate to Clarifying Questions tab
         const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
             name: /clarifying questions/i,
         });

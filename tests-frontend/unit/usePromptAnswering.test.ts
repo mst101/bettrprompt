@@ -1,4 +1,4 @@
-import { usePromptAnswering } from '@/Composables/usePromptAnswering';
+import { usePromptAnswering } from '@/Composables/features/usePromptAnswering';
 import { router } from '@inertiajs/vue3';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import { useAudioRecording } from '@/Composables/useAudioRecording';
+import { useAudioRecording } from '@/Composables/features/useAudioRecording';
 import { computed } from 'vue';
 
 defineProps<{

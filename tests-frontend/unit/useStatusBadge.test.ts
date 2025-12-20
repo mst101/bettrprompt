@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useStatusBadge } from '@/Composables/useStatusBadge';
+import { useStatusBadge } from '@/Composables/ui/useStatusBadge';
 import { describe, expect, it } from 'vitest';
 
 describe('useStatusBadge', () => {
@@ -47,7 +47,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('0_completed');
 
-        expect(config.label).toBe('Awaiting ClarifyingQuestions');
+        expect(config.label).toBe('Awaiting Questions');
         expect(config.colorClass).toBe('bg-yellow-100 text-yellow-800');
     });
 

@@ -1,4 +1,4 @@
-import { useAlert } from '@/Composables/useAlert';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { describe, expect, it } from 'vitest';
 
 describe('useAlert', () => {

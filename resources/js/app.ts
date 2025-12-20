@@ -6,8 +6,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import { useNotification } from './Composables/useNotification';
-import { getCookie, getCsrfToken } from './utils/cookies';
+import { useNotification } from './Composables/ui/useNotification';
+import { getCookie, getCsrfToken } from './Utils/cookies';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();

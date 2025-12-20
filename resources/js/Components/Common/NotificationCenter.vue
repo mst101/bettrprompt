@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import { useNotification } from '@/Composables/useNotification';
+import { useNotification } from '@/Composables/ui/useNotification';
 import { usePage } from '@inertiajs/vue3';
 import { computed, onMounted, TransitionGroup } from 'vue';
 

@@ -1,4 +1,4 @@
-import { useTextAppend } from '@/Composables/useTextAppend';
+import { useTextAppend } from '@/Composables/features/useTextAppend';
 import { describe, expect, it } from 'vitest';
 
 describe('useTextAppend', () => {

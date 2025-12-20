@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import { useButtonClasses } from '@/Composables/useButtonClasses';
+import { useButtonClasses } from '@/Composables/ui/useButtonClasses';
 import { computed, ref, useAttrs } from 'vue';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
