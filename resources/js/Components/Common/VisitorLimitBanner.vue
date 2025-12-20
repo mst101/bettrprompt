@@ -32,10 +32,10 @@ defineEmits<{
                         class="mt-0.5 h-6 w-6 shrink-0"
                     />
                     <div>
-                        <p class="text-sm font-semibold sm:text-base">
+                        <p class="font-semibold">
                             You've created your first optimised prompt!
                         </p>
-                        <p class="mt-1 text-xs text-indigo-100 sm:text-sm">
+                        <p class="mt-1 text-indigo-100">
                             Create a free account to save your prompts, create
                             new ones, and iterate on existing ones.
                         </p>
@@ -59,12 +59,12 @@ defineEmits<{
                 name="information-circle"
                 class="mt-0.5 h-6 w-6 shrink-0 text-indigo-600"
             />
-            <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
+            <h3 class="font-semibold text-indigo-900">
                 You've reached your visitor limit
             </h3>
         </div>
         <div>
-            <p class="mt-2 text-sm text-indigo-700">
+            <p class="mt-2 text-indigo-700">
                 You've already created an optimised prompt as a visitor. To see
                 your existing prompts, create more prompts, and iterate on
                 existing ones, you'll need to create a free account.

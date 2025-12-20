@@ -46,10 +46,7 @@ function updateValue(event: Event): void {
 
 <template>
     <div>
-        <label
-            :for="id"
-            class="block text-sm font-medium text-indigo-900 sm:text-base"
-        >
+        <label :for="id" class="block font-medium text-indigo-900">
             {{ label }}
             <span v-if="required" class="text-red-500">*</span>
         </label>
@@ -73,13 +70,13 @@ function updateValue(event: Event): void {
             @focus="$emit('focus', $event)"
         />
 
-        <p v-if="helpText" class="mt-1 text-xs text-indigo-600 sm:text-sm">
+        <p v-if="helpText" class="mt-1 text-indigo-600">
             {{ helpText }}
         </p>
 
         <slot name="help" />
 
-        <p v-if="error" class="mt-1 text-sm text-red-600 sm:text-base">
+        <p v-if="error" class="mt-1 text-red-600">
             {{ error }}
         </p>
     </div>

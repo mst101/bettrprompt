@@ -29,13 +29,10 @@ withDefaults(defineProps<Props>(), {
 
             <!-- Stage content -->
             <div class="flex-1">
-                <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
+                <h3 class="font-semibold text-indigo-900">
                     {{ title }}
                 </h3>
-                <p
-                    class="mt-1 text-sm text-indigo-600 sm:text-base"
-                    v-html="description"
-                ></p>
+                <p class="mt-1 text-indigo-600" v-html="description"></p>
 
                 <!-- Content panel (example content) -->
                 <div :class="[contentBgColour, 'mt-3 rounded-lg p-4']">

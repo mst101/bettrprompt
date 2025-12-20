@@ -31,12 +31,12 @@ defineProps<{
                 />
             </div>
             <div class="flex-1">
-                <h3 class="text-base font-semibold text-indigo-900 sm:text-lg">
+                <h3 class="font-semibold text-indigo-900">
                     {{ title }}
                 </h3>
             </div>
         </div>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="mt-4 text-sm sm:text-base" v-html="description"></p>
+        <p class="mt-4" v-html="description"></p>
     </div>
 </template>
