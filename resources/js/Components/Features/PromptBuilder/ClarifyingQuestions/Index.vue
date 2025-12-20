@@ -3,14 +3,14 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
-import type { ClarifyingQuestion } from '@/Components/Features/PromptBuilder/Cards/clarifyingQuestion';
-import AnsweredList from '@/Components/Features/PromptBuilder/Cards/ClarifyingQuestions/AnsweredList.vue';
-import BulkQuestions from '@/Components/Features/PromptBuilder/Cards/ClarifyingQuestions/BulkQuestions.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/QuestionAnsweringForm.vue';
 import type { PromptRunResource } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
+import AnsweredList from './AnsweredList.vue';
+import BulkQuestions from './BulkQuestions.vue';
+import type { ClarifyingQuestion } from './clarifyingQuestion.ts';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -46,7 +46,7 @@ const optionalQuestions = computed<ClarifyingQuestion[]>(() =>
     allQuestions.value.filter((q) => q.required === false),
 );
 
-// Questions are already sorted by the backend (required first)
+// ClarifyingQuestions are already sorted by the backend (required first)
 const questions = computed<ClarifyingQuestion[]>(() => {
     return allQuestions.value;
 });
@@ -515,7 +515,7 @@ const optionalQuestionsLabel = computed(() => {
             @toggle-show-all="showAllQuestions = !showAllQuestions"
         />
 
-        <!-- Answering mode (bulk) or Editing mode: Bulk Questions -->
+        <!-- Answering mode (bulk) or Editing mode: Bulk ClarifyingQuestions -->
         <BulkQuestions
             v-if="shouldShowBulkQuestions"
             ref="bulkQuestionsRef"

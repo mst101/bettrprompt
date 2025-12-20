@@ -41,7 +41,7 @@ export function useStatusBadge() {
         // Awaiting user action: 0_completed, 1_completed (waiting for user input)
         if (workflowStage === '0_completed') {
             return {
-                label: 'Awaiting Questions',
+                label: 'Awaiting ClarifyingQuestions',
                 colorClass: 'bg-yellow-100 text-yellow-800',
             };
         }

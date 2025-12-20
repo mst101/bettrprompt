@@ -187,7 +187,7 @@ function selectFramework(
     return FRAMEWORKS.SMART;
 }
 
-// Generate Questions based on Framework
+// Generate ClarifyingQuestions based on Framework
 function generateQuestions(framework: N8nFramework): N8nQuestion[] {
     const questions: N8nQuestion[] = [];
 

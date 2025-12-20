@@ -48,7 +48,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '0_completed' },
         });
 
-        expect(wrapper.text()).toBe('Awaiting Questions');
+        expect(wrapper.text()).toBe('Awaiting ClarifyingQuestions');
         expect(wrapper.classes()).toContain('bg-yellow-100');
         expect(wrapper.classes()).toContain('text-yellow-800');
     });

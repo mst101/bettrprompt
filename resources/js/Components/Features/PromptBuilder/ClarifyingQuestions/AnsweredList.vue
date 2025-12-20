@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClarifyingQuestion } from '@/Components/Features/PromptBuilder/Cards/clarifyingQuestion';
+import type { ClarifyingQuestion } from './clarifyingQuestion.ts';
 
 defineProps<{
     questions: ClarifyingQuestion[];

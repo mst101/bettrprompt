@@ -30,7 +30,7 @@ if (languageCode.startsWith('en-US')) {
 let userContextString = '';
 if (userContext) {
   const parts = [];
-  
+
   // Location context
   if (userContext.location?.country) {
     parts.push(`Location: ${userContext.location.country}${userContext.location.city ? ` (${userContext.location.city})` : ''}`);
@@ -38,7 +38,7 @@ if (userContext) {
     if (userContext.location.currency) parts.push(`Currency: ${userContext.location.currency}`);
     if (userContext.location.language) parts.push(`Language: ${userContext.location.language}`);
   }
-  
+
   // Professional context
   if (userContext.professional?.job_title || userContext.professional?.industry) {
     const prof = userContext.professional;
@@ -49,7 +49,7 @@ if (userContext) {
     if (profParts.length > 0) parts.push(`Professional: ${profParts.join(' ')}`);
     if (prof.company_size) parts.push(`Company size: ${prof.company_size}`);
   }
-  
+
   // Team context
   if (userContext.team?.size || userContext.team?.role) {
     const team = userContext.team;
@@ -59,7 +59,7 @@ if (userContext) {
     if (team.work_mode) teamParts.push(`(${team.work_mode})`);
     if (teamParts.length > 0) parts.push(`Team: ${teamParts.join(', ')}`);
   }
-  
+
   // Preferences context
   if (userContext.preferences?.budget) {
     parts.push(`Budget preference: ${userContext.preferences.budget}`);
@@ -67,7 +67,7 @@ if (userContext) {
   if (userContext.preferences?.primary_programming_language) {
     parts.push(`Primary language: ${userContext.preferences.primary_programming_language}`);
   }
-  
+
   if (parts.length > 0) {
     userContextString = '\n\n# User Context\n' + parts.map(p => `- ${p}`).join('\n') + '\n\nUse this context when making framework recommendations and generating questions (e.g., suggest local tools, use appropriate currency, consider technical level).';
   }
@@ -249,7 +249,7 @@ if (hasPersonality) {
         const identity = typeLetters[1]; // e.g., "A" or "T"
         const traits = personality.trait_percentages;
         const traitDescriptions = [];
-        
+
         // Map each percentage to its corresponding letter from the personality type
         if (traits.mind !== undefined) {
             traitDescriptions.push(`${mainType[0]} (${traits.mind}%)`); // I or E
@@ -266,7 +266,7 @@ if (hasPersonality) {
         if (traits.identity !== undefined) {
             traitDescriptions.push(`${identity} (${traits.identity}%)`); // A or T
         }
-        
+
         personalityInfo += `\nTraits: ${traitDescriptions.join(', ')}`;
         personalityInfo += `\nAnalyze ONLY these traits (not hypothetical ideal traits).`;
         personalityInfo += `\nFor each: AMPLIFIED (helps task), COUNTERBALANCED (opposes task), or NEUTRAL.`;
@@ -283,12 +283,12 @@ let preAnalysisSection = '';
 
 if (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {
     preAnalysisSection = '\n\n**Pre-Analysis Context:**\nContext gathered during pre-analysis:';
-    
+
     // Loop through all pre-analysis context entries and display question/answer pairs
     for (const [key, contextItem] of Object.entries(preAnalysisContext)) {
         if (contextItem && typeof contextItem === 'object' && contextItem.question) {
             preAnalysisSection += `\n\n**${contextItem.question}**`;
-            
+
             // Display answer_label if available, otherwise display answer
             const displayValue = contextItem.answer_label || contextItem.answer;
             if (displayValue) {
@@ -296,8 +296,8 @@ if (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(
             }
         }
     }
-    
-    preAnalysisSection += '\n\n**CRITICAL - Avoid Duplicate Questions:**';
+
+    preAnalysisSection += '\n\n**CRITICAL - Avoid Duplicate ClarifyingQuestions:**';
     preAnalysisSection += '\n- DO NOT ask questions that overlap with the information already provided above';
     preAnalysisSection += '\n- For example, if we already know the audience/skill level, do NOT ask about it again';
     preAnalysisSection += '\n- Generate ONLY questions that request NEW information not covered in the pre-analysis context';

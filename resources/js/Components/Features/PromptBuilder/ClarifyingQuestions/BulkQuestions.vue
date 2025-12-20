@@ -4,10 +4,10 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import ButtonVoiceInput from '@/Components/Base/Button/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/Common/OptionalBadge.vue';
-import type { ClarifyingQuestion } from '@/Components/Features/PromptBuilder/Cards/clarifyingQuestion';
 import QuestionNumber from '@/Components/Features/PromptBuilder/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/useTextAppend';
 import { ref } from 'vue';
+import type { ClarifyingQuestion } from './clarifyingQuestion.ts';
 
 const props = withDefaults(
     defineProps<{

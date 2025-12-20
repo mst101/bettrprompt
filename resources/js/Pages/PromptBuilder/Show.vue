@@ -8,22 +8,22 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
 import WorkflowError from '@/Components/Common/WorkflowError.vue';
 import AnalysisProgress from '@/Components/Features/PromptBuilder/AnalysisProgress.vue';
-import AlternativeFrameworks from '@/Components/Features/PromptBuilder/Cards/AlternativeFrameworks.vue';
-import ApiUsage from '@/Components/Features/PromptBuilder/Cards/ApiUsage.vue';
-import ClarifyingQuestions from '@/Components/Features/PromptBuilder/Cards/ClarifyingQuestions.vue';
-import CognitiveRequirements from '@/Components/Features/PromptBuilder/Cards/CognitiveRequirements.vue';
-import OptimizedPrompt from '@/Components/Features/PromptBuilder/Cards/OptimizedPrompt.vue';
-import PersonalityAdjustments from '@/Components/Features/PromptBuilder/Cards/PersonalityAdjustments.vue';
-import PersonalityAdjustmentsSummary from '@/Components/Features/PromptBuilder/Cards/PersonalityAdjustmentsSummary.vue';
-import QuickQueries from '@/Components/Features/PromptBuilder/Cards/QuickQueries.vue';
-import Recommendations from '@/Components/Features/PromptBuilder/Cards/Recommendations.vue';
-import RelatedPromptRuns from '@/Components/Features/PromptBuilder/Cards/RelatedPromptRuns.vue';
-import SelectedFramework from '@/Components/Features/PromptBuilder/Cards/SelectedFramework.vue';
-import TaskClassification from '@/Components/Features/PromptBuilder/Cards/TaskClassification.vue';
-import TaskInformation from '@/Components/Features/PromptBuilder/Cards/TaskInformation.vue';
-import TaskTraitAlignment from '@/Components/Features/PromptBuilder/Cards/TaskTraitAlignment.vue';
+import ApiUsage from '@/Components/Features/PromptBuilder/ApiUsage/Index.vue';
+import ClarifyingQuestions from '@/Components/Features/PromptBuilder/ClarifyingQuestions/Index.vue';
+import AlternativeFrameworks from '@/Components/Features/PromptBuilder/Framework/AlternativeFrameworks.vue';
+import SelectedFramework from '@/Components/Features/PromptBuilder/Framework/SelectedFramework.vue';
 import GenerationProgress from '@/Components/Features/PromptBuilder/GenerationProgress.vue';
+import OptimizedPrompt from '@/Components/Features/PromptBuilder/OptimisedPrompt/Index.vue';
+import PersonalityAdjustments from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustments.vue';
+import PersonalityAdjustmentsSummary from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustmentsSummary.vue';
+import TaskTraitAlignment from '@/Components/Features/PromptBuilder/Personality/TaskTraitAlignment.vue';
 import PreAnalysisProgress from '@/Components/Features/PromptBuilder/PreAnalysisProgress.vue';
+import Recommendations from '@/Components/Features/PromptBuilder/Recommendations/Index.vue';
+import CognitiveRequirements from '@/Components/Features/PromptBuilder/YourTask/CognitiveRequirements.vue';
+import QuickQueries from '@/Components/Features/PromptBuilder/YourTask/QuickQueries.vue';
+import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
+import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
+import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
 import { useAlert } from '@/Composables/useAlert';
 import { useRealtimeUpdates } from '@/Composables/useRealtimeUpdates';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -118,7 +118,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'questions',
-            label: 'Clarifying Questions',
+            label: 'Clarifying ClarifyingQuestions',
             icon: 'question-mark-circle',
         });
     }
@@ -210,7 +210,7 @@ if (activeTab.value === 'framework') {
 }
 
 // Also mark as viewed when user switches to the framework tab
-// And focus the "Proceed to Questions" button on larger screens
+// And focus the "Proceed to ClarifyingQuestions" button on larger screens
 watch(activeTab, async (newTab) => {
     if (newTab === 'framework') {
         markFrameworkAsViewed();
@@ -623,7 +623,7 @@ onUnmounted(() => {
                 />
             </div>
 
-            <!-- Questions Tab -->
+            <!-- ClarifyingQuestions Tab -->
             <div
                 v-if="activeTab === 'questions'"
                 class="space-y-4"
