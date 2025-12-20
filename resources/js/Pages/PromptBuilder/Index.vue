@@ -5,6 +5,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
 import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/Forms/PersonalityTypePrompt.vue';
 import TaskDescriptionForm from '@/Components/Features/PromptBuilder/Forms/TaskDescriptionForm.vue';
+import { usePersonalityPromptPreference } from '@/Composables/features/usePersonalityPromptPreference';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
@@ -97,12 +98,19 @@ const handleFocusTaskDescription = async () => {
     taskDescriptionFormRef.value?.focus();
 };
 
+const { isDismissed } = usePersonalityPromptPreference();
+
 const focusAppropriateElement = async () => {
     await nextTick();
     // Use requestAnimationFrame to wait for all rendering to complete
     requestAnimationFrame(() => {
         setTimeout(() => {
-            if (!hasPersonalityType.value) {
+            // On sm: and wider, if personality prompt is dismissed, focus textarea
+            const isSmallScreenOrWider =
+                typeof window !== 'undefined' && window.innerWidth >= 640;
+            if (isSmallScreenOrWider && isDismissed.value) {
+                taskDescriptionFormRef.value?.focus();
+            } else if (!hasPersonalityType.value) {
                 // Focus the personality prompt (link or button)
                 personalityTypePromptRef.value?.focus();
             } else {
