@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ExampleStageCard from '@/Components/Common/ExampleStageCard.vue';
 import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt/AIProviderLinks.vue';
 </script>
@@ -146,17 +147,10 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                 <div
                     class="flex items-center gap-2 font-medium text-indigo-700"
                 >
-                    <svg
-                        class="h-5 w-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd"
-                        />
-                    </svg>
+                    <DynamicIcon
+                        name="check-circle"
+                        class="h-5 w-5 text-green-600"
+                    />
                     Your prompt is ready!
                 </div>
                 <div class="rounded bg-white p-2 text-indigo-800">

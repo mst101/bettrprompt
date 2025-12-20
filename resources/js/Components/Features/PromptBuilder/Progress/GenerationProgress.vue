@@ -2,6 +2,7 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
 import StageIndicator from '@/Components/Common/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
@@ -121,17 +122,10 @@ onUnmounted(() => {
             <div class="rounded-lg border border-red-300 bg-red-50 p-4">
                 <div class="flex items-start gap-3">
                     <div class="mt-0.5">
-                        <svg
+                        <DynamicIcon
+                            name="x-circle"
                             class="h-5 w-5 text-red-600"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
+                        />
                     </div>
                     <div class="flex-1">
                         <h3 class="font-semibold text-red-900">

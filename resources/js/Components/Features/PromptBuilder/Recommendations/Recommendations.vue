@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
 
 interface ModelRecommendation {
@@ -70,19 +71,10 @@ defineProps<Props>();
                     :key="index"
                     class="flex items-start text-sm text-blue-900"
                 >
-                    <svg
+                    <DynamicIcon
+                        name="arrow-right"
                         class="mt-0.5 mr-2 h-5 w-5 shrink-0 text-blue-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13 7l5 5m0 0l-5 5m5-5H6"
-                        />
-                    </svg>
+                    />
                     {{ suggestion }}
                 </li>
             </ul>

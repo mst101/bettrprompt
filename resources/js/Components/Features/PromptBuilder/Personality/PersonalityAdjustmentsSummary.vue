@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 
 interface Props {
     adjustments: string[];
@@ -20,19 +21,10 @@ defineProps<Props>();
                 :key="index"
                 class="flex items-start rounded-lg bg-indigo-50 p-3"
             >
-                <svg
+                <DynamicIcon
+                    name="check-circle"
                     class="mt-0.5 mr-2 h-5 w-5 shrink-0 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                </svg>
+                />
                 <span class="text-indigo-900">{{ adjustment }}</span>
             </li>
         </ul>
