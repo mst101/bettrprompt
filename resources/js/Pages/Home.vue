@@ -14,7 +14,7 @@ defineOptions({
 <template>
     <Head title="Welcome to BettrPrompt" />
 
-    <div class="">
+    <div>
         <!-- Hero Section -->
         <div
             class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-16 lg:px-8 lg:py-24"
@@ -34,7 +34,7 @@ defineOptions({
 
                 <!-- Subheading -->
                 <p
-                    class="mx-auto mt-6 max-w-2xl text-sm sm:text-base lg:text-lg"
+                    class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-lg"
                 >
                     Great AI results start with great questions. BettrPrompt
                     transforms your messy, half-formed ideas into structured
@@ -173,7 +173,7 @@ defineOptions({
             </div>
 
             <!-- CTA Button -->
-            <HeroCTA class="my-12 sm:mt-24" />
+            <HeroCTA />
         </div>
     </div>
 </template>

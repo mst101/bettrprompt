@@ -79,7 +79,7 @@ const submit = () => {
                         :key="option.value"
                         class="cursor-pointer rounded-lg border border-indigo-200 bg-indigo-50 p-4 hover:border-indigo-100 hover:bg-indigo-100"
                         :class="{
-                            'border-indigo-500 bg-indigo-50':
+                            'border-indigo-500 bg-indigo-50 dark:bg-indigo-100':
                                 form.budgetConsciousness === option.value,
                         }"
                         @click="form.budgetConsciousness = option.value"

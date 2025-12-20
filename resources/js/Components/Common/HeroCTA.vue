@@ -12,11 +12,12 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col items-center gap-4">
+    <div class="my-12 flex flex-col items-center">
         <LinkButton
             variant="primary"
-            size="lg"
+            size="md"
             :href="route('prompt-builder.index')"
+            class="sm:px-6 sm:py-3 sm:text-base"
         >
             <div class="flex items-center gap-3">
                 <span>{{ buttonText }}</span>

@@ -28,7 +28,7 @@ const submit = () => {
         Reset Your Password
     </h1>
 
-    <div class="mb-4 text-xs text-gray-600 sm:text-sm">
+    <div class="mb-4 text-xs text-indigo-600 sm:text-sm">
         Forgot your password? No problem. Just let us know your email address
         and we will email you a password reset link that will allow you to
         choose a new one.

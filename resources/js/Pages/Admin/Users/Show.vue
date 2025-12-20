@@ -29,7 +29,7 @@ const props = defineProps<Props>();
             <template #actions>
                 <Link
                     :href="route('admin.users.index')"
-                    class="text-sm text-gray-600 hover:text-gray-900"
+                    class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Users
                 </Link>
@@ -40,23 +40,29 @@ const props = defineProps<Props>();
             <Card>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Name
                         </label>
-                        <p class="mt-1 text-gray-900">
+                        <p class="mt-1 text-indigo-900">
                             {{ props.user.name }}
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Email
                         </label>
-                        <p class="mt-1 text-gray-900">
+                        <p class="mt-1 text-indigo-900">
                             {{ props.user.email }}
                         </p>
                     </div>
                     <div v-if="props.user.personalityType">
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Personality Type
                         </label>
                         <p class="mt-1">
@@ -68,7 +74,9 @@ const props = defineProps<Props>();
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Administrator
                         </label>
                         <p class="mt-1">
@@ -77,7 +85,7 @@ const props = defineProps<Props>();
                                     'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
                                     props.user.isAdmin
                                         ? 'bg-green-100 text-green-800'
-                                        : 'bg-gray-100 text-gray-800',
+                                        : 'bg-indigo-100 text-indigo-800',
                                 ]"
                             >
                                 {{ props.user.isAdmin ? 'Yes' : 'No' }}
@@ -85,18 +93,22 @@ const props = defineProps<Props>();
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Total Prompt Runs
                         </label>
-                        <p class="mt-1 text-gray-900">
+                        <p class="mt-1 text-indigo-900">
                             {{ props.promptRunsCount }}
                         </p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <label
+                            class="block text-sm font-medium text-indigo-700"
+                        >
                             Joined
                         </label>
-                        <p class="mt-1 text-gray-900">
+                        <p class="mt-1 text-indigo-900">
                             {{
                                 new Date(
                                     props.user.createdAt,

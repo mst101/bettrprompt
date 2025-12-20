@@ -154,9 +154,6 @@ watch(
     <HeaderPage title="Prompt Builder" />
 
     <ContainerPage>
-        <!--        <div-->
-        <!--            class="max-w-4xl overflow-hidden bg-white text-gray-600 shadow-lg ring-1 ring-gray-100 sm:rounded-lg dark:bg-indigo-50"-->
-        <!--        >-->
         <Card>
             <!-- Error Alert -->
             <div
