@@ -5,6 +5,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import { router } from '@inertiajs/vue3';
+import { marked } from 'marked';
 import { computed, ref, watchEffect } from 'vue';
 import AIProviderLinks from './AIProviderLinks.vue';
 
@@ -17,6 +18,7 @@ const props = defineProps<Props>();
 
 const copied = ref(false);
 const isEditing = ref(false);
+const showFormatted = ref(false);
 const editedPrompt = ref(props.optimizedPrompt);
 const shouldFocusTextarea = ref(false);
 const shouldFocusEditButton = ref(false);
@@ -62,6 +64,18 @@ const copyToClipboard = async (text: string) => {
 };
 
 const copyIcon = computed(() => (copied.value ? 'check' : 'clipboard-copy'));
+
+const formattedPrompt = computed(() => {
+    try {
+        return marked(props.optimizedPrompt, {
+            breaks: true,
+            gfm: true,
+        }) as string;
+    } catch (err) {
+        console.error('Failed to render markdown:', err);
+        return props.optimizedPrompt;
+    }
+});
 
 const startEditing = () => {
     editedPrompt.value = props.optimizedPrompt;
@@ -124,6 +138,16 @@ const saveEdits = () => {
                 </ButtonPrimary>
 
                 <ButtonSecondary
+                    type="button"
+                    class="w-full sm:w-auto"
+                    data-testid="toggle-format-button"
+                    :icon="showFormatted ? 'code' : 'eye'"
+                    @click="showFormatted = !showFormatted"
+                >
+                    {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
+                </ButtonSecondary>
+
+                <ButtonSecondary
                     ref="editButtonRef"
                     type="button"
                     class="w-full sm:w-auto"
@@ -159,9 +183,9 @@ const saveEdits = () => {
 
             <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
 
-            <!-- View Mode -->
+            <!-- View Mode - Raw Markdown -->
             <div
-                v-if="!isEditing"
+                v-if="!isEditing && !showFormatted"
                 data-testid="optimized-prompt-text"
                 :class="[
                     'rounded-lg p-4 font-mono text-xs leading-relaxed text-indigo-900 transition-colors duration-300 sm:p-6 sm:text-sm',
@@ -174,6 +198,19 @@ const saveEdits = () => {
                     optimizedPrompt
                 }}</pre>
             </div>
+
+            <!-- View Mode - Formatted Markdown -->
+            <div
+                v-if="!isEditing && showFormatted"
+                data-testid="optimized-prompt-formatted"
+                :class="[
+                    'prose prose-sm prose-indigo dark:prose-invert rounded-lg p-4 transition-colors duration-300 sm:p-6',
+                    copied
+                        ? 'bg-indigo-200 dark:bg-indigo-300'
+                        : 'bg-indigo-50 dark:bg-indigo-100',
+                ]"
+                v-html="formattedPrompt"
+            />
 
             <!-- Edit Mode -->
             <FormTextarea
@@ -199,6 +236,16 @@ const saveEdits = () => {
                 >
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
+
+                <ButtonSecondary
+                    type="button"
+                    class="w-full"
+                    data-testid="toggle-format-button-mobile"
+                    :icon="showFormatted ? 'code' : 'eye'"
+                    @click="showFormatted = !showFormatted"
+                >
+                    {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
+                </ButtonSecondary>
 
                 <ButtonSecondary
                     type="button"
