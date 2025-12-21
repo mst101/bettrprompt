@@ -207,7 +207,7 @@ return [
             'maxJobs' => 0,
             'memory' => 128,
             'tries' => 1,
-            'timeout' => 60,
+            'timeout' => 200, // Increased to 200 seconds to allow n8n workflows to complete (180s HTTP timeout + 20s buffer)
             'nice' => 0,
         ],
     ],

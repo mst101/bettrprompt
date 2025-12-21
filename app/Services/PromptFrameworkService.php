@@ -121,7 +121,9 @@ class PromptFrameworkService
         }
 
         try {
-            $response = Http::timeout(10)
+            // Increased from 10 to 60 seconds to handle edge cases with long task descriptions
+            // Pre-analysis should be fast, but better safe than sorry
+            $response = Http::timeout(60)
                 ->connectTimeout(10)
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/pre-analysis", $payload);
 
@@ -238,7 +240,8 @@ class PromptFrameworkService
         }
 
         try {
-            $response = Http::timeout(60)
+            // Increased from 60 to 120 seconds to allow for complex analysis workflows
+            $response = Http::timeout(120)
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
 
             if ($response->successful()) {
@@ -330,7 +333,9 @@ class PromptFrameworkService
         }
 
         try {
-            $response = Http::timeout(90)
+            // Increased from 90 to 180 seconds to allow for longer-running workflows
+            // Some complex prompts can take 100+ seconds to generate
+            $response = Http::timeout(180)
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $payload);
 
             if ($response->successful()) {
