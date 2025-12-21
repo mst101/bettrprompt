@@ -144,7 +144,7 @@ const saveEdits = () => {
                     :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
-                    {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
+                    {{ showFormatted ? 'Show Source' : 'Show Preview' }}
                 </ButtonSecondary>
 
                 <ButtonSecondary
@@ -244,7 +244,7 @@ const saveEdits = () => {
                     :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
-                    {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
+                    {{ showFormatted ? 'Show Source' : 'Show Preview' }}
                 </ButtonSecondary>
 
                 <ButtonSecondary
