@@ -37,8 +37,8 @@ defineOptions({
                     class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-xl"
                 >
                     Great AI results start with great questions. BettrPrompt
-                    transforms your messy, half-formed ideas into structured
-                    prompts that get results.
+                    turns your vague ideas into structured prompts that actually
+                    work - by asking the right questions first.
                 </p>
 
                 <!-- CTA Button -->
@@ -52,7 +52,7 @@ defineOptions({
                     <FeatureCard
                         icon="sparkles"
                         title="Smart Framework Selection"
-                        description="Our AI analyses your task and selects from 60+ proven frameworks (SMART, RICE, COAST, and more). Get structured, effective prompts without needing to study prompt engineering."
+                        description="Our AI analyses your task and selects from 60+ proven frameworks. Get structured, effective prompts without needing to study prompt engineering."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -60,7 +60,7 @@ defineOptions({
                     <FeatureCard
                         icon="chat"
                         title="Clarifying Questions That Matter"
-                        description="Don't know where to start? BettrPrompt asks the right clarifying questions to uncover what you actually need—turning vague ideas into actionable prompts."
+                        description="Not sure where to start? BettrPrompt asks targeted questions to uncover what you actually need, turning half-formed ideas into prompts that get results."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -69,7 +69,7 @@ defineOptions({
                     <FeatureCard
                         icon="user"
                         title="Calibrated to How You Think"
-                        description="Optional: Add your personality type for precision tuning. Analytical minds get data-driven frameworks. Creative minds get exploratory approaches. Same task, different optimal paths."
+                        description="Add your personality type and we'll adapt our questions to how you think. When your thinking style matters, we'll show you why we're asking what we're asking."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -100,7 +100,7 @@ defineOptions({
                     <FeatureCard
                         icon="wrench"
                         title="Chooses the Right Tool for the Job"
-                        description="Our system analyses your task and selects the most appropriate framework from our curated library. You'll see a few carefully chosen alternatives to consider, ensuring the best fit without the paralysis of too many choices."
+                        description="Our system analyses your task and selects the most appropriate framework from our curated library. You'll see a few carefully chosen alternatives - the best fits without the paralysis of too many choices."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -109,7 +109,7 @@ defineOptions({
                     <FeatureCard
                         icon="cube"
                         title="Built on Proven Frameworks"
-                        description="Every prompt is structured using established methodologies like SMART, RICE, and Chain of Thought. These aren't experimental approaches—they're time-tested frameworks that professionals use to think through complex problems systematically."
+                        description="Every prompt is structured using established methodologies that professionals use to think through complex problems. These aren't experimental approaches, they're time-tested and proven to work."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -140,14 +140,14 @@ defineOptions({
                     <StepCard
                         :number="2"
                         title="We Analyse and Ask Relevant Questions"
-                        description="Our AI analyses your task type and selects the best framework from our curated library. We then dig deeper by asking targeted questions to build the context needed to craft an effective prompt that captures exactly what you need."
+                        description="Our AI analyses your task and selects the best framework from our curated library. Then we ask targeted questions to build the context your prompt needs - so you get results first time, not after three rounds of back-and-forth."
                         bg-colour="bg-purple-600"
                     />
 
                     <StepCard
                         :number="3"
                         title="Get Your Optimised Prompt"
-                        description="Receive a complete, highly effective prompt ready to copy into any AI tool. Built using proven frameworks and enriched with your specific context, it's structured to deliver the results you're looking for. Optionally calibrated to your personality for precision alignment."
+                        description="Receive a complete prompt ready to copy into ChatGPT, Claude, or any AI tool. Built using proven frameworks and enriched with your specific context. If you've added your personality type, we'll tailor the approach accordingly."
                         bg-colour="bg-indigo-600"
                     />
                 </div>
