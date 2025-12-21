@@ -204,7 +204,7 @@ const saveEdits = () => {
                 v-if="!isEditing && showFormatted"
                 data-testid="optimized-prompt-formatted"
                 :class="[
-                    'prose prose-sm prose-indigo dark:prose-invert w-full rounded-lg p-4 transition-colors duration-300 sm:p-6',
+                    'prose prose-sm prose-indigo dark:prose-invert w-full max-w-none rounded-lg p-4 transition-colors duration-300 sm:p-6',
                     copied
                         ? 'bg-indigo-200 dark:bg-indigo-300'
                         : 'bg-indigo-50 dark:bg-indigo-100',
