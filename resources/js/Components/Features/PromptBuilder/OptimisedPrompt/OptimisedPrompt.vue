@@ -230,7 +230,7 @@ const saveEdits = () => {
                 v-if="!isEditing && showFormatted"
                 data-testid="optimized-prompt-formatted"
                 :class="[
-                    'prose prose-sm prose-indigo dark:prose-invert w-full max-w-none rounded-lg p-4 transition-colors duration-300 sm:p-6',
+                    'prose prose-sm prose-indigo prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg dark:prose-invert w-full max-w-none rounded-lg p-4 transition-colors duration-300 sm:p-6',
                     copied
                         ? 'bg-indigo-200 dark:bg-indigo-300'
                         : 'bg-indigo-50 dark:bg-indigo-100',
@@ -305,6 +305,9 @@ const saveEdits = () => {
                     Cancel
                 </ButtonSecondary>
             </div>
+
+            <!-- AI Provider Links (visible on all screens) -->
+            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
         </div>
     </Card>
 </template>
