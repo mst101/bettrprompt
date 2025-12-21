@@ -15,7 +15,7 @@ const buttonText = computed(() => {
     <div class="my-10 flex flex-col items-center sm:my-16">
         <LinkButton
             variant="primary"
-            size="md"
+            size="lg"
             :href="route('prompt-builder.index')"
             class="sm:px-6 sm:py-3 sm:text-base"
         >

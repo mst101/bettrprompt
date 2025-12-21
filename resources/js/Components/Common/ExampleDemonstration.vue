@@ -16,7 +16,9 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         >
             <div class="space-y-2">
                 <label class="font-medium text-indigo-700">Your task:</label>
-                <div class="rounded bg-white p-3 text-indigo-700">
+                <div
+                    class="mt-2 rounded bg-white p-2 text-indigo-800 dark:bg-indigo-100"
+                >
                     I want to create a marketing strategy for my business
                 </div>
             </div>
@@ -32,17 +34,19 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         >
             <div class="space-y-3">
                 <div>
-                    <p class="mb-2 font-medium text-purple-950">
+                    <p class="font-medium text-purple-950">
                         What's your business type? Please specify industry, or
                         product/service.
                     </p>
-                    <div class="rounded bg-white p-2 text-indigo-800">
+                    <div
+                        class="mt-2 rounded bg-white p-2 text-indigo-800 dark:bg-purple-100"
+                    >
                         B2B SaaS startup offering project management and team
                         collaboration tools
                     </div>
                 </div>
                 <div>
-                    <p class="mb-2 font-medium text-purple-950">
+                    <p class="font-medium text-purple-950">
                         Who is the target audience for this marketing strategy?
                     </p>
                     <div class="space-y-1">
@@ -114,7 +118,9 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         1. What's your main customer acquisition challenge right
                         now?
                     </p>
-                    <div class="rounded bg-white p-2 text-purple-950">
+                    <div
+                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                    >
                         Low brand awareness in a crowded market; struggling to
                         reach decision-makers
                     </div>
@@ -123,7 +129,9 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     <p class="mb-1 font-medium text-purple-950">
                         2. What marketing channels do you currently use?
                     </p>
-                    <div class="rounded bg-white p-2 text-purple-950">
+                    <div
+                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                    >
                         Email list, LinkedIn, and some paid ads
                     </div>
                 </div>
@@ -131,7 +139,9 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     <p class="mb-1 font-medium text-purple-950">
                         3. What is your monthly marketing budget?
                     </p>
-                    <div class="rounded bg-white p-2 text-purple-950">
+                    <div
+                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                    >
                         £2,000 - £5,000
                     </div>
                 </div>
@@ -156,12 +166,14 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     />
                     Your prompt is ready!
                 </div>
-                <div class="rounded bg-white p-2 text-sm text-indigo-800">
-                    "Create a comprehensive marketing strategy for a B2B SaaS
+                <div
+                    class="rounded bg-white p-2 text-sm text-indigo-800 dark:bg-indigo-100"
+                >
+                    Create a comprehensive marketing strategy for a B2B SaaS
                     early-stage startup using the RACE framework (Reach, Act,
                     Convert, Engage). Target audience: mid-size tech companies.
                     Current channels: Email, LinkedIn, paid ads. Budget: £2,000
-                    - £5,000/month..."
+                    - £5,000/month...
                 </div>
                 <div class="pt-1">
                     <AIProviderLinks prompt="" />

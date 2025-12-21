@@ -33,7 +33,7 @@ const buttonClasses = useButtonClasses(props);
             <!-- Left icon -->
             <span
                 v-if="icon && iconPosition === 'left'"
-                class="mr-2 -ml-1 h-4 w-4 flex-shrink-0"
+                class="mr-2 -ml-1 h-4 w-4 shrink-0"
             >
                 <DynamicIcon :name="icon" class="h-4 w-4" />
             </span>
@@ -41,7 +41,7 @@ const buttonClasses = useButtonClasses(props);
             <!-- Right icon -->
             <span
                 v-if="icon && iconPosition === 'right'"
-                class="ml-2 h-4 w-4 flex-shrink-0"
+                class="ml-2 h-4 w-4 shrink-0"
             >
                 <DynamicIcon :name="icon" class="h-4 w-4" />
             </span>

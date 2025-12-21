@@ -26,7 +26,7 @@ export function useButtonClasses(props: ButtonStyleProps) {
         const sizes = {
             sm: 'rounded-md px-3 py-1.5 text-xs',
             md: 'rounded-md px-4 py-2 text-xs',
-            lg: 'rounded-md px-6 py-3 text-base',
+            lg: 'rounded-md px-6 py-2 text-base',
         };
 
         const variant = props.variant ?? 'primary';
