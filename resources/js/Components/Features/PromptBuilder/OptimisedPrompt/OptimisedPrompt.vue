@@ -5,7 +5,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import { router } from '@inertiajs/vue3';
-import { ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import AIProviderLinks from './AIProviderLinks.vue';
 
 interface Props {
@@ -61,6 +61,8 @@ const copyToClipboard = async (text: string) => {
     }
 };
 
+const copyIcon = computed(() => (copied.value ? 'check' : 'clipboard-copy'));
+
 const startEditing = () => {
     editedPrompt.value = props.optimizedPrompt;
     isEditing.value = true;
@@ -115,12 +117,9 @@ const saveEdits = () => {
                     type="button"
                     class="w-full sm:w-auto"
                     data-testid="copy-prompt-button"
+                    :icon="copyIcon"
                     @click="copyToClipboard(optimizedPrompt)"
                 >
-                    <DynamicIcon
-                        :name="copied ? 'check' : 'clipboard-copy'"
-                        class="mr-2 -ml-1 h-4 w-4"
-                    />
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
 
@@ -129,9 +128,9 @@ const saveEdits = () => {
                     type="button"
                     class="w-full sm:w-auto"
                     data-testid="edit-prompt-button"
+                    icon="edit"
                     @click="startEditing"
                 >
-                    <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                     Edit Prompt
                 </ButtonSecondary>
             </div>
@@ -142,6 +141,7 @@ const saveEdits = () => {
                     type="button"
                     class="w-full sm:w-auto"
                     data-testid="save-edit-button"
+                    icon="check"
                     @click="saveEdits"
                 >
                     Save Changes
@@ -194,12 +194,9 @@ const saveEdits = () => {
                     type="button"
                     class="w-full"
                     data-testid="copy-prompt-button-mobile"
+                    :icon="copyIcon"
                     @click="copyToClipboard(optimizedPrompt)"
                 >
-                    <DynamicIcon
-                        :name="copied ? 'check' : 'clipboard-copy'"
-                        class="mr-2 -ml-1 h-5 w-5"
-                    />
                     {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
                 </ButtonPrimary>
 
@@ -207,9 +204,9 @@ const saveEdits = () => {
                     type="button"
                     class="w-full"
                     data-testid="edit-prompt-button-mobile"
+                    icon="edit"
                     @click="startEditing"
                 >
-                    <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                     Edit Prompt
                 </ButtonSecondary>
             </div>
@@ -220,6 +217,7 @@ const saveEdits = () => {
                     type="button"
                     class="w-full"
                     data-testid="save-edit-button-mobile"
+                    icon="check"
                     @click="saveEdits"
                 >
                     Save Changes

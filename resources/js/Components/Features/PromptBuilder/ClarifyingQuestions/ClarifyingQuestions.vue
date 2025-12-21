@@ -2,6 +2,7 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/Forms/QuestionAnsweringForm.vue';
 import type { PromptRunResource } from '@/Types';
@@ -451,6 +452,7 @@ const optionalQuestionsLabel = computed(() => {
                         class="w-full sm:w-auto"
                         @click="startEditingAnswers"
                     >
+                        <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                         Edit Answers
                     </ButtonSecondary>
                     <div

@@ -70,7 +70,11 @@ defineExpose({ focus });
         </div>
 
         <div v-if="showProceedButton" class="flex justify-end pt-2">
-            <ButtonPrimary ref="proceedButtonRef" @click="emit('proceed')">
+            <ButtonPrimary
+                ref="proceedButtonRef"
+                icon="arrow-right"
+                @click="emit('proceed')"
+            >
                 Proceed to Questions
             </ButtonPrimary>
         </div>

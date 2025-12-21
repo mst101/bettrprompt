@@ -90,6 +90,8 @@ defineExpose({ focus });
                 <ButtonPrimary
                     class="w-full sm:w-fit"
                     type="submit"
+                    icon="arrow-right"
+                    icon-position="right"
                     :disabled="
                         form.processing || form.taskDescription.length < 10
                     "

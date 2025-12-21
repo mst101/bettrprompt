@@ -41,9 +41,12 @@ defineEmits<{
                         </p>
                     </div>
                 </div>
-                <ButtonPrimary class="shrink-0" @click="$emit('register')">
+                <ButtonPrimary
+                    class="shrink-0"
+                    icon="arrow-right"
+                    @click="$emit('register')"
+                >
                     Create Free Account
-                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>
         </div>
@@ -72,11 +75,16 @@ defineEmits<{
             <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:justify-end">
                 <ButtonPrimary
                     class="w-full sm:w-fit"
+                    icon="arrow-right"
                     @click="$emit('register')"
                 >
                     Create Free Account
                 </ButtonPrimary>
-                <ButtonPrimary class="w-full sm:w-fit" @click="$emit('login')">
+                <ButtonPrimary
+                    class="w-full sm:w-fit"
+                    icon="arrow-right"
+                    @click="$emit('login')"
+                >
                     Log in
                 </ButtonPrimary>
             </div>

@@ -58,6 +58,7 @@ const submit = () => {
                 type="submit"
                 :disabled="form.processing"
                 :loading="form.processing"
+                icon="envelope"
             >
                 Email Password Reset Link
             </ButtonPrimary>

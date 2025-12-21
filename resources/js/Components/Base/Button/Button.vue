@@ -5,6 +5,7 @@ import { computed, ref, useAttrs } from 'vue';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg';
+type IconPosition = 'left' | 'right';
 
 interface Props {
     variant?: ButtonVariant;
@@ -13,6 +14,7 @@ interface Props {
     type?: 'button' | 'submit' | 'reset';
     loading?: boolean;
     icon?: string;
+    iconPosition?: IconPosition;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -22,6 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
     type: 'button',
     loading: false,
     icon: '',
+    iconPosition: 'left',
 });
 
 const buttonClasses = useButtonClasses(props);
@@ -53,9 +56,9 @@ defineExpose({ focus });
         :class="mergedClasses"
     >
         <span class="flex items-center">
-            <!-- Reserve space for icon during loading to maintain width -->
+            <!-- Left icon - Reserve space for icon during loading to maintain width -->
             <span
-                v-if="loading || icon"
+                v-if="(loading || icon) && iconPosition === 'left'"
                 class="mr-2 -ml-1 h-4 w-4 flex-shrink-0"
             >
                 <DynamicIcon
@@ -66,6 +69,18 @@ defineExpose({ focus });
                 <DynamicIcon v-else-if="icon" :name="icon" class="h-4 w-4" />
             </span>
             <slot />
+            <!-- Right icon - Reserve space for icon during loading to maintain width -->
+            <span
+                v-if="(loading || icon) && iconPosition === 'right'"
+                class="ml-2 h-4 w-4 flex-shrink-0"
+            >
+                <DynamicIcon
+                    v-if="loading"
+                    name="arrow-path-spin"
+                    class="h-4 w-4 animate-spin"
+                />
+                <DynamicIcon v-else-if="icon" :name="icon" class="h-4 w-4" />
+            </span>
         </span>
     </button>
 </template>

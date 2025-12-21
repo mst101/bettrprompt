@@ -2,11 +2,14 @@
 import Button from '@/Components/Base/Button/Button.vue';
 import { ref } from 'vue';
 
+type IconPosition = 'left' | 'right';
+
 interface Props {
     disabled?: boolean;
     type?: 'button' | 'submit' | 'reset';
     loading?: boolean;
     icon?: string;
+    iconPosition?: IconPosition;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -14,6 +17,7 @@ withDefaults(defineProps<Props>(), {
     type: 'button',
     loading: false,
     icon: '',
+    iconPosition: 'left',
 });
 
 const buttonRef = ref<InstanceType<typeof Button> | null>(null);
@@ -33,6 +37,7 @@ defineExpose({ focus });
         :type="type"
         :loading="loading"
         :icon="icon"
+        :icon-position="iconPosition"
     >
         <slot />
     </Button>

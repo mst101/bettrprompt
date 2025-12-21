@@ -127,6 +127,7 @@ const formatDate = (dateString: string) => {
                     <ButtonSecondary
                         v-if="!isEditing"
                         type="button"
+                        icon="edit"
                         @click="isEditing = true"
                     >
                         Edit Responses

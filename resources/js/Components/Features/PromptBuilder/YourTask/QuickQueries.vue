@@ -383,7 +383,7 @@ const isDisabled = computed(() =>
                 class="inline-flex w-full items-center gap-1 sm:w-fit"
                 @click="startEditing"
             >
-                <DynamicIcon name="edit" class="h-4 w-4" />
+                <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                 Edit Answers
             </ButtonSecondary>
         </div>
@@ -421,7 +421,7 @@ const isDisabled = computed(() =>
                     :disabled="isLoading"
                     @click="startEditing"
                 >
-                    <DynamicIcon name="edit" class="h-4 w-4" />
+                    <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                     Edit Answers
                 </ButtonSecondary>
 
@@ -433,6 +433,7 @@ const isDisabled = computed(() =>
                     @click="continueToAnalysis"
                 >
                     Optimise Prompt
+                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>
         </div>

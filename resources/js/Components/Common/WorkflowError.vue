@@ -33,10 +33,10 @@ const emit = defineEmits<{
                 </div>
             </div>
             <ButtonDanger
-                class="inline-flex shrink-0 items-center gap-2 sm:self-start"
+                icon="arrow-path"
+                class="shrink-0 sm:self-start"
                 @click="emit('retry')"
             >
-                <DynamicIcon name="arrow-path" class="size-4" />
                 Retry Workflow
             </ButtonDanger>
         </div>

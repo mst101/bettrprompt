@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
-import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import Tabs, { type Tab } from '@/Components/Base/Tabs.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
@@ -477,14 +476,16 @@ onUnmounted(() => {
                 <ButtonSecondary
                     type="button"
                     class="hidden! sm:inline-flex!"
+                    icon="trash"
                     @click="handleDelete"
                 >
-                    <DynamicIcon name="trash" class="mr-2 -ml-1 h-4 w-4" />
                     Delete
                 </ButtonSecondary>
                 <LinkButton
                     :href="route('prompt-builder.index')"
                     variant="primary"
+                    icon="plus"
+                    icon-position="left"
                 >
                     CREATE NEW
                 </LinkButton>

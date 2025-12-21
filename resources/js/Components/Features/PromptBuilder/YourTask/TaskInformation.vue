@@ -136,7 +136,7 @@ watch(
                 class="inline-flex w-full items-center gap-1 sm:w-fit"
                 @click="startEditing"
             >
-                <DynamicIcon name="edit" class="h-4 w-4" />
+                <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                 Edit Task
             </ButtonSecondary>
 
@@ -188,6 +188,7 @@ watch(
                     :loading="form.processing"
                 >
                     Optimise Prompt
+                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>
         </form>

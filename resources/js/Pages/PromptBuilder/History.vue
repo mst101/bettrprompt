@@ -179,7 +179,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
 
     <HeaderPage title="Prompt History">
         <template #actions>
-            <LinkButton :href="route('prompt-builder.index')" variant="primary">
+            <LinkButton
+                :href="route('prompt-builder.index')"
+                variant="primary"
+                icon="plus"
+                icon-position="left"
+            >
                 CREATE NEW
             </LinkButton>
         </template>

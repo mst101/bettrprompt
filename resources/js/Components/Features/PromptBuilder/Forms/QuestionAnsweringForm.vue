@@ -180,7 +180,7 @@ const handleTranscription = (text: string) => {
                     class="w-full sm:w-auto"
                     @click="emit('go-back')"
                 >
-                    <DynamicIcon name="arrow-left" class="mr-2 h-4 w-4" />
+                    <DynamicIcon name="arrow-left" class="mr-2 -ml-1 h-4 w-4" />
                     Back
                 </ButtonSecondary>
             </div>
@@ -197,6 +197,7 @@ const handleTranscription = (text: string) => {
                     @click="emit('submit-all')"
                 >
                     Submit All Answers
+                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -212,6 +213,7 @@ const handleTranscription = (text: string) => {
                             ? 'Submit All Answers'
                             : 'Next Question'
                     }}
+                    <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>
         </div>

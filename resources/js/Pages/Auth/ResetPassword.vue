@@ -75,6 +75,7 @@ const submit = () => {
                 type="submit"
                 :disabled="form.processing"
                 :loading="form.processing"
+                icon="check"
             >
                 Reset Password
             </ButtonPrimary>
