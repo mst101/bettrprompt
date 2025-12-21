@@ -141,7 +141,7 @@ const saveEdits = () => {
                     type="button"
                     class="w-full sm:w-auto"
                     data-testid="toggle-format-button"
-                    :icon="showFormatted ? 'document' : 'sparkles'"
+                    :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
                     {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
@@ -241,7 +241,7 @@ const saveEdits = () => {
                     type="button"
                     class="w-full"
                     data-testid="toggle-format-button-mobile"
-                    :icon="showFormatted ? 'document' : 'sparkles'"
+                    :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
                     {{ showFormatted ? 'Show Raw' : 'Show Formatted' }}
