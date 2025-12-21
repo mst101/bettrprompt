@@ -18,7 +18,8 @@ const props = defineProps<Props>();
 
 const copied = ref(false);
 const isEditing = ref(false);
-const showFormatted = ref(false);
+const showFormatted = ref(true);
+const showProvidersDropdown = ref(false);
 const editedPrompt = ref(props.optimizedPrompt);
 const shouldFocusTextarea = ref(false);
 const shouldFocusEditButton = ref(false);
@@ -181,7 +182,32 @@ const saveEdits = () => {
                 </ButtonSecondary>
             </div>
 
-            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
+            <!-- Desktop: Show providers inline -->
+            <div v-if="!isEditing" class="hidden sm:block">
+                <AIProviderLinks :prompt="optimizedPrompt" />
+            </div>
+
+            <!-- Mobile: Show providers dropdown -->
+            <div v-if="!isEditing" class="sm:hidden">
+                <button
+                    type="button"
+                    class="mb-4 flex w-full items-center justify-between rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-900 hover:bg-indigo-100"
+                    @click="showProvidersDropdown = !showProvidersDropdown"
+                >
+                    <span>Use with AI Provider</span>
+                    <DynamicIcon
+                        :name="
+                            showProvidersDropdown
+                                ? 'chevron-up'
+                                : 'chevron-down'
+                        "
+                        class="h-4 w-4"
+                    />
+                </button>
+                <div v-if="showProvidersDropdown" class="mb-4">
+                    <AIProviderLinks :prompt="optimizedPrompt" />
+                </div>
+            </div>
 
             <!-- View Mode - Raw Markdown -->
             <div
@@ -279,8 +305,6 @@ const saveEdits = () => {
                     Cancel
                 </ButtonSecondary>
             </div>
-
-            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
         </div>
     </Card>
 </template>
