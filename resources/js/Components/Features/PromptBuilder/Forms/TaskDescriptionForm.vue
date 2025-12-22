@@ -67,7 +67,6 @@ defineExpose({ focus });
                 :error="form.errors.taskDescription"
                 help-text="Minimum 10 characters. Be specific about your goals and requirements."
                 required
-                autofocus
                 placeholder="Describe what you're trying to accomplish..."
                 @update:model-value="
                     (value) => emit('update:taskDescription', value)

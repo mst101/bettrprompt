@@ -34,6 +34,11 @@ const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
 );
 
 const focus = () => {
+    // Only focus on larger screens (sm breakpoint and above: 640px)
+    if (!window.matchMedia('(min-width: 640px)').matches) {
+        return;
+    }
+
     // Focus the link if authenticated, button if visitor
     if (props.isAuthenticated) {
         addPersonalityLinkRef.value?.focus();

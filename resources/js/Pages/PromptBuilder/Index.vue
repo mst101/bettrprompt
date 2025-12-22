@@ -113,8 +113,8 @@ const focusAppropriateElement = async () => {
             } else if (!hasPersonalityType.value) {
                 // Focus the personality prompt (link or button)
                 personalityTypePromptRef.value?.focus();
-            } else {
-                // Focus the textarea
+            } else if (isSmallScreenOrWider) {
+                // Only focus textarea on larger screens when personality type is set
                 taskDescriptionFormRef.value?.focus();
             }
         }, 200);
