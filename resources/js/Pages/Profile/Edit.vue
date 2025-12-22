@@ -90,7 +90,7 @@ defineOptions({
 
         <!-- Basic Information -->
         <UpdateProfileInformationForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :must-verify-email="mustVerifyEmail"
             :status="status"
         />
@@ -135,7 +135,7 @@ defineOptions({
 
         <!-- UI Complexity -->
         <UpdateUiComplexityForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :ui-complexity="uiComplexity"
         />
 

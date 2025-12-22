@@ -50,7 +50,7 @@ const submit = () => {
     <section>
         <CollapsibleSection
             title="Interface Complexity"
-            subtitle="Choose how much detail you'd like to see when creating prompts. Simple mode focuses on essential inputs and outputs, whilst advanced mode shows additional technical details and insights."
+            subtitle="Choose how much detail you'd like to see when creating prompts."
         >
             <form class="space-y-6" @submit.prevent="submit">
                 <div>
