@@ -12,7 +12,7 @@ import LinkText from '@/Components/Base/LinkText.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 
 interface Props {
@@ -111,13 +111,20 @@ const submit = () => {
         ? 'profile.personality.update'
         : 'visitor.personality.update';
 
+    const currentUrl = page.url || '';
+    const isOnPromptBuilder = currentUrl.includes('/prompt-builder');
+
     form.patch(route(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
             success('Personality type updated successfully');
             emit('saved');
-            if (isAuthenticated) {
-                // Show CTA after saving (only for authenticated users)
+
+            // If we're on the prompt builder, navigate back there instead of profile
+            if (isOnPromptBuilder) {
+                router.visit(route('prompt-builder.index'));
+            } else if (isAuthenticated) {
+                // Show CTA after saving (only for authenticated users on profile page)
                 showTaskCta.value = true;
                 // Focus the button after it appears
                 await nextTick();
@@ -156,6 +163,9 @@ const clearPersonality = async () => {
             ? 'profile.personality.update'
             : 'visitor.personality.update';
 
+        const currentUrl = page.url || '';
+        const isOnPromptBuilder = currentUrl.includes('/prompt-builder');
+
         clearForm.patch(route(routeName), {
             preserveScroll: true,
             onSuccess: () => {
@@ -167,6 +177,11 @@ const clearPersonality = async () => {
                 form.traitPercentages.tactics = null;
                 form.traitPercentages.identity = null;
                 success('Personality information cleared');
+
+                // If we're on the prompt builder, navigate back there instead of profile
+                if (isOnPromptBuilder) {
+                    router.visit(route('prompt-builder.index'));
+                }
             },
             onError: () => {
                 error('Failed to clear personality information');
@@ -180,7 +195,7 @@ const clearPersonality = async () => {
     <!-- Collapsible version for profile page -->
     <section v-if="collapsible">
         <CollapsibleSection
-            title="Your Personality Type"
+            title="Your Personality"
             subtitle="Update your personality type to get more personalised AI prompts."
         >
             <form class="space-y-6" @submit.prevent="submit">
@@ -571,10 +586,7 @@ const clearPersonality = async () => {
                 Save
             </ButtonPrimary>
 
-            <p
-                v-if="personalityBase && !identity"
-                class="text-sm text-amber-600"
-            >
+            <p v-if="personalityBase && !identity" class="text-sm">
                 Please select Assertive or Turbulent to complete your
                 personality type
             </p>

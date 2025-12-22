@@ -45,7 +45,7 @@ watch(
     <section>
         <CollapsibleSection
             title="Profile Information"
-            subtitle="Update your account's profile information and email address."
+            subtitle="Update your name and email address."
         >
             <form
                 class="space-y-6"
