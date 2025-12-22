@@ -18,11 +18,14 @@ const isOpen = ref(false);
 <template>
     <section>
         <!-- Collapsible Header -->
-        <button
-            type="button"
+        <div
+            role="button"
+            tabindex="0"
             class="flex w-full cursor-pointer items-start justify-between gap-4 rounded-t-lg p-4 text-left transition-colors hover:bg-indigo-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none focus:ring-inset sm:p-8"
             :class="isOpen ? '' : 'rounded-lg'"
             @click="isOpen = !isOpen"
+            @keydown.enter="isOpen = !isOpen"
+            @keydown.space.prevent="isOpen = !isOpen"
         >
             <div class="min-w-0 flex-1">
                 <h2 class="text-lg font-medium text-indigo-900">
@@ -42,7 +45,7 @@ const isOpen = ref(false);
                     isOpen ? 'rotate-180' : '',
                 ]"
             />
-        </button>
+        </div>
 
         <!-- Collapsible Content -->
         <Transition
