@@ -17,6 +17,37 @@ class PromptFrameworkService
     }
 
     /**
+     * Recursively remove null values from an array
+     * This ensures we don't send unnecessary null fields to n8n workflows
+     */
+    private function removeNullValues(?array $data): ?array
+    {
+        if ($data === null) {
+            return null;
+        }
+
+        $filtered = [];
+
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue; // Skip null values
+            }
+
+            if (is_array($value)) {
+                $nestedFiltered = $this->removeNullValues($value);
+                // Only add if the nested array is not empty after filtering
+                if (! empty($nestedFiltered)) {
+                    $filtered[$key] = $nestedFiltered;
+                }
+            } else {
+                $filtered[$key] = $value;
+            }
+        }
+
+        return empty($filtered) ? null : $filtered;
+    }
+
+    /**
      * Check if we should use test mock responses instead of calling real n8n workflows
      * Returns true when running in testing environment (E2E tests or server-side tests)
      *
@@ -115,9 +146,10 @@ class PromptFrameworkService
             'task_description' => $taskDescription,
         ];
 
-        // Add user context if available
-        if ($userContext !== null) {
-            $payload['user_context'] = $userContext;
+        // Add user context if available (filter out null values)
+        $filteredUserContext = $this->removeNullValues($userContext);
+        if ($filteredUserContext !== null) {
+            $payload['user_context'] = $filteredUserContext;
         }
 
         try {
@@ -217,21 +249,18 @@ class PromptFrameworkService
             $payload['forced_framework_code'] = $forcedFrameworkCode;
         }
 
-        // Add user context with nested personality data
+        // Add user context with nested personality data (filter out null values)
         if ($userContext !== null) {
             // Nest personality data under user_context.personality
-            $payload['user_context'] = $userContext;
-            $payload['user_context']['personality'] = [
+            $contextWithPersonality = $userContext;
+            $contextWithPersonality['personality'] = [
                 'personality_type' => $personalityType,
                 'trait_percentages' => $traitPercentages,
             ];
+            $payload['user_context'] = $this->removeNullValues($contextWithPersonality);
         } else {
             // If no user context, create one with just personality data
             $payload['user_context'] = [
-                'location' => null,
-                'professional' => null,
-                'team' => null,
-                'preferences' => null,
                 'personality' => [
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
@@ -310,21 +339,18 @@ class PromptFrameworkService
             $payload['pre_analysis_context'] = $preAnalysisContext;
         }
 
-        // Add user context with nested personality data
+        // Add user context with nested personality data (filter out null values)
         if ($userContext !== null) {
             // Nest personality data under user_context.personality
-            $payload['user_context'] = $userContext;
-            $payload['user_context']['personality'] = [
+            $contextWithPersonality = $userContext;
+            $contextWithPersonality['personality'] = [
                 'personality_type' => $personalityType,
                 'trait_percentages' => $traitPercentages,
             ];
+            $payload['user_context'] = $this->removeNullValues($contextWithPersonality);
         } else {
             // If no user context, create one with just personality data
             $payload['user_context'] = [
-                'location' => null,
-                'professional' => null,
-                'team' => null,
-                'preferences' => null,
                 'personality' => [
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,

@@ -692,6 +692,11 @@ class DebugN8nController extends Controller
                         'error' => 'Invalid input format',
                     ], 400);
                 }
+            } else {
+                // Handle array format from request (e.g., when user pastes n8n array format)
+                if (is_array($inputData) && isset($inputData[0]['body'])) {
+                    $inputData = $inputData[0];
+                }
             }
 
             // Load JavaScript from storage/app/n8n_debug/prepare_prompt/old/
@@ -787,6 +792,11 @@ class DebugN8nController extends Controller
                         'success' => false,
                         'error' => 'Invalid input format',
                     ], 400);
+                }
+            } else {
+                // Handle array format from request (e.g., when user pastes n8n array format)
+                if (is_array($inputData) && isset($inputData[0]['body'])) {
+                    $inputData = $inputData[0];
                 }
             }
 
