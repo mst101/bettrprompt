@@ -40,7 +40,18 @@ return [
         'username' => env('N8N_BASIC_AUTH_USER'),
         'password' => env('N8N_BASIC_AUTH_PASSWORD'),
         'api_key' => env('N8N_API_KEY'),
+        'api_key_live' => env('N8N_API_KEY_LIVE'),
         'webhook_secret' => env('N8N_WEBHOOK_SECRET'),
+        'workflow_ids' => [
+            0 => env('N8N_WORKFLOW_0_ID', 'x2JKq1wrjnpA76R9'),
+            1 => env('N8N_WORKFLOW_1_ID', 'MGuVYvZDLTa3D09d'),
+            2 => env('N8N_WORKFLOW_2_ID', 'kbuj1cvHJdjqQjQT'),
+        ],
+        'workflow_ids_live' => [
+            0 => env('N8N_WORKFLOW_0_ID_LIVE'),
+            1 => env('N8N_WORKFLOW_1_ID_LIVE'),
+            2 => env('N8N_WORKFLOW_2_ID_LIVE'),
+        ],
     ],
 
     'google' => [

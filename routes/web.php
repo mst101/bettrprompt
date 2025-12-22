@@ -342,6 +342,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
         [\App\Http\Controllers\DebugN8nController::class, 'executeNewWorkflow'])
         ->name('workflow.execute-workflow-new')
         ->where('workflowNumber', '[0-9]+');
+
+    Route::post('/debug/workflow/{workflowNumber}/upload-to-live',
+        [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToLive'])
+        ->name('workflow.upload-to-live')
+        ->where('workflowNumber', '[0-9]+');
 });
 
 // Mock n8n webhook endpoints for E2E testing (only in e2e environment)

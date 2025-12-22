@@ -7,10 +7,23 @@ import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue'
 import NotificationToast from '@/Components/Features/Workflow/NotificationToast.vue';
 import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { onMounted, ref } from 'vue';
+
+const props = withDefaults(defineProps<Props>(), {
+    input: null,
+    javascriptOld: null,
+    javascriptNew: null,
+    promptOld: null,
+    promptNew: null,
+    outputOld: null,
+    outputNew: null,
+});
+
+const { confirm, success, error: showError } = useAlert();
 
 interface Props {
     workflowNumber: number;
@@ -23,16 +36,6 @@ interface Props {
     outputNew?: object | null;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    input: null,
-    javascriptOld: null,
-    javascriptNew: null,
-    promptOld: null,
-    promptNew: null,
-    outputOld: null,
-    outputNew: null,
-});
-
 defineOptions({
     layout: WorkflowLayout,
 });
@@ -43,6 +46,7 @@ const isExecutingOld = ref(false);
 const isExecutingNew = ref(false);
 const isUploadingOld = ref(false);
 const isUploadingNew = ref(false);
+const isUploadingToLive = ref(false);
 const error = ref<string | null>(null);
 
 const input = ref(props.input);
@@ -246,28 +250,16 @@ const executeWorkflowNew = async () => {
 };
 
 const uploadWorkflowOld = async () => {
-    if (!inputJson.value) {
-        error.value = 'Input data is required';
-        return;
-    }
-
     isUploadingOld.value = true;
     error.value = null;
 
     try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
+        // First, save the old JavaScript to ensure it's up to date
+        await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/upload-to-n8n-old`,
             'POST',
-            { input: inputData },
         );
 
         if (!response.ok) {
@@ -291,28 +283,16 @@ const uploadWorkflowOld = async () => {
 };
 
 const uploadWorkflowNew = async () => {
-    if (!inputJson.value) {
-        error.value = 'Input data is required';
-        return;
-    }
-
     isUploadingNew.value = true;
     error.value = null;
 
     try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
+        // First, save the new JavaScript to ensure it's up to date
+        await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new`,
             'POST',
-            { input: inputData },
         );
 
         if (!response.ok) {
@@ -332,6 +312,62 @@ const uploadWorkflowNew = async () => {
         error.value = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
     } finally {
         isUploadingNew.value = false;
+    }
+};
+
+const uploadWorkflowToLive = async () => {
+    // Show confirmation dialog
+    const confirmed = await confirm(
+        'This will upload the current workflow_0.json file to the LIVE production n8n server at https://n8n.bettrprompt.ai/. This action cannot be undone. Are you sure you want to proceed?',
+        'Upload to Live Server?',
+        {
+            confirmText: 'Upload to Live',
+            cancelText: 'Cancel',
+            confirmButtonStyle: 'danger',
+        },
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    isUploadingToLive.value = true;
+    error.value = null;
+
+    try {
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/upload-to-live`,
+            'POST',
+        );
+
+        if (!response.ok) {
+            error.value = `Server error: ${response.status} ${response.statusText}`;
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            error.value =
+                result.error || 'Failed to upload workflow to live server';
+            await showError(
+                result.error || 'Failed to upload workflow to live server',
+                'Upload Failed',
+            );
+            return;
+        }
+
+        await success(
+            'Workflow successfully uploaded to live production server!',
+            'Upload Successful',
+        );
+        error.value = null;
+    } catch (err) {
+        const errorMessage = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        error.value = errorMessage;
+        await showError(errorMessage, 'Upload Failed');
+    } finally {
+        isUploadingToLive.value = false;
     }
 };
 
@@ -594,9 +630,22 @@ onMounted(async () => {
                 subtitle="Inspect workflow input, JavaScript code, and output"
             />
 
-            <ButtonPrimary @click="expandedView = 'input'">
-                Input Data
-            </ButtonPrimary>
+            <div class="flex gap-4">
+                <ButtonPrimary @click="expandedView = 'input'">
+                    Input Data
+                </ButtonPrimary>
+
+                <ButtonDanger
+                    :disabled="isUploadingToLive"
+                    @click="uploadWorkflowToLive"
+                >
+                    {{
+                        isUploadingToLive
+                            ? 'Uploading...'
+                            : 'Upload to n8n (live)'
+                    }}
+                </ButtonDanger>
+            </div>
         </div>
 
         <!-- Controls -->

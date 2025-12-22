@@ -324,15 +324,21 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Workflow ID mapping (from n8n API)
+     * Workflow ID mapping for local development (from config)
      */
     private function getWorkflowId(int $workflowNumber): ?string
     {
-        $workflowIds = [
-            0 => 'x2JKq1wrjnpA76R9',
-            1 => 'MGuVYvZDLTa3D09d',
-            2 => 'kbuj1cvHJdjqQjQT',
-        ];
+        $workflowIds = config('services.n8n.workflow_ids', []);
+
+        return $workflowIds[$workflowNumber] ?? null;
+    }
+
+    /**
+     * Workflow ID mapping for live production server
+     */
+    private function getLiveWorkflowId(int $workflowNumber): ?string
+    {
+        $workflowIds = config('services.n8n.workflow_ids_live', []);
 
         return $workflowIds[$workflowNumber] ?? null;
     }
@@ -404,6 +410,18 @@ class DebugN8nController extends Controller
     public function uploadOldWorkflowToN8n(int $workflowNumber)
     {
         try {
+            // Load the old JavaScript from storage
+            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
+            if (! file_exists($jsFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Old JavaScript file not found for workflow_{$workflowNumber}. Please save the JavaScript code first.",
+                ], 404);
+            }
+
+            $oldJavaScript = file_get_contents($jsFile);
+
+            // Load the workflow file
             $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
@@ -427,6 +445,29 @@ class DebugN8nController extends Controller
                     'error' => 'Invalid workflow JSON format',
                 ], 400);
             }
+
+            // Update the "Prepare Prompt" node with the old JavaScript
+            $found = false;
+            foreach ($workflow['nodes'] as &$node) {
+                if ($node['name'] === 'Prepare Prompt') {
+                    $node['parameters']['jsCode'] = $oldJavaScript;
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (! $found) {
+                return response()->json([
+                    'success' => false,
+                    'error' => '"Prepare Prompt" node not found in workflow',
+                ], 404);
+            }
+
+            // Save the updated workflow back to the file
+            file_put_contents(
+                $n8nWorkflowFile,
+                json_encode($workflow, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            );
 
             // Build a clean workflow object with only the required fields for n8n API
             // The PUT /api/v1/workflows/{id} endpoint requires: name, nodes, connections, settings
@@ -467,7 +508,7 @@ class DebugN8nController extends Controller
             if (! file_exists($jsFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}. Please save the JavaScript code first.",
                 ], 404);
             }
 
@@ -515,6 +556,12 @@ class DebugN8nController extends Controller
                 ], 404);
             }
 
+            // Save the updated workflow back to the file
+            file_put_contents(
+                $n8nWorkflowFile,
+                json_encode($workflow, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            );
+
             // Build a clean workflow object with only the required fields for n8n API
             $cleanWorkflow = [
                 'name' => $workflow['name'] ?? 'workflow',
@@ -539,6 +586,76 @@ class DebugN8nController extends Controller
                 'error' => "Failed to upload new workflow: {$e->getMessage()}",
             ], 500);
         }
+    }
+
+    /**
+     * Upload workflow to live production n8n server
+     */
+    public function uploadWorkflowToLive(int $workflowNumber)
+    {
+        try {
+            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            if (! file_exists($n8nWorkflowFile)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                ], 404);
+            }
+
+            $workflowId = $this->getLiveWorkflowId($workflowNumber);
+            if (! $workflowId) {
+                return response()->json([
+                    'success' => false,
+                    'error' => "Live workflow ID not configured for workflow {$workflowNumber}. Please set N8N_WORKFLOW_{$workflowNumber}_ID_LIVE in your .env file.",
+                ], 400);
+            }
+
+            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
+            if (! $workflow) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid workflow JSON format',
+                ], 400);
+            }
+
+            // Build a clean workflow object with only the required fields for n8n API
+            $cleanWorkflow = [
+                'name' => $workflow['name'] ?? 'workflow',
+                'nodes' => $workflow['nodes'] ?? [],
+                'connections' => $workflow['connections'] ?? [],
+                'settings' => $workflow['settings'] ?? (object) [],
+            ];
+
+            // Create a special N8nClient instance configured for the live server
+            $liveN8nClient = $this->createLiveN8nClient();
+            $result = $liveN8nClient->updateWorkflow($workflowId, $cleanWorkflow);
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            \Log::error('Failed to upload workflow to live n8n server', [
+                'workflowNumber' => $workflowNumber,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to upload workflow to live server: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
+     * Create an N8nClient instance configured for the live production server
+     */
+    private function createLiveN8nClient(): \App\Services\N8nClient
+    {
+        // Temporarily override the config to point to the live server
+        config([
+            'services.n8n.url' => 'https://n8n.bettrprompt.ai',
+            'services.n8n.api_key' => config('services.n8n.api_key_live'),
+        ]);
+
+        return new \App\Services\N8nClient;
     }
 
     /**

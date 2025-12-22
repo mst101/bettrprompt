@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AlertDialog from '@/Components/Base/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
 import NavLink from '@/Components/Base/NavLink.vue';
@@ -208,5 +209,8 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <main class="max-w-8xl mx-auto px-4 py-8 sm:px-6">
             <slot />
         </main>
+
+        <!-- Alert Dialog -->
+        <AlertDialog />
     </div>
 </template>
