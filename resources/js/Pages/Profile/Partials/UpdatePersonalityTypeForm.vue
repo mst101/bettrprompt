@@ -104,16 +104,19 @@ watch(
 );
 
 const submit = () => {
-    const routeName = props.visitorMode
-        ? 'visitor.personality.update'
-        : 'profile.personality.update';
+    // If user is authenticated, use profile route regardless of visitorMode prop
+    // visitorMode only matters for visitor-only forms
+    const isAuthenticated = !!user.value;
+    const routeName = isAuthenticated
+        ? 'profile.personality.update'
+        : 'visitor.personality.update';
 
     form.patch(route(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
             success('Personality type updated successfully');
             emit('saved');
-            if (!props.visitorMode) {
+            if (isAuthenticated) {
                 // Show CTA after saving (only for authenticated users)
                 showTaskCta.value = true;
                 // Focus the button after it appears
@@ -147,9 +150,11 @@ const clearPersonality = async () => {
             },
         });
 
-        const routeName = props.visitorMode
-            ? 'visitor.personality.update'
-            : 'profile.personality.update';
+        // If user is authenticated, use profile route regardless of visitorMode prop
+        const isAuthenticated = !!user.value;
+        const routeName = isAuthenticated
+            ? 'profile.personality.update'
+            : 'visitor.personality.update';
 
         clearForm.patch(route(routeName), {
             preserveScroll: true,
