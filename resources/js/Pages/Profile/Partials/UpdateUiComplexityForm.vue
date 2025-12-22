@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
@@ -47,52 +48,45 @@ const submit = () => {
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Interface Complexity
-            </h2>
+        <CollapsibleSection
+            title="Interface Complexity"
+            subtitle="Choose how much detail you'd like to see when creating prompts. Simple mode focuses on essential inputs and outputs, whilst advanced mode shows additional technical details and insights."
+        >
+            <form class="space-y-6" @submit.prevent="submit">
+                <div>
+                    <InputLabel for="uiComplexity" value="Interface Mode" />
+                    <div class="mt-3 space-y-3">
+                        <FormRadio
+                            id="ui-simple"
+                            v-model="form.uiComplexity"
+                            name="uiComplexity"
+                            value="simple"
+                            label="Simple"
+                            help-text="Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details."
+                        />
 
-            <p class="mt-1 text-sm text-indigo-600">
-                Choose how much detail you'd like to see when creating prompts.
-                Simple mode focuses on essential inputs and outputs, whilst
-                advanced mode shows additional technical details and insights.
-            </p>
-        </header>
-
-        <form class="mt-6 space-y-6" @submit.prevent="submit">
-            <div>
-                <InputLabel for="uiComplexity" value="Interface Mode" />
-                <div class="mt-3 space-y-3">
-                    <FormRadio
-                        id="ui-simple"
-                        v-model="form.uiComplexity"
-                        name="uiComplexity"
-                        value="simple"
-                        label="Simple"
-                        help-text="Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details."
-                    />
-
-                    <FormRadio
-                        id="ui-advanced"
-                        v-model="form.uiComplexity"
-                        name="uiComplexity"
-                        value="advanced"
-                        label="Advanced"
-                        help-text="Shows all features including task classification, cognitive requirements, and personality insights."
-                    />
+                        <FormRadio
+                            id="ui-advanced"
+                            v-model="form.uiComplexity"
+                            name="uiComplexity"
+                            value="advanced"
+                            label="Advanced"
+                            help-text="Shows all features including task classification, cognitive requirements, and personality insights."
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center gap-4">
-                <ButtonPrimary
-                    type="submit"
-                    :disabled="form.processing"
-                    :loading="form.processing"
-                    icon="download"
-                >
-                    Save
-                </ButtonPrimary>
-            </div>
-        </form>
+                <div class="flex items-center gap-4">
+                    <ButtonPrimary
+                        type="submit"
+                        :disabled="form.processing"
+                        :loading="form.processing"
+                        icon="download"
+                    >
+                        Save
+                    </ButtonPrimary>
+                </div>
+            </form>
+        </CollapsibleSection>
     </section>
 </template>
