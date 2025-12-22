@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { watch } from 'vue';
 
 interface SelectOption {
     value: string;
@@ -83,31 +84,6 @@ watch(
     },
 );
 
-const detectedAtFormatted = computed(() => {
-    if (!props.locationData.detectedAt) return null;
-    return new Date(props.locationData.detectedAt).toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-});
-
-const detectionStatus = computed(() => {
-    if (props.locationData.manuallySet) {
-        return 'Updated';
-    }
-    return 'Detected';
-});
-
-const headerTitle = computed(() => {
-    if (!props.locationData.countryName || !detectedAtFormatted.value) {
-        return 'Location & Language';
-    }
-    return `Location & Language - <span class="text-xs">${detectionStatus.value} ${detectedAtFormatted.value}</span>`;
-});
-
 const submit = () => {
     form.patch(route('profile.location.update'), {
         preserveScroll: true,
@@ -170,34 +146,11 @@ const clearLocation = async () => {
 </script>
 
 <template>
-    <section>
-        <header
-            class="flex flex-col items-start justify-between gap-4 sm:flex-row"
-        >
-            <div>
-                <h2
-                    class="text-lg font-medium text-indigo-900"
-                    v-html="headerTitle"
-                />
-
-                <p class="mt-1 text-sm text-indigo-600">
-                    Set your location and language preferences for better
-                    optimised AI prompts.
-                </p>
-            </div>
-
-            <ButtonSecondary
-                class="mt-4 sm:mt-0"
-                type="button"
-                :disabled="form.processing"
-                icon="sparkles"
-                @click="detectLocation"
-            >
-                Auto-Detect
-            </ButtonSecondary>
-        </header>
-
-        <form class="mt-6 space-y-6" @submit.prevent="submit">
+    <CollapsibleSection
+        title="Location & Language"
+        subtitle="Set your location and language preferences for better optimised AI prompts."
+    >
+        <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">
                 <!-- Country -->
                 <FormSelect
@@ -273,6 +226,15 @@ const clearLocation = async () => {
                     Save Location
                 </ButtonPrimary>
 
+                <ButtonSecondary
+                    type="button"
+                    :disabled="form.processing"
+                    icon="sparkles"
+                    @click="detectLocation"
+                >
+                    Auto-Detect
+                </ButtonSecondary>
+
                 <ButtonTrash
                     v-if="locationData.countryName"
                     id="clear-location-form"
@@ -281,5 +243,5 @@ const clearLocation = async () => {
                 />
             </div>
         </form>
-    </section>
+    </CollapsibleSection>
 </template>

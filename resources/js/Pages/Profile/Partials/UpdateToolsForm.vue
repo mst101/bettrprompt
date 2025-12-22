@@ -153,7 +153,7 @@ const clearTools = async () => {
         title="Tools & Technologies"
         subtitle="Share the tools and programming languages you work with to improve prompt recommendations."
     >
-        <form class="mt-6 space-y-6" @submit.prevent="submit">
+        <form class="space-y-6" @submit.prevent="submit">
             <!-- Preferred Tools -->
             <div>
                 <div class="mb-4">
