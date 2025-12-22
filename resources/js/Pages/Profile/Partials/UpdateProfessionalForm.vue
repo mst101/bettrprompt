@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
@@ -108,18 +109,10 @@ const clearProfessional = async () => {
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Professional Context
-            </h2>
-
-            <p class="mt-1 text-sm text-indigo-600">
-                Tell us about your professional background to help optimise
-                prompts for your role.
-            </p>
-        </header>
-
+    <CollapsibleSection
+        title="Professional Context"
+        subtitle="Tell us about your professional background to help optimise prompts for your role."
+    >
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">
                 <!-- Job Title -->
@@ -183,5 +176,5 @@ const clearProfessional = async () => {
                 />
             </div>
         </form>
-    </section>
+    </CollapsibleSection>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
@@ -110,18 +111,10 @@ const clearTeam = async () => {
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Team & Work Context
-            </h2>
-
-            <p class="mt-1 text-sm text-indigo-600">
-                Share information about your team structure and work
-                environment.
-            </p>
-        </header>
-
+    <CollapsibleSection
+        title="Team & Work Context"
+        subtitle="Share information about your team structure and work environment."
+    >
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="space-y-6 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
                 <!-- Team Size -->
@@ -176,5 +169,5 @@ const clearTeam = async () => {
                 />
             </div>
         </form>
-    </section>
+    </CollapsibleSection>
 </template>

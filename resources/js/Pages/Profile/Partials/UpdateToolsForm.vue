@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
@@ -148,18 +149,10 @@ const clearTools = async () => {
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Tools & Technologies
-            </h2>
-
-            <p class="mt-1 text-sm text-indigo-600">
-                Share the tools and programming languages you work with to
-                improve prompt recommendations.
-            </p>
-        </header>
-
+    <CollapsibleSection
+        title="Tools & Technologies"
+        subtitle="Share the tools and programming languages you work with to improve prompt recommendations."
+    >
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <!-- Preferred Tools -->
             <div>
@@ -265,5 +258,5 @@ const clearTools = async () => {
                 />
             </div>
         </form>
-    </section>
+    </CollapsibleSection>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
@@ -107,18 +108,10 @@ const clearBudget = async () => {
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">
-                Budget & Tool Preferences
-            </h2>
-
-            <p class="mt-1 text-sm text-indigo-600">
-                Tell us about your budget for tools and services so we can
-                recommend appropriate solutions.
-            </p>
-        </header>
-
+    <CollapsibleSection
+        title="Budget & Tool Preferences"
+        subtitle="Tell us about your budget for tools and services so we can recommend appropriate solutions."
+    >
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <!-- Budget Consciousness -->
             <div>
@@ -178,5 +171,5 @@ const clearBudget = async () => {
                 />
             </div>
         </form>
-    </section>
+    </CollapsibleSection>
 </template>
