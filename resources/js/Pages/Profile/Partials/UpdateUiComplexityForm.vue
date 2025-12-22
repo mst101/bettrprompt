@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
@@ -39,11 +38,15 @@ watch(
     },
 );
 
-const submit = () => {
-    form.patch(route('profile.ui-complexity.update'), {
-        preserveScroll: true,
-    });
-};
+// Auto-save when the selected option changes
+watch(
+    () => form.uiComplexity,
+    () => {
+        form.patch(route('profile.ui-complexity.update'), {
+            preserveScroll: true,
+        });
+    },
+);
 </script>
 
 <template>
@@ -52,7 +55,7 @@ const submit = () => {
             title="Interface Complexity"
             subtitle="Choose how much detail you'd like to see when creating prompts."
         >
-            <form class="space-y-6" @submit.prevent="submit">
+            <div class="space-y-6">
                 <div>
                     <InputLabel for="uiComplexity" value="Interface Mode" />
                     <div class="mt-3 space-y-3">
@@ -75,18 +78,7 @@ const submit = () => {
                         />
                     </div>
                 </div>
-
-                <div class="flex items-center gap-4">
-                    <ButtonPrimary
-                        type="submit"
-                        :disabled="form.processing"
-                        :loading="form.processing"
-                        icon="download"
-                    >
-                        Save
-                    </ButtonPrimary>
-                </div>
-            </form>
+            </div>
         </CollapsibleSection>
     </section>
 </template>
