@@ -112,24 +112,24 @@ defineOptions({
 
         <!-- Professional Context -->
         <UpdateProfessionalForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :professional-data="professionalData"
         />
 
         <!-- Team & Work Context -->
         <UpdateTeamForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :team-data="teamData"
         />
         <!-- Budget Preferences -->
         <UpdateBudgetForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :budget-data="budgetData"
         />
 
         <!-- Tools & Technologies -->
         <UpdateToolsForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :tools-data="toolsData"
         />
 

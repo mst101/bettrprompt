@@ -20,8 +20,8 @@ const isOpen = ref(false);
         <!-- Collapsible Header -->
         <button
             type="button"
-            class="flex w-full cursor-pointer items-start justify-between gap-4 rounded-t-lg px-4 py-6 text-left transition-colors hover:bg-indigo-50"
-            :class="isOpen ? 'bg-indigo-50' : 'rounded-lg bg-white'"
+            class="flex w-full cursor-pointer items-start justify-between gap-4 rounded-t-lg p-4 text-left transition-colors hover:bg-indigo-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none focus:ring-inset sm:p-8"
+            :class="isOpen ? '' : 'rounded-lg'"
             @click="isOpen = !isOpen"
         >
             <div class="min-w-0 flex-1">
@@ -53,7 +53,7 @@ const isOpen = ref(false);
             leave-from-class="max-h-[2000px] opacity-100"
             leave-to-class="max-h-0 opacity-0"
         >
-            <div v-if="isOpen" class="rounded-b-lg bg-white px-4 pb-6">
+            <div v-if="isOpen" class="rounded-b-lg p-4 sm:px-8">
                 <slot />
             </div>
         </Transition>

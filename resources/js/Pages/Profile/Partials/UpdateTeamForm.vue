@@ -115,8 +115,8 @@ const clearTeam = async () => {
         title="Team & Work Context"
         subtitle="Share information about your team structure and work environment."
     >
-        <form class="mt-6 space-y-6" @submit.prevent="submit">
-            <div class="space-y-6 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
+        <form class="space-y-4" @submit.prevent="submit">
+            <div class="space-y-4 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
                 <!-- Team Size -->
                 <FormSelect
                     id="team-size"
