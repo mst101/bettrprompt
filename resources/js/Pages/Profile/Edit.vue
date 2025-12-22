@@ -101,12 +101,6 @@ defineOptions({
             :personality-types="personalityTypes"
         />
 
-        <!-- UI Complexity -->
-        <UpdateUiComplexityForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
-            :ui-complexity="uiComplexity"
-        />
-
         <!-- Location & Language -->
         <UpdateLocationForm
             class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
@@ -137,6 +131,12 @@ defineOptions({
         <UpdateToolsForm
             class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
             :tools-data="toolsData"
+        />
+
+        <!-- UI Complexity -->
+        <UpdateUiComplexityForm
+            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            :ui-complexity="uiComplexity"
         />
 
         <!-- Password -->

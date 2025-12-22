@@ -61,11 +61,7 @@ const submit = () => {
 
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div>
-                <InputLabel
-                    for="uiComplexity"
-                    value="Interface Mode"
-                    :required="true"
-                />
+                <InputLabel for="uiComplexity" value="Interface Mode" />
                 <div class="mt-3 space-y-3">
                     <FormRadio
                         id="ui-simple"
@@ -74,7 +70,6 @@ const submit = () => {
                         value="simple"
                         label="Simple"
                         help-text="Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details."
-                        :required="true"
                     />
 
                     <FormRadio
@@ -84,7 +79,6 @@ const submit = () => {
                         value="advanced"
                         label="Advanced"
                         help-text="Shows all features including task classification, cognitive requirements, and personality insights."
-                        :required="true"
                     />
                 </div>
             </div>

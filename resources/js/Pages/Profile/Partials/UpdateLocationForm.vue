@@ -85,7 +85,7 @@ watch(
 
 const detectedAtFormatted = computed(() => {
     if (!props.locationData.detectedAt) return null;
-    return new Date(props.locationData.detectedAt).toLocaleDateString('en-US', {
+    return new Date(props.locationData.detectedAt).toLocaleDateString('en-GB', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -105,7 +105,7 @@ const headerTitle = computed(() => {
     if (!props.locationData.countryName || !detectedAtFormatted.value) {
         return 'Location & Language';
     }
-    return `Location & Language - ${detectionStatus.value} ${detectedAtFormatted.value}`;
+    return `Location & Language - <span class="text-xs">${detectionStatus.value} ${detectedAtFormatted.value}</span>`;
 });
 
 const submit = () => {
@@ -171,25 +171,31 @@ const clearLocation = async () => {
 
 <template>
     <section>
-        <header class="flex items-start justify-between">
+        <header
+            class="flex flex-col items-start justify-between gap-4 sm:flex-row"
+        >
             <div>
-                <h2 class="text-lg font-medium text-indigo-900">
-                    {{ headerTitle }}
-                </h2>
+                <h2
+                    class="text-lg font-medium text-indigo-900"
+                    v-html="headerTitle"
+                />
 
                 <p class="mt-1 text-sm text-indigo-600">
                     Set your location and language preferences for better
                     optimised AI prompts.
                 </p>
             </div>
-        </header>
 
-        <ButtonTrash
-            v-if="locationData.countryName"
-            id="clear-location-form"
-            label="Clear Location"
-            @clear="clearLocation"
-        />
+            <ButtonSecondary
+                class="mt-4 sm:mt-0"
+                type="button"
+                :disabled="form.processing"
+                icon="sparkles"
+                @click="detectLocation"
+            >
+                Auto-Detect
+            </ButtonSecondary>
+        </header>
 
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">
@@ -257,7 +263,7 @@ const clearLocation = async () => {
                 />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -267,14 +273,12 @@ const clearLocation = async () => {
                     Save Location
                 </ButtonPrimary>
 
-                <ButtonSecondary
-                    type="button"
-                    :disabled="form.processing"
-                    icon="sparkles"
-                    @click="detectLocation"
-                >
-                    Auto-Detect
-                </ButtonSecondary>
+                <ButtonTrash
+                    v-if="locationData.countryName"
+                    id="clear-location-form"
+                    label="Clear Location"
+                    @clear="clearLocation"
+                />
             </div>
         </form>
     </section>

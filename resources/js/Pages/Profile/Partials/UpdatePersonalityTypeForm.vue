@@ -211,7 +211,6 @@ const clearPersonality = async () => {
                     :error="form.errors.personalityType"
                     placeholder="Your personality type"
                     :autofocus="true"
-                    :required="true"
                 />
 
                 <!-- Identity Selection -->
@@ -258,7 +257,7 @@ const clearPersonality = async () => {
                     @click="showTraitPercentages = !showTraitPercentages"
                 >
                     {{ showTraitPercentages ? '− Hide' : '+ Add' }}
-                    Trait Percentages (Optional)
+                    Trait Percentages (optional)
                 </ButtonText>
 
                 <div v-if="showTraitPercentages" class="mt-4 space-y-3">

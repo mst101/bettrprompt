@@ -19,7 +19,7 @@ const emit = defineEmits<{
 <template>
     <ButtonSecondary
         type="button"
-        size="sm"
+        size="md"
         :title="`${label} text`"
         :disabled="disabled"
         icon="trash"
