@@ -17,9 +17,9 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
             <div class="space-y-2">
                 <label class="font-medium text-indigo-700">Your task:</label>
                 <div
-                    class="mt-2 rounded bg-white p-2 text-indigo-800 dark:bg-indigo-100"
+                    class="mt-2 rounded border border-purple-100 bg-white p-2 text-indigo-800 dark:bg-indigo-100"
                 >
-                    I want to create a marketing strategy for my business
+                    I want to create a marketing strategy for my business.
                 </div>
             </div>
         </ExampleStageCard>
@@ -35,19 +35,19 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
             <div class="space-y-3">
                 <div>
                     <p class="font-medium text-purple-950">
-                        What's your business type? Please specify industry, or
-                        product/service.
+                        What type of business are you in, and what are your main
+                        products or services?
                     </p>
                     <div
-                        class="mt-2 rounded bg-white p-2 text-indigo-800 dark:bg-purple-100"
+                        class="mt-2 rounded border border-purple-100 bg-white p-2 text-indigo-800 dark:bg-purple-100"
                     >
-                        B2B SaaS startup offering project management and team
-                        collaboration tools
+                        We are a SaaS startup offering project management and
+                        team collaboration tools.
                     </div>
                 </div>
                 <div>
                     <p class="font-medium text-purple-950">
-                        Who is the target audience for this marketing strategy?
+                        Who is your target customer audience?
                     </p>
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
@@ -57,7 +57,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                                 <div class="h-2 w-2 rounded-full bg-white" />
                             </div>
                             <span class="text-purple-950"
-                                >Early stage startup</span
+                                >Business-to-Business (B2B)</span
                             >
                         </div>
                     </div>
@@ -69,7 +69,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="3"
             title="Review Selected Framework"
-            description="We've chosen the best approach for your task"
+            description="We recommend which framework to use (and suggest a couple of alternatives)"
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -77,29 +77,34 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                 <div
                     class="rounded bg-indigo-100 p-2 font-medium text-indigo-900"
                 >
-                    RACE Framework
+                    COAST Framework
                 </div>
-                <div class="flex flex-wrap gap-1">
+                <div class="flex flex-wrap gap-2">
                     <span
-                        class="rounded-lg bg-blue-200 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Reach</span
+                        class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
+                        >Challenge</span
                     >
                     <span
-                        class="rounded-lg bg-blue-200 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Act</span
+                        class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
+                        >Objective</span
                     >
                     <span
-                        class="rounded-lg bg-blue-200 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Convert</span
+                        class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
+                        >Actions</span
                     >
                     <span
-                        class="rounded-lg bg-blue-200 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Engage</span
+                        class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
+                        >Strategy</span
+                    >
+                    <span
+                        class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
+                        >Tactics</span
                     >
                 </div>
                 <p class="text-indigo-700">
-                    Best for creating customer-focused marketing strategies that
-                    drive measurable results
+                    COAST is the optimal framework for this task. It directly
+                    maps to strategy development with a clear progression from
+                    problem definition.
                 </p>
             </div>
         </ExampleStageCard>
@@ -119,7 +124,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         now?
                     </p>
                     <div
-                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                        class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
                         Low brand awareness in a crowded market; struggling to
                         reach decision-makers
@@ -130,7 +135,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         2. What marketing channels do you currently use?
                     </p>
                     <div
-                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                        class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
                         Email list, LinkedIn, and some paid ads
                     </div>
@@ -140,7 +145,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         3. What is your monthly marketing budget?
                     </p>
                     <div
-                        class="rounded bg-white p-2 text-purple-950 dark:bg-purple-100"
+                        class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
                         £2,000 - £5,000
                     </div>
@@ -167,13 +172,19 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     Your prompt is ready!
                 </div>
                 <div
-                    class="rounded bg-white p-2 text-sm text-indigo-800 dark:bg-indigo-100"
+                    class="rounded border border-indigo-100 bg-white p-2 text-sm text-indigo-800 dark:bg-indigo-100"
                 >
-                    Create a comprehensive marketing strategy for a B2B SaaS
-                    early-stage startup using the RACE framework (Reach, Act,
-                    Convert, Engage). Target audience: mid-size tech companies.
-                    Current channels: Email, LinkedIn, paid ads. Budget: £2,000
-                    - £5,000/month...
+                    Using the COAST framework, develop a marketing strategy for
+                    our B2B SaaS project management platform.
+                    <br />
+                    <strong>Challenge:</strong> Low brand awareness in a crowded
+                    market; struggling to reach decision-makers at mid-size tech
+                    companies.
+                    <br />
+                    <strong>Objective:</strong> Increase qualified leads and
+                    establish thought leadership.
+                    <br />
+                    etc...
                 </div>
                 <div class="pt-1">
                     <AIProviderLinks prompt="" />

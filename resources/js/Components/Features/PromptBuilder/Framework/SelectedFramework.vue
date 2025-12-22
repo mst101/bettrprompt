@@ -73,6 +73,7 @@ defineExpose({ focus });
             <ButtonPrimary
                 ref="proceedButtonRef"
                 icon="arrow-right"
+                icon-position="right"
                 @click="emit('proceed')"
             >
                 Proceed to Questions

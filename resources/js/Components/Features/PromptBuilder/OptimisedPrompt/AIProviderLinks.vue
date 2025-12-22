@@ -97,8 +97,8 @@ const handleProviderClick = async (provider: AIProvider) => {
         <div class="flex items-center justify-between">
             <h4 class="text-indigo-800">
                 Click any provider to copy your optimised prompt and open their
-                chat interface in a new tab. Then paste your prompt for better,
-                more personalised responses:
+                chat interface in a new tab. Then paste your prompt for a better
+                response:
             </h4>
             <p
                 v-if="copiedProvider"
@@ -115,7 +115,12 @@ const handleProviderClick = async (provider: AIProvider) => {
                 size="sm"
                 type="button"
                 :title="`Open ${provider.name} (prompt copied to clipboard)`"
-                class="group relative justify-center bg-indigo-50! px-3 py-2 hover:bg-indigo-100! sm:justify-start dark:bg-indigo-100! dark:hover:bg-indigo-200!"
+                class="group relative justify-center px-3 py-2 sm:justify-start"
+                :class="
+                    prompt.length > 0
+                        ? 'bg-indigo-50! hover:bg-indigo-100! dark:bg-indigo-100! dark:hover:bg-indigo-200!'
+                        : 'bg-white hover:bg-indigo-100! dark:hover:bg-indigo-200!'
+                "
                 @click="handleProviderClick(provider)"
             >
                 <component

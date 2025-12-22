@@ -117,7 +117,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'questions',
-            label: 'Clarifying Questions',
+            label: 'Questions',
             icon: 'question-mark-circle',
         });
     }
@@ -138,7 +138,7 @@ const tabs = computed<Tab[]>(() => {
     if (props.uiComplexity === 'advanced' && isAdmin.value) {
         allTabs.push({
             id: 'api-usage',
-            label: 'API Usage',
+            label: 'Costs',
             icon: 'chart-bar',
         });
     }

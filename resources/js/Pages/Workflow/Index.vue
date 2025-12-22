@@ -19,7 +19,7 @@ const infoItems = [
     },
     {
         strong: 'Framework Templates:',
-        text: '64 different prompting frameworks available for use in workflow optimisation',
+        text: '60+ different prompting frameworks available for use in workflow optimisation',
     },
 ];
 </script>

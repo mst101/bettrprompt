@@ -56,7 +56,10 @@ const closeSettings = () => {
                                     experience and analyse website traffic. By
                                     clicking "Accept All", you agree to our use
                                     of cookies.
-                                    <LinkText :href="route('cookies')">
+                                    <LinkText
+                                        class="text-indigo-200! hover:text-indigo-300!"
+                                        :href="route('cookies')"
+                                    >
                                         Read our Cookie Policy
                                     </LinkText>
                                 </p>

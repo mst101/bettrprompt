@@ -91,7 +91,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 <div class="mt-4 sm:whitespace-nowrap">
                     <ButtonSecondary
                         type="button"
-                        class="w-full focus:ring-offset-indigo-200 dark:bg-indigo-200 dark:hover:bg-indigo-300"
+                        class="w-full bg-indigo-100 hover:bg-indigo-200 focus:ring-offset-indigo-200 dark:bg-indigo-200 dark:hover:bg-indigo-300"
                         icon="arrow-right"
                         icon-position="right"
                         :disabled="switchingFramework !== null"
