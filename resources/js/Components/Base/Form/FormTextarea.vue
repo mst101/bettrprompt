@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormTextareaProps } from '@/Types';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = withDefaults(defineProps<FormTextareaProps>(), {
     modelValue: '',
@@ -15,10 +15,13 @@ const props = withDefaults(defineProps<FormTextareaProps>(), {
     textareaClass: '',
     srOnlyLabel: false,
 });
-
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
+// Configuration constants
+const MIN_ROWS = 3;
+const MAX_ROWS = 16;
+const DEFAULT_LINE_HEIGHT = 20;
 
 defineOptions({
     inheritAttrs: false,
@@ -43,22 +46,9 @@ const textareaClasses = computed(() => {
 const textarea = ref<HTMLTextAreaElement | null>(null);
 const dynamicRows = ref(props.rows);
 
-const updateDynamicRows = async () => {
-    if (!textarea.value) return;
-
-    // Capture current display size before we change it for measurement
-    const previousDisplay = dynamicRows.value;
-
-    // Measure content height at rows=1 to avoid height inflation from rows="3" reserved space
-    dynamicRows.value = 1;
-
-    await nextTick();
-
-    const textareaElement = textarea.value;
-    const scrollHeight = textareaElement.scrollHeight;
-    const styles = window.getComputedStyle(textareaElement);
-
-    // Get padding and borders to calculate actual content height
+// Extract style metrics from textarea element
+const getStyleMetrics = (element: HTMLTextAreaElement) => {
+    const styles = window.getComputedStyle(element);
     const paddingTop = parseInt(styles.paddingTop, 10) || 0;
     const paddingBottom = parseInt(styles.paddingBottom, 10) || 0;
     const borderTopWidth = parseInt(styles.borderTopWidth, 10) || 0;
@@ -66,11 +56,46 @@ const updateDynamicRows = async () => {
 
     const totalPadding =
         paddingTop + paddingBottom + borderTopWidth + borderBottomWidth;
+    const lineHeight = parseInt(styles.lineHeight, 10) || DEFAULT_LINE_HEIGHT;
+
+    return { totalPadding, lineHeight };
+};
+
+// Calculate exact number of rows needed for content (used on initial load)
+const calculateExactRows = async () => {
+    if (!textarea.value) return;
+
+    // Measure content height at rows=1 to avoid height inflation from reserved space
+    dynamicRows.value = 1;
+    await nextTick();
+
+    const textareaElement = textarea.value;
+    const scrollHeight = textareaElement.scrollHeight;
+    const { totalPadding, lineHeight } = getStyleMetrics(textareaElement);
+
     const contentHeight = Math.max(0, scrollHeight - totalPadding);
+    const rowsNeeded = Math.ceil(contentHeight / lineHeight);
 
-    const lineHeight = parseInt(styles.lineHeight, 10) || 20;
+    // Clamp between MIN_ROWS and MAX_ROWS
+    dynamicRows.value = Math.max(MIN_ROWS, Math.min(rowsNeeded, MAX_ROWS));
+};
 
-    // Calculate rows of content as decimal for precise threshold checking
+// Incremental expansion/shrinking (used while typing)
+const updateDynamicRows = async () => {
+    if (!textarea.value) return;
+
+    // Capture current display size before we change it for measurement
+    const previousDisplay = dynamicRows.value;
+
+    // Measure content height at rows=1 to avoid height inflation from reserved space
+    dynamicRows.value = 1;
+    await nextTick();
+
+    const textareaElement = textarea.value;
+    const scrollHeight = textareaElement.scrollHeight;
+    const { totalPadding, lineHeight } = getStyleMetrics(textareaElement);
+
+    const contentHeight = Math.max(0, scrollHeight - totalPadding);
     const rowsOfContent = contentHeight / lineHeight;
 
     // Expand when content fills the second-to-last row (~100%)
@@ -82,17 +107,22 @@ const updateDynamicRows = async () => {
     let rowsToDisplay = previousDisplay;
     if (rowsOfContent >= expandThreshold) {
         // Content is filling the second-to-last row, expand to next row
-        rowsToDisplay = Math.min(previousDisplay + 1, 10);
-    } else if (previousDisplay > 3 && rowsOfContent <= shrinkThreshold) {
+        rowsToDisplay = Math.min(previousDisplay + 1, MAX_ROWS);
+    } else if (previousDisplay > MIN_ROWS && rowsOfContent <= shrinkThreshold) {
         // Content has shrunk enough to no longer need current display size, shrink by 1
         rowsToDisplay = previousDisplay - 1;
     }
 
-    // Clamp between 3 (min) and 10 (max)
-    dynamicRows.value = Math.max(3, Math.min(rowsToDisplay, 10));
+    // Clamp between MIN_ROWS and MAX_ROWS
+    dynamicRows.value = Math.max(MIN_ROWS, Math.min(rowsToDisplay, MAX_ROWS));
 };
 
 watch(() => props.modelValue, updateDynamicRows);
+
+// Calculate initial rows needed on mount (calculate exact rows, not incremental)
+onMounted(() => {
+    calculateExactRows();
+});
 
 const focus = (options?: { cursorPosition?: 'start' | 'end' }) => {
     textarea.value?.focus();
