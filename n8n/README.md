@@ -195,7 +195,7 @@ Both workflows include comprehensive error handling:
 
 To import a workflow into n8n:
 
-1. Log in to your n8n instance (https://n8n.hiddengambia.com)
+1. Log in to your n8n instance (https://n8n.bettrprompt.ai)
 2. Click "Workflows" in the left sidebar
 3. Click "Add Workflow" → "Import from File"
 4. Select the JSON file from this directory
