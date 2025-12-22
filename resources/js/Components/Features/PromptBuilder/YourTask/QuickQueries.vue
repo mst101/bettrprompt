@@ -7,7 +7,6 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
-import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
 import type {
     PreAnalysisQuestion,
@@ -389,27 +388,26 @@ const isDisabled = computed(() =>
         </div>
 
         <!-- View Mode (only show if has answers and not editing) -->
-        <div v-if="!isEditing && hasAnswers" class="space-y-4">
+        <div v-if="!isEditing && hasAnswers" class="space-y-3">
             <div
                 v-for="(question, index) in questions"
                 :key="question.id"
-                class="rounded-lg border border-indigo-200 bg-indigo-50 p-3"
+                class="flex items-start gap-3 rounded-md bg-indigo-50 p-4 shadow-xs dark:bg-indigo-100"
             >
-                <div class="flex gap-3">
-                    <QuestionNumber :number="index + 1" />
-                    <div class="flex-1">
-                        <p class="text-xs font-medium text-indigo-600">
-                            {{ question.question }}
-                        </p>
-                        <p class="mt-2 text-sm text-indigo-900">
-                            {{
-                                getAnswerLabel(
-                                    question,
-                                    answers[question.id] || '',
-                                )
-                            }}
-                        </p>
-                    </div>
+                <div
+                    class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white"
+                >
+                    {{ index + 1 }}
+                </div>
+                <div class="flex-1 space-y-2">
+                    <p class="text-sm font-medium text-indigo-900">
+                        {{ question.question }}
+                    </p>
+                    <p class="text-sm text-indigo-700">
+                        {{
+                            getAnswerLabel(question, answers[question.id] || '')
+                        }}
+                    </p>
                 </div>
             </div>
 
@@ -444,11 +442,37 @@ const isDisabled = computed(() =>
             class="space-y-8"
             @submit.prevent="submitAnswers"
         >
+            <!-- Top action buttons -->
+            <div class="flex flex-col justify-end gap-3 sm:flex-row">
+                <ButtonSecondary
+                    v-if="hasAnswers"
+                    type="button"
+                    class="inline-flex w-full items-center gap-1 sm:w-fit"
+                    :disabled="isLoading"
+                    @click="cancelEditing"
+                >
+                    Cancel
+                </ButtonSecondary>
+
+                <ButtonPrimary
+                    type="submit"
+                    class="inline-flex w-full items-center gap-1 sm:w-fit"
+                    :disabled="isDisabled"
+                    :loading="isLoading"
+                >
+                    {{ submitButtonText }}
+                </ButtonPrimary>
+            </div>
+
             <div v-for="(question, index) in questions" :key="question.id">
                 <!-- Multiple choice questions -->
                 <div v-if="question.type === 'choice'" class="space-y-3">
-                    <div class="flex gap-3">
-                        <QuestionNumber :number="index + 1" />
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white"
+                        >
+                            {{ index + 1 }}
+                        </div>
                         <label
                             class="block flex-1 text-sm font-medium text-indigo-900"
                         >
@@ -514,8 +538,12 @@ const isDisabled = computed(() =>
 
                 <!-- Yes/No questions -->
                 <div v-else-if="question.type === 'yes_no'" class="space-y-3">
-                    <div class="flex gap-3">
-                        <QuestionNumber :number="index + 1" />
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white"
+                        >
+                            {{ index + 1 }}
+                        </div>
                         <label
                             class="block flex-1 text-sm font-medium text-indigo-900"
                         >
@@ -557,8 +585,12 @@ const isDisabled = computed(() =>
 
                 <!-- Text input questions -->
                 <div v-else-if="question.type === 'text'" class="space-y-3">
-                    <div class="flex gap-3">
-                        <QuestionNumber :number="index + 1" />
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white"
+                        >
+                            {{ index + 1 }}
+                        </div>
                         <span class="text-sm font-medium text-indigo-900">
                             {{ question.question }}
                         </span>

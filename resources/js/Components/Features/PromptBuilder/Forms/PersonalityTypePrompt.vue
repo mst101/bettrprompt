@@ -28,7 +28,6 @@ const { add: addNotification } = useNotification();
 const { dismissPrompt, showPrompt } = usePersonalityPromptPreference();
 const showPersonalityForm = ref(false);
 const showPersonalityBox = computed(() => showPrompt.value);
-const addPersonalityLinkRef = ref<InstanceType<typeof LinkText> | null>(null);
 const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
     null,
 );
@@ -39,12 +38,7 @@ const focus = () => {
         return;
     }
 
-    // Focus the link if authenticated, button if visitor
-    if (props.isAuthenticated) {
-        addPersonalityLinkRef.value?.focus();
-    } else {
-        addPersonalityButtonRef.value?.focus();
-    }
+    addPersonalityButtonRef.value?.focus();
 };
 
 defineExpose({ focus });
