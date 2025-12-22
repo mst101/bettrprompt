@@ -20,12 +20,14 @@ interface Props {
     visitorMode?: boolean;
     visitorPersonalityType?: string | null;
     visitorTraitPercentages?: Record<string, number> | null;
+    collapsible?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     visitorMode: false,
     visitorPersonalityType: null,
     visitorTraitPercentages: null,
+    collapsible: true,
 });
 
 const emit = defineEmits<{
@@ -170,7 +172,8 @@ const clearPersonality = async () => {
 </script>
 
 <template>
-    <section>
+    <!-- Collapsible version for profile page -->
+    <section v-if="collapsible">
         <CollapsibleSection
             title="Your Personality Type"
             subtitle="Update your personality type to get more personalised AI prompts."
@@ -387,4 +390,179 @@ const clearPersonality = async () => {
             </form>
         </CollapsibleSection>
     </section>
+
+    <!-- Non-collapsible version for prompt builder -->
+    <form v-else class="space-y-6" @submit.prevent="submit">
+        <!-- 16personalities Logo Link -->
+        <div v-if="!visitorMode" class="mb-4">
+            <a
+                class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                href="https://16personalities.com"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <DynamicIcon
+                    name="personalities"
+                    class="h-20 rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100"
+                />
+            </a>
+        </div>
+
+        <!-- Personality Type Selection -->
+        <div class="space-y-4">
+            <FormSelect
+                id="personality-base"
+                v-model="personalityBase"
+                class="max-w-sm"
+                label="Personality Type"
+                :options="personalityTypeOptions"
+                :error="form.errors.personalityType"
+                placeholder="Your personality type"
+                :autofocus="true"
+            />
+
+            <!-- Identity Selection -->
+            <div v-if="personalityBase">
+                <InputLabel for="identity" value="Identity" :required="true" />
+                <div class="mt-2 flex gap-6">
+                    <FormRadio
+                        id="identity-assertive"
+                        v-model="identity"
+                        name="identity"
+                        value="A"
+                        label="Assertive (A)"
+                        :required="true"
+                    />
+                    <FormRadio
+                        id="identity-turbulent"
+                        v-model="identity"
+                        name="identity"
+                        value="T"
+                        label="Turbulent (T)"
+                        :required="true"
+                    />
+                </div>
+            </div>
+
+            <!-- Optional Trait Percentages (only these two sections for prompt builder) -->
+            <ButtonText
+                id="toggle-trait-percentages"
+                type="button"
+                @click="showTraitPercentages = !showTraitPercentages"
+            >
+                {{ showTraitPercentages ? '− Hide' : '+ Add' }}
+                Trait Percentages (optional)
+            </ButtonText>
+
+            <div v-if="showTraitPercentages" class="mt-4 space-y-3">
+                <p class="text-indigo-600">
+                    Enter your trait percentages from
+                    <LinkText
+                        href="https://16personalities.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >16personalities.com</LinkText
+                    >.
+                </p>
+
+                <div class="max-w-xs space-y-4">
+                    <div class="relative">
+                        <FormInput
+                            id="mind"
+                            v-model="form.traitPercentages.mind"
+                            type="number"
+                            label="Introversion/Extraversion"
+                            :min="50"
+                            :max="100"
+                            class="pr-6 text-right text-lg!"
+                        />
+                        <span
+                            class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                        >
+                            %
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <FormInput
+                            id="energy"
+                            v-model="form.traitPercentages.energy"
+                            type="number"
+                            label="Intuitive/Observant"
+                            :min="50"
+                            :max="100"
+                            class="pr-6 text-right text-lg!"
+                        />
+                        <span
+                            class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                        >
+                            %
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <FormInput
+                            id="nature"
+                            v-model="form.traitPercentages.nature"
+                            type="number"
+                            label="Thinking/Feeling"
+                            :min="50"
+                            :max="100"
+                            class="pr-6 text-right text-lg!"
+                        />
+                        <span
+                            class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                        >
+                            %
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <FormInput
+                            id="tactics"
+                            v-model="form.traitPercentages.tactics"
+                            type="number"
+                            label="Judging/Prospecting"
+                            :min="50"
+                            :max="100"
+                            class="pr-6 text-right text-lg!"
+                        />
+                        <span
+                            class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                        >
+                            %
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        <FormInput
+                            id="identity-percent"
+                            v-model="form.traitPercentages.identity"
+                            type="number"
+                            label="Assertive/Turbulent"
+                            :min="50"
+                            :max="100"
+                            class="pr-6 text-right text-lg!"
+                        />
+                        <span
+                            class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                        >
+                            %
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <ButtonPrimary
+                type="submit"
+                :disabled="form.processing"
+                :loading="form.processing"
+                icon="download"
+            >
+                Save
+            </ButtonPrimary>
+        </div>
+    </form>
 </template>

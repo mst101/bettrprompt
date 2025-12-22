@@ -143,6 +143,7 @@ watch(
                         :visitor-mode="true"
                         :visitor-personality-type="visitorPersonalityType"
                         :visitor-trait-percentages="visitorTraitPercentages"
+                        :collapsible="false"
                         @saved="handlePersonalitySaved"
                     />
                 </div>
@@ -180,6 +181,7 @@ watch(
                             :visitor-mode="true"
                             :visitor-personality-type="visitorPersonalityType"
                             :visitor-trait-percentages="visitorTraitPercentages"
+                            :collapsible="false"
                             @saved="handlePersonalitySaved"
                         />
                     </div>
