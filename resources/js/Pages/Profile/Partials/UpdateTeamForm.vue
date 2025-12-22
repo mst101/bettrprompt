@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
     teamData: {
@@ -70,6 +72,41 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+const hasTeamData = computed(() => {
+    return !!(
+        props.teamData.teamSize ||
+        props.teamData.teamRole ||
+        props.teamData.workMode
+    );
+});
+
+const { confirm } = useAlert();
+
+const clearTeam = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear all team and work information?',
+        'Clear Team & Work Context',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
+        const clearForm = useForm({});
+        clearForm.delete(route('profile.team.clear'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                success('Team information cleared successfully');
+                // Clear the form fields
+                form.teamSize = '';
+                form.teamRole = '';
+                form.workMode = '';
+            },
+            onError: () => {
+                error('Failed to clear team information');
+            },
+        });
+    }
+};
 </script>
 
 <template>
@@ -121,7 +158,7 @@ const submit = () => {
                 />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -130,6 +167,13 @@ const submit = () => {
                 >
                     Save Team Context
                 </ButtonPrimary>
+
+                <ButtonTrash
+                    v-if="hasTeamData"
+                    id="clear-team-form"
+                    label="Clear Team & Work Context"
+                    @clear="clearTeam"
+                />
             </div>
         </form>
     </section>

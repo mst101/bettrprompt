@@ -3,9 +3,11 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
     toolsData: {
@@ -110,6 +112,39 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+const hasToolsData = computed(() => {
+    return (
+        form.preferredTools.length > 0 ||
+        !!props.toolsData.primaryProgrammingLanguage
+    );
+});
+
+const { confirm } = useAlert();
+
+const clearTools = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear all tools and programming languages?',
+        'Clear Tools & Technologies',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
+        const clearForm = useForm({});
+        clearForm.delete(route('profile.tools.clear'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                success('Tools & technologies cleared successfully');
+                // Clear the form fields
+                form.preferredTools = [];
+                form.primaryProgrammingLanguage = '';
+            },
+            onError: () => {
+                error('Failed to clear tools & technologies');
+            },
+        });
+    }
+};
 </script>
 
 <template>
@@ -212,7 +247,7 @@ const submit = () => {
                 show-placeholder
             />
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -221,6 +256,13 @@ const submit = () => {
                 >
                     Save Tools & Languages
                 </ButtonPrimary>
+
+                <ButtonTrash
+                    v-if="hasToolsData"
+                    id="clear-tools-form"
+                    label="Clear Tools & Technologies"
+                    @clear="clearTools"
+                />
             </div>
         </form>
     </section>

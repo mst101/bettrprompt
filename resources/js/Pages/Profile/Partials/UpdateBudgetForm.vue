@@ -2,9 +2,11 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
     budgetData: {
@@ -73,6 +75,35 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+const hasBudgetData = computed(() => {
+    return !!props.budgetData.budgetConsciousness;
+});
+
+const { confirm } = useAlert();
+
+const clearBudget = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear your budget preferences?',
+        'Clear Budget Preferences',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
+        const clearForm = useForm({});
+        clearForm.delete(route('profile.budget.clear'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                success('Budget preferences cleared successfully');
+                // Clear the form field
+                form.budgetConsciousness = '';
+            },
+            onError: () => {
+                error('Failed to clear budget preferences');
+            },
+        });
+    }
+};
 </script>
 
 <template>
@@ -129,7 +160,7 @@ const submit = () => {
                 </p>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -138,6 +169,13 @@ const submit = () => {
                 >
                     Save Budget Preferences
                 </ButtonPrimary>
+
+                <ButtonTrash
+                    v-if="hasBudgetData"
+                    id="clear-budget-form"
+                    label="Clear Budget Preferences"
+                    @clear="clearBudget"
+                />
             </div>
         </form>
     </section>

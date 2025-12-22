@@ -2,9 +2,11 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
     professionalData: {
@@ -66,6 +68,43 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+const hasProfessionalData = computed(() => {
+    return !!(
+        props.professionalData.jobTitle ||
+        props.professionalData.industry ||
+        props.professionalData.experienceLevel ||
+        props.professionalData.companySize
+    );
+});
+
+const { confirm } = useAlert();
+
+const clearProfessional = async () => {
+    const confirmed = await confirm(
+        'Are you sure you want to clear all professional information?',
+        'Clear Professional Context',
+        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+    );
+
+    if (confirmed) {
+        const clearForm = useForm({});
+        clearForm.delete(route('profile.professional.clear'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                success('Professional information cleared successfully');
+                // Clear the form fields
+                form.jobTitle = '';
+                form.industry = '';
+                form.experienceLevel = '';
+                form.companySize = '';
+            },
+            onError: () => {
+                error('Failed to clear professional information');
+            },
+        });
+    }
+};
 </script>
 
 <template>
@@ -126,7 +165,7 @@ const submit = () => {
                 />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center gap-4 sm:flex-row">
                 <ButtonPrimary
                     type="submit"
                     :disabled="form.processing"
@@ -135,6 +174,13 @@ const submit = () => {
                 >
                     Save Professional Context
                 </ButtonPrimary>
+
+                <ButtonTrash
+                    v-if="hasProfessionalData"
+                    id="clear-professional-form"
+                    label="Clear Professional Context"
+                    @clear="clearProfessional"
+                />
             </div>
         </form>
     </section>
