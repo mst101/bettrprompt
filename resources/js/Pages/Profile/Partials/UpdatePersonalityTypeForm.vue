@@ -170,27 +170,27 @@ const clearPersonality = async () => {
 </script>
 
 <template>
-    <section class="space-y-4">
-        <!-- 16personalities Logo Link -->
-        <div v-if="!visitorMode">
-            <a
-                class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
-                href="https://16personalities.com"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <DynamicIcon
-                    name="personalities"
-                    class="h-20 rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100"
-                />
-            </a>
-        </div>
-
+    <section>
         <CollapsibleSection
             title="Your Personality Type"
             subtitle="Update your personality type to get more personalised AI prompts."
         >
             <form class="space-y-6" @submit.prevent="submit">
+                <!-- 16personalities Logo Link -->
+                <div v-if="!visitorMode" class="mb-4">
+                    <a
+                        class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                        href="https://16personalities.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <DynamicIcon
+                            name="personalities"
+                            class="h-20 rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100"
+                        />
+                    </a>
+                </div>
+
                 <!-- Personality Type Selection -->
                 <div class="space-y-4">
                     <FormSelect
