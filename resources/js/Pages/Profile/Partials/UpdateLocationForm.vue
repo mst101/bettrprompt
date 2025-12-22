@@ -170,7 +170,6 @@ const clearLocation = async () => {
                     label="Region/State"
                     placeholder="e.g., California, Lancashire"
                     :error="form.errors.region"
-                    help-text="State, province, or region"
                 />
 
                 <!-- City -->

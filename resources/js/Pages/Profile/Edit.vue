@@ -103,7 +103,7 @@ defineOptions({
 
         <!-- Location & Language -->
         <UpdateLocationForm
-            class="max-w-4xl space-y-2 bg-white p-4 shadow-sm sm:rounded-lg sm:p-8 dark:bg-indigo-50"
+            class="max-w-4xl space-y-2 bg-white shadow-sm sm:rounded-lg dark:bg-indigo-50"
             :location-data="locationData"
             :countries="countries"
             :currencies="currencies"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
@@ -169,230 +170,221 @@ const clearPersonality = async () => {
 </script>
 
 <template>
-    <section>
-        <header
-            class="flex flex-col items-start sm:flex-row sm:justify-between"
+    <section class="space-y-4">
+        <!-- 16personalities Logo Link -->
+        <div v-if="!visitorMode">
+            <a
+                class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                href="https://16personalities.com"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <DynamicIcon
+                    name="personalities"
+                    class="h-20 rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100"
+                />
+            </a>
+        </div>
+
+        <CollapsibleSection
+            title="Your Personality Type"
+            subtitle="Update your personality type to get more personalised AI prompts."
         >
-            <div>
-                <h2 class="text-lg font-medium text-indigo-900">
-                    Your Personality Type
-                </h2>
-
-                <p class="mt-1 text-sm text-indigo-600">
-                    Update your personality type to get more personalised AI
-                    prompts.
-                </p>
-            </div>
-
-            <div v-if="!visitorMode" class="-ml-4 sm:ml-4">
-                <a
-                    class="block rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
-                    href="https://16personalities.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <DynamicIcon
-                        name="personalities"
-                        class="my-2 h-20 w-full rounded-lg px-4 py-3 text-indigo-600 hover:bg-indigo-100 sm:mt-0 sm:h-fit sm:w-80"
+            <form class="space-y-6" @submit.prevent="submit">
+                <!-- Personality Type Selection -->
+                <div class="space-y-4">
+                    <FormSelect
+                        id="personality-base"
+                        v-model="personalityBase"
+                        class="max-w-sm"
+                        label="Personality Type"
+                        :options="personalityTypeOptions"
+                        :error="form.errors.personalityType"
+                        placeholder="Your personality type"
+                        :autofocus="true"
                     />
-                </a>
-            </div>
-        </header>
 
-        <form class="mt-2 space-y-6" @submit.prevent="submit">
-            <!-- Personality Type Selection -->
-            <div class="space-y-4">
-                <FormSelect
-                    id="personality-base"
-                    v-model="personalityBase"
-                    class="max-w-sm"
-                    label="Personality Type"
-                    :options="personalityTypeOptions"
-                    :error="form.errors.personalityType"
-                    placeholder="Your personality type"
-                    :autofocus="true"
-                />
-
-                <!-- Identity Selection -->
-                <div v-if="personalityBase">
-                    <InputLabel
-                        for="identity"
-                        value="Identity"
-                        :required="true"
-                    />
-                    <div class="mt-2 flex gap-6">
-                        <FormRadio
-                            id="identity-assertive"
-                            v-model="identity"
-                            name="identity"
-                            value="A"
-                            label="Assertive (A)"
+                    <!-- Identity Selection -->
+                    <div v-if="personalityBase">
+                        <InputLabel
+                            for="identity"
+                            value="Identity"
                             :required="true"
                         />
-                        <FormRadio
-                            id="identity-turbulent"
-                            v-model="identity"
-                            name="identity"
-                            value="T"
-                            label="Turbulent (T)"
-                            :required="true"
-                        />
-                    </div>
-                </div>
-
-                <!-- Selected Personality Display -->
-                <p
-                    v-if="fullPersonalityType"
-                    class="max-w-sm rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
-                >
-                    Selected: {{ fullPersonalityType }}
-                </p>
-            </div>
-
-            <!-- Optional Trait Percentages -->
-            <div>
-                <ButtonText
-                    id="toggle-trait-percentages"
-                    type="button"
-                    @click="showTraitPercentages = !showTraitPercentages"
-                >
-                    {{ showTraitPercentages ? '− Hide' : '+ Add' }}
-                    Trait Percentages (optional)
-                </ButtonText>
-
-                <div v-if="showTraitPercentages" class="mt-4 space-y-3">
-                    <p class="text-indigo-600">
-                        Enter your trait percentages from
-                        <LinkText
-                            href="https://16personalities.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            >16personalities.com</LinkText
-                        >.
-                    </p>
-
-                    <div class="max-w-xs space-y-4">
-                        <div class="relative">
-                            <FormInput
-                                id="mind"
-                                v-model="form.traitPercentages.mind"
-                                type="number"
-                                label="Introversion/Extraversion"
-                                :min="50"
-                                :max="100"
-                                class="pr-6 text-right text-lg!"
+                        <div class="mt-2 flex gap-6">
+                            <FormRadio
+                                id="identity-assertive"
+                                v-model="identity"
+                                name="identity"
+                                value="A"
+                                label="Assertive (A)"
+                                :required="true"
                             />
-                            <span
-                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
-                            >
-                                %
-                            </span>
-                        </div>
-
-                        <div class="relative">
-                            <FormInput
-                                id="energy"
-                                v-model="form.traitPercentages.energy"
-                                type="number"
-                                label="Intuitive/Observant"
-                                :min="50"
-                                :max="100"
-                                class="pr-6 text-right text-lg!"
+                            <FormRadio
+                                id="identity-turbulent"
+                                v-model="identity"
+                                name="identity"
+                                value="T"
+                                label="Turbulent (T)"
+                                :required="true"
                             />
-                            <span
-                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
-                            >
-                                %
-                            </span>
-                        </div>
-
-                        <div class="relative">
-                            <FormInput
-                                id="nature"
-                                v-model="form.traitPercentages.nature"
-                                type="number"
-                                label="Thinking/Feeling"
-                                :min="50"
-                                :max="100"
-                                class="pr-6 text-right text-lg!"
-                            />
-                            <span
-                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
-                            >
-                                %
-                            </span>
-                        </div>
-
-                        <div class="relative">
-                            <FormInput
-                                id="tactics"
-                                v-model="form.traitPercentages.tactics"
-                                type="number"
-                                label="Judging/Prospecting"
-                                :min="50"
-                                :max="100"
-                                class="pr-6 text-right text-lg!"
-                            />
-                            <span
-                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
-                            >
-                                %
-                            </span>
-                        </div>
-
-                        <div class="relative">
-                            <FormInput
-                                id="identity-percent"
-                                v-model="form.traitPercentages.identity"
-                                type="number"
-                                label="Assertive/Turbulent"
-                                :min="50"
-                                :max="100"
-                                class="pr-6 text-right text-lg!"
-                            />
-                            <span
-                                class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
-                            >
-                                %
-                            </span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="flex flex-col items-center gap-4 sm:flex-row">
-                <ButtonPrimary
-                    type="submit"
-                    :disabled="form.processing"
-                    :loading="form.processing"
-                    icon="download"
-                >
-                    Save
-                </ButtonPrimary>
-
-                <ButtonTrash
-                    v-if="personalityBase"
-                    label="Clear"
-                    @clear="clearPersonality"
-                />
-
-                <!-- Persist CTA after a successful save in this session -->
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <LinkButton
-                        v-if="showTaskCta"
-                        ref="taskCtaButton"
-                        :href="route('prompt-builder.index')"
+                    <!-- Selected Personality Display -->
+                    <p
+                        v-if="fullPersonalityType"
+                        class="max-w-sm rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
                     >
-                        Enter your Task
-                        <DynamicIcon name="arrow-right" class="h-4 w-4" />
-                    </LinkButton>
-                </Transition>
-            </div>
-        </form>
+                        Selected: {{ fullPersonalityType }}
+                    </p>
+                </div>
+
+                <!-- Optional Trait Percentages -->
+                <div>
+                    <ButtonText
+                        id="toggle-trait-percentages"
+                        type="button"
+                        @click="showTraitPercentages = !showTraitPercentages"
+                    >
+                        {{ showTraitPercentages ? '− Hide' : '+ Add' }}
+                        Trait Percentages (optional)
+                    </ButtonText>
+
+                    <div v-if="showTraitPercentages" class="mt-4 space-y-3">
+                        <p class="text-indigo-600">
+                            Enter your trait percentages from
+                            <LinkText
+                                href="https://16personalities.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >16personalities.com</LinkText
+                            >.
+                        </p>
+
+                        <div class="max-w-xs space-y-4">
+                            <div class="relative">
+                                <FormInput
+                                    id="mind"
+                                    v-model="form.traitPercentages.mind"
+                                    type="number"
+                                    label="Introversion/Extraversion"
+                                    :min="50"
+                                    :max="100"
+                                    class="pr-6 text-right text-lg!"
+                                />
+                                <span
+                                    class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                                >
+                                    %
+                                </span>
+                            </div>
+
+                            <div class="relative">
+                                <FormInput
+                                    id="energy"
+                                    v-model="form.traitPercentages.energy"
+                                    type="number"
+                                    label="Intuitive/Observant"
+                                    :min="50"
+                                    :max="100"
+                                    class="pr-6 text-right text-lg!"
+                                />
+                                <span
+                                    class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                                >
+                                    %
+                                </span>
+                            </div>
+
+                            <div class="relative">
+                                <FormInput
+                                    id="nature"
+                                    v-model="form.traitPercentages.nature"
+                                    type="number"
+                                    label="Thinking/Feeling"
+                                    :min="50"
+                                    :max="100"
+                                    class="pr-6 text-right text-lg!"
+                                />
+                                <span
+                                    class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                                >
+                                    %
+                                </span>
+                            </div>
+
+                            <div class="relative">
+                                <FormInput
+                                    id="tactics"
+                                    v-model="form.traitPercentages.tactics"
+                                    type="number"
+                                    label="Judging/Prospecting"
+                                    :min="50"
+                                    :max="100"
+                                    class="pr-6 text-right text-lg!"
+                                />
+                                <span
+                                    class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                                >
+                                    %
+                                </span>
+                            </div>
+
+                            <div class="relative">
+                                <FormInput
+                                    id="identity-percent"
+                                    v-model="form.traitPercentages.identity"
+                                    type="number"
+                                    label="Assertive/Turbulent"
+                                    :min="50"
+                                    :max="100"
+                                    class="pr-6 text-right text-lg!"
+                                />
+                                <span
+                                    class="pointer-events-none absolute top-9 right-3 text-lg text-indigo-800"
+                                >
+                                    %
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 sm:flex-row">
+                    <ButtonPrimary
+                        type="submit"
+                        :disabled="form.processing"
+                        :loading="form.processing"
+                        icon="download"
+                    >
+                        Save
+                    </ButtonPrimary>
+
+                    <ButtonTrash
+                        v-if="personalityBase"
+                        label="Clear"
+                        @clear="clearPersonality"
+                    />
+
+                    <!-- Persist CTA after a successful save in this session -->
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <LinkButton
+                            v-if="showTaskCta"
+                            ref="taskCtaButton"
+                            :href="route('prompt-builder.index')"
+                        >
+                            Enter your Task
+                            <DynamicIcon name="arrow-right" class="h-4 w-4" />
+                        </LinkButton>
+                    </Transition>
+                </div>
+            </form>
+        </CollapsibleSection>
     </section>
 </template>
