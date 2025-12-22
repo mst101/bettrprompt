@@ -554,15 +554,25 @@ const clearPersonality = async () => {
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div
+            class="flex flex-col items-start gap-3 sm:flex-row sm:items-center"
+        >
             <ButtonPrimary
                 type="submit"
-                :disabled="form.processing"
+                :disabled="form.processing || !fullPersonalityType"
                 :loading="form.processing"
                 icon="download"
             >
                 Save
             </ButtonPrimary>
+
+            <p
+                v-if="personalityBase && !identity"
+                class="text-sm text-amber-600"
+            >
+                Please select Assertive or Turbulent to complete your
+                personality type
+            </p>
         </div>
     </form>
 </template>
