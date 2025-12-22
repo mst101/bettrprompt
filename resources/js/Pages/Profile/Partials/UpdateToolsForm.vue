@@ -260,7 +260,7 @@ const clearTools = async () => {
                 <ButtonTrash
                     v-if="hasToolsData"
                     id="clear-tools-form"
-                    label="Clear Tools & Technologies"
+                    label="Clear"
                     @clear="clearTools"
                 />
             </div>

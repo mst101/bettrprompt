@@ -78,12 +78,16 @@ Route::middleware('auth')->group(function () {
     // Professional profile routes
     Route::patch('/profile/professional',
         [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
+    Route::delete('/profile/professional', [ProfileController::class, 'clearProfessional'])->name('profile.professional.clear');
     // Team profile routes
     Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
+    Route::delete('/profile/team', [ProfileController::class, 'clearTeam'])->name('profile.team.clear');
     // Budget profile routes
     Route::patch('/profile/budget', [ProfileController::class, 'updateBudget'])->name('profile.budget.update');
+    Route::delete('/profile/budget', [ProfileController::class, 'clearBudget'])->name('profile.budget.clear');
     // Tools profile routes
     Route::patch('/profile/tools', [ProfileController::class, 'updateTools'])->name('profile.tools.update');
+    Route::delete('/profile/tools', [ProfileController::class, 'clearTools'])->name('profile.tools.clear');
     // Account deletion
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 

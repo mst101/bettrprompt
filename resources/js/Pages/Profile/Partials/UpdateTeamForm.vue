@@ -171,7 +171,7 @@ const clearTeam = async () => {
                 <ButtonTrash
                     v-if="hasTeamData"
                     id="clear-team-form"
-                    label="Clear Team & Work Context"
+                    label="Clear"
                     @clear="clearTeam"
                 />
             </div>

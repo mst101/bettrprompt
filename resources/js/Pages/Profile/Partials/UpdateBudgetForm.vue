@@ -173,7 +173,7 @@ const clearBudget = async () => {
                 <ButtonTrash
                     v-if="hasBudgetData"
                     id="clear-budget-form"
-                    label="Clear Budget Preferences"
+                    label="Clear"
                     @clear="clearBudget"
                 />
             </div>

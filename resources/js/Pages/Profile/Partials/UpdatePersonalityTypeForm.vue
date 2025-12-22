@@ -372,7 +372,7 @@ const clearPersonality = async () => {
 
                 <ButtonTrash
                     v-if="personalityBase"
-                    label="Clear Personality Info"
+                    label="Clear"
                     @clear="clearPersonality"
                 />
 

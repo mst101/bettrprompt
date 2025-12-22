@@ -178,7 +178,7 @@ const clearProfessional = async () => {
                 <ButtonTrash
                     v-if="hasProfessionalData"
                     id="clear-professional-form"
-                    label="Clear Professional Context"
+                    label="Clear"
                     @clear="clearProfessional"
                 />
             </div>

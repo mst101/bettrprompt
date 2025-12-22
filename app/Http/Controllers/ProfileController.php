@@ -435,4 +435,98 @@ class ProfileController extends Controller
             return Redirect::back()->with('error', 'Failed to clear location. Please try again.');
         }
     }
+
+    public function clearProfessional(Request $request): RedirectResponse
+    {
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->update([
+                    'job_title' => null,
+                    'industry' => null,
+                    'experience_level' => null,
+                    'company_size' => null,
+                ]);
+                $request->user()->updateProfileCompletion();
+            });
+
+            return Redirect::route('profile.edit')
+                ->with('status', 'professional-cleared');
+        } catch (\Exception $e) {
+            Log::error('Failed to clear professional information', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error', 'Failed to clear professional information. Please try again.');
+        }
+    }
+
+    public function clearTeam(Request $request): RedirectResponse
+    {
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->update([
+                    'team_size' => null,
+                    'team_role' => null,
+                    'work_mode' => null,
+                ]);
+                $request->user()->updateProfileCompletion();
+            });
+
+            return Redirect::route('profile.edit')
+                ->with('status', 'team-cleared');
+        } catch (\Exception $e) {
+            Log::error('Failed to clear team information', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error', 'Failed to clear team information. Please try again.');
+        }
+    }
+
+    public function clearBudget(Request $request): RedirectResponse
+    {
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->update([
+                    'budget_consciousness' => null,
+                ]);
+                $request->user()->updateProfileCompletion();
+            });
+
+            return Redirect::route('profile.edit')
+                ->with('status', 'budget-cleared');
+        } catch (\Exception $e) {
+            Log::error('Failed to clear budget preferences', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error', 'Failed to clear budget preferences. Please try again.');
+        }
+    }
+
+    public function clearTools(Request $request): RedirectResponse
+    {
+        try {
+            DatabaseService::retryOnDeadlock(function () use ($request) {
+                $request->user()->update([
+                    'preferred_tools' => null,
+                    'primary_programming_language' => null,
+                ]);
+                $request->user()->updateProfileCompletion();
+            });
+
+            return Redirect::route('profile.edit')
+                ->with('status', 'tools-cleared');
+        } catch (\Exception $e) {
+            Log::error('Failed to clear tools & technologies', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return Redirect::back()->with('error', 'Failed to clear tools & technologies. Please try again.');
+        }
+    }
 }

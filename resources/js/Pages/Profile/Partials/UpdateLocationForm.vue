@@ -276,7 +276,7 @@ const clearLocation = async () => {
                 <ButtonTrash
                     v-if="locationData.countryName"
                     id="clear-location-form"
-                    label="Clear Location"
+                    label="Clear"
                     @clear="clearLocation"
                 />
             </div>
