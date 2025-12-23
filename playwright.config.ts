@@ -104,8 +104,9 @@ export default defineConfig({
         // Start Laravel development server with APP_ENV=e2e
         // This connects to the bettrprompt_e2e database
         command: 'env APP_ENV=e2e ./vendor/bin/sail artisan serve',
+
+        // Use the same URL as baseURL above - proxied through Caddy to the test server
         url: 'https://app.localhost',
-        port: 8000,
 
         // Reuse existing server during local development if it's already running
         reuseExistingServer: !process.env.CI,
