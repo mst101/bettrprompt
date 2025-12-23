@@ -6,6 +6,7 @@ import LogoCopilot from '@/Components/Logos/AIProviders/LogoCopilot.vue';
 import LogoGemini from '@/Components/Logos/AIProviders/LogoGemini.vue';
 import LogoGrok from '@/Components/Logos/AIProviders/LogoGrok.vue';
 import LogoMetaAI from '@/Components/Logos/AIProviders/LogoMetaAI.vue';
+import LogoMistral from '@/Components/Logos/AIProviders/LogoMistral.vue';
 import LogoPerplexity from '@/Components/Logos/AIProviders/LogoPerplexity.vue';
 import { ref, type Component } from 'vue';
 
@@ -58,6 +59,12 @@ const providers: AIProvider[] = [
         name: 'Meta AI',
         url: 'https://www.meta.ai/',
         logo: LogoMetaAI,
+        supportsUrlPrompt: false,
+    },
+    {
+        name: 'Mistral',
+        url: 'https://chat.mistral.ai/',
+        logo: LogoMistral,
         supportsUrlPrompt: false,
     },
     {
