@@ -1,14 +1,40 @@
 import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Global setup for Playwright E2E tests
  * This runs once before all tests
+ *
+ * IMPORTANT: This swaps .env files so the Laravel dev server connects to
+ * bettrprompt_e2e instead of production bettrprompt database.
+ * After all tests complete, the original .env is restored.
  */
 async function globalSetup() {
     console.log('🧪 Setting up E2E test environment...');
 
+    const envPath = path.join(process.cwd(), '.env');
+    const envE2ePath = path.join(process.cwd(), '.env.e2e');
+    const envBackupPath = path.join(process.cwd(), '.env.backup');
+
     try {
-        // Set APP_ENV to e2e so Laravel uses .env.e2e
+        // CRITICAL: Backup and swap .env files
+        // This ensures the running Laravel dev server will use bettrprompt_e2e database
+        if (fs.existsSync(envPath)) {
+            fs.copyFileSync(envPath, envBackupPath);
+            console.log('📝 Backed up production .env to .env.backup');
+        }
+
+        if (fs.existsSync(envE2ePath)) {
+            fs.copyFileSync(envE2ePath, envPath);
+            console.log(
+                '🔄 Swapped to .env.e2e - Laravel dev server will now use bettrprompt_e2e database',
+            );
+        } else {
+            throw new Error('.env.e2e not found!');
+        }
+
+        // Set APP_ENV to e2e for any Node/artisan processes
         process.env.APP_ENV = 'e2e';
 
         console.log('📦 Creating test database...');
@@ -35,6 +61,28 @@ async function globalSetup() {
         );
 
         console.log('✅ E2E test environment ready!');
+
+        // Return a cleanup function that runs after all tests complete
+        return async () => {
+            try {
+                console.log('🧹 Cleaning up E2E test environment...');
+
+                // Restore the production .env from backup
+                if (fs.existsSync(envBackupPath)) {
+                    fs.copyFileSync(envBackupPath, envPath);
+                    fs.unlinkSync(envBackupPath);
+                    console.log(
+                        '✅ Restored production .env - Laravel dev server back to normal',
+                    );
+                }
+            } catch (cleanupError) {
+                console.error(
+                    '⚠️  Failed to restore production .env:',
+                    cleanupError,
+                );
+                // Don't throw during cleanup to avoid masking test failures
+            }
+        };
     } catch (error) {
         console.error('❌ Failed to set up E2E test environment:', error);
         throw error;

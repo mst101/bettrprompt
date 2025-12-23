@@ -98,26 +98,10 @@ export default defineConfig({
         // },
     ],
 
-    // Start a dedicated test Laravel server with e2e environment
-    // This ensures tests use the bettrprompt_e2e database, not production
-    webServer: {
-        // Start Laravel development server with APP_ENV=e2e
-        // This connects to the bettrprompt_e2e database
-        command: 'env APP_ENV=e2e ./vendor/bin/sail artisan serve',
-
-        // Use the same URL as baseURL above - proxied through Caddy to the test server
-        url: 'https://app.localhost',
-
-        // Reuse existing server during local development if it's already running
-        reuseExistingServer: !process.env.CI,
-
-        // Wait up to 2 minutes for server to start (Sail needs time to initialize)
-        timeout: 120 * 1000,
-
-        // Only show server stderr on failure
-        stdout: 'ignore',
-        stderr: 'pipe',
-    },
+    // Note: We rely on global-setup.ts to swap .env files before tests run.
+    // This ensures the existing Laravel dev server (accessed via Caddy) connects to
+    // the bettrprompt_e2e database instead of the production bettrprompt database.
+    // See global-setup.ts for more details.
 
     // Global timeout for each test (60 seconds)
     // Increased from 30s to handle parallel test execution and async n8n workflow processing
