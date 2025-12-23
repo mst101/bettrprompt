@@ -38,17 +38,17 @@ const isOpen = ref(false);
             @keydown.enter="isOpen = !isOpen"
             @keydown.space.prevent="isOpen = !isOpen"
         >
+            <div v-if="icon" class="mt-0.5 shrink-0 sm:mt-0 sm:mr-2">
+                <DynamicIcon
+                    :name="icon"
+                    class="size-6 text-indigo-700 sm:size-8"
+                />
+            </div>
+
             <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2">
-                    <DynamicIcon
-                        v-if="icon"
-                        :name="icon"
-                        class="size-5 text-indigo-700"
-                    />
-                    <h2 class="text-lg font-medium text-indigo-900">
-                        {{ title }}
-                    </h2>
-                </div>
+                <h2 class="text-lg font-medium text-indigo-900">
+                    {{ title }}
+                </h2>
 
                 <p class="mt-1 text-sm text-indigo-600">
                     {{ subtitle }}

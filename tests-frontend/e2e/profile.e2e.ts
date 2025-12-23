@@ -324,10 +324,15 @@ test.describe('Profile - Authenticated User', () => {
         // Scroll to delete section
         await deleteSection.scrollIntoViewIfNeeded();
 
-        // Find and click delete account button
-        const deleteButton = deleteSection.getByRole('button', {
-            name: /delete account/i,
-        });
+        // Expand the delete account section
+        const deleteHeader = deleteSection.locator('[role="button"]').first();
+        await deleteHeader.click();
+        await authenticatedPage.waitForTimeout(300);
+
+        // Find and click delete account button (the actual button, not the header)
+        const deleteButton = deleteSection
+            .locator('[data-testid="collapsible-content-delete-account"]')
+            .getByRole('button', { name: /delete account/i });
         await expect(deleteButton).toBeVisible();
         await deleteButton.click();
 

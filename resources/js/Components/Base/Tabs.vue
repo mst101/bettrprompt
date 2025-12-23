@@ -56,7 +56,7 @@ const selectTab = (tabId: string) => {
         </div>
 
         <!-- Desktop: Horizontal Tabs (sm: and above) -->
-        <nav class="-mb-px hidden flex-wrap gap-x-6 sm:flex" aria-label="Tabs">
+        <nav class="-mb-px hidden flex-wrap gap-x-5 sm:flex" aria-label="Tabs">
             <button
                 v-for="tab in tabs"
                 :key="tab.id"

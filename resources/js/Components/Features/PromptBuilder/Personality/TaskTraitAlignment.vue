@@ -47,18 +47,16 @@ defineProps<Props>();
                     :key="index"
                     class="rounded-lg bg-blue-100 p-4"
                 >
-                    <div class="mb-2 flex items-start justify-between">
-                        <div>
-                            <span
-                                class="inline-block rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-blue-50"
-                            >
-                                {{ item.trait }}
-                            </span>
-                            <span
-                                class="ml-2 text-sm font-medium text-blue-900"
-                            >
-                                aligns with {{ item.requirement_aligned }}
-                            </span>
+                    <div class="mb-2 flex items-center justify-between">
+                        <div
+                            class="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-blue-50"
+                        >
+                            {{ item.trait }}
+                        </div>
+                        <div
+                            class="ml-2 flex-1 text-sm font-medium text-blue-900"
+                        >
+                            aligns with {{ item.requirement_aligned }}
                         </div>
                     </div>
                     <p class="text-sm text-blue-800">

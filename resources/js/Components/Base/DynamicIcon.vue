@@ -27,7 +27,6 @@ const iconAliases: Record<string, string> = {
     settings: 'cog',
     search: 'magnifying-glass',
     spinner: 'arrow-path-spin',
-    'building-office': 'building-storefront',
 };
 
 const getIconPath = (iconName: string): string => {

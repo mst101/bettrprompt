@@ -279,7 +279,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             </tr>
                         </thead>
                         <tbody
-                            class="divide-y divide-indigo-200 bg-white dark:bg-indigo-50"
+                            class="divide-y divide-indigo-200 bg-white text-indigo-900 dark:bg-indigo-50"
                         >
                             <tr
                                 v-for="promptRun in promptRuns.data"
