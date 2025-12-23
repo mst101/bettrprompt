@@ -381,7 +381,7 @@ This will:
 **Single test file:**
 
 ```bash
-npx playwright test tests-frontend/e2e/prompt-builder-history.e2e.ts
+npx playwright test tests-frontend/e2e/history.e2e.ts
 ```
 
 **Single test by name:**
@@ -613,7 +613,7 @@ await execAsync(
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  Controllers / Routes                                 │  │
 │  │  - /test/login (test-only)                           │  │
-│  │  - /prompt-builder-history                           │  │
+│  │  - /history                           │  │
 │  │  - Other application routes                          │  │
 │  └──────────────────────────────────────────────────────┘  │
 └─────────────────────────┬───────────────────────────────────┘

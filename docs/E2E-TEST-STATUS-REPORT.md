@@ -91,7 +91,7 @@ data pollution in the development database. However, there are **45 failing test
 - Responsive Design tests (mobile layout, badges, selectors, clickable rows)
 - Edge Cases tests (different statuses, missing frameworks, state persistence)
 
-**Test Location:** `tests-frontend/e2e/prompt-builder-history.e2e.ts`
+**Test Location:** `tests-frontend/e2e/history.e2e.ts`
 
 ---
 
@@ -332,7 +332,7 @@ npx playwright test
 
 ```bash
 npx playwright test framework-selection.e2e.ts
-npx playwright test prompt-builder-history.e2e.ts
+npx playwright test history.e2e.ts
 npx playwright test static-pages.e2e.ts
 ```
 
