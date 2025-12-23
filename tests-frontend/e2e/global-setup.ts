@@ -16,8 +16,27 @@ async function globalSetup() {
     const envPath = path.join(process.cwd(), '.env');
     const envE2ePath = path.join(process.cwd(), '.env.e2e');
     const envBackupPath = path.join(process.cwd(), '.env.backup');
+    const configCachePath = path.join(
+        process.cwd(),
+        'bootstrap/cache/config.php',
+    );
 
     try {
+        // SAFETY CHECK: Prevent tests from hitting production database
+        // If config caching is enabled, Laravel won't read the swapped .env file
+        if (fs.existsSync(configCachePath)) {
+            console.error('❌ CRITICAL: Config caching is enabled!');
+            console.error(
+                '   Laravel will NOT read the swapped .env file, causing tests to hit the production database.',
+            );
+            console.error('');
+            console.error('   Clear the config cache before running tests:');
+            console.error('   ./vendor/bin/sail artisan config:clear');
+            console.error('');
+            throw new Error(
+                'Config cache detected. Run "sail artisan config:clear" before running e2e tests.',
+            );
+        }
         // CRITICAL: Backup and swap .env files
         // This ensures the running Laravel dev server will use bettrprompt_e2e database
         if (fs.existsSync(envPath)) {
