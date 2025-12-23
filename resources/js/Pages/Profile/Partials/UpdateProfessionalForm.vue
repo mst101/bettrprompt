@@ -112,6 +112,7 @@ const clearProfessional = async () => {
     <CollapsibleSection
         title="Professional Context"
         subtitle="Tell us about your professional background to help optimise prompts for your role."
+        data-testid="professional"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">

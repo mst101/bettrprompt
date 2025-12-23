@@ -114,6 +114,7 @@ const clearTeam = async () => {
     <CollapsibleSection
         title="Team & Work Context"
         subtitle="Share information about your team structure and work environment."
+        data-testid="team"
     >
         <form class="space-y-4" @submit.prevent="submit">
             <div class="space-y-4 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">

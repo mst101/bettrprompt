@@ -197,6 +197,7 @@ const clearPersonality = async () => {
         <CollapsibleSection
             title="Your Personality"
             subtitle="Update your personality type to get more personalised AI prompts."
+            data-testid="personality"
         >
             <form class="space-y-6" @submit.prevent="submit">
                 <!-- 16personalities Logo Link -->

@@ -111,6 +111,7 @@ const clearBudget = async () => {
     <CollapsibleSection
         title="Budget & Tool Preferences"
         subtitle="Tell us about your budget for tools and services so we can recommend appropriate solutions."
+        data-testid="budget"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <!-- Budget Consciousness -->

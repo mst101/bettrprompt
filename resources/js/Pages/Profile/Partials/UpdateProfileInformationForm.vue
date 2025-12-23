@@ -46,6 +46,7 @@ watch(
         <CollapsibleSection
             title="Profile Information"
             subtitle="Update your name and email address."
+            data-testid="profile-information"
         >
             <form
                 class="space-y-6"

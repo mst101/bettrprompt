@@ -50,10 +50,10 @@ test.describe('Profile - Authenticated User', () => {
         await authenticatedPage.goto('/profile');
 
         // Expand Profile Information section
-        const profileSection = authenticatedPage.getByRole('heading', {
-            name: /profile information/i,
-        });
-        await profileSection.click();
+        const profileHeader = authenticatedPage.getByTestId(
+            'collapsible-header-profile-information',
+        );
+        await profileHeader.click();
 
         // Should see name and email fields populated with TEST_USER data
         // Labels may include asterisk for required fields: "Name *"
@@ -76,10 +76,10 @@ test.describe('Profile - Authenticated User', () => {
         await authenticatedPage.goto('/profile');
 
         // Expand Profile Information section
-        const profileHeading = authenticatedPage.getByRole('heading', {
-            name: /profile information/i,
-        });
-        await profileHeading.click();
+        const profileHeader = authenticatedPage.getByTestId(
+            'collapsible-header-profile-information',
+        );
+        await profileHeader.click();
 
         // Wait for section to expand
         await authenticatedPage.waitForTimeout(300);
@@ -506,6 +506,13 @@ test.describe('Profile - Authenticated User', () => {
         await expect(
             authenticatedPage.getByRole('heading', { name: /^profile$/i }),
         ).toBeVisible();
+
+        // Expand Profile Information section
+        const profileHeader = authenticatedPage.getByTestId(
+            'collapsible-header-profile-information',
+        );
+        await profileHeader.click();
+        await authenticatedPage.waitForTimeout(300);
 
         // Check that forms are still accessible
         const nameInput = authenticatedPage.getByLabel(/name/i);

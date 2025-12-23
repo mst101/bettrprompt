@@ -54,6 +54,7 @@ watch(
         <CollapsibleSection
             title="Interface Complexity"
             subtitle="Choose how much detail you'd like to see when creating prompts."
+            data-testid="ui-complexity"
         >
             <div class="space-y-6">
                 <div>

@@ -44,6 +44,7 @@ const updatePassword = () => {
         <CollapsibleSection
             title="Update Password"
             subtitle="Ensure your account is using a long, random password to stay secure."
+            data-testid="password"
         >
             <form class="space-y-6" @submit.prevent="updatePassword">
                 <FormInput

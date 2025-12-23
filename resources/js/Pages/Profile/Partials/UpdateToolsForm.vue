@@ -152,6 +152,7 @@ const clearTools = async () => {
     <CollapsibleSection
         title="Tools & Technologies"
         subtitle="Share the tools and programming languages you work with to improve prompt recommendations."
+        data-testid="tools"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <!-- Preferred Tools -->
