@@ -30,10 +30,10 @@ defineOptions({
     </HeaderPage>
 
     <ContainerPage>
-        <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
+        <div class="overflow-hidden bg-indigo-50 shadow-xs sm:rounded-lg">
             <div
                 data-testid="prose-content"
-                class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-indigo-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-indigo-700 prose-p:mb-4 prose-p:text-indigo-600 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-indigo-600 prose-strong:text-indigo-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none px-6"
+                class="prose prose-indigo prose-headings:scroll-mt-20 prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-indigo-900 prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-lg prose-h3:font-semibold prose-h3:text-indigo-700 prose-p:mb-4 prose-p:text-indigo-800 prose-p:leading-relaxed prose-ul:my-4 prose-ul:text-indigo-700 prose-strong:text-indigo-700 prose-ul:space-y-2 prose-li:leading-relaxed mt-8 max-w-none px-6"
             >
                 <h2>1. Introduction</h2>
                 <p>

@@ -17,7 +17,7 @@ const toggle = () => {
 
 <template>
     <div
-        class="flex items-center gap-3 rounded-md border border-indigo-200 bg-indigo-50 p-3 focus:ring-offset-indigo-100"
+        class="flex items-center gap-3 rounded-md border border-indigo-200 bg-white p-3 focus:ring-offset-indigo-100 dark:bg-indigo-50"
     >
         <span v-if="label" class="text-sm font-medium text-indigo-700">
             {{ label }}
@@ -25,7 +25,7 @@ const toggle = () => {
         <button
             type="button"
             :class="[
-                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-hidden',
+                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden',
                 modelValue ? 'bg-indigo-600' : 'bg-indigo-300',
             ]"
             role="switch"
