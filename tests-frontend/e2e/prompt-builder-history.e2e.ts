@@ -61,7 +61,7 @@ test.describe('Prompt Builder History - Empty State', () => {
         // Page is already navigated to empty state in beforeEach
         // Verify empty state message is visible when no prompts exist
         const emptyStateContainer = authenticatedPage.locator(
-            'text=/no prompt history yet/i',
+            'text=/no prompt history yet\./i',
         );
         await expect(emptyStateContainer).toBeVisible({ timeout: 5000 });
 
