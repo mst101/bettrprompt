@@ -45,12 +45,12 @@ defineProps<Props>();
                 <div
                     v-for="(item, index) in alignment.amplified"
                     :key="index"
-                    class="rounded-lg border border-blue-200 bg-blue-100 p-4"
+                    class="rounded-lg bg-blue-100 p-4"
                 >
                     <div class="mb-2 flex items-start justify-between">
                         <div>
                             <span
-                                class="inline-block rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white"
+                                class="inline-block rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-blue-50"
                             >
                                 {{ item.trait }}
                             </span>
@@ -75,18 +75,18 @@ defineProps<Props>();
                 alignment.counterbalanced.length > 0
             "
         >
-            <h3 class="mb-3 text-sm font-medium text-purple-700">
+            <h3 class="mb-3 text-sm font-medium text-indigo-700">
                 Counterbalanced Traits (Adjusted For)
             </h3>
             <div class="space-y-3">
                 <div
                     v-for="(item, index) in alignment.counterbalanced"
                     :key="index"
-                    class="rounded-lg border border-purple-200 bg-purple-50 p-4"
+                    class="rounded-lg bg-indigo-50 p-4"
                 >
                     <div class="mb-2">
                         <span
-                            class="inline-block rounded-full bg-purple-600 px-2 py-0.5 text-xs font-medium text-white"
+                            class="inline-block rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-medium text-indigo-50"
                         >
                             {{ item.trait }}
                         </span>
@@ -94,16 +94,16 @@ defineProps<Props>();
                             opposes {{ item.requirement_opposed }}
                         </span>
                     </div>
-                    <p class="mb-2 text-sm text-purple-700">
+                    <p class="mb-2 text-sm text-indigo-700">
                         {{ item.reason }}
                     </p>
                     <div
-                        class="rounded border-l-4 border-purple-400 bg-purple-100 p-3"
+                        class="rounded border-l-4 border-indigo-400 bg-indigo-100 p-3"
                     >
-                        <p class="text-xs font-medium text-purple-800">
+                        <p class="text-xs font-medium text-indigo-900">
                             Adjustment Applied:
                         </p>
-                        <p class="mt-1 text-sm text-purple-950">
+                        <p class="mt-1 text-sm text-indigo-950">
                             {{ item.injection }}
                         </p>
                     </div>
