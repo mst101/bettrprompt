@@ -56,7 +56,11 @@ const selectTab = (tabId: string) => {
         </div>
 
         <!-- Desktop: Horizontal Tabs (sm: and above) -->
-        <nav class="-mb-px hidden flex-wrap gap-x-5 sm:flex" aria-label="Tabs">
+        <nav
+            class="-mb-px hidden flex-wrap sm:flex"
+            :class="tabs.length > 6 ? 'gap-x-5' : 'gap-x-8'"
+            aria-label="Tabs"
+        >
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
