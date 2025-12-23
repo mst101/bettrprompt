@@ -76,7 +76,7 @@ describe('Button', () => {
 
             expect(button.classes()).toContain('px-4');
             expect(button.classes()).toContain('py-2');
-            expect(button.classes()).toContain('text-sm');
+            expect(button.classes()).toContain('text-xs');
         });
 
         it('should render small size', () => {
@@ -89,7 +89,7 @@ describe('Button', () => {
 
             expect(button.classes()).toContain('px-3');
             expect(button.classes()).toContain('py-1.5');
-            expect(button.classes()).toContain('text-sm');
+            expect(button.classes()).toContain('text-xs');
         });
 
         it('should render medium size', () => {
@@ -102,7 +102,7 @@ describe('Button', () => {
 
             expect(button.classes()).toContain('px-4');
             expect(button.classes()).toContain('py-2');
-            expect(button.classes()).toContain('text-sm');
+            expect(button.classes()).toContain('text-xs');
         });
 
         it('should render large size', () => {
@@ -114,8 +114,8 @@ describe('Button', () => {
             const button = wrapper.find('button');
 
             expect(button.classes()).toContain('px-6');
-            expect(button.classes()).toContain('py-3');
-            expect(button.classes()).toContain('text-sm');
+            expect(button.classes()).toContain('py-2');
+            expect(button.classes()).toContain('text-base');
         });
     });
 

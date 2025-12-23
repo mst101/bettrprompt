@@ -6,6 +6,7 @@ describe('FormTextarea', () => {
     const defaultProps = {
         id: 'test-textarea',
         modelValue: '',
+        label: 'Test Label',
     };
 
     it('should render textarea element', () => {

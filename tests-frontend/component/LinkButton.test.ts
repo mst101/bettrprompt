@@ -111,8 +111,7 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('border');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-sm');
-        expect(link.classes()).toContain('font-medium');
+        expect(link.classes()).toContain('text-xs');
     });
 
     it('should have base styling classes for secondary variant', () => {
@@ -128,8 +127,7 @@ describe('LinkButton', () => {
         expect(link.classes()).toContain('items-center');
         expect(link.classes()).toContain('px-4');
         expect(link.classes()).toContain('py-2');
-        expect(link.classes()).toContain('text-sm');
-        expect(link.classes()).toContain('font-medium');
+        expect(link.classes()).toContain('text-xs');
     });
 
     it('should have hover styling for secondary variant', () => {

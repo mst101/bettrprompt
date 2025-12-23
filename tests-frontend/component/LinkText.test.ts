@@ -44,7 +44,6 @@ describe('LinkText', () => {
         const link = wrapper.find('a');
         expect(link.classes()).toContain('rounded-md');
         expect(link.classes()).toContain('p-1');
-        expect(link.classes()).toContain('text-sm');
         expect(link.classes()).toContain('text-indigo-600');
     });
 

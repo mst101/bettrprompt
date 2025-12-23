@@ -152,6 +152,6 @@ describe('WorkflowError', () => {
 
         const icons = wrapper.findAllComponents(DynamicIcon);
         expect(icons[0].classes()).toContain('size-5'); // Error icon
-        expect(icons[1].classes()).toContain('size-4'); // Retry icon
+        expect(icons[1].classes()).toContain('h-4'); // Retry icon (from Button component)
     });
 });

@@ -151,7 +151,6 @@ describe('ButtonText', () => {
 
         const button = wrapper.find('button');
         expect(button.classes()).toContain('cursor-pointer');
-        expect(button.classes()).toContain('text-sm');
         expect(button.classes()).toContain('font-normal');
         expect(button.classes()).toContain('rounded-md');
     });

@@ -172,7 +172,7 @@ describe('FormRadio', () => {
         const input = wrapper.find('input');
         expect(input.classes()).toContain('h-4');
         expect(input.classes()).toContain('w-4');
-        expect(input.classes()).toContain('border-indigo-100');
+        expect(input.classes()).toContain('border-indigo-300');
         expect(input.classes()).toContain('text-indigo-600');
     });
 

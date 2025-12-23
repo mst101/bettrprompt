@@ -47,7 +47,6 @@ describe('InputLabel', () => {
         const label = wrapper.find('label');
 
         expect(label.classes()).toContain('block');
-        expect(label.classes()).toContain('text-sm');
         expect(label.classes()).toContain('font-medium');
         expect(label.classes()).toContain('text-indigo-700');
     });

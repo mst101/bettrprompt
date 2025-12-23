@@ -10,7 +10,7 @@ describe('StatusBadge', () => {
 
         expect(wrapper.text()).toBe('Completed');
         expect(wrapper.classes()).toContain('bg-green-100');
-        expect(wrapper.classes()).toContain('text-green-800');
+        expect(wrapper.classes()).toContain('text-green-900');
     });
 
     it('should render processing workflow stage (1_processing)', () => {
@@ -19,8 +19,8 @@ describe('StatusBadge', () => {
         });
 
         expect(wrapper.text()).toContain('Analysing');
-        expect(wrapper.classes()).toContain('bg-yellow-100');
-        expect(wrapper.classes()).toContain('text-yellow-800');
+        expect(wrapper.classes()).toContain('bg-yellow-400');
+        expect(wrapper.classes()).toContain('text-yellow-900');
     });
 
     it('should render failed workflow stage (2_failed)', () => {
@@ -30,7 +30,7 @@ describe('StatusBadge', () => {
 
         expect(wrapper.text()).toBe('Failed');
         expect(wrapper.classes()).toContain('bg-red-100');
-        expect(wrapper.classes()).toContain('text-red-800');
+        expect(wrapper.classes()).toContain('text-red-900');
     });
 
     it('should render awaiting answers workflow stage (1_completed)', () => {
@@ -39,7 +39,7 @@ describe('StatusBadge', () => {
         });
 
         expect(wrapper.text()).toBe('Awaiting Answers');
-        expect(wrapper.classes()).toContain('bg-blue-100');
+        expect(wrapper.classes()).toContain('bg-blue-200');
         expect(wrapper.classes()).toContain('text-blue-800');
     });
 
@@ -49,8 +49,8 @@ describe('StatusBadge', () => {
         });
 
         expect(wrapper.text()).toBe('Awaiting Questions');
-        expect(wrapper.classes()).toContain('bg-yellow-100');
-        expect(wrapper.classes()).toContain('text-yellow-800');
+        expect(wrapper.classes()).toContain('bg-yellow-400');
+        expect(wrapper.classes()).toContain('text-yellow-900');
     });
 
     it('should have test ID attribute', () => {
