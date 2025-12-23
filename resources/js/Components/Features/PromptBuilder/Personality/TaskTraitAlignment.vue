@@ -38,30 +38,30 @@ defineProps<Props>();
 
         <!-- Amplified Traits -->
         <div v-if="alignment.amplified && alignment.amplified.length > 0">
-            <h3 class="mb-3 text-sm font-medium text-green-700">
+            <h3 class="mb-3 text-sm font-medium text-blue-700">
                 Amplified Traits (Strengths Leveraged)
             </h3>
             <div class="space-y-3">
                 <div
                     v-for="(item, index) in alignment.amplified"
                     :key="index"
-                    class="rounded-lg border border-green-200 bg-green-50 p-4"
+                    class="rounded-lg border border-blue-200 bg-blue-100 p-4"
                 >
                     <div class="mb-2 flex items-start justify-between">
                         <div>
                             <span
-                                class="inline-block rounded-full bg-green-600 px-2 py-0.5 text-xs font-medium text-white"
+                                class="inline-block rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white"
                             >
                                 {{ item.trait }}
                             </span>
                             <span
-                                class="ml-2 text-sm font-medium text-indigo-900"
+                                class="ml-2 text-sm font-medium text-blue-900"
                             >
                                 aligns with {{ item.requirement_aligned }}
                             </span>
                         </div>
                     </div>
-                    <p class="text-sm text-indigo-700">
+                    <p class="text-sm text-blue-800">
                         {{ item.reason }}
                     </p>
                 </div>
@@ -75,18 +75,18 @@ defineProps<Props>();
                 alignment.counterbalanced.length > 0
             "
         >
-            <h3 class="mb-3 text-sm font-medium text-orange-700">
+            <h3 class="mb-3 text-sm font-medium text-purple-700">
                 Counterbalanced Traits (Adjusted For)
             </h3>
             <div class="space-y-3">
                 <div
                     v-for="(item, index) in alignment.counterbalanced"
                     :key="index"
-                    class="rounded-lg border border-orange-200 bg-orange-50 p-4"
+                    class="rounded-lg border border-purple-200 bg-purple-50 p-4"
                 >
                     <div class="mb-2">
                         <span
-                            class="inline-block rounded-full bg-orange-600 px-2 py-0.5 text-xs font-medium text-white"
+                            class="inline-block rounded-full bg-purple-600 px-2 py-0.5 text-xs font-medium text-white"
                         >
                             {{ item.trait }}
                         </span>
@@ -94,16 +94,16 @@ defineProps<Props>();
                             opposes {{ item.requirement_opposed }}
                         </span>
                     </div>
-                    <p class="mb-2 text-sm text-indigo-700">
+                    <p class="mb-2 text-sm text-purple-700">
                         {{ item.reason }}
                     </p>
                     <div
-                        class="rounded border-l-4 border-orange-400 bg-white p-3"
+                        class="rounded border-l-4 border-purple-400 bg-purple-100 p-3"
                     >
-                        <p class="text-xs font-medium text-orange-800">
+                        <p class="text-xs font-medium text-purple-800">
                             Adjustment Applied:
                         </p>
-                        <p class="mt-1 text-sm text-indigo-700">
+                        <p class="mt-1 text-sm text-purple-950">
                             {{ item.injection }}
                         </p>
                     </div>
@@ -115,13 +115,8 @@ defineProps<Props>();
         <div v-if="alignment.neutral && alignment.neutral.length > 0">
             <details class="group">
                 <summary
-                    class="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-900"
+                    class="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-700"
                 >
-                    <span
-                        class="inline-block transition-transform group-open:rotate-90"
-                    >
-                        ▶
-                    </span>
                     Neutral Traits ({{ alignment.neutral.length }})
                 </summary>
                 <div class="mt-3 space-y-2">

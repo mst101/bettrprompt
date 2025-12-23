@@ -59,7 +59,7 @@ test('terms page displays correctly', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Terms')
+        ->component('Legal/Terms')
     );
 });
 
@@ -68,7 +68,7 @@ test('privacy page displays correctly', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Privacy')
+        ->component('Legal/Privacy')
     );
 });
 
@@ -77,12 +77,12 @@ test('cookies page displays correctly', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Cookies')
+        ->component('Legal/Cookies')
     );
 });
 
 test('dashboard redirects to prompt builder index', function () {
-    $response = $this->get('/dashboard');
+    $response = $this->get(route('prompt-builder.index'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
