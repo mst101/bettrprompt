@@ -98,17 +98,25 @@ export default defineConfig({
         // },
     ],
 
-    // Note: When running locally with Sail/Caddy, ensure the server is running
-    // The webServer option is commented out because we use Laravel Sail + Caddy
-    // Uncomment if you need Playwright to auto-start a server (e.g., in CI)
-    // webServer: {
-    //     command: 'php artisan serve',
-    //     url: 'http://localhost:8000',
-    //     reuseExistingServer: !process.env.CI,
-    //     stdout: 'ignore',
-    //     stderr: 'pipe',
-    //     timeout: 120 * 1000,
-    // },
+    // Start a dedicated test Laravel server with e2e environment
+    // This ensures tests use the bettrprompt_e2e database, not production
+    webServer: {
+        // Start Laravel development server with APP_ENV=e2e
+        // This connects to the bettrprompt_e2e database
+        command: 'env APP_ENV=e2e ./vendor/bin/sail artisan serve',
+        url: 'https://app.localhost',
+        port: 8000,
+
+        // Reuse existing server during local development if it's already running
+        reuseExistingServer: !process.env.CI,
+
+        // Wait up to 2 minutes for server to start (Sail needs time to initialize)
+        timeout: 120 * 1000,
+
+        // Only show server stderr on failure
+        stdout: 'ignore',
+        stderr: 'pipe',
+    },
 
     // Global timeout for each test (60 seconds)
     // Increased from 30s to handle parallel test execution and async n8n workflow processing
