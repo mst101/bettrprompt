@@ -194,11 +194,11 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
 
-        // Click on the Clarifying Questions tab
-        const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
-            name: /clarifying questions/i,
-        });
-        await clarifyingQuestionsTab.click();
+        // Click on the Questions tab
+        const questionsTab = authenticatedPage.getByTestId(
+            'tab-button-questions',
+        );
+        await questionsTab.click();
 
         // Verify the clarifying questions section is visible
         const clarifyingQuestionsCard = authenticatedPage
@@ -268,9 +268,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             timeout: 5000,
         });
 
-        // Should see the optimised prompt text
+        // Should see the optimised prompt text (formatted by default)
         const optimisedPromptText = authenticatedPage.getByTestId(
-            'optimized-prompt-text',
+            'optimized-prompt-formatted',
         );
         await expect(optimisedPromptText).toBeVisible();
 
@@ -347,9 +347,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await expect(saveButton).toBeVisible();
         await saveButton.click();
 
-        // Verify the edited text is now displayed
+        // Verify the edited text is now displayed (formatted by default)
         const promptDisplay = authenticatedPage.getByTestId(
-            'optimized-prompt-text',
+            'optimized-prompt-formatted',
         );
         await expect(promptDisplay).toContainText(editedText);
     });
@@ -419,11 +419,11 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Navigate to Clarifying Questions tab
-        const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
-            name: /clarifying questions/i,
-        });
-        await clarifyingQuestionsTab.click();
+        // Navigate to Questions tab
+        const questionsTab = authenticatedPage.getByTestId(
+            'tab-button-questions',
+        );
+        await questionsTab.click();
 
         // Look for the voice input button within the question answer form
         // The button is inside the FormTextareaWithActions component
@@ -480,11 +480,11 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Navigate to Clarifying Questions tab
-        const clarifyingQuestionsTab = authenticatedPage.getByRole('button', {
-            name: /clarifying questions/i,
-        });
-        await clarifyingQuestionsTab.click();
+        // Navigate to Questions tab
+        const questionsTab = authenticatedPage.getByTestId(
+            'tab-button-questions',
+        );
+        await questionsTab.click();
 
         // Wait for progress indicator (should be visible when answering questions)
         const progressIndicator =

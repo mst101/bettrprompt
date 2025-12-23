@@ -162,7 +162,10 @@ export class ProfilePage {
      * Get a section by its heading text
      */
     getSectionByHeading(headingPattern: string | RegExp): Locator {
-        return this.page.locator('section').filter({ hasText: headingPattern });
+        return this.page
+            .locator('section')
+            .filter({ hasText: headingPattern })
+            .first();
     }
 
     /**
