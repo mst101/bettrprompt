@@ -20,7 +20,7 @@ type UseCaseItem = CarouselItem & AccordionItem;
 const useCases = ref<UseCaseItem[]>([
     {
         id: 'work-career',
-        icon: 'building-office-2',
+        icon: 'building-office',
         title: 'Work & Career',
         subtitle:
             'Navigate the conversations and decisions that shape your professional life.',
