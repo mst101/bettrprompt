@@ -1,22 +1,18 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 88" fill="none">
         <!-- Center circle -->
-        <circle
-            cx="12"
-            cy="12"
-            r="6"
-            stroke="currentColor"
-            stroke-width="1.5"
-        />
+        <circle cx="44" cy="44" r="12" stroke="currentColor" stroke-width="2" />
 
-        <!-- Dots at cardinal positions -->
-        <!-- Top -->
-        <circle cx="12" cy="2" r="1.5" fill="currentColor" />
-        <!-- Right -->
-        <circle cx="22" cy="12" r="1.5" fill="currentColor" />
-        <!-- Bottom -->
-        <circle cx="12" cy="22" r="1.5" fill="currentColor" />
-        <!-- Left -->
-        <circle cx="2" cy="12" r="1.5" fill="currentColor" />
+        <!-- Top circle -->
+        <circle cx="44" cy="10" r="10" fill="currentColor" opacity="0.9" />
+
+        <!-- Right circle -->
+        <circle cx="74" cy="44" r="10" fill="currentColor" opacity="0.7" />
+
+        <!-- Bottom circle -->
+        <circle cx="44" cy="78" r="10" fill="currentColor" opacity="0.5" />
+
+        <!-- Left circle -->
+        <circle cx="14" cy="44" r="10" fill="currentColor" opacity="0.3" />
     </svg>
 </template>
