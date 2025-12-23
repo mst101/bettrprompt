@@ -45,7 +45,7 @@ const updatePassword = () => {
             title="Update Password"
             subtitle="Ensure your account is using a long, random password to stay secure."
             data-testid="password"
-            icon="lock"
+            icon="lock-closed"
         >
             <form class="space-y-6" @submit.prevent="updatePassword">
                 <FormInput
