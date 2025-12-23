@@ -78,19 +78,19 @@ export class ProfilePage {
         await field.fill(value);
 
         if (shouldSave) {
-            await this.saveSectionForm(labelPattern);
+            await this.save();
         }
     }
 
     /**
-     * Fill a field within a specific section by section heading
+     * Fill a field within a specific section by data-testid
      */
     async fillFieldInSection(
-        sectionPattern: string | RegExp,
+        sectionTestId: string,
         labelPattern: string | RegExp,
         value: string,
     ): Promise<void> {
-        const section = this.getSectionByHeading(sectionPattern);
+        const section = this.page.getByTestId(sectionTestId);
         const field = section.getByLabel(labelPattern).first();
         await field.scrollIntoViewIfNeeded();
         await field.fill(value);
@@ -99,8 +99,8 @@ export class ProfilePage {
     /**
      * Get the save button within a specific section
      */
-    getSectionSaveButton(sectionPattern: string | RegExp): Locator {
-        const section = this.getSectionByHeading(sectionPattern);
+    getSectionSaveButton(sectionTestId: string): Locator {
+        const section = this.page.getByTestId(sectionTestId);
         return section.getByRole('button', { name: /^save$/i });
     }
 
@@ -108,10 +108,10 @@ export class ProfilePage {
      * Save a specific section form
      */
     async saveSectionForm(
-        sectionPattern: string | RegExp,
+        sectionTestId: string,
         timeout: number = 5000,
     ): Promise<void> {
-        const section = this.getSectionByHeading(sectionPattern);
+        const section = this.page.getByTestId(sectionTestId);
         const saveButton = section.getByRole('button', { name: /^save$/i });
 
         // Scroll section into view
@@ -159,24 +159,21 @@ export class ProfilePage {
     // ===== Section Locators =====
 
     /**
-     * Get a section by its heading text
+     * Get a section by its data-testid
      */
-    getSectionByHeading(headingPattern: string | RegExp): Locator {
-        return this.page
-            .locator('section')
-            .filter({ hasText: headingPattern })
-            .first();
+    getSection(sectionTestId: string): Locator {
+        return this.page.getByTestId(sectionTestId);
     }
 
     /**
      * Get fields within a specific section
      */
-    getFieldsInSection(sectionPattern: string | RegExp): {
+    getFieldsInSection(sectionTestId: string): {
         inputs: Locator;
         checkboxes: Locator;
         saveButton: Locator;
     } {
-        const section = this.getSectionByHeading(sectionPattern);
+        const section = this.getSection(sectionTestId);
         return {
             inputs: section.getByRole('textbox'),
             checkboxes: section.getByRole('checkbox'),
@@ -196,8 +193,8 @@ export class ProfilePage {
         await expect(field).toBeVisible();
     }
 
-    async expectSectionVisible(sectionPattern: string | RegExp): Promise<void> {
-        const section = this.getSectionByHeading(sectionPattern);
+    async expectSectionVisible(sectionTestId: string): Promise<void> {
+        const section = this.getSection(sectionTestId);
         await expect(section).toBeVisible();
     }
 

@@ -10,14 +10,14 @@ test.describe('Profile - Location & Language', () => {
     test('should display location section', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(/Location & Language/i);
+        const section = profilePage.getSection('collapsible-section-location');
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
     test('should allow updating location fields', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(/Location & Language/i);
+        const section = profilePage.getSection('collapsible-section-location');
         await section.scrollIntoViewIfNeeded();
 
         // Attempt to interact with first available field
@@ -45,8 +45,9 @@ test.describe('Profile - Professional Information', () => {
     }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Professional Context/i);
+        const section = profilePage.getSection(
+            'collapsible-section-professional',
+        );
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
@@ -55,8 +56,9 @@ test.describe('Profile - Professional Information', () => {
     }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Professional Context/i);
+        const section = profilePage.getSection(
+            'collapsible-section-professional',
+        );
         await section.scrollIntoViewIfNeeded();
 
         // Try to interact with available form fields
@@ -78,14 +80,14 @@ test.describe('Profile - Team & Work Context', () => {
     test('should display team section', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(/Team & Work Context/i);
+        const section = profilePage.getSection('collapsible-section-team');
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
     test('should allow toggling team checkboxes', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(/Team & Work Context/i);
+        const section = profilePage.getSection('collapsible-section-team');
         await section.scrollIntoViewIfNeeded();
 
         // Try to interact with checkboxes if available
@@ -114,18 +116,14 @@ test.describe('Profile - Budget & Tools', () => {
     test('should display budget section', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(
-            /Budget & Tool Preferences/i,
-        );
+        const section = profilePage.getSection('collapsible-section-budget');
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
     test('should allow updating budget field', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section = profilePage.getSectionByHeading(
-            /Budget & Tool Preferences/i,
-        );
+        const section = profilePage.getSection('collapsible-section-budget');
         await section.scrollIntoViewIfNeeded();
 
         const field = section.getByRole('textbox').first();
@@ -147,16 +145,14 @@ test.describe('Profile - Tools & Technologies', () => {
     test('should display tools section', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Tools & Technologies/i);
+        const section = profilePage.getSection('collapsible-section-tools');
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
     test('should allow toggling tool preferences', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Tools & Technologies/i);
+        const section = profilePage.getSection('collapsible-section-tools');
         await section.scrollIntoViewIfNeeded();
 
         const checkbox = section.getByRole('checkbox').first();
@@ -182,8 +178,9 @@ test.describe('Profile - Interface Complexity', () => {
     test('should display UI complexity options', async ({ profilePage }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Interface Complexity/i);
+        const section = profilePage.getSection(
+            'collapsible-section-ui-complexity',
+        );
         await expect(section).toBeVisible({ timeout: 5000 });
     });
 
@@ -192,8 +189,9 @@ test.describe('Profile - Interface Complexity', () => {
     }) => {
         await profilePage.goto();
 
-        const section =
-            profilePage.getSectionByHeading(/Interface Complexity/i);
+        const section = profilePage.getSection(
+            'collapsible-section-ui-complexity',
+        );
         await section.scrollIntoViewIfNeeded();
 
         const radios = section.getByRole('radio');
@@ -253,14 +251,14 @@ test.describe('Profile - Form Submission', () => {
         await profilePage.goto();
 
         // Verify we can navigate and interact with multiple sections
-        const sections = [
-            /Location & Language/i,
-            /Professional Context/i,
-            /Team & Work Context/i,
+        const sectionTestIds = [
+            'collapsible-section-location',
+            'collapsible-section-professional',
+            'collapsible-section-team',
         ];
 
-        for (const sectionPattern of sections) {
-            const section = profilePage.getSectionByHeading(sectionPattern);
+        for (const testId of sectionTestIds) {
+            const section = profilePage.getSection(testId);
             const visible = await section
                 .isVisible({ timeout: 2000 })
                 .catch(() => false);
