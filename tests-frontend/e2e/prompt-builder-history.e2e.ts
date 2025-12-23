@@ -18,14 +18,14 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
     test('should redirect to login when accessing history without authentication', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Should redirect to home or login page
         const url = page.url();
         const isRedirected = url === '/' || url.includes('login');
 
         expect(isRedirected).toBeTruthy();
-        expect(url).not.toContain('/prompt-builder-history');
+        expect(url).not.toContain('/history');
     });
 });
 
@@ -39,7 +39,7 @@ test.describe('Prompt Builder History - Empty State', () => {
 
         // Navigate and wait for page to load
         // Use domcontentloaded instead of networkidle for speed
-        await authenticatedPage.goto('/prompt-builder-history', {
+        await authenticatedPage.goto('/history', {
             waitUntil: 'domcontentloaded',
         });
     });
@@ -117,9 +117,7 @@ test.describe('Prompt Builder History - Empty State', () => {
             await expect(taskInput).toBeVisible({ timeout: 5000 });
         } else {
             // If the empty state link isn't visible, just verify we're on the history page
-            expect(authenticatedPage.url()).toContain(
-                '/prompt-builder-history',
-            );
+            expect(authenticatedPage.url()).toContain('/history');
         }
     });
 });
@@ -134,7 +132,7 @@ test.describe('Prompt Builder History - With Data', () => {
     });
 
     test('should display history table with prompt runs', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -157,7 +155,7 @@ test.describe('Prompt Builder History - With Data', () => {
         // Set viewport to desktop size
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -185,7 +183,7 @@ test.describe('Prompt Builder History - With Data', () => {
     });
 
     test('should show status badges for each prompt run', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -199,7 +197,7 @@ test.describe('Prompt Builder History - With Data', () => {
     });
 
     test('should display dates in British format', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -226,7 +224,7 @@ test.describe('Prompt Builder History - With Data', () => {
     });
 
     test('should display personality types', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Set viewport to desktop size
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -251,7 +249,7 @@ test.describe('Prompt Builder History - With Data', () => {
     });
 
     test('should truncate long task descriptions', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -284,7 +282,7 @@ test.describe('Prompt Builder History - With Data', () => {
     test('should show framework names or placeholder', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Framework column should exist on large screens
         const frameworkHeader = page.getByRole('columnheader', {
@@ -329,7 +327,7 @@ test.describe('Prompt Builder History - Sorting', () => {
     test('should sort by created date (default descending)', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Created column should be sortable
         const createdHeader = page.getByRole('columnheader', {
@@ -344,7 +342,7 @@ test.describe('Prompt Builder History - Sorting', () => {
     test('should toggle sort direction when clicking column header', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Click task description header to sort
         const taskHeader = page
@@ -374,7 +372,7 @@ test.describe('Prompt Builder History - Sorting', () => {
     });
 
     test('should sort by workflow stage', async ({ page }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Desktop size to see all columns
         await page.setViewportSize({ width: 1280, height: 720 });
@@ -398,7 +396,7 @@ test.describe('Prompt Builder History - Sorting', () => {
     test('should sort by personality type', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Click personality type header
         const personalityHeader = page
@@ -419,7 +417,7 @@ test.describe('Prompt Builder History - Sorting', () => {
     test('should sort by framework', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Click framework header
         const frameworkHeader = page
@@ -455,7 +453,7 @@ test.describe('Prompt Builder History - Pagination', () => {
     test('should display pagination controls when multiple pages exist', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -479,7 +477,7 @@ test.describe('Prompt Builder History - Pagination', () => {
     });
 
     test('should navigate to next page', async ({ page }) => {
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -510,7 +508,7 @@ test.describe('Prompt Builder History - Pagination', () => {
 
     test('should navigate to previous page', async ({ page }) => {
         // Start on page 2
-        await page.goto('/prompt-builder-history?per_page=10&page=2');
+        await page.goto('/history?per_page=10&page=2');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -528,7 +526,7 @@ test.describe('Prompt Builder History - Pagination', () => {
     });
 
     test('should allow changing items per page', async ({ page }) => {
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -561,7 +559,7 @@ test.describe('Prompt Builder History - Pagination', () => {
         // Mobile viewport
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         // Should see mobile "Page X of Y" text (use .first() for mobile version)
         const pageIndicator = page.getByText(/page \d+ of \d+/i).first();
@@ -576,7 +574,7 @@ test.describe('Prompt Builder History - Pagination', () => {
     });
 
     test('should validate per-page input constraints', async ({ page }) => {
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         await page.setViewportSize({ width: 1280, height: 720 });
 
@@ -620,7 +618,7 @@ test.describe('Prompt Builder History - Navigation', () => {
     test('should navigate to prompt details when clicking a row', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Click the first row
         const firstRow = page.locator('tbody tr').first();
@@ -643,7 +641,7 @@ test.describe('Prompt Builder History - Navigation', () => {
     test('should support keyboard navigation to prompt details', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Focus and press Enter on first row
         const firstRow = page.locator('tbody tr').first();
@@ -661,7 +659,7 @@ test.describe('Prompt Builder History - Navigation', () => {
     test('should navigate to create new prompt from header button', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Click Create New button in header
         const createButton = page.getByRole('link', { name: /create new/i });
@@ -728,7 +726,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         // Set mobile viewport (below sm: 640px breakpoint)
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // On mobile, table columns are hidden (sm:hidden), but content should still be displayed
         // Either as cards/list items or in a different responsive layout
@@ -747,7 +745,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
     test('should show status badge in mobile view', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Status badges should be visible on mobile (in the created date cell)
         // Mobile status indicators are rendered inside the date cell
@@ -762,7 +760,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
     test('should show mobile per-page selector', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history?per_page=10');
+        await page.goto('/history?per_page=10');
 
         // Mobile per-page input should be visible
         const perPageInput = page.locator(
@@ -781,7 +779,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
     test('should maintain clickable rows on mobile', async ({ page }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Rows should still be clickable
         const firstRow = page.locator('tbody tr').first();
@@ -799,7 +797,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
     }) => {
         await page.setViewportSize({ width: 375, height: 667 });
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Header should be visible
         const heading = page.getByRole('heading', { name: /prompt history/i });
@@ -824,7 +822,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         // Create runs with various statuses for this test
         await seedPromptRuns(6); // Creates varied statuses
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -842,7 +840,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         // Create runs in processing state (many won't have frameworks)
         await seedPromptRuns(3);
 
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // Wait for page to load
         await page.waitForLoadState('domcontentloaded');
@@ -877,7 +875,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Navigate with specific sort and pagination
         await page.goto(
-            '/prompt-builder-history?sort_by=workflow_stage&sort_direction=asc&per_page=5&page=2',
+            '/history?sort_by=workflow_stage&sort_direction=asc&per_page=5&page=2',
         );
 
         // Wait for table to appear
@@ -896,7 +894,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         expect(page.url()).toMatch(/\/prompt-builder\/\d+/);
 
         // Go back and wait for navigation to history page
-        const backPromise = page.waitForURL(/\/prompt-builder-history/, {
+        const backPromise = page.waitForURL(/\/history/, {
             timeout: 10000,
         });
         await page.goBack();

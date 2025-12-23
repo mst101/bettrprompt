@@ -91,8 +91,8 @@ Route::middleware('auth')->group(function () {
     // Account deletion
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Prompt Builder history (requires authentication)
-    Route::get('/prompt-builder-history', [PromptBuilderController::class, 'history'])
+    // Prompt history (requires authentication)
+    Route::get('/history', [PromptBuilderController::class, 'history'])
         ->name('prompt-builder.history');
 });
 

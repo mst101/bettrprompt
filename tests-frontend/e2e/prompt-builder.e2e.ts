@@ -42,7 +42,7 @@ test.describe('Prompt Builder - Basic Flow', () => {
     test('should show prompt optimizer history page for authenticated users', async ({
         page,
     }) => {
-        await page.goto('/prompt-builder-history');
+        await page.goto('/history');
 
         // History requires authentication - should redirect to login
         const url = page.url();
@@ -356,7 +356,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
     test('should view prompt history', async ({ authenticatedPage }) => {
         // Navigate to history page
-        await authenticatedPage.goto('/prompt-builder-history');
+        await authenticatedPage.goto('/history');
 
         // Should see the heading
         const heading = authenticatedPage.getByRole('heading', {
@@ -384,7 +384,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await setupAndNavigateToPromptRun(authenticatedPage, '2_completed');
 
         // Now navigate to history page
-        await authenticatedPage.goto('/prompt-builder-history');
+        await authenticatedPage.goto('/history');
 
         await authenticatedPage.waitForLoadState('domcontentloaded');
 

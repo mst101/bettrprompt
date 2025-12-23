@@ -29,7 +29,7 @@ test.describe('Realtime - Fallback Behavior', () => {
         });
 
         // Application should still be usable - navigate to history
-        await authenticatedPage.goto('/prompt-builder-history');
+        await authenticatedPage.goto('/history');
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Should still be able to navigate
@@ -74,7 +74,7 @@ test.describe('Realtime - Channel Cleanup', () => {
         await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
 
         // Navigate away - channels should cleanup properly
-        await authenticatedPage.goto('/prompt-builder-history');
+        await authenticatedPage.goto('/history');
 
         // Should not have JavaScript errors
         expect(errors).toHaveLength(0);
@@ -96,7 +96,7 @@ test.describe('Realtime - Channel Cleanup', () => {
                 '1_processing',
             );
             await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
-            await authenticatedPage.goto('/prompt-builder-history');
+            await authenticatedPage.goto('/history');
         }
 
         // Navigate to different page
