@@ -181,7 +181,7 @@ const currentItem = computed(() => props.items[activeIndex.value]);
 
         <!-- Dot Indicators -->
         <div class="mt-4 flex items-center justify-center">
-            <div role="tablist" class="flex gap-2">
+            <div role="tablist" class="flex gap-4">
                 <button
                     v-for="(item, index) in items"
                     :key="item.id"

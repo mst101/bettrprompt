@@ -10,7 +10,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="1"
             title="Enter Your Task"
-            description="Describe what you want to achieve <span>(the more information you provide, the better)</span>"
+            description="Describe what you want to achieve"
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -28,7 +28,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="2"
             title="Answer Quick Queries"
-            description="A few quick questions to understand your context"
+            description="A few questions to understand your context"
             bg-colour="bg-purple-600"
             content-bg-colour="bg-purple-50"
         >
@@ -69,7 +69,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="3"
             title="Review Selected Framework"
-            description="We recommend which framework to use (and suggest a couple of alternatives)"
+            description="We recommend the best approach for your task"
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -102,9 +102,8 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     >
                 </div>
                 <p class="text-indigo-700">
-                    COAST is the optimal framework for this task. It directly
-                    maps to strategy development with a clear progression from
-                    problem definition.
+                    COAST maps directly to strategy development with a clear
+                    progression from problem to action.
                 </p>
             </div>
         </ExampleStageCard>
@@ -113,7 +112,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="4"
             title="Answer Clarifying Questions"
-            description="Help us understand the details"
+            description="The details that make your prompt specific"
             bg-colour="bg-purple-600"
             content-bg-colour="bg-purple-50"
         >
@@ -157,7 +156,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <ExampleStageCard
             :stage="5"
             title="Receive Your Optimised Prompt"
-            description="Copy and use in any AI tool"
+            description="Ready to copy into any AI tool"
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >

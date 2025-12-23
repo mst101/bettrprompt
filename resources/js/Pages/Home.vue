@@ -139,7 +139,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="sparkles"
                         title="Smart Framework Selection"
-                        description="Our AI analyses your task and selects from 60+ proven frameworks. Get structured, effective prompts without needing to study prompt engineering."
+                        description="We analyse your task and choose the right approach from 60+ proven methodologies. You get structured prompts without needing to become a prompt engineer."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -147,7 +147,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="chat"
                         title="Clarifying Questions That Matter"
-                        description="Not sure where to start? BettrPrompt asks targeted questions to uncover what you actually need, turning half-formed ideas into prompts that get results."
+                        description="Not sure where to start? We ask the questions you haven't thought of yet - so you get useful answers on the first try, not after three rounds of back-and-forth."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -156,20 +156,20 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="user"
                         title="Calibrated to How You Think"
-                        description="Add your personality type and we'll adapt our questions to how you think. When your thinking style matters, we'll show you why we're asking what we're asking."
+                        description="Add your personality type and we'll adapt our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
                 </div>
             </div>
 
-            <!-- Why BettrPrompt Works -->
+            <!-- "But Can't I Just..." Section (Objection Handling) -->
             <div class="mt-24">
                 <div class="text-center">
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        Why BettrPrompt Works
+                        But Can't I Just...?
                     </h2>
                 </div>
 
@@ -177,26 +177,26 @@ const expandedUseCases = ref<string[]>([]);
                     class="mt-4 grid gap-8 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3"
                 >
                     <FeatureCard
-                        icon="magnifying-glass"
-                        title="Quality Input = Quality Output"
-                        description="Vague questions produce generic answers. BettrPrompt helps you articulate precisely what you need, ensuring AI understands your context and delivers relevant, actionable responses instead of surface-level suggestions."
+                        icon="chat"
+                        title="...Ask ChatGPT to Help Me Prompt?"
+                        description="You can. But it won't ask the questions you haven't thought of. BettrPrompt interviews you first - surfacing what you actually need before generating anything."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
 
                     <FeatureCard
-                        icon="wrench"
-                        title="Chooses the Right Tool for the Job"
-                        description="Our system analyses your task and selects the most appropriate framework from our curated library. You'll see a few carefully chosen alternatives - the best fits without the paralysis of too many choices."
+                        icon="document-text"
+                        title="...Use a Prompt Template?"
+                        description="Templates are generic by design. We generate prompts for your specific situation through dialogue - no two prompts are the same because no two situations are."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
                     />
 
                     <FeatureCard
-                        icon="cube"
-                        title="Built on Proven Frameworks"
-                        description="Every prompt is structured using established methodologies that professionals use to think through complex problems. These aren't experimental approaches, they're time-tested and proven to work."
+                        icon="academic-cap"
+                        title="...Learn Prompt Engineering?"
+                        description="You could spend hours studying frameworks. Or you could describe what you need and let us handle the structure. We've done the learning so you don't have to."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -220,21 +220,21 @@ const expandedUseCases = ref<string[]>([]);
                     <StepCard
                         :number="1"
                         title="Describe Your Challenge"
-                        description="What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language. BettrPrompt handles the complexity of turning it into an effective prompt."
+                        description="What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language - we'll handle the rest."
                         bg-colour="bg-indigo-600"
                     />
 
                     <StepCard
                         :number="2"
-                        title="We Analyse and Ask Relevant Questions"
-                        description="Our AI analyses your task and selects the best framework from our curated library. Then we ask targeted questions to build the context your prompt needs - so you get results first time, not after three rounds of back-and-forth."
+                        title="Answer a Few Questions"
+                        description="We dig deeper - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
                         bg-colour="bg-purple-600"
                     />
 
                     <StepCard
                         :number="3"
                         title="Get Your Optimised Prompt"
-                        description="Receive a complete prompt ready to copy into ChatGPT, Claude, or any AI tool. Built using proven frameworks and enriched with your specific context. If you've added your personality type, we'll tailor the approach accordingly."
+                        description="Copy your prompt into ChatGPT, Claude, or any AI tool. It's structured for results and shaped by your answers - not a generic template."
                         bg-colour="bg-indigo-600"
                     />
                 </div>
@@ -246,26 +246,11 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        When to Use BettrPrompt?
+                        When to Use BettrPrompt
                     </h2>
                     <p class="mt-4 text-lg text-indigo-700">
-                        One tool. Endless applications.
-                    </p>
-                </div>
-
-                <div class="mx-auto mt-6 max-w-3xl">
-                    <p class="text-center text-lg text-indigo-800">
-                        Whenever you need to think clearly, BettrPrompt helps.
-                        Work decisions, personal dilemmas, creative projects,
-                        tricky conversations - if you can describe it,
-                        BettrPrompt can help you structure it. And because it
-                        adapts to how you think, you'll get questions that make
-                        sense to you, not generic prompts designed for someone
-                        else's brain.
-                    </p>
-                    <p class="mt-8 text-center text-lg text-indigo-800">
-                        Here are just a few examples. The only real limit is
-                        your imagination.
+                        If you can describe what you're trying to achieve, we'll
+                        help you structure it.
                     </p>
                 </div>
 
@@ -281,14 +266,6 @@ const expandedUseCases = ref<string[]>([]);
                         :allow-multiple="true"
                         class="md:hidden"
                     />
-                </div>
-
-                <div class="mx-auto mt-6 max-w-3xl">
-                    <p class="text-center text-indigo-700">
-                        These are starting points, not limits. If you can
-                        describe what you're trying to achieve, BettrPrompt will
-                        help you find the right questions to ask.
-                    </p>
                 </div>
             </div>
 
