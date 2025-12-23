@@ -150,6 +150,7 @@ const clearLocation = async () => {
         title="Location & Language"
         subtitle="Set your location and language preferences for better optimised AI prompts."
         data-testid="location"
+        icon="globe"
     >
         <form class="space-y-6" @submit.prevent="submit">
             <div class="grid gap-6 sm:grid-cols-2">

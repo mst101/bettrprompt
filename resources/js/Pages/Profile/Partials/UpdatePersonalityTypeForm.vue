@@ -198,6 +198,7 @@ const clearPersonality = async () => {
             title="Your Personality"
             subtitle="Update your personality type to get more personalised AI prompts."
             data-testid="personality"
+            icon="sparkles"
         >
             <form class="space-y-6" @submit.prevent="submit">
                 <!-- 16personalities Logo Link -->

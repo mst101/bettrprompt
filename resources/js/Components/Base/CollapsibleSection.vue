@@ -7,11 +7,13 @@ interface Props {
     subtitle: string;
     defaultOpen?: boolean;
     dataTestid?: string;
+    icon?: string;
 }
 
 withDefaults(defineProps<Props>(), {
     defaultOpen: false,
     dataTestid: undefined,
+    icon: undefined,
 });
 
 const isOpen = ref(false);
@@ -37,9 +39,16 @@ const isOpen = ref(false);
             @keydown.space.prevent="isOpen = !isOpen"
         >
             <div class="min-w-0 flex-1">
-                <h2 class="text-lg font-medium text-indigo-900">
-                    {{ title }}
-                </h2>
+                <div class="flex items-center gap-2">
+                    <DynamicIcon
+                        v-if="icon"
+                        :name="icon"
+                        class="size-5 text-indigo-700"
+                    />
+                    <h2 class="text-lg font-medium text-indigo-900">
+                        {{ title }}
+                    </h2>
+                </div>
 
                 <p class="mt-1 text-sm text-indigo-600">
                     {{ subtitle }}

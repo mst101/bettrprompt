@@ -47,6 +47,7 @@ watch(
             title="Profile Information"
             subtitle="Update your name and email address."
             data-testid="profile-information"
+            icon="user"
         >
             <form
                 class="space-y-6"

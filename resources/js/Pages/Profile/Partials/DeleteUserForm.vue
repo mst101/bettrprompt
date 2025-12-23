@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import { useForm } from '@inertiajs/vue3';
@@ -39,62 +40,60 @@ const closeModal = () => {
 </script>
 
 <template>
-    <section class="space-y-6">
-        <header>
-            <h2 class="text-lg font-medium text-indigo-900">Delete Account</h2>
+    <CollapsibleSection
+        title="Delete Account"
+        subtitle="Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain."
+        data-testid="delete-account"
+        icon="trash"
+    >
+        <div class="space-y-6">
+            <ButtonDanger icon="trash" @click="confirmUserDeletion"
+                >Delete Account</ButtonDanger
+            >
 
-            <p class="mt-1 text-sm text-indigo-600">
-                Once your account is deleted, all of its resources and data will
-                be permanently deleted. Before deleting your account, please
-                download any data or information that you wish to retain.
-            </p>
-        </header>
+            <Modal :show="confirmingUserDeletion" @close="closeModal">
+                <div class="p-6">
+                    <h2 class="text-lg font-medium text-indigo-900">
+                        Are you sure you want to delete your account?
+                    </h2>
 
-        <ButtonDanger icon="trash" @click="confirmUserDeletion"
-            >Delete Account</ButtonDanger
-        >
+                    <p class="mt-1 text-sm text-indigo-600">
+                        Once your account is deleted, all of its resources and
+                        data will be permanently deleted. Please enter your
+                        password to confirm you would like to permanently delete
+                        your account.
+                    </p>
 
-        <Modal :show="confirmingUserDeletion" @close="closeModal">
-            <div class="p-6">
-                <h2 class="text-lg font-medium text-indigo-900">
-                    Are you sure you want to delete your account?
-                </h2>
+                    <div class="mt-6">
+                        <FormInput
+                            id="password"
+                            v-model="form.password"
+                            label="Password"
+                            type="password"
+                            :error="form.errors.password"
+                            placeholder="Password"
+                            class="w-3/4"
+                            @keyup.enter="deleteUser"
+                        />
+                    </div>
 
-                <p class="mt-1 text-sm text-indigo-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Please enter your password to
-                    confirm you would like to permanently delete your account.
-                </p>
+                    <div class="mt-6 flex justify-end">
+                        <ButtonSecondary @click="closeModal">
+                            Cancel
+                        </ButtonSecondary>
 
-                <div class="mt-6">
-                    <FormInput
-                        id="password"
-                        v-model="form.password"
-                        label="Password"
-                        type="password"
-                        :error="form.errors.password"
-                        placeholder="Password"
-                        class="w-3/4"
-                        @keyup.enter="deleteUser"
-                    />
+                        <ButtonDanger
+                            class="ms-3"
+                            :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing"
+                            icon="trash"
+                            @click="deleteUser"
+                        >
+                            Delete Account
+                        </ButtonDanger>
+                    </div>
                 </div>
-
-                <div class="mt-6 flex justify-end">
-                    <ButtonSecondary @click="closeModal">
-                        Cancel
-                    </ButtonSecondary>
-
-                    <ButtonDanger
-                        class="ms-3"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        icon="trash"
-                        @click="deleteUser"
-                    >
-                        Delete Account
-                    </ButtonDanger>
-                </div>
-            </div>
-        </Modal>
-    </section>
+            </Modal>
+        </div>
+    </CollapsibleSection>
 </template>
