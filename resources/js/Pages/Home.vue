@@ -73,7 +73,7 @@ const useCases = ref<UseCaseItem[]>([
         id: 'business-strategy',
         icon: 'trending-up',
         title: 'Business & Strategy',
-        subtitle: 'Structure your thinking for high-stakes decisions.',
+        subtitle: 'Think through high-stakes decisions with clarity.',
         bullets: [
             'Developing a marketing strategy for a new product',
             'Analysing whether to expand into a new market',
@@ -125,8 +125,8 @@ const expandedUseCases = ref<string[]>([]);
                     class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-2xl"
                 >
                     Great AI results start with great questions. BettrPrompt
-                    turns your vague ideas into structured prompts that actually
-                    work - by asking the right questions first.
+                    asks the right ones - then builds structured prompts that
+                    actually work.
                 </p>
 
                 <!-- CTA Button -->
@@ -139,16 +139,16 @@ const expandedUseCases = ref<string[]>([]);
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
                         icon="sparkles"
-                        title="Smart Framework Selection"
-                        description="We analyse your task and choose the right approach from 60+ proven methodologies. You get structured prompts without needing to become a prompt engineer."
+                        title="The Right Approach, Automatically"
+                        description="We analyse your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
 
                     <FeatureCard
                         icon="chat"
-                        title="Clarifying Questions That Matter"
-                        description="Not sure where to start? We ask the questions you haven't thought of yet - so you get useful answers on the first try, not after three rounds of back-and-forth."
+                        title="Questions You Haven't Thought Of"
+                        description="Not sure where to start? We surface what you actually need - so you get useful answers on the first try, not after three rounds of back-and-forth."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -156,8 +156,8 @@ const expandedUseCases = ref<string[]>([]);
 
                     <FeatureCard
                         icon="user"
-                        title="Calibrated to How You Think"
-                        description="Add your personality type and we'll adapt our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
+                        title="Adapted to How You Think"
+                        description="Add your personality type and we'll tailor our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -175,7 +175,7 @@ const expandedUseCases = ref<string[]>([]);
                     <p class="mx-auto mt-4 max-w-2xl text-lg text-indigo-700">
                         You can. ChatGPT might even ask a clarifying question or
                         two. But there's a difference between being helpful
-                        quickly and structuring your thinking systematically.
+                        quickly and drawing out what you actually need.
                     </p>
                 </div>
 
@@ -204,7 +204,7 @@ const expandedUseCases = ref<string[]>([]);
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-gray-500">
-                                    You say:
+                                    You:
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-700"
@@ -268,7 +268,7 @@ const expandedUseCases = ref<string[]>([]);
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-indigo-600">
-                                    You say:
+                                    You:
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-800"
@@ -284,11 +284,11 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
-                                    Asks: "How did you two meet? What's a story
-                                    that captures who he really is? What's the
-                                    couple's sense of humour? Who's in the
-                                    audience? Are you comfortable with public
-                                    speaking?"
+                                    Selects a framework for memorable personal
+                                    storytelling. Then asks: "How did you two
+                                    meet? What's a story that captures who he
+                                    really is? What's the couple's sense of
+                                    humour? Who's in the audience?"
                                 </p>
                             </div>
                             <div>
@@ -299,7 +299,7 @@ const expandedUseCases = ref<string[]>([]);
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
                                     A prompt that captures your friendship, fits
-                                    the audience, and plays to your strengths —
+                                    the audience, and plays to your strengths -
                                     so the AI output actually sounds like
                                     something you'd say.
                                 </p>
@@ -318,12 +318,13 @@ const expandedUseCases = ref<string[]>([]);
                 <!-- The Key Insight -->
                 <div class="mx-auto mt-8 max-w-3xl text-center">
                     <p class="text-lg text-indigo-800">
+                        ChatGPT answers what you ask.
                         <strong class="text-indigo-900"
-                            >The difference is in the questions.</strong
+                            >BettrPrompt uncovers what you should have
+                            asked</strong
                         >
-                        ChatGPT answers what you ask. BettrPrompt uncovers what
-                        you should have asked — then builds a prompt that gets
-                        you AI's best work, not its first guess.
+                        - then builds a prompt that gets you AI's best work, not
+                        its first guess.
                     </p>
                 </div>
 
@@ -332,7 +333,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="document-text"
                         title="What About Prompt Templates?"
-                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue — your context, your constraints, your voice. No two prompts are the same."
+                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue - your context, your constraints, your voice. No two prompts are the same."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -341,7 +342,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="academic-cap"
                         title="Should I Learn Prompt Engineering?"
-                        description="You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need — we'll handle the structure."
+                        description="You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need - we'll handle the rest."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -372,14 +373,14 @@ const expandedUseCases = ref<string[]>([]);
                     <StepCard
                         :number="2"
                         title="Answer a Few Questions"
-                        description="We dig deeper - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
+                        description="We structure your thinking - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
                         bg-colour="bg-purple-600"
                     />
 
                     <StepCard
                         :number="3"
                         title="Get Your Optimised Prompt"
-                        description="Copy your prompt into ChatGPT, Claude, or any AI tool. It's structured for results and shaped by your answers - not a generic template."
+                        description="Copy your prompt into ChatGPT, Claude, or any AI tool. It's built for results and shaped by your answers - not a generic template."
                         bg-colour="bg-indigo-600"
                     />
                 </div>
@@ -395,7 +396,7 @@ const expandedUseCases = ref<string[]>([]);
                     </h2>
                     <p class="mt-4 text-lg text-indigo-700">
                         If you can describe what you're trying to achieve, we'll
-                        help you structure it.
+                        help you get there.
                     </p>
                 </div>
 
@@ -420,11 +421,10 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        See BettrPrompt in Action
+                        Watch It Work
                     </h2>
                     <p class="mt-4 text-lg text-indigo-600">
-                        Follow along with a real example: creating a marketing
-                        strategy
+                        A real example: creating a marketing strategy
                     </p>
                 </div>
 

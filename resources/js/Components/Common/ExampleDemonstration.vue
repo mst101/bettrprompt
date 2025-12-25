@@ -17,7 +17,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
             <div class="space-y-2">
                 <label class="font-medium text-indigo-700">Your task:</label>
                 <div
-                    class="mt-2 rounded border border-purple-100 bg-white p-2 text-indigo-800 dark:bg-indigo-100"
+                    class="mt-2 rounded border border-indigo-100 bg-white p-2 text-indigo-800 dark:bg-indigo-100"
                 >
                     I want to create a marketing strategy for my business.
                 </div>
