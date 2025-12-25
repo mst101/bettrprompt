@@ -3,6 +3,7 @@ import type { AccordionItem } from '@/Components/Base/Accordion.vue';
 import Accordion from '@/Components/Base/Accordion.vue';
 import type { CarouselItem } from '@/Components/Base/Carousel.vue';
 import Carousel from '@/Components/Base/Carousel.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ExampleDemonstration from '@/Components/Common/ExampleDemonstration.vue';
 import FeatureCard from '@/Components/Common/FeatureCard.vue';
 import HeroCTA from '@/Components/Common/HeroCTA.vue';
@@ -163,31 +164,173 @@ const expandedUseCases = ref<string[]>([]);
                 </div>
             </div>
 
-            <!-- "But Can't I Just..." Section (Objection Handling) -->
+            <!-- "But Can't I Just Ask ChatGPT?" Section -->
             <div class="mt-24">
                 <div class="text-center">
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        But Can't I Just...?
+                        "But Can't I Just Ask ChatGPT?"
                     </h2>
+                    <p class="mx-auto mt-4 max-w-2xl text-lg text-indigo-700">
+                        You can. But here's what actually happens.
+                    </p>
                 </div>
 
+                <!-- Side-by-side Comparison -->
                 <div
-                    class="mt-4 grid gap-8 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3"
+                    class="mx-auto mt-8 grid max-w-5xl gap-6 sm:mt-12 lg:grid-cols-2"
                 >
-                    <FeatureCard
-                        icon="chat"
-                        title="...Ask ChatGPT to Help Me Prompt?"
-                        description="You can. But it won't ask the questions you haven't thought of. BettrPrompt interviews you first - surfacing what you actually need before generating anything."
-                        icon-bg-colour="bg-indigo-100"
-                        icon-colour="text-indigo-600"
-                    />
+                    <!-- ChatGPT Direct -->
+                    <div
+                        class="rounded-lg border-2 border-gray-200 bg-gray-50 p-6"
+                    >
+                        <div class="mb-4 flex items-center gap-3">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200"
+                            >
+                                <DynamicIcon
+                                    name="chat"
+                                    class="h-5 w-5 text-gray-600"
+                                />
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-700">
+                                Asking ChatGPT directly
+                            </h3>
+                        </div>
 
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">
+                                    You say:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-gray-700"
+                                >
+                                    "Help me write a prompt for a marketing
+                                    strategy"
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">
+                                    ChatGPT does:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-gray-600"
+                                >
+                                    Immediately generates a generic prompt based
+                                    on assumptions about your business,
+                                    audience, budget, and goals.
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">
+                                    You get:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-gray-600"
+                                >
+                                    A reasonable-looking prompt that misses your
+                                    actual constraints. You iterate 2-3 times,
+                                    adding context you didn't think to include
+                                    upfront.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="mt-4 flex items-center gap-2 text-sm text-gray-500"
+                        >
+                            <DynamicIcon name="clock" class="h-4 w-4" />
+                            <span>Multiple rounds to get something useful</span>
+                        </div>
+                    </div>
+
+                    <!-- BettrPrompt -->
+                    <div
+                        class="rounded-lg border-2 border-indigo-300 bg-indigo-50 p-6"
+                    >
+                        <div class="mb-4 flex items-center gap-3">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-200"
+                            >
+                                <DynamicIcon
+                                    name="sparkles"
+                                    class="h-5 w-5 text-indigo-600"
+                                />
+                            </div>
+                            <h3 class="text-lg font-semibold text-indigo-900">
+                                Using BettrPrompt
+                            </h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm font-medium text-indigo-600">
+                                    You say:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-indigo-800"
+                                >
+                                    "I need a marketing strategy"
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-indigo-600">
+                                    BettrPrompt does:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-indigo-700"
+                                >
+                                    Stops. Asks: "What's your budget? Who's your
+                                    audience? What channels are you already
+                                    using? What's your biggest acquisition
+                                    challenge?"
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-indigo-600">
+                                    You get:
+                                </p>
+                                <p
+                                    class="mt-1 rounded bg-white p-3 text-indigo-700"
+                                >
+                                    A prompt built from your actual situation —
+                                    including context you wouldn't have thought
+                                    to provide, structured using a framework
+                                    matched to your task.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="mt-4 flex items-center gap-2 text-sm text-indigo-600"
+                        >
+                            <DynamicIcon name="check-circle" class="h-4 w-4" />
+                            <span>Right first time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Key Insight -->
+                <div class="mx-auto mt-8 max-w-3xl text-center">
+                    <p class="text-lg text-indigo-800">
+                        <strong class="text-indigo-900"
+                            >The difference isn't the output — it's the
+                            process.</strong
+                        >
+                        ChatGPT answers what you ask. It doesn't know what you
+                        don't know to ask. BettrPrompt's job is to surface the
+                        questions that change the answer.
+                    </p>
+                </div>
+
+                <!-- Secondary Objections -->
+                <div class="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
                     <FeatureCard
                         icon="document-text"
-                        title="...Use a Prompt Template?"
-                        description="Templates are generic by design. We generate prompts for your specific situation through dialogue - no two prompts are the same because no two situations are."
+                        title="What About Prompt Templates?"
+                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue — your budget, your constraints, your context. No two prompts are the same."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -195,8 +338,8 @@ const expandedUseCases = ref<string[]>([]);
 
                     <FeatureCard
                         icon="academic-cap"
-                        title="...Learn Prompt Engineering?"
-                        description="You could spend hours studying frameworks. Or you could describe what you need and let us handle the structure. We've done the learning so you don't have to."
+                        title="Should I Learn Prompt Engineering?"
+                        description="You could. But you're busy. BettrPrompt embeds 60+ frameworks so you don't have to memorise them. Describe what you need — we'll handle the structure."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
