@@ -173,7 +173,9 @@ const expandedUseCases = ref<string[]>([]);
                         "But Can't I Just Ask ChatGPT?"
                     </h2>
                     <p class="mx-auto mt-4 max-w-2xl text-lg text-indigo-700">
-                        You can. But here's what actually happens.
+                        You can. ChatGPT might even ask a clarifying question or
+                        two. But there's a difference between being helpful
+                        quickly and structuring your thinking systematically.
                     </p>
                 </div>
 
@@ -207,20 +209,20 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-700"
                                 >
-                                    "Help me write a prompt for a marketing
-                                    strategy"
+                                    "I need to write a best man speech for my
+                                    friend's wedding"
                                 </p>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">
-                                    ChatGPT does:
+                                    ChatGPT:
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
                                 >
-                                    Immediately generates a generic prompt based
-                                    on assumptions about your business,
-                                    audience, budget, and goals.
+                                    Generates a speech immediately, or asks one
+                                    or two quick questions before diving in.
+                                    It's trying to help you fast.
                                 </p>
                             </div>
                             <div>
@@ -230,10 +232,9 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
                                 >
-                                    A reasonable-looking prompt that misses your
-                                    actual constraints. You iterate 2-3 times,
-                                    adding context you didn't think to include
-                                    upfront.
+                                    A generic speech that sounds like every
+                                    other best man speech. You spend the next
+                                    hour tweaking it to sound like you.
                                 </p>
                             </div>
                         </div>
@@ -242,7 +243,7 @@ const expandedUseCases = ref<string[]>([]);
                             class="mt-4 flex items-center gap-2 text-sm text-gray-500"
                         >
                             <DynamicIcon name="clock" class="h-4 w-4" />
-                            <span>Multiple rounds to get something useful</span>
+                            <span>You get what you asked for</span>
                         </div>
                     </div>
 
@@ -272,20 +273,22 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-800"
                                 >
-                                    "I need a marketing strategy"
+                                    "I need to write a best man speech for my
+                                    friend's wedding"
                                 </p>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-indigo-600">
-                                    BettrPrompt does:
+                                    BettrPrompt:
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
-                                    Stops. Asks: "What's your budget? Who's your
-                                    audience? What channels are you already
-                                    using? What's your biggest acquisition
-                                    challenge?"
+                                    Asks: "How did you two meet? What's a story
+                                    that captures who he really is? What's the
+                                    couple's sense of humour? Who's in the
+                                    audience? Are you comfortable with public
+                                    speaking?"
                                 </p>
                             </div>
                             <div>
@@ -295,10 +298,10 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
-                                    A prompt built from your actual situation —
-                                    including context you wouldn't have thought
-                                    to provide, structured using a framework
-                                    matched to your task.
+                                    A prompt that captures your friendship, fits
+                                    the audience, and plays to your strengths —
+                                    so the AI output actually sounds like
+                                    something you'd say.
                                 </p>
                             </div>
                         </div>
@@ -307,7 +310,7 @@ const expandedUseCases = ref<string[]>([]);
                             class="mt-4 flex items-center gap-2 text-sm text-indigo-600"
                         >
                             <DynamicIcon name="check-circle" class="h-4 w-4" />
-                            <span>Right first time</span>
+                            <span>You get what AI is actually capable of</span>
                         </div>
                     </div>
                 </div>
@@ -316,12 +319,11 @@ const expandedUseCases = ref<string[]>([]);
                 <div class="mx-auto mt-8 max-w-3xl text-center">
                     <p class="text-lg text-indigo-800">
                         <strong class="text-indigo-900"
-                            >The difference isn't the output — it's the
-                            process.</strong
+                            >The difference is in the questions.</strong
                         >
-                        ChatGPT answers what you ask. It doesn't know what you
-                        don't know to ask. BettrPrompt's job is to surface the
-                        questions that change the answer.
+                        ChatGPT answers what you ask. BettrPrompt uncovers what
+                        you should have asked — then builds a prompt that gets
+                        you AI's best work, not its first guess.
                     </p>
                 </div>
 
@@ -330,7 +332,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="document-text"
                         title="What About Prompt Templates?"
-                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue — your budget, your constraints, your context. No two prompts are the same."
+                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue — your context, your constraints, your voice. No two prompts are the same."
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -339,7 +341,7 @@ const expandedUseCases = ref<string[]>([]);
                     <FeatureCard
                         icon="academic-cap"
                         title="Should I Learn Prompt Engineering?"
-                        description="You could. But you're busy. BettrPrompt embeds 60+ frameworks so you don't have to memorise them. Describe what you need — we'll handle the structure."
+                        description="You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need — we'll handle the structure."
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
