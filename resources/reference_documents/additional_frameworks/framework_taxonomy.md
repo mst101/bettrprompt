@@ -31,9 +31,6 @@
 | `CREATIVE` | Novel ideas, unconventional thinking | High N, High P | High S, High J |
 | `STRUCTURE` | Clear organisation, logical flow | High J, High T | High P |
 | `WARM` | Warmth, rapport-building | High F, High E | High T |
-| `ITERATIVE` | Self-improvement, refinement, learning from feedback | High P, High T-identity | High J, High A |
-| `ABSTRACTION` | Higher-level principle identification before specifics | High N, High T | High S |
-| `AGENTIC` | Interleaved thinking and acting with tool interaction | High T, High P | High N (ungrounded), High J (premature) |
 
 ## Task → Requirements Mapping
 
@@ -41,15 +38,15 @@
 |------|---------------------|----------------------|
 | `DECISION` | `OBJECTIVE`, `RISK` | `DECISIVE`, `EXPLORE` |
 | `STRATEGY` | `VISION`, `DETAIL` | `RISK`, `DECISIVE` |
-| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK`, `ABSTRACTION` |
-| `CREATION_CONTENT` | Varies (see content types) | `STRUCTURE`, `ITERATIVE` |
-| `CREATION_TECHNICAL` | `DETAIL`, `OBJECTIVE` | `STRUCTURE`, `ITERATIVE` |
+| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK` |
+| `CREATION_CONTENT` | Varies (see content types) | `STRUCTURE` |
+| `CREATION_TECHNICAL` | `DETAIL`, `OBJECTIVE` | `STRUCTURE` |
 | `IDEATION` | `CREATIVE`, `EXPLORE` | `VISION` |
-| `PROBLEM_SOLVING` | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE`, `AGENTIC` |
-| `LEARNING` | `STRUCTURE`, `ABSTRACTION` | Varies |
+| `PROBLEM_SOLVING` | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE` |
+| `LEARNING` | `STRUCTURE` | Varies |
 | `PERSUASION` | `EMPATHY`, `WARM` | `STRUCTURE` |
-| `FEEDBACK` | `EMPATHY`, `OBJECTIVE` | `WARM`, `ITERATIVE` |
-| `RESEARCH` | `OBJECTIVE`, `EXPLORE` | `DETAIL`, `AGENTIC` |
+| `FEEDBACK` | `EMPATHY`, `OBJECTIVE` | `WARM` |
+| `RESEARCH` | `OBJECTIVE`, `EXPLORE` | `DETAIL` |
 | `GOAL_SETTING` | `DETAIL`, `DECISIVE` | `VISION` |
 
 ### Content Types (CREATION_CONTENT)
@@ -71,15 +68,10 @@
 - **CRISPE** (`CRISPE`): Clarity, Relevance, Iteration, Specificity, Parameters, Examples. For: technical docs, strategic planning. Complexity: Medium
 - **RELIC** (`RELIC`): Role, Emphasis, Limitation, Information, Challenge. For: content creation, strategic planning. Complexity: Medium
 - **RTF** (`RTF`): Request, Task, Format. For: data retrieval, simple requests. Complexity: Low
-- **CO-STAR** (`CO_STAR`): Context, Objective, Style, Tone, Audience, Response. For: content creation, marketing copy, precise tone control. Complexity: Medium
-- **ICIO** (`ICIO`): Instruction, Context, Input, Output. For: data processing, content transformation, structured tasks. Complexity: Low
-- **CRAFT** (`CRAFT`): Context, Request, Action, Frame, Template (+Examples, Develop). For: repeatable prompts, structured outputs. Complexity: Medium-High
 
 ### Iterative Refinement
 - **RACEF** (`RACEF`): Rephrase, Append, Contextualize, Examples, Follow-Up. For: brainstorming, iterative problem-solving. Complexity: Medium
 - **Chain of Destiny** (`CHAIN_OF_DESTINY`): Baseline + Feedback loops. For: projects prioritising quality. Complexity: High
-- **Self-Refine** (`SELF_REFINE`): Generate → Critique → Refine (iterative). For: writing improvement, code refinement, quality-sensitive outputs. Complexity: High
-- **Reflexion** (`REFLEXION`): Act → Evaluate → Reflect → Learn → Act. For: complex problem-solving, code generation, multi-step reasoning. Complexity: High
 
 ### Decision-Making & Prioritisation
 - **RICE** (`RICE`): Reach, Impact, Confidence, Effort. For: feature prioritisation, project selection. Complexity: Low
@@ -92,9 +84,6 @@
 - **Tree of Thought** (`TREE_OF_THOUGHT`): Nodes, Edges, Outcomes. For: complex problem-solving, scenario planning. Complexity: High
 - **FOCUS** (`FOCUS`): Focus areas, Prioritisation, Resources. For: goal-setting and prioritisation. Complexity: Medium
 - **Six Thinking Hats** (`SIX_THINKING_HATS`): White (facts), Red (emotions), Black (risks), Yellow (benefits), Green (creativity), Blue (process). For: multi-perspective analysis. Complexity: Medium
-- **Step-Back** (`STEP_BACK`): Abstraction → Grounding → Reasoning. For: STEM problems, knowledge-intensive questions, multi-hop reasoning. Complexity: Medium
-- **ReAct** (`REACT`): Thought → Action → Observation (loop). For: tool-using tasks, information retrieval, agentic workflows. Complexity: High
-- **Skeleton-of-Thought** (`SKELETON_OF_THOUGHT`): Skeleton → Parallel Expansion → Assembly. For: structured explanations, listicles, consultancy responses. Complexity: Medium. NOT for: sequential reasoning, math, coding.
 
 ### Storytelling & Narrative
 - **BAB** (`BAB`): Before, After, Bridge. For: marketing, persuasion. Complexity: Low
@@ -159,7 +148,6 @@
 - **ORID** (`ORID`): Objective, Reflective, Interpretive, Decisional. For: group discussions, coaching. Complexity: Medium
 - **PAUSE** (`PAUSE`): Prepare, Assess, Uncover, Synthesize, Execute. For: management decisions. Complexity: Medium
 - **Elicitation** (`ELICITATION`): Structured information extraction. For: research, interviews. Complexity: Medium
-- **Meta Prompting** (`META_PROMPTING`): Prompt → Evaluate → Refine Prompt → Execute. For: prompt optimisation, complex task setup. Complexity: High
 
 ### Visual & Dialogue
 - **Atomic Prompting** (`ATOMIC_PROMPTING`): Detailed visual specs. For: image generation (Midjourney, DALL-E). Complexity: Medium
@@ -170,48 +158,48 @@
 **NOTE:** Use the framework codes shown in parentheses when selecting frameworks.
 
 ### DECISION
-Primary: RICE (`RICE`), Pros and Cons (`PROS_AND_CONS`), Tree of Thought (`TREE_OF_THOUGHT`), Step-Back (`STEP_BACK`)
-Secondary: SMART (`SMART`), Six Thinking Hats (`SIX_THINKING_HATS`), ORID (`ORID`), PAUSE (`PAUSE`), ReAct (`REACT`)
+Primary: RICE (`RICE`), Pros and Cons (`PROS_AND_CONS`), Tree of Thought (`TREE_OF_THOUGHT`)
+Secondary: SMART (`SMART`), Six Thinking Hats (`SIX_THINKING_HATS`), ORID (`ORID`), PAUSE (`PAUSE`)
 
 ### STRATEGY
-Primary: COAST (`COAST`), 3Cs Model (`3CS`), GOPA (`GOPA`), SMART (`SMART`), CO-STAR (`CO_STAR`)
+Primary: COAST (`COAST`), 3Cs Model (`3CS`), GOPA (`GOPA`), SMART (`SMART`)
 Secondary: Chain of Thought (`CHAIN_OF_THOUGHT`), ROSES (`ROSES`), RELIC (`RELIC`)
 
 ### ANALYSIS
-Primary: Chain of Thought (`CHAIN_OF_THOUGHT`), Tree of Thought (`TREE_OF_THOUGHT`), FOCUS (`FOCUS`), Step-Back (`STEP_BACK`)
-Secondary: Five Ws and One H (`FIVE_WS_AND_ONE_H`), PROMPT (`PROMPT`), Socratic Method (`SOCRATIC_METHOD`), Six Thinking Hats (`SIX_THINKING_HATS`), ReAct (`REACT`)
+Primary: Chain of Thought (`CHAIN_OF_THOUGHT`), Tree of Thought (`TREE_OF_THOUGHT`), FOCUS (`FOCUS`)
+Secondary: Five Ws and One H (`FIVE_WS_AND_ONE_H`), PROMPT (`PROMPT`), Socratic Method (`SOCRATIC_METHOD`), Six Thinking Hats (`SIX_THINKING_HATS`)
 
 ### CREATION_CONTENT
-Primary: BLOG (`BLOG`), TAG (`TAG`), APE (`APE`), 4S Method (`4S_METHOD`), CO-STAR (`CO_STAR`), CRAFT (`CRAFT`)
-Secondary: Hamburger Model (`HAMBURGER`), CRISPE (`CRISPE`), TRACI (`TRACI`), Skeleton-of-Thought (`SKELETON_OF_THOUGHT`), Self-Refine (`SELF_REFINE`)
+Primary: BLOG (`BLOG`), TAG (`TAG`), APE (`APE`), 4S Method (`4S_METHOD`)
+Secondary: Hamburger Model (`HAMBURGER`), CRISPE (`CRISPE`), TRACI (`TRACI`)
 
 ### CREATION_TECHNICAL
-Primary: RASCEF (`RASCEF`), CRISPE (`CRISPE`), RTF (`RTF`), ICIO (`ICIO`)
-Secondary: CIDI (`CIDI`), Zero-Shot (`ZERO_SHOT`), GRADE (`GRADE`), Self-Refine (`SELF_REFINE`), Reflexion (`REFLEXION`)
+Primary: RASCEF (`RASCEF`), CRISPE (`CRISPE`), RTF (`RTF`)
+Secondary: CIDI (`CIDI`), Zero-Shot (`ZERO_SHOT`), GRADE (`GRADE`)
 
 ### IDEATION
-Primary: SCAMPER (`SCAMPER`), HMW (`HMW`), What If (`WHAT_IF`), Imagine (`IMAGINE`), Skeleton-of-Thought (`SKELETON_OF_THOUGHT`)
+Primary: SCAMPER (`SCAMPER`), HMW (`HMW`), What If (`WHAT_IF`), Imagine (`IMAGINE`)
 Secondary: Tree of Thought (`TREE_OF_THOUGHT`), SPARK (`SPARK`), Six Thinking Hats (`SIX_THINKING_HATS`)
 
 ### PROBLEM_SOLVING
-Primary: Chain of Thought (`CHAIN_OF_THOUGHT`), GOPA (`GOPA`), ROSES (`ROSES`), PAUSE (`PAUSE`), ReAct (`REACT`), Step-Back (`STEP_BACK`)
-Secondary: Tree of Thought (`TREE_OF_THOUGHT`), Six Thinking Hats (`SIX_THINKING_HATS`), Five Ws and One H (`FIVE_WS_AND_ONE_H`), Reflexion (`REFLEXION`)
+Primary: Chain of Thought (`CHAIN_OF_THOUGHT`), GOPA (`GOPA`), ROSES (`ROSES`), PAUSE (`PAUSE`)
+Secondary: Tree of Thought (`TREE_OF_THOUGHT`), Six Thinking Hats (`SIX_THINKING_HATS`), Five Ws and One H (`FIVE_WS_AND_ONE_H`)
 
 ### LEARNING
-Primary: ELI5 (`ELI5`), Bloom's Taxonomy (`BLOOMS_TAXONOMY`), TQA (`TQA`), Help Me Understand (`HELP_ME_UNDERSTAND`), Step-Back (`STEP_BACK`)
-Secondary: Socratic Method (`SOCRATIC_METHOD`), Few-Shot (`FEW_SHOT`), Skeleton-of-Thought (`SKELETON_OF_THOUGHT`)
+Primary: ELI5 (`ELI5`), Bloom's Taxonomy (`BLOOMS_TAXONOMY`), TQA (`TQA`), Help Me Understand (`HELP_ME_UNDERSTAND`)
+Secondary: Socratic Method (`SOCRATIC_METHOD`), Few-Shot (`FEW_SHOT`)
 
 ### PERSUASION
-Primary: BAB (`BAB`), Challenge-Solution-Benefit (`CHALLENGE_SOLUTION_BENEFIT`), TRACE (`TRACE`), PEE (`PEE`), CO-STAR (`CO_STAR`)
+Primary: BAB (`BAB`), Challenge-Solution-Benefit (`CHALLENGE_SOLUTION_BENEFIT`), TRACE (`TRACE`), PEE (`PEE`)
 Secondary: CAR (`CAR`), PAR (`PAR`), STAR (`STAR`), RACE (`RACE`)
 
 ### FEEDBACK
-Primary: RISE (`RISE`), ROSES (`ROSES`), PEE (`PEE`), Self-Refine (`SELF_REFINE`)
+Primary: RISE (`RISE`), ROSES (`ROSES`), PEE (`PEE`)
 Secondary: Chain of Destiny (`CHAIN_OF_DESTINY`), RACEF (`RACEF`)
 
 ### RESEARCH
-Primary: PROMPT (`PROMPT`), Five Ws and One H (`FIVE_WS_AND_ONE_H`), Elicitation (`ELICITATION`), ReAct (`REACT`)
-Secondary: Chain of Thought (`CHAIN_OF_THOUGHT`), RODES (`RODES`), Step-Back (`STEP_BACK`)
+Primary: PROMPT (`PROMPT`), Five Ws and One H (`FIVE_WS_AND_ONE_H`), Elicitation (`ELICITATION`)
+Secondary: Chain of Thought (`CHAIN_OF_THOUGHT`), RODES (`RODES`)
 
 ### GOAL_SETTING
 Primary: SMART (`SMART`), GOPA (`GOPA`)
@@ -221,28 +209,15 @@ Secondary: COAST (`COAST`), FOCUS (`FOCUS`)
 
 1. Classify task into category
 2. Retrieve candidate frameworks from mapping
-3. Check for special indicators:
-   - Tone/audience critical? → Prefer CO-STAR
-   - Tool-using/research task? → Consider ReAct
-   - Quality-critical output? → Consider Self-Refine
-   - Principle-based reasoning needed? → Consider Step-Back
-   - Parallelisable structure? → Consider Skeleton-of-Thought
-   - Complex task setup? → Consider Meta Prompting
-4. Prefer "Primary" frameworks
-5. Match complexity:
+3. Prefer "Primary" frameworks
+4. Match complexity:
    - Simple task → Low complexity framework
    - Moderate task → Low or Medium complexity
    - Complex task → Medium or High complexity
-6. Check iteration benefit:
-   - If quality-critical output → Consider Self-Refine, Reflexion
-   - If multi-step with potential failures → Consider ReAct, Reflexion
-   - If structure can be parallelised → Consider Skeleton-of-Thought
-   - If abstraction would help reasoning → Consider Step-Back
-7. Select ONE framework for construction
-8. Note alternatives
+5. Select ONE framework for construction
+6. Note alternatives
 
 Complexity criteria:
 - **Simple**: Single-step, clear output, minimal context
 - **Moderate**: Multi-step, some ambiguity, needs context
 - **Complex**: Multi-faceted, significant ambiguity, extensive context, multiple stakeholders
-- **Iterative**: Tasks where refinement cycles improve output significantly → Add Self-Refine or Reflexion as secondary option

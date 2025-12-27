@@ -369,75 +369,6 @@ This framework requires balancing honesty (High-T strength) with empathy (potent
 
 ---
 
-### Meta Prompting Template
-
-**Best For**: Prompt optimisation, complex task setup, when optimal prompt structure is unclear
-
-```
-[META-LEVEL INSTRUCTION]
-You are a prompt engineering expert. Your task is to create or improve a prompt
-that will be used for the following purpose:
-
-[TARGET TASK DESCRIPTION]
-{Description of what the final prompt should accomplish}
-{Desired output type and quality}
-{Constraints and requirements}
-
-[CURRENT PROMPT (if refining)]
-{Existing prompt to improve, if applicable}
-
-[TASK-TRAIT ALIGNMENT FOR TARGET USER]
-The prompt being created is for a user with these characteristics:
-- Personality type: {MBTI type}
-- Key traits to consider: {relevant traits}
-- Cognitive requirements of their task: {requirements}
-
-{Note: Apply Task-Trait Alignment principles to the GENERATED prompt}
-
-[META-PROMPT INSTRUCTIONS]
-
-**Phase 1: Analysis**
-Analyse the target task:
-- What type of task is this? (creation, analysis, decision, etc.)
-- What framework(s) would be most effective?
-- What elements must the prompt include?
-- What personality adjustments should be incorporated?
-
-**Phase 2: Prompt Generation**
-Create an optimised prompt that:
-- Uses an appropriate framework structure
-- Includes all necessary components (context, task, constraints, format)
-- Incorporates personality-aware language
-- Specifies clear quality criteria
-- Is clear and unambiguous
-
-**Phase 3: Self-Critique**
-Review the generated prompt for:
-- Completeness: Does it include all necessary elements?
-- Clarity: Is every instruction unambiguous?
-- Personality fit: Does language match target user?
-- Framework adherence: Does it follow best practices?
-
-**Phase 4: Refinement**
-Address any issues identified in critique.
-Produce final, polished prompt.
-
-[OUTPUT]
-1. Analysis summary (brief)
-2. Generated/Refined prompt
-3. Notes on personality adjustments made
-4. Suggested model and usage tips
-
-[QUALITY CRITERIA]
-- Prompt follows established framework structure
-- All ambiguities are resolved
-- Personality adjustments are appropriate
-- Output format is clearly specified
-- Quality criteria are explicit and measurable
-```
-
----
-
 ### Customer Communication Template (Content Creation)
 
 **Best For**: Emails to customers, especially sensitive communications
@@ -504,35 +435,6 @@ Write an email that:
 - [ ] Reader feels valued and respected
 - [ ] Closes with forward-looking relationship commitment
 ```
-
----
-
-## Framework Interaction Guidelines
-
-### When to Combine Frameworks
-
-Some frameworks work well in combination:
-
-| Primary Framework   | Can Combine With | Use Case                                             |
-|---------------------|------------------|------------------------------------------------------|
-| CO-STAR             | Self-Refine      | High-quality content with iterative improvement      |
-| ReAct               | Step-Back        | Complex problems needing both abstraction and action |
-| Chain of Thought    | Self-Refine      | Reasoning tasks requiring verification               |
-| Skeleton-of-Thought | CO-STAR          | Structured content with tone precision               |
-| Any framework       | Meta Prompting   | When optimal prompt structure is unclear             |
-
-### Framework Selection Quick Reference
-
-| Task Characteristic                        | Recommended Framework |
-|--------------------------------------------|-----------------------|
-| Needs precise tone/audience control        | CO-STAR               |
-| Quality-critical, benefits from iteration  | Self-Refine           |
-| Requires external tools or research        | ReAct                 |
-| Benefits from abstraction before specifics | Step-Back             |
-| Can be broken into parallel components     | Skeleton-of-Thought   |
-| Complex or unclear task setup              | Meta Prompting        |
-| Sequential reasoning required              | Chain of Thought      |
-| Multiple possible paths to explore         | Tree of Thought       |
 
 ---
 
@@ -613,18 +515,6 @@ Some frameworks work well in combination:
 | RESEARCH           | Gemini 1.5 Pro    | Long context for document synthesis |
 | GOAL_SETTING       | Claude Sonnet 4.5 | Structured output, efficiency       |
 
-### Framework-to-Model Recommendations
-
-| Framework           | Primary Model              | Rationale                         |
-|---------------------|----------------------------|-----------------------------------|
-| CO-STAR             | Claude Opus 4.5            | Nuanced tone and style control    |
-| ReAct               | Claude Opus 4.5 / GPT-4    | Complex multi-step reasoning      |
-| Self-Refine         | Claude Opus 4.5            | Strong self-critique capabilities |
-| Reflexion           | Claude Opus 4.5            | Memory and reflection handling    |
-| Step-Back           | Claude Opus 4.5 / GPT-4    | Abstract reasoning                |
-| Skeleton-of-Thought | Claude Sonnet 4.5 / GPT-4o | Efficient structured generation   |
-| Meta Prompting      | Claude Opus 4.5            | Nuanced prompt engineering        |
-
 ### Task-Trait Alignment Model Considerations
 
 When significant counterbalancing is required, prefer models better at following nuanced instructions:
@@ -644,88 +534,87 @@ Return the complete output in this structure:
 
 ```json
 {
-    "optimised_prompt": "The complete prompt text, ready for copy/paste",
-    "metadata": {
-        "framework_used": {
-            "name": "COAST",
-            "code": "COAST",
-            "components": [
-                "Challenge",
-                "Objective",
-                "Actions",
-                "Strategy",
-                "Tactics"
-            ],
-            "explanation": "Why this framework was selected and how it was applied"
+  "optimised_prompt": "The complete prompt text, ready for copy/paste",
+  
+  "metadata": {
+    "framework_used": {
+      "name": "COAST",
+      "code": "COAST",
+      "components": ["Challenge", "Objective", "Actions", "Strategy", "Tactics"],
+      "explanation": "Why this framework was selected and how it was applied"
+    },
+    
+    "task_trait_alignment": {
+      "amplified": [
+        {
+          "trait": "High N (64%)",
+          "requirement_aligned": "Big-Picture Vision",
+          "how_applied": "Prompt structured to leverage strategic framing abilities"
+        }
+      ],
+      "counterbalanced": [
+        {
+          "trait": "High T (84%)",
+          "requirement_opposed": "Empathy & Stakeholder Awareness",
+          "reason": "Task requires emotional acknowledgment that High-T may naturally skip",
+          "injections_added": [
+            "Explicit requirement to acknowledge customer's loyalty",
+            "Instruction to express appreciation before business content",
+            "Quality criterion checking for emotional resonance"
+          ]
         },
-        "task_trait_alignment": {
-            "amplified": [
-                {
-                    "trait": "High N (64%)",
-                    "requirement_aligned": "Big-Picture Vision",
-                    "how_applied": "Prompt structured to leverage strategic framing abilities"
-                }
-            ],
-            "counterbalanced": [
-                {
-                    "trait": "High T (84%)",
-                    "requirement_opposed": "Empathy & Stakeholder Awareness",
-                    "reason": "Task requires emotional acknowledgment that High-T may naturally skip",
-                    "injections_added": [
-                        "Explicit requirement to acknowledge customer's loyalty",
-                        "Instruction to express appreciation before business content",
-                        "Quality criterion checking for emotional resonance"
-                    ]
-                },
-                {
-                    "trait": "High A (84%)",
-                    "requirement_opposed": "Warm/Relational Tone",
-                    "reason": "Assertive confidence must not come across as dismissive",
-                    "injections_added": [
-                        "Tone requirement for warmth over efficiency",
-                        "Instruction for humble, relationship-first framing"
-                    ]
-                }
-            ],
-            "neutral": [
-                {
-                    "trait": "High I (65%)",
-                    "reason": "Introversion not relevant to this communication task"
-                }
-            ]
-        },
-        "personality_adjustments_summary": [
-            "AMPLIFIED: N-strength used for strategic framing of the change",
-            "COUNTERBALANCED: T-tendency with explicit empathy requirements",
-            "COUNTERBALANCED: A-tendency with warmth and humility requirements",
-            "NEUTRAL: I and P traits not adjusted (not relevant to task)"
-        ],
-        "model_recommendations": [
-            {
-                "rank": 1,
-                "model": "Claude Opus 4.5",
-                "model_id": "claude-opus-4-5-20250514",
-                "rationale": "Best for nuanced communication requiring both analytical clarity and emotional intelligence. Excels at following complex counterbalance instructions."
-            },
-            {
-                "rank": 2,
-                "model": "GPT-4",
-                "model_id": "gpt-4",
-                "rationale": "Strong alternative capable of warm, nuanced communication"
-            },
-            {
-                "rank": 3,
-                "model": "Claude Sonnet 4.5",
-                "model_id": "claude-sonnet-4-5-20250514",
-                "rationale": "Faster option if iterating; handles counterbalance instructions well"
-            }
-        ],
-        "iteration_suggestions": [
-            "If output feels too formal/cold, strengthen the empathy injections",
-            "If output is too soft/vague, reduce counterbalancing weight on High-T",
-            "If customer context changes, update the relationship history section"
-        ]
-    }
+        {
+          "trait": "High A (84%)",
+          "requirement_opposed": "Warm/Relational Tone", 
+          "reason": "Assertive confidence must not come across as dismissive",
+          "injections_added": [
+            "Tone requirement for warmth over efficiency",
+            "Instruction for humble, relationship-first framing"
+          ]
+        }
+      ],
+      "neutral": [
+        {
+          "trait": "High I (65%)",
+          "reason": "Introversion not relevant to this communication task"
+        }
+      ]
+    },
+    
+    "personality_adjustments_summary": [
+      "AMPLIFIED: N-strength used for strategic framing of the change",
+      "COUNTERBALANCED: T-tendency with explicit empathy requirements",
+      "COUNTERBALANCED: A-tendency with warmth and humility requirements",
+      "NEUTRAL: I and P traits not adjusted (not relevant to task)"
+    ],
+    
+    "model_recommendations": [
+      {
+        "rank": 1,
+        "model": "Claude Opus 4.5",
+        "model_id": "claude-opus-4-5-20250514",
+        "rationale": "Best for nuanced communication requiring both analytical clarity and emotional intelligence. Excels at following complex counterbalance instructions."
+      },
+      {
+        "rank": 2,
+        "model": "GPT-4",
+        "model_id": "gpt-4",
+        "rationale": "Strong alternative capable of warm, nuanced communication"
+      },
+      {
+        "rank": 3,
+        "model": "Claude Sonnet 4.5",
+        "model_id": "claude-sonnet-4-5-20250514",
+        "rationale": "Faster option if iterating; handles counterbalance instructions well"
+      }
+    ],
+    
+    "iteration_suggestions": [
+      "If output feels too formal/cold, strengthen the empathy injections",
+      "If output is too soft/vague, reduce counterbalancing weight on High-T",
+      "If customer context changes, update the relationship history section"
+    ]
+  }
 }
 ```
 
