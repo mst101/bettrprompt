@@ -286,6 +286,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.show')
         ->where('workflowNumber', '[0-9]+');
 
+    // Set variant preference for workflow
+    Route::post('/debug/workflow/{workflowNumber}/variant',
+        [\App\Http\Controllers\DebugN8nController::class, 'setVariant'])
+        ->name('workflow.set-variant')
+        ->where('workflowNumber', '[0-9]+');
+
     // Debug API endpoints
     Route::post('/debug/workflow/{workflowNumber}/input',
         [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])

@@ -6,15 +6,15 @@
         "httpMethod": "POST",
         "path": "api/n8n/webhook/analysis",
         "responseMode": "responseNode",
-        "options": []
+        "options": {}
       },
-      "id": "a992fac0-8f28-4c7b-83d3-4346838bd0c7",
+      "id": "6234030d-147c-4e66-b96e-6bcc54b939dc",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -368,
-        -336
+        0,
+        0
       ],
       "webhookId": "prompt-analysis-webhook"
     },
@@ -114,30 +114,17 @@
             }
           ]
         },
-        "options": []
+        "options": {}
       },
-      "id": "c568698e-f63f-434c-95ba-bcb138e4fc23",
+      "id": "89b4c006-61f1-4a69-93a7-094948d12ac8",
       "name": "Load Reference Documents",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -144,
-        -336
+        224,
+        0
       ],
       "notes": "Reference documents split by category for efficient filtering (no question bank in first pass)"
-    },
-    {
-      "parameters": {
-        "jsCode": "// FIRST PASS: Classify task and select framework\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst frameworkDoc = referenceData.framework_taxonomy;\nconst personalityDoc = referenceData.personality_calibration;\n\nconst taskDescription = webhookData.task_description || '';\nconst userContext = webhookData.user_context || null;\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n// NOTE: preAnalysisContext is NOT used in first pass intentionally.\n// First pass should classify tasks independently, without pre-analysis bias.\n// Pre-analysis context is used only in second pass for question generation.\n\nconst systemPrompt = `You are a task classification API. You have access to the complete Framework Taxonomy and Personality Calibration documentation.\n\n## FRAMEWORK TAXONOMY\n\n${frameworkDoc.content}\n\n## PERSONALITY CALIBRATION (Reference)\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nAnalyze the provided task description and:\n1. **Classify** into primary and secondary task categories\n2. **Identify** primary and secondary cognitive requirements for the task\n3. **Select** the single best framework from the taxonomy\n4. **Suggest** 2-3 alternative frameworks MOST RELEVANT to this specific task (consider task category, complexity, and cognitive requirements)\n\nReturn ONLY valid JSON with this exact schema:\n{\n  \"task_classification\":{\"primary_category\":\"...\",\"secondary_category\":null,\"complexity\":\"simple|moderate|complex\",\"classification_reasoning\":\"...\"},\n  \"cognitive_requirements\":{\"primary\":[\"REQ1\"],\"secondary\":[],\"reasoning\":\"...\"},\n  \"selected_framework\":{\"name\":\"...\",\"code\":\"...\",\"components\":[\"C1\",\"C2\",\"C3\"],\"rationale\":\"...\"},\n  \"alternative_frameworks\":[{\"name\":\"...\",\"code\":\"...\",\"when_to_use_instead\":\"If you...\"}]\n}\n\nRules: Include components array. Don't include rationale in alternatives. Use 2nd person in when_to_use_instead. Select alternatives MOST RELEVANT to task (not generic). JSON only.`;\n\n// Build user context summary - ONLY include non-null fields\nlet userContextSummary = '';\nif (userContext) {\n  const contextParts = [];\n  \n  if (userContext.location && (userContext.location.country || userContext.location.state || userContext.location.city)) {\n    const locationParts = [];\n    if (userContext.location.country) locationParts.push(userContext.location.country);\n    if (userContext.location.state) locationParts.push(userContext.location.state);\n    if (userContext.location.city) locationParts.push(userContext.location.city);\n    contextParts.push('Location: ' + locationParts.join(', '));\n  }\n  \n  if (userContext.professional && (userContext.professional.occupation || userContext.professional.industry || userContext.professional.workEnvironment)) {\n    const profParts = [];\n    if (userContext.professional.occupation) profParts.push(userContext.professional.occupation);\n    if (userContext.professional.industry) profParts.push('in ' + userContext.professional.industry);\n    if (userContext.professional.workEnvironment) profParts.push('(' + userContext.professional.workEnvironment + ')');\n    contextParts.push('Professional: ' + profParts.join(' '));\n  }\n  \n  if (userContext.team && (userContext.team.teamSize || userContext.team.teamType)) {\n    const teamParts = [];\n    if (userContext.team.teamSize) teamParts.push(userContext.team.teamSize + ' person team');\n    if (userContext.team.teamType) teamParts.push(userContext.team.teamType);\n    contextParts.push('Team: ' + teamParts.join(', '));\n  }\n  \n  if (userContext.budget && (userContext.budget.monthlyBudget)) {\n    const budgetStr = userContext.budget.monthlyBudget + (userContext.budget.budgetCurrency ? ' ' + userContext.budget.budgetCurrency : '');\n    contextParts.push('Budget: ' + budgetStr);\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    contextParts.push('Preferred Tools: ' + userContext.tools.preferredTools.join(', '));\n  }\n  \n  if (contextParts.length > 0) {\n    userContextSummary = '\\n\\nUser Context:\\n' + contextParts.map(p => '- ' + p).join('\\n');\n  }\n}\n\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context (from workflow_0):';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += '\\n- ' + contextItem.question + ': ' + displayValue;\n    }\n  }\n}\n\nconst userMessage = `Classify this task and select the best framework:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nUsing the framework taxonomy provided, classify the task and recommend the single best framework plus 2-3 alternatives that are MOST RELEVANT to this specific task (consider the task category, complexity, and cognitive requirements when selecting alternatives).`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }]\n  }\n}];"
-      },
-      "id": "6a3a2846-9292-4081-b126-878f9b9a91c1",
-      "name": "Prepare First Pass Prompt",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        80,
-        -336
-      ]
     },
     {
       "parameters": {
@@ -157,19 +144,19 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
-        "options": []
+        "options": {}
       },
-      "id": "a0fe0f55-88a2-4d1f-975e-4d6037af543c",
+      "id": "a198b760-7884-4ba8-99fe-38ad48aa917b",
       "name": "First Pass: Call Anthropic API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        304,
-        -336
+        672,
+        0
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "5u3Dji2E1ZKRUSRX",
+          "id": "0KM4kQ1SAvHJtLFa",
           "name": "Header Auth account"
         }
       }
@@ -178,39 +165,26 @@
       "parameters": {
         "jsCode": "// Parse first pass response\nconst apiResponse = $input.first().json;\nlet classificationData;\n\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  classificationData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      error: 'Failed to parse first pass response'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    classification: classificationData,\n    api_usage: {\n      model: apiResponse.model,\n      input_tokens: apiResponse.usage?.input_tokens || 0,\n      output_tokens: apiResponse.usage?.output_tokens || 0\n    }\n  }\n}];"
       },
-      "id": "fedfbbc3-61fe-4d86-905e-7ac639b8a9b0",
+      "id": "230c15c6-b8aa-4343-baf8-17c2c7d4d9c2",
       "name": "Parse First Pass Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        528,
-        -336
+        896,
+        0
       ]
     },
     {
       "parameters": {
         "jsCode": "// Filter questions based on classification\nconst firstPassResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nif (!firstPassResult.success) {\n  return [{\n    json: {\n      success: false,\n      error: 'First pass classification failed'\n    }\n  }];\n}\n\nconst category = firstPassResult.classification.task_classification?.primary_category;\nconst complexity = firstPassResult.classification.task_classification?.complexity;\n\n// Load universal questions (always included)\nlet selectedQuestions = referenceData.universal_questions.content;\n\n// Load category-specific questions\nconst categoryMap = {\n  'DECISION': 'decision_questions',\n  'STRATEGY': 'strategy_questions',\n  'ANALYSIS': 'analysis_questions',\n  'CREATION_CONTENT': 'creation_content_questions',\n  'CREATION_TECHNICAL': 'creation_technical_questions',\n  'IDEATION': 'ideation_questions',\n  'PROBLEM_SOLVING': 'problem_solving_questions',\n  'LEARNING': 'learning_questions',\n  'PERSUASION': 'persuasion_questions',\n  'FEEDBACK': 'feedback_questions',\n  'RESEARCH': 'research_questions',\n  'GOAL_SETTING': 'goal_setting_questions'\n};\n\nif (categoryMap[category] && referenceData[categoryMap[category]]) {\n  selectedQuestions += '\\n\\n' + referenceData[categoryMap[category]].content;\n}\n\nreturn [{\n  json: {\n    category,\n    complexity,\n    selected_questions: selectedQuestions,\n    classification: firstPassResult.classification\n  }\n}];"
       },
-      "id": "filter-questions-node",
+      "id": "26c196c9-61aa-484e-a9dd-4aedb229a9f7",
       "name": "Filter Questions by Category",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        752,
-        -336
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "// SECOND PASS: Generate clarifying questions AND perform Task-Trait Alignment analysis\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst filterResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst personalityDoc = referenceData.personality_calibration;\nconst selectedQuestions = filterResult.selected_questions;\n\n// CRITICAL: Pass FULL user_context when available\nconst userContext = webhookData.user_context || null;\nconst taskDescription = webhookData.task_description || 'Not provided';\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n\nconst systemPrompt = `You are a question generation and Task-Trait Alignment API. You have access to personality calibration guidelines.\n\n## PERSONALITY CALIBRATION\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nSelect and adapt clarifying questions from the provided question bank, tailored to this specific task and personality type (if available), then perform Task-Trait Alignment analysis.\n\nFor each question, explain: (1) Why it's necessary, (2) How it connects to task requirements or personality.\n\nIf personality data provided: Perform full Task-Trait Alignment (amplified, counterbalanced, neutral traits).\n\nReturn ONLY valid JSON with these fields:\n{\n  \"clarifying_questions\": [{\"id\":\"U1\",\"question\":\"...\",\"purpose\":\"...\",\"required\":true}],\n  \"question_rationale\":\"...\",\n  \"personality_tier\":\"full|partial|none\",\n  \"task_trait_alignment\":{\"amplified\":[{\"trait\":\"...\",\"requirement_aligned\":\"...\",\"reason\":\"...\"}],\"counterbalanced\":[{\"trait\":\"...\",\"requirement_opposed\":\"...\",\"reason\":\"...\",\"injection\":\"...\"}],\"neutral\":[{\"trait\":\"...\",\"reason\":\"...\"}]},\n  \"personality_adjustments_preview\":[\"AMPLIFIED:...\",\"COUNTERBALANCED:...\"]\n}\n\nRules: alignment fields are objects (not strings). adjustments_preview is 2 strings. Use only user's actual traits. If no personality: empty arrays.`;\n\nconst classification = filterResult.classification;\nconst hasPersonality = !!webhookData.user_context?.personality?.personality_type;\n\nlet personalityInfo = 'No personality data';\nif (hasPersonality) {\n  const p = webhookData.user_context.personality;\n  const typeLetters = p.personality_type.split('-');\n  const mainType = typeLetters[0]; // e.g., \"INTP\"\n  const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n  const traits = p.trait_percentages;\n  \n  const traitMapping = [\n    `${mainType[0]} (${traits.mind}%) - ${mainType[0] === 'I' ? 'Introversion' : 'Extraversion'}`,\n    `${mainType[1]} (${traits.energy}%) - ${mainType[1] === 'S' ? 'Sensing' : 'Intuition'}`,\n    `${mainType[2]} (${traits.nature}%) - ${mainType[2] === 'T' ? 'Thinking' : 'Feeling'}`,\n    `${mainType[3]} (${traits.tactics}%) - ${mainType[3] === 'J' ? 'Judging' : 'Perceiving'}`,\n    `${identity} (${traits.identity}%) - ${identity === 'A' ? 'Assertive' : 'Turbulent'}`\n  ];\n  \n  personalityInfo = `Type: ${p.personality_type}\\nTraits (in order I/E, S/N, T/F, J/P, A/T):\\n${traitMapping.join('\\n')}\\n\\nIMPORTANT: Only analyze the user's ACTUAL traits listed above. Do NOT make up traits. Do NOT assume the user has traits they don't have.`;\n}\n\n// Build user context summary for Claude\nlet userContextSummary = '';\nif (userContext) {\n  userContextSummary = '\\n\\nUser Context:';\n  \n  if (userContext.location) {\n    userContextSummary += `\\nLocation: ${userContext.location.country || ''}${userContext.location.state ? ', ' + userContext.location.state : ''}${userContext.location.city ? ', ' + userContext.location.city : ''}`;\n  }\n  \n  if (userContext.professional) {\n    userContextSummary += `\\nProfessional: ${userContext.professional.occupation || 'N/A'} in ${userContext.professional.industry || 'N/A'} (${userContext.professional.workEnvironment || 'N/A'})`;\n  }\n  \n  if (userContext.team) {\n    userContextSummary += `\\nTeam: ${userContext.team.teamSize || 'N/A'} person team (${userContext.team.teamType || 'N/A'})`;\n  }\n  \n  if (userContext.budget) {\n    userContextSummary += `\\nBudget: ${userContext.budget.monthlyBudget || 'N/A'} ${userContext.budget.budgetCurrency || ''}`;\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    userContextSummary += `\\nPreferred Tools: ${userContext.tools.preferredTools.join(', ')}`;\n  }\n}\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context:';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += `\\n- ${contextItem.question}: ${displayValue}`;\n    }\n  }\n}\n\nconst userMessage = `## Question Bank (filtered by task category)\n\n${selectedQuestions}\n\n---\n\nGenerate clarifying questions + Task-Trait Alignment:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nCategory: ${classification.task_classification.primary_category} | Reqs: ${classification.cognitive_requirements.primary.join(', ')}${classification.cognitive_requirements.secondary.length > 0 ? ' + ' + classification.cognitive_requirements.secondary.join(', ') : ''} | Complexity: ${classification.task_classification.complexity} | Framework: ${classification.selected_framework.code} | Personality: ${personalityInfo}\n\nSelect relevant questions (explain why). If personality: analyze trait alignment. Return all 5 fields.`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }],\n    classification: classification,\n    cognitive_requirements: classification.cognitive_requirements,\n    user_context: userContext\n  }\n}];"
-      },
-      "id": "prepare-second-pass",
-      "name": "Prepare Second Pass Prompt",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        976,
-        -336
+        1120,
+        0
       ]
     },
     {
@@ -231,34 +205,34 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 2048,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
-        "options": []
+        "options": {}
       },
-      "id": "second-pass-api",
+      "id": "ef4fef4f-a690-48c7-a911-0c956065883e",
       "name": "Second Pass: Call Anthropic API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1200,
-        -336
+        1568,
+        0
       ],
       "credentials": {
         "httpHeaderAuth": {
-          "id": "5u3Dji2E1ZKRUSRX",
+          "id": "0KM4kQ1SAvHJtLFa",
           "name": "Header Auth account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "// Parse second pass response and combine results from both passes\nconst apiResponse = $input.first().json;\nconst firstPassClassification = $('Prepare Second Pass Prompt').first().json.classification;\nconst firstPassApiResponse = $('First Pass: Call Anthropic API').first().json;\n\nlet questionsData;\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  questionsData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      api_usage: null,\n      error: {\n        message: 'Failed to parse second pass response',\n        details: e.message\n      },\n      error_context: {\n        error_type: 'parsing_error',\n        failed_node: 'Second Pass: Call Anthropic API',\n        timestamp: new Date().toISOString()\n      }\n    }\n  }];\n}\n\n// Aggregate API usage from both passes\nconst apiUsage = [\n  {\n    model: firstPassApiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: firstPassApiResponse.usage?.input_tokens || 0,\n    output_tokens: firstPassApiResponse.usage?.output_tokens || 0\n  },\n  {\n    model: apiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  }\n];\n\n// Combine both passes into final response\nconst finalData = {\n  task_classification: firstPassClassification.task_classification,\n  cognitive_requirements: firstPassClassification.cognitive_requirements,\n  selected_framework: firstPassClassification.selected_framework,\n  alternative_frameworks: firstPassClassification.alternative_frameworks,\n  clarifying_questions: questionsData.clarifying_questions,\n  question_rationale: questionsData.question_rationale,\n  personality_tier: questionsData.personality_tier\n};\n\n// Add task_trait_alignment if present in second pass response\nif (questionsData.task_trait_alignment) {\n  finalData.task_trait_alignment = questionsData.task_trait_alignment;\n}\n\n// Add personality_adjustments_preview if present in second pass response\nif (questionsData.personality_adjustments_preview) {\n  finalData.personality_adjustments_preview = questionsData.personality_adjustments_preview;\n}\n\nreturn [{\n  json: {\n    success: true,\n    data: finalData,\n    api_usage: apiUsage,\n    error: null\n  }\n}];"
+        "jsCode": "// Parse second pass response and combine results from both passes\nconst apiResponse = $input.first().json;\nconst firstPassClassification = $('Prepare Prompt 2').first().json.classification;\nconst firstPassApiResponse = $('First Pass: Call Anthropic API').first().json;\n\nlet questionsData;\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  questionsData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      api_usage: null,\n      error: {\n        message: 'Failed to parse second pass response',\n        details: e.message\n      },\n      error_context: {\n        error_type: 'parsing_error',\n        failed_node: 'Second Pass: Call Anthropic API',\n        timestamp: new Date().toISOString()\n      }\n    }\n  }];\n}\n\n// Aggregate API usage from both passes\nconst apiUsage = [\n  {\n    model: firstPassApiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: firstPassApiResponse.usage?.input_tokens || 0,\n    output_tokens: firstPassApiResponse.usage?.output_tokens || 0\n  },\n  {\n    model: apiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  }\n];\n\n// Combine both passes into final response\nconst finalData = {\n  task_classification: firstPassClassification.task_classification,\n  cognitive_requirements: firstPassClassification.cognitive_requirements,\n  selected_framework: firstPassClassification.selected_framework,\n  alternative_frameworks: firstPassClassification.alternative_frameworks,\n  clarifying_questions: questionsData.clarifying_questions,\n  question_rationale: questionsData.question_rationale,\n  personality_tier: questionsData.personality_tier\n};\n\n// Add task_trait_alignment if present in second pass response\nif (questionsData.task_trait_alignment) {\n  finalData.task_trait_alignment = questionsData.task_trait_alignment;\n}\n\n// Add personality_adjustments_preview if present in second pass response\nif (questionsData.personality_adjustments_preview) {\n  finalData.personality_adjustments_preview = questionsData.personality_adjustments_preview;\n}\n\nreturn [{\n  json: {\n    success: true,\n    data: finalData,\n    api_usage: apiUsage,\n    error: null\n  }\n}];"
       },
-      "id": "combine-results",
+      "id": "aa6269b2-e57b-4650-9a71-0c1e11a32937",
       "name": "Combine Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1424,
-        -336
+        1792,
+        0
       ]
     },
     {
@@ -276,17 +250,43 @@
           }
         }
       },
-      "id": "b687fd26-1ad3-49d3-91dc-e3b5a4a0ce02",
+      "id": "5c4394be-2dbd-45d5-964d-44557d90cce5",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1648,
-        -336
+        2016,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIRST PASS: Classify task and select framework\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst frameworkDoc = referenceData.framework_taxonomy;\nconst personalityDoc = referenceData.personality_calibration;\n\nconst taskDescription = webhookData.task_description || '';\nconst userContext = webhookData.user_context || null;\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n// NOTE: preAnalysisContext is NOT used in first pass intentionally.\n// First pass should classify tasks independently, without pre-analysis bias.\n// Pre-analysis context is used only in second pass for question generation.\n\nconst systemPrompt = `You are a task classification API. You have access to the complete Framework Taxonomy and Personality Calibration documentation.\n\n## FRAMEWORK TAXONOMY\n\n${frameworkDoc.content}\n\n## PERSONALITY CALIBRATION (Reference)\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nAnalyze the provided task description and:\n1. **Classify** into primary and secondary task categories\n2. **Identify** primary and secondary cognitive requirements for the task\n3. **Select** the single best framework from the taxonomy\n4. **Suggest** 2-3 alternative frameworks MOST RELEVANT to this specific task (consider task category, complexity, and cognitive requirements)\n\nReturn ONLY valid JSON with this exact schema:\n{\n  \"task_classification\":{\"primary_category\":\"...\",\"secondary_category\":null,\"complexity\":\"simple|moderate|complex\",\"classification_reasoning\":\"...\"},\n  \"cognitive_requirements\":{\"primary\":[\"REQ1\"],\"secondary\":[],\"reasoning\":\"...\"},\n  \"selected_framework\":{\"name\":\"...\",\"code\":\"...\",\"components\":[\"C1\",\"C2\",\"C3\"],\"rationale\":\"...\"},\n  \"alternative_frameworks\":[{\"name\":\"...\",\"code\":\"...\",\"when_to_use_instead\":\"If you...\"}]\n}\n\nRules: Include components array. Don't include rationale in alternatives. Use 2nd person in when_to_use_instead. Select alternatives MOST RELEVANT to task (not generic). JSON only.`;\n\n// Build user context summary - ONLY include non-null fields\nlet userContextSummary = '';\nif (userContext) {\n  const contextParts = [];\n  \n  if (userContext.location && (userContext.location.country || userContext.location.state || userContext.location.city)) {\n    const locationParts = [];\n    if (userContext.location.country) locationParts.push(userContext.location.country);\n    if (userContext.location.state) locationParts.push(userContext.location.state);\n    if (userContext.location.city) locationParts.push(userContext.location.city);\n    contextParts.push('Location: ' + locationParts.join(', '));\n  }\n  \n  if (userContext.professional && (userContext.professional.occupation || userContext.professional.industry || userContext.professional.workEnvironment)) {\n    const profParts = [];\n    if (userContext.professional.occupation) profParts.push(userContext.professional.occupation);\n    if (userContext.professional.industry) profParts.push('in ' + userContext.professional.industry);\n    if (userContext.professional.workEnvironment) profParts.push('(' + userContext.professional.workEnvironment + ')');\n    contextParts.push('Professional: ' + profParts.join(' '));\n  }\n  \n  if (userContext.team && (userContext.team.teamSize || userContext.team.teamType)) {\n    const teamParts = [];\n    if (userContext.team.teamSize) teamParts.push(userContext.team.teamSize + ' person team');\n    if (userContext.team.teamType) teamParts.push(userContext.team.teamType);\n    contextParts.push('Team: ' + teamParts.join(', '));\n  }\n  \n  if (userContext.budget && (userContext.budget.monthlyBudget)) {\n    const budgetStr = userContext.budget.monthlyBudget + (userContext.budget.budgetCurrency ? ' ' + userContext.budget.budgetCurrency : '');\n    contextParts.push('Budget: ' + budgetStr);\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    contextParts.push('Preferred Tools: ' + userContext.tools.preferredTools.join(', '));\n  }\n  \n  if (contextParts.length > 0) {\n    userContextSummary = '\\n\\nUser Context:\\n' + contextParts.map(p => '- ' + p).join('\\n');\n  }\n}\n\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context (from workflow_0):';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += '\\n- ' + contextItem.question + ': ' + displayValue;\n    }\n  }\n}\n\nconst userMessage = `Classify this task and select the best framework:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nUsing the framework taxonomy provided, classify the task and recommend the single best framework plus 2-3 alternatives that are MOST RELEVANT to this specific task (consider the task category, complexity, and cognitive requirements when selecting alternatives).`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }]\n  }\n}];"
+      },
+      "id": "7da02674-4931-4ac2-b12c-29b7ffc44600",
+      "name": "Prepare Prompt 1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// SECOND PASS: Generate clarifying questions AND perform Task-Trait Alignment analysis\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst filterResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst personalityDoc = referenceData.personality_calibration;\nconst selectedQuestions = filterResult.selected_questions;\n\n// CRITICAL: Pass FULL user_context when available\nconst userContext = webhookData.user_context || null;\nconst taskDescription = webhookData.task_description || 'Not provided';\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n\nconst systemPrompt = `You are a question generation and Task-Trait Alignment API. You have access to personality calibration guidelines.\n\n## PERSONALITY CALIBRATION\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nSelect and adapt clarifying questions from the provided question bank, tailored to this specific task and personality type (if available), then perform Task-Trait Alignment analysis.\n\nFor each question, explain: (1) Why it's necessary, (2) How it connects to task requirements or personality.\n\nIf personality data provided: Perform full Task-Trait Alignment (amplified, counterbalanced, neutral traits).\n\nReturn ONLY valid JSON with these fields:\n{\n  \"clarifying_questions\": [{\"id\":\"U1\",\"question\":\"...\",\"purpose\":\"...\",\"required\":true}],\n  \"question_rationale\":\"...\",\n  \"personality_tier\":\"full|partial|none\",\n  \"task_trait_alignment\":{\"amplified\":[{\"trait\":\"...\",\"requirement_aligned\":\"...\",\"reason\":\"...\"}],\"counterbalanced\":[{\"trait\":\"...\",\"requirement_opposed\":\"...\",\"reason\":\"...\",\"injection\":\"...\"}],\"neutral\":[{\"trait\":\"...\",\"reason\":\"...\"}]},\n  \"personality_adjustments_preview\":[\"AMPLIFIED:...\",\"COUNTERBALANCED:...\"]\n}\n\nRules: alignment fields are objects (not strings). adjustments_preview is 2 strings. Use only user's actual traits. If no personality: empty arrays.`;\n\nconst classification = filterResult.classification;\nconst hasPersonality = !!webhookData.user_context?.personality?.personality_type;\n\nlet personalityInfo = 'No personality data';\nif (hasPersonality) {\n  const p = webhookData.user_context.personality;\n  const typeLetters = p.personality_type.split('-');\n  const mainType = typeLetters[0]; // e.g., \"INTP\"\n  const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n  const traits = p.trait_percentages;\n  \n  const traitMapping = [\n    `${mainType[0]} (${traits.mind}%) - ${mainType[0] === 'I' ? 'Introversion' : 'Extraversion'}`,\n    `${mainType[1]} (${traits.energy}%) - ${mainType[1] === 'S' ? 'Sensing' : 'Intuition'}`,\n    `${mainType[2]} (${traits.nature}%) - ${mainType[2] === 'T' ? 'Thinking' : 'Feeling'}`,\n    `${mainType[3]} (${traits.tactics}%) - ${mainType[3] === 'J' ? 'Judging' : 'Perceiving'}`,\n    `${identity} (${traits.identity}%) - ${identity === 'A' ? 'Assertive' : 'Turbulent'}`\n  ];\n  \n  personalityInfo = `Type: ${p.personality_type}\\nTraits (in order I/E, S/N, T/F, J/P, A/T):\\n${traitMapping.join('\\n')}\\n\\nIMPORTANT: Only analyze the user's ACTUAL traits listed above. Do NOT make up traits. Do NOT assume the user has traits they don't have.`;\n}\n\n// Build user context summary for Claude\nlet userContextSummary = '';\nif (userContext) {\n  userContextSummary = '\\n\\nUser Context:';\n  \n  if (userContext.location) {\n    userContextSummary += `\\nLocation: ${userContext.location.country || ''}${userContext.location.state ? ', ' + userContext.location.state : ''}${userContext.location.city ? ', ' + userContext.location.city : ''}`;\n  }\n  \n  if (userContext.professional) {\n    userContextSummary += `\\nProfessional: ${userContext.professional.occupation || 'N/A'} in ${userContext.professional.industry || 'N/A'} (${userContext.professional.workEnvironment || 'N/A'})`;\n  }\n  \n  if (userContext.team) {\n    userContextSummary += `\\nTeam: ${userContext.team.teamSize || 'N/A'} person team (${userContext.team.teamType || 'N/A'})`;\n  }\n  \n  if (userContext.budget) {\n    userContextSummary += `\\nBudget: ${userContext.budget.monthlyBudget || 'N/A'} ${userContext.budget.budgetCurrency || ''}`;\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    userContextSummary += `\\nPreferred Tools: ${userContext.tools.preferredTools.join(', ')}`;\n  }\n}\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context:';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += `\\n- ${contextItem.question}: ${displayValue}`;\n    }\n  }\n}\n\nconst userMessage = `## Question Bank (filtered by task category)\n\n${selectedQuestions}\n\n---\n\nGenerate clarifying questions + Task-Trait Alignment:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nCategory: ${classification.task_classification.primary_category} | Reqs: ${classification.cognitive_requirements.primary.join(', ')}${classification.cognitive_requirements.secondary.length > 0 ? ' + ' + classification.cognitive_requirements.secondary.join(', ') : ''} | Complexity: ${classification.task_classification.complexity} | Framework: ${classification.selected_framework.code} | Personality: ${personalityInfo}\n\nSelect relevant questions (explain why). If personality: analyze trait alignment. Return all 5 fields.`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }],\n    classification: classification,\n    cognitive_requirements: classification.cognitive_requirements,\n    user_context: userContext\n  }\n}];"
+      },
+      "id": "cad4af8f-e5f9-44e4-adaf-1c7b5a1f8578",
+      "name": "Prepare Prompt 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        0
       ]
     }
   ],
-  "pinData": [],
+  "pinData": {},
   "connections": {
     "Webhook Trigger": {
       "main": [
@@ -303,18 +303,7 @@
       "main": [
         [
           {
-            "node": "Prepare First Pass Prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare First Pass Prompt": {
-      "main": [
-        [
-          {
-            "node": "First Pass: Call Anthropic API",
+            "node": "Prepare Prompt 1",
             "type": "main",
             "index": 0
           }
@@ -347,18 +336,7 @@
       "main": [
         [
           {
-            "node": "Prepare Second Pass Prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Second Pass Prompt": {
-      "main": [
-        [
-          {
-            "node": "Second Pass: Call Anthropic API",
+            "node": "Prepare Prompt 2",
             "type": "main",
             "index": 0
           }
@@ -386,20 +364,51 @@
           }
         ]
       ]
+    },
+    "Prepare Prompt 1": {
+      "main": [
+        [
+          {
+            "node": "First Pass: Call Anthropic API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt 2": {
+      "main": [
+        [
+          {
+            "node": "Second Pass: Call Anthropic API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "two-pass-optimization",
+  "versionId": "2ed6b5dd-ae12-4b95-b333-a47b740e3eee",
   "meta": {
-    "templateCredsSetupCompleted": true
+    "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
   },
-  "id": "workflow_1_two_pass",
+  "id": "MGuVYvZDLTa3D09d",
   "tags": [
     {
+      "updatedAt": "2025-12-18T23:21:45.461Z",
+      "createdAt": "2025-12-18T23:21:45.461Z",
+      "id": "Ng4Eq3gTX2UVvWUH",
       "name": "two-pass-optimization"
+    },
+    {
+      "updatedAt": "2025-12-18T14:16:09.106Z",
+      "createdAt": "2025-12-18T14:16:09.106Z",
+      "id": "J89TfkxPA5LV9fyu",
+      "name": "prompt-framework"
     }
   ]
 }
