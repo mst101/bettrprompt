@@ -983,6 +983,12 @@ class DebugN8nController extends Controller
             'query' => $inputData['query'] ?? [],
         ];
 
+        // Check if this is a multi-pass scenario (has classification or selected_questions from previous pass)
+        $isMultiPass = isset($inputData['classification']) || isset($inputData['selected_questions']);
+
+        // For multi-pass scenarios, use the merged input data as $input (simulating previous node's output)
+        $inputNodeData = $isMultiPass ? $inputData : $webhookData;
+
         // Load reference documents from resources/reference_documents/
         $referenceData = $this->loadReferenceDocuments();
 
@@ -1011,6 +1017,7 @@ class DebugN8nController extends Controller
         $dataObject = [
             'webhook' => $webhookData,
             'reference' => $referenceData,
+            'input' => $inputNodeData,
         ];
         file_put_contents($tempDataFile, json_encode($dataObject, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         $this->tempFilesToCleanup[] = $tempDataFile;
@@ -1044,11 +1051,13 @@ const data = JSON.parse(fs.readFileSync({$dataFileEscaped}, 'utf8'));
   'Load Reference Documents': data.reference
 };
 
-// Mock \$input for accessing current node input (workflow 0 style)
+// Mock \$input for accessing current node input
+// For multi-pass workflows, this will be the output from the previous node (including classification)
+// For single-pass workflows, this will be the webhook data
 const \$input = {
   first() {
     return {
-      json: data.webhook || {}
+      json: data.input || {}
     };
   }
 };
