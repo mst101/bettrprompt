@@ -570,6 +570,24 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
             return;
         }
 
+        // For Pass 2+, use the classification and filtered questions from the previous pass
+        const currentPassIndex = preparePromptNodes.value.findIndex(
+            (n) => n.name === nodeName,
+        );
+        if (currentPassIndex > 0) {
+            const previousNode = preparePromptNodes.value[currentPassIndex - 1];
+            if (previousNode?.promptOld) {
+                // Get the classification and filtered questions from the first pass output
+                // This provides the task classification that the second pass JavaScript expects
+                inputData = {
+                    ...inputData,
+                    classification: previousNode.promptOld.classification,
+                    selected_questions:
+                        previousNode.promptOld.selected_questions,
+                };
+            }
+        }
+
         // Save the old JavaScript to file first (for backwards compatibility, also save primary node)
         if (nodeName === 'Prepare Prompt') {
             await saveOldJavaScriptToFile();
@@ -624,6 +642,24 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         } catch {
             error.value = 'Invalid JSON in input data';
             return;
+        }
+
+        // For Pass 2+, use the classification and filtered questions from the previous pass
+        const currentPassIndex = preparePromptNodes.value.findIndex(
+            (n) => n.name === nodeName,
+        );
+        if (currentPassIndex > 0) {
+            const previousNode = preparePromptNodes.value[currentPassIndex - 1];
+            if (previousNode?.promptNew) {
+                // Get the classification and filtered questions from the first pass output
+                // This provides the task classification that the second pass JavaScript expects
+                inputData = {
+                    ...inputData,
+                    classification: previousNode.promptNew.classification,
+                    selected_questions:
+                        previousNode.promptNew.selected_questions,
+                };
+            }
         }
 
         // Save the new JavaScript to file first (for backwards compatibility, also save primary node)
