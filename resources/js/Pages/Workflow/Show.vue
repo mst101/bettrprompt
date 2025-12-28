@@ -708,6 +708,16 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         // Update the node's prompt data
         // Handle both array format (from workflow) and object format
         let promptData = result.prompt;
+        console.log('preparePromptNew: received prompt data', {
+            promptDataType: typeof promptData,
+            isArray: Array.isArray(promptData),
+            promptDataKeys:
+                typeof promptData === 'object'
+                    ? Object.keys(promptData)
+                    : 'N/A',
+            promptData: promptData,
+        });
+
         if (
             Array.isArray(promptData) &&
             promptData.length > 0 &&
@@ -715,7 +725,17 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
             promptData[0].json
         ) {
             promptData = promptData[0].json;
+            console.log('Extracted from array wrapper:', promptData);
         }
+
+        console.log('Final promptData to store in node:', {
+            hasClassification: !!promptData?.classification,
+            keys:
+                typeof promptData === 'object'
+                    ? Object.keys(promptData)
+                    : 'N/A',
+        });
+
         node.promptNew = promptData;
         // Also update the main promptNew if this is the primary node
         if (nodeName === 'Prepare Prompt') {
