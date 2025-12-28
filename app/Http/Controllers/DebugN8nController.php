@@ -1309,79 +1309,8 @@ try {
                 ], 400);
             }
 
-            // Upload the old workflow to n8n to ensure it's up-to-date
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
-            if (! file_exists($n8nWorkflowFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
-                ], 404);
-            }
-
-            $workflowId = $this->getWorkflowId($workflowNumber);
-            if (! $workflowId) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Unknown workflow number: {$workflowNumber}",
-                ], 400);
-            }
-
-            // Load the old JavaScript version
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
-            if (! file_exists($jsFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Old JavaScript file not found for workflow_{$workflowNumber}",
-                ], 404);
-            }
-
-            $oldJavaScript = file_get_contents($jsFile);
-
-            // Load and update the workflow with the old JavaScript
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            if (! $workflow) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid workflow JSON format',
-                ], 400);
-            }
-
-            // Update the "Prepare Prompt" node with the old JavaScript
-            $found = false;
-            foreach ($workflow['nodes'] as &$node) {
-                if ($node['name'] === 'Prepare Prompt') {
-                    $node['parameters']['jsCode'] = $oldJavaScript;
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (! $found) {
-                return response()->json([
-                    'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow',
-                ], 404);
-            }
-
-            $cleanWorkflow = [
-                'name' => $workflow['name'] ?? 'workflow',
-                'nodes' => $workflow['nodes'] ?? [],
-                'connections' => $workflow['connections'] ?? [],
-                'settings' => $workflow['settings'] ?? (object) [],
-            ];
-
-            // Upload the workflow to n8n first
-            $n8nClient = new \App\Services\N8nClient;
-            $uploadResult = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
-
-            if (! $uploadResult['success']) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Failed to upload old workflow to n8n before execution',
-                    'details' => $uploadResult,
-                ], 400);
-            }
-
+            // Execute the already-uploaded workflow without uploading it again
+            // The "Upload to n8n" button is responsible for uploading the workflow
             $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
             $this->saveWorkflowOutput($workflowNumber, $resultData);
 
@@ -1424,79 +1353,8 @@ try {
                 ], 400);
             }
 
-            // Upload the new workflow to n8n to ensure it's up-to-date
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
-            if (! file_exists($n8nWorkflowFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
-                ], 404);
-            }
-
-            $workflowId = $this->getWorkflowId($workflowNumber);
-            if (! $workflowId) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Unknown workflow number: {$workflowNumber}",
-                ], 400);
-            }
-
-            // Load the new JavaScript version
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
-            if (! file_exists($jsFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
-                ], 404);
-            }
-
-            $newJavaScript = file_get_contents($jsFile);
-
-            // Load and update the workflow with the new JavaScript
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            if (! $workflow) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid workflow JSON format',
-                ], 400);
-            }
-
-            // Update the "Prepare Prompt" node with the new JavaScript
-            $found = false;
-            foreach ($workflow['nodes'] as &$node) {
-                if ($node['name'] === 'Prepare Prompt') {
-                    $node['parameters']['jsCode'] = $newJavaScript;
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (! $found) {
-                return response()->json([
-                    'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow',
-                ], 404);
-            }
-
-            $cleanWorkflow = [
-                'name' => $workflow['name'] ?? 'workflow',
-                'nodes' => $workflow['nodes'] ?? [],
-                'connections' => $workflow['connections'] ?? [],
-                'settings' => $workflow['settings'] ?? (object) [],
-            ];
-
-            // Upload the workflow to n8n first
-            $n8nClient = new \App\Services\N8nClient;
-            $uploadResult = $n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
-
-            if (! $uploadResult['success']) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Failed to upload new workflow to n8n before execution',
-                    'details' => $uploadResult,
-                ], 400);
-            }
-
+            // Execute the already-uploaded workflow without uploading it again
+            // The "Upload to n8n" button is responsible for uploading the workflow
             $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
             $this->saveWorkflowOutput($workflowNumber, $resultData, true);
 
