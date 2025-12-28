@@ -480,7 +480,7 @@ const saveInputData = async () => {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/input`,
             'POST',
-            [inputData],
+            Array.isArray(inputData) ? inputData : [inputData],
         );
 
         const result = await response.json();
@@ -758,7 +758,7 @@ const savePassInputData = async (nodeName: string, passNumber: number) => {
         const response = await makeRequest(
             `/debug/workflow/${props.workflowNumber}/pass-input/${passNumber}`,
             'POST',
-            [inputData], // Wrap in array format
+            Array.isArray(inputData) ? inputData : [inputData],
         );
 
         const result = await response.json();
