@@ -688,6 +688,10 @@ class DebugN8nController extends Controller
     public function preparePromptOld(Request $request, int $workflowNumber)
     {
         try {
+            // Get variant and node name from request
+            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $nodeName = $request->input('nodeName', 'Prepare Prompt');
+
             // Get input from request or load from storage
             $inputData = $request->input('input');
 
@@ -723,17 +727,15 @@ class DebugN8nController extends Controller
                 }
             }
 
-            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/old/
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
+            // Load JavaScript from variant-specific path
+            $javascript = $this->variantService->loadJavaScript($workflowNumber, $variant, $nodeName, false);
 
-            if (! file_exists($jsFile)) {
+            if ($javascript === null) {
                 return response()->json([
                     'success' => false,
-                    'error' => "JavaScript file not found for workflow_{$workflowNumber}",
+                    'error' => "JavaScript file not found for workflow_{$workflowNumber}, variant={$variant}, node={$nodeName}",
                 ], 404);
             }
-
-            $javascript = file_get_contents($jsFile);
 
             // Execute the JavaScript using Node.js
             // Note: We don't normalize JavaScript anymore since buildNodeScript handles modern syntax
@@ -757,10 +759,8 @@ class DebugN8nController extends Controller
 
             $result = $output['result'];
 
-            // Save prompt to storage/app/n8n_debug/prompt/old/
-            $this->ensureDebugDirectory('prompt/old');
-            $promptFile = storage_path("app/n8n_debug/prompt/old/workflow_{$workflowNumber}_prompt.json");
-            file_put_contents($promptFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            // Save prompt to variant-specific path
+            $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, false);
 
             return response()->json([
                 'success' => true,
@@ -789,6 +789,10 @@ class DebugN8nController extends Controller
     public function preparePromptNew(Request $request, int $workflowNumber)
     {
         try {
+            // Get variant and node name from request
+            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $nodeName = $request->input('nodeName', 'Prepare Prompt');
+
             // Get input from request or load from storage
             $inputData = $request->input('input');
 
@@ -824,17 +828,15 @@ class DebugN8nController extends Controller
                 }
             }
 
-            // Load JavaScript from storage/app/n8n_debug/prepare_prompt/new/
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            // Load JavaScript from variant-specific path
+            $javascript = $this->variantService->loadJavaScript($workflowNumber, $variant, $nodeName, true);
 
-            if (! file_exists($jsFile)) {
+            if ($javascript === null) {
                 return response()->json([
                     'success' => false,
-                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}",
+                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}, variant={$variant}, node={$nodeName}",
                 ], 404);
             }
-
-            $javascript = file_get_contents($jsFile);
 
             // Execute the JavaScript using Node.js
             $nodeScript = $this->buildNodeScript($inputData, $javascript);
@@ -857,10 +859,8 @@ class DebugN8nController extends Controller
 
             $result = $output['result'];
 
-            // Save prompt to storage/app/n8n_debug/prompt/new/
-            $this->ensureDebugDirectory('prompt/new');
-            $promptFile = storage_path("app/n8n_debug/prompt/new/workflow_{$workflowNumber}_prompt.json");
-            file_put_contents($promptFile, json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            // Save prompt to variant-specific path
+            $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, true);
 
             return response()->json([
                 'success' => true,
