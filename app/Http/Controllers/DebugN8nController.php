@@ -847,9 +847,19 @@ class DebugN8nController extends Controller
             // Debug: Log what we received for multi-pass scenarios
             $hasClassification = isset($inputData['classification']);
             $hasSelectedQuestions = isset($inputData['selected_questions']);
-            \Log::info("preparePromptNew debug: variant={$variant}, nodeName={$nodeName}, hasClassification={$hasClassification}, hasSelectedQuestions={$hasSelectedQuestions}", [
+            \Log::info('preparePromptNew debug - Input received', [
+                'variant' => $variant,
+                'nodeName' => $nodeName,
+                'hasClassification' => $hasClassification,
+                'hasSelectedQuestions' => $hasSelectedQuestions,
                 'inputDataKeys' => array_keys((array) $inputData),
-                'classification' => isset($inputData['classification']) ? 'set' : 'not set',
+                'inputDataStructure' => [
+                    'has_body' => isset($inputData['body']),
+                    'has_headers' => isset($inputData['headers']),
+                    'has_classification' => isset($inputData['classification']),
+                    'classification_type' => isset($inputData['classification']) ? gettype($inputData['classification']) : 'N/A',
+                    'classification_keys' => isset($inputData['classification']) ? array_keys((array) $inputData['classification']) : [],
+                ],
             ]);
 
             // Load JavaScript from variant-specific path
@@ -875,6 +885,14 @@ class DebugN8nController extends Controller
             $output = $this->executeNode($nodeScript);
 
             if (! $output['success']) {
+                // Log the error for debugging
+                \Log::error('preparePromptNew execution failed', [
+                    'error' => $output['error'],
+                    'debug_output' => $output['debug_output'] ?? null,
+                    'variant' => $variant,
+                    'nodeName' => $nodeName,
+                ]);
+
                 return response()->json([
                     'success' => false,
                     'error' => $output['error'],
@@ -1031,11 +1049,18 @@ class DebugN8nController extends Controller
         $this->tempFilesToCleanup[] = $tempDataFile;
 
         // Debug: Log what we're passing to Node.js
-        \Log::info('buildNodeScript: dataObject structure', [
+        \Log::info('buildNodeScript: Passing to Node.js', [
             'isMultiPass' => $isMultiPass,
             'inputNodeDataType' => gettype($inputNodeData),
             'inputNodeDataKeys' => array_keys((array) $inputNodeData),
             'hasClassificationInInput' => isset($inputNodeData['classification']) ? 'yes' : 'no',
+            'inputNodeDataSnapshot' => [
+                'has_body' => isset($inputNodeData['body']),
+                'has_headers' => isset($inputNodeData['headers']),
+                'has_classification' => isset($inputNodeData['classification']),
+                'classification_type' => isset($inputNodeData['classification']) ? gettype($inputNodeData['classification']) : 'N/A',
+            ],
+            'webhookDataKeys' => array_keys((array) $webhookData),
         ]);
 
         // Build the Node.js script with proper file paths
