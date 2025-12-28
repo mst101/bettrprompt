@@ -434,23 +434,29 @@ class DebugN8nController extends Controller
     public function uploadOldWorkflowToN8n(int $workflowNumber)
     {
         try {
-            // Load the old JavaScript from storage
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
-            if (! file_exists($jsFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Old JavaScript file not found for workflow_{$workflowNumber}. Please save the JavaScript code first.",
-                ], 404);
+            // Get the current variant
+            $variant = $this->getVariant($workflowNumber);
+            $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
+
+            // Load JavaScript for each prepare prompt node
+            $nodeJavaScript = [];
+            foreach ($nodeNames as $nodeName) {
+                $js = $this->variantService->loadJavaScript($workflowNumber, $variant, $nodeName, false);
+                if ($js === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Old JavaScript file not found for node '{$nodeName}' in variant '{$variant}'",
+                    ], 404);
+                }
+                $nodeJavaScript[$nodeName] = $js;
             }
 
-            $oldJavaScript = file_get_contents($jsFile);
-
-            // Load the workflow file
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            // Get the correct workflow file for this variant
+            $n8nWorkflowFile = $this->variantService->getWorkflowFilePath($workflowNumber, $variant);
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
                 ], 404);
             }
 
@@ -470,20 +476,22 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            // Update the "Prepare Prompt" node with the old JavaScript
-            $found = false;
+            // Update all Prepare Prompt nodes with the old JavaScript
+            $foundCount = 0;
             foreach ($workflow['nodes'] as &$node) {
-                if ($node['name'] === 'Prepare Prompt') {
-                    $node['parameters']['jsCode'] = $oldJavaScript;
-                    $found = true;
-                    break;
+                foreach ($nodeNames as $nodeName) {
+                    if ($node['name'] === $nodeName) {
+                        $node['parameters']['jsCode'] = $nodeJavaScript[$nodeName];
+                        $foundCount++;
+                        break;
+                    }
                 }
             }
 
-            if (! $found) {
+            if ($foundCount === 0) {
                 return response()->json([
                     'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow',
+                    'error' => 'No Prepare Prompt nodes found in workflow',
                 ], 404);
             }
 
@@ -527,23 +535,29 @@ class DebugN8nController extends Controller
     public function uploadNewWorkflowToN8n(int $workflowNumber)
     {
         try {
-            // Load the new JavaScript version
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
-            if (! file_exists($jsFile)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "New JavaScript file not found for workflow_{$workflowNumber}. Please save the JavaScript code first.",
-                ], 404);
+            // Get the current variant
+            $variant = $this->getVariant($workflowNumber);
+            $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
+
+            // Load JavaScript for each prepare prompt node
+            $nodeJavaScript = [];
+            foreach ($nodeNames as $nodeName) {
+                $js = $this->variantService->loadJavaScript($workflowNumber, $variant, $nodeName, true);
+                if ($js === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "New JavaScript file not found for node '{$nodeName}' in variant '{$variant}'",
+                    ], 404);
+                }
+                $nodeJavaScript[$nodeName] = $js;
             }
 
-            $newJavaScript = file_get_contents($jsFile);
-
-            // Load the base workflow file
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            // Get the correct workflow file for this variant
+            $n8nWorkflowFile = $this->variantService->getWorkflowFilePath($workflowNumber, $variant);
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
                 ], 404);
             }
 
@@ -563,20 +577,22 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            // Update the "Prepare Prompt" node with the new JavaScript
-            $found = false;
+            // Update all Prepare Prompt nodes with the new JavaScript
+            $foundCount = 0;
             foreach ($workflow['nodes'] as &$node) {
-                if ($node['name'] === 'Prepare Prompt') {
-                    $node['parameters']['jsCode'] = $newJavaScript;
-                    $found = true;
-                    break;
+                foreach ($nodeNames as $nodeName) {
+                    if ($node['name'] === $nodeName) {
+                        $node['parameters']['jsCode'] = $nodeJavaScript[$nodeName];
+                        $foundCount++;
+                        break;
+                    }
                 }
             }
 
-            if (! $found) {
+            if ($foundCount === 0) {
                 return response()->json([
                     'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow',
+                    'error' => 'No Prepare Prompt nodes found in workflow',
                 ], 404);
             }
 
