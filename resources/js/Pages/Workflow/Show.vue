@@ -570,6 +570,11 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
             return;
         }
 
+        // If input is an array (n8n format), extract the first element
+        if (Array.isArray(inputData) && inputData.length > 0) {
+            inputData = inputData[0];
+        }
+
         // For Pass 2+, require the previous pass to have been run
         const currentPassIndex = preparePromptNodes.value.findIndex(
             (n) => n.name === nodeName,
@@ -642,6 +647,11 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         } catch {
             error.value = 'Invalid JSON in input data';
             return;
+        }
+
+        // If input is an array (n8n format), extract the first element
+        if (Array.isArray(inputData) && inputData.length > 0) {
+            inputData = inputData[0];
         }
 
         // For Pass 2+, require the previous pass to have been run
