@@ -3,6 +3,8 @@ import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import ButtonSuccess from '@/Components/Base/Button/ButtonSuccess.vue';
+import FormSelect from '@/Components/Base/Form/FormSelect.vue';
+import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue';
 import NotificationToast from '@/Components/Features/Workflow/NotificationToast.vue';
 import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
@@ -22,6 +24,8 @@ interface Variant {
 
 interface PreparePromptNode {
     name: string;
+    passNumber: number;
+    passInput: object | null;
     javascriptOld: string | null;
     javascriptNew: string | null;
     promptOld: object | null;
@@ -73,6 +77,7 @@ const error = ref<string | null>(null);
 
 const input = ref(props.input);
 const inputJson = ref(JSON.stringify(props.input, null, 2));
+const passInputJson = ref<Record<string, string>>({});
 const javascriptOld = ref(props.javascriptOld || '');
 const javascriptNew = ref(props.javascriptNew || '');
 const promptOld = ref(props.promptOld);
@@ -87,6 +92,14 @@ const selectedPass = ref(0);
 // Get the current node being displayed based on selected pass
 const currentNode = computed(() => {
     return preparePromptNodes.value[selectedPass.value] || null;
+});
+
+// Get pass options for FormSelect
+const passOptions = computed(() => {
+    return preparePromptNodes.value.map((_, index) => ({
+        value: String(index),
+        label: `Pass ${index + 1}`,
+    }));
 });
 
 // Modal state for maximized views
@@ -708,15 +721,6 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         // Update the node's prompt data
         // Handle both array format (from workflow) and object format
         let promptData = result.prompt;
-        console.log('preparePromptNew: received prompt data', {
-            promptDataType: typeof promptData,
-            isArray: Array.isArray(promptData),
-            promptDataKeys:
-                typeof promptData === 'object'
-                    ? Object.keys(promptData)
-                    : 'N/A',
-            promptData: promptData,
-        });
 
         if (
             Array.isArray(promptData) &&
@@ -725,16 +729,7 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
             promptData[0].json
         ) {
             promptData = promptData[0].json;
-            console.log('Extracted from array wrapper:', promptData);
         }
-
-        console.log('Final promptData to store in node:', {
-            hasClassification: !!promptData?.classification,
-            keys:
-                typeof promptData === 'object'
-                    ? Object.keys(promptData)
-                    : 'N/A',
-        });
 
         node.promptNew = promptData;
         // Also update the main promptNew if this is the primary node
@@ -748,8 +743,55 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
     }
 };
 
+/**
+ * Save pass-specific input data
+ */
+const savePassInputData = async (nodeName: string, passNumber: number) => {
+    try {
+        let inputData;
+        try {
+            inputData = JSON.parse(passInputJson.value[nodeName]);
+        } catch {
+            error.value = 'Invalid JSON in pass input data';
+            return;
+        }
+
+        const response = await makeRequest(
+            `/debug/workflow/${props.workflowNumber}/pass-input/${passNumber}`,
+            'POST',
+            [inputData], // Wrap in array format
+        );
+
+        const result = await response.json();
+        if (!result.success) {
+            error.value = result.error || 'Failed to save pass input data';
+        } else {
+            saveMessage.value = `Pass ${passNumber} input saved successfully!`;
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
+            error.value = null;
+        }
+    } catch (err) {
+        error.value = `Failed to save pass input data: ${
+            err instanceof Error ? err.message : 'Unknown error'
+        }`;
+    }
+};
+
 // Auto-execute both versions when page loads if they have code
 onMounted(async () => {
+    // Initialize pass input JSON for each node (Pass 2+)
+    props.preparePromptNodes.forEach((node) => {
+        if (node.passNumber > 1) {
+            passInputJson.value[node.name] = JSON.stringify(
+                node.passInput || {},
+                null,
+                2,
+            );
+        }
+    });
+
     // Execute the current node (old and new versions)
     if (currentNode.value) {
         if (currentNode.value.javascriptOld && input.value) {
@@ -766,7 +808,7 @@ onMounted(async () => {
 <template>
     <div>
         <!-- Header -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="flex items-center justify-between">
             <PageHeader
                 :title="`Workflow ${workflowNumber}`"
                 subtitle="Inspect workflow input, JavaScript code, and output"
@@ -781,34 +823,28 @@ onMounted(async () => {
                 />
 
                 <!-- Pass selector (only show if multiple passes exist) -->
-                <div
+                <FormSelect
                     v-if="preparePromptNodes.length > 1"
-                    class="items-centre flex gap-3"
-                >
-                    <label
-                        for="pass-selector"
-                        class="text-sm font-medium text-slate-700"
-                    >
-                        Pass:
-                    </label>
-                    <select
-                        id="pass-selector"
-                        v-model.number="selectedPass"
-                        class="rounded-md border border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    >
-                        <option
-                            v-for="(node, index) in preparePromptNodes"
-                            :key="index"
-                            :value="index"
-                        >
-                            Pass {{ index + 1 }}
-                        </option>
-                    </select>
-                </div>
+                    id="pass-selector"
+                    :model-value="String(selectedPass)"
+                    label="Pass:"
+                    label-sr-only
+                    :options="passOptions"
+                    :show-placeholder="false"
+                    @update:model-value="selectedPass = parseInt($event)"
+                />
 
                 <ButtonPrimary @click="expandedView = 'input'">
                     Input Data
                 </ButtonPrimary>
+
+                <!-- Pass Input button for Pass 2+ -->
+                <ButtonSecondary
+                    v-if="currentNode.passNumber > 1"
+                    @click="expandedView = `pass-input-${selectedPass}`"
+                >
+                    Pass {{ currentNode.passNumber }} Input
+                </ButtonSecondary>
 
                 <ButtonDanger
                     :disabled="isUploadingToLive"
@@ -829,7 +865,7 @@ onMounted(async () => {
             <div v-if="currentNode" class="space-y-4">
                 <!-- Node heading -->
                 <div class="items-centre flex justify-between">
-                    <h3 class="text-lg font-semibold text-slate-800">
+                    <h3 class="text-lg font-semibold text-indigo-800">
                         Prepare Prompt{{
                             preparePromptNodes.length > 1
                                 ? ` ${selectedPass + 1}`
@@ -929,8 +965,8 @@ onMounted(async () => {
             </div>
 
             <!-- Workflow Output Sections (shown at the end after all nodes) -->
-            <div class="border-t-2 border-slate-300 pt-8">
-                <h3 class="mb-4 text-lg font-semibold text-slate-800">
+            <div class="border-t-2 border-indigo-300 pt-8">
+                <h3 class="mb-4 text-lg font-semibold text-indigo-800">
                     Workflow Output
                 </h3>
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -1538,6 +1574,60 @@ onMounted(async () => {
                 </div>
             </div>
         </ExpandableModal>
+
+        <!-- Pass Input Modals (for Pass 2+) -->
+        <template
+            v-for="node in preparePromptNodes.filter(
+                (n: PreparePromptNode) => n.passNumber > 1,
+            )"
+            :key="`pass-input-${node.name}`"
+        >
+            <ExpandableModal
+                :show="
+                    expandedView ===
+                    `pass-input-${preparePromptNodes.indexOf(node)}`
+                "
+                :title="`Pass ${node.passNumber} Input - ${node.name}`"
+                @close="expandedView = null"
+            >
+                <div class="mb-4 rounded-md bg-blue-50 p-4">
+                    <p class="text-sm text-blue-800">
+                        This is the input data for {{ node.name }}. It should
+                        contain the output from Pass
+                        {{ node.passNumber - 1 }} (classification,
+                        selected_questions, etc.). You can provide it as an
+                        object or wrapped in an array. If this file doesn't
+                        exist, the system will use the actual output from Pass
+                        {{ node.passNumber - 1 }}.
+                    </p>
+                </div>
+
+                <div class="flex h-full flex-col">
+                    <FormTextarea
+                        :id="`pass-${node.passNumber}-input`"
+                        v-model="passInputJson[node.name]"
+                        :label="`Pass ${node.passNumber} input`"
+                        class="flex-1 resize-none overflow-auto rounded-md border border-indigo-300 p-4 font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        placeholder="Enter as JSON object or array: { classification: {...}, ... } or [{ classification: {...}, ... }]"
+                    >
+                    </FormTextarea>
+
+                    <div class="mt-4 flex justify-end gap-2">
+                        <ButtonSecondary @click="expandedView = null">
+                            Cancel
+                        </ButtonSecondary>
+                        <ButtonPrimary
+                            @click="
+                                savePassInputData(node.name, node.passNumber);
+                                expandedView = null;
+                            "
+                        >
+                            Save and Close
+                        </ButtonPrimary>
+                    </div>
+                </div>
+            </ExpandableModal>
+        </template>
 
         <!-- Notifications -->
         <NotificationToast

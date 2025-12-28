@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import { computed, ref } from 'vue';
 
 interface Variant {
@@ -17,11 +18,11 @@ const props = defineProps<Props>();
 
 const selectedVariant = ref(props.currentVariant);
 
-const currentVariantDescription = computed(() => {
-    return (
-        props.availableVariants.find((v) => v.key === selectedVariant.value)
-            ?.description || ''
-    );
+const variantOptions = computed(() => {
+    return props.availableVariants.map((v) => ({
+        value: v.key,
+        label: v.name,
+    }));
 });
 
 const getCsrfToken = () => {
@@ -84,29 +85,15 @@ const handleVariantChange = async () => {
 </script>
 
 <template>
-    <div class="items-centre flex gap-3">
-        <label
-            for="variant-selector"
-            class="text-sm font-medium text-slate-700"
-        >
-            Variant:
-        </label>
-        <select
+    <div class="flex items-center gap-3">
+        <FormSelect
             id="variant-selector"
             v-model="selectedVariant"
-            class="rounded-md border border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            @change="handleVariantChange"
-        >
-            <option
-                v-for="variant in availableVariants"
-                :key="variant.key"
-                :value="variant.key"
-            >
-                {{ variant.name }}
-            </option>
-        </select>
-        <span v-if="currentVariantDescription" class="text-xs text-slate-500">
-            {{ currentVariantDescription }}
-        </span>
+            label="Variant:"
+            label-sr-only
+            :options="variantOptions"
+            :show-placeholder="false"
+            @update:model-value="handleVariantChange"
+        />
     </div>
 </template>

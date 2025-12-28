@@ -290,6 +290,68 @@ class WorkflowVariantService
     }
 
     /**
+     * Extract pass number from node name
+     * 'Prepare Prompt' → 1
+     * 'Prepare Prompt 1' → 1
+     * 'Prepare Prompt 2' → 2
+     */
+    public function getPassNumberFromNodeName(string $nodeName): int
+    {
+        if ($nodeName === 'Prepare Prompt') {
+            return 1;
+        }
+
+        // Extract number from node name like "Prepare Prompt 2" → 2
+        if (preg_match('/(\d+)$/', $nodeName, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return 1;
+    }
+
+    /**
+     * Load pass output (e.g., output from Pass 1 to be used by Pass 2)
+     */
+    public function loadPassOutput(
+        int $workflowNumber,
+        string $variant,
+        int $passNumber,
+        bool $isNew
+    ): ?array {
+        $version = $isNew ? 'new' : 'old';
+        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
+        $fileName = "workflow_{$workflowNumber}_output_{$passNumber}.json";
+        $filePath = $variantPath.$fileName;
+
+        if (! file_exists($filePath)) {
+            return null;
+        }
+
+        return json_decode(file_get_contents($filePath), true);
+    }
+
+    /**
+     * Save pass output (e.g., save Pass 1 output so Pass 2 can use it)
+     */
+    public function savePassOutput(
+        int $workflowNumber,
+        string $variant,
+        int $passNumber,
+        array $outputData,
+        bool $isNew
+    ): void {
+        $version = $isNew ? 'new' : 'old';
+        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
+        $this->ensureDebugDirectory($variantPath);
+
+        $fileName = "workflow_{$workflowNumber}_output_{$passNumber}.json";
+        $filePath = $variantPath.$fileName;
+
+        file_put_contents($filePath, json_encode($outputData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        chmod($filePath, 0644);
+    }
+
+    /**
      * Convert node name to filename suffix
      * 'Prepare Prompt' → ''
      * 'Prepare Prompt 1' → '_1'

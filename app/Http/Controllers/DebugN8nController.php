@@ -87,13 +87,26 @@ class DebugN8nController extends Controller
         $promptNew = null;
 
         foreach ($nodeNames as $nodeName) {
+            $passNumber = $this->variantService->getPassNumberFromNodeName($nodeName);
+
             $jsOld = $this->variantService->loadJavaScript($workflowNumber, $currentVariant, $nodeName, false);
             $jsNew = $this->variantService->loadJavaScript($workflowNumber, $currentVariant, $nodeName, true);
             $promptOld_node = $this->variantService->loadPrompt($workflowNumber, $currentVariant, $nodeName, false);
             $promptNew_node = $this->variantService->loadPrompt($workflowNumber, $currentVariant, $nodeName, true);
 
+            // For Pass 2+, check for pass-specific input file
+            $passInput = null;
+            if ($passNumber > 1) {
+                $passInputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input_".($passNumber - 1).'.json');
+                if (file_exists($passInputFile)) {
+                    $passInput = json_decode(file_get_contents($passInputFile), true);
+                }
+            }
+
             $preparePromptNodes[] = [
                 'name' => $nodeName,
+                'passNumber' => $passNumber,
+                'passInput' => $passInput,
                 'javascriptOld' => $jsOld,
                 'javascriptNew' => $jsNew,
                 'promptOld' => $promptOld_node,
@@ -146,6 +159,34 @@ class DebugN8nController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save input: {$e->getMessage()}",
+            ], 500);
+        }
+    }
+
+    /**
+     * Save pass-specific input data for Pass 2+
+     * Stored as workflow_X_input_Y.json where Y is passNumber - 1
+     */
+    public function savePassInput(Request $request, int $workflowNumber, int $passNumber)
+    {
+        try {
+            $this->ensureDebugDirectory('input');
+
+            // Pass input is stored as workflow_X_input_Y.json where Y is passNumber - 1
+            // e.g., Pass 2 input is workflow_1_input_1.json (output from Pass 1)
+            $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input_".($passNumber - 1).'.json');
+
+            $content = json_encode($request->all(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            file_put_contents($inputFile, $content);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pass input saved successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => "Failed to save pass input: {$e->getMessage()}",
             ], 500);
         }
     }
@@ -708,6 +749,9 @@ class DebugN8nController extends Controller
             $variant = $request->input('variant', $this->getVariant($workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
 
+            // Extract pass number from node name
+            $passNumber = $this->variantService->getPassNumberFromNodeName($nodeName);
+
             // Get input from request or load from storage
             $inputData = $request->input('input');
 
@@ -740,6 +784,62 @@ class DebugN8nController extends Controller
                 // Handle array format from request (e.g., when user pastes n8n array format)
                 if (is_array($inputData) && isset($inputData[0]['body'])) {
                     $inputData = $inputData[0];
+                }
+            }
+
+            // For Pass 2+, check for manually created pass-specific input file first
+            if ($passNumber > 1) {
+                $passInputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input_".($passNumber - 1).'.json');
+
+                if (file_exists($passInputFile)) {
+                    // Use the manually created pass input file
+                    $passInputContent = json_decode(file_get_contents($passInputFile), true);
+
+                    // Merge the pass input into inputData
+                    if (is_array($passInputContent)) {
+                        // Handle array format [{ ... }]
+                        if (isset($passInputContent[0]) && is_array($passInputContent[0])) {
+                            $passInputContent = $passInputContent[0];
+                        }
+
+                        // Merge relevant fields from pass input
+                        if (isset($passInputContent['classification'])) {
+                            $inputData['classification'] = $passInputContent['classification'];
+                        }
+                        if (isset($passInputContent['selected_questions'])) {
+                            $inputData['selected_questions'] = $passInputContent['selected_questions'];
+                        }
+                        if (isset($passInputContent['cognitive_requirements'])) {
+                            $inputData['cognitive_requirements'] = $passInputContent['cognitive_requirements'];
+                        }
+                        if (isset($passInputContent['user_context'])) {
+                            $inputData['user_context'] = $passInputContent['user_context'];
+                        }
+                    }
+                } else {
+                    // Fall back to loading previous pass output
+                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, false);
+                    if ($previousPassOutput !== null) {
+                        // Merge previous pass output into input data
+                        // This provides classification, selected_questions, etc. from previous pass
+                        if (isset($previousPassOutput['classification'])) {
+                            $inputData['classification'] = $previousPassOutput['classification'];
+                        }
+                        if (isset($previousPassOutput['selected_questions'])) {
+                            $inputData['selected_questions'] = $previousPassOutput['selected_questions'];
+                        }
+                        if (isset($previousPassOutput['cognitive_requirements'])) {
+                            $inputData['cognitive_requirements'] = $previousPassOutput['cognitive_requirements'];
+                        }
+                        if (isset($previousPassOutput['user_context'])) {
+                            $inputData['user_context'] = $previousPassOutput['user_context'];
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => "Pass {$passNumber} requires either a pass input file (workflow_{$workflowNumber}_input_".($passNumber - 1).'.json) or output from Pass '.($passNumber - 1).'.',
+                        ], 404);
+                    }
                 }
             }
 
@@ -778,6 +878,9 @@ class DebugN8nController extends Controller
             // Save prompt to variant-specific path
             $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, false);
 
+            // Save pass output so next pass can use it
+            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, false);
+
             return response()->json([
                 'success' => true,
                 'prompt' => $result,
@@ -808,6 +911,9 @@ class DebugN8nController extends Controller
             // Get variant and node name from request
             $variant = $request->input('variant', $this->getVariant($workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
+
+            // Extract pass number from node name
+            $passNumber = $this->variantService->getPassNumberFromNodeName($nodeName);
 
             // Get input from request or load from storage
             $inputData = $request->input('input');
@@ -841,6 +947,62 @@ class DebugN8nController extends Controller
                 // Handle array format from request (e.g., when user pastes n8n array format)
                 if (is_array($inputData) && isset($inputData[0]['body'])) {
                     $inputData = $inputData[0];
+                }
+            }
+
+            // For Pass 2+, check for manually created pass-specific input file first
+            if ($passNumber > 1) {
+                $passInputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input_".($passNumber - 1).'.json');
+
+                if (file_exists($passInputFile)) {
+                    // Use the manually created pass input file
+                    $passInputContent = json_decode(file_get_contents($passInputFile), true);
+
+                    // Merge the pass input into inputData
+                    if (is_array($passInputContent)) {
+                        // Handle array format [{ ... }]
+                        if (isset($passInputContent[0]) && is_array($passInputContent[0])) {
+                            $passInputContent = $passInputContent[0];
+                        }
+
+                        // Merge relevant fields from pass input
+                        if (isset($passInputContent['classification'])) {
+                            $inputData['classification'] = $passInputContent['classification'];
+                        }
+                        if (isset($passInputContent['selected_questions'])) {
+                            $inputData['selected_questions'] = $passInputContent['selected_questions'];
+                        }
+                        if (isset($passInputContent['cognitive_requirements'])) {
+                            $inputData['cognitive_requirements'] = $passInputContent['cognitive_requirements'];
+                        }
+                        if (isset($passInputContent['user_context'])) {
+                            $inputData['user_context'] = $passInputContent['user_context'];
+                        }
+                    }
+                } else {
+                    // Fall back to loading previous pass output
+                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, true);
+                    if ($previousPassOutput !== null) {
+                        // Merge previous pass output into input data
+                        // This provides classification, selected_questions, etc. from previous pass
+                        if (isset($previousPassOutput['classification'])) {
+                            $inputData['classification'] = $previousPassOutput['classification'];
+                        }
+                        if (isset($previousPassOutput['selected_questions'])) {
+                            $inputData['selected_questions'] = $previousPassOutput['selected_questions'];
+                        }
+                        if (isset($previousPassOutput['cognitive_requirements'])) {
+                            $inputData['cognitive_requirements'] = $previousPassOutput['cognitive_requirements'];
+                        }
+                        if (isset($previousPassOutput['user_context'])) {
+                            $inputData['user_context'] = $previousPassOutput['user_context'];
+                        }
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'error' => "Pass {$passNumber} requires either a pass input file (workflow_{$workflowNumber}_input_".($passNumber - 1).'.json) or output from Pass '.($passNumber - 1).'.',
+                        ], 404);
+                    }
                 }
             }
 
@@ -903,6 +1065,9 @@ class DebugN8nController extends Controller
 
             // Save prompt to variant-specific path
             $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, true);
+
+            // Save pass output so next pass can use it
+            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, true);
 
             return response()->json([
                 'success' => true,

@@ -298,6 +298,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('workflow.save-input')
         ->where('workflowNumber', '[0-9]+');
 
+    Route::post('/debug/workflow/{workflowNumber}/pass-input/{passNumber}',
+        [\App\Http\Controllers\DebugN8nController::class, 'savePassInput'])
+        ->name('workflow.save-pass-input')
+        ->where('workflowNumber', '[0-9]+')
+        ->where('passNumber', '[0-9]+');
+
     Route::post('/debug/workflow/{workflowNumber}/javascript-old',
         [\App\Http\Controllers\DebugN8nController::class, 'saveOldJavaScript'])
         ->name('workflow.save-javascript-old')
