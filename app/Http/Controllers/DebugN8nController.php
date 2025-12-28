@@ -844,6 +844,14 @@ class DebugN8nController extends Controller
                 }
             }
 
+            // Debug: Log what we received for multi-pass scenarios
+            $hasClassification = isset($inputData['classification']);
+            $hasSelectedQuestions = isset($inputData['selected_questions']);
+            \Log::info("preparePromptNew debug: variant={$variant}, nodeName={$nodeName}, hasClassification={$hasClassification}, hasSelectedQuestions={$hasSelectedQuestions}", [
+                'inputDataKeys' => array_keys((array) $inputData),
+                'classification' => isset($inputData['classification']) ? 'set' : 'not set',
+            ]);
+
             // Load JavaScript from variant-specific path
             $javascript = $this->variantService->loadJavaScript($workflowNumber, $variant, $nodeName, true);
 
@@ -1022,7 +1030,13 @@ class DebugN8nController extends Controller
         file_put_contents($tempDataFile, json_encode($dataObject, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         $this->tempFilesToCleanup[] = $tempDataFile;
 
-        // Debug: Temp files created successfully
+        // Debug: Log what we're passing to Node.js
+        \Log::info('buildNodeScript: dataObject structure', [
+            'isMultiPass' => $isMultiPass,
+            'inputNodeDataType' => gettype($inputNodeData),
+            'inputNodeDataKeys' => array_keys((array) $inputNodeData),
+            'hasClassificationInInput' => isset($inputNodeData['classification']) ? 'yes' : 'no',
+        ]);
 
         // Build the Node.js script with proper file paths
         // Properly escape file paths for Node.js string literals
