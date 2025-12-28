@@ -1,414 +1,414 @@
 {
-  "name": "workflow_1_two_pass",
-  "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "api/n8n/webhook/analysis",
-        "responseMode": "responseNode",
-        "options": {}
-      },
-      "id": "6234030d-147c-4e66-b96e-6bcc54b939dc",
-      "name": "Webhook Trigger",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        0,
-        0
-      ],
-      "webhookId": "prompt-analysis-webhook"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "framework_taxonomy",
-              "name": "framework_taxonomy",
-              "type": "object",
-              "value": "{\"content\": \"# Framework Taxonomy (Compressed)\\n\\n## Task Categories\\n\\n| Code | Description | Triggers |\\n|------|-------------|----------|\\n| `DECISION` | Choose between options, prioritise | \\\"decide\\\", \\\"choose\\\", \\\"which\\\", \\\"compare\\\", \\\"pros and cons\\\" |\\n| `STRATEGY` | Business strategy, roadmaps, long-term planning | \\\"strategy\\\", \\\"plan\\\", \\\"roadmap\\\", \\\"long-term\\\", \\\"growth\\\" |\\n| `ANALYSIS` | Understand data, examine situations, root cause | \\\"analyse\\\", \\\"understand why\\\", \\\"explain\\\", \\\"examine\\\", \\\"diagnose\\\" |\\n| `CREATION_CONTENT` | Writing, marketing, emails, communications | \\\"write\\\", \\\"draft\\\", \\\"blog\\\", \\\"email\\\", \\\"copy\\\", \\\"article\\\" |\\n| `CREATION_TECHNICAL` | Code, docs, specs, technical writing | \\\"code\\\", \\\"build\\\", \\\"develop\\\", \\\"API\\\", \\\"script\\\", \\\"documentation\\\" |\\n| `IDEATION` | Brainstorming, innovation, generating ideas | \\\"ideas\\\", \\\"brainstorm\\\", \\\"creative\\\", \\\"possibilities\\\", \\\"suggestions\\\" |\\n| `PROBLEM_SOLVING` | Fixing issues, troubleshooting | \\\"solve\\\", \\\"fix\\\", \\\"problem\\\", \\\"issue\\\", \\\"challenge\\\", \\\"overcome\\\" |\\n| `LEARNING` | Understanding concepts, education | \\\"learn\\\", \\\"understand\\\", \\\"explain to me\\\", \\\"teach me\\\", \\\"what is\\\" |\\n| `PERSUASION` | Convincing, selling, pitching | \\\"convince\\\", \\\"persuade\\\", \\\"pitch\\\", \\\"sell\\\", \\\"proposal\\\", \\\"negotiate\\\" |\\n| `FEEDBACK` | Reviewing, critiquing, improving work | \\\"review\\\", \\\"feedback\\\", \\\"improve\\\", \\\"critique\\\", \\\"refine\\\" |\\n| `RESEARCH` | Gathering information, investigation | \\\"research\\\", \\\"find out\\\", \\\"investigate\\\", \\\"gather information\\\" |\\n| `GOAL_SETTING` | Defining objectives, KPIs, targets | \\\"goal\\\", \\\"objective\\\", \\\"target\\\", \\\"KPI\\\", \\\"milestone\\\" |\\n\\n## Cognitive Requirements\\n\\n| Code | Description | Aligned Traits | Opposed Traits |\\n|------|-------------|----------------|----------------|\\n| `EMPATHY` | Understanding feelings, relationships | High F, High E | High T |\\n| `VISION` | Future thinking, patterns, concepts | High N, High P | High S |\\n| `DETAIL` | Step-by-step specificity, concrete actions | High S, High J | High N, High P |\\n| `DECISIVE` | Clear conclusions, confident guidance | High J, High A | High P, High T-identity |\\n| `EXPLORE` | Option generation, avoiding premature closure | High P, High N | High J |\\n| `OBJECTIVE` | Logic, evidence-based analysis | High T, High S | High F |\\n| `RISK` | Identifying problems, downsides | High T-identity, High T | High A |\\n| `CREATIVE` | Novel ideas, unconventional thinking | High N, High P | High S, High J |\\n| `STRUCTURE` | Clear organisation, logical flow | High J, High T | High P |\\n| `WARM` | Warmth, rapport-building | High F, High E | High T |\\n\\n## Task → Requirements Mapping\\n\\n| Task | Primary Requirements | Secondary Requirements |\\n|------|---------------------|----------------------|\\n| `DECISION` | `OBJECTIVE`, `RISK` | `DECISIVE`, `EXPLORE` |\\n| `STRATEGY` | `VISION`, `DETAIL` | `RISK`, `DECISIVE` |\\n| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK` |\\n| `CREATION_CONTENT` | Varies (see content types) | `STRUCTURE` |\\n| `CREATION_TECHNICAL` | `DETAIL`, `OBJECTIVE` | `STRUCTURE` |\\n| `IDEATION` | `CREATIVE`, `EXPLORE` | `VISION` |\\n| `PROBLEM_SOLVING` | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE` |\\n| `LEARNING` | `STRUCTURE` | Varies |\\n| `PERSUASION` | `EMPATHY`, `WARM` | `STRUCTURE` |\\n| `FEEDBACK` | `EMPATHY`, `OBJECTIVE` | `WARM` |\\n| `RESEARCH` | `OBJECTIVE`, `EXPLORE` | `DETAIL` |\\n| `GOAL_SETTING` | `DETAIL`, `DECISIVE` | `VISION` |\\n\\n### Content Types (CREATION_CONTENT)\\n\\n| Type | Triggers | Primary Reqs | Secondary Reqs |\\n|------|----------|--------------|----------------|\\n| Customer email | \\\"email to customer\\\", \\\"client email\\\" | `EMPATHY`, `WARM`, `STRUCTURE` | |\\n| Marketing copy | \\\"marketing\\\", \\\"ad copy\\\", \\\"landing page\\\" | `EMPATHY`, `CREATIVE`, `DECISIVE` | |\\n| Technical blog | \\\"technical post\\\", \\\"how-to\\\" | `OBJECTIVE`, `STRUCTURE`, `DETAIL` | |\\n| Executive summary | \\\"executive summary\\\", \\\"brief for leadership\\\" | `DECISIVE`, `STRUCTURE` | |\\n| Apology/bad news | \\\"apologise\\\", \\\"bad news\\\", \\\"discontinuing\\\" | `EMPATHY`, `WARM`, `RISK` | |\\n| Sales pitch | \\\"sales\\\", \\\"pitch\\\", \\\"proposal\\\" | `EMPATHY`, `DECISIVE`, `CREATIVE` | |\\n\\n## Frameworks (Essential Info Only)\\n\\n**IMPORTANT:** Each framework has an explicit `code` field that MUST be used exactly as shown when referencing the framework template.\\n\\n### Structured Clarity\\n- **CRISPE** (`CRISPE`): Clarity, Relevance, Iteration, Specificity, Parameters, Examples. For: technical docs, strategic planning. Complexity: Medium\\n- **RELIC** (`RELIC`): Role, Emphasis, Limitation, Information, Challenge. For: content creation, strategic planning. Complexity: Medium\\n- **RTF** (`RTF`): Request, Task, Format. For: data retrieval, simple requests. Complexity: Low\\n\\n### Iterative Refinement\\n- **RACEF** (`RACEF`): Rephrase, Append, Contextualize, Examples, Follow-Up. For: brainstorming, iterative problem-solving. Complexity: Medium\\n- **Chain of Destiny** (`CHAIN_OF_DESTINY`): Baseline + Feedback loops. For: projects prioritising quality. Complexity: High\\n\\n### Decision-Making & Prioritisation\\n- **RICE** (`RICE`): Reach, Impact, Confidence, Effort. For: feature prioritisation, project selection. Complexity: Low\\n- **SMART** (`SMART`): Specific, Measurable, Achievable, Relevant, Time-bound. For: goal-setting. Complexity: Low\\n- **COAST** (`COAST`): Challenge, Objective, Actions, Strategy, Tactics. For: project management. Complexity: Medium\\n- **Pros and Cons** (`PROS_AND_CONS`): Benefits vs Drawbacks. For: decision-making. Complexity: Low\\n\\n### Analytical & Problem-Solving\\n- **Chain of Thought** (`CHAIN_OF_THOUGHT`): Intro, Breakdown, Logical Progression, Conclusion. For: complex reasoning. Complexity: High\\n- **Tree of Thought** (`TREE_OF_THOUGHT`): Nodes, Edges, Outcomes. For: complex problem-solving, scenario planning. Complexity: High\\n- **FOCUS** (`FOCUS`): Focus areas, Prioritisation, Resources. For: goal-setting and prioritisation. Complexity: Medium\\n- **Six Thinking Hats** (`SIX_THINKING_HATS`): White (facts), Red (emotions), Black (risks), Yellow (benefits), Green (creativity), Blue (process). For: multi-perspective analysis. Complexity: Medium\\n\\n### Storytelling & Narrative\\n- **BAB** (`BAB`): Before, After, Bridge. For: marketing, persuasion. Complexity: Low\\n- **CAR** (`CAR`): Context, Action, Result. For: case studies, interviews. Complexity: Low\\n- **PAR** (`PAR`): Problem, Action, Result. For: success stories. Complexity: Low\\n- **STAR** (`STAR`): Situation, Task, Action, Result. For: interviews, case studies. Complexity: Low\\n- **Challenge-Solution-Benefit** (`CHALLENGE_SOLUTION_BENEFIT`): For: marketing, product development. Complexity: Low\\n\\n### Content Creation\\n- **BLOG** (`BLOG`): Background, Logic, Outline, Goal. For: blog posts, articles. Complexity: Low\\n- **APE** (`APE`): Audience, Purpose, Execution. For: content marketing. Complexity: Low\\n- **TAG** (`TAG`): Topic, Audience, Goal. For: content marketing. Complexity: Low\\n- **4S Method** (`4S_METHOD`): Structure, Style, Substance, Speed. For: digital marketing. Complexity: Low\\n- **Hamburger** (`HAMBURGER`): Intro, Body, Conclusion. For: blogs, articles. Complexity: Low\\n\\n### Creative & Innovation\\n- **SCAMPER** (`SCAMPER`): Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse. For: innovation, product development. Complexity: Medium\\n- **HMW** (`HMW`): \\\"How might we...\\\" questions. For: design thinking, brainstorming. Complexity: Low\\n- **Imagine** (`IMAGINE`): Future scenario visioning. For: strategic planning. Complexity: Low\\n- **What If** (`WHAT_IF`): Hypothetical scenarios. For: creative problem-solving. Complexity: Low\\n- **SPARK** (`SPARK`): Situation, Problem, Aspiration, Result, Kismet. For: product development, marketing. Complexity: Medium\\n\\n### Educational & Learning\\n- **Bloom's Taxonomy** (`BLOOMS_TAXONOMY`): Remember → Understand → Apply → Analyze → Evaluate → Create. For: educational content. Complexity: Medium\\n- **ELI5** (`ELI5`): Explain Like I'm 5. For: simplifying complex concepts. Complexity: Low\\n- **Help Me Understand** (`HELP_ME_UNDERSTAND`): Comprehension-focused. For: customer support, education. Complexity: Low\\n- **TQA** (`TQA`): Thematic, Question, Answer. For: e-learning. Complexity: Low\\n- **Socratic Method** (`SOCRATIC_METHOD`): Progressive questioning. For: education, critical analysis. Complexity: Medium\\n\\n### Communication & Engagement\\n- **RACE** (`RACE`): Reach, Act, Convert, Engage. For: marketing campaigns. Complexity: Medium\\n- **ERA** (`ERA`): Engage, React, Act. For: marketing, engagement. Complexity: Low\\n- **CARE** (`CARE`): Compassion, Awareness, Response, Engagement. For: customer service. Complexity: Medium\\n\\n### Strategic Analysis\\n- **3Cs** (`3CS`): Company, Customer, Competitor. For: market analysis. Complexity: Medium\\n- **GOPA** (`GOPA`): Goals, Obstacles, Plans, Actions. For: goal setting, problem-solving. Complexity: Low\\n\\n### Feedback & Improvement\\n- **RISE** (`RISE`): Reflect, Inquire, Suggest, Elevate. For: performance management. Complexity: Medium\\n- **ROSES** (`ROSES`): Recognize, Observe, Strategize, Execute, Study. For: complex projects. Complexity: Medium\\n- **PEE** (`PEE`): Point, Evidence, Explanation. For: academic writing, critiques. Complexity: Low\\n\\n### Advanced Structured\\n- **RASCEF** (`RASCEF`): Role, Action, Steps, Context, Examples, Format. For: technical documentation. Complexity: Medium\\n- **RHODES** (`RHODES`): Role, Objective, Details, Examples, Sense Check. For: creative content, marketing. Complexity: Medium\\n- **RISEN** (`RISEN`): Role, Input, Steps, Expectation, Novelty. For: research, innovation. Complexity: Medium\\n- **GRADE** (`GRADE`): Goal, Request, Action, Details, Example. For: project management. Complexity: Medium\\n- **TRACI** (`TRACI`): Task, Role, Audience, Create, Intent. For: marketing, education. Complexity: Medium\\n- **RODES** (`RODES`): Role, Objective, Details, Examples, Sense Check. For: educational content. Complexity: Medium\\n- **CIDI** (`CIDI`): Context, Instructions, Details, Input. For: project management. Complexity: Medium\\n\\n### Argumentation\\n- **TRACE** (`TRACE`): Topic, Reason, Audience, Counterargument, Evidence. For: debate, persuasive writing. Complexity: Medium\\n- **SPAR** (`SPAR`): Situation, Problem, Action, Result. For: case studies. Complexity: Low\\n- **PROMPT** (`PROMPT`): Precision, Relevance, Objectivity, Method, Provenance, Timeliness. For: research, journalism. Complexity: Medium\\n\\n### Specialised\\n- **SPEAR** (`SPEAR`): Start, Provide, Explain, Ask, Rinse & Repeat. For: everyday tasks. Complexity: Low\\n- **Few-Shot** (`FEW_SHOT`): Task + Demonstrations + Query. For: classification, creative content. Complexity: Low\\n- **Zero-Shot** (`ZERO_SHOT`): Direct instruction without examples. For: translation, factual queries. Complexity: Low\\n- **ORID** (`ORID`): Objective, Reflective, Interpretive, Decisional. For: group discussions, coaching. Complexity: Medium\\n- **PAUSE** (`PAUSE`): Prepare, Assess, Uncover, Synthesize, Execute. For: management decisions. Complexity: Medium\\n- **Elicitation** (`ELICITATION`): Structured information extraction. For: research, interviews. Complexity: Medium\\n\\n### Visual & Dialogue\\n- **Atomic Prompting** (`ATOMIC_PROMPTING`): Detailed visual specs. For: image generation (Midjourney, DALL-E). Complexity: Medium\\n- **Five Ws and One H** (`FIVE_WS_AND_ONE_H`): Who, What, When, Where, Why, How. For: journalism, research. Complexity: Low\\n\\n## Framework-to-Category Mapping\\n\\n**NOTE:** Use the framework codes shown in parentheses when selecting frameworks.\\n\\n### DECISION\\nPrimary: RICE (`RICE`), Pros and Cons (`PROS_AND_CONS`), Tree of Thought (`TREE_OF_THOUGHT`)\\nSecondary: SMART (`SMART`), Six Thinking Hats (`SIX_THINKING_HATS`), ORID (`ORID`), PAUSE (`PAUSE`)\\n\\n### STRATEGY\\nPrimary: COAST (`COAST`), 3Cs Model (`3CS`), GOPA (`GOPA`), SMART (`SMART`)\\nSecondary: Chain of Thought (`CHAIN_OF_THOUGHT`), ROSES (`ROSES`), RELIC (`RELIC`)\\n\\n### ANALYSIS\\nPrimary: Chain of Thought (`CHAIN_OF_THOUGHT`), Tree of Thought (`TREE_OF_THOUGHT`), FOCUS (`FOCUS`)\\nSecondary: Five Ws and One H (`FIVE_WS_AND_ONE_H`), PROMPT (`PROMPT`), Socratic Method (`SOCRATIC_METHOD`), Six Thinking Hats (`SIX_THINKING_HATS`)\\n\\n### CREATION_CONTENT\\nPrimary: BLOG (`BLOG`), TAG (`TAG`), APE (`APE`), 4S Method (`4S_METHOD`)\\nSecondary: Hamburger Model (`HAMBURGER`), CRISPE (`CRISPE`), TRACI (`TRACI`)\\n\\n### CREATION_TECHNICAL\\nPrimary: RASCEF (`RASCEF`), CRISPE (`CRISPE`), RTF (`RTF`)\\nSecondary: CIDI (`CIDI`), Zero-Shot (`ZERO_SHOT`), GRADE (`GRADE`)\\n\\n### IDEATION\\nPrimary: SCAMPER (`SCAMPER`), HMW (`HMW`), What If (`WHAT_IF`), Imagine (`IMAGINE`)\\nSecondary: Tree of Thought (`TREE_OF_THOUGHT`), SPARK (`SPARK`), Six Thinking Hats (`SIX_THINKING_HATS`)\\n\\n### PROBLEM_SOLVING\\nPrimary: Chain of Thought (`CHAIN_OF_THOUGHT`), GOPA (`GOPA`), ROSES (`ROSES`), PAUSE (`PAUSE`)\\nSecondary: Tree of Thought (`TREE_OF_THOUGHT`), Six Thinking Hats (`SIX_THINKING_HATS`), Five Ws and One H (`FIVE_WS_AND_ONE_H`)\\n\\n### LEARNING\\nPrimary: ELI5 (`ELI5`), Bloom's Taxonomy (`BLOOMS_TAXONOMY`), TQA (`TQA`), Help Me Understand (`HELP_ME_UNDERSTAND`)\\nSecondary: Socratic Method (`SOCRATIC_METHOD`), Few-Shot (`FEW_SHOT`)\\n\\n### PERSUASION\\nPrimary: BAB (`BAB`), Challenge-Solution-Benefit (`CHALLENGE_SOLUTION_BENEFIT`), TRACE (`TRACE`), PEE (`PEE`)\\nSecondary: CAR (`CAR`), PAR (`PAR`), STAR (`STAR`), RACE (`RACE`)\\n\\n### FEEDBACK\\nPrimary: RISE (`RISE`), ROSES (`ROSES`), PEE (`PEE`)\\nSecondary: Chain of Destiny (`CHAIN_OF_DESTINY`), RACEF (`RACEF`)\\n\\n### RESEARCH\\nPrimary: PROMPT (`PROMPT`), Five Ws and One H (`FIVE_WS_AND_ONE_H`), Elicitation (`ELICITATION`)\\nSecondary: Chain of Thought (`CHAIN_OF_THOUGHT`), RODES (`RODES`)\\n\\n### GOAL_SETTING\\nPrimary: SMART (`SMART`), GOPA (`GOPA`)\\nSecondary: COAST (`COAST`), FOCUS (`FOCUS`)\\n\\n## Selection Algorithm\\n\\n1. Classify task into category\\n2. Retrieve candidate frameworks from mapping\\n3. Prefer \\\"Primary\\\" frameworks\\n4. Match complexity:\\n   - Simple task → Low complexity framework\\n   - Moderate task → Low or Medium complexity\\n   - Complex task → Medium or High complexity\\n5. Select ONE framework for construction\\n6. Note alternatives\\n\\nComplexity criteria:\\n- **Simple**: Single-step, clear output, minimal context\\n- **Moderate**: Multi-step, some ambiguity, needs context\\n- **Complex**: Multi-faceted, significant ambiguity, extensive context, multiple stakeholders\\n\"}"
+    "name": "workflow_1_two_pass",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "api/n8n/webhook/analysis",
+                "responseMode": "responseNode",
+                "options": []
             },
-            {
-              "id": "personality_calibration",
-              "name": "personality_calibration",
-              "value": "{\"content\":\"# Personality Calibration (Truncated)\\n\\nFor full details, see the original document. This is a summary.\\n\\nApply Task-Trait Alignment analysis when personality data is provided.\"}",
-              "type": "object"
-            },
-            {
-              "id": "universal_questions",
-              "name": "universal_questions",
-              "value": "{\"content\": \"# Universal Questions\\n\\nThese questions are relevant across most task categories. Select 2-3 from this pool for every task.\\n\\n| ID | Question | Purpose |\\n|----|----------|---------|\\n| U1 | What is the scope or boundary of this task? What's explicitly out of scope? | Define limits |\\n| U2 | How will you measure success? What does a good outcome look like? | Success criteria |\\n| U3 | Who is the intended audience for this output? | Audience clarity |\\n| U4 | What constraints exist (time, budget, length, format, resources)? | Limitation awareness |\\n| U5 | What background context is essential to understand? | Context gathering |\\n| U6 | What have you already tried or considered? | Avoid redundancy |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "decision_questions",
-              "name": "decision_questions",
-              "value": "{\"content\": \"# DECISION Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| D1 | What options are you currently considering? | Map the decision space | High |\\n| D2 | What criteria matter most in making this decision? | Identify decision factors | High |\\n| D3 | What's the cost or impact of choosing wrong? | Understand stakes | Medium |\\n| D4 | Is this decision reversible, or are you locked in once you choose? | Assess commitment level | Medium |\\n| D5 | What information would make this decision obvious? | Identify knowledge gaps | Medium |\\n| D6 | What's your timeline for making this decision? | Urgency assessment | Medium |\\n| D7 | Who else is affected by or involved in this decision? | Stakeholder mapping | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "strategy_questions",
-              "name": "strategy_questions",
-              "value": "{\"content\": \"# STRATEGY Questions\\n\\nSelect 4-6 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| S1 | What's the time horizon for this strategy? | Temporal scope | High |\\n| S2 | What resources are available (budget, team, tools)? | Resource constraints | High |\\n| S3 | What does success look like at the end of this period? | Goal definition | High |\\n| S4 | Who are the key stakeholders who need to buy in? | Stakeholder mapping | High |\\n| S5 | What's been tried before, and what were the results? | Historical context | Medium |\\n| S6 | What are the biggest obstacles or risks you foresee? | Risk identification | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "analysis_questions",
-              "name": "analysis_questions",
-              "value": "{\"content\": \"# ANALYSIS Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| A1 | What data or information do you have access to? | Data inventory | High |\\n| A2 | What's the specific question you're trying to answer? | Focus the analysis | High |\\n| A3 | What's the hypothesis you're testing, if any? | Frame the inquiry | Medium |\\n| A4 | What level of depth is needed (surface scan vs. deep dive)? | Scope calibration | Medium |\\n| A5 | Are there specific angles or perspectives you want explored? | Direction setting | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "creation_content_questions",
-              "name": "creation_content_questions",
-              "value": "{\"content\": \"# CREATION_CONTENT Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| C1 | Who is the target audience for this content? | Audience definition | High |\\n| C2 | What's the primary goal or call to action? | Purpose clarity | High |\\n| C3 | What tone is appropriate (formal, casual, technical, friendly)? | Voice/style | High |\\n| C4 | What's the target length or word count? | Scope | Medium |\\n| C5 | Are there examples of style or content you want to emulate? | Style reference | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "creation_technical_questions",
-              "name": "creation_technical_questions",
-              "value": "{\"content\": \"# CREATION_TECHNICAL Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| T1 | What technology stack or language is required? | Technical constraints | High |\\n| T2 | What's the skill level of people who'll use this? | User context | High |\\n| T3 | Are there existing conventions, style guides, or patterns to follow? | Standards | Medium |\\n| T4 | What error handling or edge cases matter? | Robustness | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "ideation_questions",
-              "name": "ideation_questions",
-              "value": "{\"content\": \"# IDEATION Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| I1 | What problem or opportunity are you generating ideas for? | Focus area | High |\\n| I2 | What constraints should ideas respect? | Boundaries | High |\\n| I3 | How wild can ideas be — incremental improvements or moonshots? | Creativity scope | Medium |\\n| I4 | What's already been considered or tried? | Avoid repetition | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "problem_solving_questions",
-              "name": "problem_solving_questions",
-              "value": "{\"content\": \"# PROBLEM_SOLVING Questions\\n\\nSelect 4-6 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| P1 | What exactly is the problem? Can you describe the symptoms? | Problem definition | High |\\n| P2 | When did this problem start or when was it first noticed? | Timeline | High |\\n| P3 | What have you already tried? | Avoid redundancy | High |\\n| P4 | What happens if this isn't solved? | Stakes/urgency | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "learning_questions",
-              "name": "learning_questions",
-              "value": "{\"content\": \"# LEARNING Questions\\n\\nSelect 2-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| L1 | What's your current understanding level of this topic? | Baseline assessment | High |\\n| L2 | What specifically is confusing or unclear? | Focus area | High |\\n| L3 | What do you need to do with this knowledge? | Application context | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "persuasion_questions",
-              "name": "persuasion_questions",
-              "value": "{\"content\": \"# PERSUASION Questions\\n\\nSelect 4-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| PE1 | Who specifically needs to be convinced? | Target audience | High |\\n| PE2 | What are their current beliefs or position? | Starting point | High |\\n| PE3 | What objections or concerns might they raise? | Anticipate resistance | High |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "feedback_questions",
-              "name": "feedback_questions",
-              "value": "{\"content\": \"# FEEDBACK Questions\\n\\nSelect 3-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| F1 | What aspects do you most want feedback on? | Focus area | High |\\n| F2 | What's working well that should be preserved? | Identify strengths | High |\\n| F3 | What's the purpose of this work? | Context for evaluation | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "research_questions",
-              "name": "research_questions",
-              "value": "{\"content\": \"# RESEARCH Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| R1 | What do you already know about this topic? | Starting point | High |\\n| R2 | What specific questions need to be answered? | Research focus | High |\\n| R3 | What sources are acceptable or preferred? | Source criteria | Medium |\\n\"}",
-              "type": "object"
-            },
-            {
-              "id": "goal_setting_questions",
-              "name": "goal_setting_questions",
-              "value": "{\"content\": \"# GOAL_SETTING Questions\\n\\nSelect 3-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| G1 | What's the overarching vision this goal supports? | Strategic context | High |\\n| G2 | What time frame applies to this goal? | Temporal scope | High |\\n| G3 | How will progress be measured? | Metrics definition | High |\\n\"}",
-              "type": "object"
-            }
-          ]
+            "id": "6234030d-147c-4e66-b96e-6bcc54b939dc",
+            "name": "Webhook Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                0,
+                0
+            ],
+            "webhookId": "prompt-analysis-webhook"
         },
-        "options": {}
-      },
-      "id": "89b4c006-61f1-4a69-93a7-094948d12ac8",
-      "name": "Load Reference Documents",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        224,
-        0
-      ],
-      "notes": "Reference documents split by category for efficient filtering (no question bank in first pass)"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.anthropic.com/v1/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "anthropic-version",
-              "value": "2023-06-01"
-            }
-          ]
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "framework_taxonomy",
+                            "name": "framework_taxonomy",
+                            "type": "object",
+                            "value": "{\"content\": \"# Framework Taxonomy (Compressed)\\n\\n## Task Categories\\n\\n| Code | Description | Triggers |\\n|------|-------------|----------|\\n| `DECISION` | Choose between options, prioritise | \\\"decide\\\", \\\"choose\\\", \\\"which\\\", \\\"compare\\\", \\\"pros and cons\\\" |\\n| `STRATEGY` | Business strategy, roadmaps, long-term planning | \\\"strategy\\\", \\\"plan\\\", \\\"roadmap\\\", \\\"long-term\\\", \\\"growth\\\" |\\n| `ANALYSIS` | Understand data, examine situations, root cause | \\\"analyse\\\", \\\"understand why\\\", \\\"explain\\\", \\\"examine\\\", \\\"diagnose\\\" |\\n| `CREATION_CONTENT` | Writing, marketing, emails, communications | \\\"write\\\", \\\"draft\\\", \\\"blog\\\", \\\"email\\\", \\\"copy\\\", \\\"article\\\" |\\n| `CREATION_TECHNICAL` | Code, docs, specs, technical writing | \\\"code\\\", \\\"build\\\", \\\"develop\\\", \\\"API\\\", \\\"script\\\", \\\"documentation\\\" |\\n| `IDEATION` | Brainstorming, innovation, generating ideas | \\\"ideas\\\", \\\"brainstorm\\\", \\\"creative\\\", \\\"possibilities\\\", \\\"suggestions\\\" |\\n| `PROBLEM_SOLVING` | Fixing issues, troubleshooting | \\\"solve\\\", \\\"fix\\\", \\\"problem\\\", \\\"issue\\\", \\\"challenge\\\", \\\"overcome\\\" |\\n| `LEARNING` | Understanding concepts, education | \\\"learn\\\", \\\"understand\\\", \\\"explain to me\\\", \\\"teach me\\\", \\\"what is\\\" |\\n| `PERSUASION` | Convincing, selling, pitching | \\\"convince\\\", \\\"persuade\\\", \\\"pitch\\\", \\\"sell\\\", \\\"proposal\\\", \\\"negotiate\\\" |\\n| `FEEDBACK` | Reviewing, critiquing, improving work | \\\"review\\\", \\\"feedback\\\", \\\"improve\\\", \\\"critique\\\", \\\"refine\\\" |\\n| `RESEARCH` | Gathering information, investigation | \\\"research\\\", \\\"find out\\\", \\\"investigate\\\", \\\"gather information\\\" |\\n| `GOAL_SETTING` | Defining objectives, KPIs, targets | \\\"goal\\\", \\\"objective\\\", \\\"target\\\", \\\"KPI\\\", \\\"milestone\\\" |\\n\\n## Cognitive Requirements\\n\\n| Code | Description | Aligned Traits | Opposed Traits |\\n|------|-------------|----------------|----------------|\\n| `EMPATHY` | Understanding feelings, relationships | High F, High E | High T |\\n| `VISION` | Future thinking, patterns, concepts | High N, High P | High S |\\n| `DETAIL` | Step-by-step specificity, concrete actions | High S, High J | High N, High P |\\n| `DECISIVE` | Clear conclusions, confident guidance | High J, High A | High P, High T-identity |\\n| `EXPLORE` | Option generation, avoiding premature closure | High P, High N | High J |\\n| `OBJECTIVE` | Logic, evidence-based analysis | High T, High S | High F |\\n| `RISK` | Identifying problems, downsides | High T-identity, High T | High A |\\n| `CREATIVE` | Novel ideas, unconventional thinking | High N, High P | High S, High J |\\n| `STRUCTURE` | Clear organisation, logical flow | High J, High T | High P |\\n| `WARM` | Warmth, rapport-building | High F, High E | High T |\\n\\n## Task \u2192 Requirements Mapping\\n\\n| Task | Primary Requirements | Secondary Requirements |\\n|------|---------------------|----------------------|\\n| `DECISION` | `OBJECTIVE`, `RISK` | `DECISIVE`, `EXPLORE` |\\n| `STRATEGY` | `VISION`, `DETAIL` | `RISK`, `DECISIVE` |\\n| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK` |\\n| `CREATION_CONTENT` | Varies (see content types) | `STRUCTURE` |\\n| `CREATION_TECHNICAL` | `DETAIL`, `OBJECTIVE` | `STRUCTURE` |\\n| `IDEATION` | `CREATIVE`, `EXPLORE` | `VISION` |\\n| `PROBLEM_SOLVING` | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE` |\\n| `LEARNING` | `STRUCTURE` | Varies |\\n| `PERSUASION` | `EMPATHY`, `WARM` | `STRUCTURE` |\\n| `FEEDBACK` | `EMPATHY`, `OBJECTIVE` | `WARM` |\\n| `RESEARCH` | `OBJECTIVE`, `EXPLORE` | `DETAIL` |\\n| `GOAL_SETTING` | `DETAIL`, `DECISIVE` | `VISION` |\\n\\n### Content Types (CREATION_CONTENT)\\n\\n| Type | Triggers | Primary Reqs | Secondary Reqs |\\n|------|----------|--------------|----------------|\\n| Customer email | \\\"email to customer\\\", \\\"client email\\\" | `EMPATHY`, `WARM`, `STRUCTURE` | |\\n| Marketing copy | \\\"marketing\\\", \\\"ad copy\\\", \\\"landing page\\\" | `EMPATHY`, `CREATIVE`, `DECISIVE` | |\\n| Technical blog | \\\"technical post\\\", \\\"how-to\\\" | `OBJECTIVE`, `STRUCTURE`, `DETAIL` | |\\n| Executive summary | \\\"executive summary\\\", \\\"brief for leadership\\\" | `DECISIVE`, `STRUCTURE` | |\\n| Apology/bad news | \\\"apologise\\\", \\\"bad news\\\", \\\"discontinuing\\\" | `EMPATHY`, `WARM`, `RISK` | |\\n| Sales pitch | \\\"sales\\\", \\\"pitch\\\", \\\"proposal\\\" | `EMPATHY`, `DECISIVE`, `CREATIVE` | |\\n\\n## Frameworks (Essential Info Only)\\n\\n**IMPORTANT:** Each framework has an explicit `code` field that MUST be used exactly as shown when referencing the framework template.\\n\\n### Structured Clarity\\n- **CRISPE** (`CRISPE`): Clarity, Relevance, Iteration, Specificity, Parameters, Examples. For: technical docs, strategic planning. Complexity: Medium\\n- **RELIC** (`RELIC`): Role, Emphasis, Limitation, Information, Challenge. For: content creation, strategic planning. Complexity: Medium\\n- **RTF** (`RTF`): Request, Task, Format. For: data retrieval, simple requests. Complexity: Low\\n\\n### Iterative Refinement\\n- **RACEF** (`RACEF`): Rephrase, Append, Contextualize, Examples, Follow-Up. For: brainstorming, iterative problem-solving. Complexity: Medium\\n- **Chain of Destiny** (`CHAIN_OF_DESTINY`): Baseline + Feedback loops. For: projects prioritising quality. Complexity: High\\n\\n### Decision-Making & Prioritisation\\n- **RICE** (`RICE`): Reach, Impact, Confidence, Effort. For: feature prioritisation, project selection. Complexity: Low\\n- **SMART** (`SMART`): Specific, Measurable, Achievable, Relevant, Time-bound. For: goal-setting. Complexity: Low\\n- **COAST** (`COAST`): Challenge, Objective, Actions, Strategy, Tactics. For: project management. Complexity: Medium\\n- **Pros and Cons** (`PROS_AND_CONS`): Benefits vs Drawbacks. For: decision-making. Complexity: Low\\n\\n### Analytical & Problem-Solving\\n- **Chain of Thought** (`CHAIN_OF_THOUGHT`): Intro, Breakdown, Logical Progression, Conclusion. For: complex reasoning. Complexity: High\\n- **Tree of Thought** (`TREE_OF_THOUGHT`): Nodes, Edges, Outcomes. For: complex problem-solving, scenario planning. Complexity: High\\n- **FOCUS** (`FOCUS`): Focus areas, Prioritisation, Resources. For: goal-setting and prioritisation. Complexity: Medium\\n- **Six Thinking Hats** (`SIX_THINKING_HATS`): White (facts), Red (emotions), Black (risks), Yellow (benefits), Green (creativity), Blue (process). For: multi-perspective analysis. Complexity: Medium\\n\\n### Storytelling & Narrative\\n- **BAB** (`BAB`): Before, After, Bridge. For: marketing, persuasion. Complexity: Low\\n- **CAR** (`CAR`): Context, Action, Result. For: case studies, interviews. Complexity: Low\\n- **PAR** (`PAR`): Problem, Action, Result. For: success stories. Complexity: Low\\n- **STAR** (`STAR`): Situation, Task, Action, Result. For: interviews, case studies. Complexity: Low\\n- **Challenge-Solution-Benefit** (`CHALLENGE_SOLUTION_BENEFIT`): For: marketing, product development. Complexity: Low\\n\\n### Content Creation\\n- **BLOG** (`BLOG`): Background, Logic, Outline, Goal. For: blog posts, articles. Complexity: Low\\n- **APE** (`APE`): Audience, Purpose, Execution. For: content marketing. Complexity: Low\\n- **TAG** (`TAG`): Topic, Audience, Goal. For: content marketing. Complexity: Low\\n- **4S Method** (`4S_METHOD`): Structure, Style, Substance, Speed. For: digital marketing. Complexity: Low\\n- **Hamburger** (`HAMBURGER`): Intro, Body, Conclusion. For: blogs, articles. Complexity: Low\\n\\n### Creative & Innovation\\n- **SCAMPER** (`SCAMPER`): Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse. For: innovation, product development. Complexity: Medium\\n- **HMW** (`HMW`): \\\"How might we...\\\" questions. For: design thinking, brainstorming. Complexity: Low\\n- **Imagine** (`IMAGINE`): Future scenario visioning. For: strategic planning. Complexity: Low\\n- **What If** (`WHAT_IF`): Hypothetical scenarios. For: creative problem-solving. Complexity: Low\\n- **SPARK** (`SPARK`): Situation, Problem, Aspiration, Result, Kismet. For: product development, marketing. Complexity: Medium\\n\\n### Educational & Learning\\n- **Bloom's Taxonomy** (`BLOOMS_TAXONOMY`): Remember \u2192 Understand \u2192 Apply \u2192 Analyze \u2192 Evaluate \u2192 Create. For: educational content. Complexity: Medium\\n- **ELI5** (`ELI5`): Explain Like I'm 5. For: simplifying complex concepts. Complexity: Low\\n- **Help Me Understand** (`HELP_ME_UNDERSTAND`): Comprehension-focused. For: customer support, education. Complexity: Low\\n- **TQA** (`TQA`): Thematic, Question, Answer. For: e-learning. Complexity: Low\\n- **Socratic Method** (`SOCRATIC_METHOD`): Progressive questioning. For: education, critical analysis. Complexity: Medium\\n\\n### Communication & Engagement\\n- **RACE** (`RACE`): Reach, Act, Convert, Engage. For: marketing campaigns. Complexity: Medium\\n- **ERA** (`ERA`): Engage, React, Act. For: marketing, engagement. Complexity: Low\\n- **CARE** (`CARE`): Compassion, Awareness, Response, Engagement. For: customer service. Complexity: Medium\\n\\n### Strategic Analysis\\n- **3Cs** (`3CS`): Company, Customer, Competitor. For: market analysis. Complexity: Medium\\n- **GOPA** (`GOPA`): Goals, Obstacles, Plans, Actions. For: goal setting, problem-solving. Complexity: Low\\n\\n### Feedback & Improvement\\n- **RISE** (`RISE`): Reflect, Inquire, Suggest, Elevate. For: performance management. Complexity: Medium\\n- **ROSES** (`ROSES`): Recognize, Observe, Strategize, Execute, Study. For: complex projects. Complexity: Medium\\n- **PEE** (`PEE`): Point, Evidence, Explanation. For: academic writing, critiques. Complexity: Low\\n\\n### Advanced Structured\\n- **RASCEF** (`RASCEF`): Role, Action, Steps, Context, Examples, Format. For: technical documentation. Complexity: Medium\\n- **RHODES** (`RHODES`): Role, Objective, Details, Examples, Sense Check. For: creative content, marketing. Complexity: Medium\\n- **RISEN** (`RISEN`): Role, Input, Steps, Expectation, Novelty. For: research, innovation. Complexity: Medium\\n- **GRADE** (`GRADE`): Goal, Request, Action, Details, Example. For: project management. Complexity: Medium\\n- **TRACI** (`TRACI`): Task, Role, Audience, Create, Intent. For: marketing, education. Complexity: Medium\\n- **RODES** (`RODES`): Role, Objective, Details, Examples, Sense Check. For: educational content. Complexity: Medium\\n- **CIDI** (`CIDI`): Context, Instructions, Details, Input. For: project management. Complexity: Medium\\n\\n### Argumentation\\n- **TRACE** (`TRACE`): Topic, Reason, Audience, Counterargument, Evidence. For: debate, persuasive writing. Complexity: Medium\\n- **SPAR** (`SPAR`): Situation, Problem, Action, Result. For: case studies. Complexity: Low\\n- **PROMPT** (`PROMPT`): Precision, Relevance, Objectivity, Method, Provenance, Timeliness. For: research, journalism. Complexity: Medium\\n\\n### Specialised\\n- **SPEAR** (`SPEAR`): Start, Provide, Explain, Ask, Rinse & Repeat. For: everyday tasks. Complexity: Low\\n- **Few-Shot** (`FEW_SHOT`): Task + Demonstrations + Query. For: classification, creative content. Complexity: Low\\n- **Zero-Shot** (`ZERO_SHOT`): Direct instruction without examples. For: translation, factual queries. Complexity: Low\\n- **ORID** (`ORID`): Objective, Reflective, Interpretive, Decisional. For: group discussions, coaching. Complexity: Medium\\n- **PAUSE** (`PAUSE`): Prepare, Assess, Uncover, Synthesize, Execute. For: management decisions. Complexity: Medium\\n- **Elicitation** (`ELICITATION`): Structured information extraction. For: research, interviews. Complexity: Medium\\n\\n### Visual & Dialogue\\n- **Atomic Prompting** (`ATOMIC_PROMPTING`): Detailed visual specs. For: image generation (Midjourney, DALL-E). Complexity: Medium\\n- **Five Ws and One H** (`FIVE_WS_AND_ONE_H`): Who, What, When, Where, Why, How. For: journalism, research. Complexity: Low\\n\\n## Framework-to-Category Mapping\\n\\n**NOTE:** Use the framework codes shown in parentheses when selecting frameworks.\\n\\n### DECISION\\nPrimary: RICE (`RICE`), Pros and Cons (`PROS_AND_CONS`), Tree of Thought (`TREE_OF_THOUGHT`)\\nSecondary: SMART (`SMART`), Six Thinking Hats (`SIX_THINKING_HATS`), ORID (`ORID`), PAUSE (`PAUSE`)\\n\\n### STRATEGY\\nPrimary: COAST (`COAST`), 3Cs Model (`3CS`), GOPA (`GOPA`), SMART (`SMART`)\\nSecondary: Chain of Thought (`CHAIN_OF_THOUGHT`), ROSES (`ROSES`), RELIC (`RELIC`)\\n\\n### ANALYSIS\\nPrimary: Chain of Thought (`CHAIN_OF_THOUGHT`), Tree of Thought (`TREE_OF_THOUGHT`), FOCUS (`FOCUS`)\\nSecondary: Five Ws and One H (`FIVE_WS_AND_ONE_H`), PROMPT (`PROMPT`), Socratic Method (`SOCRATIC_METHOD`), Six Thinking Hats (`SIX_THINKING_HATS`)\\n\\n### CREATION_CONTENT\\nPrimary: BLOG (`BLOG`), TAG (`TAG`), APE (`APE`), 4S Method (`4S_METHOD`)\\nSecondary: Hamburger Model (`HAMBURGER`), CRISPE (`CRISPE`), TRACI (`TRACI`)\\n\\n### CREATION_TECHNICAL\\nPrimary: RASCEF (`RASCEF`), CRISPE (`CRISPE`), RTF (`RTF`)\\nSecondary: CIDI (`CIDI`), Zero-Shot (`ZERO_SHOT`), GRADE (`GRADE`)\\n\\n### IDEATION\\nPrimary: SCAMPER (`SCAMPER`), HMW (`HMW`), What If (`WHAT_IF`), Imagine (`IMAGINE`)\\nSecondary: Tree of Thought (`TREE_OF_THOUGHT`), SPARK (`SPARK`), Six Thinking Hats (`SIX_THINKING_HATS`)\\n\\n### PROBLEM_SOLVING\\nPrimary: Chain of Thought (`CHAIN_OF_THOUGHT`), GOPA (`GOPA`), ROSES (`ROSES`), PAUSE (`PAUSE`)\\nSecondary: Tree of Thought (`TREE_OF_THOUGHT`), Six Thinking Hats (`SIX_THINKING_HATS`), Five Ws and One H (`FIVE_WS_AND_ONE_H`)\\n\\n### LEARNING\\nPrimary: ELI5 (`ELI5`), Bloom's Taxonomy (`BLOOMS_TAXONOMY`), TQA (`TQA`), Help Me Understand (`HELP_ME_UNDERSTAND`)\\nSecondary: Socratic Method (`SOCRATIC_METHOD`), Few-Shot (`FEW_SHOT`)\\n\\n### PERSUASION\\nPrimary: BAB (`BAB`), Challenge-Solution-Benefit (`CHALLENGE_SOLUTION_BENEFIT`), TRACE (`TRACE`), PEE (`PEE`)\\nSecondary: CAR (`CAR`), PAR (`PAR`), STAR (`STAR`), RACE (`RACE`)\\n\\n### FEEDBACK\\nPrimary: RISE (`RISE`), ROSES (`ROSES`), PEE (`PEE`)\\nSecondary: Chain of Destiny (`CHAIN_OF_DESTINY`), RACEF (`RACEF`)\\n\\n### RESEARCH\\nPrimary: PROMPT (`PROMPT`), Five Ws and One H (`FIVE_WS_AND_ONE_H`), Elicitation (`ELICITATION`)\\nSecondary: Chain of Thought (`CHAIN_OF_THOUGHT`), RODES (`RODES`)\\n\\n### GOAL_SETTING\\nPrimary: SMART (`SMART`), GOPA (`GOPA`)\\nSecondary: COAST (`COAST`), FOCUS (`FOCUS`)\\n\\n## Selection Algorithm\\n\\n1. Classify task into category\\n2. Retrieve candidate frameworks from mapping\\n3. Prefer \\\"Primary\\\" frameworks\\n4. Match complexity:\\n   - Simple task \u2192 Low complexity framework\\n   - Moderate task \u2192 Low or Medium complexity\\n   - Complex task \u2192 Medium or High complexity\\n5. Select ONE framework for construction\\n6. Note alternatives\\n\\nComplexity criteria:\\n- **Simple**: Single-step, clear output, minimal context\\n- **Moderate**: Multi-step, some ambiguity, needs context\\n- **Complex**: Multi-faceted, significant ambiguity, extensive context, multiple stakeholders\\n\"}"
+                        },
+                        {
+                            "id": "personality_calibration",
+                            "name": "personality_calibration",
+                            "value": "{\"content\":\"# Personality Calibration (Truncated)\\n\\nFor full details, see the original document. This is a summary.\\n\\nApply Task-Trait Alignment analysis when personality data is provided.\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "universal_questions",
+                            "name": "universal_questions",
+                            "value": "{\"content\": \"# Universal Questions\\n\\nThese questions are relevant across most task categories. Select 2-3 from this pool for every task.\\n\\n| ID | Question | Purpose |\\n|----|----------|---------|\\n| U1 | What is the scope or boundary of this task? What's explicitly out of scope? | Define limits |\\n| U2 | How will you measure success? What does a good outcome look like? | Success criteria |\\n| U3 | Who is the intended audience for this output? | Audience clarity |\\n| U4 | What constraints exist (time, budget, length, format, resources)? | Limitation awareness |\\n| U5 | What background context is essential to understand? | Context gathering |\\n| U6 | What have you already tried or considered? | Avoid redundancy |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "decision_questions",
+                            "name": "decision_questions",
+                            "value": "{\"content\": \"# DECISION Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| D1 | What options are you currently considering? | Map the decision space | High |\\n| D2 | What criteria matter most in making this decision? | Identify decision factors | High |\\n| D3 | What's the cost or impact of choosing wrong? | Understand stakes | Medium |\\n| D4 | Is this decision reversible, or are you locked in once you choose? | Assess commitment level | Medium |\\n| D5 | What information would make this decision obvious? | Identify knowledge gaps | Medium |\\n| D6 | What's your timeline for making this decision? | Urgency assessment | Medium |\\n| D7 | Who else is affected by or involved in this decision? | Stakeholder mapping | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "strategy_questions",
+                            "name": "strategy_questions",
+                            "value": "{\"content\": \"# STRATEGY Questions\\n\\nSelect 4-6 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| S1 | What's the time horizon for this strategy? | Temporal scope | High |\\n| S2 | What resources are available (budget, team, tools)? | Resource constraints | High |\\n| S3 | What does success look like at the end of this period? | Goal definition | High |\\n| S4 | Who are the key stakeholders who need to buy in? | Stakeholder mapping | High |\\n| S5 | What's been tried before, and what were the results? | Historical context | Medium |\\n| S6 | What are the biggest obstacles or risks you foresee? | Risk identification | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "analysis_questions",
+                            "name": "analysis_questions",
+                            "value": "{\"content\": \"# ANALYSIS Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| A1 | What data or information do you have access to? | Data inventory | High |\\n| A2 | What's the specific question you're trying to answer? | Focus the analysis | High |\\n| A3 | What's the hypothesis you're testing, if any? | Frame the inquiry | Medium |\\n| A4 | What level of depth is needed (surface scan vs. deep dive)? | Scope calibration | Medium |\\n| A5 | Are there specific angles or perspectives you want explored? | Direction setting | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "creation_content_questions",
+                            "name": "creation_content_questions",
+                            "value": "{\"content\": \"# CREATION_CONTENT Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| C1 | Who is the target audience for this content? | Audience definition | High |\\n| C2 | What's the primary goal or call to action? | Purpose clarity | High |\\n| C3 | What tone is appropriate (formal, casual, technical, friendly)? | Voice/style | High |\\n| C4 | What's the target length or word count? | Scope | Medium |\\n| C5 | Are there examples of style or content you want to emulate? | Style reference | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "creation_technical_questions",
+                            "name": "creation_technical_questions",
+                            "value": "{\"content\": \"# CREATION_TECHNICAL Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| T1 | What technology stack or language is required? | Technical constraints | High |\\n| T2 | What's the skill level of people who'll use this? | User context | High |\\n| T3 | Are there existing conventions, style guides, or patterns to follow? | Standards | Medium |\\n| T4 | What error handling or edge cases matter? | Robustness | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "ideation_questions",
+                            "name": "ideation_questions",
+                            "value": "{\"content\": \"# IDEATION Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| I1 | What problem or opportunity are you generating ideas for? | Focus area | High |\\n| I2 | What constraints should ideas respect? | Boundaries | High |\\n| I3 | How wild can ideas be \u2014 incremental improvements or moonshots? | Creativity scope | Medium |\\n| I4 | What's already been considered or tried? | Avoid repetition | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "problem_solving_questions",
+                            "name": "problem_solving_questions",
+                            "value": "{\"content\": \"# PROBLEM_SOLVING Questions\\n\\nSelect 4-6 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| P1 | What exactly is the problem? Can you describe the symptoms? | Problem definition | High |\\n| P2 | When did this problem start or when was it first noticed? | Timeline | High |\\n| P3 | What have you already tried? | Avoid redundancy | High |\\n| P4 | What happens if this isn't solved? | Stakes/urgency | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "learning_questions",
+                            "name": "learning_questions",
+                            "value": "{\"content\": \"# LEARNING Questions\\n\\nSelect 2-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| L1 | What's your current understanding level of this topic? | Baseline assessment | High |\\n| L2 | What specifically is confusing or unclear? | Focus area | High |\\n| L3 | What do you need to do with this knowledge? | Application context | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "persuasion_questions",
+                            "name": "persuasion_questions",
+                            "value": "{\"content\": \"# PERSUASION Questions\\n\\nSelect 4-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| PE1 | Who specifically needs to be convinced? | Target audience | High |\\n| PE2 | What are their current beliefs or position? | Starting point | High |\\n| PE3 | What objections or concerns might they raise? | Anticipate resistance | High |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "feedback_questions",
+                            "name": "feedback_questions",
+                            "value": "{\"content\": \"# FEEDBACK Questions\\n\\nSelect 3-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| F1 | What aspects do you most want feedback on? | Focus area | High |\\n| F2 | What's working well that should be preserved? | Identify strengths | High |\\n| F3 | What's the purpose of this work? | Context for evaluation | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "research_questions",
+                            "name": "research_questions",
+                            "value": "{\"content\": \"# RESEARCH Questions\\n\\nSelect 3-5 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| R1 | What do you already know about this topic? | Starting point | High |\\n| R2 | What specific questions need to be answered? | Research focus | High |\\n| R3 | What sources are acceptable or preferred? | Source criteria | Medium |\\n\"}",
+                            "type": "object"
+                        },
+                        {
+                            "id": "goal_setting_questions",
+                            "name": "goal_setting_questions",
+                            "value": "{\"content\": \"# GOAL_SETTING Questions\\n\\nSelect 3-4 questions from this pool.\\n\\n| ID | Question | Purpose | Priority |\\n|----|----------|---------|----------|\\n| G1 | What's the overarching vision this goal supports? | Strategic context | High |\\n| G2 | What time frame applies to this goal? | Temporal scope | High |\\n| G3 | How will progress be measured? | Metrics definition | High |\\n\"}",
+                            "type": "object"
+                        }
+                    ]
+                },
+                "options": []
+            },
+            "id": "89b4c006-61f1-4a69-93a7-094948d12ac8",
+            "name": "Load Reference Documents",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                224,
+                0
+            ],
+            "notes": "Reference documents split by category for efficient filtering (no question bank in first pass)"
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
-        "options": {}
-      },
-      "id": "a198b760-7884-4ba8-99fe-38ad48aa917b",
-      "name": "First Pass: Call Anthropic API",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        672,
-        0
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "0KM4kQ1SAvHJtLFa",
-          "name": "Header Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Parse first pass response\nconst apiResponse = $input.first().json;\nlet classificationData;\n\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  classificationData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      error: 'Failed to parse first pass response'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    classification: classificationData,\n    api_usage: {\n      model: apiResponse.model,\n      input_tokens: apiResponse.usage?.input_tokens || 0,\n      output_tokens: apiResponse.usage?.output_tokens || 0\n    }\n  }\n}];"
-      },
-      "id": "230c15c6-b8aa-4343-baf8-17c2c7d4d9c2",
-      "name": "Parse First Pass Response",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        896,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Filter questions based on classification\nconst firstPassResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nif (!firstPassResult.success) {\n  return [{\n    json: {\n      success: false,\n      error: 'First pass classification failed'\n    }\n  }];\n}\n\nconst category = firstPassResult.classification.task_classification?.primary_category;\nconst complexity = firstPassResult.classification.task_classification?.complexity;\n\n// Load universal questions (always included)\nlet selectedQuestions = referenceData.universal_questions.content;\n\n// Load category-specific questions\nconst categoryMap = {\n  'DECISION': 'decision_questions',\n  'STRATEGY': 'strategy_questions',\n  'ANALYSIS': 'analysis_questions',\n  'CREATION_CONTENT': 'creation_content_questions',\n  'CREATION_TECHNICAL': 'creation_technical_questions',\n  'IDEATION': 'ideation_questions',\n  'PROBLEM_SOLVING': 'problem_solving_questions',\n  'LEARNING': 'learning_questions',\n  'PERSUASION': 'persuasion_questions',\n  'FEEDBACK': 'feedback_questions',\n  'RESEARCH': 'research_questions',\n  'GOAL_SETTING': 'goal_setting_questions'\n};\n\nif (categoryMap[category] && referenceData[categoryMap[category]]) {\n  selectedQuestions += '\\n\\n' + referenceData[categoryMap[category]].content;\n}\n\nreturn [{\n  json: {\n    category,\n    complexity,\n    selected_questions: selectedQuestions,\n    classification: firstPassResult.classification\n  }\n}];"
-      },
-      "id": "26c196c9-61aa-484e-a9dd-4aedb229a9f7",
-      "name": "Filter Questions by Category",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1120,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.anthropic.com/v1/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "anthropic-version",
-              "value": "2023-06-01"
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.anthropic.com/v1/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "anthropic-version",
+                            "value": "2023-06-01"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
+                "options": []
+            },
+            "id": "a198b760-7884-4ba8-99fe-38ad48aa917b",
+            "name": "First Pass: Call Anthropic API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                672,
+                0
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "0KM4kQ1SAvHJtLFa",
+                    "name": "Header Auth account"
+                }
             }
-          ]
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 2048,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
-        "options": {}
-      },
-      "id": "ef4fef4f-a690-48c7-a911-0c956065883e",
-      "name": "Second Pass: Call Anthropic API",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1568,
-        0
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "0KM4kQ1SAvHJtLFa",
-          "name": "Header Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Parse second pass response and combine results from both passes\nconst apiResponse = $input.first().json;\nconst firstPassClassification = $('Prepare Prompt 2').first().json.classification;\nconst firstPassApiResponse = $('First Pass: Call Anthropic API').first().json;\n\nlet questionsData;\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  questionsData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      api_usage: null,\n      error: {\n        message: 'Failed to parse second pass response',\n        details: e.message\n      },\n      error_context: {\n        error_type: 'parsing_error',\n        failed_node: 'Second Pass: Call Anthropic API',\n        timestamp: new Date().toISOString()\n      }\n    }\n  }];\n}\n\n// Aggregate API usage from both passes\nconst apiUsage = [\n  {\n    model: firstPassApiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: firstPassApiResponse.usage?.input_tokens || 0,\n    output_tokens: firstPassApiResponse.usage?.output_tokens || 0\n  },\n  {\n    model: apiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  }\n];\n\n// Combine both passes into final response\nconst finalData = {\n  task_classification: firstPassClassification.task_classification,\n  cognitive_requirements: firstPassClassification.cognitive_requirements,\n  selected_framework: firstPassClassification.selected_framework,\n  alternative_frameworks: firstPassClassification.alternative_frameworks,\n  clarifying_questions: questionsData.clarifying_questions,\n  question_rationale: questionsData.question_rationale,\n  personality_tier: questionsData.personality_tier\n};\n\n// Add task_trait_alignment if present in second pass response\nif (questionsData.task_trait_alignment) {\n  finalData.task_trait_alignment = questionsData.task_trait_alignment;\n}\n\n// Add personality_adjustments_preview if present in second pass response\nif (questionsData.personality_adjustments_preview) {\n  finalData.personality_adjustments_preview = questionsData.personality_adjustments_preview;\n}\n\nreturn [{\n  json: {\n    success: true,\n    data: finalData,\n    api_usage: apiUsage,\n    error: null\n  }\n}];"
-      },
-      "id": "aa6269b2-e57b-4650-9a71-0c1e11a32937",
-      "name": "Combine Results",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1792,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify($json) }}",
-        "options": {
-          "responseHeaders": {
-            "entries": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
+        {
+            "parameters": {
+                "jsCode": "// Parse first pass response\nconst apiResponse = $input.first().json;\nlet classificationData;\n\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  classificationData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      error: 'Failed to parse first pass response'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    classification: classificationData,\n    api_usage: {\n      model: apiResponse.model,\n      input_tokens: apiResponse.usage?.input_tokens || 0,\n      output_tokens: apiResponse.usage?.output_tokens || 0\n    }\n  }\n}];"
+            },
+            "id": "230c15c6-b8aa-4343-baf8-17c2c7d4d9c2",
+            "name": "Parse First Pass Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                896,
+                0
             ]
-          }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Filter questions based on classification\nconst firstPassResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nif (!firstPassResult.success) {\n  return [{\n    json: {\n      success: false,\n      error: 'First pass classification failed'\n    }\n  }];\n}\n\nconst category = firstPassResult.classification.task_classification?.primary_category;\nconst complexity = firstPassResult.classification.task_classification?.complexity;\n\n// Load universal questions (always included)\nlet selectedQuestions = referenceData.universal_questions.content;\n\n// Load category-specific questions\nconst categoryMap = {\n  'DECISION': 'decision_questions',\n  'STRATEGY': 'strategy_questions',\n  'ANALYSIS': 'analysis_questions',\n  'CREATION_CONTENT': 'creation_content_questions',\n  'CREATION_TECHNICAL': 'creation_technical_questions',\n  'IDEATION': 'ideation_questions',\n  'PROBLEM_SOLVING': 'problem_solving_questions',\n  'LEARNING': 'learning_questions',\n  'PERSUASION': 'persuasion_questions',\n  'FEEDBACK': 'feedback_questions',\n  'RESEARCH': 'research_questions',\n  'GOAL_SETTING': 'goal_setting_questions'\n};\n\nif (categoryMap[category] && referenceData[categoryMap[category]]) {\n  selectedQuestions += '\\n\\n' + referenceData[categoryMap[category]].content;\n}\n\nreturn [{\n  json: {\n    category,\n    complexity,\n    selected_questions: selectedQuestions,\n    classification: firstPassResult.classification\n  }\n}];"
+            },
+            "id": "26c196c9-61aa-484e-a9dd-4aedb229a9f7",
+            "name": "Filter Questions by Category",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.anthropic.com/v1/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "anthropic-version",
+                            "value": "2023-06-01"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({\n  model: 'claude-haiku-4-5',\n  max_tokens: 2048,\n  temperature: 0.1,\n  system: $json.system,\n  messages: $json.messages\n}) }}",
+                "options": []
+            },
+            "id": "ef4fef4f-a690-48c7-a911-0c956065883e",
+            "name": "Second Pass: Call Anthropic API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1568,
+                0
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "0KM4kQ1SAvHJtLFa",
+                    "name": "Header Auth account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse second pass response and combine results from both passes\nconst apiResponse = $input.first().json;\nconst firstPassClassification = $('Prepare Prompt 2').first().json.classification;\nconst firstPassApiResponse = $('First Pass: Call Anthropic API').first().json;\n\nlet questionsData;\ntry {\n  let content = apiResponse.content?.[0]?.text || '';\n  content = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  const jsonObjects = [];\n  let depth = 0;\n  let jsonStart = -1;\n\n  for (let i = 0; i < content.length; i++) {\n    if (content[i] === '{') {\n      if (depth === 0) jsonStart = i;\n      depth++;\n    } else if (content[i] === '}') {\n      depth--;\n      if (depth === 0 && jsonStart !== -1) {\n        jsonObjects.push(content.substring(jsonStart, i + 1));\n        jsonStart = -1;\n      }\n    }\n  }\n\n  questionsData = JSON.parse(jsonObjects[jsonObjects.length - 1]);\n} catch (e) {\n  return [{\n    json: {\n      success: false,\n      data: null,\n      api_usage: null,\n      error: {\n        message: 'Failed to parse second pass response',\n        details: e.message\n      },\n      error_context: {\n        error_type: 'parsing_error',\n        failed_node: 'Second Pass: Call Anthropic API',\n        timestamp: new Date().toISOString()\n      }\n    }\n  }];\n}\n\n// Aggregate API usage from both passes\nconst apiUsage = [\n  {\n    model: firstPassApiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: firstPassApiResponse.usage?.input_tokens || 0,\n    output_tokens: firstPassApiResponse.usage?.output_tokens || 0\n  },\n  {\n    model: apiResponse.model || 'claude-haiku-4-5-20251001',\n    input_tokens: apiResponse.usage?.input_tokens || 0,\n    output_tokens: apiResponse.usage?.output_tokens || 0\n  }\n];\n\n// Combine both passes into final response\nconst finalData = {\n  task_classification: firstPassClassification.task_classification,\n  cognitive_requirements: firstPassClassification.cognitive_requirements,\n  selected_framework: firstPassClassification.selected_framework,\n  alternative_frameworks: firstPassClassification.alternative_frameworks,\n  clarifying_questions: questionsData.clarifying_questions,\n  question_rationale: questionsData.question_rationale,\n  personality_tier: questionsData.personality_tier\n};\n\n// Add task_trait_alignment if present in second pass response\nif (questionsData.task_trait_alignment) {\n  finalData.task_trait_alignment = questionsData.task_trait_alignment;\n}\n\n// Add personality_adjustments_preview if present in second pass response\nif (questionsData.personality_adjustments_preview) {\n  finalData.personality_adjustments_preview = questionsData.personality_adjustments_preview;\n}\n\nreturn [{\n  json: {\n    success: true,\n    data: finalData,\n    api_usage: apiUsage,\n    error: null\n  }\n}];"
+            },
+            "id": "aa6269b2-e57b-4650-9a71-0c1e11a32937",
+            "name": "Combine Results",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1792,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "5c4394be-2dbd-45d5-964d-44557d90cce5",
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                2016,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// FIRST PASS: Classify task and select framework\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst frameworkDoc = referenceData.framework_taxonomy;\nconst personalityDoc = referenceData.personality_calibration;\n\nconst taskDescription = webhookData.task_description || '';\nconst userContext = webhookData.user_context || null;\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n// NOTE: preAnalysisContext is NOT used in first pass intentionally.\n// First pass should classify tasks independently, without pre-analysis bias.\n// Pre-analysis context is used only in second pass for question generation.\n\nconst systemPrompt = `You are a task classification API. You have access to the complete Framework Taxonomy and Personality Calibration documentation.\n\n## FRAMEWORK TAXONOMY\n\n${frameworkDoc.content}\n\n## PERSONALITY CALIBRATION (Reference)\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nAnalyze the provided task description and:\n1. **Classify** into primary and secondary task categories\n2. **Identify** primary and secondary cognitive requirements for the task\n3. **Select** the single best framework from the taxonomy\n4. **Suggest** 2-3 alternative frameworks MOST RELEVANT to this specific task (consider task category, complexity, and cognitive requirements)\n\nReturn ONLY valid JSON with this exact schema:\n{\n  \"task_classification\":{\"primary_category\":\"...\",\"secondary_category\":null,\"complexity\":\"simple|moderate|complex\",\"classification_reasoning\":\"...\"},\n  \"cognitive_requirements\":{\"primary\":[\"REQ1\"],\"secondary\":[],\"reasoning\":\"...\"},\n  \"selected_framework\":{\"name\":\"...\",\"code\":\"...\",\"components\":[\"C1\",\"C2\",\"C3\"],\"rationale\":\"...\"},\n  \"alternative_frameworks\":[{\"name\":\"...\",\"code\":\"...\",\"when_to_use_instead\":\"If you...\"}]\n}\n\nRules: Include components array. Don't include rationale in alternatives. Use 2nd person in when_to_use_instead. Select alternatives MOST RELEVANT to task (not generic). JSON only.`;\n\n// Build user context summary - ONLY include non-null fields\nlet userContextSummary = '';\nif (userContext) {\n  const contextParts = [];\n  \n  if (userContext.location && (userContext.location.country || userContext.location.state || userContext.location.city)) {\n    const locationParts = [];\n    if (userContext.location.country) locationParts.push(userContext.location.country);\n    if (userContext.location.state) locationParts.push(userContext.location.state);\n    if (userContext.location.city) locationParts.push(userContext.location.city);\n    contextParts.push('Location: ' + locationParts.join(', '));\n  }\n  \n  if (userContext.professional && (userContext.professional.occupation || userContext.professional.industry || userContext.professional.workEnvironment)) {\n    const profParts = [];\n    if (userContext.professional.occupation) profParts.push(userContext.professional.occupation);\n    if (userContext.professional.industry) profParts.push('in ' + userContext.professional.industry);\n    if (userContext.professional.workEnvironment) profParts.push('(' + userContext.professional.workEnvironment + ')');\n    contextParts.push('Professional: ' + profParts.join(' '));\n  }\n  \n  if (userContext.team && (userContext.team.teamSize || userContext.team.teamType)) {\n    const teamParts = [];\n    if (userContext.team.teamSize) teamParts.push(userContext.team.teamSize + ' person team');\n    if (userContext.team.teamType) teamParts.push(userContext.team.teamType);\n    contextParts.push('Team: ' + teamParts.join(', '));\n  }\n  \n  if (userContext.budget && (userContext.budget.monthlyBudget)) {\n    const budgetStr = userContext.budget.monthlyBudget + (userContext.budget.budgetCurrency ? ' ' + userContext.budget.budgetCurrency : '');\n    contextParts.push('Budget: ' + budgetStr);\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    contextParts.push('Preferred Tools: ' + userContext.tools.preferredTools.join(', '));\n  }\n  \n  if (contextParts.length > 0) {\n    userContextSummary = '\\n\\nUser Context:\\n' + contextParts.map(p => '- ' + p).join('\\n');\n  }\n}\n\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context (from workflow_0):';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += '\\n- ' + contextItem.question + ': ' + displayValue;\n    }\n  }\n}\n\nconst userMessage = `Classify this task and select the best framework:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nUsing the framework taxonomy provided, classify the task and recommend the single best framework plus 2-3 alternatives that are MOST RELEVANT to this specific task (consider the task category, complexity, and cognitive requirements when selecting alternatives).`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }]\n  }\n}];"
+            },
+            "id": "7da02674-4931-4ac2-b12c-29b7ffc44600",
+            "name": "Prepare Prompt 1",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                448,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// SECOND PASS: Generate clarifying questions AND perform Task-Trait Alignment analysis\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst filterResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst personalityDoc = referenceData.personality_calibration;\nconst selectedQuestions = filterResult.selected_questions;\n\n// CRITICAL: Pass FULL user_context when available\nconst userContext = webhookData.user_context || null;\nconst taskDescription = webhookData.task_description || 'Not provided';\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n\nconst systemPrompt = `You are a question generation and Task-Trait Alignment API. You have access to personality calibration guidelines.\n\n## PERSONALITY CALIBRATION\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nSelect and adapt clarifying questions from the provided question bank, tailored to this specific task and personality type (if available), then perform Task-Trait Alignment analysis.\n\nFor each question, explain: (1) Why it's necessary, (2) How it connects to task requirements or personality.\n\nIf personality data provided: Perform full Task-Trait Alignment (amplified, counterbalanced, neutral traits).\n\nReturn ONLY valid JSON with these fields:\n{\n  \"clarifying_questions\": [{\"id\":\"U1\",\"question\":\"...\",\"purpose\":\"...\",\"required\":true}],\n  \"question_rationale\":\"...\",\n  \"personality_tier\":\"full|partial|none\",\n  \"task_trait_alignment\":{\"amplified\":[{\"trait\":\"...\",\"requirement_aligned\":\"...\",\"reason\":\"...\"}],\"counterbalanced\":[{\"trait\":\"...\",\"requirement_opposed\":\"...\",\"reason\":\"...\",\"injection\":\"...\"}],\"neutral\":[{\"trait\":\"...\",\"reason\":\"...\"}]},\n  \"personality_adjustments_preview\":[\"AMPLIFIED:...\",\"COUNTERBALANCED:...\"]\n}\n\nRules: alignment fields are objects (not strings). adjustments_preview is 2 strings. Use only user's actual traits. If no personality: empty arrays.`;\n\nconst classification = filterResult.classification;\nconst hasPersonality = !!webhookData.user_context?.personality?.personality_type;\n\nlet personalityInfo = 'No personality data';\nif (hasPersonality) {\n  const p = webhookData.user_context.personality;\n  const typeLetters = p.personality_type.split('-');\n  const mainType = typeLetters[0]; // e.g., \"INTP\"\n  const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n  const traits = p.trait_percentages;\n  \n  const traitMapping = [\n    `${mainType[0]} (${traits.mind}%) - ${mainType[0] === 'I' ? 'Introversion' : 'Extraversion'}`,\n    `${mainType[1]} (${traits.energy}%) - ${mainType[1] === 'S' ? 'Sensing' : 'Intuition'}`,\n    `${mainType[2]} (${traits.nature}%) - ${mainType[2] === 'T' ? 'Thinking' : 'Feeling'}`,\n    `${mainType[3]} (${traits.tactics}%) - ${mainType[3] === 'J' ? 'Judging' : 'Perceiving'}`,\n    `${identity} (${traits.identity}%) - ${identity === 'A' ? 'Assertive' : 'Turbulent'}`\n  ];\n  \n  personalityInfo = `Type: ${p.personality_type}\\nTraits (in order I/E, S/N, T/F, J/P, A/T):\\n${traitMapping.join('\\n')}\\n\\nIMPORTANT: Only analyze the user's ACTUAL traits listed above. Do NOT make up traits. Do NOT assume the user has traits they don't have.`;\n}\n\n// Build user context summary for Claude\nlet userContextSummary = '';\nif (userContext) {\n  userContextSummary = '\\n\\nUser Context:';\n  \n  if (userContext.location) {\n    userContextSummary += `\\nLocation: ${userContext.location.country || ''}${userContext.location.state ? ', ' + userContext.location.state : ''}${userContext.location.city ? ', ' + userContext.location.city : ''}`;\n  }\n  \n  if (userContext.professional) {\n    userContextSummary += `\\nProfessional: ${userContext.professional.occupation || 'N/A'} in ${userContext.professional.industry || 'N/A'} (${userContext.professional.workEnvironment || 'N/A'})`;\n  }\n  \n  if (userContext.team) {\n    userContextSummary += `\\nTeam: ${userContext.team.teamSize || 'N/A'} person team (${userContext.team.teamType || 'N/A'})`;\n  }\n  \n  if (userContext.budget) {\n    userContextSummary += `\\nBudget: ${userContext.budget.monthlyBudget || 'N/A'} ${userContext.budget.budgetCurrency || ''}`;\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    userContextSummary += `\\nPreferred Tools: ${userContext.tools.preferredTools.join(', ')}`;\n  }\n}\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context:';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += `\\n- ${contextItem.question}: ${displayValue}`;\n    }\n  }\n}\n\nconst userMessage = `## Question Bank (filtered by task category)\n\n${selectedQuestions}\n\n---\n\nGenerate clarifying questions + Task-Trait Alignment:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nCategory: ${classification.task_classification.primary_category} | Reqs: ${classification.cognitive_requirements.primary.join(', ')}${classification.cognitive_requirements.secondary.length > 0 ? ' + ' + classification.cognitive_requirements.secondary.join(', ') : ''} | Complexity: ${classification.task_classification.complexity} | Framework: ${classification.selected_framework.code} | Personality: ${personalityInfo}\n\nSelect relevant questions (explain why). If personality: analyze trait alignment. Return all 5 fields.`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }],\n    classification: classification,\n    cognitive_requirements: classification.cognitive_requirements,\n    user_context: userContext\n  }\n}];"
+            },
+            "id": "cad4af8f-e5f9-44e4-adaf-1c7b5a1f8578",
+            "name": "Prepare Prompt 2",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1344,
+                0
+            ]
         }
-      },
-      "id": "5c4394be-2dbd-45d5-964d-44557d90cce5",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [
-        2016,
-        0
-      ]
+    ],
+    "pinData": [],
+    "connections": {
+        "Webhook Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Load Reference Documents",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Load Reference Documents": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Prompt 1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "First Pass: Call Anthropic API": {
+            "main": [
+                [
+                    {
+                        "node": "Parse First Pass Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse First Pass Response": {
+            "main": [
+                [
+                    {
+                        "node": "Filter Questions by Category",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter Questions by Category": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Prompt 2",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Second Pass: Call Anthropic API": {
+            "main": [
+                [
+                    {
+                        "node": "Combine Results",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Combine Results": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Prompt 1": {
+            "main": [
+                [
+                    {
+                        "node": "First Pass: Call Anthropic API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Prompt 2": {
+            "main": [
+                [
+                    {
+                        "node": "Second Pass: Call Anthropic API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
     },
-    {
-      "parameters": {
-        "jsCode": "// FIRST PASS: Classify task and select framework\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst frameworkDoc = referenceData.framework_taxonomy;\nconst personalityDoc = referenceData.personality_calibration;\n\nconst taskDescription = webhookData.task_description || '';\nconst userContext = webhookData.user_context || null;\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n// NOTE: preAnalysisContext is NOT used in first pass intentionally.\n// First pass should classify tasks independently, without pre-analysis bias.\n// Pre-analysis context is used only in second pass for question generation.\n\nconst systemPrompt = `You are a task classification API. You have access to the complete Framework Taxonomy and Personality Calibration documentation.\n\n## FRAMEWORK TAXONOMY\n\n${frameworkDoc.content}\n\n## PERSONALITY CALIBRATION (Reference)\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nAnalyze the provided task description and:\n1. **Classify** into primary and secondary task categories\n2. **Identify** primary and secondary cognitive requirements for the task\n3. **Select** the single best framework from the taxonomy\n4. **Suggest** 2-3 alternative frameworks MOST RELEVANT to this specific task (consider task category, complexity, and cognitive requirements)\n\nReturn ONLY valid JSON with this exact schema:\n{\n  \"task_classification\":{\"primary_category\":\"...\",\"secondary_category\":null,\"complexity\":\"simple|moderate|complex\",\"classification_reasoning\":\"...\"},\n  \"cognitive_requirements\":{\"primary\":[\"REQ1\"],\"secondary\":[],\"reasoning\":\"...\"},\n  \"selected_framework\":{\"name\":\"...\",\"code\":\"...\",\"components\":[\"C1\",\"C2\",\"C3\"],\"rationale\":\"...\"},\n  \"alternative_frameworks\":[{\"name\":\"...\",\"code\":\"...\",\"when_to_use_instead\":\"If you...\"}]\n}\n\nRules: Include components array. Don't include rationale in alternatives. Use 2nd person in when_to_use_instead. Select alternatives MOST RELEVANT to task (not generic). JSON only.`;\n\n// Build user context summary - ONLY include non-null fields\nlet userContextSummary = '';\nif (userContext) {\n  const contextParts = [];\n  \n  if (userContext.location && (userContext.location.country || userContext.location.state || userContext.location.city)) {\n    const locationParts = [];\n    if (userContext.location.country) locationParts.push(userContext.location.country);\n    if (userContext.location.state) locationParts.push(userContext.location.state);\n    if (userContext.location.city) locationParts.push(userContext.location.city);\n    contextParts.push('Location: ' + locationParts.join(', '));\n  }\n  \n  if (userContext.professional && (userContext.professional.occupation || userContext.professional.industry || userContext.professional.workEnvironment)) {\n    const profParts = [];\n    if (userContext.professional.occupation) profParts.push(userContext.professional.occupation);\n    if (userContext.professional.industry) profParts.push('in ' + userContext.professional.industry);\n    if (userContext.professional.workEnvironment) profParts.push('(' + userContext.professional.workEnvironment + ')');\n    contextParts.push('Professional: ' + profParts.join(' '));\n  }\n  \n  if (userContext.team && (userContext.team.teamSize || userContext.team.teamType)) {\n    const teamParts = [];\n    if (userContext.team.teamSize) teamParts.push(userContext.team.teamSize + ' person team');\n    if (userContext.team.teamType) teamParts.push(userContext.team.teamType);\n    contextParts.push('Team: ' + teamParts.join(', '));\n  }\n  \n  if (userContext.budget && (userContext.budget.monthlyBudget)) {\n    const budgetStr = userContext.budget.monthlyBudget + (userContext.budget.budgetCurrency ? ' ' + userContext.budget.budgetCurrency : '');\n    contextParts.push('Budget: ' + budgetStr);\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    contextParts.push('Preferred Tools: ' + userContext.tools.preferredTools.join(', '));\n  }\n  \n  if (contextParts.length > 0) {\n    userContextSummary = '\\n\\nUser Context:\\n' + contextParts.map(p => '- ' + p).join('\\n');\n  }\n}\n\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context (from workflow_0):';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += '\\n- ' + contextItem.question + ': ' + displayValue;\n    }\n  }\n}\n\nconst userMessage = `Classify this task and select the best framework:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nUsing the framework taxonomy provided, classify the task and recommend the single best framework plus 2-3 alternatives that are MOST RELEVANT to this specific task (consider the task category, complexity, and cognitive requirements when selecting alternatives).`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }]\n  }\n}];"
-      },
-      "id": "7da02674-4931-4ac2-b12c-29b7ffc44600",
-      "name": "Prepare Prompt 1",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        448,
-        0
-      ]
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
     },
-    {
-      "parameters": {
-        "jsCode": "// SECOND PASS: Generate clarifying questions AND perform Task-Trait Alignment analysis\nconst webhookData = $('Webhook Trigger').first().json.body || {};\nconst filterResult = $input.first().json;\nconst referenceData = $('Load Reference Documents').first().json;\n\nconst personalityDoc = referenceData.personality_calibration;\nconst selectedQuestions = filterResult.selected_questions;\n\n// CRITICAL: Pass FULL user_context when available\nconst userContext = webhookData.user_context || null;\nconst taskDescription = webhookData.task_description || 'Not provided';\nconst preAnalysisContext = webhookData.pre_analysis_context || null;\n\nconst systemPrompt = `You are a question generation and Task-Trait Alignment API. You have access to personality calibration guidelines.\n\n## PERSONALITY CALIBRATION\n\n${personalityDoc.content}\n\n---\n\n## YOUR TASK\n\nSelect and adapt clarifying questions from the provided question bank, tailored to this specific task and personality type (if available), then perform Task-Trait Alignment analysis.\n\nFor each question, explain: (1) Why it's necessary, (2) How it connects to task requirements or personality.\n\nIf personality data provided: Perform full Task-Trait Alignment (amplified, counterbalanced, neutral traits).\n\nReturn ONLY valid JSON with these fields:\n{\n  \"clarifying_questions\": [{\"id\":\"U1\",\"question\":\"...\",\"purpose\":\"...\",\"required\":true}],\n  \"question_rationale\":\"...\",\n  \"personality_tier\":\"full|partial|none\",\n  \"task_trait_alignment\":{\"amplified\":[{\"trait\":\"...\",\"requirement_aligned\":\"...\",\"reason\":\"...\"}],\"counterbalanced\":[{\"trait\":\"...\",\"requirement_opposed\":\"...\",\"reason\":\"...\",\"injection\":\"...\"}],\"neutral\":[{\"trait\":\"...\",\"reason\":\"...\"}]},\n  \"personality_adjustments_preview\":[\"AMPLIFIED:...\",\"COUNTERBALANCED:...\"]\n}\n\nRules: alignment fields are objects (not strings). adjustments_preview is 2 strings. Use only user's actual traits. If no personality: empty arrays.`;\n\nconst classification = filterResult.classification;\nconst hasPersonality = !!webhookData.user_context?.personality?.personality_type;\n\nlet personalityInfo = 'No personality data';\nif (hasPersonality) {\n  const p = webhookData.user_context.personality;\n  const typeLetters = p.personality_type.split('-');\n  const mainType = typeLetters[0]; // e.g., \"INTP\"\n  const identity = typeLetters[1]; // e.g., \"A\" or \"T\"\n  const traits = p.trait_percentages;\n  \n  const traitMapping = [\n    `${mainType[0]} (${traits.mind}%) - ${mainType[0] === 'I' ? 'Introversion' : 'Extraversion'}`,\n    `${mainType[1]} (${traits.energy}%) - ${mainType[1] === 'S' ? 'Sensing' : 'Intuition'}`,\n    `${mainType[2]} (${traits.nature}%) - ${mainType[2] === 'T' ? 'Thinking' : 'Feeling'}`,\n    `${mainType[3]} (${traits.tactics}%) - ${mainType[3] === 'J' ? 'Judging' : 'Perceiving'}`,\n    `${identity} (${traits.identity}%) - ${identity === 'A' ? 'Assertive' : 'Turbulent'}`\n  ];\n  \n  personalityInfo = `Type: ${p.personality_type}\\nTraits (in order I/E, S/N, T/F, J/P, A/T):\\n${traitMapping.join('\\n')}\\n\\nIMPORTANT: Only analyze the user's ACTUAL traits listed above. Do NOT make up traits. Do NOT assume the user has traits they don't have.`;\n}\n\n// Build user context summary for Claude\nlet userContextSummary = '';\nif (userContext) {\n  userContextSummary = '\\n\\nUser Context:';\n  \n  if (userContext.location) {\n    userContextSummary += `\\nLocation: ${userContext.location.country || ''}${userContext.location.state ? ', ' + userContext.location.state : ''}${userContext.location.city ? ', ' + userContext.location.city : ''}`;\n  }\n  \n  if (userContext.professional) {\n    userContextSummary += `\\nProfessional: ${userContext.professional.occupation || 'N/A'} in ${userContext.professional.industry || 'N/A'} (${userContext.professional.workEnvironment || 'N/A'})`;\n  }\n  \n  if (userContext.team) {\n    userContextSummary += `\\nTeam: ${userContext.team.teamSize || 'N/A'} person team (${userContext.team.teamType || 'N/A'})`;\n  }\n  \n  if (userContext.budget) {\n    userContextSummary += `\\nBudget: ${userContext.budget.monthlyBudget || 'N/A'} ${userContext.budget.budgetCurrency || ''}`;\n  }\n  \n  if (userContext.tools && Array.isArray(userContext.tools.preferredTools) && userContext.tools.preferredTools.length > 0) {\n    userContextSummary += `\\nPreferred Tools: ${userContext.tools.preferredTools.join(', ')}`;\n  }\n}\n\n// Build pre-analysis context display for Claude\nlet preAnalysisDisplay = '';\nif (preAnalysisContext && typeof preAnalysisContext === 'object' && Object.keys(preAnalysisContext).length > 0) {\n  preAnalysisDisplay = '\\n\\nPre-Analysis Context:';\n  for (const [key, contextItem] of Object.entries(preAnalysisContext)) {\n    if (contextItem && typeof contextItem === 'object' && contextItem.question) {\n      const displayValue = contextItem.answer_label || contextItem.answer;\n      preAnalysisDisplay += `\\n- ${contextItem.question}: ${displayValue}`;\n    }\n  }\n}\n\nconst userMessage = `## Question Bank (filtered by task category)\n\n${selectedQuestions}\n\n---\n\nGenerate clarifying questions + Task-Trait Alignment:\n\nTask: ${taskDescription}${userContextSummary}${preAnalysisDisplay}\n\nCategory: ${classification.task_classification.primary_category} | Reqs: ${classification.cognitive_requirements.primary.join(', ')}${classification.cognitive_requirements.secondary.length > 0 ? ' + ' + classification.cognitive_requirements.secondary.join(', ') : ''} | Complexity: ${classification.task_classification.complexity} | Framework: ${classification.selected_framework.code} | Personality: ${personalityInfo}\n\nSelect relevant questions (explain why). If personality: analyze trait alignment. Return all 5 fields.`;\n\nreturn [{\n  json: {\n    system: systemPrompt,\n    messages: [{\n      role: 'user',\n      content: userMessage\n    }],\n    classification: classification,\n    cognitive_requirements: classification.cognitive_requirements,\n    user_context: userContext\n  }\n}];"
-      },
-      "id": "cad4af8f-e5f9-44e4-adaf-1c7b5a1f8578",
-      "name": "Prepare Prompt 2",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1344,
-        0
-      ]
-    }
-  ],
-  "pinData": {},
-  "connections": {
-    "Webhook Trigger": {
-      "main": [
-        [
-          {
-            "node": "Load Reference Documents",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "versionId": "2ed6b5dd-ae12-4b95-b333-a47b740e3eee",
+    "meta": {
+        "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
     },
-    "Load Reference Documents": {
-      "main": [
-        [
-          {
-            "node": "Prepare Prompt 1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "First Pass: Call Anthropic API": {
-      "main": [
-        [
-          {
-            "node": "Parse First Pass Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Parse First Pass Response": {
-      "main": [
-        [
-          {
-            "node": "Filter Questions by Category",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter Questions by Category": {
-      "main": [
-        [
-          {
-            "node": "Prepare Prompt 2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Second Pass: Call Anthropic API": {
-      "main": [
-        [
-          {
-            "node": "Combine Results",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Combine Results": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Prompt 1": {
-      "main": [
-        [
-          {
-            "node": "First Pass: Call Anthropic API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Prompt 2": {
-      "main": [
-        [
-          {
-            "node": "Second Pass: Call Anthropic API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "2ed6b5dd-ae12-4b95-b333-a47b740e3eee",
-  "meta": {
-    "instanceId": "84d0a09da6de796c56234811b8afdc764a7fd996e2a2f20623945672625b0bf7"
-  },
-  "id": "MGuVYvZDLTa3D09d",
-  "tags": [
-    {
-      "updatedAt": "2025-12-18T23:21:45.461Z",
-      "createdAt": "2025-12-18T23:21:45.461Z",
-      "id": "Ng4Eq3gTX2UVvWUH",
-      "name": "two-pass-optimization"
-    },
-    {
-      "updatedAt": "2025-12-18T14:16:09.106Z",
-      "createdAt": "2025-12-18T14:16:09.106Z",
-      "id": "J89TfkxPA5LV9fyu",
-      "name": "prompt-framework"
-    }
-  ]
+    "id": "MGuVYvZDLTa3D09d",
+    "tags": [
+        {
+            "updatedAt": "2025-12-18T23:21:45.461Z",
+            "createdAt": "2025-12-18T23:21:45.461Z",
+            "id": "Ng4Eq3gTX2UVvWUH",
+            "name": "two-pass-optimization"
+        },
+        {
+            "updatedAt": "2025-12-18T14:16:09.106Z",
+            "createdAt": "2025-12-18T14:16:09.106Z",
+            "id": "J89TfkxPA5LV9fyu",
+            "name": "prompt-framework"
+        }
+    ]
 }

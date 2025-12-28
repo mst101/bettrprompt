@@ -570,45 +570,22 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
             return;
         }
 
-        // For Pass 2+, use the classification and filtered questions from the previous pass
+        // For Pass 2+, require the previous pass to have been run
         const currentPassIndex = preparePromptNodes.value.findIndex(
             (n) => n.name === nodeName,
         );
         if (currentPassIndex > 0) {
             const previousNode = preparePromptNodes.value[currentPassIndex - 1];
-            if (previousNode?.promptOld) {
-                // Get the classification and filtered questions from the first pass output
-                // This provides the task classification that the second pass JavaScript expects
-                inputData = {
-                    ...inputData,
-                    classification: previousNode.promptOld.classification,
-                    selected_questions:
-                        previousNode.promptOld.selected_questions,
-                };
+            if (!previousNode?.promptOld) {
+                error.value = `Pass ${currentPassIndex + 1} requires Pass ${currentPassIndex} to be run first. Please run "Prepare Prompt ${currentPassIndex === 1 ? '' : currentPassIndex}" and generate its output first.`;
+                return;
             }
 
-            // If we still don't have classification, provide a default for debugging
-            if (!inputData.classification) {
-                inputData.classification = {
-                    task_classification: {
-                        primary_category: 'STRATEGY',
-                        complexity: 'high',
-                        explanation:
-                            'Default classification for debugging (first pass output did not include classification)',
-                    },
-                    cognitive_requirements: {
-                        primary: ['VISION', 'DETAIL'],
-                        secondary: ['RISK', 'DECISIVE'],
-                    },
-                    selected_framework: {
-                        code: 'COAST',
-                        name: 'COAST',
-                    },
-                    alternative_frameworks: [],
-                };
-                inputData.selected_questions =
-                    inputData.selected_questions || '';
-            }
+            // Merge the classification and selected_questions from the previous pass output
+            // This simulates the "Filter Questions by Category" node output in the actual workflow
+            inputData.classification = previousNode.promptOld.classification;
+            inputData.selected_questions =
+                previousNode.promptOld.selected_questions;
         }
 
         // Save the old JavaScript to file first (for backwards compatibility, also save primary node)
@@ -667,45 +644,22 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
             return;
         }
 
-        // For Pass 2+, use the classification and filtered questions from the previous pass
+        // For Pass 2+, require the previous pass to have been run
         const currentPassIndex = preparePromptNodes.value.findIndex(
             (n) => n.name === nodeName,
         );
         if (currentPassIndex > 0) {
             const previousNode = preparePromptNodes.value[currentPassIndex - 1];
-            if (previousNode?.promptNew) {
-                // Get the classification and filtered questions from the first pass output
-                // This provides the task classification that the second pass JavaScript expects
-                inputData = {
-                    ...inputData,
-                    classification: previousNode.promptNew.classification,
-                    selected_questions:
-                        previousNode.promptNew.selected_questions,
-                };
+            if (!previousNode?.promptNew) {
+                error.value = `Pass ${currentPassIndex + 1} requires Pass ${currentPassIndex} to be run first. Please run "Prepare Prompt ${currentPassIndex === 1 ? '' : currentPassIndex}" and generate its output first.`;
+                return;
             }
 
-            // If we still don't have classification, provide a default for debugging
-            if (!inputData.classification) {
-                inputData.classification = {
-                    task_classification: {
-                        primary_category: 'STRATEGY',
-                        complexity: 'high',
-                        explanation:
-                            'Default classification for debugging (first pass output did not include classification)',
-                    },
-                    cognitive_requirements: {
-                        primary: ['VISION', 'DETAIL'],
-                        secondary: ['RISK', 'DECISIVE'],
-                    },
-                    selected_framework: {
-                        code: 'COAST',
-                        name: 'COAST',
-                    },
-                    alternative_frameworks: [],
-                };
-                inputData.selected_questions =
-                    inputData.selected_questions || '';
-            }
+            // Merge the classification and selected_questions from the previous pass output
+            // This simulates the "Filter Questions by Category" node output in the actual workflow
+            inputData.classification = previousNode.promptNew.classification;
+            inputData.selected_questions =
+                previousNode.promptNew.selected_questions;
         }
 
         // Save the new JavaScript to file first (for backwards compatibility, also save primary node)
