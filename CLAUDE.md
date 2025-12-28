@@ -1,239 +1,117 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Project Overview
 
-## Tech Stack
+BettrPrompt creates personality-calibrated AI prompts using 16personalities.com framework. Users complete personality assessments, then receive prompts optimised for their type via a 3-stage n8n workflow system.
 
-- **Backend**: Laravel 12 (PHP 8.2+)
-- **Frontend**: Inertia.js with Vue 3 + TypeScript
-- **Database**: PostgreSQL
-- **Cache/Queue**: Redis
-- **Queue Manager**: Laravel Horizon
-- **WebSockets**: Laravel Reverb
-- **Workflow Automation**: n8n
-- **Styling**: Tailwind CSS v4
-- **Testing**: Pest (PHPUnit)
-- **Dev Environment**: Laravel Sail (Docker)
-- **Reverse Proxy**: Caddy
+**Tech Stack:** Laravel 12, Inertia.js, Vue 3 + TypeScript, PostgreSQL, Redis, n8n, Tailwind CSS v4, Pest, pnpm, Laravel Sail (Docker)
 
-## Development Conventions
+## Core Domain: 3-Stage Workflow
 
-### Language and Style Guidelines
+Prompt generation follows these stages (stored in `workflow_stage` column):
 
-- Always use British English! Only use American English when absolutely necessary i.e. Third-party API endpoints and
-  integrations, CSS framework classes (Tailwind CSS), HTML attributes, External library method names.
+**Workflow 0 (Pre-analysis):** `0_processing` → `0_completed` / `0_failed`
+**Workflow 1 (Main analysis):** `1_processing` → `1_completed` / `1_failed`
+**Workflow 2 (Prompt generation):** `2_processing` → `2_completed` / `2_failed`
 
-### Naming Convention: Frontend camelCase ↔ Backend snake_case
+- Only `2_completed` means fully successful
+- Use `PromptRun` helper methods: `isProcessing()`, `isPending()`, `isCompleted()`, `isFailed()`
+- See `docs/workflow_stages.md` for full lifecycle details
 
-**Critical Rule**: All client-side (Vue/TypeScript) variables and properties MUST use camelCase.
+## Naming Conventions (Critical)
 
-**Implementation Pattern**:
-1. Frontend Vue components use camelCase for all variables, props, and data fields
-2. Laravel Resources (e.g., `PromptRunResource`) convert frontend camelCase properties to snake_case for serialization
-3. Form Request classes validate and transform snake_case request bodies to camelCase for TypeScript types
-4. Database columns remain in snake_case (Laravel convention)
+### Frontend camelCase ↔ Backend snake_case
 
-**Example**:
+- **Vue/TypeScript:** camelCase for all variables/props (`uiComplexity`, `personalityType`)
+- **Database:** snake_case columns (`ui_complexity`, `personality_type`)
+- **Resources:** Transform camelCase → snake_case when serialising
+- **Form Requests:** Validate snake_case, transform to camelCase for TypeScript
+
 ```typescript
-// Frontend (Vue) - camelCase
-const form = reactive({
-  uiComplexity: 'advanced',
-  personalityType: 'INTJ',
-  traitPercentages: { ... }
-});
+// Vue
+const form = reactive({ uiComplexity: 'advanced' });
 
-// Laravel Resource - converts to snake_case
+// Resource
 'uiComplexity' => $this->ui_complexity,
-'personalityType' => $this->personality_type,
-'traitPercentages' => $this->trait_percentages,
 
-// Database - snake_case
-Schema::table('users', fn(Blueprint $table) => {
-  $table->string('ui_complexity')->default('advanced');
-  $table->string('personality_type')->nullable();
-  $table->json('trait_percentages')->nullable();
-});
+// Database
+$table->string('ui_complexity');
 ```
 
-**Forms Using This Pattern**:
-- `UpdateUiComplexityForm` - ui_complexity
-- `UpdateLocationForm` - country, state, city, zipcode
-- `UpdateProfessionalForm` - occupation, industry, workEnvironment
-- `UpdateTeamForm` - teamSize, teamType, teamComposition
-- `UpdateBudgetForm` - monthlyBudget, budgetCurrency
-- `UpdateToolsForm` - preferredTools, toolCategories
+### HTML Attributes: kebab-case
 
-### HTML Attributes: kebab-case for `id` and `data-testid`
+All `id` and `data-testid` attributes MUST use kebab-case:
 
-**Critical Rule**: All HTML `id` and `data-testid` attributes MUST use kebab-case (lowercase with hyphens).
-
-**Why**: HTML standards recommend kebab-case for attribute values. It provides:
-- Consistency with web standards
-- Better CSS selector compatibility
-- Easier reading in templates and tests
-- Avoiding confusion with JavaScript camelCase
-
-**Examples**:
 ```html
-<!-- ✓ CORRECT - kebab-case -->
-<input id="user-name" />
-<button id="submit-button" />
-<div data-testid="task-tab" />
-<form id="profile-update-form" />
+<!-- ✓ CORRECT -->
+<input id="user-name" data-testid="submit-button" />
 
-<!-- ✗ WRONG - camelCase or snake_case -->
-<input id="userName" />          <!-- Don't use camelCase -->
-<button id="submitButton" />     <!-- Don't use camelCase -->
-<div data-testid="taskTab" />    <!-- Don't use camelCase -->
-<form id="profile_update_form" /><!-- Don't use snake_case -->
+<!-- ✗ WRONG -->
+<input id="userName" data-testid="submitButton" />
 ```
-
-**Components Affected**:
-- All Vue components: `<input id="kebab-case" />`
-- Form components: `FormInput`, `FormSelect`, `FormCheckbox`, etc.
-- Test IDs: `data-testid="kebab-case-name"`
-- Layout components: All header, container, and page elements
 
 ## Development Commands
 
-### Starting the Development Environment
-
 ```bash
-# Start Docker containers (PostgreSQL, Redis, n8n)
+# Start environment
 ./vendor/bin/sail up -d
+composer dev  # Runs: serve, horizon, reverb, pail, vite
 
-# Run full development stack (Laravel server, queue worker, logs, Vite)
-composer dev
-```
-
-The `composer dev` command runs these processes concurrently:
-
-- `php artisan serve` - Laravel development server
-- `php artisan horizon` - Queue manager with dashboard (visit `/horizon`)
-- `php artisan reverb:start` - WebSocket server for real-time updates
-- `php artisan pail --timeout=0` - Log viewer
-- `npm run dev` - Vite dev server with HMR
-
-### Building and Testing
-
-```bash
-# Run Pest tests (always use Sail for consistency with Docker environment)
+# Testing (ALWAYS use Sail for consistency with Docker environment)
 ./vendor/bin/sail test
-# or to run tests directly (not recommended - use sail for consistency)
-php artisan test
-
-# Run specific test file
 ./vendor/bin/sail test tests/Feature/ExampleTest.php
 
-# Build for production (includes SSR build)
-npm run build
+# Frontend
+pnpm dev          # Vite dev server (included in composer dev)
+pnpm build        # Production build with SSR
+pnpm lint         # ESLint + Prettier
+pnpm test:unit    # Vitest
+pnpm test:e2e     # Playwright
 
-# Lint TypeScript/Vue files
-npm run lint
-
-# Code style (Laravel Pint)
+# Code style
 ./vendor/bin/pint
+
+# Initial setup
+composer setup    # Install deps, setup .env, migrate, build assets
 ```
 
-**IMPORTANT**: Always use `./vendor/bin/sail` for running tests and Laravel commands to ensure consistency with the Docker environment (PostgreSQL, Redis, etc.). Using `php artisan` directly may fail or produce different results.
+**CRITICAL:** Always use `./vendor/bin/sail` for Laravel commands/tests. Using `php artisan` directly may fail or produce different results due to Docker environment (PostgreSQL, Redis, etc.).
 
-### Initial Setup
+## Key Services
 
-```bash
-composer setup
-```
+- `N8nClient` - Triggers n8n workflows via webhooks
+- `PersonalityTypeService` - Personality calculations and type determination
+- `PromptFrameworkService` - Framework selection and prompt generation
+- `GeolocationService` - MaxMind geolocation for users
 
-This runs: composer install, creates .env, generates key, runs migrations, npm install, and builds assets.
+## Testing Patterns
 
-## Architecture Overview
+- **Always test:** New controllers, form requests, services, n8n endpoints
+- **Use factories:** `User::factory()->create()`, `PromptRun::factory()->...`
+- **Mock n8n:** `Http::fake(['n8n.localhost/*' => ...])`
+- Test validation: Submit forms with missing/invalid data
 
-### Frontend (Inertia.js + Vue)
+## Architecture Notes
 
-- **Entry Point**: `resources/js/app.ts`
-- **SSR Entry**: `resources/js/ssr.ts`
-- **Pages**: Located in `resources/js/Pages/` - Inertia automatically resolves these
-- **Layouts**: `resources/js/Layouts/` (AuthenticatedLayout, GuestLayout)
-- **Routing**: Uses Ziggy for Laravel route helpers in Vue components
+- **Frontend:** Inertia.js pages in `resources/js/Pages/`, SSR enabled
+- **Backend:** Services in `app/Services/`, n8n webhook receiver in `routes/api.php`
+- **n8n Integration:** Secured with `X-N8N-SECRET` header verification
+- **Dev proxy:** Caddy (dev-only) serves `app.localhost` and `n8n.localhost` (production uses Nginx)
 
-The application uses Inertia.js to create a single-page app experience whilst maintaining Laravel's routing and
-controllers. SSR is enabled for improved performance and SEO.
+## Common Workflows
 
-### Backend (Laravel)
+**Adding a profile field:**
+1. Migration (snake_case column)
+2. Add to `User` model `$fillable`
+3. Create Form Request (validate snake_case, transform to camelCase)
+4. Add to `UserResource` (transform camelCase → snake_case)
+5. Update Vue component (use camelCase)
+6. Write tests
 
-- **Services**: Custom service classes in `app/Services/`
-    - `N8nClient` - Handles communication with n8n workflows via webhooks
-- **Routes**:
-    - `routes/web.php` - Inertia page routes
-    - `routes/api.php` - API endpoints (includes n8n webhook receiver)
-    - `routes/auth.php` - Laravel Breeze authentication routes
-- **Authentication**: Laravel Sanctum + Breeze
+**n8n integration:**
+1. Create workflow in n8n dashboard (`n8n.localhost`)
+2. Add webhook URL to `config/services.php`
+3. Update `N8nClient` with new method
+4. Test with `Http::fake()` in tests
 
-### n8n Integration
-
-The application integrates with n8n (workflow automation):
-
-- **n8n Service**: `app/Services/N8nClient.php` - Triggers n8n workflows
-- **Webhook Receiver**: `routes/api.php` - POST `/api/n8n/webhook` endpoint
-    - Secured with `X-N8N-SECRET` header verification
-    - Configure secret in `config/services.php` under `n8n.webhook_secret`
-- **n8n Configuration**: Set these in `.env`:
-    - `N8N_URL` - Base URL for n8n instance
-    - `N8N_USERNAME` / `N8N_PASSWORD` - Basic auth credentials
-    - `N8N_WEBHOOK_SECRET` - Secret for webhook verification
-
-### Local Development with Caddy
-
-Caddy acts as a reverse proxy for local development:
-
-- `app.localhost` → Laravel application (port 80)
-- `n8n.localhost` → n8n dashboard (port 5678)
-
-The n8n dashboard is protected with basic authentication (credentials in Caddyfile).
-
-#### Fixing HTTPS Certificate Warnings
-
-Caddy automatically generates self-signed SSL certificates for local `.localhost` domains. To avoid "Your connection is not private" warnings in Chrome:
-
-**For Chrome/Chromium on Linux (most common):**
-
-```bash
-# 1. Install NSS tools (required for Chrome certificate management)
-sudo apt install libnss3-tools
-
-# 2. Run the Chrome-specific installation script
-./scripts/install-chrome-ca.sh
-
-# 3. Completely close ALL Chrome windows
-pkill -f chrome
-
-# 4. Wait a few seconds, then restart Chrome and visit https://app.localhost
-```
-
-**For macOS or other browsers:**
-
-```bash
-# Run the general installation script
-./scripts/install-local-ca.sh
-```
-
-**Why Chrome needs special handling on Linux:**
-Chrome on Linux uses its own NSS certificate database (`~/.pki/nssdb`), separate from the system trust store. Installing the certificate to `/usr/local/share/ca-certificates/` fixes it for `curl`, `wget`, and other system tools, but Chrome requires the certificate to be added to its NSS database using `certutil`.
-
-**Verification:**
-```bash
-# Check if certificate is in Chrome's database
-certutil -L -d sql:$HOME/.pki/nssdb | grep Caddy
-
-# Should show something like:
-# Caddy Local Authority - 2025 ECC Root         C,,
-```
-
-## Database
-
-Uses PostgreSQL with standard Laravel migrations in `database/migrations/`. A separate database is automatically created
-for testing.
-
-## Project Context
-
-This is "BettrPrompt", an application that creates optimised AI prompts customised to personality types (based on
-16personalities.com). Documentation in `docs/` folder contains project overview and other reference materials.
+**Docs:** `docs/workflow_stages.md` (workflows), `docs/n8n_integrations.md` (n8n setup), `docs/caddy-https-setup.md` (HTTPS certificates), `docs/deployment/` (production), `docs/E2E-TEST-SETUP.md` (e2e testing)
