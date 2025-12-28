@@ -617,10 +617,20 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         // Update the node's prompt data
-        node.promptOld = result.prompt;
+        // Handle both array format (from workflow) and object format
+        let promptData = result.prompt;
+        if (
+            Array.isArray(promptData) &&
+            promptData.length > 0 &&
+            promptData[0] &&
+            promptData[0].json
+        ) {
+            promptData = promptData[0].json;
+        }
+        node.promptOld = promptData;
         // Also update the main promptOld if this is the primary node
         if (nodeName === 'Prepare Prompt') {
-            promptOld.value = result.prompt;
+            promptOld.value = promptData;
         }
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
@@ -696,10 +706,20 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         // Update the node's prompt data
-        node.promptNew = result.prompt;
+        // Handle both array format (from workflow) and object format
+        let promptData = result.prompt;
+        if (
+            Array.isArray(promptData) &&
+            promptData.length > 0 &&
+            promptData[0] &&
+            promptData[0].json
+        ) {
+            promptData = promptData[0].json;
+        }
+        node.promptNew = promptData;
         // Also update the main promptNew if this is the primary node
         if (nodeName === 'Prepare Prompt') {
-            promptNew.value = result.prompt;
+            promptNew.value = promptData;
         }
     } catch (err) {
         error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
