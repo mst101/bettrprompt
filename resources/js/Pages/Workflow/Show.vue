@@ -4,7 +4,6 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import ButtonSuccess from '@/Components/Base/Button/ButtonSuccess.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
-import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue';
 import NotificationToast from '@/Components/Features/Workflow/NotificationToast.vue';
 import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
@@ -839,12 +838,12 @@ onMounted(async () => {
                 </ButtonPrimary>
 
                 <!-- Pass Input button for Pass 2+ -->
-                <ButtonSecondary
+                <ButtonPrimary
                     v-if="currentNode.passNumber > 1"
                     @click="expandedView = `pass-input-${selectedPass}`"
                 >
                     Pass {{ currentNode.passNumber }} Input
-                </ButtonSecondary>
+                </ButtonPrimary>
 
                 <ButtonDanger
                     :disabled="isUploadingToLive"
@@ -1590,32 +1589,27 @@ onMounted(async () => {
                 :title="`Pass ${node.passNumber} Input - ${node.name}`"
                 @close="expandedView = null"
             >
-                <div class="mb-4 rounded-md bg-blue-50 p-4">
-                    <p class="text-sm text-blue-800">
-                        This is the input data for {{ node.name }}. It should
-                        contain the output from Pass
-                        {{ node.passNumber - 1 }} (classification,
-                        selected_questions, etc.). You can provide it as an
-                        object or wrapped in an array. If this file doesn't
-                        exist, the system will use the actual output from Pass
-                        {{ node.passNumber - 1 }}.
-                    </p>
-                </div>
-
                 <div class="flex h-full flex-col">
-                    <FormTextarea
-                        :id="`pass-${node.passNumber}-input`"
+                    <textarea
                         v-model="passInputJson[node.name]"
-                        :label="`Pass ${node.passNumber} input`"
-                        class="flex-1 resize-none overflow-auto rounded-md border border-indigo-300 p-4 font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        placeholder="Enter as JSON object or array: { classification: {...}, ... } or [{ classification: {...}, ... }]"
+                        class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
+                        placeholder="Enter input data as JSON (object or array format)..."
+                        style="
+                            line-height: 1.5;
+                            white-space: pre;
+                            overflow-wrap: normal;
+                        "
+                    ></textarea>
+                    <div
+                        class="flex shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                     >
-                    </FormTextarea>
-
-                    <div class="mt-4 flex justify-end gap-2">
-                        <ButtonSecondary @click="expandedView = null">
-                            Cancel
-                        </ButtonSecondary>
+                        <span class="text-xs text-indigo-600">
+                            {{
+                                passInputJson[node.name]
+                                    ? `${passInputJson[node.name].length} characters`
+                                    : 'N/A'
+                            }}
+                        </span>
                         <ButtonPrimary
                             @click="
                                 savePassInputData(node.name, node.passNumber);
