@@ -586,6 +586,29 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
                         previousNode.promptOld.selected_questions,
                 };
             }
+
+            // If we still don't have classification, provide a default for debugging
+            if (!inputData.classification) {
+                inputData.classification = {
+                    task_classification: {
+                        primary_category: 'STRATEGY',
+                        complexity: 'high',
+                        explanation:
+                            'Default classification for debugging (first pass output did not include classification)',
+                    },
+                    cognitive_requirements: {
+                        primary: ['VISION', 'DETAIL'],
+                        secondary: ['RISK', 'DECISIVE'],
+                    },
+                    selected_framework: {
+                        code: 'COAST',
+                        name: 'COAST',
+                    },
+                    alternative_frameworks: [],
+                };
+                inputData.selected_questions =
+                    inputData.selected_questions || '';
+            }
         }
 
         // Save the old JavaScript to file first (for backwards compatibility, also save primary node)
@@ -659,6 +682,29 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
                     selected_questions:
                         previousNode.promptNew.selected_questions,
                 };
+            }
+
+            // If we still don't have classification, provide a default for debugging
+            if (!inputData.classification) {
+                inputData.classification = {
+                    task_classification: {
+                        primary_category: 'STRATEGY',
+                        complexity: 'high',
+                        explanation:
+                            'Default classification for debugging (first pass output did not include classification)',
+                    },
+                    cognitive_requirements: {
+                        primary: ['VISION', 'DETAIL'],
+                        secondary: ['RISK', 'DECISIVE'],
+                    },
+                    selected_framework: {
+                        code: 'COAST',
+                        name: 'COAST',
+                    },
+                    alternative_frameworks: [],
+                };
+                inputData.selected_questions =
+                    inputData.selected_questions || '';
             }
         }
 
