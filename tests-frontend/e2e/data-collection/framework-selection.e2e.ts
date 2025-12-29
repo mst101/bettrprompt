@@ -179,7 +179,7 @@ test.describe.serial('Framework Selection Analysis', () => {
 
                     // Check if we have pre-analysis questions displayed
                     const preAnalysisQuestions = page.locator(
-                        '[data-testid="quick-queries"], text=/answer.*question|clarify/i',
+                        '[data-testid="pre-analysis"], text=/answer.*question|clarify/i',
                     );
                     const hasPreAnalysisQuestions = await preAnalysisQuestions
                         .first()

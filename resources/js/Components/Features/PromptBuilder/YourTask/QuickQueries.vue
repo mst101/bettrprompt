@@ -261,7 +261,7 @@ const submitAnswers = () => {
     if (hasAnswers.value) {
         form.answers = finalAnswers;
         form.post(
-            route('prompt-builder.update-quick-queries', {
+            route('prompt-builder.update-pre-analysis-answers', {
                 promptRun: props.promptRun.id,
             }),
             {
@@ -359,7 +359,7 @@ const isDisabled = computed(() =>
 </script>
 
 <template>
-    <Card v-if="shouldShow" class="space-y-4">
+    <Card v-if="shouldShow" class="space-y-4" data-testid="pre-analysis">
         <!-- Header -->
         <div
             class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"

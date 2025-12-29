@@ -43,7 +43,7 @@ const hasRelations =
                 <LinkText
                     class="text-indigo-800 hover:text-indigo-700"
                     :href="
-                        route('prompt-builder.analyse', {
+                        route('prompt-builder.show', {
                             promptRun: parent.id,
                         })
                     "
@@ -81,7 +81,7 @@ const hasRelations =
                     <LinkText
                         class="text-indigo-800 hover:text-indigo-700"
                         :href="
-                            route('prompt-builder.analyse', {
+                            route('prompt-builder.show', {
                                 promptRun: child.id,
                             })
                         "

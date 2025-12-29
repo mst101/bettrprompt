@@ -164,7 +164,7 @@ test('user cannot view other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create(['user_id' => $otherUser->id]);
 
-    $response = $this->get(route('prompt-builder.analyse', $otherRun));
+    $response = $this->get(route('prompt-builder.show', $otherRun));
 
     $response->assertForbidden();
 });
