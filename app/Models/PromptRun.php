@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\DatabaseService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -192,5 +193,93 @@ class PromptRun extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Record and normalise a clarifying answer
+     * Handles padding answers to match question count and advancing to next question
+     */
+    public function recordClarifyingAnswer(int $questionIndex, mixed $answer): array
+    {
+        $questions = $this->framework_questions ?? [];
+        $questionCount = count($questions);
+
+        if ($questionCount === 0) {
+            return [];
+        }
+
+        $index = max(0, min($questionIndex, $questionCount - 1));
+        $answers = array_values($this->clarifying_answers ?? []);
+
+        // Pad answers to match question count
+        for ($i = 0; $i < $questionCount; $i++) {
+            if (! array_key_exists($i, $answers)) {
+                $answers[$i] = null;
+            }
+        }
+
+        $answers[$index] = $answer === null || $answer === '' ? null : $answer;
+        $answers = array_values($answers);
+
+        // After answering/skipping a question, move to the next one
+        $nextIndex = min($index + 1, $questionCount);
+
+        DatabaseService::retryOnDeadlock(function () use ($answers, $nextIndex) {
+            $this->update([
+                'clarifying_answers' => $answers,
+                'current_question_index' => $nextIndex,
+                'workflow_stage' => '1_completed',
+            ]);
+        });
+
+        return $answers;
+    }
+
+    /**
+     * Mark a workflow stage as completed with optional data
+     */
+    public function markWorkflowCompleted(int $workflow, array $data = []): void
+    {
+        $updateData = array_merge($data, [
+            'workflow_stage' => "{$workflow}_completed",
+            'error_message' => null,
+        ]);
+
+        // Workflow 2 completion should also set the completed_at timestamp
+        if ($workflow === 2 && ! isset($updateData['completed_at'])) {
+            $updateData['completed_at'] = now();
+        }
+
+        DatabaseService::retryOnDeadlock(function () use ($updateData) {
+            $this->update($updateData);
+        });
+    }
+
+    /**
+     * Mark a workflow stage as failed with error message
+     */
+    public function markWorkflowFailed(int $workflow, string $errorMessage): void
+    {
+        DatabaseService::retryOnDeadlock(function () use ($workflow, $errorMessage) {
+            $this->update([
+                'workflow_stage' => "{$workflow}_failed",
+                'error_message' => $errorMessage,
+            ]);
+        });
+    }
+
+    /**
+     * Mark a workflow stage as processing
+     */
+    public function markWorkflowProcessing(int $workflow, array $data = []): void
+    {
+        $updateData = array_merge($data, [
+            'workflow_stage' => "{$workflow}_processing",
+            'error_message' => null,
+        ]);
+
+        DatabaseService::retryOnDeadlock(function () use ($updateData) {
+            $this->update($updateData);
+        });
     }
 }

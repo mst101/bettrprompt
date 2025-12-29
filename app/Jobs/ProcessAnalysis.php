@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\AnalysisCompleted;
 use App\Models\PromptRun;
-use App\Services\DatabaseService;
 use App\Services\N8nWorkflowClient;
 use DB;
 use Exception;
@@ -69,22 +68,18 @@ class ProcessAnalysis implements ShouldQueue
             }
 
             // Update the prompt run with analysis results
-            DatabaseService::retryOnDeadlock(function () use ($result) {
-                $this->promptRun->update([
-                    'workflow_stage' => '1_completed',
-                    'task_classification' => $result['data']['task_classification'] ?? null,
-                    'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
-                    'selected_framework' => $result['data']['selected_framework'] ?? null,
-                    'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
-                    'personality_tier' => $result['data']['personality_tier'] ?? 'none',
-                    'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
-                    'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
-                    'question_rationale' => $result['data']['question_rationale'] ?? null,
-                    'framework_questions' => $this->sortClarifyingQuestions($result['data']['clarifying_questions'] ?? []),
-                    'analysis_api_usage' => $result['api_usage'] ?? null,
-                    'error_message' => null,
-                ]);
-            });
+            $this->promptRun->markWorkflowCompleted(1, [
+                'task_classification' => $result['data']['task_classification'] ?? null,
+                'cognitive_requirements' => $result['data']['cognitive_requirements'] ?? null,
+                'selected_framework' => $result['data']['selected_framework'] ?? null,
+                'alternative_frameworks' => $result['data']['alternative_frameworks'] ?? [],
+                'personality_tier' => $result['data']['personality_tier'] ?? 'none',
+                'task_trait_alignment' => $result['data']['task_trait_alignment'] ?? null,
+                'personality_adjustments_preview' => $result['data']['personality_adjustments_preview'] ?? [],
+                'question_rationale' => $result['data']['question_rationale'] ?? null,
+                'framework_questions' => $this->sortClarifyingQuestions($result['data']['clarifying_questions'] ?? []),
+                'analysis_api_usage' => $result['api_usage'] ?? null,
+            ]);
 
             Log::info('Task analysis completed', [
                 'prompt_run_id' => $this->promptRun->id,
@@ -131,12 +126,7 @@ class ProcessAnalysis implements ShouldQueue
         ]);
 
         // Store the error details
-        DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
-            $this->promptRun->update([
-                'workflow_stage' => '1_failed',
-                'error_message' => $errorMessage,
-            ]);
-        });
+        $this->promptRun->markWorkflowFailed(1, $errorMessage);
     }
 
     /**

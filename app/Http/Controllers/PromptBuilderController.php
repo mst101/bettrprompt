@@ -336,7 +336,7 @@ class PromptBuilderController extends Controller
 
         $validated = $request->validated();
 
-        $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], $validated['answer']);
+        $answers = $promptRun->recordClarifyingAnswer($validated['question_index'], $validated['answer']);
 
         return response()->json(['clarifying_answers' => $answers]);
     }
@@ -1001,46 +1001,5 @@ class PromptBuilderController extends Controller
         }
 
         return $context;
-    }
-
-    /**
-     * Normalise and persist a single clarifying answer
-     * Handles padding answers to match question count and advancing to next question.
-     */
-    protected function saveClarifyingAnswer(PromptRun $promptRun, int $questionIndex, $answer): array
-    {
-        $questions = $promptRun->framework_questions ?? [];
-        $questionCount = count($questions);
-
-        if ($questionCount === 0) {
-            return [];
-        }
-
-        $index = max(0, min($questionIndex, $questionCount - 1));
-        $answers = Arr::wrap($promptRun->clarifying_answers ?? []);
-        $answers = array_values($answers);
-
-        // Pad answers to match question count
-        for ($i = 0; $i < $questionCount; $i++) {
-            if (! array_key_exists($i, $answers)) {
-                $answers[$i] = null;
-            }
-        }
-
-        $answers[$index] = $answer === null || $answer === '' ? null : $answer;
-        $answers = array_values($answers);
-
-        // After answering/skipping a question, move to the next one
-        $nextIndex = min($index + 1, $questionCount);
-
-        DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers, $nextIndex) {
-            $promptRun->update([
-                'clarifying_answers' => $answers,
-                'current_question_index' => $nextIndex,
-                'workflow_stage' => '1_completed',
-            ]);
-        });
-
-        return $answers;
     }
 }

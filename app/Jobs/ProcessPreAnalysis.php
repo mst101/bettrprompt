@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\PreAnalysisCompleted;
 use App\Models\PromptRun;
-use App\Services\DatabaseService;
 use App\Services\N8nWorkflowClient;
 use DB;
 use Exception;
@@ -55,15 +54,11 @@ class ProcessPreAnalysis implements ShouldQueue
             // Check if pre-analysis needs clarification questions
             if ($preAnalysis['needs_clarification']) {
                 // Update with questions - user will answer them
-                DatabaseService::retryOnDeadlock(function () use ($preAnalysis) {
-                    $this->promptRun->update([
-                        'workflow_stage' => '0_completed',
-                        'pre_analysis_questions' => $preAnalysis['questions'] ?? [],
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                        'error_message' => null,
-                    ]);
-                });
+                $this->promptRun->markWorkflowCompleted(0, [
+                    'pre_analysis_questions' => $preAnalysis['questions'] ?? [],
+                    'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
+                    'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
+                ]);
 
                 Log::info('Pre-analysis completed with questions', [
                     'prompt_run_id' => $this->promptRun->id,
@@ -95,16 +90,12 @@ class ProcessPreAnalysis implements ShouldQueue
                 }
             } else {
                 // No questions needed - proceed directly to main analysis
-                DatabaseService::retryOnDeadlock(function () use ($preAnalysis) {
-                    $this->promptRun->update([
-                        'workflow_stage' => '1_processing',
-                        'pre_analysis_skipped' => true,
-                        'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
-                        'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
-                        'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
-                        'error_message' => null,
-                    ]);
-                });
+                $this->promptRun->markWorkflowProcessing(1, [
+                    'pre_analysis_skipped' => true,
+                    'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
+                    'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
+                    'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
+                ]);
 
                 Log::info('Pre-analysis skipped - proceeding to main analysis', [
                     'prompt_run_id' => $this->promptRun->id,
@@ -144,11 +135,6 @@ class ProcessPreAnalysis implements ShouldQueue
         ]);
 
         // Store the error details
-        DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
-            $this->promptRun->update([
-                'workflow_stage' => '0_failed',
-                'error_message' => $errorMessage,
-            ]);
-        });
+        $this->promptRun->markWorkflowFailed(0, $errorMessage);
     }
 }

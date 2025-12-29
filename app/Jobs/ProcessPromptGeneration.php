@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Data\GenerationPayload;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
-use App\Services\DatabaseService;
 use App\Services\N8nWorkflowClient;
 use DB;
 use Exception;
@@ -114,19 +113,14 @@ class ProcessPromptGeneration implements ShouldQueue
             }
 
             // Update the prompt run with generation results
-            DatabaseService::retryOnDeadlock(function () use ($result) {
-                $this->promptRun->update([
-                    'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
-                    'framework_used' => $result['data']['framework_used'] ?? null,
-                    'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
-                    'model_recommendations' => $result['data']['model_recommendations'] ?? null,
-                    'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
-                    'generation_api_usage' => $result['api_usage'] ?? null,
-                    'workflow_stage' => '2_completed',
-                    'completed_at' => now(),
-                    'error_message' => null,
-                ]);
-            });
+            $this->promptRun->markWorkflowCompleted(2, [
+                'optimized_prompt' => $result['data']['optimised_prompt'] ?? null,
+                'framework_used' => $result['data']['framework_used'] ?? null,
+                'personality_adjustments_summary' => $result['data']['personality_adjustments_summary'] ?? null,
+                'model_recommendations' => $result['data']['model_recommendations'] ?? null,
+                'iteration_suggestions' => $result['data']['iteration_suggestions'] ?? null,
+                'generation_api_usage' => $result['api_usage'] ?? null,
+            ]);
 
             Log::info('Prompt generation completed', [
                 'prompt_run_id' => $this->promptRun->id,
@@ -172,11 +166,6 @@ class ProcessPromptGeneration implements ShouldQueue
         ]);
 
         // Store the error details
-        DatabaseService::retryOnDeadlock(function () use ($errorMessage) {
-            $this->promptRun->update([
-                'workflow_stage' => '2_failed',
-                'error_message' => $errorMessage,
-            ]);
-        });
+        $this->promptRun->markWorkflowFailed(2, $errorMessage);
     }
 }
