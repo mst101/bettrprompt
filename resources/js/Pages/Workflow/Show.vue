@@ -253,9 +253,9 @@ const executeWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-workflow-old`,
+            `/debug/workflow/${props.workflowNumber}/execute-workflow-old?variant=${props.currentVariant}`,
             'POST',
-            { input: inputData, variant: props.currentVariant, nodeName },
+            { input: inputData, nodeName },
         );
 
         if (!response.ok) {
@@ -298,9 +298,9 @@ const executeWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-workflow-new`,
+            `/debug/workflow/${props.workflowNumber}/execute-workflow-new?variant=${props.currentVariant}`,
             'POST',
-            { input: inputData, variant: props.currentVariant, nodeName },
+            { input: inputData, nodeName },
         );
 
         if (!response.ok) {
