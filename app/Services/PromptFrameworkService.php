@@ -151,6 +151,9 @@ class PromptFrameworkService
         if ($filteredUserContext !== null) {
             $payload['user_context'] = $filteredUserContext;
         }
+        Log::info('Pre-analysis payload', (array) $payload);
+
+        dd($payload);
 
         try {
             // Increased from 10 to 60 seconds to handle edge cases with long task descriptions

@@ -27,7 +27,7 @@ test('show page displays prompt run details', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get(route('prompt-builder.analyse', $promptRun));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -51,7 +51,7 @@ test('show page displays current question', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get(route('prompt-builder.analyse', $promptRun));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -78,7 +78,7 @@ test('show page returns null when all questions answered', function () {
         'current_question_index' => 2,
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get(route('prompt-builder.analyse', $promptRun));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -100,7 +100,7 @@ test('show page includes personality tier in response', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get(route('prompt-builder.analyse', $promptRun));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -117,7 +117,7 @@ test('show page displays completed prompt run with optimized prompt', function (
         'optimized_prompt' => 'This is your personalised, optimised prompt based on your INTJ personality.',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get(route('prompt-builder.analyse', $promptRun));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -238,7 +238,7 @@ test('go back to previous question updates index', function () {
 
     $response = $this->post(route('prompt-builder.go-back', $promptRun));
 
-    $response->assertRedirect(route('prompt-builder.show', $promptRun));
+    $response->assertRedirect(route('prompt-builder.analyse', $promptRun));
 
     $promptRun->refresh();
     expect($promptRun->current_question_index)->toBe(0)

@@ -68,7 +68,7 @@ const submissionError = ref<string | null>(null);
 
 const submit = () => {
     submissionError.value = null;
-    form.post(route('prompt-builder.analyse'), {
+    form.post(route('prompt-builder.pre-analyse'), {
         onError: () => {
             submissionError.value =
                 'Failed to submit prompt. Please check your connection and try again.';

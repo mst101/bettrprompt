@@ -81,9 +81,9 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Workflow 0: Analyse task and get quick queries
+     * Workflow 0: Pre-analyse task and get quick queries
      */
-    public function analyse(PromptBuilderAnalyseRequest $request)
+    public function preAnalyse(PromptBuilderAnalyseRequest $request)
     {
         $validated = $request->validated();
         $userId = auth()->id();
@@ -159,7 +159,7 @@ class PromptBuilderController extends Controller
             // The job will either show questions or proceed directly to main analysis
             ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
-            return redirect()->route('prompt-builder.show', $promptRun);
+            return redirect()->route('prompt-builder.analyse', $promptRun);
 
         } catch (\Exception $e) {
             Log::error('Failed to create prompt run', [
@@ -205,7 +205,7 @@ class PromptBuilderController extends Controller
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
-                ->route('prompt-builder.show', $promptRun)
+                ->route('prompt-builder.analyse', $promptRun)
                 ->with('success', 'Analysing your task...');
 
         } catch (\Exception $e) {
@@ -253,7 +253,7 @@ class PromptBuilderController extends Controller
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
             return redirect()
-                ->route('prompt-builder.show', $promptRun)
+                ->route('prompt-builder.analyse', $promptRun)
                 ->with('success', 'Re-analysing your task with updated answers...');
 
         } catch (\Exception $e) {
@@ -327,9 +327,9 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Workflow 1: Display prompt run with clarifying questions
+     * Workflow 1: Analyse prompt run and display clarifying questions
      */
-    public function show(Request $request, PromptRun $promptRun)
+    public function analyse(Request $request, PromptRun $promptRun)
     {
         $this->authorizePromptRun($promptRun, $request);
 
@@ -500,7 +500,7 @@ class PromptBuilderController extends Controller
             });
 
             return redirect()
-                ->route('prompt-builder.show', $promptRun);
+                ->route('prompt-builder.analyse', $promptRun);
 
         } catch (\Exception $e) {
             Log::error('Failed to go back (PromptBuilder)', [
@@ -590,7 +590,7 @@ class PromptBuilderController extends Controller
             // The job will either show questions or proceed directly to main analysis
             ProcessPreAnalysis::dispatch($childPromptRun, $this->getJobDatabase($request));
 
-            return redirect()->route('prompt-builder.show', $childPromptRun);
+            return redirect()->route('prompt-builder.analyse', $childPromptRun);
         } catch (\Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
@@ -674,7 +674,7 @@ class PromptBuilderController extends Controller
             ProcessPromptGeneration::dispatch($childPromptRun, $this->getJobDatabase($request));
 
             return redirect()
-                ->route('prompt-builder.show', $childPromptRun)
+                ->route('prompt-builder.analyse', $childPromptRun)
                 ->with('success', 'Generating your optimised prompt with edited answers...');
         } catch (\Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
@@ -724,7 +724,7 @@ class PromptBuilderController extends Controller
                 ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
                 return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                    ->route('prompt-builder.analyse', $promptRun)
                     ->with('success', 'Retrying pre-analysis...');
 
             } elseif ($failedWorkflow === 1) {
@@ -745,7 +745,7 @@ class PromptBuilderController extends Controller
                 ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
                 return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                    ->route('prompt-builder.analyse', $promptRun)
                     ->with('success', 'Retrying analysis...');
 
             } elseif ($failedWorkflow === 2) {
@@ -765,7 +765,7 @@ class PromptBuilderController extends Controller
                 ProcessPromptGeneration::dispatch($promptRun, $this->getJobDatabase($request));
 
                 return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                    ->route('prompt-builder.analyse', $promptRun)
                     ->with('success', 'Retrying prompt generation...');
             }
 
@@ -1066,10 +1066,10 @@ class PromptBuilderController extends Controller
             ProcessAnalysis::dispatch($childPromptRun, $validated['framework_code'],
                 $this->getJobDatabase($request));
 
-            // Redirect to the new prompt run's show page
+            // Redirect to the new prompt run's analyse page
             // Inertia will handle the redirect and fetch the full page data
             return redirect()
-                ->route('prompt-builder.show', $childPromptRun)
+                ->route('prompt-builder.analyse', $childPromptRun)
                 ->with('success', 'Re-analysing with selected framework...');
         } catch (\Exception $e) {
             Log::error('Failed to switch framework (PromptBuilder)', [

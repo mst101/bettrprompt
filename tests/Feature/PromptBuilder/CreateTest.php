@@ -21,7 +21,7 @@ beforeEach(function () {
 test('create prompt run validates task description required', function () {
     $this->actingAs($this->user);
 
-    $response = $this->post(route('prompt-builder.analyse'), []);
+    $response = $this->post(route('prompt-builder.pre-analyse'), []);
 
     $response->assertSessionHasErrors(['task_description']);
 });
@@ -29,7 +29,7 @@ test('create prompt run validates task description required', function () {
 test('create prompt run validates task description min length', function () {
     $this->actingAs($this->user);
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'short', // Too short (min 10)
     ]);
 
@@ -52,7 +52,7 @@ test('create prompt run creates prompt run successfully', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'Create a detailed project plan for launching a new product',
     ]);
 
@@ -84,7 +84,7 @@ test('create prompt run includes user personality traits', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'Test task that is long enough to pass validation',
     ]);
 
@@ -115,7 +115,7 @@ test('create prompt run saves personality tier', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'Lead a team brainstorming session for new product ideas',
     ]);
 
@@ -146,7 +146,7 @@ test('create prompt run allows guests as visitors', function () {
     $visitor = Visitor::factory()->create();
     $this->withCookie('visitor_id', (string) $visitor->id);
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'Test task for visitor',
     ]);
 
@@ -164,7 +164,7 @@ test('user cannot view other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create(['user_id' => $otherUser->id]);
 
-    $response = $this->get(route('prompt-builder.show', $otherRun));
+    $response = $this->get(route('prompt-builder.analyse', $otherRun));
 
     $response->assertForbidden();
 });
@@ -190,7 +190,7 @@ test('create prompt run allows users without personality type', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.analyse'), [
+    $response = $this->post(route('prompt-builder.pre-analyse'), [
         'task_description' => 'Help me write a professional email',
     ]);
 

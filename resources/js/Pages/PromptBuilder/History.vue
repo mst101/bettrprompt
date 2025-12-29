@@ -289,7 +289,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 @click="
                                     $inertia.visit(
                                         route(
-                                            'prompt-builder.show',
+                                            'prompt-builder.analyse',
                                             promptRun.id,
                                         ),
                                     )
@@ -297,7 +297,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 @keydown.enter="
                                     $inertia.visit(
                                         route(
-                                            'prompt-builder.show',
+                                            'prompt-builder.analyse',
                                             promptRun.id,
                                         ),
                                     )

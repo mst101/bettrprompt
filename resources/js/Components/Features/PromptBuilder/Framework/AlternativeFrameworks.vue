@@ -43,13 +43,16 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 // The response should contain the new promptRun ID in the props
                 const newPromptRunId = page.props.promptRun?.id;
 
-                // Force a fresh navigation to the new promptRun's show page
+                // Force a fresh navigation to the new promptRun's analyse page
                 // This ensures the component mounts with completely fresh props
                 if (newPromptRunId) {
-                    router.visit(route('prompt-builder.show', newPromptRunId), {
-                        method: 'get',
-                        preserveScroll: true,
-                    });
+                    router.visit(
+                        route('prompt-builder.analyse', newPromptRunId),
+                        {
+                            method: 'get',
+                            preserveScroll: true,
+                        },
+                    );
                 }
             },
             onError: (errors) => {

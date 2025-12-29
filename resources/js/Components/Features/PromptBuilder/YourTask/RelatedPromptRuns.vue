@@ -43,7 +43,9 @@ const hasRelations =
                 <LinkText
                     class="text-indigo-800 hover:text-indigo-700"
                     :href="
-                        route('prompt-builder.show', { promptRun: parent.id })
+                        route('prompt-builder.analyse', {
+                            promptRun: parent.id,
+                        })
                     "
                 >
                     {{ truncateText(parent.taskDescription) }}
@@ -79,7 +81,7 @@ const hasRelations =
                     <LinkText
                         class="text-indigo-800 hover:text-indigo-700"
                         :href="
-                            route('prompt-builder.show', {
+                            route('prompt-builder.analyse', {
                                 promptRun: child.id,
                             })
                         "
