@@ -90,6 +90,26 @@ const getMessagesAsText = (messages: Message[] | unknown) => {
 
 const getJsonCharacterCount = (data: unknown): string => {
     if (!data) return '0';
+    // If data has system/messages (prompt output), count the generated prompt text
+    if (typeof data === 'object' && data !== null) {
+        const obj = data as any;
+        let totalLength = 0;
+        if (typeof obj.system === 'string') {
+            totalLength += obj.system.length;
+        }
+        if (Array.isArray(obj.messages)) {
+            totalLength += obj.messages.reduce((sum: number, msg: any) => {
+                if (typeof msg.content === 'string') {
+                    return sum + msg.content.length;
+                }
+                return sum;
+            }, 0);
+        }
+        if (totalLength > 0) {
+            return new Intl.NumberFormat().format(totalLength);
+        }
+    }
+    // Otherwise count the entire JSON serialisation
     const jsonString = JSON.stringify(data, null, 2);
     const count = jsonString.length;
     return new Intl.NumberFormat().format(count);
