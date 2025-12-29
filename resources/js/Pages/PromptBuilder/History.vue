@@ -194,7 +194,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
         <Card padding="none">
             <div
                 v-if="promptRuns.data.length === 0"
-                class="text-centre p-6 text-indigo-500"
+                class="p-6 text-center text-indigo-500"
             >
                 <p>No prompt history yet.</p>
                 <a
@@ -428,7 +428,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                     <div class="sm:hidden">
                         <!-- Results info and page info -->
                         <div
-                            class="text-centre mb-3 space-y-1 text-sm text-indigo-700"
+                            class="mb-3 space-y-1 text-center text-sm text-indigo-700"
                         >
                             <p
                                 v-if="
