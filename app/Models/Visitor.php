@@ -122,14 +122,6 @@ class Visitor extends Model
     }
 
     /**
-     * Get UI complexity level (defaults to 'advanced')
-     */
-    public function getUiComplexity(): string
-    {
-        return $this->ui_complexity ?? 'advanced';
-    }
-
-    /**
      * Get a summary of the visitor's location
      */
     public function getLocationSummary(): string

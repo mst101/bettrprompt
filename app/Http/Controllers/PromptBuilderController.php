@@ -287,20 +287,20 @@ class PromptBuilderController extends Controller
         $currentQuestionAnswer = $answers[$currentQuestionIndex] ?? null;
 
         // Check if visitor has already completed a prompt (for client-side modal)
+        // Guests always get 'advanced' UI complexity, authenticated users get their preference
         $visitorHasCompletedPrompts = false;
-        $uiComplexity = 'advanced'; // default
+        $uiComplexity = 'advanced'; // default for guests
 
-        if (! auth()->check()) {
+        if (auth()->check()) {
+            $uiComplexity = auth()->user()->getUiComplexity();
+        } else {
             $visitorId = $this->getVisitorId($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor) {
                     $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts();
-                    $uiComplexity = $visitor->getUiComplexity();
                 }
             }
-        } else {
-            $uiComplexity = auth()->user()->getUiComplexity();
         }
 
         // Fetch Claude models (admin users only)
