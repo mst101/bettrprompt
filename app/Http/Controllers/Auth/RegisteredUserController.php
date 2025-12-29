@@ -7,19 +7,20 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Services\GeolocationService;
 use App\Services\VisitorMigrationService;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
@@ -70,7 +71,7 @@ class RegisteredUserController extends Controller
                         'ip' => $request->ip(),
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Failed to lookup location for new user', [
                     'user_id' => $user->id,
                     'ip' => $request->ip(),

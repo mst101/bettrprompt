@@ -8,11 +8,15 @@ use App\Models\User;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
+use Exception;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 class OAuthController extends Controller
 {
@@ -23,7 +27,7 @@ class OAuthController extends Controller
     {
         try {
             return Socialite::driver('google')->redirect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to redirect to Google OAuth', [
                 'error' => $e->getMessage(),
             ]);
@@ -157,7 +161,7 @@ class OAuthController extends Controller
                             'ip' => $request->ip(),
                         ]);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to lookup location for OAuth user', [
                         'user_id' => $user->id,
                         'ip' => $request->ip(),
@@ -185,7 +189,7 @@ class OAuthController extends Controller
 
             return redirect()->intended(route('prompt-builder.index'));
 
-        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
+        } catch (InvalidStateException $e) {
             Log::warning('OAuth state validation failed', [
                 'error' => $e->getMessage(),
             ]);
@@ -193,7 +197,7 @@ class OAuthController extends Controller
             return redirect()->route('login')
                 ->with('error', 'Authentication session expired. Please try logging in again.');
 
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             Log::error('OAuth provider error', [
                 'error' => $e->getMessage(),
                 'status' => $e->getResponse()?->getStatusCode(),
@@ -202,7 +206,7 @@ class OAuthController extends Controller
             return redirect()->route('login')
                 ->with('error', 'Failed to communicate with Google. Please try again later.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Unexpected error in Google OAuth callback', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -250,7 +254,7 @@ class OAuthController extends Controller
                 ]);
             });
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             $errorCode = $e->errorInfo[1] ?? null;
 
             // Handle duplicate email
@@ -269,7 +273,7 @@ class OAuthController extends Controller
 
             return null;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Unexpected error creating OAuth user', [
                 'error' => $e->getMessage(),
                 'email' => $oauthUser->email,

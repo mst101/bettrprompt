@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\VisitorMigrationService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ class AuthenticatedSessionController extends Controller
 
             return redirect('/')->with('status', 'You have been logged out successfully.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Logout failed', [
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage(),
@@ -64,7 +65,7 @@ class AuthenticatedSessionController extends Controller
             try {
                 $request->session()->flush();
                 $request->session()->regenerateToken();
-            } catch (\Exception $sessionError) {
+            } catch (Exception $sessionError) {
                 // Ignore session errors at this point
             }
 

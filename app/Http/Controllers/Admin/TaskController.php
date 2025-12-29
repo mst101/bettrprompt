@@ -23,7 +23,7 @@ class TaskController extends Controller
             ->orderByDesc('runs_count');
 
         if ($request->search) {
-            $tasksQuery->where('task_description', 'like', "%{$request->search}%");
+            $tasksQuery->where('task_description', 'like', "%$request->search%");
         }
 
         $tasks = $tasksQuery->paginate(20)->withQueryString();

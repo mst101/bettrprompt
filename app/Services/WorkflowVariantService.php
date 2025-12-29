@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Storage;
-
 class WorkflowVariantService
 {
     /**
@@ -63,7 +61,7 @@ class WorkflowVariantService
     {
         $config = $this->getVariantConfig($workflowNumber, $variant);
         if (empty($config)) {
-            return base_path("n8n/workflow_{$workflowNumber}.json");
+            return base_path("n8n/workflow_$workflowNumber.json");
         }
 
         return base_path("n8n/{$config['workflow_file']}");
@@ -75,11 +73,10 @@ class WorkflowVariantService
      *   → '/home/mark/repos/bettrprompt/storage/app/n8n_debug/variants/two-pass/javascript/old/'
      */
     public function getVariantStoragePath(
-        int $workflowNumber,
         string $variant,
         string $type
     ): string {
-        return storage_path("app/n8n_debug/variants/{$variant}/{$type}/");
+        return storage_path("app/n8n_debug/variants/$variant/$type/");
     }
 
     /**
@@ -140,8 +137,8 @@ class WorkflowVariantService
         $version = $isNew ? 'new' : 'old';
 
         // Try variant-specific path first
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "javascript/{$version}");
-        $fileName = "workflow_{$workflowNumber}_prepare_prompt{$suffix}.js";
+        $variantPath = $this->getVariantStoragePath($variant, "javascript/$version");
+        $fileName = "workflow_{$workflowNumber}_prepare_prompt$suffix.js";
         $variantFile = $variantPath.$fileName;
 
         if (file_exists($variantFile)) {
@@ -149,7 +146,7 @@ class WorkflowVariantService
         }
 
         // Fall back to legacy structure for backwards compatibility
-        $legacyPath = storage_path("app/n8n_debug/javascript/{$version}/");
+        $legacyPath = storage_path("app/n8n_debug/javascript/$version/");
         $legacyFile = $legacyPath.$fileName;
 
         if (file_exists($legacyFile)) {
@@ -173,10 +170,10 @@ class WorkflowVariantService
         $suffix = $this->getNodeFilenameSuffix($nodeName);
         $version = $isNew ? 'new' : 'old';
 
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "javascript/{$version}");
+        $variantPath = $this->getVariantStoragePath($variant, "javascript/$version");
         $this->ensureDebugDirectory($variantPath);
 
-        $fileName = "workflow_{$workflowNumber}_prepare_prompt{$suffix}.js";
+        $fileName = "workflow_{$workflowNumber}_prepare_prompt$suffix.js";
         $filePath = $variantPath.$fileName;
 
         file_put_contents($filePath, $code);
@@ -196,8 +193,8 @@ class WorkflowVariantService
         $version = $isNew ? 'new' : 'old';
 
         // Try variant-specific path first
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "prompt/{$version}");
-        $fileName = "workflow_{$workflowNumber}_prompt{$suffix}.json";
+        $variantPath = $this->getVariantStoragePath($variant, "prompt/$version");
+        $fileName = "workflow_{$workflowNumber}_prompt$suffix.json";
         $variantFile = $variantPath.$fileName;
 
         if (file_exists($variantFile)) {
@@ -205,7 +202,7 @@ class WorkflowVariantService
         }
 
         // Fall back to legacy structure
-        $legacyPath = storage_path("app/n8n_debug/prompt/{$version}/");
+        $legacyPath = storage_path("app/n8n_debug/prompt/$version/");
         $legacyFile = $legacyPath.$fileName;
 
         if (file_exists($legacyFile)) {
@@ -228,10 +225,10 @@ class WorkflowVariantService
         $suffix = $this->getNodeFilenameSuffix($nodeName);
         $version = $isNew ? 'new' : 'old';
 
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "prompt/{$version}");
+        $variantPath = $this->getVariantStoragePath($variant, "prompt/$version");
         $this->ensureDebugDirectory($variantPath);
 
-        $fileName = "workflow_{$workflowNumber}_prompt{$suffix}.json";
+        $fileName = "workflow_{$workflowNumber}_prompt$suffix.json";
         $filePath = $variantPath.$fileName;
 
         file_put_contents($filePath, json_encode($promptData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -249,7 +246,7 @@ class WorkflowVariantService
         $version = $isNew ? 'new' : 'old';
 
         // Try variant-specific path first
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
+        $variantPath = $this->getVariantStoragePath($variant, "output/$version");
         $fileName = "workflow_{$workflowNumber}_output.json";
         $variantFile = $variantPath.$fileName;
 
@@ -258,7 +255,7 @@ class WorkflowVariantService
         }
 
         // Fall back to legacy structure
-        $legacyPath = storage_path("app/n8n_debug/output/{$version}/");
+        $legacyPath = storage_path("app/n8n_debug/output/$version/");
         $legacyFile = $legacyPath.$fileName;
 
         if (file_exists($legacyFile)) {
@@ -279,7 +276,7 @@ class WorkflowVariantService
     ): void {
         $version = $isNew ? 'new' : 'old';
 
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
+        $variantPath = $this->getVariantStoragePath($variant, "output/$version");
         $this->ensureDebugDirectory($variantPath);
 
         $fileName = "workflow_{$workflowNumber}_output.json";
@@ -319,8 +316,8 @@ class WorkflowVariantService
         bool $isNew
     ): ?array {
         $version = $isNew ? 'new' : 'old';
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
-        $fileName = "workflow_{$workflowNumber}_output_{$passNumber}.json";
+        $variantPath = $this->getVariantStoragePath($variant, "output/$version");
+        $fileName = "workflow_{$workflowNumber}_output_$passNumber.json";
         $filePath = $variantPath.$fileName;
 
         if (! file_exists($filePath)) {
@@ -328,27 +325,6 @@ class WorkflowVariantService
         }
 
         return json_decode(file_get_contents($filePath), true);
-    }
-
-    /**
-     * Save pass output (e.g., save Pass 1 output so Pass 2 can use it)
-     */
-    public function savePassOutput(
-        int $workflowNumber,
-        string $variant,
-        int $passNumber,
-        array $outputData,
-        bool $isNew
-    ): void {
-        $version = $isNew ? 'new' : 'old';
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "output/{$version}");
-        $this->ensureDebugDirectory($variantPath);
-
-        $fileName = "workflow_{$workflowNumber}_output_{$passNumber}.json";
-        $filePath = $variantPath.$fileName;
-
-        file_put_contents($filePath, json_encode($outputData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        chmod($filePath, 0644);
     }
 
     /**

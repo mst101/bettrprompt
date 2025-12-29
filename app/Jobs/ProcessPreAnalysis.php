@@ -6,6 +6,7 @@ use App\Events\PreAnalysisCompleted;
 use App\Models\PromptRun;
 use App\Services\DatabaseService;
 use App\Services\N8nWorkflowClient;
+use DB;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -25,13 +26,15 @@ class ProcessPreAnalysis implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws Exception
      */
     public function handle(N8nWorkflowClient $workflowClient): void
     {
         // Switch database if specified (e.g., for data collection tests)
         if ($this->database) {
             config(['database.connections.pgsql.database' => $this->database]);
-            \DB::purge('pgsql');
+            DB::purge('pgsql');
         }
 
         try {

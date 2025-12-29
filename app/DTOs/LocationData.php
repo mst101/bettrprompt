@@ -4,19 +4,19 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 
-class LocationData
+readonly class LocationData
 {
     public function __construct(
-        public readonly ?string $countryCode = null,
-        public readonly ?string $countryName = null,
-        public readonly ?string $region = null,
-        public readonly ?string $city = null,
-        public readonly ?string $timezone = null,
-        public readonly ?string $currencyCode = null,
-        public readonly ?float $latitude = null,
-        public readonly ?float $longitude = null,
-        public readonly ?string $languageCode = null,
-        public readonly ?Carbon $detectedAt = null,
+        public ?string $countryCode = null,
+        public ?string $countryName = null,
+        public ?string $region = null,
+        public ?string $city = null,
+        public ?string $timezone = null,
+        public ?string $currencyCode = null,
+        public ?float $latitude = null,
+        public ?float $longitude = null,
+        public ?string $languageCode = null,
+        public ?Carbon $detectedAt = null,
     ) {}
 
     /**
@@ -71,9 +71,9 @@ class LocationData
     public function getSummary(): string
     {
         if (is_null($this->city)) {
-            return "{$this->region}, {$this->countryName}";
+            return "$this->region, $this->countryName";
         }
 
-        return "{$this->city}, {$this->region}, {$this->countryName}";
+        return "$this->city, $this->region, $this->countryName";
     }
 }

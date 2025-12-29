@@ -124,7 +124,7 @@ class MigrateN8nDebugData extends Command
                 }
 
                 $fileName = basename($sourceFile);
-                $destPath = $variantService->getVariantStoragePath($workflowNumber, $variant, "{$type}/{$version}");
+                $destPath = $variantService->getVariantStoragePath($variant, "{$type}/{$version}");
 
                 // Create destination directory if it doesn't exist
                 if (! is_dir($destPath)) {

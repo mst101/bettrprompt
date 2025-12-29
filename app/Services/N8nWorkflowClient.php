@@ -358,7 +358,7 @@ class N8nWorkflowClient
      */
     protected function isTestingEnvironment(): bool
     {
-        return env('APP_ENV') === 'testing' || env('TESTING') === 'true' || app()->environment('testing');
+        return app()->environment('testing');
     }
 
     /**

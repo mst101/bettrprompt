@@ -8,7 +8,6 @@ use GeoIp2\Database\Reader;
 use GeoIp2\Exception\AddressNotFoundException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class GeolocationService
 {
@@ -48,7 +47,6 @@ class GeolocationService
         'ZA' => 'ZAR',
         'SG' => 'SGD',
         'HK' => 'HKD',
-        'NZ' => 'NZD',
     ];
 
     /**
@@ -89,26 +87,22 @@ class GeolocationService
         // Reject private IPs (unless in development mode)
         if ($this->isPrivateIp($ip)) {
             if (! config('geoip.development.allow_private_ip_lookup')) {
-                Log::debug("Skipping geolocation for private IP: {$ip}");
+                Log::debug("Skipping geolocation for private IP: $ip");
 
                 return null;
             }
-            Log::debug("Performing geolocation lookup for private IP in development: {$ip}");
+            Log::debug("Performing geolocation lookup for private IP in development: $ip");
 
             // Return a default location for development with private IPs
             return $this->getDefaultLocationForDevelopment();
         }
 
         // Try cache first
-        try {
-            $cached = Cache::get($this->getCacheKey($ip));
-            if ($cached !== null) {
-                Log::debug("Geolocation cache hit for IP: {$ip}");
+        $cached = Cache::get($this->getCacheKey($ip));
+        if ($cached !== null) {
+            Log::debug("Geolocation cache hit for IP: $ip");
 
-                return LocationData::fromArray($cached);
-            }
-        } catch (InvalidArgumentException $e) {
-            Log::warning("Cache error during geolocation lookup: {$e->getMessage()}");
+            return LocationData::fromArray($cached);
         }
 
         try {
@@ -121,42 +115,38 @@ class GeolocationService
 
             $record = $reader->city($ip);
 
-            $timezone = $record->location?->timeZone;
-            $countryCode = $record->country?->isoCode;
+            $timezone = $record->location->timeZone;
+            $countryCode = $record->country->isoCode;
 
             $locationData = new LocationData(
                 countryCode: $countryCode,
-                countryName: $record->country?->name,
-                region: $record->mostSpecificSubdivision?->name,
-                city: $record->city?->name,
+                countryName: $record->country->name,
+                region: $record->mostSpecificSubdivision->name,
+                city: $record->city->name,
                 timezone: $timezone,
                 currencyCode: $this->getCurrencyForCountry($countryCode),
-                latitude: $this->anonymiseCoordinate($record->location?->latitude),
-                longitude: $this->anonymiseCoordinate($record->location?->longitude),
+                latitude: $this->anonymiseCoordinate($record->location->latitude),
+                longitude: $this->anonymiseCoordinate($record->location->longitude),
                 languageCode: $this->getLanguageForCountry($countryCode),
                 detectedAt: now(),
             );
 
             // Cache the result
-            try {
-                Cache::put(
-                    $this->getCacheKey($ip),
-                    $locationData->toArray(),
-                    self::CACHE_TTL
-                );
-            } catch (InvalidArgumentException $e) {
-                Log::warning("Failed to cache geolocation result: {$e->getMessage()}");
-            }
+            Cache::put(
+                $this->getCacheKey($ip),
+                $locationData->toArray(),
+                self::CACHE_TTL
+            );
 
-            Log::debug("Geolocation lookup successful for IP: {$ip}, Country: {$countryCode}");
+            Log::debug("Geolocation lookup successful for IP: $ip, Country: $countryCode");
 
             return $locationData;
         } catch (AddressNotFoundException) {
-            Log::debug("IP address not found in MaxMind database: {$ip}");
+            Log::debug("IP address not found in MaxMind database: $ip");
 
             return null;
         } catch (Exception $e) {
-            Log::error("Geolocation lookup failed for IP {$ip}: {$e->getMessage()}");
+            Log::error("Geolocation lookup failed for IP $ip: {$e->getMessage()}");
 
             return null;
         }
@@ -175,7 +165,7 @@ class GeolocationService
      */
     private function getCacheKey(string $ip): string
     {
-        return "geoip:{$ip}";
+        return "geoip:$ip";
     }
 
     /**
@@ -190,7 +180,7 @@ class GeolocationService
         $databasePath = config('geoip.maxmind.database_path');
 
         if (! file_exists($databasePath)) {
-            Log::warning("MaxMind database not found at: {$databasePath}");
+            Log::warning("MaxMind database not found at: $databasePath");
 
             return null;
         }
@@ -216,7 +206,9 @@ class GeolocationService
         }
 
         // Special case for Eurozone
-        $euCountries = ['DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'IE', 'PT', 'GR', 'CY', 'MT', 'SK', 'SI', 'LV', 'LT', 'EE'];
+        $euCountries = [
+            'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'IE', 'PT', 'GR', 'CY', 'MT', 'SK', 'SI', 'LV', 'LT', 'EE',
+        ];
         if (in_array($countryCode, $euCountries)) {
             return 'EUR';
         }
@@ -276,7 +268,7 @@ class GeolocationService
         if ($this->reader !== null) {
             try {
                 $this->reader->close();
-            } catch (\Exception) {
+            } catch (Exception) {
                 // Ignore exceptions during cleanup
             }
         }

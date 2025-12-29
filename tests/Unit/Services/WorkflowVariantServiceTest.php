@@ -113,7 +113,7 @@ class WorkflowVariantServiceTest extends TestCase
 
     public function test_get_variant_storage_path_includes_variant_name(): void
     {
-        $path = $this->variantService->getVariantStoragePath(1, 'two-pass', 'prepare_prompt/old');
+        $path = $this->variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
 
         $this->assertStringContainsString('two-pass', $path);
         $this->assertStringContainsString('prepare_prompt', $path);
@@ -122,7 +122,7 @@ class WorkflowVariantServiceTest extends TestCase
 
     public function test_get_variant_storage_path_returns_directory_path(): void
     {
-        $path = $this->variantService->getVariantStoragePath(1, 'single-pass', 'prompt/new');
+        $path = $this->variantService->getVariantStoragePath('single-pass', 'prompt/new');
 
         // Path should be a directory path ending with /
         $this->assertStringEndsWith('/', $path);

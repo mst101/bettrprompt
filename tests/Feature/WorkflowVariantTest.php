@@ -74,7 +74,8 @@ class WorkflowVariantTest extends TestCase
 
     public function test_set_variant_validates_variant_exists(): void
     {
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'invalid-variant']);
+        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant',
+            ['variant' => 'invalid-variant']);
 
         $response->assertStatus(400)
             ->assertJson(['success' => false]);
@@ -182,8 +183,8 @@ class WorkflowVariantTest extends TestCase
 
     public function test_load_variant_storage_path_multiple_variants(): void
     {
-        $singlePassPath = $this->variantService->getVariantStoragePath(1, 'single-pass', 'prepare_prompt/old');
-        $twoPassPath = $this->variantService->getVariantStoragePath(1, 'two-pass', 'prepare_prompt/old');
+        $singlePassPath = $this->variantService->getVariantStoragePath('single-pass', 'prepare_prompt/old');
+        $twoPassPath = $this->variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
 
         // They should be different paths
         $this->assertNotEquals($singlePassPath, $twoPassPath);

@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
+use Throwable;
 
 class N8nClient
 {
@@ -38,17 +41,17 @@ class N8nClient
     /**
      * Validate that N8n service is properly configured
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function validateConfiguration(): void
     {
         if (! $this->baseUrl) {
-            throw new \RuntimeException('N8n service URL is not configured. Check N8N_INTERNAL_URL environment variable.');
+            throw new RuntimeException('N8n service URL is not configured. Check N8N_INTERNAL_URL environment variable.');
         }
 
         // Either API key or basic auth credentials required
         if (! $this->apiKey && (! $this->username || ! $this->password)) {
-            throw new \RuntimeException('N8n service requires either N8N_API_KEY or (N8N_BASIC_AUTH_USER and N8N_BASIC_AUTH_PASSWORD) environment variables.');
+            throw new RuntimeException('N8n service requires either N8N_API_KEY or (N8N_BASIC_AUTH_USER and N8N_BASIC_AUTH_PASSWORD) environment variables.');
         }
     }
 
@@ -113,6 +116,9 @@ class N8nClient
      * @param  string  $workflowId  The n8n workflow ID
      * @param  array  $workflow  The workflow definition
      * @return array Response with success status and data/error
+     *
+     * @throws ConnectionException
+     * @throws Throwable
      */
     public function updateWorkflow(string $workflowId, array $workflow): array
     {
@@ -142,7 +148,7 @@ class N8nClient
                     $http = $http->withBasicAuth($this->username, $this->password);
                 }
 
-                $response = $http->put(rtrim($this->baseUrl, '/')."/api/v1/workflows/{$workflowId}", $workflow);
+                $response = $http->put(rtrim($this->baseUrl, '/')."/api/v1/workflows/$workflowId", $workflow);
 
                 // Check for HTTP errors
                 if ($response->failed()) {
@@ -191,7 +197,7 @@ class N8nClient
                     'data' => $response->json(),
                 ];
 
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            } catch (ConnectionException $e) {
                 // Network/connection errors - retry
                 $attempt++;
                 $lastException = $e;
@@ -209,24 +215,7 @@ class N8nClient
                 // Exponential backoff
                 $this->backoffDelay($attempt);
 
-            } catch (\Illuminate\Http\Client\RequestException $e) {
-                // HTTP request exceptions
-                $attempt++;
-                $lastException = $e;
-
-                Log::error('N8n request exception updating workflow', [
-                    'workflowId' => $workflowId,
-                    'attempt' => $attempt,
-                    'error' => $e->getMessage(),
-                ]);
-
-                if ($attempt >= $this->maxRetries) {
-                    break;
-                }
-
-                $this->backoffDelay($attempt);
-
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Unexpected errors - don't retry
                 Log::error('N8n unexpected error updating workflow', [
                     'workflowId' => $workflowId,
@@ -260,6 +249,9 @@ class N8nClient
      * @param  string  $path  Webhook path (e.g., '/webhook/my-webhook')
      * @param  array  $payload  Data to send
      * @return array Response with success status and data/error
+     *
+     * @throws ConnectionException
+     * @throws Throwable
      */
     public function triggerWebhook(string $path, array $payload = []): array
     {
@@ -281,7 +273,7 @@ class N8nClient
         while ($attempt < $this->maxRetries) {
             try {
                 $response = Http::timeout($this->timeout)
-                    ->retry(1, 0) // Laravel's built-in retry (attempt once, no delay)
+                    ->retry(1) // Laravel's built-in retry (attempt once, no delay)
                     ->withBasicAuth($this->username, $this->password)
                     ->post(rtrim($this->baseUrl, '/').'/'.ltrim($path, '/'), $payload);
 
@@ -355,7 +347,7 @@ class N8nClient
                     'data' => $response->json(),
                 ];
 
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            } catch (ConnectionException $e) {
                 // Network/connection errors - retry
                 $attempt++;
                 $lastException = $e;
@@ -373,24 +365,7 @@ class N8nClient
                 // Exponential backoff
                 $this->backoffDelay($attempt);
 
-            } catch (\Illuminate\Http\Client\RequestException $e) {
-                // HTTP request exceptions
-                $attempt++;
-                $lastException = $e;
-
-                Log::error('N8n request exception', [
-                    'path' => $path,
-                    'attempt' => $attempt,
-                    'error' => $e->getMessage(),
-                ]);
-
-                if ($attempt >= $this->maxRetries) {
-                    break;
-                }
-
-                $this->backoffDelay($attempt);
-
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Unexpected errors - don't retry
                 Log::error('N8n unexpected error', [
                     'path' => $path,

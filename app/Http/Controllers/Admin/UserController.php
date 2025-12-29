@@ -25,8 +25,8 @@ class UserController extends Controller
                 },
             ])
             ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
             })
             ->latest()
             ->paginate(20)

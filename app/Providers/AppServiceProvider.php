@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\N8nWorkflowClient;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(N8nWorkflowClient::class, function ($app) {
+        $this->app->singleton(N8nWorkflowClient::class, function () {
             return new N8nWorkflowClient;
         });
     }
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Force HTTPS URLs when behind reverse proxy (Caddy)
         if ($this->app->environment('local')) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
     }
 }

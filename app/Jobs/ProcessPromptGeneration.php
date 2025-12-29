@@ -7,6 +7,7 @@ use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
 use App\Services\DatabaseService;
 use App\Services\N8nWorkflowClient;
+use DB;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,13 +27,15 @@ class ProcessPromptGeneration implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws Exception
      */
     public function handle(N8nWorkflowClient $workflowClient): void
     {
         // Switch database if specified (e.g., for data collection tests)
         if ($this->database) {
             config(['database.connections.pgsql.database' => $this->database]);
-            \DB::purge('pgsql');
+            DB::purge('pgsql');
         }
 
         try {
@@ -83,7 +86,7 @@ class ProcessPromptGeneration implements ShouldQueue
 
                 // If n8n returned a 202 Accepted or similar (async), it's not really a failure
                 // The actual result will come via webhook
-                if (strpos($errorMsg, 'Accepted') !== false || strpos($errorMsg, 'queued') !== false) {
+                if (str_contains($errorMsg, 'Accepted') || str_contains($errorMsg, 'queued')) {
                     Log::info('Workflow 2 queued asynchronously', [
                         'prompt_run_id' => $this->promptRun->id,
                         'workflow_stage' => $this->promptRun->workflow_stage,
