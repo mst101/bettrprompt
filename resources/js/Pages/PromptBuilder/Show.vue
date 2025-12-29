@@ -19,7 +19,7 @@ import GenerationProgress from '@/Components/Features/PromptBuilder/Progress/Gen
 import PreAnalysisProgress from '@/Components/Features/PromptBuilder/Progress/PreAnalysisProgress.vue';
 import Recommendations from '@/Components/Features/PromptBuilder/Recommendations/Recommendations.vue';
 import CognitiveRequirements from '@/Components/Features/PromptBuilder/YourTask/CognitiveRequirements.vue';
-import QuickQueries from '@/Components/Features/PromptBuilder/YourTask/QuickQueries.vue';
+import PreAnalysisQuestions from '@/Components/Features/PromptBuilder/YourTask/PreAnalysisQuestions.vue';
 import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
@@ -558,7 +558,7 @@ onUnmounted(() => {
                 />
 
                 <!-- Pre-analysis questions/answers -->
-                <QuickQueries :prompt-run="promptRun" />
+                <PreAnalysisQuestions :prompt-run="promptRun" />
 
                 <RelatedPromptRuns
                     v-if="hasRelatedRuns"
