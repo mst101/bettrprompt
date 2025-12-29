@@ -144,10 +144,6 @@ class MockN8nController extends Controller
 
         // Check if this is an error scenario
         if (in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
-            // For error scenarios, we still need to update the DB directly
-            // because the error handling is different
-            $promptRunId = $request->input('prompt_run_id');
-
             return $this->handleErrorScenario($request, $scenario, '1_processing');
         }
 
@@ -245,7 +241,7 @@ class MockN8nController extends Controller
         $scenario = $this->getMockScenario($request);
 
         // Check if this is an error scenario
-        if ($scenario && in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
+        if (in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
             return $this->handleErrorScenario($request, $scenario, '2_processing');
         }
 
