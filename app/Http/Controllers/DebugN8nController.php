@@ -22,24 +22,9 @@ class DebugN8nController extends Controller
     private const INPUT_DIR = 'input';
 
     /**
-     * Directory for storing JavaScript versions
-     */
-    private const JAVASCRIPT_DIR = 'javascript';
-
-    /**
-     * Directory for storing prompt outputs
-     */
-    private const PROMPT_DIR = 'prompts';
-
-    /**
      * Default prepare prompt node name
      */
     private const DEFAULT_NODE_NAME = 'Prepare Prompt';
-
-    /**
-     * Node.js script execution timeout (seconds)
-     */
-    private const NODE_EXECUTION_TIMEOUT = 30;
 
     /**
      * @var array List of temporary files to clean up after execution
@@ -270,8 +255,11 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from n8n workflow and save to specified version
      */
-    private function reloadJavaScriptFromWorkflowInternal(Request $request, int $workflowNumber, bool $isNew): \Illuminate\Http\JsonResponse
-    {
+    private function reloadJavaScriptFromWorkflowInternal(
+        Request $request,
+        int $workflowNumber,
+        bool $isNew
+    ): \Illuminate\Http\JsonResponse {
         try {
             $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
@@ -473,8 +461,11 @@ class DebugN8nController extends Controller
     /**
      * Upload workflow to n8n server with specified version
      */
-    private function uploadWorkflowToN8nInternal(Request $request, int $workflowNumber, bool $isNew): \Illuminate\Http\JsonResponse
-    {
+    private function uploadWorkflowToN8nInternal(
+        Request $request,
+        int $workflowNumber,
+        bool $isNew
+    ): \Illuminate\Http\JsonResponse {
         try {
             $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
@@ -660,8 +651,11 @@ class DebugN8nController extends Controller
     /**
      * Prepare prompt with specified JavaScript version
      */
-    private function preparePromptInternal(Request $request, int $workflowNumber, bool $isNew): \Illuminate\Http\JsonResponse
-    {
+    private function preparePromptInternal(
+        Request $request,
+        int $workflowNumber,
+        bool $isNew
+    ): \Illuminate\Http\JsonResponse {
         try {
             $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', self::DEFAULT_NODE_NAME);
@@ -738,8 +732,12 @@ class DebugN8nController extends Controller
      *
      * @return array with 'success', 'data', and optional 'status_code' keys
      */
-    private function loadPreparePromptInput(Request $request, int $workflowNumber, string $variant, int $passNumber): array
-    {
+    private function loadPreparePromptInput(
+        Request $request,
+        int $workflowNumber,
+        string $variant,
+        int $passNumber
+    ): array {
         $inputData = $request->input('input');
 
         if ($inputData === null) {
@@ -805,9 +803,11 @@ class DebugN8nController extends Controller
             }
         } else {
             // Try loading previous pass output (check both old and new versions)
-            $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, true);
+            $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1,
+                true);
             if ($previousPassOutput === null) {
-                $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, false);
+                $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1,
+                    false);
             }
 
             if ($previousPassOutput !== null) {
@@ -1132,7 +1132,7 @@ try {
 
             // Strategy 2: Find the last { ... } JSON block
             $trimmed = rtrim($output);
-            if (preg_match('/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}$/', $trimmed, $matches)) {
+            if (preg_match('/\{[^{}]*(?:\{[^{}]*}[^{}]*)*}$/', $trimmed, $matches)) {
                 $result = json_decode($matches[0], true);
                 if (json_last_error() === JSON_ERROR_NONE && is_array($result)) {
                     return $result;
@@ -1257,8 +1257,12 @@ try {
     /**
      * Save workflow output to variant-specific storage
      */
-    private function saveWorkflowOutput(Request $request, int $workflowNumber, array $resultData, bool $isNew = false): void
-    {
+    private function saveWorkflowOutput(
+        Request $request,
+        int $workflowNumber,
+        array $resultData,
+        bool $isNew = false
+    ): void {
         $variant = $this->getVariant($request, $workflowNumber);
         $this->variantService->saveOutput($workflowNumber, $variant, $resultData, $isNew);
     }
@@ -1284,8 +1288,11 @@ try {
     /**
      * Execute n8n workflow with specified version
      */
-    private function executeWorkflowInternal(Request $request, int $workflowNumber, bool $isNew): \Illuminate\Http\JsonResponse
-    {
+    private function executeWorkflowInternal(
+        Request $request,
+        int $workflowNumber,
+        bool $isNew
+    ): \Illuminate\Http\JsonResponse {
         try {
             $inputData = $this->loadInputData($request, $workflowNumber);
 
@@ -1306,7 +1313,8 @@ try {
                 ], 400);
             }
 
-            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext, $inputData);
+            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext,
+                $inputData);
             $this->saveWorkflowOutput($request, $workflowNumber, $resultData, $isNew);
 
             return response()->json([
