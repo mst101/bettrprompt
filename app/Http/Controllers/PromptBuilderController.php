@@ -23,7 +23,6 @@ use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
-use App\Services\PromptFrameworkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -32,10 +31,6 @@ use Inertia\Inertia;
 class PromptBuilderController extends Controller
 {
     // ======== SETUP ========
-
-    public function __construct(
-        private PromptFrameworkService $promptService
-    ) {}
 
     /**
      * Display the prompt builder landing page
