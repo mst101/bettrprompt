@@ -102,7 +102,7 @@ class TestBroadcastController extends Controller
         if (! $promptRun->optimized_prompt) {
             $promptRun->update([
                 'workflow_stage' => '2_completed',
-                'optimized_prompt' => "# Test Optimised Prompt\n\nThis is a test prompt generated for E2E testing purposes.\n\n## Your Task\n{$promptRun->task_description}\n\n## Recommended Framework\n{$promptRun->selected_framework}\n\nPlease proceed with this structured approach to achieve the best results.",
+                'optimized_prompt' => "# Test Optimised Prompt\n\nThis is a test prompt generated for E2E testing purposes.\n\n## Your Task\n$promptRun->task_description\n\n## Recommended Framework\n$promptRun->selected_framework\n\nPlease proceed with this structured approach to achieve the best results.",
                 'completed_at' => now(),
             ]);
 
@@ -169,13 +169,13 @@ class TestBroadcastController extends Controller
         // Get the first existing visitor, or create a new one if none exist
         $visitor = Visitor::first();
         if (! $visitor) {
-            $visitor = Visitor::create([]);
+            $visitor = Visitor::create();
         }
 
         $data = [
             'visitor_id' => $visitor->id,
             'user_id' => $userId,
-            'task_description' => "E2E Test Prompt - Workflow Stage: {$state}",
+            'task_description' => "E2E Test Prompt - Workflow Stage: $state",
             'task_classification' => ['type' => 'prompt_builder', 'source' => 'test'],
             'personality_type' => 'INTJ-A',
         ];
@@ -279,7 +279,7 @@ class TestBroadcastController extends Controller
             'success' => true,
             'prompt_run_id' => $promptRun->id,
             'state' => $state,
-            'url' => "/prompt-builder/{$promptRun->id}",
+            'url' => "/prompt-builder/$promptRun->id",
         ]);
     }
 
@@ -315,7 +315,7 @@ class TestBroadcastController extends Controller
         ]);
 
         // Create personality type code (e.g., "INTJ-A")
-        $personalityCode = "{$personalityType}-".($identity === 'assertive' ? 'A' : 'T');
+        $personalityCode = "$personalityType-".($identity === 'assertive' ? 'A' : 'T');
 
         // Update user personality with the trait percentages as sent by the fixture
         $user->update([

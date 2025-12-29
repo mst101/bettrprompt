@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -49,7 +50,7 @@ class ReferenceDocumentsController extends Controller
             if (! file_exists($path)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Document not found: {$filename}",
+                    'error' => "Document not found: $filename",
                 ], 404);
             }
 
@@ -62,7 +63,7 @@ class ReferenceDocumentsController extends Controller
                 'content' => $content,
                 'usedIn' => $this->getWorkflowsUsingDocument($filename),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -88,7 +89,7 @@ class ReferenceDocumentsController extends Controller
                 mkdir($directory, 0755, true);
             }
 
-            // Save the markdown file
+            // Save the Markdown file
             file_put_contents($path, $request->input('content'));
             chmod($path, 0644);
 
@@ -97,9 +98,9 @@ class ReferenceDocumentsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Document '{$filename}' saved successfully and embedded into workflows",
+                'message' => "Document '$filename' saved successfully and embedded into workflows",
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -109,18 +110,20 @@ class ReferenceDocumentsController extends Controller
 
     /**
      * Get the file path for a document
+     *
+     * @throws Exception
      */
     private function getDocumentPath($type, $filename)
     {
         $baseDir = resource_path('reference_documents');
 
         if ($type === 'core') {
-            return "{$baseDir}/{$filename}";
+            return "$baseDir/$filename";
         } elseif ($type === 'framework') {
-            return "{$baseDir}/framework_templates/{$filename}";
+            return "$baseDir/framework_templates/$filename";
         }
 
-        throw new \Exception("Invalid document type: {$type}");
+        throw new Exception("Invalid document type: $type");
     }
 
     /**
@@ -142,7 +145,7 @@ class ReferenceDocumentsController extends Controller
         ];
 
         foreach ($coreFiles as $file) {
-            $path = "{$baseDir}/{$file}";
+            $path = "$baseDir/$file";
             if (file_exists($path)) {
                 $documents['core'][] = [
                     'type' => 'core',
@@ -156,9 +159,9 @@ class ReferenceDocumentsController extends Controller
         }
 
         // Framework template files
-        $frameworkDir = "{$baseDir}/framework_templates";
+        $frameworkDir = "$baseDir/framework_templates";
         if (is_dir($frameworkDir)) {
-            $files = glob("{$frameworkDir}/*.md");
+            $files = glob("$frameworkDir/*.md");
             foreach ($files as $path) {
                 $file = basename($path);
                 $documents['framework'][] = [
@@ -185,12 +188,12 @@ class ReferenceDocumentsController extends Controller
      */
     private function getWorkflowsUsingDocument($filename)
     {
-        $baseFilename = str_replace('.md', '', $filename);
+        str_replace('.md', '', $filename);
         $usedIn = [];
 
         // Framework templates are used in workflow_2
         if (str_contains(resource_path('reference_documents/framework_templates'), $filename) ||
-            is_file(resource_path("reference_documents/framework_templates/{$filename}"))) {
+            is_file(resource_path("reference_documents/framework_templates/$filename"))) {
             $usedIn[] = 'workflow_2';
         }
 
@@ -209,6 +212,8 @@ class ReferenceDocumentsController extends Controller
 
     /**
      * Embed a document into the relevant workflow JSON files
+     *
+     * @throws Exception
      */
     private function embedDocumentIntoWorkflows($type, $filename, $content)
     {
@@ -240,19 +245,21 @@ class ReferenceDocumentsController extends Controller
 
     /**
      * Update the "Load Reference Documents" node in a workflow JSON file
+     *
+     * @throws Exception
      */
     private function updateWorkflowJSON($workflowNumber, $updates, $type, $filename)
     {
-        $workflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+        $workflowFile = base_path("n8n/workflow_$workflowNumber.json");
 
         if (! file_exists($workflowFile)) {
-            throw new \Exception("Workflow file not found: workflow_{$workflowNumber}.json");
+            throw new Exception("Workflow file not found: workflow_$workflowNumber.json");
         }
 
         $workflow = json_decode(file_get_contents($workflowFile), true);
 
         if (! isset($workflow['nodes'])) {
-            throw new \Exception('Invalid workflow format: nodes array not found');
+            throw new Exception('Invalid workflow format: nodes array not found');
         }
 
         // Find the "Load Reference Documents" node
@@ -278,7 +285,7 @@ class ReferenceDocumentsController extends Controller
         }
 
         if (! $found) {
-            throw new \Exception("Load Reference Documents node not found in workflow_{$workflowNumber}");
+            throw new Exception("Load Reference Documents node not found in workflow_$workflowNumber");
         }
 
         // Write the updated workflow back to file
@@ -361,7 +368,7 @@ class ReferenceDocumentsController extends Controller
         $frameworkDir = resource_path('reference_documents/framework_templates');
 
         if (is_dir($frameworkDir)) {
-            $files = glob("{$frameworkDir}/*.md");
+            $files = glob("$frameworkDir/*.md");
             foreach ($files as $path) {
                 $filename = basename($path);
                 $templateName = str_replace('.md', '', $filename);
