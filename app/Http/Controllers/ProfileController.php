@@ -15,7 +15,9 @@ use App\Models\Currency;
 use App\Models\Language;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
+use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class ProfileController extends Controller
 {
@@ -60,7 +63,7 @@ class ProfileController extends Controller
 
         $currencies = Currency::all()->map(fn ($currency) => [
             'value' => $currency->id,
-            'label' => "{$currency->symbol} ({$currency->id})",
+            'label' => "$currency->symbol ($currency->id)",
         ])->values();
 
         $languages = Language::active()->map(fn ($language) => [
@@ -130,7 +133,7 @@ class ProfileController extends Controller
             return Redirect::route('profile.edit')
                 ->with('status', 'profile-updated');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Failed to update user profile', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -157,7 +160,7 @@ class ProfileController extends Controller
             return Redirect::route('profile.edit')
                 ->with('status', 'personality-updated');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Failed to update user personality type', [
                 'user_id' => $request->user()->id,
                 'personality_type' => $request->validated('personalityType'),
@@ -205,7 +208,7 @@ class ProfileController extends Controller
             return Redirect::to('/')
                 ->with('status', 'Your account has been deleted.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Log::error('Failed to delete user account', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
@@ -216,7 +219,7 @@ class ProfileController extends Controller
 
             return Redirect::back()->with('error',
                 'Failed to delete account. Please try again or contact support.');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Unexpected error during account deletion', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
@@ -251,7 +254,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update user location', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -279,7 +282,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'professional-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update professional context', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -306,7 +309,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'team-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update team context', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -331,7 +334,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'budget-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update budget preferences', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -357,7 +360,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'tools-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update tool preferences', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -390,7 +393,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-detected-updated');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to detect location', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -426,7 +429,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-cleared');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to clear location', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -451,7 +454,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'professional-cleared');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to clear professional information', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -475,7 +478,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'team-cleared');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to clear team information', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -497,7 +500,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'budget-cleared');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to clear budget preferences', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
@@ -520,7 +523,7 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit')
                 ->with('status', 'tools-cleared');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to clear tools & technologies', [
                 'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
