@@ -33,9 +33,9 @@ test('user can update personality type', function () {
     $response->assertSessionHas('status', 'personality-updated');
 
     $this->user->refresh();
-    expect($this->user->personality_type)->toBe('ENFP-T');
-    expect($this->user->trait_percentages['mind'])->toBe(62);
-    expect($this->user->trait_percentages['energy'])->toBe(85);
+    expect($this->user->personality_type)->toBe('ENFP-T')
+        ->and($this->user->trait_percentages['mind'])->toBe(62)
+        ->and($this->user->trait_percentages['energy'])->toBe(85);
 });
 
 test('personality update validates personality type format', function () {
@@ -150,7 +150,7 @@ test('personality update requires authentication', function () {
     $response->assertRedirect(route('login'));
 });
 
-test('personality update accepts valid mbti type', function (string $type) {
+test('personality update accepts valid MBTI type', function (string $type) {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => $type,
         'traitPercentages' => [
@@ -186,7 +186,7 @@ test('personality update accepts valid mbti type', function (string $type) {
     'ESFP-A', 'ESFP-T',
 ]);
 
-test('personality update rejects invalid mbti type', function (string $type) {
+test('personality update rejects invalid MBTI type', function (string $type) {
     $response = $this->patch(route('profile.personality.update'), [
         'personalityType' => $type,
         'traitPercentages' => [
@@ -229,9 +229,9 @@ test('personality type is stored with prompt runs', function () {
     $this->user->refresh();
 
     // Verify the personality type can be accessed
-    expect($this->user->personality_type)->toBe('ENFP-T');
-    expect($this->user->trait_percentages)->toBeArray();
-    expect($this->user->trait_percentages['mind'])->toBe(62);
+    expect($this->user->personality_type)->toBe('ENFP-T')
+        ->and($this->user->trait_percentages)->toBeArray()
+        ->and($this->user->trait_percentages['mind'])->toBe(62);
 });
 
 test('updating personality does not affect other user data', function () {
@@ -255,7 +255,7 @@ test('updating personality does not affect other user data', function () {
     $this->user->refresh();
 
     // Other fields should remain unchanged
-    expect($this->user->name)->toBe($originalName);
-    expect($this->user->email)->toBe($originalEmail);
-    expect($this->user->created_at->timestamp)->toBe($originalCreatedAt->timestamp);
+    expect($this->user->name)->toBe($originalName)
+        ->and($this->user->email)->toBe($originalEmail)
+        ->and($this->user->created_at->timestamp)->toBe($originalCreatedAt->timestamp);
 });
