@@ -976,45 +976,6 @@ class PromptBuilderController extends Controller
     }
 
     /**
-     * Get user context for workflow optimisation
-     * Includes location, professional, team, budget, and tool preferences
-     */
-    protected function getUserContext(Request $request): ?array
-    {
-        // Authenticated users - get full context from user profile
-        if (auth()->check()) {
-            return auth()->user()->getUserContext();
-        }
-
-        // Guest users - build minimal context from visitor location data
-        $visitorId = $this->getVisitorId($request);
-        if ($visitorId) {
-            $visitor = Visitor::find($visitorId);
-            if ($visitor && $visitor->hasLocationData()) {
-                return [
-                    'location' => [
-                        'country' => $visitor->country_name,
-                        'country_code' => $visitor->country_code,
-                        'region' => $visitor->region,
-                        'city' => $visitor->city,
-                        'timezone' => $visitor->timezone,
-                        'currency' => $visitor->currency_code,
-                        'language' => $visitor->language_code,
-                    ],
-                    // Guests don't have professional/team/preferences data
-                    'professional' => null,
-                    'team' => null,
-                    'preferences' => null,
-                    'personality' => null,
-                ];
-            }
-        }
-
-        // No context available
-        return null;
-    }
-
-    /**
      * Build structured pre_analysis_context from questions and answers
      */
     protected function buildPreAnalysisContext(?array $questions, array $answers): array
@@ -1051,33 +1012,6 @@ class PromptBuilderController extends Controller
         }
 
         return $context;
-    }
-
-    /**
-     * Check if all questions have been answered
-     */
-    protected function hasAnsweredAllQuestions(PromptRun $promptRun): bool
-    {
-        $totalQuestions = count($promptRun->framework_questions ?? []);
-        $answers = Arr::wrap($promptRun->clarifying_answers ?? []);
-        $answers = array_values($answers);
-
-        if ($totalQuestions === 0) {
-            return true;
-        }
-
-        if (count($answers) < $totalQuestions) {
-            return false;
-        }
-
-        // Consider answered if every slot is non-null
-        foreach ($answers as $answer) {
-            if ($answer === null) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
