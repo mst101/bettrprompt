@@ -22,7 +22,8 @@ class N8nWorkflowClient
     public function __construct()
     {
         // Always use the internal service URL to avoid HTTPS/host routing issues
-        $this->n8nBaseUrl = config('services.n8n.url', env('N8N_INTERNAL_URL', 'http://n8n:5678'));
+        // Config value is set in config/services.php for proper config caching support
+        $this->n8nBaseUrl = config('services.n8n.url');
     }
 
     // ======== WORKFLOW 0: PRE-ANALYSIS ========
