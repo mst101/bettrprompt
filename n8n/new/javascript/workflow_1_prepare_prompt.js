@@ -84,11 +84,15 @@ ${fwInstr}
    - COUNTERBALANCE opposing traits
    - NEUTRAL unrelated traits
 5. Skip questions covered by pre-analysis
-6. Generate tailored questions${forced ? ` for ${forced}` : ''}
+6. Generate tailored questions${forced ? ` for ${forced}` : ''}:
+   - PRIORITISE questions that address identified cognitive requirements
+   - Use "Cognitive Reqs" column in question bank to match questions to requirements
+   - Ensure at least 1 question addresses each PRIMARY cognitive requirement
+   - Balance: include universal + framework-specific + category-specific questions
 
 ## OUTPUT (JSON only, no markdown)
 \`\`\`json
-{"task_classification":{"primary_category":"CODE","secondary_category":null,"complexity":"moderate","classification_reasoning":"Brief","content_type":null},"cognitive_requirements":{"primary":["LOGICAL_THINKING"],"secondary":[],"reasoning":"Why"},"selected_framework":{"name":"Name","code":"UPPERCASE_CODE","components":["C1"],"rationale":"Why (include scoring: matched reqs + total)"},"alternative_frameworks":[{"name":"Alt","code":"ALT","when_to_use_instead":"When"}],"personality_tier":"full|partial|none","task_trait_alignment":{"amplified":[{"trait":"User's actual trait","requirement_aligned":"REQ","reason":"Why"}],"counterbalanced":[{"trait":"User's actual trait","requirement_opposed":"REQ","reason":"Why","injection":"Text"}],"neutral":[{"trait":"User's actual trait","reason":"Why"}]},"personality_adjustments_preview":["AMPLIFIED: Desc","COUNTERBALANCED: Desc"],"clarifying_questions":[{"id":"Q1","question":"Text","purpose":"Why","required":true}],"question_rationale":"Brief"}
+{"task_classification":{"primary_category":"CODE","secondary_category":null,"complexity":"moderate","classification_reasoning":"Brief","content_type":null},"cognitive_requirements":{"primary":["LOGICAL_THINKING"],"secondary":[],"reasoning":"Why"},"selected_framework":{"name":"Name","code":"UPPERCASE_CODE","components":["C1"],"rationale":"Why (include scoring: matched reqs + total)"},"alternative_frameworks":[{"name":"Alt","code":"ALT","when_to_use_instead":"When"}],"personality_tier":"full|partial|none","task_trait_alignment":{"amplified":[{"trait":"User's actual trait","requirement_aligned":"REQ","reason":"Why"}],"counterbalanced":[{"trait":"User's actual trait","requirement_opposed":"REQ","reason":"Why","injection":"Text"}],"neutral":[{"trait":"User's actual trait","reason":"Why"}]},"personality_adjustments_preview":["AMPLIFIED: Desc","COUNTERBALANCED: Desc"],"clarifying_questions":[{"id":"Q1","question":"Text","purpose":"Why (mention which cognitive req this addresses)","required":true}],"question_rationale":"Brief (mention which reqs are covered)"}
 \`\`\`${getLang(uc?.location?.language)}`;
 
 // Build personality info
