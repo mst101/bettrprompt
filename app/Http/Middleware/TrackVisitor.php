@@ -6,18 +6,22 @@ use App\Models\User;
 use App\Models\Visitor;
 use App\Services\GeolocationService;
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class TrackVisitor
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
+     *
+     * @throws Throwable
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -84,6 +88,8 @@ class TrackVisitor
 
     /**
      * Create a new visitor record.
+     *
+     * @throws Throwable
      */
     protected function createVisitor(Request $request): string
     {
@@ -91,72 +97,56 @@ class TrackVisitor
         //            'url' => $request->fullUrl(),
         //        ]);
 
-        try {
-            // Look up referrer by referral code if present
-            $referredByUserId = null;
-            if ($referralCode = $request->query('ref')) {
-                $referrer = User::where('referral_code', $referralCode)->first();
-                if ($referrer) {
-                    $referredByUserId = $referrer->id;
-                    //                    Log::info('Referral code found', [
-                    //                        'referral_code' => $referralCode,
-                    //                        'referrer_id' => $referredByUserId,
-                    //                    ]);
+        // Look up referrer by referral code if present
+        $referredByUserId = null;
+        if ($referralCode = $request->query('ref')) {
+            $referrer = User::where('referral_code', $referralCode)->first();
+            $referredByUserId = $referrer?->id;
+        }
+
+        // Create visitor in a separate transaction that commits immediately
+        // This ensures the visitor persists even if the main request fails
+        $visitor = DB::transaction(function () use ($request, $referredByUserId) {
+            // Perform geolocation lookup if enabled
+            $locationData = null;
+            if (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
+                try {
+                    $geolocationService = new GeolocationService;
+                    $locationData = $geolocationService->lookupIp($request->ip());
+                } catch (Exception $e) {
+                    Log::error('Geolocation lookup failed', [
+                        'ip' => $request->ip(),
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 
-            // Create visitor in a separate transaction that commits immediately
-            // This ensures the visitor persists even if the main request fails
-            $visitor = DB::transaction(function () use ($request, $referredByUserId) {
-                // Perform geolocation lookup if enabled
-                $locationData = null;
-                if (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
-                    try {
-                        $geolocationService = new GeolocationService;
-                        $locationData = $geolocationService->lookupIp($request->ip());
-                    } catch (\Exception $e) {
-                        Log::error('Geolocation lookup failed', [
-                            'ip' => $request->ip(),
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
-                }
+            $visitorData = [
+                // Don't set 'id' - let HasUuids trait generate it
+                'utm_source' => $request->query('utm_source'),
+                'utm_medium' => $request->query('utm_medium'),
+                'utm_campaign' => $request->query('utm_campaign'),
+                'utm_term' => $request->query('utm_term'),
+                'utm_content' => $request->query('utm_content'),
+                'referrer' => $request->header('referer'),
+                'landing_page' => $request->fullUrl(),
+                'user_agent' => $request->userAgent(),
+                'ip_address' => $request->ip(),
+                'first_visit_at' => now(),
+                'last_visit_at' => now(),
+                'visit_count' => 1,
+                'referred_by_user_id' => $referredByUserId,
+            ];
 
-                $visitorData = [
-                    // Don't set 'id' - let HasUuids trait generate it
-                    'utm_source' => $request->query('utm_source'),
-                    'utm_medium' => $request->query('utm_medium'),
-                    'utm_campaign' => $request->query('utm_campaign'),
-                    'utm_term' => $request->query('utm_term'),
-                    'utm_content' => $request->query('utm_content'),
-                    'referrer' => $request->header('referer'),
-                    'landing_page' => $request->fullUrl(),
-                    'user_agent' => $request->userAgent(),
-                    'ip_address' => $request->ip(),
-                    'first_visit_at' => now(),
-                    'last_visit_at' => now(),
-                    'visit_count' => 1,
-                    'referred_by_user_id' => $referredByUserId,
-                ];
+            // Add location data if geolocation succeeded
+            if ($locationData !== null) {
+                $visitorData = array_merge($visitorData, $locationData->toArray());
+            }
 
-                // Add location data if geolocation succeeded
-                if ($locationData !== null) {
-                    $visitorData = array_merge($visitorData, $locationData->toArray());
-                }
+            return Visitor::create($visitorData);
+        });
 
-                return Visitor::create($visitorData);
-            });
-
-            $visitorId = (string) $visitor->id;
-            //            Log::info('Visitor record created successfully', ['visitor_id' => $visitorId]);
-
-            return $visitorId;
-        } catch (\Exception $e) {
-            //            Log::error('Failed to create visitor record', [
-            //                'error' => $e->getMessage(),
-            //            ]);
-            throw $e;
-        }
+        return (string) $visitor->id;
     }
 
     /**
@@ -166,11 +156,9 @@ class TrackVisitor
     {
         $visitor = Visitor::find($visitorId);
 
-        if ($visitor) {
-            $visitor->update([
-                'last_visit_at' => now(),
-                'visit_count' => $visitor->visit_count + 1,
-            ]);
-        }
+        $visitor?->update([
+            'last_visit_at' => now(),
+            'visit_count' => $visitor->visit_count + 1,
+        ]);
     }
 }
