@@ -54,6 +54,7 @@ class DebugN8nController extends Controller
     protected function getVariant(Request $request, int $workflowNumber): string
     {
         return $request->query('variant')
+            ?? session("workflow.{$workflowNumber}.variant")
             ?? $this->variantService->getDefaultVariant($workflowNumber);
     }
 
