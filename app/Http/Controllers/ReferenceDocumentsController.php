@@ -217,8 +217,6 @@ class ReferenceDocumentsController extends Controller
      */
     private function embedDocumentIntoWorkflows($type, $filename, $content)
     {
-        $baseFilename = str_replace('.md', '', $filename);
-
         // Determine which workflows to update
         $workflows = [];
 

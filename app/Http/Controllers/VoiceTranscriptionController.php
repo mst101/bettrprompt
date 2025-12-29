@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Log;
 use OpenAI;
 
 class VoiceTranscriptionController extends Controller
@@ -59,12 +61,12 @@ class VoiceTranscriptionController extends Controller
                 'success' => true,
                 'transcript' => $response->text,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Clean up temporary file on error
             if ($tempPath && file_exists($tempPath)) {
                 unlink($tempPath);
             }
-            \Log::error('Voice transcription failed', [
+            Log::error('Voice transcription failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);

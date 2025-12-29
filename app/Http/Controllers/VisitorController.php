@@ -19,12 +19,10 @@ class VisitorController extends Controller
 
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
-            if ($visitor) {
-                $visitor->update([
-                    'personality_type' => $validated['personalityType'],
-                    'trait_percentages' => $validated['traitPercentages'] ?? null,
-                ]);
-            }
+            $visitor?->update([
+                'personality_type' => $validated['personalityType'],
+                'trait_percentages' => $validated['traitPercentages'] ?? null,
+            ]);
         }
 
         return back()->with('status', 'personality-updated');
