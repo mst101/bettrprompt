@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\GenerationPayload;
 use App\Services\N8nClient;
+use App\Services\N8nWorkflowClient;
 use App\Services\WorkflowVariantService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use InvalidArgumentException;
+use Log;
+use Throwable;
 
 class DebugN8nController extends Controller
 {
@@ -35,8 +42,8 @@ class DebugN8nController extends Controller
      * Inject dependencies
      */
     public function __construct(
-        private WorkflowVariantService $variantService,
-        private N8nClient $n8nClient
+        private readonly WorkflowVariantService $variantService,
+        private readonly N8nClient $n8nClient
     ) {}
 
     // ======== VARIANT AND PASS MANAGEMENT ========
@@ -78,10 +85,10 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            session(["workflow.{$workflowNumber}.variant" => $variant]);
+            session(["workflow.$workflowNumber.variant" => $variant]);
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to set variant: {$e->getMessage()}",
@@ -198,7 +205,7 @@ class DebugN8nController extends Controller
                 'success' => true,
                 'message' => 'Input saved successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save input: {$e->getMessage()}",
@@ -226,7 +233,7 @@ class DebugN8nController extends Controller
                 'success' => true,
                 'message' => 'Pass input saved successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save pass input: {$e->getMessage()}",
@@ -259,7 +266,7 @@ class DebugN8nController extends Controller
         Request $request,
         int $workflowNumber,
         bool $isNew
-    ): \Illuminate\Http\JsonResponse {
+    ): JsonResponse {
         try {
             $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
@@ -275,7 +282,7 @@ class DebugN8nController extends Controller
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
+                    'error' => "Workflow file not found: $n8nWorkflowFile",
                 ], 404);
             }
 
@@ -286,7 +293,7 @@ class DebugN8nController extends Controller
                 if ($javascript === null) {
                     return response()->json([
                         'success' => false,
-                        'error' => "Node '{$nodeName}' not found in workflow or has no jsCode",
+                        'error' => "Node '$nodeName' not found in workflow or has no jsCode",
                     ], 404);
                 }
 
@@ -302,10 +309,10 @@ class DebugN8nController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "JavaScript reloaded from workflow {$versionLabel}",
+                'message' => "JavaScript reloaded from workflow $versionLabel",
                 'reloadedNodes' => $reloadedNodes,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to reload JavaScript from workflow: {$e->getMessage()}",
@@ -332,7 +339,7 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript code with version control
      */
-    private function saveJavaScript(Request $request, int $workflowNumber, bool $isNew): \Illuminate\Http\JsonResponse
+    private function saveJavaScript(Request $request, int $workflowNumber, bool $isNew): JsonResponse
     {
         try {
             $request->validate([
@@ -349,9 +356,9 @@ class DebugN8nController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "{$versionLabel} JavaScript saved successfully",
+                'message' => "$versionLabel JavaScript saved successfully",
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save JavaScript: {$e->getMessage()}",
@@ -391,11 +398,11 @@ class DebugN8nController extends Controller
                 'code' => 'required|string',
             ]);
 
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            $n8nWorkflowFile = base_path("n8n/workflow_$workflowNumber.json");
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: workflow_$workflowNumber.json",
                 ], 404);
             }
 
@@ -434,7 +441,7 @@ class DebugN8nController extends Controller
                 'success' => true,
                 'message' => 'JavaScript updated in n8n workflow successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => "Failed to save to n8n workflow: {$e->getMessage()}",
@@ -465,7 +472,7 @@ class DebugN8nController extends Controller
         Request $request,
         int $workflowNumber,
         bool $isNew
-    ): \Illuminate\Http\JsonResponse {
+    ): JsonResponse {
         try {
             $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
@@ -478,7 +485,7 @@ class DebugN8nController extends Controller
                 if ($js === null) {
                     return response()->json([
                         'success' => false,
-                        'error' => "{$versionType} JavaScript file not found for node '{$nodeName}' in variant '{$variant}'",
+                        'error' => "$versionType JavaScript file not found for node '$nodeName' in variant '$variant'",
                     ], 404);
                 }
                 $nodeJavaScript[$nodeName] = $js;
@@ -488,7 +495,7 @@ class DebugN8nController extends Controller
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
+                    'error' => "Workflow file not found: $n8nWorkflowFile",
                 ], 404);
             }
 
@@ -496,7 +503,7 @@ class DebugN8nController extends Controller
             if (! $workflowId) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Unknown workflow number: {$workflowNumber}",
+                    'error' => "Unknown workflow number: $workflowNumber",
                 ], 400);
             }
 
@@ -544,8 +551,8 @@ class DebugN8nController extends Controller
             $result = $this->n8nClient->updateWorkflow($workflowId, $cleanWorkflow);
 
             return response()->json($result);
-        } catch (\Exception $e) {
-            \Log::error('Failed to upload workflow to n8n', [
+        } catch (Throwable $e) {
+            Log::error('Failed to upload workflow to n8n', [
                 'workflowNumber' => $workflowNumber,
                 'isNew' => $isNew,
                 'error' => $e->getMessage(),
@@ -566,11 +573,11 @@ class DebugN8nController extends Controller
     public function uploadWorkflowToLive(int $workflowNumber)
     {
         try {
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            $n8nWorkflowFile = base_path("n8n/workflow_$workflowNumber.json");
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: workflow_$workflowNumber.json",
                 ], 404);
             }
 
@@ -578,7 +585,7 @@ class DebugN8nController extends Controller
             if (! $workflowId) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Live workflow ID not configured for workflow {$workflowNumber}. Please set N8N_WORKFLOW_{$workflowNumber}_ID_LIVE in your .env file.",
+                    'error' => "Live workflow ID not configured for workflow $workflowNumber. Please set N8N_WORKFLOW_{$workflowNumber}_ID_LIVE in your .env file.",
                 ], 400);
             }
 
@@ -603,8 +610,8 @@ class DebugN8nController extends Controller
             $result = $liveN8nClient->updateWorkflow($workflowId, $cleanWorkflow);
 
             return response()->json($result);
-        } catch (\Exception $e) {
-            \Log::error('Failed to upload workflow to live n8n server', [
+        } catch (Throwable $e) {
+            Log::error('Failed to upload workflow to live n8n server', [
                 'workflowNumber' => $workflowNumber,
                 'error' => $e->getMessage(),
             ]);
@@ -619,7 +626,7 @@ class DebugN8nController extends Controller
     /**
      * Create an N8nClient instance configured for the live production server
      */
-    private function createLiveN8nClient(): \App\Services\N8nClient
+    private function createLiveN8nClient(): N8nClient
     {
         // Temporarily override the config to point to the live server
         config([
@@ -627,7 +634,7 @@ class DebugN8nController extends Controller
             'services.n8n.api_key' => config('services.n8n.api_key_live'),
         ]);
 
-        return new \App\Services\N8nClient;
+        return new N8nClient;
     }
 
     // ======== PROMPT PREPARATION ========
@@ -655,7 +662,7 @@ class DebugN8nController extends Controller
         Request $request,
         int $workflowNumber,
         bool $isNew
-    ): \Illuminate\Http\JsonResponse {
+    ): JsonResponse {
         try {
             $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', self::DEFAULT_NODE_NAME);
@@ -673,7 +680,7 @@ class DebugN8nController extends Controller
             if ($javascript === null) {
                 return response()->json([
                     'success' => false,
-                    'error' => "JavaScript file not found for workflow_{$workflowNumber}, variant={$variant}, node={$nodeName}",
+                    'error' => "JavaScript file not found for workflow_$workflowNumber, variant=$variant, node=$nodeName",
                 ], 404);
             }
 
@@ -689,7 +696,7 @@ class DebugN8nController extends Controller
             $output = $this->executeNode($nodeScript);
             if (! $output['success']) {
                 if ($isNew) {
-                    \Log::error('preparePromptNew execution failed', [
+                    Log::error('preparePromptNew execution failed', [
                         'error' => $output['error'],
                         'debug_output' => $output['debug_output'] ?? null,
                         'variant' => $variant,
@@ -712,7 +719,7 @@ class DebugN8nController extends Controller
                 'system' => $result['system'] ?? null,
                 'messages' => $result['messages'] ?? null,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -745,7 +752,7 @@ class DebugN8nController extends Controller
             if (! file_exists($inputFile)) {
                 return [
                     'success' => false,
-                    'error' => "Input file not found for workflow_{$workflowNumber}",
+                    'error' => "Input file not found for workflow_$workflowNumber",
                     'status_code' => 404,
                 ];
             }
@@ -815,7 +822,7 @@ class DebugN8nController extends Controller
             } else {
                 return [
                     'success' => false,
-                    'error' => "Pass {$passNumber} requires either a pass input file (workflow_{$workflowNumber}_input_".($passNumber - 1).'.json) or output from Pass '.($passNumber - 1).'.',
+                    'error' => "Pass $passNumber requires either a pass input file (workflow_{$workflowNumber}_input_".($passNumber - 1).'.json) or output from Pass '.($passNumber - 1).'.',
                     'status_code' => 404,
                 ];
             }
@@ -848,7 +855,7 @@ class DebugN8nController extends Controller
     private function ensureDebugDirectory(string $subdirectory = ''): string
     {
         $basePath = storage_path('app/n8n_debug');
-        $fullPath = $subdirectory ? "{$basePath}/{$subdirectory}" : $basePath;
+        $fullPath = $subdirectory ? "$basePath/$subdirectory" : $basePath;
 
         if (! is_dir($fullPath)) {
             mkdir($fullPath, 0755, true);
@@ -872,7 +879,7 @@ class DebugN8nController extends Controller
         ];
 
         // Load framework taxonomy
-        $frameworkFile = "{$referenceDocsPath}/framework_taxonomy.md";
+        $frameworkFile = "$referenceDocsPath/framework_taxonomy.md";
         if (file_exists($frameworkFile)) {
             $referenceData['framework_taxonomy'] = [
                 'content' => file_get_contents($frameworkFile),
@@ -880,7 +887,7 @@ class DebugN8nController extends Controller
         }
 
         // Load personality calibration
-        $personalityFile = "{$referenceDocsPath}/personality_calibration.md";
+        $personalityFile = "$referenceDocsPath/personality_calibration.md";
         if (file_exists($personalityFile)) {
             $personalityContent = file_get_contents($personalityFile);
             // Support both key names for compatibility with different workflows
@@ -893,7 +900,7 @@ class DebugN8nController extends Controller
         }
 
         // Load question bank
-        $questionBankFile = "{$referenceDocsPath}/question_bank.md";
+        $questionBankFile = "$referenceDocsPath/question_bank.md";
         if (file_exists($questionBankFile)) {
             $referenceData['question_bank'] = [
                 'content' => file_get_contents($questionBankFile),
@@ -901,9 +908,9 @@ class DebugN8nController extends Controller
         }
 
         // Load framework templates from directory
-        $frameworkTemplatesDir = "{$referenceDocsPath}/framework_templates";
+        $frameworkTemplatesDir = "$referenceDocsPath/framework_templates";
         if (is_dir($frameworkTemplatesDir)) {
-            $templateFiles = glob("{$frameworkTemplatesDir}/*.md");
+            $templateFiles = glob("$frameworkTemplatesDir/*.md");
             foreach ($templateFiles as $templateFile) {
                 $templateName = strtoupper(str_replace('.md', '', basename($templateFile)));
                 $referenceData['framework_templates'][$templateName] = file_get_contents($templateFile);
@@ -915,6 +922,8 @@ class DebugN8nController extends Controller
 
     /**
      * Build a Node.js script to execute the workflow JavaScript
+     *
+     * @throws Exception
      */
     private function buildNodeScript(array $inputData, string $javascript): string
     {
@@ -937,12 +946,12 @@ class DebugN8nController extends Controller
 
         $webhookDataJson = json_encode($webhookData, JSON_UNESCAPED_SLASHES);
         if ($webhookDataJson === false) {
-            throw new \Exception('Failed to encode webhook data: '.json_last_error_msg());
+            throw new Exception('Failed to encode webhook data: '.json_last_error_msg());
         }
 
         $referenceDataJson = json_encode($referenceData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if ($referenceDataJson === false) {
-            throw new \Exception('Failed to encode reference data: '.json_last_error_msg());
+            throw new Exception('Failed to encode reference data: '.json_last_error_msg());
         }
 
         // Write JavaScript and data to storage directory for debugging
@@ -951,12 +960,12 @@ class DebugN8nController extends Controller
 
         $this->tempFilesToCleanup = [];
 
-        $tempJsFile = "{$debugDir}/workflow_exec_code.js";
+        $tempJsFile = "$debugDir/workflow_exec_code.js";
         file_put_contents($tempJsFile, $javascript);
         $this->tempFilesToCleanup[] = $tempJsFile;
 
         // Write data as a JSON file
-        $tempDataFile = "{$debugDir}/workflow_exec_data.json";
+        $tempDataFile = "$debugDir/workflow_exec_data.json";
         $dataObject = [
             'webhook' => $webhookData,
             'reference' => $referenceData,
@@ -966,10 +975,10 @@ class DebugN8nController extends Controller
         $this->tempFilesToCleanup[] = $tempDataFile;
 
         // Debug: Log what we're passing to Node.js
-        \Log::info('buildNodeScript: Passing to Node.js', [
+        Log::info('buildNodeScript: Passing to Node.js', [
             'isMultiPass' => $isMultiPass,
             'inputNodeDataType' => gettype($inputNodeData),
-            'inputNodeDataKeys' => array_keys((array) $inputNodeData),
+            'inputNodeDataKeys' => array_keys($inputNodeData),
             'hasClassificationInInput' => isset($inputNodeData['classification']) ? 'yes' : 'no',
             'inputNodeDataSnapshot' => [
                 'has_body' => isset($inputNodeData['body']),
@@ -977,7 +986,7 @@ class DebugN8nController extends Controller
                 'has_classification' => isset($inputNodeData['classification']),
                 'classification_type' => isset($inputNodeData['classification']) ? gettype($inputNodeData['classification']) : 'N/A',
             ],
-            'webhookDataKeys' => array_keys((array) $webhookData),
+            'webhookDataKeys' => array_keys($webhookData),
         ]);
 
         // Build the Node.js script with proper file paths
@@ -985,7 +994,7 @@ class DebugN8nController extends Controller
         $dataFileEscaped = json_encode($tempDataFile);
         $jsFileEscaped = json_encode($tempJsFile);
 
-        $nodeScript = "(async () => {
+        return "(async () => {
 // Mock n8n environment
 const $ = function(nodeName) {
   return {
@@ -999,7 +1008,7 @@ const $ = function(nodeName) {
 
 // Initialize node data from file
 const fs = require('fs');
-const data = JSON.parse(fs.readFileSync({$dataFileEscaped}, 'utf8'));
+const data = JSON.parse(fs.readFileSync($dataFileEscaped, 'utf8'));
 
 // Store node data
 \$._nodeData = {
@@ -1021,7 +1030,7 @@ const \$input = {
 // Execute the workflow code
 try {
   // Load and execute the user's code from file
-  const userCode = fs.readFileSync({$jsFileEscaped}, 'utf8');
+  const userCode = fs.readFileSync($jsFileEscaped, 'utf8');
 
   // Wrap the code and execute it
   let evalResult;
@@ -1084,8 +1093,6 @@ try {
   process.exit(1);
 }
 })();";
-
-        return $nodeScript;
     }
 
     /**
@@ -1109,7 +1116,7 @@ try {
             // They will be cleaned up after this method returns
 
             // Execute with timeout (30 seconds should be plenty for JS execution)
-            $output = shell_exec("timeout 30 node {$tempFile} 2>&1");
+            $output = shell_exec("timeout 30 node $tempFile 2>&1");
 
             // The output might contain console.log() output before the JSON
             // Find the last JSON object (which should be our result)
@@ -1122,7 +1129,6 @@ try {
 
             // Try to extract JSON from the output
             // Look for the pattern: {...success...}
-            $result = null;
 
             // Strategy 1: Try decoding the entire output
             $result = json_decode($output, true);
@@ -1150,7 +1156,7 @@ try {
             }
 
             // If all strategies failed, return the raw output as error
-            \Log::error('Node.js output parsing failed', [
+            Log::error('Node.js output parsing failed', [
                 'output' => $output,
                 'output_length' => strlen($output),
                 'first_200_chars' => substr($output, 0, 200),
@@ -1162,7 +1168,7 @@ try {
                 'error' => 'Invalid or unexpected token',
                 'debug_output' => substr($output, 0, 500), // Include first 500 chars for debugging
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -1223,7 +1229,7 @@ try {
         ?array $userContext,
         ?array $inputData = null
     ): array {
-        $workflowClient = new \App\Services\N8nWorkflowClient;
+        $workflowClient = new N8nWorkflowClient;
 
         return match ($workflowNumber) {
             0 => $workflowClient->executePreAnalysis($taskDescription, $userContext),
@@ -1236,7 +1242,7 @@ try {
                 $userContext
             ),
             2 => $workflowClient->executeGeneration(
-                new \App\Data\GenerationPayload(
+                new GenerationPayload(
                     taskClassification: $inputData['analysis_data']['task_classification'] ?? [],
                     cognitiveRequirements: $inputData['analysis_data']['cognitive_requirements'] ?? [],
                     selectedFramework: $inputData['analysis_data']['selected_framework'] ?? [],
@@ -1250,7 +1256,7 @@ try {
                     preAnalysisContext: $inputData['pre_analysis_context'] ?? null
                 )
             ),
-            default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
+            default => throw new InvalidArgumentException("Workflow $workflowNumber is not supported for direct execution"),
         };
     }
 
@@ -1292,14 +1298,14 @@ try {
         Request $request,
         int $workflowNumber,
         bool $isNew
-    ): \Illuminate\Http\JsonResponse {
+    ): JsonResponse {
         try {
             $inputData = $this->loadInputData($request, $workflowNumber);
 
             if ($inputData === null) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Input file not found for workflow_{$workflowNumber}",
+                    'error' => "Input file not found for workflow_$workflowNumber",
                 ], 404);
             }
 
@@ -1323,7 +1329,7 @@ try {
                 'system' => $resultData['system'] ?? null,
                 'messages' => $resultData['messages'] ?? null,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
