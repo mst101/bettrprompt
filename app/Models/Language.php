@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use LaravelIdea\Helper\App\Models\_IH_Language_C;
 
 class Language extends Model
 {
@@ -29,7 +29,7 @@ class Language extends Model
         return $this->hasMany(Country::class, 'language_id', 'id');
     }
 
-    public static function active(): array|_IH_Language_C
+    public static function active(): Collection
     {
         return static::where('active', true)->get();
     }

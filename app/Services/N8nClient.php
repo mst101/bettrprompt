@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -355,6 +356,25 @@ class N8nClient
                 Log::warning('N8n connection error, retrying', [
                     'path' => $path,
                     'attempt' => $attempt,
+                    'error' => $e->getMessage(),
+                ]);
+
+                if ($attempt >= $this->maxRetries) {
+                    break;
+                }
+
+                // Exponential backoff
+                $this->backoffDelay($attempt);
+
+            } catch (RequestException $e) {
+                // HTTP request errors (5xx) - retry
+                $attempt++;
+                $lastException = $e;
+
+                Log::warning('N8n request error, retrying', [
+                    'path' => $path,
+                    'attempt' => $attempt,
+                    'status' => $e->response?->status(),
                     'error' => $e->getMessage(),
                 ]);
 

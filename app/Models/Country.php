@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use LaravelIdea\Helper\App\Models\_IH_Country_C;
 
 class Country extends Model
 {
@@ -39,7 +39,7 @@ class Country extends Model
         return $this->belongsTo(Language::class, 'language_id', 'id');
     }
 
-    public static function sortedByName(): _IH_Country_C|array
+    public static function sortedByName(): Collection
     {
         return static::orderBy('name', 'asc')->get();
     }
