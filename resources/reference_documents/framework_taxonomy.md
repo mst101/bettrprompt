@@ -172,6 +172,159 @@
 - **Atomic Prompting** (`ATOMIC_PROMPTING`): Detailed visual specs. For: image generation (Midjourney, DALL-E). Complexity: Medium
 - **Five Ws and One H** (`FIVE_WS_AND_ONE_H`): Who, What, When, Where, Why, How. For: journalism, research. Complexity: Low
 
+## Framework Cognitive Requirements Support
+
+This section maps each framework to the cognitive requirements it supports. Use this for requirement-based framework scoring.
+
+**Scoring Guidelines:**
+- Primary requirements supported by framework: +3 points
+- Secondary requirements supported by framework: +1 point
+- Select framework with highest total score
+- On tie, prefer lower complexity for simple tasks
+
+### Structured Clarity Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `CRISPE` | `DETAIL`, `STRUCTURE`, `OBJECTIVE` | `ITERATIVE` |
+| `RELIC` | `STRUCTURE`, `DETAIL`, `CREATIVE` | `EMPATHY` |
+| `RTF` | `DETAIL`, `STRUCTURE` | `OBJECTIVE` |
+| `CO_STAR` | `EMPATHY`, `WARM`, `STRUCTURE` | `PERSUASION`, `CREATIVE` |
+| `ICIO` | `DETAIL`, `OBJECTIVE`, `STRUCTURE` | - |
+| `CRAFT` | `STRUCTURE`, `DETAIL`, `ITERATIVE` | `OBJECTIVE` |
+
+### Iterative Refinement Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `RACEF` | `ITERATIVE`, `CREATIVE`, `EXPLORE` | `STRUCTURE` |
+| `CHAIN_OF_DESTINY` | `ITERATIVE`, `DETAIL`, `OBJECTIVE` | `RISK` |
+| `SELF_REFINE` | `ITERATIVE`, `OBJECTIVE` | `STRUCTURE`, `DETAIL` |
+| `REFLEXION` | `ITERATIVE`, `OBJECTIVE`, `AGENTIC` | `ABSTRACTION`, `RISK` |
+
+### Decision-Making & Prioritisation Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `RICE` | `OBJECTIVE`, `DECISIVE`, `RISK` | `DETAIL` |
+| `SMART` | `DETAIL`, `DECISIVE`, `STRUCTURE` | `OBJECTIVE` |
+| `COAST` | `VISION`, `DETAIL`, `STRUCTURE`, `DECISIVE` | `RISK` |
+| `PROS_AND_CONS` | `OBJECTIVE`, `RISK`, `EXPLORE` | `DECISIVE` |
+
+### Analytical & Problem-Solving Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `CHAIN_OF_THOUGHT` | `OBJECTIVE`, `ABSTRACTION`, `DETAIL` | `STRUCTURE` |
+| `TREE_OF_THOUGHT` | `OBJECTIVE`, `EXPLORE`, `ABSTRACTION` | `VISION` |
+| `FOCUS` | `OBJECTIVE`, `DETAIL`, `DECISIVE` | `VISION` |
+| `SIX_THINKING_HATS` | `EXPLORE`, `OBJECTIVE`, `EMPATHY` | `CREATIVE`, `RISK` |
+| `STEP_BACK` | `ABSTRACTION`, `OBJECTIVE` | `VISION`, `STRUCTURE` |
+| `REACT` | `AGENTIC`, `OBJECTIVE`, `ITERATIVE` | `DETAIL`, `RISK` |
+| `SKELETON_OF_THOUGHT` | `STRUCTURE`, `VISION` | `DETAIL`, `CREATIVE` |
+
+### Storytelling & Narrative Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `BAB` | `PERSUASION`, `EMPATHY`, `STRUCTURE` | `WARM`, `CREATIVE` |
+| `CAR` | `STRUCTURE`, `OBJECTIVE` | `PERSUASION` |
+| `PAR` | `STRUCTURE`, `OBJECTIVE` | `PERSUASION` |
+| `STAR` | `STRUCTURE`, `DETAIL`, `OBJECTIVE` | - |
+| `CHALLENGE_SOLUTION_BENEFIT` | `PERSUASION`, `EMPATHY` | `OBJECTIVE`, `CREATIVE` |
+
+### Content Creation Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `BLOG` | `STRUCTURE`, `DETAIL` | `CREATIVE`, `PEDAGOGY` |
+| `APE` | `EMPATHY`, `PERSUASION` | `STRUCTURE` |
+| `TAG` | `EMPATHY`, `DECISIVE` | `STRUCTURE` |
+| `4S_METHOD` | `STRUCTURE`, `CREATIVE` | `DETAIL`, `PERSUASION` |
+| `HAMBURGER` | `STRUCTURE` | `DETAIL`, `PEDAGOGY` |
+
+### Creative & Innovation Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `SCAMPER` | `CREATIVE`, `EXPLORE` | `VISION` |
+| `HMW` | `CREATIVE`, `EXPLORE`, `EMPATHY` | - |
+| `IMAGINE` | `CREATIVE`, `VISION` | - |
+| `WHAT_IF` | `CREATIVE`, `EXPLORE` | `VISION` |
+| `SPARK` | `CREATIVE`, `EMPATHY`, `VISION` | `PERSUASION` |
+
+### Educational & Learning Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `BLOOMS_TAXONOMY` | `PEDAGOGY`, `STRUCTURE`, `ABSTRACTION` | `OBJECTIVE` |
+| `ELI5` | `PEDAGOGY`, `EMPATHY` | `STRUCTURE` |
+| `HELP_ME_UNDERSTAND` | `PEDAGOGY`, `EMPATHY`, `STRUCTURE` | - |
+| `TQA` | `PEDAGOGY`, `STRUCTURE` | - |
+| `SOCRATIC_METHOD` | `PEDAGOGY`, `OBJECTIVE`, `EXPLORE` | `ABSTRACTION` |
+
+### Communication & Engagement Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `RACE` | `PERSUASION`, `STRUCTURE`, `DECISIVE` | `EMPATHY` |
+| `ERA` | `PERSUASION`, `EMPATHY`, `WARM` | - |
+| `CARE` | `EMPATHY`, `WARM` | `STRUCTURE` |
+
+### Strategic Analysis Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `3CS` | `OBJECTIVE`, `SYNTHESIS`, `VISION` | `STRUCTURE` |
+| `GOPA` | `DETAIL`, `STRUCTURE`, `DECISIVE` | `OBJECTIVE` |
+
+### Feedback & Improvement Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `RISE` | `EMPATHY`, `OBJECTIVE`, `WARM` | `ITERATIVE` |
+| `ROSES` | `STRUCTURE`, `DETAIL`, `ITERATIVE` | `OBJECTIVE`, `VISION` |
+| `PEE` | `OBJECTIVE`, `STRUCTURE` | `PERSUASION` |
+
+### Advanced Structured Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `RASCEF` | `DETAIL`, `STRUCTURE`, `OBJECTIVE` | - |
+| `RHODES` | `STRUCTURE`, `DETAIL`, `CREATIVE` | `EMPATHY` |
+| `RISEN` | `STRUCTURE`, `DETAIL`, `CREATIVE` | `VISION` |
+| `GRADE` | `STRUCTURE`, `DETAIL`, `DECISIVE` | `OBJECTIVE` |
+| `TRACI` | `STRUCTURE`, `EMPATHY`, `PERSUASION` | `CREATIVE` |
+| `RODES` | `STRUCTURE`, `DETAIL`, `PEDAGOGY` | `EMPATHY` |
+| `CIDI` | `STRUCTURE`, `DETAIL`, `OBJECTIVE` | - |
+
+### Argumentation Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `TRACE` | `PERSUASION`, `OBJECTIVE`, `RISK` | `EMPATHY`, `STRUCTURE` |
+| `SPAR` | `STRUCTURE`, `OBJECTIVE` | `PERSUASION` |
+| `PROMPT` | `OBJECTIVE`, `DETAIL`, `STRUCTURE` | `SYNTHESIS` |
+
+### Specialised Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `SPEAR` | `STRUCTURE`, `DETAIL` | - |
+| `FEW_SHOT` | `STRUCTURE`, `DETAIL` | `PEDAGOGY` |
+| `ZERO_SHOT` | `OBJECTIVE`, `DETAIL` | - |
+| `ORID` | `OBJECTIVE`, `EMPATHY`, `DECISIVE` | `STRUCTURE` |
+| `PAUSE` | `OBJECTIVE`, `SYNTHESIS`, `DECISIVE` | `RISK` |
+| `ELICITATION` | `OBJECTIVE`, `DETAIL`, `STRUCTURE` | - |
+| `META_PROMPTING` | `ITERATIVE`, `OBJECTIVE`, `ABSTRACTION` | `SYNTHESIS` |
+
+### Visual & Dialogue Frameworks
+
+| Framework | Primary Requirements | Secondary Requirements |
+|-----------|---------------------|----------------------|
+| `ATOMIC_PROMPTING` | `DETAIL`, `CREATIVE`, `VISION` | - |
+| `FIVE_WS_AND_ONE_H` | `OBJECTIVE`, `DETAIL`, `STRUCTURE` | - |
+
 ## Framework-to-Category Mapping
 
 **NOTE:** Use the framework codes shown in parentheses when selecting frameworks.

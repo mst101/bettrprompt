@@ -66,7 +66,7 @@ Rather than always amplifying or always counterbalancing personality traits, the
 
 Every task has inherent cognitive requirements. These requirements may align with, oppose, or be unrelated to specific personality traits.
 
-#### Requirement: Empathy & Stakeholder Awareness
+#### Requirement: `EMPATHY` - Empathy & Stakeholder Awareness
 
 Tasks requiring understanding of human feelings, relationships, and interpersonal impact.
 
@@ -82,7 +82,7 @@ Tasks requiring understanding of human feelings, relationships, and interpersona
 - Include stakeholder impact analysis
 - Request acknowledgment of emotional dimensions
 
-#### Requirement: Big-Picture Strategic Vision
+#### Requirement: `VISION` - Big-Picture Strategic Vision
 
 Tasks requiring future thinking, pattern recognition, and conceptual frameworks.
 
@@ -97,7 +97,7 @@ Tasks requiring future thinking, pattern recognition, and conceptual frameworks.
 - Request future-state visioning
 - Ask for pattern identification across examples
 
-#### Requirement: Detailed Execution Planning
+#### Requirement: `DETAIL` - Detailed Execution Planning
 
 Tasks requiring step-by-step specificity, concrete actions, and practical implementation.
 
@@ -118,7 +118,7 @@ Tasks requiring step-by-step specificity, concrete actions, and practical implem
 - Request prioritised task lists
 - Ask for clear sequencing and dependencies
 
-#### Requirement: Decisive Recommendations
+#### Requirement: `DECISIVE` - Decisive Recommendations
 
 Tasks requiring clear conclusions, prioritised options, and confident guidance.
 
@@ -139,7 +139,7 @@ Tasks requiring clear conclusions, prioritised options, and confident guidance.
 - Request clear language without excessive caveats
 - Ask for "recommended" not "you might consider"
 
-#### Requirement: Exploring Multiple Options
+#### Requirement: `EXPLORE` - Exploring Multiple Options
 
 Tasks requiring divergent thinking, option generation, and avoiding premature closure.
 
@@ -155,7 +155,7 @@ Tasks requiring divergent thinking, option generation, and avoiding premature cl
 - Request "what else could work?" exploration
 - Explicitly delay recommendation until options are fully explored
 
-#### Requirement: Objective Analysis
+#### Requirement: `OBJECTIVE` - Objective Analysis
 
 Tasks requiring dispassionate evaluation, logical reasoning, and evidence-based conclusions.
 
@@ -170,7 +170,7 @@ Tasks requiring dispassionate evaluation, logical reasoning, and evidence-based 
 - Request separation of facts from feelings
 - Ask for objective criteria before subjective considerations
 
-#### Requirement: Risk Awareness
+#### Requirement: `RISK` - Risk Awareness
 
 Tasks requiring identification of potential problems, downsides, and failure modes.
 
@@ -186,7 +186,7 @@ Tasks requiring identification of potential problems, downsides, and failure mod
 - Request risk/downside analysis section
 - Ask "What would cause this to fail?"
 
-#### Requirement: Creative Innovation
+#### Requirement: `CREATIVE` - Creative Innovation
 
 Tasks requiring novel ideas, unconventional thinking, and breaking from established patterns.
 
@@ -202,7 +202,7 @@ Tasks requiring novel ideas, unconventional thinking, and breaking from establis
 - Request "What if we ignored current constraints?" thinking
 - Ask for ideas that challenge assumptions
 
-#### Requirement: Structured Communication
+#### Requirement: `STRUCTURE` - Structured Communication
 
 Tasks requiring clear organisation, logical flow, and professional presentation.
 
@@ -218,7 +218,7 @@ Tasks requiring clear organisation, logical flow, and professional presentation.
 - Request numbered lists for sequential items
 - Ask for executive summary upfront
 
-#### Requirement: Warm/Relational Tone
+#### Requirement: `WARM` - Warm/Relational Tone
 
 Tasks requiring warmth, rapport-building, and relationship-focused communication.
 
@@ -234,7 +234,7 @@ Tasks requiring warmth, rapport-building, and relationship-focused communication
 - Request relationship-affirming language
 - Ask for tone that prioritises connection over efficiency
 
-#### Requirement: Iterative Self-Improvement
+#### Requirement: `ITERATIVE` - Iterative Self-Improvement
 
 Tasks requiring multiple passes, self-critique, and progressive refinement of output quality.
 
@@ -255,7 +255,7 @@ Tasks requiring multiple passes, self-critique, and progressive refinement of ou
 - Request: "Apply genuine self-critique, not surface-level acceptance"
 - Include: "Challenge your own output as a skeptical reviewer would"
 
-#### Requirement: Abstraction Before Specifics
+#### Requirement: `ABSTRACTION` - Abstraction Before Specifics
 
 Tasks benefiting from higher-level principle identification before tackling concrete details.
 
@@ -271,7 +271,7 @@ Tasks benefiting from higher-level principle identification before tackling conc
 - Request: "Step back from the details—what broader concepts apply?"
 - Include: "Connect specific question to underlying framework or theory"
 
-#### Requirement: Structured Parallel Processing
+#### Requirement: `PARALLEL` - Structured Parallel Processing
 
 Tasks where content can be developed in parallel components then assembled.
 
@@ -287,7 +287,7 @@ Tasks where content can be developed in parallel components then assembled.
 - Request: "Constrain expansion to skeleton points—no tangents"
 - Include: "Each point should be independently complete"
 
-#### Requirement: Agentic Reasoning
+#### Requirement: `AGENTIC` - Agentic Reasoning
 
 Tasks requiring interleaved thinking and acting with external tool/environment interaction.
 
@@ -308,24 +308,79 @@ Tasks requiring interleaved thinking and acting with external tool/environment i
 - Request: "If first approach fails, genuinely explore alternatives"
 - Include: "Final answer only after sufficient information gathered"
 
+#### Requirement: `SYNTHESIS` - Information Synthesis
+
+Tasks requiring integration of multiple sources, finding connections between disparate information, and building coherent understanding from diverse inputs.
+
+| Trait | Alignment | Action |
+|-------|-----------|--------|
+| High N (≥60%) | **Aligned** | Amplify — natural pattern recognition across sources |
+| High T (≥60%) | **Aligned** | Amplify — logical integration of evidence |
+| High S (≥60%) | **Misaligned** | Counterbalance — push beyond individual data points |
+| High P (≥60%) | **Aligned** | Amplify — comfortable with multiple perspectives |
+
+**Counterbalance injection for High S:**
+- Add requirements: "Identify patterns and connections across all sources"
+- Request: "How do these pieces of information relate to each other?"
+- Include: "Synthesise findings into a coherent narrative, not just a list"
+
+#### Requirement: `PERSUASION` - Persuasive Communication
+
+Tasks requiring convincing others, building compelling arguments, and influencing decisions through strategic framing.
+
+| Trait | Alignment | Action |
+|-------|-----------|--------|
+| High E (≥60%) | **Aligned** | Amplify — natural social influence |
+| High F (≥60%) | **Partially aligned** | Strong on emotional appeals, may need logical balance |
+| High T (≥60%) | **Partially aligned** | Strong on logical arguments, may need emotional balance |
+| High J (≥60%) | **Aligned** | Amplify — structured argumentation |
+
+**Counterbalance injection for High F:**
+- Add requirements: "Support emotional appeals with data and evidence"
+- Request: "Include both rational and emotional persuasion elements"
+- Include: "Build credibility through objective support"
+
+**Counterbalance injection for High T:**
+- Add requirements: "Balance logic with emotional resonance"
+- Request: "Consider what will emotionally move your audience"
+- Include: "Use storytelling alongside data"
+
+#### Requirement: `PEDAGOGY` - Educational Clarity
+
+Tasks requiring teaching, explaining complex concepts, and adapting content for learners at different levels.
+
+| Trait | Alignment | Action |
+|-------|-----------|--------|
+| High F (≥60%) | **Aligned** | Amplify — natural empathy for learner needs |
+| High S (≥60%) | **Aligned** | Amplify — concrete examples and step-by-step clarity |
+| High J (≥60%) | **Aligned** | Amplify — structured learning progression |
+| High N (≥60%) | **Misaligned** | Counterbalance — force concrete examples |
+
+**Counterbalance injection for High N:**
+- Add requirements: "Provide concrete examples for abstract concepts"
+- Request: "Include step-by-step walkthrough with specific examples"
+- Include: "Check understanding at each level before advancing"
+
 ---
 
 ### Task Category to Cognitive Requirements Mapping
 
 | Task Category | Primary Requirements | Secondary Requirements |
 |---------------|---------------------|----------------------|
-| DECISION | Objective Analysis, Risk Awareness | Decisive Recommendations |
-| STRATEGY | Big-Picture Vision, Detailed Planning | Risk Awareness, Decisive Recommendations |
-| ANALYSIS | Objective Analysis, Detailed Planning | Risk Awareness, Abstraction Before Specifics |
-| CREATION_CONTENT | Varies by content type | Structured Communication, Iterative Self-Improvement |
-| CREATION_TECHNICAL | Detailed Planning, Objective Analysis | Structured Communication, Iterative Self-Improvement |
-| IDEATION | Creative Innovation, Exploring Options | Big-Picture Vision |
-| PROBLEM_SOLVING | Objective Analysis, Detailed Planning | Risk Awareness, Exploring Options, Agentic Reasoning |
-| LEARNING | Structured Communication, Abstraction Before Specifics | Varies by learner |
-| PERSUASION | Empathy & Stakeholder Awareness, Warm Tone | Structured Communication |
-| FEEDBACK | Empathy & Stakeholder Awareness, Objective Analysis | Warm Tone, Iterative Self-Improvement |
-| RESEARCH | Objective Analysis, Exploring Options | Detailed Planning, Agentic Reasoning |
-| GOAL_SETTING | Detailed Planning, Decisive Recommendations | Big-Picture Vision |
+| DECISION | `OBJECTIVE`, `RISK` | `DECISIVE` |
+| STRATEGY | `VISION`, `DETAIL` | `RISK`, `DECISIVE` |
+| ANALYSIS | `OBJECTIVE`, `DETAIL` | `RISK`, `ABSTRACTION` |
+| CREATION_CONTENT | Varies by content type | `STRUCTURE`, `ITERATIVE` |
+| CREATION_TECHNICAL | `DETAIL`, `OBJECTIVE` | `STRUCTURE`, `ITERATIVE` |
+| IDEATION | `CREATIVE`, `EXPLORE` | `VISION` |
+| PROBLEM_SOLVING | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE`, `AGENTIC` |
+| LEARNING | `PEDAGOGY`, `STRUCTURE` | `ABSTRACTION` |
+| PERSUASION | `PERSUASION`, `EMPATHY` | `STRUCTURE`, `WARM` |
+| FEEDBACK | `EMPATHY`, `OBJECTIVE` | `WARM`, `ITERATIVE` |
+| RESEARCH | `OBJECTIVE`, `SYNTHESIS` | `DETAIL`, `EXPLORE`, `AGENTIC` |
+| GOAL_SETTING | `DETAIL`, `DECISIVE` | `VISION` |
+| PLANNING | `DETAIL`, `STRUCTURE` | `VISION`, `RISK` |
+| OPTIMIZATION | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE` |
 
 ### Content-Type Specific Requirements
 
@@ -333,14 +388,14 @@ For CREATION_CONTENT tasks, requirements vary by content type:
 
 | Content Type | Primary Requirements |
 |--------------|---------------------|
-| Customer email | Empathy, Warm Tone, Structured Communication |
-| Marketing copy | Empathy, Creative Innovation, Decisive Recommendations |
-| Technical blog | Objective Analysis, Structured Communication, Detailed Planning |
-| Executive summary | Decisive Recommendations, Structured Communication |
-| Apology/bad news | Empathy, Warm Tone, Risk Awareness |
-| Sales pitch | Empathy, Decisive Recommendations, Creative Innovation |
-| Internal memo | Structured Communication, Objective Analysis |
-| Social media | Creative Innovation, Warm Tone |
+| Customer email | `EMPATHY`, `WARM`, `STRUCTURE` |
+| Marketing copy | `EMPATHY`, `CREATIVE`, `PERSUASION` |
+| Technical blog | `OBJECTIVE`, `STRUCTURE`, `DETAIL`, `PEDAGOGY` |
+| Executive summary | `DECISIVE`, `STRUCTURE` |
+| Apology/bad news | `EMPATHY`, `WARM`, `RISK` |
+| Sales pitch | `PERSUASION`, `EMPATHY`, `DECISIVE` |
+| Internal memo | `STRUCTURE`, `OBJECTIVE` |
+| Social media | `CREATIVE`, `WARM`, `PERSUASION` |
 
 ---
 
@@ -615,28 +670,28 @@ When returning personality calibration data, include the Task-Trait Alignment an
   },
   "composite_profile": "Analyst",
   "task_cognitive_requirements": [
-    "Empathy & Stakeholder Awareness",
-    "Structured Communication",
-    "Warm/Relational Tone"
+    "EMPATHY",
+    "STRUCTURE",
+    "WARM"
   ],
   "trait_alignment": {
     "amplified": [
       {
         "trait": "High N (64%)",
-        "requirement": "Big-Picture Vision",
+        "requirement_aligned": "VISION",
         "reason": "Can frame the change in context of larger relationship/future"
       }
     ],
     "counterbalanced": [
       {
         "trait": "High T (84%)",
-        "requirement": "Empathy & Stakeholder Awareness",
+        "requirement_opposed": "EMPATHY",
         "reason": "Task requires emotional acknowledgment that High-T may skip",
         "injection": "Prompt includes explicit requirements for expressing appreciation and acknowledging emotional impact"
       },
       {
         "trait": "High A (84%)",
-        "requirement": "Warm/Relational Tone",
+        "requirement_opposed": "WARM",
         "reason": "Confidence should not come across as dismissive",
         "injection": "Prompt requires warm opening and relationship-affirming language"
       }
