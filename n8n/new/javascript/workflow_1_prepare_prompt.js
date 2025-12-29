@@ -43,7 +43,25 @@ const getLang = (lang) => {
 };
 
 const forced = webhookData.forced_framework_code;
-const fwInstr = forced ? `\n\n## FORCED FRAMEWORK: ${forced}\nMUST use ${forced}. Generate ${forced}-specific questions.` : '';
+const fwInstr = forced
+  ? `\n\n## FORCED FRAMEWORK: ${forced}\nMUST use ${forced}. Generate ${forced}-specific questions.`
+  : `\n\n## FRAMEWORK SELECTION: REQUIREMENT-BASED SCORING
+
+Algorithm:
+1. Identify candidate frameworks for task category
+2. Score each framework:
+   - PRIMARY requirement supported: +3 points
+   - SECONDARY requirement supported: +1 point
+   - Use "Framework Cognitive Requirements Support" mapping
+3. Select highest-scoring framework
+4. Tiebreaker: For simple tasks prefer lower complexity; complex tasks prefer comprehensive support
+5. Explain scoring in rationale: matched requirements + total score
+
+Example:
+- Task needs: VISION (primary), DETAIL (primary), SYNTHESIS (secondary)
+- COAST supports: VISION, DETAIL, STRUCTURE, DECISIVE → Score: +3 +3 = 6
+- GOPA supports: DETAIL, STRUCTURE, DECISIVE → Score: +3 = 3
+- Select COAST (6 vs 3)`;
 
 const systemPrompt = `JSON API: analyse tasks, classify, select framework, align traits, generate questions.
 
@@ -55,11 +73,12 @@ ${docs.personality.content || 'N/A'}
 ${docs.questions.content || 'N/A'}
 
 ---
+${fwInstr}
 
 ## TASK
 1. Classify task (use pre-analysis if provided)
 2. Identify cognitive needs
-${forced ? `3. Use ${forced} framework` : '3. Select best framework'}
+3. ${forced ? `Use ${forced} framework` : 'Select framework using requirement-based scoring (see algorithm above)'}
 4. Task-Trait Alignment (if personality data):
    - AMPLIFY aligned traits
    - COUNTERBALANCE opposing traits
@@ -69,7 +88,7 @@ ${forced ? `3. Use ${forced} framework` : '3. Select best framework'}
 
 ## OUTPUT (JSON only, no markdown)
 \`\`\`json
-{"task_classification":{"primary_category":"CODE","secondary_category":null,"complexity":"moderate","classification_reasoning":"Brief","content_type":null},"cognitive_requirements":{"primary":["LOGICAL_THINKING"],"secondary":[],"reasoning":"Why"},"selected_framework":{"name":"Name","code":"UPPERCASE_CODE","components":["C1"],"rationale":"Why"},"alternative_frameworks":[{"name":"Alt","code":"ALT","when_to_use_instead":"When"}],"personality_tier":"full|partial|none","task_trait_alignment":{"amplified":[{"trait":"User's actual trait","requirement_aligned":"REQ","reason":"Why"}],"counterbalanced":[{"trait":"User's actual trait","requirement_opposed":"REQ","reason":"Why","injection":"Text"}],"neutral":[{"trait":"User's actual trait","reason":"Why"}]},"personality_adjustments_preview":["AMPLIFIED: Desc","COUNTERBALANCED: Desc"],"clarifying_questions":[{"id":"Q1","question":"Text","purpose":"Why","required":true}],"question_rationale":"Brief"}
+{"task_classification":{"primary_category":"CODE","secondary_category":null,"complexity":"moderate","classification_reasoning":"Brief","content_type":null},"cognitive_requirements":{"primary":["LOGICAL_THINKING"],"secondary":[],"reasoning":"Why"},"selected_framework":{"name":"Name","code":"UPPERCASE_CODE","components":["C1"],"rationale":"Why (include scoring: matched reqs + total)"},"alternative_frameworks":[{"name":"Alt","code":"ALT","when_to_use_instead":"When"}],"personality_tier":"full|partial|none","task_trait_alignment":{"amplified":[{"trait":"User's actual trait","requirement_aligned":"REQ","reason":"Why"}],"counterbalanced":[{"trait":"User's actual trait","requirement_opposed":"REQ","reason":"Why","injection":"Text"}],"neutral":[{"trait":"User's actual trait","reason":"Why"}]},"personality_adjustments_preview":["AMPLIFIED: Desc","COUNTERBALANCED: Desc"],"clarifying_questions":[{"id":"Q1","question":"Text","purpose":"Why","required":true}],"question_rationale":"Brief"}
 \`\`\`${getLang(uc?.location?.language)}`;
 
 // Build personality info
