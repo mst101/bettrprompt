@@ -6,11 +6,13 @@
 |------|-------------|----------|
 | `DECISION` | Choose between options, prioritise | "decide", "choose", "which", "compare", "pros and cons" |
 | `STRATEGY` | Business strategy, roadmaps, long-term planning | "strategy", "plan", "roadmap", "long-term", "growth" |
+| `PLANNING` | Breaking down goals into actionable steps, project execution | "plan", "organize", "coordinate", "schedule", "timeline", "project plan" |
 | `ANALYSIS` | Understand data, examine situations, root cause | "analyse", "understand why", "explain", "examine", "diagnose" |
 | `CREATION_CONTENT` | Writing, marketing, emails, communications | "write", "draft", "blog", "email", "copy", "article" |
 | `CREATION_TECHNICAL` | Code, docs, specs, technical writing | "code", "build", "develop", "API", "script", "documentation" |
 | `IDEATION` | Brainstorming, innovation, generating ideas | "ideas", "brainstorm", "creative", "possibilities", "suggestions" |
 | `PROBLEM_SOLVING` | Fixing issues, troubleshooting | "solve", "fix", "problem", "issue", "challenge", "overcome" |
+| `OPTIMIZATION` | Making existing systems better, faster, cheaper | "optimize", "improve", "enhance", "streamline", "reduce costs", "increase efficiency" |
 | `LEARNING` | Understanding concepts, education | "learn", "understand", "explain to me", "teach me", "what is" |
 | `PERSUASION` | Convincing, selling, pitching | "convince", "persuade", "pitch", "sell", "proposal", "negotiate" |
 | `FEEDBACK` | Reviewing, critiquing, improving work | "review", "feedback", "improve", "critique", "refine" |
@@ -34,22 +36,27 @@
 | `ITERATIVE` | Self-improvement, refinement, learning from feedback | High P, High T-identity | High J, High A |
 | `ABSTRACTION` | Higher-level principle identification before specifics | High N, High T | High S |
 | `AGENTIC` | Interleaved thinking and acting with tool interaction | High T, High P | High N (ungrounded), High J (premature) |
+| `SYNTHESIS` | Integrating disparate information into coherent whole | High N, High T | High S, High P |
+| `PERSUASION` | Building compelling arguments, convincing others | High E, High F, High J | High I, High T |
+| `PEDAGOGY` | Making complex things understandable, scaffolding learning | High F, High S, High J | High N, High P |
 
 ## Task → Requirements Mapping
 
 | Task | Primary Requirements | Secondary Requirements |
 |------|---------------------|----------------------|
 | `DECISION` | `OBJECTIVE`, `RISK` | `DECISIVE`, `EXPLORE` |
-| `STRATEGY` | `VISION`, `DETAIL` | `RISK`, `DECISIVE` |
-| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK`, `ABSTRACTION` |
+| `STRATEGY` | `VISION`, `DETAIL` | `RISK`, `DECISIVE`, `SYNTHESIS` |
+| `PLANNING` | `DETAIL`, `STRUCTURE` | `RISK`, `DECISIVE` |
+| `ANALYSIS` | `OBJECTIVE`, `DETAIL` | `RISK`, `ABSTRACTION`, `SYNTHESIS` |
 | `CREATION_CONTENT` | Varies (see content types) | `STRUCTURE`, `ITERATIVE` |
 | `CREATION_TECHNICAL` | `DETAIL`, `OBJECTIVE` | `STRUCTURE`, `ITERATIVE` |
 | `IDEATION` | `CREATIVE`, `EXPLORE` | `VISION` |
 | `PROBLEM_SOLVING` | `OBJECTIVE`, `DETAIL` | `RISK`, `EXPLORE`, `AGENTIC` |
-| `LEARNING` | `STRUCTURE`, `ABSTRACTION` | Varies |
-| `PERSUASION` | `EMPATHY`, `WARM` | `STRUCTURE` |
+| `OPTIMIZATION` | `OBJECTIVE`, `DETAIL` | `ITERATIVE`, `RISK` |
+| `LEARNING` | `STRUCTURE`, `PEDAGOGY` | `ABSTRACTION` |
+| `PERSUASION` | `PERSUASION`, `EMPATHY` | `WARM`, `STRUCTURE` |
 | `FEEDBACK` | `EMPATHY`, `OBJECTIVE` | `WARM`, `ITERATIVE` |
-| `RESEARCH` | `OBJECTIVE`, `EXPLORE` | `DETAIL`, `AGENTIC` |
+| `RESEARCH` | `OBJECTIVE`, `EXPLORE`, `SYNTHESIS` | `DETAIL`, `AGENTIC` |
 | `GOAL_SETTING` | `DETAIL`, `DECISIVE` | `VISION` |
 
 ### Content Types (CREATION_CONTENT)
@@ -57,11 +64,11 @@
 | Type | Triggers | Primary Reqs | Secondary Reqs |
 |------|----------|--------------|----------------|
 | Customer email | "email to customer", "client email" | `EMPATHY`, `WARM`, `STRUCTURE` | |
-| Marketing copy | "marketing", "ad copy", "landing page" | `EMPATHY`, `CREATIVE`, `DECISIVE` | |
-| Technical blog | "technical post", "how-to" | `OBJECTIVE`, `STRUCTURE`, `DETAIL` | |
-| Executive summary | "executive summary", "brief for leadership" | `DECISIVE`, `STRUCTURE` | |
+| Marketing copy | "marketing", "ad copy", "landing page" | `PERSUASION`, `CREATIVE`, `EMPATHY` | `DECISIVE` |
+| Technical blog | "technical post", "how-to" | `OBJECTIVE`, `STRUCTURE`, `DETAIL` | `PEDAGOGY` |
+| Executive summary | "executive summary", "brief for leadership" | `DECISIVE`, `STRUCTURE`, `SYNTHESIS` | |
 | Apology/bad news | "apologise", "bad news", "discontinuing" | `EMPATHY`, `WARM`, `RISK` | |
-| Sales pitch | "sales", "pitch", "proposal" | `EMPATHY`, `DECISIVE`, `CREATIVE` | |
+| Sales pitch | "sales", "pitch", "proposal" | `PERSUASION`, `EMPATHY`, `DECISIVE` | `CREATIVE` |
 
 ## Frameworks (Essential Info Only)
 
