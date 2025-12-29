@@ -12,14 +12,14 @@ These questions are relevant across most task categories. Select 2-3 from this p
 
 ### Core Universal Questions
 
-| ID | Question | Purpose | When Essential |
-|----|----------|---------|----------------|
-| U1 | What is the scope or boundary of this task? What's explicitly out of scope? | Define limits | Complex or ambiguous tasks |
-| U2 | How will you measure success? What does a good outcome look like? | Success criteria | All tasks except simple factual |
-| U3 | Who is the intended audience for this output? | Audience clarity | Any task with an output |
-| U4 | What constraints exist (time, budget, length, format, resources)? | Limitation awareness | Most tasks |
-| U5 | What background context is essential to understand? | Context gathering | Tasks requiring domain knowledge |
-| U6 | What have you already tried or considered? | Avoid redundancy | Problem-solving, iteration tasks |
+| ID | Question | Purpose | Cognitive Reqs | When Essential |
+|----|----------|---------|----------------|----------------|
+| U1 | What is the scope or boundary of this task? What's explicitly out of scope? | Define limits | `STRUCTURE`, `DETAIL` | Complex or ambiguous tasks |
+| U2 | How will you measure success? What does a good outcome look like? | Success criteria | `DECISIVE`, `OBJECTIVE` | All tasks except simple factual |
+| U3 | Who is the intended audience for this output? | Audience clarity | `EMPATHY`, `PERSUASION` | Any task with an output |
+| U4 | What constraints exist (time, budget, length, format, resources)? | Limitation awareness | `DETAIL`, `OBJECTIVE` | Most tasks |
+| U5 | What background context is essential to understand? | Context gathering | `SYNTHESIS`, `DETAIL` | Tasks requiring domain knowledge |
+| U6 | What have you already tried or considered? | Avoid redundancy | `EXPLORE`, `ITERATIVE` | Problem-solving, iteration tasks |
 
 ### Personality-Adjusted Universal Questions
 
@@ -57,16 +57,16 @@ For each universal question, select the phrasing that matches the user's persona
 
 Select 4-6 questions when CO-STAR framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| COS1 | Who is the specific audience for this content? What's their role and knowledge level? | Audience definition | High |
-| COS2 | What's the primary objective—what should the reader do, think, or feel after reading? | Objective clarity | High |
-| COS3 | What writing style fits best—formal, conversational, technical, storytelling? | Style determination | High |
-| COS4 | What tone should come through—professional, friendly, urgent, empathetic, authoritative? | Tone setting | High |
-| COS5 | What format works best for this content—paragraphs, bullet points, sections with headers? | Response format | Medium |
-| COS6 | What background context does the AI need to understand the situation? | Context gathering | Medium |
-| COS7 | Are there any words, phrases, or topics to avoid? | Boundaries | Medium |
-| COS8 | Is there existing content or examples to match in style? | Style reference | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| COS1 | Who is the specific audience for this content? What's their role and knowledge level? | Audience definition | `EMPATHY`, `PEDAGOGY` | High |
+| COS2 | What's the primary objective—what should the reader do, think, or feel after reading? | Objective clarity | `DECISIVE`, `PERSUASION` | High |
+| COS3 | What writing style fits best—formal, conversational, technical, storytelling? | Style determination | `STRUCTURE`, `CREATIVE` | High |
+| COS4 | What tone should come through—professional, friendly, urgent, empathetic, authoritative? | Tone setting | `WARM`, `EMPATHY` | High |
+| COS5 | What format works best for this content—paragraphs, bullet points, sections with headers? | Response format | `STRUCTURE` | Medium |
+| COS6 | What background context does the AI need to understand the situation? | Context gathering | `SYNTHESIS` | Medium |
+| COS7 | Are there any words, phrases, or topics to avoid? | Boundaries | `RISK` | Medium |
+| COS8 | Is there existing content or examples to match in style? | Style reference | `CREATIVE`, `ITERATIVE` | Low |
 
 #### Personality-Adjusted Phrasing for CO-STAR
 
@@ -83,14 +83,14 @@ Select 4-6 questions when CO-STAR framework is identified.
 
 Select 4-5 questions when ReAct framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| REA1 | What tools, resources, or information sources are available? | Tool inventory | High |
-| REA2 | What's the end goal—what specific outcome are you trying to achieve? | Goal clarity | High |
-| REA3 | How will you know when the task is complete? What signals success? | Termination criteria | High |
-| REA4 | What constraints or rules must be followed during the process? | Guardrails | Medium |
-| REA5 | If initial approaches fail, what alternatives should be considered? | Fallback planning | Medium |
-| REA6 | Are there any actions or sources that should be avoided? | Boundaries | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| REA1 | What tools, resources, or information sources are available? | Tool inventory | `AGENTIC`, `DETAIL` | High |
+| REA2 | What's the end goal—what specific outcome are you trying to achieve? | Goal clarity | `DECISIVE`, `OBJECTIVE` | High |
+| REA3 | How will you know when the task is complete? What signals success? | Termination criteria | `DECISIVE`, `OBJECTIVE` | High |
+| REA4 | What constraints or rules must be followed during the process? | Guardrails | `RISK`, `DETAIL` | Medium |
+| REA5 | If initial approaches fail, what alternatives should be considered? | Fallback planning | `EXPLORE`, `ITERATIVE` | Medium |
+| REA6 | Are there any actions or sources that should be avoided? | Boundaries | `RISK` | Low |
 
 #### Conditional Questions for ReAct
 
@@ -104,14 +104,14 @@ Select 4-5 questions when ReAct framework is identified.
 
 Select 4-5 questions when Self-Refine framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| SRF1 | What are the specific quality criteria for this output? | Quality standards | High |
-| SRF2 | What aspects are most important to get right? | Priority focus | High |
-| SRF3 | How many refinement iterations are acceptable? | Iteration bounds | Medium |
-| SRF4 | What's the minimum acceptable quality threshold? | Quality floor | Medium |
-| SRF5 | Are there examples of excellent outputs to aspire to? | Quality reference | Medium |
-| SRF6 | What common mistakes or pitfalls should be watched for? | Error awareness | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| SRF1 | What are the specific quality criteria for this output? | Quality standards | `ITERATIVE`, `OBJECTIVE` | High |
+| SRF2 | What aspects are most important to get right? | Priority focus | `DECISIVE`, `OBJECTIVE` | High |
+| SRF3 | How many refinement iterations are acceptable? | Iteration bounds | `ITERATIVE` | Medium |
+| SRF4 | What's the minimum acceptable quality threshold? | Quality floor | `OBJECTIVE`, `DECISIVE` | Medium |
+| SRF5 | Are there examples of excellent outputs to aspire to? | Quality reference | `ITERATIVE`, `CREATIVE` | Medium |
+| SRF6 | What common mistakes or pitfalls should be watched for? | Error awareness | `RISK`, `ITERATIVE` | Low |
 
 #### Personality-Adjusted Phrasing for Self-Refine
 
@@ -128,13 +128,13 @@ Select 4-5 questions when Self-Refine framework is identified.
 
 Select 3-4 questions when Step-Back framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| STB1 | What domain or field does this question belong to? | Domain identification | High |
-| STB2 | What general principles or theories might apply? | Principle prompting | High |
-| STB3 | What's the specific question you need answered? | Question clarity | High |
-| STB4 | What level of detail is needed in the answer? | Depth calibration | Medium |
-| STB5 | Are there related concepts you already understand? | Build on existing | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| STB1 | What domain or field does this question belong to? | Domain identification | `ABSTRACTION`, `SYNTHESIS` | High |
+| STB2 | What general principles or theories might apply? | Principle prompting | `ABSTRACTION`, `VISION` | High |
+| STB3 | What's the specific question you need answered? | Question clarity | `DETAIL`, `OBJECTIVE` | High |
+| STB4 | What level of detail is needed in the answer? | Depth calibration | `DETAIL` | Medium |
+| STB5 | Are there related concepts you already understand? | Build on existing | `SYNTHESIS`, `PEDAGOGY` | Low |
 
 #### Conditional Questions for Step-Back
 
@@ -148,13 +148,13 @@ Select 3-4 questions when Step-Back framework is identified.
 
 Select 3-5 questions when Skeleton-of-Thought framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| SOT1 | What's the main topic or question to address? | Topic focus | High |
-| SOT2 | How many main points should the response cover? | Scope sizing | High |
-| SOT3 | Is there a preferred logical order for the points? | Structure guidance | Medium |
-| SOT4 | How detailed should each point be? | Depth calibration | Medium |
-| SOT5 | Does coherence between points matter, or can they be independent? | Framework fit check | Medium |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| SOT1 | What's the main topic or question to address? | Topic focus | `STRUCTURE`, `DETAIL` | High |
+| SOT2 | How many main points should the response cover? | Scope sizing | `STRUCTURE`, `DETAIL` | High |
+| SOT3 | Is there a preferred logical order for the points? | Structure guidance | `STRUCTURE`, `OBJECTIVE` | Medium |
+| SOT4 | How detailed should each point be? | Depth calibration | `DETAIL` | Medium |
+| SOT5 | Does coherence between points matter, or can they be independent? | Framework fit check | `STRUCTURE`, `PARALLEL` | Medium |
 
 #### Framework Fit Verification
 
@@ -173,15 +173,15 @@ If answer to SOT5 indicates high interdependence, consider switching to Chain of
 
 Select 5-7 questions when Meta Prompting framework is identified.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| MET1 | What task will the generated prompt be used for? | Target task | High |
-| MET2 | What model will execute the prompt (if known)? | Model targeting | High |
-| MET3 | What output format and quality is expected? | Output requirements | High |
-| MET4 | What's the user profile for the generated prompt (if known)? | Personality targeting | Medium |
-| MET5 | Are there existing prompts to improve, or starting from scratch? | Starting point | Medium |
-| MET6 | What constraints must the prompt respect? | Boundaries | Medium |
-| MET7 | What has been tried that didn't work well? | Failure learning | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| MET1 | What task will the generated prompt be used for? | Target task | `DETAIL`, `OBJECTIVE` | High |
+| MET2 | What model will execute the prompt (if known)? | Model targeting | `DETAIL` | High |
+| MET3 | What output format and quality is expected? | Output requirements | `STRUCTURE`, `OBJECTIVE` | High |
+| MET4 | What's the user profile for the generated prompt (if known)? | Personality targeting | `EMPATHY`, `PEDAGOGY` | Medium |
+| MET5 | Are there existing prompts to improve, or starting from scratch? | Starting point | `ITERATIVE` | Medium |
+| MET6 | What constraints must the prompt respect? | Boundaries | `RISK`, `DETAIL` | Medium |
+| MET7 | What has been tried that didn't work well? | Failure learning | `ITERATIVE`, `RISK` | Low |
 
 ---
 
@@ -191,18 +191,18 @@ Select 5-7 questions when Meta Prompting framework is identified.
 
 Select 3-5 questions from this pool based on task specifics.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| D1 | What options are you currently considering? | Map the decision space | High |
-| D2 | What criteria matter most in making this decision? | Identify decision factors | High |
-| D3 | What's the cost or impact of choosing wrong? | Understand stakes | Medium |
-| D4 | Is this decision reversible, or are you locked in once you choose? | Assess commitment level | Medium |
-| D5 | What information would make this decision obvious? | Identify knowledge gaps | Medium |
-| D6 | What's your timeline for making this decision? | Urgency assessment | Medium |
-| D7 | Who else is affected by or involved in this decision? | Stakeholder mapping | Medium |
-| D8 | Have you made similar decisions before? What worked or didn't? | Learn from history | Low |
-| D9 | What's your gut telling you, and why might you be hesitating? | Surface intuition | Low (F types) |
-| D10 | If you had to decide right now, what would you choose? | Force prioritisation | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| D1 | What options are you currently considering? | Map the decision space | `EXPLORE`, `DETAIL` | High |
+| D2 | What criteria matter most in making this decision? | Identify decision factors | `OBJECTIVE`, `DECISIVE` | High |
+| D3 | What's the cost or impact of choosing wrong? | Understand stakes | `RISK`, `OBJECTIVE` | Medium |
+| D4 | Is this decision reversible, or are you locked in once you choose? | Assess commitment level | `RISK` | Medium |
+| D5 | What information would make this decision obvious? | Identify knowledge gaps | `SYNTHESIS`, `OBJECTIVE` | Medium |
+| D6 | What's your timeline for making this decision? | Urgency assessment | `DETAIL` | Medium |
+| D7 | Who else is affected by or involved in this decision? | Stakeholder mapping | `EMPATHY`, `SYNTHESIS` | Medium |
+| D8 | Have you made similar decisions before? What worked or didn't? | Learn from history | `ITERATIVE`, `SYNTHESIS` | Low |
+| D9 | What's your gut telling you, and why might you be hesitating? | Surface intuition | `EMPATHY`, `RISK` | Low (F types) |
+| D10 | If you had to decide right now, what would you choose? | Force prioritisation | `DECISIVE` | Low |
 
 #### Conditional Questions
 
@@ -216,20 +216,20 @@ Select 3-5 questions from this pool based on task specifics.
 
 Select 4-6 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| S1 | What's the time horizon for this strategy? | Temporal scope | High |
-| S2 | What resources are available (budget, team, tools)? | Resource constraints | High |
-| S3 | What does success look like at the end of this period? | Goal definition | High |
-| S4 | Who are the key stakeholders who need to buy in? | Stakeholder mapping | High |
-| S5 | What's been tried before, and what were the results? | Historical context | Medium |
-| S6 | What are the biggest obstacles or risks you foresee? | Risk identification | Medium |
-| S7 | Who are your main competitors or alternatives? | Competitive context | Medium |
-| S8 | What's your unique advantage or differentiation? | Positioning | Medium |
-| S9 | What's the current state you're starting from? | Baseline assessment | Medium |
-| S10 | What dependencies or external factors could affect this? | External awareness | Low |
-| S11 | What would cause this strategy to fail? | Failure mode analysis | Low (T-identity types) |
-| S12 | What's your appetite for risk versus proven approaches? | Risk tolerance | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| S1 | What's the time horizon for this strategy? | Temporal scope | `VISION`, `DETAIL` | High |
+| S2 | What resources are available (budget, team, tools)? | Resource constraints | `DETAIL`, `OBJECTIVE` | High |
+| S3 | What does success look like at the end of this period? | Goal definition | `VISION`, `DECISIVE` | High |
+| S4 | Who are the key stakeholders who need to buy in? | Stakeholder mapping | `EMPATHY`, `PERSUASION` | High |
+| S5 | What's been tried before, and what were the results? | Historical context | `ITERATIVE`, `SYNTHESIS` | Medium |
+| S6 | What are the biggest obstacles or risks you foresee? | Risk identification | `RISK`, `VISION` | Medium |
+| S7 | Who are your main competitors or alternatives? | Competitive context | `OBJECTIVE`, `SYNTHESIS` | Medium |
+| S8 | What's your unique advantage or differentiation? | Positioning | `VISION`, `CREATIVE` | Medium |
+| S9 | What's the current state you're starting from? | Baseline assessment | `DETAIL`, `OBJECTIVE` | Medium |
+| S10 | What dependencies or external factors could affect this? | External awareness | `RISK`, `SYNTHESIS` | Low |
+| S11 | What would cause this strategy to fail? | Failure mode analysis | `RISK`, `OBJECTIVE` | Low (T-identity types) |
+| S12 | What's your appetite for risk versus proven approaches? | Risk tolerance | `RISK`, `DECISIVE` | Low |
 
 #### Conditional Questions
 
@@ -243,18 +243,18 @@ Select 4-6 questions from this pool.
 
 Select 3-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| A1 | What data or information do you have access to? | Data inventory | High |
-| A2 | What's the specific question you're trying to answer? | Focus the analysis | High |
-| A3 | What's the hypothesis you're testing, if any? | Frame the inquiry | Medium |
-| A4 | What level of depth is needed (surface scan vs. deep dive)? | Scope calibration | Medium |
-| A5 | Are there specific angles or perspectives you want explored? | Direction setting | Medium |
-| A6 | Who needs to act on this analysis? | Audience/action | Medium |
-| A7 | What would change your mind or surprise you? | Challenge assumptions | Low |
-| A8 | What's the deadline or urgency for this analysis? | Time constraints | Medium |
-| A9 | What format should the analysis take? | Output format | Low |
-| A10 | Are there any known biases or blind spots to watch for? | Quality control | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| A1 | What data or information do you have access to? | Data inventory | `DETAIL`, `OBJECTIVE` | High |
+| A2 | What's the specific question you're trying to answer? | Focus the analysis | `OBJECTIVE`, `DETAIL` | High |
+| A3 | What's the hypothesis you're testing, if any? | Frame the inquiry | `OBJECTIVE`, `VISION` | Medium |
+| A4 | What level of depth is needed (surface scan vs. deep dive)? | Scope calibration | `DETAIL` | Medium |
+| A5 | Are there specific angles or perspectives you want explored? | Direction setting | `EXPLORE`, `SYNTHESIS` | Medium |
+| A6 | Who needs to act on this analysis? | Audience/action | `EMPATHY`, `PERSUASION` | Medium |
+| A7 | What would change your mind or surprise you? | Challenge assumptions | `EXPLORE`, `OBJECTIVE` | Low |
+| A8 | What's the deadline or urgency for this analysis? | Time constraints | `DETAIL` | Medium |
+| A9 | What format should the analysis take? | Output format | `STRUCTURE` | Low |
+| A10 | Are there any known biases or blind spots to watch for? | Quality control | `OBJECTIVE`, `RISK` | Low |
 
 #### Conditional Questions
 
@@ -268,19 +268,19 @@ Select 3-5 questions from this pool.
 
 Select 3-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| C1 | Who is the target audience for this content? | Audience definition | High |
-| C2 | What's the primary goal or call to action? | Purpose clarity | High |
-| C3 | What tone is appropriate (formal, casual, technical, friendly)? | Voice/style | High |
-| C4 | What's the target length or word count? | Scope | Medium |
-| C5 | Are there examples of style or content you want to emulate? | Style reference | Medium |
-| C6 | What key messages or points must be included? | Required content | Medium |
-| C7 | What should definitely be avoided? | Boundaries | Medium |
-| C8 | Where will this content be published or used? | Channel context | Medium |
-| C9 | What's the deadline? | Urgency | Low |
-| C10 | Is this part of a larger campaign or standalone? | Context | Low |
-| C11 | What do you want the reader to feel or do after reading? | Emotional goal | Low (F types) |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| C1 | Who is the target audience for this content? | Audience definition | `EMPATHY`, `PEDAGOGY` | High |
+| C2 | What's the primary goal or call to action? | Purpose clarity | `PERSUASION`, `DECISIVE` | High |
+| C3 | What tone is appropriate (formal, casual, technical, friendly)? | Voice/style | `WARM`, `STRUCTURE` | High |
+| C4 | What's the target length or word count? | Scope | `DETAIL` | Medium |
+| C5 | Are there examples of style or content you want to emulate? | Style reference | `CREATIVE`, `ITERATIVE` | Medium |
+| C6 | What key messages or points must be included? | Required content | `DETAIL`, `STRUCTURE` | Medium |
+| C7 | What should definitely be avoided? | Boundaries | `RISK` | Medium |
+| C8 | Where will this content be published or used? | Channel context | `DETAIL`, `SYNTHESIS` | Medium |
+| C9 | What's the deadline? | Urgency | `DETAIL` | Low |
+| C10 | Is this part of a larger campaign or standalone? | Context | `SYNTHESIS`, `VISION` | Low |
+| C11 | What do you want the reader to feel or do after reading? | Emotional goal | `EMPATHY`, `PERSUASION` | Low (F types) |
 
 #### Conditional Questions
 
@@ -294,18 +294,18 @@ Select 3-5 questions from this pool.
 
 Select 3-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| T1 | What technology stack or language is required? | Technical constraints | High |
-| T2 | What's the skill level of people who'll use this? | User context | High |
-| T3 | Are there existing conventions, style guides, or patterns to follow? | Standards | Medium |
-| T4 | What error handling or edge cases matter? | Robustness | Medium |
-| T5 | Is this for production or prototype/proof of concept? | Quality level | Medium |
-| T6 | What's the expected input and output? | Interface definition | Medium |
-| T7 | Are there performance requirements? | Non-functional needs | Low |
-| T8 | What documentation level is needed? | Documentation scope | Low |
-| T9 | How will this be tested or validated? | Quality assurance | Low |
-| T10 | What's the deployment environment? | Infrastructure context | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| T1 | What technology stack or language is required? | Technical constraints | `DETAIL`, `OBJECTIVE` | High |
+| T2 | What's the skill level of people who'll use this? | User context | `PEDAGOGY`, `EMPATHY` | High |
+| T3 | Are there existing conventions, style guides, or patterns to follow? | Standards | `STRUCTURE`, `DETAIL` | Medium |
+| T4 | What error handling or edge cases matter? | Robustness | `RISK`, `OBJECTIVE` | Medium |
+| T5 | Is this for production or prototype/proof of concept? | Quality level | `DETAIL`, `DECISIVE` | Medium |
+| T6 | What's the expected input and output? | Interface definition | `DETAIL`, `STRUCTURE` | Medium |
+| T7 | Are there performance requirements? | Non-functional needs | `OBJECTIVE`, `DETAIL` | Low |
+| T8 | What documentation level is needed? | Documentation scope | `PEDAGOGY`, `STRUCTURE` | Low |
+| T9 | How will this be tested or validated? | Quality assurance | `OBJECTIVE`, `RISK` | Low |
+| T10 | What's the deployment environment? | Infrastructure context | `DETAIL`, `OBJECTIVE` | Low |
 
 #### Conditional Questions
 
@@ -319,18 +319,18 @@ Select 3-5 questions from this pool.
 
 Select 3-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| I1 | What problem or opportunity are you generating ideas for? | Focus area | High |
-| I2 | What constraints should ideas respect? | Boundaries | High |
-| I3 | How wild can ideas be — incremental improvements or moonshots? | Creativity scope | Medium |
-| I4 | What's already been considered or tried? | Avoid repetition | Medium |
-| I5 | What definitely won't work or isn't feasible? | Eliminate dead ends | Medium |
-| I6 | What resources would be available to implement ideas? | Feasibility context | Medium |
-| I7 | Who are the users or beneficiaries of these ideas? | User focus | Medium |
-| I8 | What inspires you or what examples do you admire? | Inspiration sources | Low |
-| I9 | What's the timeline for implementing ideas? | Urgency | Low |
-| I10 | How will ideas be evaluated or prioritised? | Selection criteria | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| I1 | What problem or opportunity are you generating ideas for? | Focus area | `CREATIVE`, `DETAIL` | High |
+| I2 | What constraints should ideas respect? | Boundaries | `DETAIL`, `RISK` | High |
+| I3 | How wild can ideas be — incremental improvements or moonshots? | Creativity scope | `CREATIVE`, `EXPLORE` | Medium |
+| I4 | What's already been considered or tried? | Avoid repetition | `EXPLORE`, `SYNTHESIS` | Medium |
+| I5 | What definitely won't work or isn't feasible? | Eliminate dead ends | `RISK`, `OBJECTIVE` | Medium |
+| I6 | What resources would be available to implement ideas? | Feasibility context | `DETAIL`, `OBJECTIVE` | Medium |
+| I7 | Who are the users or beneficiaries of these ideas? | User focus | `EMPATHY`, `VISION` | Medium |
+| I8 | What inspires you or what examples do you admire? | Inspiration sources | `CREATIVE`, `VISION` | Low |
+| I9 | What's the timeline for implementing ideas? | Urgency | `DETAIL` | Low |
+| I10 | How will ideas be evaluated or prioritised? | Selection criteria | `DECISIVE`, `OBJECTIVE` | Low |
 
 #### Conditional Questions
 
@@ -344,20 +344,20 @@ Select 3-5 questions from this pool.
 
 Select 4-6 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| P1 | What exactly is the problem? Can you describe the symptoms? | Problem definition | High |
-| P2 | When did this problem start or when was it first noticed? | Timeline | High |
-| P3 | What have you already tried? | Avoid redundancy | High |
-| P4 | What happens if this isn't solved? | Stakes/urgency | Medium |
-| P5 | Are there symptoms versus root causes to distinguish? | Depth of problem | Medium |
-| P6 | Who has relevant expertise or has seen this before? | Resource identification | Medium |
-| P7 | What changed right before the problem appeared? | Cause hunting | Medium |
-| P8 | Is this a recurring problem or first occurrence? | Pattern | Medium |
-| P9 | What would a solution need to achieve? | Success criteria | Medium |
-| P10 | What constraints affect possible solutions? | Solution boundaries | Medium |
-| P11 | What's your hypothesis about the cause? | Current thinking | Low |
-| P12 | What quick wins might provide relief while solving the deeper issue? | Pragmatic relief | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| P1 | What exactly is the problem? Can you describe the symptoms? | Problem definition | `DETAIL`, `OBJECTIVE` | High |
+| P2 | When did this problem start or when was it first noticed? | Timeline | `DETAIL`, `SYNTHESIS` | High |
+| P3 | What have you already tried? | Avoid redundancy | `ITERATIVE`, `EXPLORE` | High |
+| P4 | What happens if this isn't solved? | Stakes/urgency | `RISK`, `VISION` | Medium |
+| P5 | Are there symptoms versus root causes to distinguish? | Depth of problem | `OBJECTIVE`, `ABSTRACTION` | Medium |
+| P6 | Who has relevant expertise or has seen this before? | Resource identification | `SYNTHESIS`, `EMPATHY` | Medium |
+| P7 | What changed right before the problem appeared? | Cause hunting | `DETAIL`, `SYNTHESIS` | Medium |
+| P8 | Is this a recurring problem or first occurrence? | Pattern | `ITERATIVE`, `SYNTHESIS` | Medium |
+| P9 | What would a solution need to achieve? | Success criteria | `DECISIVE`, `OBJECTIVE` | Medium |
+| P10 | What constraints affect possible solutions? | Solution boundaries | `DETAIL`, `RISK` | Medium |
+| P11 | What's your hypothesis about the cause? | Current thinking | `OBJECTIVE`, `ABSTRACTION` | Low |
+| P12 | What quick wins might provide relief while solving the deeper issue? | Pragmatic relief | `DECISIVE`, `EXPLORE` | Low |
 
 #### Conditional Questions
 
@@ -371,16 +371,16 @@ Select 4-6 questions from this pool.
 
 Select 2-4 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| L1 | What's your current understanding level of this topic? | Baseline assessment | High |
-| L2 | What specifically is confusing or unclear? | Focus area | High |
-| L3 | What do you need to do with this knowledge? | Application context | Medium |
-| L4 | Do you learn better from examples, explanations, or analogies? | Learning style | Medium |
-| L5 | How deep do you need to go (overview vs. expert level)? | Depth calibration | Medium |
-| L6 | What related concepts do you already understand? | Build on existing | Low |
-| L7 | Is there a specific format that works well for you? | Output preference | Low |
-| L8 | What's the urgency — immediate application or general knowledge? | Timeline | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| L1 | What's your current understanding level of this topic? | Baseline assessment | `PEDAGOGY`, `DETAIL` | High |
+| L2 | What specifically is confusing or unclear? | Focus area | `PEDAGOGY`, `DETAIL` | High |
+| L3 | What do you need to do with this knowledge? | Application context | `DETAIL`, `VISION` | Medium |
+| L4 | Do you learn better from examples, explanations, or analogies? | Learning style | `PEDAGOGY`, `EMPATHY` | Medium |
+| L5 | How deep do you need to go (overview vs. expert level)? | Depth calibration | `PEDAGOGY`, `DETAIL` | Medium |
+| L6 | What related concepts do you already understand? | Build on existing | `PEDAGOGY`, `SYNTHESIS` | Low |
+| L7 | Is there a specific format that works well for you? | Output preference | `STRUCTURE`, `PEDAGOGY` | Low |
+| L8 | What's the urgency — immediate application or general knowledge? | Timeline | `DETAIL` | Low |
 
 #### Conditional Questions
 
@@ -394,18 +394,18 @@ Select 2-4 questions from this pool.
 
 Select 4-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| PE1 | Who specifically needs to be convinced? | Target audience | High |
-| PE2 | What are their current beliefs or position? | Starting point | High |
-| PE3 | What objections or concerns might they raise? | Anticipate resistance | High |
-| PE4 | What evidence or arguments do they find compelling? | Persuasion style | Medium |
-| PE5 | What's their motivation — what do they care about? | Values alignment | Medium |
-| PE6 | What do you want them to do after being persuaded? | Call to action | Medium |
-| PE7 | What's your relationship with this audience? | Trust level | Medium |
-| PE8 | What's at stake for them? | Their perspective | Low |
-| PE9 | Have you tried to persuade them before? What happened? | History | Low |
-| PE10 | What's the format for this persuasion (written, verbal, presentation)? | Medium | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| PE1 | Who specifically needs to be convinced? | Target audience | `EMPATHY`, `PERSUASION` | High |
+| PE2 | What are their current beliefs or position? | Starting point | `PERSUASION`, `SYNTHESIS` | High |
+| PE3 | What objections or concerns might they raise? | Anticipate resistance | `RISK`, `PERSUASION` | High |
+| PE4 | What evidence or arguments do they find compelling? | Persuasion style | `PERSUASION`, `OBJECTIVE` | Medium |
+| PE5 | What's their motivation — what do they care about? | Values alignment | `EMPATHY`, `PERSUASION` | Medium |
+| PE6 | What do you want them to do after being persuaded? | Call to action | `DECISIVE`, `PERSUASION` | Medium |
+| PE7 | What's your relationship with this audience? | Trust level | `WARM`, `EMPATHY` | Medium |
+| PE8 | What's at stake for them? | Their perspective | `EMPATHY`, `RISK` | Low |
+| PE9 | Have you tried to persuade them before? What happened? | History | `ITERATIVE`, `SYNTHESIS` | Low |
+| PE10 | What's the format for this persuasion (written, verbal, presentation)? | Medium | `STRUCTURE`, `PERSUASION` | Low |
 
 #### Conditional Questions
 
@@ -419,16 +419,16 @@ Select 4-5 questions from this pool.
 
 Select 3-4 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| F1 | What aspects do you most want feedback on? | Focus area | High |
-| F2 | What's working well that should be preserved? | Identify strengths | High |
-| F3 | What's the purpose of this work? | Context for evaluation | Medium |
-| F4 | How candid can the feedback be? | Calibrate directness | Medium |
-| F5 | What will you do with the feedback? | Action orientation | Medium |
-| F6 | Who is the intended audience for this work? | Evaluation criteria | Medium |
-| F7 | What's the timeline for revisions? | Urgency | Low |
-| F8 | Are there specific criteria or standards to evaluate against? | Benchmarks | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| F1 | What aspects do you most want feedback on? | Focus area | `OBJECTIVE`, `ITERATIVE` | High |
+| F2 | What's working well that should be preserved? | Identify strengths | `OBJECTIVE`, `EMPATHY` | High |
+| F3 | What's the purpose of this work? | Context for evaluation | `SYNTHESIS`, `OBJECTIVE` | Medium |
+| F4 | How candid can the feedback be? | Calibrate directness | `WARM`, `EMPATHY` | Medium |
+| F5 | What will you do with the feedback? | Action orientation | `ITERATIVE`, `DECISIVE` | Medium |
+| F6 | Who is the intended audience for this work? | Evaluation criteria | `EMPATHY`, `OBJECTIVE` | Medium |
+| F7 | What's the timeline for revisions? | Urgency | `DETAIL` | Low |
+| F8 | Are there specific criteria or standards to evaluate against? | Benchmarks | `OBJECTIVE`, `STRUCTURE` | Low |
 
 #### Conditional Questions
 
@@ -442,18 +442,18 @@ Select 3-4 questions from this pool.
 
 Select 3-5 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| R1 | What do you already know about this topic? | Starting point | High |
-| R2 | What specific questions need to be answered? | Research focus | High |
-| R3 | What sources are acceptable or preferred? | Source criteria | Medium |
-| R4 | What time period is relevant? | Temporal scope | Medium |
-| R5 | How rigorous does this need to be (quick scan vs. thorough)? | Depth | Medium |
-| R6 | What format should findings take? | Output format | Medium |
-| R7 | Who will use this research? | Audience | Medium |
-| R8 | What would be surprising or change your approach? | Challenge assumptions | Low |
-| R9 | What's the deadline? | Urgency | Low |
-| R10 | Are there competing perspectives to consider? | Balance | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| R1 | What do you already know about this topic? | Starting point | `SYNTHESIS`, `DETAIL` | High |
+| R2 | What specific questions need to be answered? | Research focus | `DETAIL`, `OBJECTIVE` | High |
+| R3 | What sources are acceptable or preferred? | Source criteria | `OBJECTIVE`, `RISK` | Medium |
+| R4 | What time period is relevant? | Temporal scope | `DETAIL` | Medium |
+| R5 | How rigorous does this need to be (quick scan vs. thorough)? | Depth | `DETAIL`, `OBJECTIVE` | Medium |
+| R6 | What format should findings take? | Output format | `STRUCTURE` | Medium |
+| R7 | Who will use this research? | Audience | `EMPATHY`, `PERSUASION` | Medium |
+| R8 | What would be surprising or change your approach? | Challenge assumptions | `EXPLORE`, `OBJECTIVE` | Low |
+| R9 | What's the deadline? | Urgency | `DETAIL` | Low |
+| R10 | Are there competing perspectives to consider? | Balance | `EXPLORE`, `SYNTHESIS` | Low |
 
 #### Conditional Questions
 
@@ -467,16 +467,16 @@ Select 3-5 questions from this pool.
 
 Select 3-4 questions from this pool.
 
-| ID | Question | Purpose | Priority |
-|----|----------|---------|----------|
-| G1 | What's the overarching vision this goal supports? | Strategic context | High |
-| G2 | What time frame applies to this goal? | Temporal scope | High |
-| G3 | How will progress be measured? | Metrics definition | High |
-| G4 | What resources are available? | Feasibility | Medium |
-| G5 | What obstacles are anticipated? | Risk awareness | Medium |
-| G6 | Who else needs to be aligned on this goal? | Stakeholders | Medium |
-| G7 | What happens if the goal isn't achieved? | Stakes | Low |
-| G8 | What's the stretch version versus minimum acceptable? | Ambition calibration | Low |
+| ID | Question | Purpose | Cognitive Reqs | Priority |
+|----|----------|---------|----------------|----------|
+| G1 | What's the overarching vision this goal supports? | Strategic context | `VISION`, `SYNTHESIS` | High |
+| G2 | What time frame applies to this goal? | Temporal scope | `DETAIL`, `VISION` | High |
+| G3 | How will progress be measured? | Metrics definition | `OBJECTIVE`, `DETAIL` | High |
+| G4 | What resources are available? | Feasibility | `DETAIL`, `OBJECTIVE` | Medium |
+| G5 | What obstacles are anticipated? | Risk awareness | `RISK`, `VISION` | Medium |
+| G6 | Who else needs to be aligned on this goal? | Stakeholders | `EMPATHY`, `PERSUASION` | Medium |
+| G7 | What happens if the goal isn't achieved? | Stakes | `RISK`, `VISION` | Low |
+| G8 | What's the stretch version versus minimum acceptable? | Ambition calibration | `DECISIVE`, `RISK` | Low |
 
 #### Conditional Questions
 
