@@ -175,4 +175,22 @@ class PromptRun extends Model
             default => null,
         };
     }
+
+    /**
+     * Check if the prompt run can be accessed by the given user ID or visitor ID
+     */
+    public function canBeAccessedBy(?int $userId, ?string $visitorId): bool
+    {
+        // Check if authenticated user owns this prompt run
+        if ($userId && $this->user_id === $userId) {
+            return true;
+        }
+
+        // Check if visitor owns this prompt run
+        if ($visitorId && $this->visitor_id === $visitorId) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -918,19 +918,9 @@ class PromptBuilderController extends Controller
      */
     protected function authorizePromptRun(PromptRun $promptRun, Request $request): void
     {
-        // Check if authenticated user owns this prompt run
-        if (auth()->check() && $promptRun->user_id === auth()->id()) {
-            return;
+        if (! $promptRun->canBeAccessedBy(auth()->id(), $this->getVisitorId($request))) {
+            abort(403);
         }
-
-        // Check if visitor owns this prompt run
-        $visitorId = $this->getVisitorId($request);
-        if ($visitorId && $promptRun->visitor_id === $visitorId) {
-            return;
-        }
-
-        // No match - unauthorised
-        abort(403);
     }
 
     /**

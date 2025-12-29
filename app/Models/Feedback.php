@@ -14,6 +14,7 @@ class Feedback extends Model
 
     protected $fillable = [
         'user_id',
+        'personality_type',
         'experience_level',
         'usefulness',
         'usage_intent',
@@ -32,6 +33,18 @@ class Feedback extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Find feedback by user ID.
+     */
+    public static function findByUser(?int $userId): ?self
+    {
+        if ($userId === null) {
+            return null;
+        }
+
+        return static::where('user_id', $userId)->first();
     }
 
     protected static function newFactory(): FeedbackFactory|Factory

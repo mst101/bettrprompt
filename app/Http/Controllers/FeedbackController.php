@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFeedbackRequest;
+use App\Models\Feedback;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,9 +13,7 @@ class FeedbackController extends Controller
     public function create(): Response|RedirectResponse
     {
         // Check if user has already submitted feedback
-        $existingFeedback = DB::table('feedback')
-            ->where('user_id', auth()->id())
-            ->first();
+        $existingFeedback = Feedback::findByUser(auth()->id());
 
         if ($existingFeedback) {
             return redirect()->route('feedback.show');
@@ -26,9 +24,7 @@ class FeedbackController extends Controller
 
     public function show(): Response|RedirectResponse
     {
-        $feedback = DB::table('feedback')
-            ->where('user_id', auth()->id())
-            ->first();
+        $feedback = Feedback::findByUser(auth()->id());
 
         if (! $feedback) {
             return redirect()->route('feedback.create');
@@ -40,7 +36,7 @@ class FeedbackController extends Controller
                 'usefulness' => $feedback->usefulness,
                 'usageIntent' => $feedback->usage_intent,
                 'suggestions' => $feedback->suggestions,
-                'desiredFeatures' => json_decode($feedback->desired_features, true),
+                'desiredFeatures' => $feedback->desired_features,
                 'desiredFeaturesOther' => $feedback->desired_features_other,
                 'createdAt' => $feedback->created_at,
                 'updatedAt' => $feedback->updated_at,
@@ -52,17 +48,15 @@ class FeedbackController extends Controller
     {
         $validated = $request->validatedToSnakeCase();
 
-        DB::table('feedback')->insert([
+        Feedback::create([
             'user_id' => auth()->id(),
             'personality_type' => auth()->user()?->personality_type,
             'experience_level' => $validated['experience_level'],
             'usefulness' => $validated['usefulness'],
             'usage_intent' => $validated['usage_intent'],
             'suggestions' => $validated['suggestions'] ?? null,
-            'desired_features' => json_encode($validated['desired_features']),
+            'desired_features' => $validated['desired_features'],
             'desired_features_other' => $validated['desired_features_other'] ?? null,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         return redirect()->route('feedback.thank-you')
@@ -73,17 +67,16 @@ class FeedbackController extends Controller
     {
         $validated = $request->validatedToSnakeCase();
 
-        DB::table('feedback')
-            ->where('user_id', auth()->id())
-            ->update([
-                'experience_level' => $validated['experience_level'],
-                'usefulness' => $validated['usefulness'],
-                'usage_intent' => $validated['usage_intent'],
-                'suggestions' => $validated['suggestions'] ?? null,
-                'desired_features' => json_encode($validated['desired_features']),
-                'desired_features_other' => $validated['desired_features_other'] ?? null,
-                'updated_at' => now(),
-            ]);
+        $feedback = Feedback::findByUser(auth()->id());
+
+        $feedback->update([
+            'experience_level' => $validated['experience_level'],
+            'usefulness' => $validated['usefulness'],
+            'usage_intent' => $validated['usage_intent'],
+            'suggestions' => $validated['suggestions'] ?? null,
+            'desired_features' => $validated['desired_features'],
+            'desired_features_other' => $validated['desired_features_other'] ?? null,
+        ]);
 
         return redirect()->route('feedback.show')
             ->with('success', 'Thank you for updating your feedback!');
@@ -91,9 +84,7 @@ class FeedbackController extends Controller
 
     public function thankYou(): Response|RedirectResponse
     {
-        $feedback = DB::table('feedback')
-            ->where('user_id', auth()->id())
-            ->first();
+        $feedback = Feedback::findByUser(auth()->id());
 
         if (! $feedback) {
             return redirect()->route('feedback.create');

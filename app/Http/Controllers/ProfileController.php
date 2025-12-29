@@ -239,18 +239,7 @@ class ProfileController extends Controller
     public function updateLocation(UpdateLocationRequest $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'country_code' => $request->validated('countryCode'),
-                    'region' => $request->validated('region'),
-                    'city' => $request->validated('city'),
-                    'timezone' => $request->validated('timezone'),
-                    'currency_code' => $request->validated('currencyCode'),
-                    'language_code' => $request->validated('languageCode'),
-                    'location_manually_set' => true,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->updateLocation($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
@@ -270,15 +259,7 @@ class ProfileController extends Controller
     public function updateProfessional(UpdateProfessionalRequest $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'job_title' => $request->validated('jobTitle'),
-                    'industry' => $request->validated('industry'),
-                    'experience_level' => $request->validated('experienceLevel'),
-                    'company_size' => $request->validated('companySize'),
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->updateProfessional($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'professional-updated');
@@ -298,14 +279,7 @@ class ProfileController extends Controller
     public function updateTeam(UpdateTeamRequest $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'team_size' => $request->validated('teamSize'),
-                    'team_role' => $request->validated('teamRole'),
-                    'work_mode' => $request->validated('workMode'),
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->updateTeam($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'team-updated');
@@ -325,12 +299,7 @@ class ProfileController extends Controller
     public function updateBudget(UpdateBudgetRequest $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'budget_consciousness' => $request->validated('budgetConsciousness'),
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->updateBudget($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'budget-updated');
@@ -350,13 +319,7 @@ class ProfileController extends Controller
     public function updateTools(UpdateToolsRequest $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'preferred_tools' => $request->validated('preferredTools'),
-                    'primary_programming_language' => $request->validated('primaryProgrammingLanguage'),
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->updateTools($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'tools-updated');
@@ -409,23 +372,7 @@ class ProfileController extends Controller
     public function clearLocation(Request $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'country_code' => null,
-                    'country_name' => null,
-                    'region' => null,
-                    'city' => null,
-                    'timezone' => null,
-                    'currency_code' => null,
-                    'latitude' => null,
-                    'longitude' => null,
-                    'language_code' => null,
-                    'location_detected_at' => null,
-                    'location_manually_set' => false,
-                    'language_manually_set' => false,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->clearLocation();
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-cleared');
@@ -442,15 +389,7 @@ class ProfileController extends Controller
     public function clearProfessional(Request $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'job_title' => null,
-                    'industry' => null,
-                    'experience_level' => null,
-                    'company_size' => null,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->clearProfessional();
 
             return Redirect::route('profile.edit')
                 ->with('status', 'professional-cleared');
@@ -467,14 +406,7 @@ class ProfileController extends Controller
     public function clearTeam(Request $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'team_size' => null,
-                    'team_role' => null,
-                    'work_mode' => null,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->clearTeam();
 
             return Redirect::route('profile.edit')
                 ->with('status', 'team-cleared');
@@ -491,12 +423,7 @@ class ProfileController extends Controller
     public function clearBudget(Request $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'budget_consciousness' => null,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->clearBudget();
 
             return Redirect::route('profile.edit')
                 ->with('status', 'budget-cleared');
@@ -513,13 +440,7 @@ class ProfileController extends Controller
     public function clearTools(Request $request): RedirectResponse
     {
         try {
-            DatabaseService::retryOnDeadlock(function () use ($request) {
-                $request->user()->update([
-                    'preferred_tools' => null,
-                    'primary_programming_language' => null,
-                ]);
-                $request->user()->updateProfileCompletion();
-            });
+            $request->user()->clearTools();
 
             return Redirect::route('profile.edit')
                 ->with('status', 'tools-cleared');
