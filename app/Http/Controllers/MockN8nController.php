@@ -26,8 +26,8 @@ class MockN8nController extends Controller
             return $scenario;
         }
 
-        // Then check environment variable (set by test setup)
-        $scenario = env('TEST_MOCK_SCENARIO');
+        // Then check configuration (set by test setup via TEST_MOCK_SCENARIO env)
+        $scenario = config('services.testing.mock_scenario');
         if ($scenario) {
             return $scenario;
         }

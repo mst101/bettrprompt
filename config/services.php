@@ -63,4 +63,8 @@ return [
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
     ],
+
+    'testing' => [
+        'mock_scenario' => env('TEST_MOCK_SCENARIO'),
+    ],
 ];
