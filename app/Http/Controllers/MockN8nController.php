@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AnalysisCompleted;
 use App\Events\WorkflowFailed;
 use App\Models\PromptRun;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -68,7 +68,6 @@ class MockN8nController extends Controller
                 if ($promptRun) {
                     $promptRun->update([
                         'workflow_stage' => $failureStage,
-                        'status' => 'failed',
                         'error_message' => $errorMessage,
                     ]);
 
@@ -81,7 +80,7 @@ class MockN8nController extends Controller
                         'workflow_stage' => $failureStage,
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Failed to handle mock error scenario', [
                     'prompt_run_id' => $promptRunId,
                     'error' => $e->getMessage(),
@@ -110,7 +109,7 @@ class MockN8nController extends Controller
         ]);
 
         // Check if this is an error scenario
-        if ($scenario && in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
+        if (in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
             return $this->handleErrorScenario($request, $scenario, '0_processing');
         }
 
@@ -144,7 +143,7 @@ class MockN8nController extends Controller
         ]);
 
         // Check if this is an error scenario
-        if ($scenario && in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
+        if (in_array($scenario, ['rate-limit', 'timeout', 'api-error', 'validation-error'])) {
             // For error scenarios, we still need to update the DB directly
             // because the error handling is different
             $promptRunId = $request->input('prompt_run_id');
