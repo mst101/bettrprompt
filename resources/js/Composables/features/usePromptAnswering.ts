@@ -12,7 +12,6 @@ import { nextTick, ref } from 'vue';
  *     answerForm,
  *     isSubmitting,
  *     submitAnswer,
- *     skipQuestion,
  *     handleTranscription,
  *     clearAnswer
  * } = usePromptAnswering(props.promptRun.id, () => textareaRef.value?.focus());
@@ -44,22 +43,6 @@ export function usePromptAnswering(
                 isSubmitting.value = false;
             },
         });
-    };
-
-    const skipQuestion = () => {
-        isSubmitting.value = true;
-        router.post(
-            route('prompt-builder.skip', promptRunId),
-            {},
-            {
-                preserveScroll: true,
-                onFinish: async () => {
-                    isSubmitting.value = false;
-                    await nextTick();
-                    onNavigate?.();
-                },
-            },
-        );
     };
 
     const handleTranscription = (text: string) => {
@@ -94,7 +77,6 @@ export function usePromptAnswering(
         answerForm,
         isSubmitting,
         submitAnswer,
-        skipQuestion,
         goBackToPreviousQuestion,
         handleTranscription,
         clearAnswer,

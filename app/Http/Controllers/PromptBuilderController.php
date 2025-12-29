@@ -8,7 +8,6 @@ use App\Http\Requests\CreateChildFromTaskRequest;
 use App\Http\Requests\CreateChildWithFrameworkRequest;
 use App\Http\Requests\GeneratePromptRequest;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
-use App\Http\Requests\SkipQuestionRequest;
 use App\Http\Requests\SubmitPreAnalysisAnswersRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
 use App\Http\Requests\UpdatePreAnalysisAnswersRequest;
@@ -30,8 +29,6 @@ use Inertia\Inertia;
 
 class PromptBuilderController extends Controller
 {
-    // ======== SETUP ========
-
     /**
      * Display the prompt builder landing page
      */
@@ -339,22 +336,6 @@ class PromptBuilderController extends Controller
         $validated = $request->validated();
 
         $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], $validated['answer']);
-
-        return response()->json(['clarifying_answers' => $answers]);
-    }
-
-    /**
-     * Workflow 1: Skip a clarifying question
-     * Records null answer and advances to the next question.
-     * Used when user doesn't want to answer a particular question.
-     */
-    public function skipQuestion(SkipQuestionRequest $request, PromptRun $promptRun)
-    {
-        $this->authorizePromptRun($promptRun, $request);
-
-        $validated = $request->validated();
-
-        $answers = $this->saveClarifyingAnswer($promptRun, $validated['question_index'], null);
 
         return response()->json(['clarifying_answers' => $answers]);
     }

@@ -108,11 +108,6 @@ export class PromptBuilderPage {
         await submitButton.click();
     }
 
-    async skipQuestion(): Promise<void> {
-        const skipButton = this.page.getByRole('button', { name: /skip/i });
-        await skipButton.click();
-    }
-
     // ===== Tab Navigation Waiting =====
 
     async waitForFrameworkTab(): Promise<void> {

@@ -90,14 +90,6 @@ describe('usePromptAnswering', () => {
         expect(answerForm.answer).toBe('');
     });
 
-    it('should set submitting state when skipping question', () => {
-        const { isSubmitting, skipQuestion } = usePromptAnswering(1);
-
-        expect(isSubmitting.value).toBe(false);
-        skipQuestion();
-        expect(isSubmitting.value).toBe(true);
-    });
-
     it('should handle multiple transcriptions', () => {
         const { answerForm, handleTranscription } = usePromptAnswering(1);
 
@@ -115,17 +107,6 @@ describe('usePromptAnswering', () => {
         // Just verify the callback is accepted without error
         answerForm.answer = 'My answer';
         expect(() => submitAnswer()).not.toThrow();
-    });
-
-    it('should skip question', () => {
-        const mockPost = vi.fn();
-        vi.mocked(router.post).mockImplementation(mockPost);
-
-        const { skipQuestion } = usePromptAnswering(1);
-
-        skipQuestion();
-
-        expect(mockPost).toHaveBeenCalled();
     });
 
     it('should go back to previous question', () => {
@@ -146,17 +127,6 @@ describe('usePromptAnswering', () => {
         expect(isSubmitting.value).toBe(false);
         answerForm.answer = 'My answer';
         submitAnswer();
-        expect(isSubmitting.value).toBe(true);
-    });
-
-    it('should set isSubmitting when skipping', () => {
-        const mockPost = vi.fn();
-        vi.mocked(router.post).mockImplementation(mockPost);
-
-        const { isSubmitting, skipQuestion } = usePromptAnswering(1);
-
-        expect(isSubmitting.value).toBe(false);
-        skipQuestion();
         expect(isSubmitting.value).toBe(true);
     });
 
@@ -189,17 +159,6 @@ describe('usePromptAnswering', () => {
 
         // Form should be submitting
         expect(answerForm.post).toHaveBeenCalled();
-    });
-
-    it('should skip question with correct route', () => {
-        const mockPost = vi.fn();
-        vi.mocked(router.post).mockImplementation(mockPost);
-
-        const { skipQuestion } = usePromptAnswering(456);
-
-        skipQuestion();
-
-        expect(mockPost).toHaveBeenCalled();
     });
 
     it('should go back with correct route', () => {
@@ -244,25 +203,6 @@ describe('usePromptAnswering', () => {
         const options = postCall[1];
         if (options?.onSuccess) {
             await options.onSuccess();
-        }
-
-        expect(onNavigate).toHaveBeenCalled();
-    });
-
-    it('should call onNavigate callback after skipping question', async () => {
-        const mockPost = vi.fn();
-        vi.mocked(router.post).mockImplementation(mockPost);
-
-        const onNavigate = vi.fn();
-        const { skipQuestion } = usePromptAnswering(1, onNavigate);
-
-        skipQuestion();
-
-        // Call the onFinish callback
-        const postCall = mockPost.mock.calls[0];
-        const options = postCall[2];
-        if (options?.onFinish) {
-            await options.onFinish();
         }
 
         expect(onNavigate).toHaveBeenCalled();

@@ -176,32 +176,6 @@ test('answer question rejects invalid workflow stage', function () {
     $response->assertOk();
 });
 
-test('skip question records null answer', function () {
-    $this->actingAs($this->user);
-
-    $promptRun = PromptRun::factory()->create([
-        'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
-        'framework_questions' => [
-            ['question' => 'Question 1'],
-            ['question' => 'Question 2'],
-        ],
-        'clarifying_answers' => [],
-        'current_question_index' => 0,
-    ]);
-
-    $response = $this->post(route('prompt-builder.skip', $promptRun), [
-        'question_index' => 0,
-    ]);
-
-    $response->assertOk();
-
-    $promptRun->refresh();
-    expect($promptRun->clarifying_answers)->toHaveCount(2)
-        ->and($promptRun->clarifying_answers[0])->toBeNull()
-        ->and($promptRun->current_question_index)->toBe(1);
-});
-
 test('user cannot answer other users questions', function () {
     $this->actingAs($this->user);
 

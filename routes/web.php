@@ -132,8 +132,6 @@ Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, '
     ->name('prompt-builder.full-details');
 Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
     ->name('prompt-builder.answer');
-Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])
-    ->name('prompt-builder.skip');
 Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
     ->name('prompt-builder.go-back');
 Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
@@ -151,10 +149,6 @@ Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
     ->name('prompt-builder.create-child-with-framework');
 Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
     ->name('prompt-builder.destroy');
-Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
-    ->name('prompt-builder.answer');
-Route::post('/prompt-builder/{promptRun}/skip', [PromptBuilderController::class, 'skipQuestion'])
-    ->name('prompt-builder.skip');
 Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
     ->name('prompt-builder.update-prompt');
 // });

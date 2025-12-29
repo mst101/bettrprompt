@@ -213,20 +213,6 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
     }
 };
 
-const skipQuestion = async () => {
-    await saveAnswer(currentIndex.value, null);
-
-    if (atLastQuestion.value) {
-        // If skipping the last question, submit all answers
-        submitAllAnswers();
-    } else {
-        goNext();
-        // Focus the next question's textarea
-        await nextTick();
-        questionFormRef.value?.focus();
-    }
-};
-
 const clearCurrentAnswer = () => {
     currentAnswerDraft.value = '';
 };
@@ -511,7 +497,6 @@ const optionalQuestionsLabel = computed(() => {
             :show-all="showAllQuestions"
             @submit="submitAnswer"
             @submit-all="submitAllAnswersEarly"
-            @skip="skipQuestion"
             @go-back="goBack"
             @clear="clearCurrentAnswer"
             @toggle-show-all="showAllQuestions = !showAllQuestions"
