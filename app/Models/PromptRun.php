@@ -99,51 +99,6 @@ class PromptRun extends Model
     }
 
     /**
-     * Get the current unanswered question.
-     */
-    public function getCurrentQuestion(): ?string
-    {
-        if (! $this->framework_questions || ! is_array($this->framework_questions)) {
-            return null;
-        }
-
-        $currentIndex = $this->current_question_index ?? 0;
-
-        return $this->framework_questions[$currentIndex] ?? null;
-    }
-
-    /**
-     * Check if all questions have been answered.
-     */
-    public function hasAnsweredAllQuestions(): bool
-    {
-        if (! $this->framework_questions) {
-            return false;
-        }
-
-        $totalQuestions = count($this->framework_questions);
-        $currentIndex = $this->current_question_index ?? 0;
-
-        return $currentIndex >= $totalQuestions;
-    }
-
-    /**
-     * Get the number of answered questions.
-     */
-    public function getAnsweredQuestionsCount(): int
-    {
-        return $this->current_question_index ?? 0;
-    }
-
-    /**
-     * Get the total number of questions.
-     */
-    public function getTotalQuestionsCount(): int
-    {
-        return count($this->framework_questions ?? []);
-    }
-
-    /**
      * Get user context for workflow optimisation
      * Falls back to visitor context if no authenticated user
      */
@@ -189,17 +144,6 @@ class PromptRun extends Model
     }
 
     /**
-     * Check if the prompt run is pending (waiting for user input)
-     */
-    public function isPending(): bool
-    {
-        return in_array($this->workflow_stage, [
-            '0_completed',
-            '1_completed',
-        ]);
-    }
-
-    /**
      * Check if the prompt run is completed successfully
      */
     public function isCompleted(): bool
@@ -230,37 +174,5 @@ class PromptRun extends Model
             '2_failed' => 2,
             default => null,
         };
-    }
-
-    /**
-     * Scope: Query only processing runs
-     */
-    public function scopeProcessing($query)
-    {
-        return $query->whereIn('workflow_stage', [
-            '0_processing',
-            '1_processing',
-            '2_processing',
-        ]);
-    }
-
-    /**
-     * Scope: Query only completed runs
-     */
-    public function scopeCompleted($query)
-    {
-        return $query->where('workflow_stage', '2_completed');
-    }
-
-    /**
-     * Scope: Query only failed runs (any workflow)
-     */
-    public function scopeFailed($query)
-    {
-        return $query->whereIn('workflow_stage', [
-            '0_failed',
-            '1_failed',
-            '2_failed',
-        ]);
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Database\Factories\FeedbackFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Feedback extends Model
 {
@@ -27,12 +29,12 @@ class Feedback extends Model
         'usage_intent' => 'integer',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): FeedbackFactory|Factory
     {
         return FeedbackFactory::new();
     }

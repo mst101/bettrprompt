@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class UseE2eDatabase
@@ -30,13 +31,13 @@ class UseE2eDatabase
                 app('db')->purge('pgsql');
 
                 // Log for debugging
-                \Log::info('UseE2eDatabase middleware: Switched to bettrprompt_e2e database', [
+                Log::info('UseE2eDatabase middleware: Switched to bettrprompt_e2e database', [
                     'url' => $request->url(),
                     'current_db' => Config::get('database.connections.pgsql.database'),
                 ]);
             } else {
                 // Data collection database is already set, don't override it
-                \Log::info('UseE2eDatabase middleware: Data collection database already set, skipping E2E override', [
+                Log::info('UseE2eDatabase middleware: Data collection database already set, skipping E2E override', [
                     'url' => $request->url(),
                     'current_db' => $currentDb,
                 ]);

@@ -131,9 +131,9 @@ class Visitor extends Model
         }
 
         if (is_null($this->city)) {
-            return "{$this->region}, {$this->country_name}";
+            return "$this->region, $this->country_name";
         }
 
-        return "{$this->city}, {$this->region}, {$this->country_name}";
+        return "$this->city, $this->region, $this->country_name";
     }
 }
