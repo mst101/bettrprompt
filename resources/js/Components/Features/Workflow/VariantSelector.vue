@@ -25,62 +25,12 @@ const variantOptions = computed(() => {
     }));
 });
 
-const getCsrfToken = () => {
-    const token = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content');
-    if (!token) {
-        // Fallback: try to extract from cookies
-        const name = 'XSRF-TOKEN';
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift();
-    }
-    return token;
-};
-
-const handleVariantChange = async () => {
-    try {
-        const csrfToken = getCsrfToken();
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-        };
-        if (csrfToken) {
-            headers['X-CSRF-TOKEN'] = csrfToken;
-        }
-
-        const response = await fetch(
-            `/debug/workflow/${props.workflowNumber}/variant`,
-            {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ variant: selectedVariant.value }),
-            },
-        );
-
-        if (!response.ok) {
-            console.error(
-                'Failed to switch variant:',
-                response.status,
-                response.statusText,
-            );
-            selectedVariant.value = props.currentVariant;
-            return;
-        }
-
-        const result = await response.json();
-        if (!result.success) {
-            console.error('Failed to switch variant:', result.error);
-            selectedVariant.value = props.currentVariant;
-            return;
-        }
-
-        // Reload page to fetch new variant data
-        window.location.reload();
-    } catch (err) {
-        console.error('Failed to switch variant:', err);
-        selectedVariant.value = props.currentVariant;
-    }
+const handleVariantChange = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('variant', selectedVariant.value);
+    // Reset pass to 0 when variant changes
+    url.searchParams.delete('pass');
+    window.location.href = url.toString();
 };
 </script>
 

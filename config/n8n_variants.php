@@ -19,22 +19,22 @@ return [
         ],
     ],
 
-    // Workflows 0 and 2 (no variants yet)
+    // Workflows 0 and 2 (single-pass only)
     0 => [
-        'default' => 'default',
+        'default' => 'single-pass',
         'variants' => [
-            'default' => [
-                'name' => 'Default',
+            'single-pass' => [
+                'name' => 'Single Pass',
                 'workflow_file' => 'workflow_0.json',
                 'prepare_prompt_nodes' => ['Prepare Prompt'],
             ],
         ],
     ],
     2 => [
-        'default' => 'default',
+        'default' => 'single-pass',
         'variants' => [
-            'default' => [
-                'name' => 'Default',
+            'single-pass' => [
+                'name' => 'Single Pass',
                 'workflow_file' => 'workflow_2.json',
                 'prepare_prompt_nodes' => ['Prepare Prompt'],
             ],

@@ -8,34 +8,41 @@ let frameworkTemplateContent = referenceData.framework_templates[frameworkCode];
 
 // Try variations if not found
 if (!frameworkTemplateContent) {
-  const withTaxonomy = frameworkCode + '_TAXONOMY';
-  if (referenceData.framework_templates[withTaxonomy]) {
-    frameworkTemplateContent = referenceData.framework_templates[withTaxonomy];
-    frameworkCode = withTaxonomy;
-  }
+    const withTaxonomy = frameworkCode + '_TAXONOMY';
+    if (referenceData.framework_templates[withTaxonomy]) {
+        frameworkTemplateContent =
+            referenceData.framework_templates[withTaxonomy];
+        frameworkCode = withTaxonomy;
+    }
 }
 
 // Try case-insensitive partial match
 if (!frameworkTemplateContent) {
-  const searchCode = frameworkCode.toUpperCase();
-  for (const [key, value] of Object.entries(referenceData.framework_templates)) {
-    if (key.toUpperCase().startsWith(searchCode)) {
-      frameworkTemplateContent = value;
-      frameworkCode = key;
-      console.log(`Framework fuzzy-matched: ${webhookData.analysis_data.selected_framework.code} → ${key}`);
-      break;
+    const searchCode = frameworkCode.toUpperCase();
+    for (const [key, value] of Object.entries(
+        referenceData.framework_templates,
+    )) {
+        if (key.toUpperCase().startsWith(searchCode)) {
+            frameworkTemplateContent = value;
+            frameworkCode = key;
+            console.log(
+                `Framework fuzzy-matched: ${webhookData.analysis_data.selected_framework.code} → ${key}`,
+            );
+            break;
+        }
     }
-  }
 }
 
 if (!frameworkTemplateContent) {
-  throw new Error(`Framework not found: ${webhookData.analysis_data.selected_framework.code}. Available: ${Object.keys(referenceData.framework_templates).sort().join(', ')}`);
+    throw new Error(
+        `Framework not found: ${webhookData.analysis_data.selected_framework.code}. Available: ${Object.keys(referenceData.framework_templates).sort().join(', ')}`,
+    );
 }
 
 const frameworkTemplateDoc = {
-  success: true,
-  content: frameworkTemplateContent,
-  framework_code: frameworkCode
+    success: true,
+    content: frameworkTemplateContent,
+    framework_code: frameworkCode,
 };
 
 const personalityDoc = referenceData.personality_calibration;
@@ -46,44 +53,61 @@ const userContext = webhookData.user_context || null;
 
 // Helper: Build user context
 function buildUserContext(ctx) {
-  if (!ctx) return '';
+    if (!ctx) return '';
 
-  const parts = [];
-  const loc = ctx.location;
-  const prof = ctx.professional;
-  const team = ctx.team;
-  const pref = ctx.preferences;
+    const parts = [];
+    const loc = ctx.location;
+    const prof = ctx.professional;
+    const team = ctx.team;
+    const pref = ctx.preferences;
 
-  if (loc?.country) {
-    parts.push(`Location: ${loc.country}${loc.city ? ` (${loc.city})` : ''}`);
-    if (loc.timezone) parts.push(`TZ: ${loc.timezone}`);
-    if (loc.currency) parts.push(`Currency: ${loc.currency}`);
-    if (loc.language) parts.push(`Lang: ${loc.language}`);
-  }
+    if (loc?.country) {
+        parts.push(
+            `Location: ${loc.country}${loc.city ? ` (${loc.city})` : ''}`,
+        );
+        if (loc.timezone) parts.push(`TZ: ${loc.timezone}`);
+        if (loc.currency) parts.push(`Currency: ${loc.currency}`);
+        if (loc.language) parts.push(`Lang: ${loc.language}`);
+    }
 
-  if (prof?.job_title || prof?.industry) {
-    const p = [prof.job_title, prof.industry && `in ${prof.industry}`, prof.experience_level && `(${prof.experience_level})`].filter(Boolean);
-    if (p.length) parts.push(`Professional: ${p.join(' ')}`);
-    if (prof.company_size) parts.push(`Company: ${prof.company_size}`);
-  }
+    if (prof?.job_title || prof?.industry) {
+        const p = [
+            prof.job_title,
+            prof.industry && `in ${prof.industry}`,
+            prof.experience_level && `(${prof.experience_level})`,
+        ].filter(Boolean);
+        if (p.length) parts.push(`Professional: ${p.join(' ')}`);
+        if (prof.company_size) parts.push(`Company: ${prof.company_size}`);
+    }
 
-  if (team?.size || team?.role) {
-    const t = [team.size && `${team.size} team`, team.role && `${team.role} role`, team.work_mode && `(${team.work_mode})`].filter(Boolean);
-    if (t.length) parts.push(`Team: ${t.join(', ')}`);
-  }
+    if (team?.size || team?.role) {
+        const t = [
+            team.size && `${team.size} team`,
+            team.role && `${team.role} role`,
+            team.work_mode && `(${team.work_mode})`,
+        ].filter(Boolean);
+        if (t.length) parts.push(`Team: ${t.join(', ')}`);
+    }
 
-  if (pref?.budget) parts.push(`Budget: ${pref.budget}`);
-  if (pref?.primary_programming_language) parts.push(`Lang: ${pref.primary_programming_language}`);
+    if (pref?.budget) parts.push(`Budget: ${pref.budget}`);
+    if (pref?.primary_programming_language)
+        parts.push(`Lang: ${pref.primary_programming_language}`);
 
-  return parts.length ? '\n\n# User Context\n- ' + parts.join('\n- ') + '\n\nUse context when optimizing (local currency, tools, complexity level).' : '';
+    return parts.length
+        ? '\n\n# User Context\n- ' +
+              parts.join('\n- ') +
+              '\n\nUse context when optimizing (local currency, tools, complexity level).'
+        : '';
 }
 
 // Helper: Language preference
 function getLanguageInstructions(ctx) {
-  const lang = ctx?.location?.language || 'en-GB';
-  if (lang.startsWith('en-US')) return '\n\n# Language: American English\nUse American spelling/format.';
-  if (lang.startsWith('en-')) return '\n\n# Language: British English\nUse British spelling/format.';
-  return `\n\n# Language: ${lang}\nAdapt for this locale.`;
+    const lang = ctx?.location?.language || 'en-GB';
+    if (lang.startsWith('en-US'))
+        return '\n\n# Language: American English\nUse American spelling/format.';
+    if (lang.startsWith('en-'))
+        return '\n\n# Language: British English\nUse British spelling/format.';
+    return `\n\n# Language: ${lang}\nAdapt for this locale.`;
 }
 
 const userContextString = buildUserContext(userContext);
@@ -148,31 +172,31 @@ userMessage += `Framework: ${analysisData.selected_framework?.name}\n`;
 userMessage += `Personality: ${analysisData.personality_tier || 'none'}\n\n`;
 
 if (analysisData.task_trait_alignment) {
-  userMessage += `**Task-Trait Alignment:**\n${JSON.stringify(analysisData.task_trait_alignment, null, 2)}\n\n`;
-  userMessage += `Apply amplifications and counterbalancing as specified. For counterbalanced traits, include injection text explicitly in prompt.\n\n`;
+    userMessage += `**Task-Trait Alignment:**\n${JSON.stringify(analysisData.task_trait_alignment, null, 2)}\n\n`;
+    userMessage += `Apply amplifications and counterbalancing as specified. For counterbalanced traits, include injection text explicitly in prompt.\n\n`;
 }
 
 userMessage += `---\n\n## ORIGINAL TASK\n\n${webhookData.original_task_description || 'No task'}\n\n`;
 
 if (webhookData.user_context?.personality?.personality_type) {
-  userMessage += `## PERSONALITY\n\nType: ${webhookData.user_context.personality.personality_type}\n`;
-  if (webhookData.user_context.personality.trait_percentages) {
-    userMessage += `Percentages: ${JSON.stringify(webhookData.user_context.personality.trait_percentages)}\n`;
-  }
-  userMessage += '\n';
+    userMessage += `## PERSONALITY\n\nType: ${webhookData.user_context.personality.personality_type}\n`;
+    if (webhookData.user_context.personality.trait_percentages) {
+        userMessage += `Percentages: ${JSON.stringify(webhookData.user_context.personality.trait_percentages)}\n`;
+    }
+    userMessage += '\n';
 }
 
 if (preAnalysisContext && Object.keys(preAnalysisContext).length > 0) {
-  userMessage += `## PRE-ANALYSIS CONTEXT\n\n${JSON.stringify(preAnalysisContext, null, 2)}\n\n`;
+    userMessage += `## PRE-ANALYSIS CONTEXT\n\n${JSON.stringify(preAnalysisContext, null, 2)}\n\n`;
 }
 
 userMessage += `## USER ANSWERS\n\n`;
 if (questionAnswers?.length > 0) {
-  questionAnswers.forEach((qa, i) => {
-    userMessage += `**Q${i + 1}: ${qa.question}**\nA: ${qa.answer}\n\n`;
-  });
+    questionAnswers.forEach((qa, i) => {
+        userMessage += `**Q${i + 1}: ${qa.question}**\nA: ${qa.answer}\n\n`;
+    });
 } else {
-  userMessage += `No answers provided.\n\n`;
+    userMessage += `No answers provided.\n\n`;
 }
 
 userMessage += `---\n\nConstruct optimized prompt:\n`;
@@ -183,9 +207,11 @@ userMessage += `4. Apply COUNTERBALANCING (inject explicit requirements)\n`;
 userMessage += `5. Make self-contained and immediately usable\n`;
 userMessage += `6. Recommend models considering counterbalance complexity${userContextString}`;
 
-return [{
-  json: {
-    system: systemPrompt,
-    messages: [{role: 'user', content: userMessage}]
-  }
-}];
+return [
+    {
+        json: {
+            system: systemPrompt,
+            messages: [{ role: 'user', content: userMessage }],
+        },
+    },
+];

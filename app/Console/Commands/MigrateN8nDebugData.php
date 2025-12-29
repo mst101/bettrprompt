@@ -56,7 +56,7 @@ class MigrateN8nDebugData extends Command
         $hasData = [];
 
         foreach ($workflowNumbers as $num) {
-            $legacyPath = storage_path('app/n8n_debug/prepare_prompt/');
+            $legacyPath = storage_path('app/n8n_debug/javascript/');
             if (is_dir($legacyPath)) {
                 // Check if there are any files for this workflow
                 $files = glob($legacyPath."**/workflow_{$num}_*.js");
@@ -86,8 +86,8 @@ class MigrateN8nDebugData extends Command
         $defaultVariant = $config[$workflowNumber]['default'];
         $baseLegacyPath = storage_path('app/n8n_debug/');
 
-        // Migrate prepare_prompt files
-        $this->migrateDirectory($workflowNumber, $defaultVariant, $baseLegacyPath, 'prepare_prompt', $variantService);
+        // Migrate JavaScript files
+        $this->migrateDirectory($workflowNumber, $defaultVariant, $baseLegacyPath, 'javascript', $variantService);
 
         // Migrate prompt files
         $this->migrateDirectory($workflowNumber, $defaultVariant, $baseLegacyPath, 'prompt', $variantService);

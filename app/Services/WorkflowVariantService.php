@@ -71,8 +71,8 @@ class WorkflowVariantService
 
     /**
      * Get storage path for variant data
-     * e.g., getVariantStoragePath(1, 'two-pass', 'prepare_prompt/old')
-     *   → '/home/mark/repos/bettrprompt/storage/app/n8n_debug/variants/two-pass/prepare_prompt/old/'
+     * e.g., getVariantStoragePath(1, 'two-pass', 'javascript/old')
+     *   → '/home/mark/repos/bettrprompt/storage/app/n8n_debug/variants/two-pass/javascript/old/'
      */
     public function getVariantStoragePath(
         int $workflowNumber,
@@ -140,7 +140,7 @@ class WorkflowVariantService
         $version = $isNew ? 'new' : 'old';
 
         // Try variant-specific path first
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "prepare_prompt/{$version}");
+        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "javascript/{$version}");
         $fileName = "workflow_{$workflowNumber}_prepare_prompt{$suffix}.js";
         $variantFile = $variantPath.$fileName;
 
@@ -149,7 +149,7 @@ class WorkflowVariantService
         }
 
         // Fall back to legacy structure for backwards compatibility
-        $legacyPath = storage_path("app/n8n_debug/prepare_prompt/{$version}/");
+        $legacyPath = storage_path("app/n8n_debug/javascript/{$version}/");
         $legacyFile = $legacyPath.$fileName;
 
         if (file_exists($legacyFile)) {
@@ -173,7 +173,7 @@ class WorkflowVariantService
         $suffix = $this->getNodeFilenameSuffix($nodeName);
         $version = $isNew ? 'new' : 'old';
 
-        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "prepare_prompt/{$version}");
+        $variantPath = $this->getVariantStoragePath($workflowNumber, $variant, "javascript/{$version}");
         $this->ensureDebugDirectory($variantPath);
 
         $fileName = "workflow_{$workflowNumber}_prepare_prompt{$suffix}.js";

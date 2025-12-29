@@ -13,7 +13,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 interface Variant {
     key: string;
@@ -34,6 +34,7 @@ interface PreparePromptNode {
 interface Props {
     workflowNumber: number;
     currentVariant?: string;
+    currentPass?: number;
     availableVariants?: Variant[];
     input?: object | null;
     preparePromptNodes?: PreparePromptNode[];
@@ -49,6 +50,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     input: null,
     currentVariant: 'default',
+    currentPass: 0,
     availableVariants: () => [],
     preparePromptNodes: () => [],
     javascriptOld: null,
@@ -86,7 +88,8 @@ const outputNew = ref(props.outputNew);
 const preparePromptNodes = ref(props.preparePromptNodes || []);
 
 // Track which pass is selected when multiple passes exist (0-based index)
-const selectedPass = ref(0);
+// Initialize from URL query parameter (passed via props)
+const selectedPass = ref(props.currentPass);
 
 // Get the current node being displayed based on selected pass
 const currentNode = computed(() => {
@@ -99,6 +102,18 @@ const passOptions = computed(() => {
         value: String(index),
         label: `Pass ${index + 1}`,
     }));
+});
+
+// Watch for pass changes and update URL
+watch(selectedPass, (newPass) => {
+    const url = new URL(window.location.href);
+    if (newPass === 0) {
+        // Default value, remove from URL for cleaner URLs
+        url.searchParams.delete('pass');
+    } else {
+        url.searchParams.set('pass', String(newPass));
+    }
+    window.location.href = url.toString();
 });
 
 // Modal state for maximized views
@@ -162,7 +177,8 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
             error.value =
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
-            javascriptOld.value = result.code || '';
+            // Reload the page to get fresh data from backend
+            window.location.reload();
             error.value = null;
         }
     } catch (err) {
@@ -182,7 +198,8 @@ const reloadJavaScriptFromWorkflowAsNew = async () => {
             error.value =
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
-            javascriptNew.value = result.code || '';
+            // Reload the page to get fresh data from backend
+            window.location.reload();
             error.value = null;
         }
     } catch (err) {

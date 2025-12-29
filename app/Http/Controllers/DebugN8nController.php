@@ -21,12 +21,23 @@ class DebugN8nController extends Controller
     ) {}
 
     /**
-     * Get current variant for workflow (from session or default)
+     * Get current variant for workflow (from query parameter or default)
      */
-    protected function getVariant(int $workflowNumber): string
+    protected function getVariant(Request $request, int $workflowNumber): string
     {
-        return session("workflow.{$workflowNumber}.variant")
+        return $request->query('variant')
             ?? $this->variantService->getDefaultVariant($workflowNumber);
+    }
+
+    /**
+     * Get current pass for workflow (from query parameter or default)
+     * Returns 0-based index (0 = Pass 1, 1 = Pass 2, etc.)
+     */
+    protected function getPass(Request $request): int
+    {
+        $pass = $request->query('pass', 0);
+
+        return is_numeric($pass) && $pass >= 0 ? (int) $pass : 0;
     }
 
     /**
@@ -60,9 +71,10 @@ class DebugN8nController extends Controller
     /**
      * Display the workflow page
      */
-    public function show(int $workflowNumber)
+    public function show(Request $request, int $workflowNumber)
     {
-        $currentVariant = $this->getVariant($workflowNumber);
+        $currentVariant = $this->getVariant($request, $workflowNumber);
+        $currentPass = $this->getPass($request);
         $availableVariants = $this->variantService->getVariants($workflowNumber);
         $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $currentVariant);
 
@@ -126,9 +138,15 @@ class DebugN8nController extends Controller
         $outputOld = $this->variantService->loadOutput($workflowNumber, $currentVariant, false);
         $outputNew = $this->variantService->loadOutput($workflowNumber, $currentVariant, true);
 
+        // Clamp pass to valid range in case variant changed
+        if ($currentPass >= count($preparePromptNodes)) {
+            $currentPass = 0;
+        }
+
         return Inertia::render('Workflow/Show', [
             'workflowNumber' => $workflowNumber,
             'currentVariant' => $currentVariant,
+            'currentPass' => $currentPass,
             'availableVariants' => $availableVariants,
             'input' => $input,
             'preparePromptNodes' => $preparePromptNodes,
@@ -194,52 +212,70 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from the n8n workflow file
      */
-    public function reloadJavaScriptFromWorkflow(int $workflowNumber)
+    public function reloadJavaScriptFromWorkflow(Request $request, int $workflowNumber)
     {
         try {
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            // Get current variant from query parameter
+            $variant = $this->getVariant($request, $workflowNumber);
+
+            // Get all prepare prompt node names for this variant
+            $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
+
+            if (empty($nodeNames)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No prepare prompt nodes found in variant configuration',
+                ], 404);
+            }
+
+            // Get the correct workflow file path for this variant
+            $n8nWorkflowFile = $this->variantService->getWorkflowFilePath($workflowNumber, $variant);
+
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
                 ], 404);
             }
 
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            if (! isset($workflow['nodes'])) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid workflow format: nodes array not found',
-                ], 400);
-            }
+            $reloadedNodes = [];
 
-            // Find and extract the "Prepare Prompt" node JavaScript
-            $javascript = null;
-            foreach ($workflow['nodes'] as $node) {
-                if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
-                    $javascript = $node['parameters']['jsCode'];
-                    break;
+            // Extract and save JavaScript for EACH node in the variant
+            foreach ($nodeNames as $nodeName) {
+                $javascript = $this->variantService->extractJavaScriptFromNode(
+                    $workflowNumber,
+                    $variant,
+                    $nodeName
+                );
+
+                if ($javascript === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Node '{$nodeName}' not found in workflow or has no jsCode",
+                    ], 404);
                 }
-            }
 
-            if ($javascript === null) {
-                return response()->json([
-                    'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow or has no jsCode',
-                ], 404);
-            }
+                // Save using variant service (handles variant-specific paths)
+                $this->variantService->saveJavaScript(
+                    $workflowNumber,
+                    $variant,
+                    $nodeName,
+                    $javascript,
+                    false  // isNew = false for "old" version
+                );
 
-            // Save the extracted JavaScript to storage
-            $this->ensureDebugDirectory('prepare_prompt/old');
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/old/workflow_{$workflowNumber}_prepare_prompt.js");
-            file_put_contents($jsFile, $javascript);
-            chmod($jsFile, 0644);
+                $reloadedNodes[] = [
+                    'nodeName' => $nodeName,
+                    'codeLength' => strlen($javascript),
+                ];
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'JavaScript reloaded from workflow successfully',
-                'code' => $javascript,
+                'reloadedNodes' => $reloadedNodes,
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -251,52 +287,70 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from workflow file and save as new version
      */
-    public function reloadJavaScriptFromWorkflowAsNew(int $workflowNumber)
+    public function reloadJavaScriptFromWorkflowAsNew(Request $request, int $workflowNumber)
     {
         try {
-            $n8nWorkflowFile = base_path("n8n/workflow_{$workflowNumber}.json");
+            // Get current variant from query parameter
+            $variant = $this->getVariant($request, $workflowNumber);
+
+            // Get all prepare prompt node names for this variant
+            $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
+
+            if (empty($nodeNames)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No prepare prompt nodes found in variant configuration',
+                ], 404);
+            }
+
+            // Get the correct workflow file path for this variant
+            $n8nWorkflowFile = $this->variantService->getWorkflowFilePath($workflowNumber, $variant);
+
             if (! file_exists($n8nWorkflowFile)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Workflow file not found: workflow_{$workflowNumber}.json",
+                    'error' => "Workflow file not found: {$n8nWorkflowFile}",
                 ], 404);
             }
 
-            $workflow = json_decode(file_get_contents($n8nWorkflowFile), true);
-            if (! isset($workflow['nodes'])) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Invalid workflow format: nodes array not found',
-                ], 400);
-            }
+            $reloadedNodes = [];
 
-            // Find and extract the "Prepare Prompt" node JavaScript
-            $javascript = null;
-            foreach ($workflow['nodes'] as $node) {
-                if ($node['name'] === 'Prepare Prompt' && isset($node['parameters']['jsCode'])) {
-                    $javascript = $node['parameters']['jsCode'];
-                    break;
+            // Extract and save JavaScript for EACH node in the variant
+            foreach ($nodeNames as $nodeName) {
+                $javascript = $this->variantService->extractJavaScriptFromNode(
+                    $workflowNumber,
+                    $variant,
+                    $nodeName
+                );
+
+                if ($javascript === null) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => "Node '{$nodeName}' not found in workflow or has no jsCode",
+                    ], 404);
                 }
-            }
 
-            if ($javascript === null) {
-                return response()->json([
-                    'success' => false,
-                    'error' => '"Prepare Prompt" node not found in workflow or has no jsCode',
-                ], 404);
-            }
+                // Save using variant service (handles variant-specific paths)
+                $this->variantService->saveJavaScript(
+                    $workflowNumber,
+                    $variant,
+                    $nodeName,
+                    $javascript,
+                    true  // isNew = true for "new" version
+                );
 
-            // Save the extracted JavaScript to storage as new version
-            $this->ensureDebugDirectory('prepare_prompt/new');
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
-            file_put_contents($jsFile, $javascript);
-            chmod($jsFile, 0644);
+                $reloadedNodes[] = [
+                    'nodeName' => $nodeName,
+                    'codeLength' => strlen($javascript),
+                ];
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'JavaScript reloaded from workflow and saved as new version',
-                'code' => $javascript,
+                'reloadedNodes' => $reloadedNodes,
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -311,7 +365,7 @@ class DebugN8nController extends Controller
     public function loadJavaScriptNew(int $workflowNumber)
     {
         try {
-            $jsFile = storage_path("app/n8n_debug/prepare_prompt/new/workflow_{$workflowNumber}_prepare_prompt.js");
+            $jsFile = storage_path("app/n8n_debug/javascript/new/workflow_{$workflowNumber}_prepare_prompt.js");
 
             if (! file_exists($jsFile)) {
                 return response()->json([
@@ -344,7 +398,7 @@ class DebugN8nController extends Controller
                 'code' => 'required|string',
             ]);
 
-            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
 
             $this->variantService->saveJavaScript($workflowNumber, $variant, $nodeName, $request->input('code'), false);
@@ -371,7 +425,7 @@ class DebugN8nController extends Controller
                 'code' => 'required|string',
             ]);
 
-            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
 
             $this->variantService->saveJavaScript($workflowNumber, $variant, $nodeName, $request->input('code'), true);
@@ -472,11 +526,11 @@ class DebugN8nController extends Controller
     /**
      * Upload old workflow to n8n server
      */
-    public function uploadOldWorkflowToN8n(int $workflowNumber)
+    public function uploadOldWorkflowToN8n(Request $request, int $workflowNumber)
     {
         try {
             // Get the current variant
-            $variant = $this->getVariant($workflowNumber);
+            $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
 
             // Load JavaScript for each prepare prompt node
@@ -573,11 +627,11 @@ class DebugN8nController extends Controller
     /**
      * Upload new workflow version to n8n server
      */
-    public function uploadNewWorkflowToN8n(int $workflowNumber)
+    public function uploadNewWorkflowToN8n(Request $request, int $workflowNumber)
     {
         try {
             // Get the current variant
-            $variant = $this->getVariant($workflowNumber);
+            $variant = $this->getVariant($request, $workflowNumber);
             $nodeNames = $this->variantService->extractPreparePromptNodeNames($workflowNumber, $variant);
 
             // Load JavaScript for each prepare prompt node
@@ -746,7 +800,7 @@ class DebugN8nController extends Controller
     {
         try {
             // Get variant and node name from request
-            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
 
             // Extract pass number from node name
@@ -818,7 +872,8 @@ class DebugN8nController extends Controller
                     }
                 } else {
                     // Fall back to loading previous pass output
-                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, false);
+                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant,
+                        $passNumber - 1, false);
                     if ($previousPassOutput !== null) {
                         // Merge previous pass output into input data
                         // This provides classification, selected_questions, etc. from previous pass
@@ -879,7 +934,7 @@ class DebugN8nController extends Controller
             $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, false);
 
             // Save pass output so next pass can use it
-            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, false);
+            //            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, false);
 
             return response()->json([
                 'success' => true,
@@ -909,7 +964,7 @@ class DebugN8nController extends Controller
     {
         try {
             // Get variant and node name from request
-            $variant = $request->input('variant', $this->getVariant($workflowNumber));
+            $variant = $request->input('variant', $this->getVariant($request, $workflowNumber));
             $nodeName = $request->input('nodeName', 'Prepare Prompt');
 
             // Extract pass number from node name
@@ -981,7 +1036,8 @@ class DebugN8nController extends Controller
                     }
                 } else {
                     // Fall back to loading previous pass output
-                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant, $passNumber - 1, true);
+                    $previousPassOutput = $this->variantService->loadPassOutput($workflowNumber, $variant,
+                        $passNumber - 1, true);
                     if ($previousPassOutput !== null) {
                         // Merge previous pass output into input data
                         // This provides classification, selected_questions, etc. from previous pass
@@ -1067,7 +1123,7 @@ class DebugN8nController extends Controller
             $this->variantService->savePrompt($workflowNumber, $variant, $nodeName, $result, true);
 
             // Save pass output so next pass can use it
-            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, true);
+            //            $this->variantService->savePassOutput($workflowNumber, $variant, $passNumber, $result, true);
 
             return response()->json([
                 'success' => true,
@@ -1434,17 +1490,19 @@ try {
             $inputData = $inputData['body'];
         }
 
-        if ($inputData === null) {
+        // If no valid input data from request, try loading from file
+        // Check if $inputData is empty, null, or missing required fields
+        if (empty($inputData) || (! isset($inputData['task_description']) && ! isset($inputData['original_task_description']) && ! isset($inputData['analysis_data']))) {
             $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
 
             if (! file_exists($inputFile)) {
-                return null;
+                return $inputData; // Return what we have from the request, or null
             }
 
             $content = json_decode(file_get_contents($inputFile), true);
 
             if (! $content) {
-                return null;
+                return $inputData; // Return what we have from the request, or null
             }
 
             // Extract the body from the stored input
@@ -1453,7 +1511,7 @@ try {
             } elseif (is_array($content) && isset($content['body'])) {
                 $inputData = $content['body'];
             } else {
-                return null;
+                return $inputData; // Return what we have from the request, or null
             }
         }
 
@@ -1466,7 +1524,8 @@ try {
     private function executeWorkflowWithService(
         int $workflowNumber,
         ?string $taskDescription,
-        ?array $userContext
+        ?array $userContext,
+        ?array $inputData = null
     ): array {
         $promptService = new \App\Services\PromptFrameworkService;
 
@@ -1480,21 +1539,31 @@ try {
                 null,
                 $userContext
             ),
+            2 => $promptService->generatePrompt(
+                $inputData['analysis_data']['task_classification'] ?? [],
+                $inputData['analysis_data']['cognitive_requirements'] ?? [],
+                $inputData['analysis_data']['selected_framework'] ?? [],
+                $inputData['analysis_data']['personality_tier'] ?? 'full',
+                $inputData['analysis_data']['task_trait_alignment'] ?? [],
+                [], // personalityAdjustmentsPreview (not in input data)
+                $inputData['original_task_description'] ?? $taskDescription ?? '',
+                $userContext['personality']['personality_type'] ?? null,
+                $userContext['personality']['trait_percentages'] ?? null,
+                $inputData['question_answers'] ?? [],
+                $userContext,
+                $inputData['pre_analysis_context'] ?? null
+            ),
             default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
         };
     }
 
     /**
-     * Save workflow output to storage and n8n directory
+     * Save workflow output to variant-specific storage
      */
-    private function saveWorkflowOutput(int $workflowNumber, array $resultData, bool $isNew = false): void
+    private function saveWorkflowOutput(Request $request, int $workflowNumber, array $resultData, bool $isNew = false): void
     {
-        $variant = $isNew ? 'new' : 'old';
-
-        // Save to storage/app/n8n_debug/output/{old|new}/
-        $this->ensureDebugDirectory("output/{$variant}");
-        $debugOutputFile = storage_path("app/n8n_debug/output/{$variant}/workflow_{$workflowNumber}_output.json");
-        file_put_contents($debugOutputFile, json_encode($resultData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $variant = $this->getVariant($request, $workflowNumber);
+        $this->variantService->saveOutput($workflowNumber, $variant, $resultData, $isNew);
     }
 
     /**
@@ -1512,20 +1581,21 @@ try {
                 ], 404);
             }
 
-            $taskDescription = $inputData['task_description'] ?? null;
+            // Support both 'task_description' (workflows 0, 1) and 'original_task_description' (workflow 2)
+            $taskDescription = $inputData['task_description'] ?? $inputData['original_task_description'] ?? null;
             $userContext = $inputData['user_context'] ?? null;
 
             if (! $taskDescription) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'task_description is required in input data',
+                    'error' => 'task_description or original_task_description is required in input data',
                 ], 400);
             }
 
             // Execute the already-uploaded workflow without uploading it again
             // The "Upload to n8n" button is responsible for uploading the workflow
-            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
-            $this->saveWorkflowOutput($workflowNumber, $resultData);
+            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext, $inputData);
+            $this->saveWorkflowOutput($request, $workflowNumber, $resultData);
 
             return response()->json([
                 'success' => true,
@@ -1556,20 +1626,21 @@ try {
                 ], 404);
             }
 
-            $taskDescription = $inputData['task_description'] ?? null;
+            // Support both 'task_description' (workflows 0, 1) and 'original_task_description' (workflow 2)
+            $taskDescription = $inputData['task_description'] ?? $inputData['original_task_description'] ?? null;
             $userContext = $inputData['user_context'] ?? null;
 
             if (! $taskDescription) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'task_description is required in input data',
+                    'error' => 'task_description or original_task_description is required in input data',
                 ], 400);
             }
 
             // Execute the already-uploaded workflow without uploading it again
             // The "Upload to n8n" button is responsible for uploading the workflow
-            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext);
-            $this->saveWorkflowOutput($workflowNumber, $resultData, true);
+            $resultData = $this->executeWorkflowWithService($workflowNumber, $taskDescription, $userContext, $inputData);
+            $this->saveWorkflowOutput($request, $workflowNumber, $resultData, true);
 
             return response()->json([
                 'success' => true,

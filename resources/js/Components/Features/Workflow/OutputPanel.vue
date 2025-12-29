@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ButtonSmall from '@/Components/Base/Button/ButtonSmall.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { ref } from 'vue';
@@ -39,6 +40,13 @@ const emit = defineEmits<{
 // Track which sections should display raw markdown
 const showRawSystem = ref(false);
 const showRawMessages = ref(false);
+
+// Track which sections are expanded/collapsed
+const systemExpanded = ref(false);
+const messagesExpanded = ref(true);
+
+// Track wrap lines mode for raw JSON
+const wrapRawJson = ref(false);
 
 const renderMarkdown = (text: string | null | undefined): string => {
     if (!text) return '';
@@ -96,11 +104,42 @@ const getJsonCharacterCount = (data: unknown): string => {
         <div class="flex-1 overflow-auto bg-indigo-100 p-6">
             <div v-if="output">
                 <!-- Raw JSON display (for n8n workflow outputs) -->
-                <div
-                    v-if="props.showRawJson"
-                    class="mt-2 max-h-screen overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
-                >
-                    <pre>{{ JSON.stringify(output, null, 2) }}</pre>
+                <div v-if="props.showRawJson">
+                    <div class="mb-2 flex items-center justify-between">
+                        <div class="text-xs font-semibold text-indigo-900">
+                            Raw JSON
+                        </div>
+                        <div class="flex gap-2">
+                            <ButtonSmall
+                                title="Copy to clipboard"
+                                @click="
+                                    copyToClipboard(
+                                        JSON.stringify(output, null, 2),
+                                    )
+                                "
+                            >
+                                📋 Copy
+                            </ButtonSmall>
+                            <ButtonSmall
+                                :title="`${wrapRawJson ? 'Disable' : 'Enable'} line wrapping`"
+                                @click="wrapRawJson = !wrapRawJson"
+                            >
+                                {{ wrapRawJson ? '↔ Wrap' : '↔ No Wrap' }}
+                            </ButtonSmall>
+                        </div>
+                    </div>
+                    <div
+                        class="max-h-screen overflow-auto rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
+                    >
+                        <pre
+                            class="break-words"
+                            :class="{
+                                'whitespace-pre-wrap': wrapRawJson,
+                                'whitespace-pre': !wrapRawJson,
+                            }"
+                            >{{ JSON.stringify(output, null, 2) }}</pre
+                        >
+                    </div>
                 </div>
 
                 <!-- Structured display (for prompt outputs with system/messages) -->
@@ -108,9 +147,19 @@ const getJsonCharacterCount = (data: unknown): string => {
                     <!-- System Prompt -->
                     <div v-if="output.system" class="mb-6">
                         <div class="mb-2 flex items-center justify-between">
-                            <h3 class="font-semibold text-indigo-900">
+                            <button
+                                class="flex cursor-pointer items-center gap-2 font-semibold text-indigo-900 hover:text-indigo-700"
+                                @click="systemExpanded = !systemExpanded"
+                            >
+                                <DynamicIcon
+                                    name="chevron-right"
+                                    class="h-5 w-5 transition-transform duration-200"
+                                    :class="{
+                                        'rotate-90': systemExpanded,
+                                    }"
+                                />
                                 System
-                            </h3>
+                            </button>
                             <div class="flex gap-2">
                                 <ButtonSmall
                                     title="Copy to clipboard"
@@ -134,26 +183,38 @@ const getJsonCharacterCount = (data: unknown): string => {
                                 </ButtonSmall>
                             </div>
                         </div>
-                        <div
-                            v-if="showRawSystem"
-                            class="overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 font-mono text-sm wrap-break-word whitespace-pre-wrap text-indigo-700"
-                        >
-                            {{ output.system }}
+                        <div v-if="systemExpanded">
+                            <div
+                                v-if="showRawSystem"
+                                class="overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 font-mono text-sm wrap-break-word whitespace-pre-wrap text-indigo-700"
+                            >
+                                {{ output.system }}
+                            </div>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <div
+                                v-else
+                                class="prose dark:prose-invert prose-sm max-w-none overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
+                                v-html="renderMarkdown(output.system)"
+                            />
                         </div>
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <div
-                            v-else
-                            class="prose dark:prose-invert prose-sm max-w-none overflow-auto rounded-md border border-indigo-200 bg-indigo-50 p-3 text-indigo-700"
-                            v-html="renderMarkdown(output.system)"
-                        />
                     </div>
 
                     <!-- Messages -->
                     <div v-if="output.messages">
                         <div class="mb-2 flex items-center justify-between">
-                            <h3 class="font-semibold text-indigo-900">
+                            <button
+                                class="flex cursor-pointer items-center gap-2 font-semibold text-indigo-900 hover:text-indigo-700"
+                                @click="messagesExpanded = !messagesExpanded"
+                            >
+                                <DynamicIcon
+                                    name="chevron-right"
+                                    class="h-5 w-5 transition-transform duration-200"
+                                    :class="{
+                                        'rotate-90': messagesExpanded,
+                                    }"
+                                />
                                 Messages
-                            </h3>
+                            </button>
                             <div class="flex gap-2">
                                 <ButtonSmall
                                     title="Copy to clipboard"
@@ -183,46 +244,57 @@ const getJsonCharacterCount = (data: unknown): string => {
                                 </ButtonSmall>
                             </div>
                         </div>
-                        <div
-                            v-if="Array.isArray(output.messages)"
-                            class="space-y-2"
-                        >
+                        <div v-if="messagesExpanded">
                             <div
-                                v-for="(message, index) in output.messages"
-                                :key="index"
-                                class="rounded border border-indigo-200 bg-indigo-50 p-3"
+                                v-if="Array.isArray(output.messages)"
+                                class="space-y-2"
                             >
-                                <div v-if="typeof message === 'object'">
-                                    <!-- eslint-disable-next-line vue/no-v-html -->
-                                    <div
-                                        v-if="
-                                            message.content && !showRawMessages
-                                        "
-                                        class="prose dark:prose-invert prose-sm max-w-none text-indigo-700"
-                                        v-html="renderMarkdown(message.content)"
-                                    />
-                                    <div
-                                        v-else-if="
-                                            message.content && showRawMessages
-                                        "
-                                        class="font-mono text-sm break-words whitespace-pre-wrap text-indigo-700"
-                                    >
-                                        {{ message.content }}
+                                <div
+                                    v-for="(message, index) in output.messages"
+                                    :key="index"
+                                    class="rounded border border-indigo-200 bg-indigo-50 p-3"
+                                >
+                                    <div v-if="typeof message === 'object'">
+                                        <!-- eslint-disable-next-line vue/no-v-html -->
+                                        <div
+                                            v-if="
+                                                message.content &&
+                                                !showRawMessages
+                                            "
+                                            class="prose dark:prose-invert prose-sm max-w-none text-indigo-700"
+                                            v-html="
+                                                renderMarkdown(message.content)
+                                            "
+                                        />
+                                        <div
+                                            v-else-if="
+                                                message.content &&
+                                                showRawMessages
+                                            "
+                                            class="font-mono text-sm wrap-break-word whitespace-pre-wrap text-indigo-700"
+                                        >
+                                            {{ message.content }}
+                                        </div>
+                                        <div
+                                            v-else
+                                            class="text-xs text-indigo-700"
+                                        >
+                                            {{
+                                                JSON.stringify(message, null, 2)
+                                            }}
+                                        </div>
                                     </div>
-                                    <div v-else class="text-xs text-indigo-700">
-                                        {{ JSON.stringify(message, null, 2) }}
-                                    </div>
+                                    <p v-else class="text-xs text-indigo-700">
+                                        {{ message }}
+                                    </p>
                                 </div>
-                                <p v-else class="text-xs text-indigo-700">
-                                    {{ message }}
-                                </p>
                             </div>
-                        </div>
-                        <div
-                            v-else
-                            class="rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
-                        >
-                            {{ JSON.stringify(output.messages, null, 2) }}
+                            <div
+                                v-else
+                                class="rounded border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700"
+                            >
+                                {{ JSON.stringify(output.messages, null, 2) }}
+                            </div>
                         </div>
                     </div>
                 </template>
