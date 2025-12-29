@@ -2,7 +2,7 @@
 
 use App\Models\PromptRun;
 use App\Models\User;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -88,9 +88,9 @@ test('create child from answers creates child successfully', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    // Mock PromptFrameworkService
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    // Mock N8nWorkflowClient
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,
@@ -141,8 +141,8 @@ test('create child from answers converts empty strings to null', function () {
         'personality_tier' => 'full',
     ]);
 
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,
@@ -206,8 +206,8 @@ test('parent child relationship is correctly established', function () {
         'personality_tier' => 'full',
     ]);
 
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,
@@ -242,8 +242,8 @@ test('child prompt run inherits personality from user', function () {
         'personality_tier' => 'full',
     ]);
 
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,
@@ -295,8 +295,8 @@ test('child from answers inherits pre-analysis information from parent', functio
         'pre_analysis_reasoning' => 'User needs structured guidance',
     ]);
 
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,

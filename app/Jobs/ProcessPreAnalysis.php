@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Events\PreAnalysisCompleted;
 use App\Models\PromptRun;
 use App\Services\DatabaseService;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,7 +26,7 @@ class ProcessPreAnalysis implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PromptFrameworkService $promptService): void
+    public function handle(N8nWorkflowClient $workflowClient): void
     {
         // Switch database if specified (e.g., for data collection tests)
         if ($this->database) {
@@ -44,7 +44,7 @@ class ProcessPreAnalysis implements ShouldQueue
             $userContext = $this->promptRun->getUserContext();
 
             // Run the pre-analysis workflow (Workflow 0)
-            $preAnalysis = $promptService->preAnalyseTask(
+            $preAnalysis = $workflowClient->executePreAnalysis(
                 $this->promptRun->task_description,
                 $userContext
             );

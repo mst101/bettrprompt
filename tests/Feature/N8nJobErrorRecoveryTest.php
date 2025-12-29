@@ -5,7 +5,7 @@ use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
 use App\Models\PromptRun;
 use App\Models\User;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
@@ -20,9 +20,9 @@ test('pre analysis job handles service failure and updates database', function (
         'task_description' => 'Test task',
     ]);
 
-    // Mock PromptFrameworkService to throw exception
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient to throw exception
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->once()
             ->andThrow(new \Exception('N8n service unavailable'));
     });
@@ -30,7 +30,7 @@ test('pre analysis job handles service failure and updates database', function (
     // Execute the job (it will throw, which is expected behaviour)
     try {
         $job = new ProcessPreAnalysis($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected to throw
     }
@@ -49,9 +49,9 @@ test('analysis job handles service failure and updates database', function () {
         'task_description' => 'Test task',
     ]);
 
-    // Mock PromptFrameworkService to throw exception
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+    // Mock N8nWorkflowClient to throw exception
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeAnalysis')
             ->once()
             ->andThrow(new \Exception('Analysis failed'));
     });
@@ -59,7 +59,7 @@ test('analysis job handles service failure and updates database', function () {
     // Execute the job
     try {
         $job = new ProcessAnalysis($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }
@@ -83,9 +83,9 @@ test('prompt generation job handles service failure and updates database', funct
         'personality_tier' => 'full',
     ]);
 
-    // Mock PromptFrameworkService to throw exception
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    // Mock N8nWorkflowClient to throw exception
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andThrow(new \Exception('Generation failed'));
     });
@@ -93,7 +93,7 @@ test('prompt generation job handles service failure and updates database', funct
     // Execute the job
     try {
         $job = new ProcessPromptGeneration($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }
@@ -112,9 +112,9 @@ test('pre analysis job succeeds and dispatches next job', function () {
         'task_description' => 'Test task',
     ]);
 
-    // Mock PromptFrameworkService to return success (no questions needed)
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient to return success (no questions needed)
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->once()
             ->andReturn([
                 'needs_clarification' => false,
@@ -125,7 +125,7 @@ test('pre analysis job succeeds and dispatches next job', function () {
 
     // Execute the job
     $job = new ProcessPreAnalysis($promptRun);
-    $job->handle(app(PromptFrameworkService::class));
+    $job->handle(app(N8nWorkflowClient::class));
 
     // Verify next job was dispatched
     Queue::assertPushed(ProcessAnalysis::class);
@@ -145,9 +145,9 @@ test('pre analysis job with questions does not dispatch next job', function () {
         'task_description' => 'Test task',
     ]);
 
-    // Mock PromptFrameworkService to return questions
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient to return questions
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->once()
             ->andReturn([
                 'needs_clarification' => true,
@@ -160,7 +160,7 @@ test('pre analysis job with questions does not dispatch next job', function () {
 
     // Execute the job
     $job = new ProcessPreAnalysis($promptRun);
-    $job->handle(app(PromptFrameworkService::class));
+    $job->handle(app(N8nWorkflowClient::class));
 
     // Verify next job was NOT dispatched (waiting for user answers)
     Queue::assertNotPushed(ProcessAnalysis::class);
@@ -182,8 +182,8 @@ test('jobs clear previous error messages on success', function () {
     ]);
 
     // Mock successful response
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->once()
             ->andReturn([
                 'needs_clarification' => false,
@@ -192,7 +192,7 @@ test('jobs clear previous error messages on success', function () {
     });
 
     $job = new ProcessPreAnalysis($promptRun);
-    $job->handle(app(PromptFrameworkService::class));
+    $job->handle(app(N8nWorkflowClient::class));
 
     // Verify error message was cleared
     $promptRun->refresh();
@@ -208,15 +208,15 @@ test('jobs handle n8n rate limit errors', function () {
     ]);
 
     // Mock rate limit response
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('analyseTask')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeAnalysis')
             ->once()
             ->andThrow(new \Exception('API rate limit reached'));
     });
 
     try {
         $job = new ProcessAnalysis($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }
@@ -240,15 +240,15 @@ test('jobs handle n8n timeout errors', function () {
     ]);
 
     // Mock timeout response
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andThrow(new \Exception('Request timed out'));
     });
 
     try {
         $job = new ProcessPromptGeneration($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }
@@ -272,15 +272,15 @@ test('jobs preserve previous successful data on failure', function () {
     ]);
 
     // Mock generation failure
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andThrow(new \Exception('Generation failed'));
     });
 
     try {
         $job = new ProcessPromptGeneration($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }
@@ -303,15 +303,15 @@ test('pre analysis job handles n8n circuit breaker open', function () {
     ]);
 
     // Mock circuit breaker response
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->once()
             ->andThrow(new \Exception('N8n service is temporarily unavailable'));
     });
 
     try {
         $job = new ProcessPreAnalysis($promptRun);
-        $job->handle(app(PromptFrameworkService::class));
+        $job->handle(app(N8nWorkflowClient::class));
     } catch (\Exception $e) {
         // Expected
     }

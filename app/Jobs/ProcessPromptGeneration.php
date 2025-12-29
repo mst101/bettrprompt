@@ -2,10 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Data\GenerationPayload;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
 use App\Services\DatabaseService;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,7 +27,7 @@ class ProcessPromptGeneration implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PromptFrameworkService $promptService): void
+    public function handle(N8nWorkflowClient $workflowClient): void
     {
         // Switch database if specified (e.g., for data collection tests)
         if ($this->database) {
@@ -56,21 +57,21 @@ class ProcessPromptGeneration implements ShouldQueue
             $userContext = $this->promptRun->getUserContext();
 
             // Run the generation workflow
-            $result = $promptService->generatePrompt(
-                $this->promptRun->task_classification,
-                $this->promptRun->cognitive_requirements ?? [],
-                $this->promptRun->selected_framework,
-                $this->promptRun->personality_tier,
-                $this->promptRun->task_trait_alignment ?? [],
-                $this->promptRun->personality_adjustments_preview ?? [],
-                $this->promptRun->task_description,
-                $this->promptRun->personality_type,
-                $this->promptRun->trait_percentages,
-                $questionAnswers,
-                $userContext,
-                $this->promptRun->pre_analysis_context
+            $payload = new GenerationPayload(
+                taskClassification: $this->promptRun->task_classification,
+                cognitiveRequirements: $this->promptRun->cognitive_requirements ?? [],
+                selectedFramework: $this->promptRun->selected_framework,
+                personalityTier: $this->promptRun->personality_tier,
+                taskTraitAlignment: $this->promptRun->task_trait_alignment ?? [],
+                originalTaskDescription: $this->promptRun->task_description,
+                questionAnswers: $questionAnswers,
+                personalityType: $this->promptRun->personality_type,
+                traitPercentages: $this->promptRun->trait_percentages,
+                userContext: $userContext,
+                preAnalysisContext: $this->promptRun->pre_analysis_context
             );
 
+            $result = $workflowClient->executeGeneration($payload);
 
             // For async workflows, n8n returns immediately without results
             // The actual results come back via webhook callback
@@ -87,6 +88,7 @@ class ProcessPromptGeneration implements ShouldQueue
                         'prompt_run_id' => $this->promptRun->id,
                         'workflow_stage' => $this->promptRun->workflow_stage,
                     ]);
+
                     return;
                 }
 
@@ -104,6 +106,7 @@ class ProcessPromptGeneration implements ShouldQueue
                 Log::info('Workflow 2 returned empty data, waiting for webhook callback', [
                     'prompt_run_id' => $this->promptRun->id,
                 ]);
+
                 return;
             }
 

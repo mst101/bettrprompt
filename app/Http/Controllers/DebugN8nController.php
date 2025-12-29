@@ -1519,7 +1519,7 @@ try {
     }
 
     /**
-     * Execute workflow and return results using PromptFrameworkService
+     * Execute workflow and return results using N8nWorkflowClient
      */
     private function executeWorkflowWithService(
         int $workflowNumber,
@@ -1527,11 +1527,11 @@ try {
         ?array $userContext,
         ?array $inputData = null
     ): array {
-        $promptService = new \App\Services\PromptFrameworkService;
+        $workflowClient = new \App\Services\N8nWorkflowClient;
 
         return match ($workflowNumber) {
-            0 => $promptService->preAnalyseTask($taskDescription, $userContext),
-            1 => $promptService->analyseTask(
+            0 => $workflowClient->executePreAnalysis($taskDescription, $userContext),
+            1 => $workflowClient->executeAnalysis(
                 $taskDescription,
                 $userContext['personality']['personality_type'] ?? null,
                 $userContext['personality']['trait_percentages'] ?? null,
@@ -1539,19 +1539,20 @@ try {
                 null,
                 $userContext
             ),
-            2 => $promptService->generatePrompt(
-                $inputData['analysis_data']['task_classification'] ?? [],
-                $inputData['analysis_data']['cognitive_requirements'] ?? [],
-                $inputData['analysis_data']['selected_framework'] ?? [],
-                $inputData['analysis_data']['personality_tier'] ?? 'full',
-                $inputData['analysis_data']['task_trait_alignment'] ?? [],
-                [], // personalityAdjustmentsPreview (not in input data)
-                $inputData['original_task_description'] ?? $taskDescription ?? '',
-                $userContext['personality']['personality_type'] ?? null,
-                $userContext['personality']['trait_percentages'] ?? null,
-                $inputData['question_answers'] ?? [],
-                $userContext,
-                $inputData['pre_analysis_context'] ?? null
+            2 => $workflowClient->executeGeneration(
+                new \App\Data\GenerationPayload(
+                    taskClassification: $inputData['analysis_data']['task_classification'] ?? [],
+                    cognitiveRequirements: $inputData['analysis_data']['cognitive_requirements'] ?? [],
+                    selectedFramework: $inputData['analysis_data']['selected_framework'] ?? [],
+                    personalityTier: $inputData['analysis_data']['personality_tier'] ?? 'full',
+                    taskTraitAlignment: $inputData['analysis_data']['task_trait_alignment'] ?? [],
+                    originalTaskDescription: $inputData['original_task_description'] ?? $taskDescription ?? '',
+                    questionAnswers: $inputData['question_answers'] ?? [],
+                    personalityType: $userContext['personality']['personality_type'] ?? null,
+                    traitPercentages: $userContext['personality']['trait_percentages'] ?? null,
+                    userContext: $userContext,
+                    preAnalysisContext: $inputData['pre_analysis_context'] ?? null
+                )
             ),
             default => throw new \InvalidArgumentException("Workflow {$workflowNumber} is not supported for direct execution"),
         };

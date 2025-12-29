@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,8 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(PromptFrameworkService::class, function ($app) {
-            return new PromptFrameworkService;
+        $this->app->singleton(N8nWorkflowClient::class, function ($app) {
+            return new N8nWorkflowClient;
         });
     }
 

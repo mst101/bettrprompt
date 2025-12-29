@@ -361,7 +361,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Mock n8n webhook endpoints for E2E testing (only in e2e environment)
 // These endpoints simulate n8n responses without requiring n8n to be running.
-// When N8N_URL=http://localhost, PromptFrameworkService calls these instead of real n8n.
+// When N8N_URL=http://localhost, N8nWorkflowClient calls these instead of real n8n.
 if (config('app.env') === 'e2e') {
     Route::post('/webhook/api/n8n/webhook/pre-analysis', [MockN8nController::class, 'workflow0'])
         ->name('test.n8n.workflow0');

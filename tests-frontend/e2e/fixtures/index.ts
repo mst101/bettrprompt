@@ -61,7 +61,7 @@ export const test = base.extend<TestFixtures>({
      */
     page: async ({ page }, use) => {
         // Set the test flag that the backend will check
-        // The backend's PromptFrameworkService should check for this
+        // The backend's N8nWorkflowClient should check for this
         // and return mock responses instead of calling real n8n
         await page.addInitScript(() => {
             // This runs in the browser context and sets a test flag

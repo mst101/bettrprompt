@@ -2,7 +2,7 @@
 
 use App\Models\PromptRun;
 use App\Models\User;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -20,9 +20,9 @@ beforeEach(function () {
 test('generate optimised prompt successfully', function () {
     $this->actingAs($this->user);
 
-    // Mock PromptFrameworkService to return successful generation
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('generatePrompt')
+    // Mock N8nWorkflowClient to return successful generation
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executeGeneration')
             ->once()
             ->andReturn([
                 'success' => true,

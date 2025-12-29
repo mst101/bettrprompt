@@ -3,7 +3,7 @@
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
-use App\Services\PromptFrameworkService;
+use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -41,10 +41,10 @@ test('create prompt run creates prompt run successfully', function () {
 
     Queue::fake();
 
-    // Mock PromptFrameworkService to return success
-    $this->mock(PromptFrameworkService::class, function ($mock) {
+    // Mock N8nWorkflowClient to return success
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
         // First call: preAnalyseTask (returns no clarification needed)
-        $mock->shouldReceive('preAnalyseTask')
+        $mock->shouldReceive('executePreAnalysis')
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -74,9 +74,9 @@ test('create prompt run includes user personality traits', function () {
 
     Queue::fake();
 
-    // Mock PromptFrameworkService
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -105,9 +105,9 @@ test('create prompt run saves personality tier', function () {
 
     Queue::fake();
 
-    // Mock PromptFrameworkService to return personality tier
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient to return personality tier
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -132,9 +132,9 @@ test('create prompt run saves personality tier', function () {
 test('create prompt run allows guests as visitors', function () {
     Queue::fake();
 
-    // Mock PromptFrameworkService to return success
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient to return success
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
@@ -180,9 +180,9 @@ test('create prompt run allows users without personality type', function () {
 
     Queue::fake();
 
-    // Mock PromptFrameworkService
-    $this->mock(PromptFrameworkService::class, function ($mock) {
-        $mock->shouldReceive('preAnalyseTask')
+    // Mock N8nWorkflowClient
+    $this->mock(N8nWorkflowClient::class, function ($mock) {
+        $mock->shouldReceive('executePreAnalysis')
             ->andReturn([
                 'needs_clarification' => false,
                 'reasoning' => 'Task description is clear',
