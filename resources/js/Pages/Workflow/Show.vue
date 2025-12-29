@@ -332,9 +332,9 @@ const uploadWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-old`,
+            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-old?variant=${props.currentVariant}`,
             'POST',
-            { variant: props.currentVariant, nodeName },
+            { nodeName },
         );
 
         if (!response.ok) {
@@ -366,9 +366,9 @@ const uploadWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new`,
+            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new?variant=${props.currentVariant}`,
             'POST',
-            { variant: props.currentVariant, nodeName },
+            { nodeName },
         );
 
         if (!response.ok) {
