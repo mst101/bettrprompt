@@ -199,6 +199,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get UI complexity level (defaults to 'advanced')
+     */
+    public function getUiComplexity(): string
+    {
+        return $this->ui_complexity ?? 'advanced';
+    }
+
+    /**
      * Build user context for workflow usage
      */
     public function getUserContext(): array

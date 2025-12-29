@@ -22,6 +22,7 @@ use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -111,7 +112,7 @@ class PromptBuilderController extends Controller
                             'ip' => $request->ip(),
                         ]);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to lookup location for existing user', [
                         'user_id' => $user->id,
                         'ip' => $request->ip(),
@@ -147,7 +148,7 @@ class PromptBuilderController extends Controller
 
             return redirect()->route('prompt-builder.show', $promptRun);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to create prompt run', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -198,7 +199,7 @@ class PromptBuilderController extends Controller
                 ->route('prompt-builder.show', $promptRun)
                 ->with('success', 'Analysing your task...');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to submit pre-analysis answers', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -248,7 +249,7 @@ class PromptBuilderController extends Controller
                 ->route('prompt-builder.show', $promptRun)
                 ->with('success', 'Re-analysing your task with updated answers...');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update quick queries', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -293,18 +294,18 @@ class PromptBuilderController extends Controller
             $visitorId = $this->getVisitorId($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
-                $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
-                $uiComplexity = $visitor?->ui_complexity ?? 'advanced';
-            } else {
-                $uiComplexity = 'advanced'; // default for visitors
+                if ($visitor) {
+                    $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts();
+                    $uiComplexity = $visitor->getUiComplexity();
+                }
             }
         } else {
-            $uiComplexity = auth()->user()->ui_complexity ?? 'advanced';
+            $uiComplexity = auth()->user()->getUiComplexity();
         }
 
-        // Fetch Claude models for cost calculations (only in advanced mode)
+        // Fetch Claude models (admin users only)
         $claudeModels = [];
-        if ($uiComplexity === 'advanced') {
+        if (auth()->check() && auth()->user()->is_admin) {
             $claudeModels = ClaudeModelResource::collection(
                 ClaudeModel::active()->orderByDesc('release_date')->get()
             )->resolve();
@@ -380,7 +381,7 @@ class PromptBuilderController extends Controller
             return redirect()
                 ->route('prompt-builder.show', $promptRun);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to go back (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -427,7 +428,7 @@ class PromptBuilderController extends Controller
                 'message' => 'Generating your optimised prompt...',
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to dispatch prompt generation', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -469,7 +470,7 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()->with('success', 'Prompt updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to update optimised prompt (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -535,7 +536,7 @@ class PromptBuilderController extends Controller
             ProcessPreAnalysis::dispatch($childPromptRun, $this->getJobDatabase($request));
 
             return redirect()->route('prompt-builder.show', $childPromptRun);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
                 'error' => $e->getMessage(),
@@ -622,7 +623,7 @@ class PromptBuilderController extends Controller
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
                 ->with('success', 'Generating your optimised prompt with edited answers...');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
                 'error' => $e->getMessage(),
@@ -682,7 +683,7 @@ class PromptBuilderController extends Controller
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
                 ->with('success', 'Re-analysing with selected framework...');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to switch framework (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
                 'framework_code' => $validated['framework_code'],
@@ -710,8 +711,6 @@ class PromptBuilderController extends Controller
         if (! $promptRun->isFailed()) {
             return back()->with('error', 'Only failed runs can be retried.');
         }
-
-        $workflowStage = $promptRun->workflow_stage;
 
         try {
             // Determine which workflow failed and retry from there
@@ -782,7 +781,7 @@ class PromptBuilderController extends Controller
 
             return back()->with('error', 'Cannot retry from this stage.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to retry (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
@@ -814,7 +813,7 @@ class PromptBuilderController extends Controller
             return redirect()
                 ->route('prompt-builder.history')
                 ->with('success', 'Prompt run deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to delete prompt run (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
                 'error' => $e->getMessage(),
