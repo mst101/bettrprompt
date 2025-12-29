@@ -54,7 +54,6 @@ class DebugN8nController extends Controller
     protected function getVariant(Request $request, int $workflowNumber): string
     {
         return $request->query('variant')
-            ?? session("workflow.{$workflowNumber}.variant")
             ?? $this->variantService->getDefaultVariant($workflowNumber);
     }
 
@@ -70,7 +69,7 @@ class DebugN8nController extends Controller
     }
 
     /**
-     * Set variant preference in session
+     * Validate and confirm a variant selection
      */
     public function setVariant(Request $request, int $workflowNumber)
     {
@@ -86,9 +85,11 @@ class DebugN8nController extends Controller
                 ], 400);
             }
 
-            session(["workflow.$workflowNumber.variant" => $variant]);
-
-            return response()->json(['success' => true]);
+            // Return success with redirect URL so client can navigate to variant
+            return response()->json([
+                'success' => true,
+                'redirectUrl' => route('workflow.show', ['workflowNumber' => $workflowNumber, 'variant' => $variant]),
+            ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

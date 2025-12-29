@@ -63,13 +63,13 @@ class WorkflowVariantTest extends TestCase
         );
     }
 
-    public function test_set_variant_updates_session(): void
+    public function test_set_variant_returns_redirect_url(): void
     {
-        $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass'])
-            ->assertStatus(200)
-            ->assertJson(['success' => true]);
+        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
 
-        $this->assertEquals('two-pass', session('workflow.1.variant'));
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure(['redirectUrl']);
     }
 
     public function test_set_variant_validates_variant_exists(): void
@@ -83,11 +83,13 @@ class WorkflowVariantTest extends TestCase
 
     public function test_set_variant_persists_across_requests(): void
     {
-        // Set variant
-        $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        // Set variant - API returns success
+        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        $response->assertStatus(200)
+            ->assertJson(['success' => true]);
 
-        // Verify it persists
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1');
+        // Verify it persists by navigating to the variant URL
+        $response = $this->actingAs($this->adminUser)->get('/workflow/1?variant=two-pass');
         $response->assertInertia(fn ($page) => $page
             ->where('currentVariant', 'two-pass')
         );
@@ -95,11 +97,11 @@ class WorkflowVariantTest extends TestCase
 
     public function test_show_two_pass_variant_includes_two_nodes(): void
     {
-        // Set the variant
+        // Set the variant (API confirms it's valid)
         $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
 
-        // Get the page
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1');
+        // Get the page with the variant query parameter
+        $response = $this->actingAs($this->adminUser)->get('/workflow/1?variant=two-pass');
 
         $response->assertInertia(fn ($page) => $page
             ->has('preparePromptNodes', 2)
