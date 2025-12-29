@@ -2323,7 +2323,7 @@ private static function getDefaultMessage(int $statusCode): string
     <Head :title="title(status)" />
 
     <div class="flex min-h-screen items-centre justify-centre">
-        <div class="text-centre">
+        <div class="text-center">
             <h1 class="mb-4 text-6xl font-bold text-indigo-900">{{ status }}</h1>
             <p class="mb-8 text-xl text-indigo-600">{{ message }}</p>
             <a

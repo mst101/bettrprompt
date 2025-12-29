@@ -19,6 +19,13 @@ let connectionState: 'connected' | 'connecting' | 'disconnected' | 'failed' =
 // Initialize Echo with error handling
 function initializeEcho() {
     try {
+        // Only initialize Echo if we have a valid app key
+        if (!import.meta.env.VITE_REVERB_APP_KEY) {
+            connectionState = 'disconnected';
+            window.Echo = null;
+            return;
+        }
+
         const reverbConfig = {
             broadcaster: 'reverb',
             key: import.meta.env.VITE_REVERB_APP_KEY,
