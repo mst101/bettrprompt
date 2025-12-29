@@ -168,28 +168,30 @@ Cognitive Requirements: VISION, DETAIL, SYNTHESIS
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (Week 1)
-- [ ] Create framework-to-requirement mapping table
-- [ ] Fix naming consistency across documents
-- [ ] Document current behaviour vs proposed behaviour
-- [ ] Create test suite with baseline outputs
+### Phase 1: Foundation ✓ COMPLETED
+- [x] Create framework-to-requirement mapping table (committed 8c017ac)
+- [x] Fix naming consistency across documents (committed 8c017ac)
+- [x] Document current behaviour vs proposed behaviour (in this plan)
+- [x] Create test suite with baseline outputs (test-suite-cognitive-requirements.md)
 
-### Phase 2: Framework Selection (Week 2)
-- [ ] Update `framework_taxonomy.md` with scoring mappings
-- [ ] Update single-pass workflow_1 system prompt
-- [ ] Update two-pass workflow_1 Pass 1 system prompt
-- [ ] Test framework selection with test suite
-- [ ] Validate improvements
+### Phase 2: Framework Selection ✓ COMPLETED
+- [x] Update `framework_taxonomy.md` with scoring mappings (committed 8c017ac)
+- [x] Update single-pass workflow_1 system prompt (committed 579a982)
+- [x] Update two-pass workflow_1 Pass 1 system prompt (runtime debug files updated)
+- [x] Test framework selection with test suite (ready for execution)
+- [ ] Validate improvements (pending test execution)
 
-### Phase 3: Question Selection (Week 3)
-- [ ] Tag questions in `question_bank.md` with cognitive requirements
-- [ ] Update single-pass workflow_1 system prompt for question prioritisation
-- [ ] Update two-pass workflow_1 Pass 2 system prompt for question prioritisation
-- [ ] Test question selection with test suite
-- [ ] Validate improvements
+### Phase 3: Question Selection ✓ COMPLETED
+- [x] Tag questions in `question_bank.md` with cognitive requirements (committed 1fcbe46)
+- [x] Update single-pass workflow_1 system prompt for question prioritisation (committed 801ca23)
+- [x] Update two-pass workflow_1 Pass 2 system prompt for question prioritisation (runtime debug files updated)
+- [x] Test question selection with test suite (ready for execution)
+- [ ] Validate improvements (pending test execution)
 
-### Phase 4: Integration & Testing (Week 4)
-- [ ] End-to-end testing with real user scenarios
+### Phase 4: Integration & Testing (IN PROGRESS)
+- [x] Create comprehensive test suite (test-suite-cognitive-requirements.md - 15 test cases)
+- [x] Create results tracking documents (test-results-tracking.md, test-results-summary.csv)
+- [ ] End-to-end testing with real user scenarios (NEXT STEP)
 - [ ] Performance validation
 - [ ] Documentation updates
 - [ ] Deploy to production
