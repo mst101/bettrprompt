@@ -2,8 +2,13 @@
 
 namespace App\Console;
 
+use App\Console\Commands\HiddenGambia\App\MakeAppCommand;
+use App\Console\Commands\HiddenGambia\Core\ClearSettingsCacheCommand;
+use App\Console\Commands\HiddenGambia\Resources\MakeCommand;
+use App\Console\Commands\HiddenGambia\TypeScript\GenerateDefinitionsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,23 +19,17 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // Core Commands
-        \App\Console\Commands\HiddenGambia\Core\ClearSettingsCacheCommand::class,
-
-        // Marketing Commands
-        \App\Console\Commands\HiddenGambia\Marketing\SendCampaignCommand::class,
-        \App\Console\Commands\HiddenGambia\Marketing\ProcessScheduledCampaignsCommand::class,
+        ClearSettingsCacheCommand::class,
 
         // TypeScript Commands
-        \App\Console\Commands\HiddenGambia\TypeScript\GenerateDefinitionsCommand::class,
+        GenerateDefinitionsCommand::class,
 
         // Resource Commands
-        \App\Console\Commands\HiddenGambia\Resources\MakeCommand::class,
+        MakeCommand::class,
 
         // App Commands
-        \App\Console\Commands\HiddenGambia\App\MakeAppCommand::class,
+        MakeAppCommand::class,
 
-        // Magellan Commands
-        \App\Console\Commands\Magellan\TestMagellanCommand::class,
     ];
 
     /**
@@ -38,9 +37,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Process scheduled campaigns every 10 minutes
-        $schedule->command('hg:marketing:process-scheduled-campaigns')->everyTenMinutes();
-
         // Process Mailgun events hourly
         $schedule->command('mailgun:process-events')->hourly();
 
@@ -51,10 +47,10 @@ class Kernel extends ConsoleKernel
             ->at('02:00')
             ->withoutOverlapping()
             ->onSuccess(function () {
-                \Illuminate\Support\Facades\Log::info('GeoIP database updated successfully via scheduler');
+                Log::info('GeoIP database updated successfully via scheduler');
             })
             ->onFailure(function () {
-                \Illuminate\Support\Facades\Log::error('GeoIP database update failed');
+                Log::error('GeoIP database update failed');
             });
     }
 

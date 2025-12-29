@@ -2,8 +2,13 @@
 
 namespace App\Console\Commands;
 
+use Exception;
+use FilesystemIterator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use PharData;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class UpdateGeoIpDatabase extends Command
 {
@@ -54,11 +59,11 @@ class UpdateGeoIpDatabase extends Command
         // Create directory if it doesn't exist
         if (! is_dir($databaseDir)) {
             if (! mkdir($databaseDir, 0755, true)) {
-                $this->error("❌ Failed to create directory: {$databaseDir}");
+                $this->error("❌ Failed to create directory: $databaseDir");
 
                 return self::FAILURE;
             }
-            $this->info("✓ Created directory: {$databaseDir}");
+            $this->info("✓ Created directory: $databaseDir");
         }
 
         // Check if database exists and if we should skip download
@@ -66,7 +71,7 @@ class UpdateGeoIpDatabase extends Command
             $fileAge = time() - filemtime($databasePath);
             $daysSinceUpdate = floor($fileAge / 86400);
             $this->info('✓ Database already exists');
-            $this->line("  Last updated: {$daysSinceUpdate} day(s) ago");
+            $this->line("  Last updated: $daysSinceUpdate day(s) ago");
             $this->line('  Use --force flag to re-download');
 
             return self::SUCCESS;
@@ -128,7 +133,7 @@ class UpdateGeoIpDatabase extends Command
             chmod($databasePath, 0644);
 
             $this->info('✓ Database downloaded and extracted successfully');
-            $this->line("  Location: {$databasePath}");
+            $this->line("  Location: $databasePath");
             $this->line('  Size: '.$this->formatBytes(filesize($databasePath)));
 
             Log::info('GeoIP database updated successfully', [
@@ -137,7 +142,7 @@ class UpdateGeoIpDatabase extends Command
             ]);
 
             return self::SUCCESS;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error('❌ Error during download/extraction: '.$e->getMessage());
             Log::error('Failed to update GeoIP database', [
                 'error' => $e->getMessage(),
@@ -179,7 +184,7 @@ class UpdateGeoIpDatabase extends Command
         curl_close($ch);
 
         if ($httpCode !== 200) {
-            $this->error("HTTP Error {$httpCode}");
+            $this->error("HTTP Error $httpCode");
             if ($httpCode === 401) {
                 $this->error('Authentication failed - check your MaxMind credentials');
             }
@@ -188,19 +193,19 @@ class UpdateGeoIpDatabase extends Command
         }
 
         if ($error) {
-            $this->error("cURL Error: {$error}");
+            $this->error("cURL Error: $error");
 
             return false;
         }
 
-        if ($content === false || empty($content)) {
+        if (empty($content)) {
             $this->error('Failed to download file or received empty response');
 
             return false;
         }
 
         if (file_put_contents($destination, $content) === false) {
-            $this->error("Failed to write file to: {$destination}");
+            $this->error("Failed to write file to: $destination");
 
             return false;
         }
@@ -216,7 +221,7 @@ class UpdateGeoIpDatabase extends Command
         try {
             // Try using PHP's PharData
             if (class_exists('\PharData')) {
-                $phar = new \PharData($source);
+                $phar = new PharData($source);
                 $phar->extractTo($destination, null, true);
 
                 return true;
@@ -234,7 +239,7 @@ class UpdateGeoIpDatabase extends Command
             exec($command, $output, $returnCode);
 
             return $returnCode === 0;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->error('Extraction error: '.$e->getMessage());
 
             return false;
@@ -246,9 +251,9 @@ class UpdateGeoIpDatabase extends Command
      */
     private function findMmdbFile(string $directory): ?string
     {
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($files as $file) {
