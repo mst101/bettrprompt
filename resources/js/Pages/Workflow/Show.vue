@@ -168,7 +168,7 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
 const reloadJavaScriptFromWorkflowAsOld = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript-old`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript-old?variant=${props.currentVariant}`,
             'POST',
         );
 
@@ -202,7 +202,7 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
 const reloadJavaScriptFromWorkflowAsNew = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript-new`,
+            `/debug/workflow/${props.workflowNumber}/reload-javascript-new?variant=${props.currentVariant}`,
             'POST',
         );
 
