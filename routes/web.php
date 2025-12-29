@@ -58,8 +58,6 @@ Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'trans
     ->middleware('throttle:30,1');
 
 // Visitor preferences (no authentication required)
-Route::patch('/visitor/ui-complexity', [VisitorController::class, 'updateUiComplexity'])
-    ->name('visitor.ui-complexity.update');
 Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
     ->name('visitor.personality.update');
 
