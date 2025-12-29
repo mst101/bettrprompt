@@ -299,19 +299,16 @@ class DebugN8nController extends Controller
                     ], 404);
                 }
 
-                $this->variantService->saveJavaScript($workflowNumber, $variant, $nodeName, $javascript, $isNew);
-
                 $reloadedNodes[] = [
                     'nodeName' => $nodeName,
+                    'javascript' => $javascript,
                     'codeLength' => strlen($javascript),
                 ];
             }
 
-            $versionLabel = $isNew ? 'and saved as new version' : '';
-
             return response()->json([
                 'success' => true,
-                'message' => "JavaScript reloaded from workflow $versionLabel",
+                'message' => 'JavaScript reloaded from workflow',
                 'reloadedNodes' => $reloadedNodes,
             ]);
         } catch (Exception $e) {

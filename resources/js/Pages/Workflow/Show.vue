@@ -177,8 +177,21 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
             error.value =
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
-            // Reload the page to get fresh data from backend
-            window.location.reload();
+            // Update each node with the reloaded JavaScript
+            if (result.reloadedNodes && Array.isArray(result.reloadedNodes)) {
+                result.reloadedNodes.forEach((reloadedNode) => {
+                    const node = preparePromptNodes.value.find(
+                        (n) => n.name === reloadedNode.nodeName,
+                    );
+                    if (node && reloadedNode.javascript) {
+                        node.javascriptOld = reloadedNode.javascript;
+                    }
+                });
+            }
+            saveMessage.value = 'JavaScript reloaded from workflow (not saved)';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
             error.value = null;
         }
     } catch (err) {
@@ -198,8 +211,21 @@ const reloadJavaScriptFromWorkflowAsNew = async () => {
             error.value =
                 result.error || 'Failed to reload JavaScript from workflow';
         } else {
-            // Reload the page to get fresh data from backend
-            window.location.reload();
+            // Update each node with the reloaded JavaScript
+            if (result.reloadedNodes && Array.isArray(result.reloadedNodes)) {
+                result.reloadedNodes.forEach((reloadedNode) => {
+                    const node = preparePromptNodes.value.find(
+                        (n) => n.name === reloadedNode.nodeName,
+                    );
+                    if (node && reloadedNode.javascript) {
+                        node.javascriptNew = reloadedNode.javascript;
+                    }
+                });
+            }
+            saveMessage.value = 'JavaScript reloaded from workflow (not saved)';
+            setTimeout(() => {
+                saveMessage.value = null;
+            }, 3000);
             error.value = null;
         }
     } catch (err) {

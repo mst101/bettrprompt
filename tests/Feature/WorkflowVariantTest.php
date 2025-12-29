@@ -201,4 +201,47 @@ class WorkflowVariantTest extends TestCase
         // This would require setting up legacy data, skipping for now
         $this->assertTrue(true);
     }
+
+    public function test_reload_javascript_returns_code_without_saving(): void
+    {
+        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/0/reload-javascript-old');
+
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'reloadedNodes' => [
+                    [
+                        'nodeName',
+                        'javascript',
+                        'codeLength',
+                    ],
+                ],
+            ]);
+
+        // Verify that the response includes JavaScript code
+        $data = $response->json();
+        $this->assertNotEmpty($data['reloadedNodes']);
+        $this->assertNotEmpty($data['reloadedNodes'][0]['javascript']);
+    }
+
+    public function test_reload_javascript_new_version_returns_code(): void
+    {
+        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/0/reload-javascript-new');
+
+        $response->assertStatus(200)
+            ->assertJson(['success' => true])
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'reloadedNodes' => [
+                    [
+                        'nodeName',
+                        'javascript',
+                        'codeLength',
+                    ],
+                ],
+            ]);
+    }
 }
