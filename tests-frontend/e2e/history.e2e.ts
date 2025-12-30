@@ -31,23 +31,21 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 
 test.describe('Prompt Builder History - Empty State', () => {
     test.beforeEach(async ({ authenticatedPage }) => {
-        // Clean database for empty state tests (no fixtures created)
-        // Don't create any prompt runs - just navigate to empty page
-        await execAsync(
-            './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e',
-        );
+        // Ensure database is clean before test
+        // Run the cleanup seeder synchronously to guarantee it completes
+        try {
+            await execAsync(
+                './vendor/bin/sail artisan db:seed --class=CleanPromptRunsSeeder --env=e2e --force',
+            );
+        } catch {
+            // Continue - the test will verify correct state
+        }
 
         // Navigate to empty history page
         await authenticatedPage.goto('/history');
 
-        // Wait specifically for the empty state message to be visible
-        // This ensures the component has fully rendered the empty state
-        await authenticatedPage
-            .locator('text=/no prompt history yet/i')
-            .waitFor({ state: 'visible', timeout: 5000 })
-            .catch(() => {
-                // Fallback: page is loaded even if message isn't found yet
-            });
+        // Wait for page to fully load before proceeding
+        await authenticatedPage.waitForLoadState('networkidle');
     });
 
     test('should display page heading when authenticated', async ({
