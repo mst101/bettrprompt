@@ -41,7 +41,7 @@ defineExpose({ focus });
                 Selected Framework
             </h2>
             <div
-                class="rounded-lg bg-indigo-50 p-3 text-indigo-800 dark:bg-indigo-100"
+                class="rounded-lg bg-indigo-50 p-3 text-indigo-800 sm:mt-4 dark:bg-indigo-100"
             >
                 {{ framework.name }}
             </div>

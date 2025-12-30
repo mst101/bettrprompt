@@ -127,9 +127,6 @@ const handleTranscription = (text: string) => {
                 <div class="flex flex-1 items-start gap-3">
                     <span class="flex-1 text-indigo-900 sm:text-xl">
                         {{ questionText }}
-                        <span v-if="isRequired" class="ml-1 text-red-500">
-                            *
-                        </span>
                     </span>
                     <OptionalBadge v-if="!isRequired" />
                 </div>
