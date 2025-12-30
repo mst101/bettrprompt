@@ -162,7 +162,7 @@ class N8nWorkflowClient
             // Nest personality data under user_context.personality
             $contextWithPersonality = $userContext;
             $contextWithPersonality['personality'] = [
-                'personality_type' => $personalityType,
+                'type' => $personalityType,
                 'trait_percentages' => $traitPercentages,
             ];
             $payload['user_context'] = $this->removeNullValues($contextWithPersonality);
@@ -170,7 +170,7 @@ class N8nWorkflowClient
             // If no user context, create one with just personality data
             $payload['user_context'] = [
                 'personality' => [
-                    'personality_type' => $personalityType,
+                    'type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                 ],
             ];
@@ -243,7 +243,7 @@ class N8nWorkflowClient
             // Nest personality data under user_context.personality
             $contextWithPersonality = $payload->userContext;
             $contextWithPersonality['personality'] = [
-                'personality_type' => $payload->personalityType,
+                'type' => $payload->personalityType,
                 'trait_percentages' => $payload->traitPercentages,
             ];
             $n8nPayload['user_context'] = $this->removeNullValues($contextWithPersonality);
@@ -251,7 +251,7 @@ class N8nWorkflowClient
             // If no user context, create one with just personality data
             $n8nPayload['user_context'] = [
                 'personality' => [
-                    'personality_type' => $payload->personalityType,
+                    'type' => $payload->personalityType,
                     'trait_percentages' => $payload->traitPercentages,
                 ],
             ];

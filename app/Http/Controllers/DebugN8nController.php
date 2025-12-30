@@ -1234,7 +1234,7 @@ try {
             0 => $workflowClient->executePreAnalysis($taskDescription, $userContext),
             1 => $workflowClient->executeAnalysis(
                 $taskDescription,
-                $userContext['personality']['personality_type'] ?? null,
+                $userContext['personality']['type'] ?? null,
                 $userContext['personality']['trait_percentages'] ?? null,
                 null,
                 null,
@@ -1249,7 +1249,7 @@ try {
                     taskTraitAlignment: $inputData['analysis_data']['task_trait_alignment'] ?? [],
                     originalTaskDescription: $inputData['original_task_description'] ?? $taskDescription ?? '',
                     questionAnswers: $inputData['question_answers'] ?? [],
-                    personalityType: $userContext['personality']['personality_type'] ?? null,
+                    personalityType: $userContext['personality']['type'] ?? null,
                     traitPercentages: $userContext['personality']['trait_percentages'] ?? null,
                     userContext: $userContext,
                     preAnalysisContext: $inputData['pre_analysis_context'] ?? null
