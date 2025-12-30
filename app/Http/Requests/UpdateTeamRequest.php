@@ -12,9 +12,9 @@ class UpdateTeamRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'teamSize' => ['nullable', 'in:solo,small,medium,large'],
-            'teamRole' => ['nullable', 'in:individual,lead,manager,director,executive'],
-            'workMode' => ['nullable', 'in:office,hybrid,remote,freelance'],
+            'team_size' => ['nullable', 'in:solo,small,medium,large'],
+            'team_role' => ['nullable', 'in:individual,lead,manager,director,executive'],
+            'work_mode' => ['nullable', 'in:office,hybrid,remote,freelance'],
         ];
     }
 }

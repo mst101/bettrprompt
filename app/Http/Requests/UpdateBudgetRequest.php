@@ -12,7 +12,7 @@ class UpdateBudgetRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'budgetConsciousness' => ['nullable', 'in:free_only,free_first,mixed,premium_ok,enterprise'],
+            'budget_consciousness' => ['nullable', 'in:free_only,free_first,mixed,premium_ok,enterprise'],
         ];
     }
 }

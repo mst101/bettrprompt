@@ -150,10 +150,10 @@ test('location country code must be 2 characters', function () {
         ->actingAs($user)
         ->from('/profile')
         ->patch('/profile/location', [
-            'countryCode' => 'USA', // Invalid: 3 characters
+            'country_code' => 'USA', // Invalid: 3 characters
         ]);
 
-    $response->assertSessionHasErrors('countryCode');
+    $response->assertSessionHasErrors('country_code');
 });
 
 test('location currency code must be 3 characters', function () {
@@ -163,10 +163,10 @@ test('location currency code must be 3 characters', function () {
         ->actingAs($user)
         ->from('/profile')
         ->patch('/profile/location', [
-            'currencyCode' => 'GB', // Invalid: 2 characters
+            'currency_code' => 'GB', // Invalid: 2 characters
         ]);
 
-    $response->assertSessionHasErrors('currencyCode');
+    $response->assertSessionHasErrors('currency_code');
 });
 
 test('user location can be cleared', function () {

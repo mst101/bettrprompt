@@ -12,10 +12,10 @@ class UpdateProfessionalRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'jobTitle' => ['nullable', 'string', 'max:100'],
+            'job_title' => ['nullable', 'string', 'max:100'],
             'industry' => ['nullable', 'string', 'max:100'],
-            'experienceLevel' => ['nullable', 'in:entry,mid,senior,expert'],
-            'companySize' => ['nullable', 'in:solo,small,medium,large,enterprise'],
+            'experience_level' => ['nullable', 'in:entry,mid,senior,expert'],
+            'company_size' => ['nullable', 'in:solo,small,medium,large,enterprise'],
         ];
     }
 }

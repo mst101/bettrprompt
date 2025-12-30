@@ -13,14 +13,6 @@ class StoreFeedbackRequest extends BaseFormRequest
     }
 
     /**
-     * Don't convert camelCase to snake_case - we validate against camelCase fields.
-     */
-    protected function shouldConvertCamelCase(): bool
-    {
-        return false;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -28,15 +20,15 @@ class StoreFeedbackRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'experienceLevel' => ['required', 'integer', 'min:1', 'max:7'],
+            'experience_level' => ['required', 'integer', 'min:1', 'max:7'],
             'usefulness' => ['required', 'integer', 'min:1', 'max:7'],
-            'usageIntent' => ['required', 'integer', 'min:1', 'max:7'],
+            'usage_intent' => ['required', 'integer', 'min:1', 'max:7'],
             'suggestions' => ['nullable', 'string', 'max:5000'],
-            'desiredFeatures' => ['required', 'array', 'min:1'],
-            'desiredFeatures.*' => [
+            'desired_features' => ['required', 'array', 'min:1'],
+            'desired_features.*' => [
                 'string', 'in:templates,compare,api-integration,collaboration,model-specific,document-upload,other',
             ],
-            'desiredFeaturesOther' => ['required_if:desiredFeatures.*,other', 'nullable', 'string', 'max:500'],
+            'desired_features_other' => ['required_if:desired_features.*,other', 'nullable', 'string', 'max:500'],
         ];
     }
 
@@ -48,12 +40,12 @@ class StoreFeedbackRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'experienceLevel.required' => 'Please select your experience level (Question 1)',
+            'experience_level.required' => 'Please select your experience level (Question 1)',
             'usefulness.required' => 'Please rate how useful the app was (Question 2)',
-            'usageIntent.required' => 'Please indicate your likelihood to use the app again (Question 3)',
-            'desiredFeatures.required' => 'Please select at least one feature you would like to see',
-            'desiredFeatures.min' => 'Please select at least one feature you would like to see',
-            'desiredFeaturesOther.required_if' => 'Please describe the feature you selected under "Other"',
+            'usage_intent.required' => 'Please indicate your likelihood to use the app again (Question 3)',
+            'desired_features.required' => 'Please select at least one feature you would like to see',
+            'desired_features.min' => 'Please select at least one feature you would like to see',
+            'desired_features_other.required_if' => 'Please describe the feature you selected under "Other"',
         ];
     }
 }

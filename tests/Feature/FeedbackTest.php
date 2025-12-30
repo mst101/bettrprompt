@@ -68,12 +68,12 @@ test('show feedback page redirects to create if no feedback exists', function ()
 
 test('store feedback creates new feedback record', function () {
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 2, // 1-7 scale (beginner)
+        'experience_level' => 2, // 1-7 scale (beginner)
         'usefulness' => 4,
-        'usageIntent' => 6, // 1-7 scale
+        'usage_intent' => 6, // 1-7 scale
         'suggestions' => 'Could use more debug',
-        'desiredFeatures' => ['templates', 'compare'],
-        'desiredFeaturesOther' => 'Integration with other tools',
+        'desired_features' => ['templates', 'compare'],
+        'desired_features_other' => 'Integration with other tools',
     ]);
 
     $response->assertRedirect(route('feedback.thank-you'));
@@ -92,27 +92,27 @@ test('store feedback creates new feedback record', function () {
 test('store feedback validates required fields', function () {
     $response = $this->post(route('feedback.store'), []);
 
-    $response->assertSessionHasErrors(['experienceLevel', 'usefulness', 'usageIntent', 'desiredFeatures']);
+    $response->assertSessionHasErrors(['experience_level', 'usefulness', 'usage_intent', 'desired_features']);
     $this->assertDatabaseEmpty('feedback');
 });
 
 test('store feedback validates experience level range', function () {
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 8, // Over max of 7
+        'experience_level' => 8, // Over max of 7
         'usefulness' => 4,
-        'usageIntent' => 6,
-        'desiredFeatures' => ['templates'],
+        'usage_intent' => 6,
+        'desired_features' => ['templates'],
     ]);
 
-    $response->assertSessionHasErrors(['experienceLevel']);
+    $response->assertSessionHasErrors(['experience_level']);
 });
 
 test('store feedback validates usefulness range', function () {
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 2,
+        'experience_level' => 2,
         'usefulness' => 8, // Max is 7
-        'usageIntent' => 6,
-        'desiredFeatures' => ['templates'],
+        'usage_intent' => 6,
+        'desired_features' => ['templates'],
     ]);
 
     $response->assertSessionHasErrors(['usefulness']);
@@ -120,21 +120,21 @@ test('store feedback validates usefulness range', function () {
 
 test('store feedback validates recommendation likelihood range', function () {
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 2,
+        'experience_level' => 2,
         'usefulness' => 4,
-        'usageIntent' => 8, // Max is 7
-        'desiredFeatures' => ['templates'],
+        'usage_intent' => 8, // Max is 7
+        'desired_features' => ['templates'],
     ]);
 
-    $response->assertSessionHasErrors(['usageIntent']);
+    $response->assertSessionHasErrors(['usage_intent']);
 });
 
 test('store feedback allows optional fields to be null', function () {
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 4,
+        'experience_level' => 4,
         'usefulness' => 3,
-        'usageIntent' => 5,
-        'desiredFeatures' => ['templates'],
+        'usage_intent' => 5,
+        'desired_features' => ['templates'],
     ]);
 
     $response->assertRedirect(route('feedback.thank-you'));
@@ -160,12 +160,12 @@ test('update feedback updates existing feedback record', function () {
     ]);
 
     $response = $this->put(route('feedback.update'), [
-        'experienceLevel' => 4,
+        'experience_level' => 4,
         'usefulness' => 5,
-        'usageIntent' => 6,
+        'usage_intent' => 6,
         'suggestions' => 'Updated suggestion',
-        'desiredFeatures' => ['compare', 'api-integration'],
-        'desiredFeaturesOther' => 'New feature idea',
+        'desired_features' => ['compare', 'api-integration'],
+        'desired_features_other' => 'New feature idea',
     ]);
 
     $response->assertRedirect(route('feedback.show'));
@@ -195,7 +195,7 @@ test('update feedback validates required fields', function () {
 
     $response = $this->put(route('feedback.update'), []);
 
-    $response->assertSessionHasErrors(['experienceLevel', 'usefulness', 'usageIntent', 'desiredFeatures']);
+    $response->assertSessionHasErrors(['experience_level', 'usefulness', 'usage_intent', 'desired_features']);
 });
 
 test('feedback routes are accessible to guests', function () {
@@ -214,12 +214,12 @@ test('guests can store feedback', function () {
     auth()->logout();
 
     $response = $this->post(route('feedback.store'), [
-        'experienceLevel' => 3,
+        'experience_level' => 3,
         'usefulness' => 4,
-        'usageIntent' => 5,
+        'usage_intent' => 5,
         'suggestions' => 'Great application!',
-        'desiredFeatures' => ['templates', 'api-integration'],
-        'desiredFeaturesOther' => null,
+        'desired_features' => ['templates', 'api-integration'],
+        'desired_features_other' => null,
     ]);
 
     $response->assertRedirect(route('feedback.thank-you'));

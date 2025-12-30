@@ -239,7 +239,7 @@ class ProfileController extends Controller
     public function updateLocation(UpdateLocationRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateLocation($request->validatedToSnakeCase());
+            $request->user()->updateLocation($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
@@ -259,7 +259,7 @@ class ProfileController extends Controller
     public function updateProfessional(UpdateProfessionalRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateProfessional($request->validatedToSnakeCase());
+            $request->user()->updateProfessional($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'professional-updated');
@@ -279,7 +279,7 @@ class ProfileController extends Controller
     public function updateTeam(UpdateTeamRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateTeam($request->validatedToSnakeCase());
+            $request->user()->updateTeam($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'team-updated');
@@ -299,7 +299,7 @@ class ProfileController extends Controller
     public function updateBudget(UpdateBudgetRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateBudget($request->validatedToSnakeCase());
+            $request->user()->updateBudget($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'budget-updated');
@@ -319,7 +319,7 @@ class ProfileController extends Controller
     public function updateTools(UpdateToolsRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateTools($request->validatedToSnakeCase());
+            $request->user()->updateTools($request->validated());
 
             return Redirect::route('profile.edit')
                 ->with('status', 'tools-updated');

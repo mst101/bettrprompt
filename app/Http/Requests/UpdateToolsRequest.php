@@ -12,9 +12,9 @@ class UpdateToolsRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'preferredTools' => ['nullable', 'array'],
-            'preferredTools.*' => ['string'],
-            'primaryProgrammingLanguage' => ['nullable', 'string', 'max:50'],
+            'preferred_tools' => ['nullable', 'array'],
+            'preferred_tools.*' => ['string'],
+            'primary_programming_language' => ['nullable', 'string', 'max:50'],
         ];
     }
 }
