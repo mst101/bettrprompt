@@ -11,21 +11,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * TypeScript interface:
  * ```typescript
  * interface User {
- *   readonly id: number;
- *   readonly name: string;
- *   readonly email: string;
- *   readonly createdAt: string;
- *   readonly updatedAt: string;
- *   readonly emailVerifiedAt: string | null;
- *   readonly personalityType: string | null;
- *   readonly traitPercentages: {
- *     mind: number | null;
- *     energy: number | null;
- *     nature: number | null;
- *     tactics: number | null;
- *     identity: number | null;
- *   } | null;
- *   readonly isAdmin: boolean;
+ *     readonly id: number;
+ *     readonly name: string;
+ *     readonly email: string;
+ *     readonly createdAt: string;
+ *     readonly updatedAt: string;
+ *     readonly emailVerifiedAt: string | null;
+ *     readonly personalityType: string | null;
+ *     readonly traitPercentages: {
+ *         mind: number | null;
+ *         energy: number | null;
+ *         nature: number | null;
+ *         tactics: number | null;
+ *         identity: number | null;
+ *     } | null;
+ *     readonly isAdmin: boolean;
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.

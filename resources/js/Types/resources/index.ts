@@ -4,9 +4,12 @@
  */
 
 export * from './AdminUserResource';
+export * from './ClaudeModelResource';
 export * from './CountryResource';
 export * from './CurrencyResource';
 export * from './LanguageResource';
+export * from './PromptRunPageResource';
+export * from './PromptRunRelationshipResource';
 export * from './PromptRunResource';
 export * from './UserResource';
 export * from './VisitorResource';

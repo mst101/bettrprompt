@@ -5,6 +5,26 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @see \App\Models\ClaudeModel
+ *
+ * TypeScript interface:
+ * ```typescript
+ * interface ClaudeModelResource {
+ *     readonly id: string;
+ *     readonly name: string;
+ *     readonly tier: 'haiku' | 'sonnet' | 'opus';
+ *     readonly version: number;
+ *     readonly inputCostPerMtok: string;
+ *     readonly outputCostPerMtok: string;
+ *     readonly releaseDate: string | null;
+ *     readonly active: boolean;
+ *     readonly positioning: string | null;
+ *     readonly contextWindowInput: number | null;
+ *     readonly contextWindowOutput: number | null;
+ * }
+ * ```
+ */
 class ClaudeModelResource extends JsonResource
 {
     /**

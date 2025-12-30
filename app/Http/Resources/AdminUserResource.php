@@ -13,14 +13,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * TypeScript interface:
  * ```typescript
  * interface AdminUser {
- *   readonly id: number;
- *   readonly name: string;
- *   readonly email: string;
- *   readonly personalityType: string | null;
- *   readonly isAdmin: boolean;
- *   readonly createdAt: string;
- *   readonly visitorsCount: number;
- *   readonly promptRunsCount: number;
+ *     readonly id: number;
+ *     readonly name: string;
+ *     readonly email: string;
+ *     readonly personalityType: string | null;
+ *     readonly isAdmin: boolean;
+ *     readonly createdAt: string;
+ *     readonly visitorsCount: number;
+ *     readonly promptRunsCount: number;
  * }
  * ```
  */

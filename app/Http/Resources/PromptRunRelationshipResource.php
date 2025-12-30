@@ -7,8 +7,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Minimal resource for related prompt runs (parent/children)
- * Only includes data needed to display links, not full details
+ * Only includes data needed to display links, not full details.
  * Full details are fetched on-demand via API
+ *
+ * @see \App\Models\PromptRun
+ *
+ * TypeScript interface:
+ * ```typescript
+ * interface PromptRunRelationshipResource {
+ *     readonly id: number;
+ *     readonly taskDescription: string;
+ *     readonly workflowStage: string;
+ *     readonly createdAt: string | null;
+ *     readonly personalityType: string | null;
+ * }
+ * ```
  */
 class PromptRunRelationshipResource extends JsonResource
 {

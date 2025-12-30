@@ -11,11 +11,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * TypeScript interface:
  * ```typescript
  * interface Language {
- *   readonly id: string;
- *   readonly name: string;
- *   readonly active: boolean;
- *   readonly createdAt: string;
- *   readonly updatedAt: string;
+ *     readonly id: string;
+ *     readonly name: string;
+ *     readonly active: boolean;
+ *     readonly createdAt: string;
+ *     readonly updatedAt: string;
  * }
  * ```
  */
