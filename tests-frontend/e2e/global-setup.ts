@@ -80,28 +80,6 @@ async function globalSetup() {
         );
 
         console.log('✅ E2E test environment ready!');
-
-        // Return a cleanup function that runs after all tests complete
-        return async () => {
-            try {
-                console.log('🧹 Cleaning up E2E test environment...');
-
-                // Restore the production .env from backup
-                if (fs.existsSync(envBackupPath)) {
-                    fs.copyFileSync(envBackupPath, envPath);
-                    fs.unlinkSync(envBackupPath);
-                    console.log(
-                        '✅ Restored production .env - Laravel dev server back to normal',
-                    );
-                }
-            } catch (cleanupError) {
-                console.error(
-                    '⚠️  Failed to restore production .env:',
-                    cleanupError,
-                );
-                // Don't throw during cleanup to avoid masking test failures
-            }
-        };
     } catch (error) {
         console.error('❌ Failed to set up E2E test environment:', error);
         throw error;

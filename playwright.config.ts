@@ -8,6 +8,9 @@ export default defineConfig({
     // Global setup script to prepare test database
     globalSetup: './tests-frontend/e2e/global-setup.ts',
 
+    // Global teardown script to restore production .env
+    globalTeardown: './tests-frontend/e2e/global-teardown.ts',
+
     // Look for test files in the "tests-frontend/e2e" directory
     testDir: './tests-frontend/e2e',
 
