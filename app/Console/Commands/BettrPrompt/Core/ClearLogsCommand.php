@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\HiddenGambia\Core;
+namespace App\Console\Commands\BettrPrompt\Core;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -12,7 +12,7 @@ class ClearLogsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'hg:clear-logs {logs?*}';
+    protected $signature = 'bp:logs:clear {logs?*}';
 
     /**
      * The console command description.

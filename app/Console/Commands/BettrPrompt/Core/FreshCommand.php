@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\HiddenGambia\Core;
+namespace App\Console\Commands\BettrPrompt\Core;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -13,7 +13,7 @@ class FreshCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'hg:fresh 
+    protected $signature = 'bp:fresh
                             {stores?* : Redis stores to flush (e.g., analytics, cache, default). If none specified, all stores are flushed}
                             {--force : Force the operation to run in production}';
 
@@ -86,7 +86,7 @@ class FreshCommand extends Command
         // Clear logs
         $this->info('🧹 Clearing logs...');
         try {
-            Artisan::call('hg:clear-logs', [], $this->output);
+            Artisan::call('bp:logs:clear', [], $this->output);
             $this->info('✅ Logs cleared successfully');
         } catch (\Exception $e) {
             $this->error('❌ Failed to clear logs: '.$e->getMessage());
