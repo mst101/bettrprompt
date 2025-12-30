@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
@@ -61,6 +62,9 @@ const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
 const shouldFocusBulkQuestions = ref(false);
 const shouldFocusEditButton = ref(false);
+const showQuestionRationale = ref(false);
+const rationaleContainerRef = ref<HTMLDivElement | null>(null);
+const rationaleMaxHeight = ref('0px');
 const questionFormRef = ref<InstanceType<typeof QuestionAnsweringForm> | null>(
     null,
 );
@@ -74,6 +78,19 @@ watchEffect(() => {
     if (shouldFocusBulkQuestions.value && bulkQuestionsRef.value) {
         bulkQuestionsRef.value.focusFirstTextarea();
         shouldFocusBulkQuestions.value = false;
+    }
+});
+
+// Watch for rationale visibility changes and measure height
+watch(showQuestionRationale, async () => {
+    await nextTick();
+    if (rationaleContainerRef.value) {
+        if (showQuestionRationale.value) {
+            rationaleMaxHeight.value =
+                rationaleContainerRef.value.scrollHeight + 'px';
+        } else {
+            rationaleMaxHeight.value = '0px';
+        }
     }
 });
 
@@ -394,7 +411,7 @@ const optionalQuestionsLabel = computed(() => {
 
     <Card class="space-y-6" data-testid="clarifying-questions">
         <div
-            class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start"
+            class="mb-2 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start"
         >
             <h2
                 class="sr-only text-lg font-semibold text-indigo-900 sm:not-sr-only"
@@ -469,12 +486,31 @@ const optionalQuestionsLabel = computed(() => {
             </div>
         </div>
 
-        <p
-            v-if="promptRun.questionRationale && uiComplexity === 'advanced'"
-            class="text-sm text-indigo-800"
-        >
-            {{ promptRun.questionRationale }}
-        </p>
+        <div v-if="promptRun.questionRationale && uiComplexity === 'advanced'">
+            <ButtonText
+                id="show-question-rationale"
+                type="button"
+                class="-ml-1 flex items-center gap-2 text-sm font-medium text-indigo-700 no-underline! hover:text-indigo-900"
+                @click="showQuestionRationale = !showQuestionRationale"
+            >
+                {{ showQuestionRationale ? 'Hide' : 'Show' }} question rationale
+                <DynamicIcon
+                    :name="
+                        showQuestionRationale ? 'chevron-down' : 'chevron-right'
+                    "
+                    class="h-4 w-4"
+                />
+            </ButtonText>
+            <div
+                ref="rationaleContainerRef"
+                class="overflow-hidden transition-all duration-300 ease-in-out"
+                :style="{ maxHeight: rationaleMaxHeight }"
+            >
+                <p class="pt-2 text-sm text-indigo-800">
+                    {{ promptRun.questionRationale }}
+                </p>
+            </div>
+        </div>
 
         <!-- Reviewing mode: Show answered list -->
         <AnsweredList
