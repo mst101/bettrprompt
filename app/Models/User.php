@@ -252,16 +252,23 @@ class User extends Authenticatable
     public function updateLocation(array $locationData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($locationData) {
-            $this->update([
-                'country_code' => $locationData['country_code'],
-                'region' => $locationData['region'],
-                'city' => $locationData['city'],
-                'timezone' => $locationData['timezone'],
-                'currency_code' => $locationData['currency_code'],
-                'language_code' => $locationData['language_code'],
-                'location_manually_set' => true,
-            ]);
-            $this->updateProfileCompletion();
+            // Build update array with only provided keys, supporting partial updates
+            $updates = array_filter([
+                'country_code' => $locationData['country_code'] ?? null,
+                'region' => $locationData['region'] ?? null,
+                'city' => $locationData['city'] ?? null,
+                'timezone' => $locationData['timezone'] ?? null,
+                'currency_code' => $locationData['currency_code'] ?? null,
+                'language_code' => $locationData['language_code'] ?? null,
+            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+
+            // Always mark location as manually set when updating
+            $updates['location_manually_set'] = true;
+
+            if (! empty($updates)) {
+                $this->update($updates);
+                $this->updateProfileCompletion();
+            }
         });
     }
 
@@ -271,13 +278,18 @@ class User extends Authenticatable
     public function updateProfessional(array $professionalData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($professionalData) {
-            $this->update([
-                'job_title' => $professionalData['job_title'],
-                'industry' => $professionalData['industry'],
-                'experience_level' => $professionalData['experience_level'],
-                'company_size' => $professionalData['company_size'],
-            ]);
-            $this->updateProfileCompletion();
+            // Build update array with only provided keys, supporting partial updates
+            $updates = array_filter([
+                'job_title' => $professionalData['job_title'] ?? null,
+                'industry' => $professionalData['industry'] ?? null,
+                'experience_level' => $professionalData['experience_level'] ?? null,
+                'company_size' => $professionalData['company_size'] ?? null,
+            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+
+            if (! empty($updates)) {
+                $this->update($updates);
+                $this->updateProfileCompletion();
+            }
         });
     }
 
@@ -287,12 +299,17 @@ class User extends Authenticatable
     public function updateTeam(array $teamData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($teamData) {
-            $this->update([
-                'team_size' => $teamData['team_size'],
-                'team_role' => $teamData['team_role'],
-                'work_mode' => $teamData['work_mode'],
-            ]);
-            $this->updateProfileCompletion();
+            // Build update array with only provided keys, supporting partial updates
+            $updates = array_filter([
+                'team_size' => $teamData['team_size'] ?? null,
+                'team_role' => $teamData['team_role'] ?? null,
+                'work_mode' => $teamData['work_mode'] ?? null,
+            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+
+            if (! empty($updates)) {
+                $this->update($updates);
+                $this->updateProfileCompletion();
+            }
         });
     }
 
@@ -302,10 +319,15 @@ class User extends Authenticatable
     public function updateBudget(array $budgetData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($budgetData) {
-            $this->update([
-                'budget_consciousness' => $budgetData['budget_consciousness'],
-            ]);
-            $this->updateProfileCompletion();
+            // Build update array with only provided keys, supporting partial updates
+            $updates = array_filter([
+                'budget_consciousness' => $budgetData['budget_consciousness'] ?? null,
+            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+
+            if (! empty($updates)) {
+                $this->update($updates);
+                $this->updateProfileCompletion();
+            }
         });
     }
 
@@ -315,11 +337,16 @@ class User extends Authenticatable
     public function updateTools(array $toolsData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($toolsData) {
-            $this->update([
-                'preferred_tools' => $toolsData['preferred_tools'],
-                'primary_programming_language' => $toolsData['primary_programming_language'],
-            ]);
-            $this->updateProfileCompletion();
+            // Build update array with only provided keys, supporting partial updates
+            $updates = array_filter([
+                'preferred_tools' => $toolsData['preferred_tools'] ?? null,
+                'primary_programming_language' => $toolsData['primary_programming_language'] ?? null,
+            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+
+            if (! empty($updates)) {
+                $this->update($updates);
+                $this->updateProfileCompletion();
+            }
         });
     }
 
