@@ -182,7 +182,17 @@ class N8nWorkflowClient
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/analysis", $payload);
 
             if ($response->successful()) {
-                return $response->json();
+                $data = $response->json();
+                if (is_array($data)) {
+                    return $data;
+                }
+
+                Log::warning('Analysis workflow returned non-array response', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                return ['success' => true];
             }
 
             Log::error('Analysis workflow failed', [
@@ -264,7 +274,17 @@ class N8nWorkflowClient
                 ->post("{$this->n8nBaseUrl}/webhook/api/n8n/webhook/generate", $n8nPayload);
 
             if ($response->successful()) {
-                return $response->json();
+                $data = $response->json();
+                if (is_array($data)) {
+                    return $data;
+                }
+
+                Log::warning('Generation workflow returned non-array response', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                return ['success' => true];
             }
 
             Log::error('Generation workflow failed', [
