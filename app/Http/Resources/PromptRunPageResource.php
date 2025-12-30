@@ -152,10 +152,10 @@ class PromptRunPageResource extends JsonResource
             // Include minimal parent/children data for UI links
             // Full details are fetched on-demand via API
             'parent' => $this->whenLoaded('parent', function () {
-                return $this->parent ? new PromptRunRelationshipResource($this->parent) : null;
+                return $this->parent ? (new PromptRunRelationshipResource($this->parent))->resolve() : null;
             }),
             'children' => $this->whenLoaded('children', function () {
-                return PromptRunRelationshipResource::collection($this->children);
+                return PromptRunRelationshipResource::collection($this->children)->resolve();
             }),
         ];
     }

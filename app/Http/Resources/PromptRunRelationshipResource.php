@@ -20,6 +20,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     readonly workflowStage: string;
  *     readonly createdAt: string | null;
  *     readonly personalityType: string | null;
+ *     readonly selectedFramework: { name: string | null } | null;
  * }
  * ```
  */
@@ -36,6 +37,7 @@ class PromptRunRelationshipResource extends JsonResource
             'workflowStage' => $this->workflow_stage,
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
             'personalityType' => $this->personality_type,
+            'selectedFramework' => $this->selected_framework ? ['name' => $this->selected_framework['name'] ?? null] : null,
         ];
     }
 }

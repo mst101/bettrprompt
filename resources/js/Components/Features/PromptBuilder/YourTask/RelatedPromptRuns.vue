@@ -36,7 +36,7 @@ const hasRelations =
                         class="h-4 w-4 text-indigo-700"
                     />
                     <span class="text-sm font-medium text-indigo-800">
-                        Parent Optimisation
+                        Parent Prompt
                     </span>
                     <StatusBadge :workflow-stage="parent.workflowStage" />
                 </div>
@@ -51,6 +51,7 @@ const hasRelations =
                     {{ truncateText(parent.taskDescription) }}
                 </LinkText>
                 <p class="mt-3 text-xs text-indigo-700">
+                    Prompt ID ({{ parent.id }}) •
                     <span v-if="parent.selectedFramework?.name">
                         {{ parent.selectedFramework.name }} •
                     </span>
@@ -68,7 +69,7 @@ const hasRelations =
                         name="arrow-down"
                         class="h-4 w-4 text-indigo-500"
                     />
-                    <span>Child Optimisations ({{ children.length }})</span>
+                    <span>Child Prompts ({{ children.length }})</span>
                 </div>
                 <div
                     v-for="child in children"
@@ -89,6 +90,7 @@ const hasRelations =
                         {{ truncateText(child.taskDescription) }}
                     </LinkText>
                     <p class="mt-3 text-xs text-indigo-500">
+                        Prompt ID ({{ child.id }}) •
                         <span v-if="child.selectedFramework?.name">
                             {{ child.selectedFramework.name }} •
                         </span>
