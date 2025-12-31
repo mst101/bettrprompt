@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import AlertDialog from '@/Components/Base/AlertDialog.vue';
+import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import DocumentSidebar from '@/Components/Features/Workflow/DocumentSidebar.vue';
 import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue';
 import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
+import { useAlert } from '@/Composables/ui/useAlert';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
@@ -35,8 +38,11 @@ interface Props {
 const selectedDocument = ref<Document | null>(null);
 const content = ref('');
 const isSaving = ref(false);
+const isEmbeddingAll = ref(false);
 const message = ref<{ type: 'success' | 'error'; text: string } | null>(null);
 const expandedView = ref<'editor' | 'preview' | null>(null);
+
+const { confirm, success, error } = useAlert();
 
 // Rendered markdown preview
 const renderedContent = computed(() => {
@@ -174,6 +180,70 @@ async function saveDocument() {
 }
 
 /**
+ * Embed all documents into workflows with confirmation
+ */
+async function handleEmbedAll() {
+    const confirmed = await confirm(
+        'This will embed all core documents and framework templates into their respective n8n workflow JSON files. This action cannot be undone.',
+        'Embed All Documents?',
+        {
+            confirmText: 'Embed All',
+            cancelText: 'Cancel',
+            confirmButtonStyle: 'danger',
+        },
+    );
+
+    if (!confirmed) return;
+
+    isEmbeddingAll.value = true;
+    try {
+        const csrfToken = getCsrfToken();
+
+        const response = await fetch('/workflow/docs/api/embed-all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+        });
+
+        if (!response.ok) {
+            const responseText = await response.text();
+            console.error('Response status:', response.status);
+            console.error('Response body:', responseText);
+            throw new Error(
+                `Server error: ${response.status} ${response.statusText}`,
+            );
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            await success(data.message);
+            message.value = {
+                type: 'success',
+                text: `✓ ${data.message}`,
+            };
+            setTimeout(() => {
+                message.value = null;
+            }, 5000);
+        } else {
+            throw new Error(data.error || 'Failed to embed documents');
+        }
+    } catch (err) {
+        await error(
+            `Error embedding documents: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        );
+        message.value = {
+            type: 'error',
+            text: `Error embedding documents: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        };
+    } finally {
+        isEmbeddingAll.value = false;
+    }
+}
+
+/**
  * Select first document on mount
  */
 function selectFirstDocument() {
@@ -204,6 +274,10 @@ const infoItems = [
     {
         strong: 'Save & Embed:',
         text: 'Clicking "Save & Embed" updates both the markdown file and embeds the content into the relevant n8n workflow JSON files',
+    },
+    {
+        strong: 'Embed All Documents:',
+        text: 'Embeds all core documents and framework templates into their respective workflow JSON files in one operation',
     },
     {
         strong: 'Live Preview:',
@@ -266,13 +340,26 @@ const infoItems = [
                                 </span>
                             </p>
                         </div>
-                        <ButtonPrimary
-                            :disabled="isSaving"
-                            :loading="isSaving"
-                            @click="saveDocument"
-                        >
-                            {{ isSaving ? 'Saving...' : 'Save & Embed' }}
-                        </ButtonPrimary>
+                        <div class="flex gap-3">
+                            <ButtonPrimary
+                                :disabled="isSaving"
+                                :loading="isSaving"
+                                @click="saveDocument"
+                            >
+                                {{ isSaving ? 'Saving...' : 'Save & Embed' }}
+                            </ButtonPrimary>
+                            <ButtonDanger
+                                :disabled="isEmbeddingAll"
+                                :loading="isEmbeddingAll"
+                                @click="handleEmbedAll"
+                            >
+                                {{
+                                    isEmbeddingAll
+                                        ? 'Embedding...'
+                                        : 'Embed All Documents'
+                                }}
+                            </ButtonDanger>
+                        </div>
                     </div>
                 </div>
 
@@ -385,5 +472,8 @@ const infoItems = [
             title="About Reference Documents"
             :items="infoItems"
         />
+
+        <!-- Alert Dialog -->
+        <AlertDialog />
     </div>
 </template>

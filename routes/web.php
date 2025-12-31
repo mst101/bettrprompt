@@ -19,6 +19,13 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/pilot', function () {
+    return Inertia::render('Pilot', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
+})->name('pilot');
+
 Route::get('/terms', function () {
     return Inertia::render('Legal/Terms');
 })->name('terms');
@@ -271,6 +278,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         [\App\Http\Controllers\ReferenceDocumentsController::class, 'update'])
         ->name('workflow.docs.update')
         ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
+
+    Route::post('/workflow/docs/api/embed-all',
+        [\App\Http\Controllers\ReferenceDocumentsController::class, 'embedAll'])
+        ->name('workflow.docs.embed-all');
 
     // Debug n8n workflow - allows inspection of workflow input/output
     // Access at: https://app.localhost/workflow/0, /workflow/1, /workflow/2

@@ -109,6 +109,44 @@ class ReferenceDocumentsController extends Controller
     }
 
     /**
+     * Embed all documents into their respective workflows
+     */
+    public function embedAll()
+    {
+        try {
+            $embedded = [];
+            $documents = $this->getDocumentsList();
+
+            // Embed all core documents
+            foreach ($documents['core'] as $doc) {
+                $path = $this->getDocumentPath($doc['type'], $doc['filename']);
+                $content = file_get_contents($path);
+                $this->embedDocumentIntoWorkflows($doc['type'], $doc['filename'], $content);
+                $embedded[] = $doc['filename'];
+            }
+
+            // Embed all framework templates
+            foreach ($documents['framework'] as $doc) {
+                $path = $this->getDocumentPath($doc['type'], $doc['filename']);
+                $content = file_get_contents($path);
+                $this->embedDocumentIntoWorkflows($doc['type'], $doc['filename'], $content);
+                $embedded[] = $doc['filename'];
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All '.count($embedded).' documents embedded successfully into workflows',
+                'embedded' => $embedded,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Get the file path for a document
      *
      * @throws Exception
