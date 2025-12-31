@@ -104,6 +104,27 @@ class ProcessPreAnalysis implements ShouldQueue
                 // Refresh the model
                 $this->promptRun->refresh();
 
+                // Broadcast pre-analysis completed event (even though skipped)
+                // This notifies the frontend that workflow stage changed to 1_processing
+                try {
+                    // Add a small delay to ensure client has subscribed to the channel
+                    usleep(500000); // 0.5 seconds
+
+                    Log::info('Dispatching PreAnalysisCompleted event (skipped)', [
+                        'prompt_run_id' => $this->promptRun->id,
+                        'workflow_stage' => $this->promptRun->workflow_stage,
+                    ]);
+                    event(new PreAnalysisCompleted($this->promptRun));
+                    Log::info('PreAnalysisCompleted event dispatched successfully (skipped)', [
+                        'prompt_run_id' => $this->promptRun->id,
+                    ]);
+                } catch (Exception $e) {
+                    Log::error('Failed to broadcast PreAnalysisCompleted event (skipped)', [
+                        'prompt_run_id' => $this->promptRun->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
                 // Dispatch main analysis job (Workflow 1)
                 ProcessAnalysis::dispatch($this->promptRun, null, $this->database);
             }

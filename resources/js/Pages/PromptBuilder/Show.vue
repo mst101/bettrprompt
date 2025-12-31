@@ -284,7 +284,11 @@ watch(
 useRealtimeUpdates(
     computed(() => `prompt-run.${props.promptRun.id}`),
     {
-        PreAnalysisCompleted: () => {
+        PreAnalysisCompleted: (data) => {
+            console.log(
+                '🎉 [WebSocket] PreAnalysisCompleted event received:',
+                data,
+            );
             // Reload page to show Quick Queries
             router.reload({
                 only: ['promptRun'],
@@ -294,7 +298,11 @@ useRealtimeUpdates(
                 },
             });
         },
-        AnalysisCompleted: () => {
+        AnalysisCompleted: (data) => {
+            console.log(
+                '🎉 [WebSocket] AnalysisCompleted event received:',
+                data,
+            );
             // Reload page to show analysis results
             router.reload({
                 only: ['promptRun'],
@@ -304,14 +312,19 @@ useRealtimeUpdates(
                 },
             });
         },
-        PromptOptimizationCompleted: () => {
+        PromptOptimizationCompleted: (data) => {
+            console.log(
+                '🎉 [WebSocket] PromptOptimizationCompleted event received:',
+                data,
+            );
             // Reload page to show completed prompt
             // The watcher on optimizedPrompt will automatically switch to the prompt tab
             router.reload({
                 only: ['promptRun'],
             });
         },
-        WorkflowFailed: () => {
+        WorkflowFailed: (data) => {
+            console.log('🎉 [WebSocket] WorkflowFailed event received:', data);
             // Reload page to show error message
             router.reload({
                 only: ['promptRun'],
@@ -533,6 +546,42 @@ onUnmounted(() => {
                         isPromptRunProcessing
                     "
                 />
+
+                <!-- Success message when pre-analysis is skipped -->
+                <div
+                    v-if="
+                        promptRun.preAnalysisSkipped &&
+                        promptRun.workflowStage === '1_processing' &&
+                        isPromptRunProcessing
+                    "
+                    class="mb-6 rounded-lg border border-green-200 bg-green-50 p-4"
+                    data-testid="pre-analysis-skipped-message"
+                >
+                    <div class="flex items-start gap-3">
+                        <svg
+                            class="mt-0.5 h-5 w-5 shrink-0 text-green-600"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-green-900">
+                                Excellent! Your task is clear
+                            </h4>
+                            <p class="mt-1 text-sm text-green-700">
+                                Your task description is sufficiently clear for
+                                us to proceed directly to the main analysis.
+                                We're now selecting the best prompt framework
+                                for you.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Enhanced loading state when main analysis is in progress (Workflow 1) -->
                 <AnalysisProgress

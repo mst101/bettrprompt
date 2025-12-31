@@ -71,6 +71,9 @@ export function useRealtimeUpdates(
         }
 
         usingFallback.value = true;
+        console.warn(
+            '[useRealtimeUpdates] WebSocket unavailable, falling back to polling',
+        );
 
         // Perform an immediate reload on first poll
         router.reload(reloadOptions);
@@ -88,6 +91,9 @@ export function useRealtimeUpdates(
 
     const stopPolling = () => {
         if (pollInterval) {
+            console.log(
+                '[useRealtimeUpdates] WebSocket reconnected, stopping polling fallback',
+            );
             clearInterval(pollInterval);
             pollInterval = null;
             usingFallback.value = false;
@@ -126,6 +132,9 @@ export function useRealtimeUpdates(
                     error,
                 );
                 if (!usingFallback.value) {
+                    console.warn(
+                        '[useRealtimeUpdates] WebSocket error detected, starting polling fallback',
+                    );
                     startPolling();
                 }
             });
@@ -140,6 +149,10 @@ export function useRealtimeUpdates(
             }
 
             connected.value = true;
+            console.log(
+                '[useRealtimeUpdates] WebSocket connected to channel:',
+                channelName.value,
+            );
         } catch (error) {
             console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
             startPolling();
