@@ -1,9 +1,5 @@
-# Global options for local development
-{
-    # Enable automatic HTTPS with self-signed certificates for .localhost domains
-    # Caddy will automatically redirect HTTP → HTTPS
-    local_certs
-}
+# Global options - no automatic HTTPS generation
+# Certificates are provided by mkcert
 
 (app_common) {
     encode gzip
@@ -34,6 +30,9 @@ app.localhost {
 
     # Regular HTTP traffic to Laravel
     reverse_proxy laravel.test:80
+
+    # Use mkcert certificates (valid until 31 March 2028)
+    tls /app/certs/app.localhost.pem /app/certs/app.localhost.key
 }
 
 # n8n workflow automation
@@ -41,4 +40,7 @@ app.localhost {
 n8n.localhost {
     import app_common
     reverse_proxy n8n:5678
+
+    # Use mkcert certificates (valid until 31 March 2028)
+    tls /app/certs/n8n.localhost.pem /app/certs/n8n.localhost.key
 }
