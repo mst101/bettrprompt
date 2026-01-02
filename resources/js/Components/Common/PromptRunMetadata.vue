@@ -20,20 +20,6 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
 <template>
     <Card>
         <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-            <!-- Workflow Stage -->
-            <div
-                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-            >
-                <span
-                    :class="[
-                        'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                        getWorkflowStageColor(workflowStage),
-                    ]"
-                >
-                    {{ workflowStage }}
-                </span>
-            </div>
-
             <!-- User -->
             <div
                 v-if="user"
@@ -64,6 +50,20 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
                 </span>
                 <span class="text-sm text-indigo-500">
                     {{ new Date(createdAt).toLocaleString() }}
+                </span>
+            </div>
+
+            <!-- Workflow Stage -->
+            <div
+                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
+            >
+                <span
+                    :class="[
+                        'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
+                        getWorkflowStageColor(workflowStage),
+                    ]"
+                >
+                    {{ workflowStage }}
                 </span>
             </div>
         </div>

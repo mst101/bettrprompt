@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunResource;
 use App\Models\ClaudeModel;
 use App\Models\PromptRun;
@@ -84,7 +85,9 @@ class TaskController extends Controller
 
         return Inertia::render('Admin/PromptRuns/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
-            'claudeModels' => ClaudeModel::all(),
+            'claudeModels' => ClaudeModelResource::collection(
+                ClaudeModel::active()->orderByDesc('release_date')->get()
+            )->resolve(),
         ]);
     }
 }
