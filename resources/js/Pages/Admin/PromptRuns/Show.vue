@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import Tabs, { type Tab } from '@/Components/Base/Tabs.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
+import PromptRunMetadata from '@/Components/Common/PromptRunMetadata.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PromptRunResource } from '@/Types/resources/PromptRunResource';
 import { Head, Link } from '@inertiajs/vue3';
@@ -15,8 +14,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const { getWorkflowStageColor } = useWorkflowStageColor();
 
 // Type-safe helper for selectedFramework
 interface FrameworkData {
@@ -98,71 +95,13 @@ const activeTab = ref<string>('task');
         </HeaderPage>
 
         <ContainerPage v-if="props.promptRun" spacing>
-            <!-- Workflow Stage and Meta -->
-            <Card>
-                <div class="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-indigo-700"
-                        >
-                            Workflow Stage
-                        </label>
-                        <span
-                            :class="[
-                                'mt-1 inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                getWorkflowStageColor(
-                                    props.promptRun.workflowStage,
-                                ),
-                            ]"
-                        >
-                            {{ props.promptRun.workflowStage }}
-                        </span>
-                    </div>
-                    <div v-if="props.promptRun.user">
-                        <label
-                            class="block text-sm font-medium text-indigo-700"
-                        >
-                            User
-                        </label>
-                        <div class="mt-1">
-                            <div class="font-medium text-indigo-900">
-                                {{ props.promptRun.user.name }}
-                            </div>
-                            <div class="text-sm text-indigo-500">
-                                {{ props.promptRun.user.email }}
-                            </div>
-                        </div>
-                    </div>
-                    <div v-if="props.promptRun.personalityType">
-                        <label
-                            class="block text-sm font-medium text-indigo-700"
-                        >
-                            Personality Type
-                        </label>
-                        <div class="mt-1">
-                            <span
-                                class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
-                            >
-                                {{ props.promptRun.personalityType }}
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-indigo-700"
-                        >
-                            Created
-                        </label>
-                        <div class="mt-1 text-indigo-900">
-                            {{
-                                new Date(
-                                    props.promptRun.createdAt,
-                                ).toLocaleString()
-                            }}
-                        </div>
-                    </div>
-                </div>
-            </Card>
+            <!-- Prompt Run Metadata -->
+            <PromptRunMetadata
+                :workflow-stage="promptRun.workflowStage"
+                :user="promptRun.user ?? null"
+                :personality-type="promptRun.personalityType"
+                :created-at="promptRun.createdAt"
+            />
 
             <!-- Tabbed Content -->
             <div class="max-w-4xl shadow-xs sm:rounded-lg">
