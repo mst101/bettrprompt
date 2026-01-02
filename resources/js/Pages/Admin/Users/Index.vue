@@ -5,24 +5,14 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import type { AdminUserResource } from '@/Types/resources/AdminUserResource';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    personalityType: string | null;
-    isAdmin: boolean;
-    createdAt: string;
-    visitorsCount: number;
-    promptRunsCount: number;
-}
-
 interface Props {
     users: {
-        data: User[];
+        data: AdminUserResource[];
         links: Array<Record<string, unknown>>;
         current_page: number;
         last_page: number;
@@ -108,7 +98,7 @@ watch(search, debouncedSearch);
                         <Link
                             v-for="user in props.users.data"
                             :key="user.id"
-                            :href="route('admin.users.show', user.id)"
+                            :href="route('admin.users.show', { user })"
                             as="tr"
                             class="cursor-pointer transition hover:bg-indigo-50"
                         >

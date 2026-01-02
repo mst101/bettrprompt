@@ -5,34 +5,37 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import type { PromptRunResource } from '@/Types/resources/PromptRunResource';
 import { Head, Link } from '@inertiajs/vue3';
-
-interface PromptRun {
-    id: number;
-    taskDescription: string;
-    personalityType: string | null;
-    selectedFramework: string | null;
-    frameworkReasoning: string | null;
-    frameworkQuestions: string[] | null;
-    clarifyingAnswers: string[] | null;
-    optimizedPrompt: string | null;
-    workflowStage: string;
-    createdAt: string;
-    completedAt: string | null;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    } | null;
-}
+import { computed } from 'vue';
 
 interface Props {
-    promptRun: PromptRun;
+    promptRun: PromptRunResource;
 }
 
 const props = defineProps<Props>();
 
-const { getStatusColor } = useWorkflowStageColor();
+const { getWorkflowStageColor } = useWorkflowStageColor();
+
+// Type-safe helper for selectedFramework
+interface FrameworkData {
+    name: string;
+    code: string;
+    rationale: string;
+    components?: string[];
+}
+
+const selectedFramework = computed(() => {
+    return props.promptRun.selectedFramework as FrameworkData | null;
+});
+
+const frameworkQuestions = computed(() => {
+    return props.promptRun.frameworkQuestions as string[] | null;
+});
+
+const clarifyingAnswers = computed(() => {
+    return props.promptRun.clarifyingAnswers as string[] | null;
+});
 </script>
 
 <template>
@@ -50,20 +53,22 @@ const { getStatusColor } = useWorkflowStageColor();
             </template>
         </HeaderPage>
 
-        <ContainerPage spacing>
-            <!-- Status and Meta -->
+        <ContainerPage v-if="props.promptRun" spacing>
+            <!-- Workflow Stage and Meta -->
             <Card>
                 <div class="grid gap-4 md:grid-cols-2">
                     <div>
                         <label
                             class="block text-sm font-medium text-indigo-700"
                         >
-                            Status
+                            Workflow Stage
                         </label>
                         <span
                             :class="[
                                 'mt-1 inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                getStatusColor(props.promptRun.workflowStage),
+                                getWorkflowStageColor(
+                                    props.promptRun.workflowStage,
+                                ),
                             ]"
                         >
                             {{ props.promptRun.workflowStage }}
@@ -126,7 +131,7 @@ const { getStatusColor } = useWorkflowStageColor();
             </Card>
 
             <!-- Framework Selection -->
-            <Card v-if="props.promptRun.selectedFramework">
+            <Card v-if="selectedFramework">
                 <h2 class="mb-3 font-semibold text-indigo-900">
                     Selected Framework
                 </h2>
@@ -135,36 +140,30 @@ const { getStatusColor } = useWorkflowStageColor();
                         <span
                             class="inline-flex rounded-lg bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-800"
                         >
-                            {{ props.promptRun.selectedFramework }}
+                            {{ selectedFramework.name }}
                         </span>
                     </div>
-                    <div v-if="props.promptRun.frameworkReasoning">
+                    <div v-if="selectedFramework.rationale">
                         <label
                             class="block text-sm font-medium text-indigo-700"
                         >
                             Reasoning
                         </label>
                         <p class="mt-1 text-indigo-700">
-                            {{ props.promptRun.frameworkReasoning }}
+                            {{ selectedFramework.rationale }}
                         </p>
                     </div>
                 </div>
             </Card>
 
             <!-- Clarifying Questions & Answers -->
-            <Card
-                v-if="
-                    props.promptRun.frameworkQuestions &&
-                    props.promptRun.frameworkQuestions.length > 0
-                "
-            >
+            <Card v-if="frameworkQuestions && frameworkQuestions.length > 0">
                 <h2 class="mb-4 font-semibold text-indigo-900">
                     Clarifying Questions & Answers
                 </h2>
                 <div class="space-y-4">
                     <div
-                        v-for="(question, index) in props.prompt_run
-                            .frameworkQuestions"
+                        v-for="(question, index) in frameworkQuestions"
                         :key="index"
                         class="rounded-lg border border-indigo-100 p-4"
                     >
@@ -186,10 +185,7 @@ const { getStatusColor } = useWorkflowStageColor();
                         </div>
 
                         <div
-                            v-if="
-                                props.promptRun.clarifyingAnswers &&
-                                props.promptRun.clarifyingAnswers[index]
-                            "
+                            v-if="clarifyingAnswers && clarifyingAnswers[index]"
                             class="mt-3 ml-7 rounded-lg bg-indigo-50 p-3"
                         >
                             <div class="flex items-start">
@@ -204,11 +200,7 @@ const { getStatusColor } = useWorkflowStageColor();
                                         Answer
                                     </label>
                                     <p class="mt-1 text-indigo-900">
-                                        {{
-                                            props.promptRun.clarifyingAnswers[
-                                                index
-                                            ]
-                                        }}
+                                        {{ clarifyingAnswers[index] }}
                                     </p>
                                 </div>
                             </div>

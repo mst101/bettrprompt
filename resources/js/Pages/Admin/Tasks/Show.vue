@@ -4,25 +4,13 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { PromptRunResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
-
-interface PromptRun {
-    id: number;
-    personalityType: string | null;
-    selectedFramework: string | null;
-    workflowStage: string;
-    createdAt: string;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    } | null;
-}
 
 interface Props {
     taskDescription: string;
     promptRuns: {
-        data: PromptRun[];
+        data: PromptRunResource[];
         links: Array<Record<string, unknown>>;
         currentPage: number;
         lastPage: number;
@@ -31,7 +19,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { getStatusColor } = useWorkflowStageColor();
+const { getWorkflowStageColor } = useWorkflowStageColor();
 
 const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow default behavior for right-click and middle-click
@@ -117,7 +105,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Status
+                                    Workflow Stage
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
@@ -128,7 +116,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                         </thead>
                         <tbody class="divide-y divide-indigo-200 bg-white">
                             <tr
-                                v-for="run in props.promptRuns.data"
+                                v-for="run in props.promptRuns"
                                 :key="run.id"
                                 class="group cursor-pointer transition hover:bg-indigo-50"
                                 @click="handleRowClick($event, run.id)"
@@ -177,13 +165,15 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-indigo-900">
-                                    {{ run.selectedFramework || 'N/A' }}
+                                    {{ run.selectedFramework?.name || 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
                                         :class="[
                                             'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
-                                            getStatusColor(run.workflowStage),
+                                            getWorkflowStageColor(
+                                                run.workflowStage,
+                                            ),
                                         ]"
                                     >
                                         {{ run.workflowStage }}
@@ -197,7 +187,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     }}
                                 </td>
                             </tr>
-                            <tr v-if="props.promptRuns.data.length === 0">
+                            <tr v-if="props.promptRuns.length === 0">
                                 <td
                                     colspan="6"
                                     class="px-6 py-4 text-center text-sm text-indigo-500"
