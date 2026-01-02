@@ -65,10 +65,10 @@ class VisitorResource extends JsonResource
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {
-                return $this->user ? new UserResource($this->user) : null;
+                return $this->user ? (new UserResource($this->user))->resolve() : null;
             }),
             'promptRuns' => $this->whenLoaded('promptRuns', function () {
-                return $this->promptRuns ? PromptRunResource::collection($this->promptRuns) : [];
+                return $this->promptRuns ? PromptRunResource::collection($this->promptRuns)->resolve() : [];
             }, []),
         ];
     }

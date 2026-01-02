@@ -70,7 +70,7 @@ class TaskController extends Controller
 
         return Inertia::render('Admin/Tasks/Show', [
             'taskDescription' => $taskDescription,
-            'promptRuns' => PromptRunResource::collection($promptRuns),
+            'promptRuns' => PromptRunResource::collection($promptRuns)->resolve(),
         ]);
     }
 
@@ -82,7 +82,7 @@ class TaskController extends Controller
         $promptRun->load(['user', 'visitor', 'children']);
 
         return Inertia::render('Admin/PromptRuns/Show', [
-            'promptRun' => new PromptRunResource($promptRun),
+            'promptRun' => PromptRunResource::make($promptRun)->resolve(),
         ]);
     }
 }

@@ -42,8 +42,12 @@ class CountryResource extends JsonResource
             'name' => $this->name,
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
-            'currency' => new CurrencyResource($this->whenLoaded('currency')),
-            'language' => new LanguageResource($this->whenLoaded('language')),
+            'currency' => $this->whenLoaded('currency', function () {
+                return $this->currency ? (new CurrencyResource($this->currency))->resolve() : null;
+            }),
+            'language' => $this->whenLoaded('language', function () {
+                return $this->language ? (new LanguageResource($this->language))->resolve() : null;
+            }),
         ];
     }
 }

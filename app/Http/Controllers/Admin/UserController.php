@@ -34,7 +34,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Index', [
             'users' => [
-                'data' => AdminUserResource::collection($users->items()),
+                'data' => AdminUserResource::collection($users->items())->resolve(),
                 'links' => $users->linkCollection(),
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
@@ -62,6 +62,7 @@ class UserController extends Controller
             ->count();
 
         return Inertia::render('Admin/Users/Show', [
+            //            'user' => UserResource::make($user)->resolve(),
             'user' => new UserResource($user),
             'promptRunsCount' => $promptRunsCount,
         ]);

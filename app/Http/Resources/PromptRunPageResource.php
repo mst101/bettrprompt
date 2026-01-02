@@ -144,10 +144,10 @@ class PromptRunPageResource extends JsonResource
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {
-                return $this->user ? new UserResource($this->user) : null;
+                return $this->user ? (new UserResource($this->user))->resolve() : null;
             }),
             'visitor' => $this->whenLoaded('visitor', function () {
-                return $this->visitor ? new VisitorResource($this->visitor) : null;
+                return $this->visitor ? (new VisitorResource($this->visitor))->resolve() : null;
             }),
             // Include minimal parent/children data for UI links
             // Full details are fetched on-demand via API

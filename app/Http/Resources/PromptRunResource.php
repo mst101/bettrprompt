@@ -109,10 +109,10 @@ class PromptRunResource extends JsonResource
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {
-                return $this->user ? new UserResource($this->user) : null;
+                return $this->user ? (new UserResource($this->user))->resolve() : null;
             }),
             'visitor' => $this->whenLoaded('visitor', function () {
-                return $this->visitor ? new VisitorResource($this->visitor) : null;
+                return $this->visitor ? (new VisitorResource($this->visitor))->resolve() : null;
             }),
             'parent' => $this->whenLoaded('parent', function () {
                 return $this->parent ? (new PromptRunResource($this->parent))->resolve() : null;
