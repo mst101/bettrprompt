@@ -24,9 +24,6 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
             <div
                 class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
             >
-                <span class="text-sm font-medium text-indigo-700">
-                    Workflow:
-                </span>
                 <span
                     :class="[
                         'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
@@ -42,7 +39,6 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
                 v-if="user"
                 class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
             >
-                <span class="text-sm font-medium text-indigo-700">User:</span>
                 <span class="text-sm text-indigo-900">
                     {{ user.name }}
                     <span class="text-indigo-500">({{ user.email }})</span>
@@ -54,7 +50,6 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
                 v-if="personalityType"
                 class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
             >
-                <span class="text-sm font-medium text-indigo-700">Type:</span>
                 <span
                     class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
                 >

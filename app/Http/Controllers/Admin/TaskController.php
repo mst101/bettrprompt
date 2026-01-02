@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PromptRunResource;
+use App\Models\ClaudeModel;
 use App\Models\PromptRun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -79,10 +80,11 @@ class TaskController extends Controller
      */
     public function promptRun(PromptRun $promptRun): Response
     {
-        $promptRun->load(['user', 'visitor', 'children']);
+        $promptRun->load(['user', 'visitor', 'parent', 'children']);
 
         return Inertia::render('Admin/PromptRuns/Show', [
             'promptRun' => PromptRunResource::make($promptRun)->resolve(),
+            'claudeModels' => ClaudeModel::all(),
         ]);
     }
 }
