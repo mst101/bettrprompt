@@ -2,6 +2,9 @@
 import Card from '@/Components/Base/Card.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
+import CompactMetadataCard, {
+    type MetadataItem,
+} from '@/Components/Common/CompactMetadataCard.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
@@ -195,6 +198,45 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
         );
     }
 };
+
+const userMetadataItems = computed<MetadataItem[]>(() => {
+    const items: MetadataItem[] = [];
+
+    items.push({
+        label: 'Name',
+        value: props.user.name,
+    });
+
+    items.push({
+        label: 'Email',
+        value: props.user.email,
+    });
+
+    if (props.user.personalityType) {
+        items.push({
+            label: 'Personality',
+            value: props.user.personalityType,
+            badge: true,
+            badgeColor: 'purple',
+        });
+    }
+
+    if (props.user.isAdmin) {
+        items.push({
+            label: 'Role',
+            value: 'Admin',
+            badge: true,
+            badgeColor: 'indigo',
+        });
+    }
+
+    items.push({
+        label: 'Joined',
+        value: new Date(props.user.createdAt).toLocaleDateString(),
+    });
+
+    return items;
+});
 </script>
 
 <template>
@@ -213,64 +255,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
 
         <ContainerPage spacing>
             <!-- Compact User Metadata Card -->
-            <Card>
-                <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-                    <!-- Name -->
-                    <div
-                        class="border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-                    >
-                        <span class="text-sm text-indigo-900">
-                            {{ props.user.name }}
-                        </span>
-                    </div>
-
-                    <!-- Email -->
-                    <div
-                        class="border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-                    >
-                        <span class="text-sm text-indigo-500">
-                            {{ props.user.email }}
-                        </span>
-                    </div>
-
-                    <!-- Personality Type -->
-                    <div
-                        v-if="props.user.personalityType"
-                        class="border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-                    >
-                        <span
-                            class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-800"
-                        >
-                            {{ props.user.personalityType }}
-                        </span>
-                    </div>
-
-                    <!-- Admin Badge -->
-                    <div
-                        v-if="props.user.isAdmin"
-                        class="border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-                    >
-                        <span
-                            class="inline-flex rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700"
-                        >
-                            Admin
-                        </span>
-                    </div>
-
-                    <!-- Joined Date -->
-                    <div
-                        class="border-r border-indigo-200 pr-4 last:border-r-0"
-                    >
-                        <span class="text-sm text-indigo-500">
-                            {{
-                                new Date(
-                                    props.user.createdAt,
-                                ).toLocaleDateString()
-                            }}
-                        </span>
-                    </div>
-                </div>
-            </Card>
+            <CompactMetadataCard :items="userMetadataItems" />
 
             <!-- Prompts Heading -->
             <div class="mt-6 flex items-baseline gap-2">

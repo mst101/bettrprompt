@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import Card from '@/Components/Base/Card.vue';
+import CompactMetadataCard, {
+    type MetadataItem,
+} from '@/Components/Common/CompactMetadataCard.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
-import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 interface Props {
     workflowStage: string;
@@ -14,51 +16,52 @@ interface Props {
     createdAt: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const metadataItems = computed<MetadataItem[]>(() => {
+    const items: MetadataItem[] = [];
+
+    if (props.user) {
+        items.push({
+            label: 'User',
+            value: props.user.name,
+            url: route('admin.users.show', { user: props.user.id }),
+        });
+    }
+
+    if (props.personalityType) {
+        items.push({
+            label: 'Personality',
+            value: props.personalityType,
+            badge: true,
+            badgeColor: 'purple',
+        });
+    }
+
+    items.push({
+        label: 'Created',
+        value: new Date(props.createdAt).toLocaleString(),
+    });
+
+    return items;
+});
 </script>
 
 <template>
-    <Card>
-        <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-            <!-- User -->
-            <div
-                v-if="user"
-                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-            >
-                <Link
-                    :href="route('admin.users.show', { user: user.id })"
-                    class="text-sm text-indigo-900 hover:text-indigo-600 hover:underline"
-                >
-                    {{ user.name }}
-                </Link>
-                <span class="text-indigo-500">({{ user.email }})</span>
-            </div>
+    <div class="space-y-3">
+        <!-- Metadata items -->
+        <CompactMetadataCard :items="metadataItems" />
 
-            <!-- Personality Type -->
+        <!-- Workflow Stage (displayed separately for special styling) -->
+        <div>
             <div
-                v-if="personalityType"
-                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
+                class="text-xs font-semibold tracking-wider text-indigo-600 uppercase sm:hidden"
             >
-                <span
-                    class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
-                >
-                    {{ personalityType }}
-                </span>
+                Status
             </div>
-
-            <!-- Created Date -->
-            <div
-                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0"
-            >
-                <span class="text-sm text-indigo-500">
-                    {{ new Date(createdAt).toLocaleString() }}
-                </span>
-            </div>
-
-            <!-- Workflow Stage -->
-            <div class="flex items-center gap-2 sm:pr-6">
+            <div class="mt-1 sm:mt-0">
                 <StatusBadge :workflow-stage="workflowStage" />
             </div>
         </div>
-    </Card>
+    </div>
 </template>
