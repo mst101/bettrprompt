@@ -147,13 +147,10 @@ const hasRelatedRuns = computed(
 
             <!-- Tabbed Content -->
             <div class="max-w-4xl shadow-xs sm:rounded-lg">
-                <Tabs v-model="activeTab" :tabs="tabs" />
+                <Tabs v-model="activeTab" class="mb-2" :tabs="tabs" />
 
                 <!-- Your Task Tab -->
-                <div
-                    v-if="activeTab === 'task'"
-                    class="space-y-4 rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'task'" class="space-y-4">
                     <!-- Workflow error display for any failed stage -->
                     <WorkflowError
                         v-if="hasWorkflowFailed && promptRun.errorMessage"
@@ -185,10 +182,7 @@ const hasRelatedRuns = computed(
                 </div>
 
                 <!-- Framework Tab -->
-                <div
-                    v-if="activeTab === 'framework'"
-                    class="space-y-4 rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'framework'" class="space-y-4">
                     <SelectedFramework
                         v-if="promptRun.selectedFramework"
                         :framework="promptRun.selectedFramework as any"
@@ -203,10 +197,7 @@ const hasRelatedRuns = computed(
                 </div>
 
                 <!-- Personality Tab -->
-                <div
-                    v-if="activeTab === 'personality'"
-                    class="space-y-4 rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'personality'" class="space-y-4">
                     <TaskTraitAlignment
                         v-if="promptRun.taskTraitAlignment"
                         :alignment="promptRun.taskTraitAlignment as any"
@@ -229,10 +220,7 @@ const hasRelatedRuns = computed(
                 </div>
 
                 <!-- Questions Tab -->
-                <div
-                    v-if="activeTab === 'questions'"
-                    class="space-y-4 rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'questions'" class="space-y-4">
                     <ClarifyingQuestions
                         :prompt-run="promptRun"
                         ui-complexity="simple"
@@ -241,10 +229,7 @@ const hasRelatedRuns = computed(
                 </div>
 
                 <!-- Recommendations Tab -->
-                <div
-                    v-if="activeTab === 'recommendations'"
-                    class="rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'recommendations'" class="space-y-4">
                     <Recommendations
                         :model-recommendations="
                             promptRun.modelRecommendations as any
@@ -256,10 +241,7 @@ const hasRelatedRuns = computed(
                 </div>
 
                 <!-- Costs Tab -->
-                <div
-                    v-if="activeTab === 'costs'"
-                    class="rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
-                >
+                <div v-if="activeTab === 'costs'" class="space-y-4">
                     <ApiUsage
                         :pre-analysis-usage="
                             promptRun.preAnalysisApiUsage as any
@@ -273,7 +255,7 @@ const hasRelatedRuns = computed(
                 <!-- Optimised Prompt Tab -->
                 <div
                     v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
-                    class="rounded-b-lg border border-t-0 border-indigo-100 bg-white p-6"
+                    class="space-y-4"
                 >
                     <OptimisedPrompt
                         :optimized-prompt="promptRun.optimizedPrompt"

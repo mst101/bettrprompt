@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminUserResource;
+use App\Http\Resources\PromptRunResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,21 +49,27 @@ class UserController extends Controller
      */
     public function show(User $user): Response
     {
-        $user->load([
-            'visitors.promptRuns' => function ($query) {
-                $query->latest()->limit(10);
-            },
-        ]);
+        // Get all prompt runs for this user (both owned and via visitors)
+        $promptRuns = $user->promptRuns()
+            ->with(['user', 'visitor'])
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
-        $promptRunsCount = $user->visitors()
-            ->with('promptRuns')
-            ->get()
-            ->pluck('promptRuns')
-            ->flatten()
-            ->count();
+        $promptRunsCount = $user->promptRuns()->count();
 
         return Inertia::render('Admin/Users/Show', [
             'user' => UserResource::make($user)->resolve(),
+            'promptRuns' => PromptRunResource::collection($promptRuns->items())->resolve(),
+            'pagination' => [
+                'current_page' => $promptRuns->currentPage(),
+                'last_page' => $promptRuns->lastPage(),
+                'per_page' => $promptRuns->perPage(),
+                'total' => $promptRuns->total(),
+                'next_page_url' => $promptRuns->nextPageUrl(),
+                'prev_page_url' => $promptRuns->previousPageUrl(),
+                'links' => $promptRuns->linkCollection(),
+            ],
             'promptRunsCount' => $promptRunsCount,
         ]);
     }
