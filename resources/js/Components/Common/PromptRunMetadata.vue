@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
-import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
+import StatusBadge from '@/Components/Common/StatusBadge.vue';
 
 interface Props {
     workflowStage: string;
@@ -13,8 +13,6 @@ interface Props {
 }
 
 defineProps<Props>();
-
-const { getWorkflowStageColor } = useWorkflowStageColor();
 </script>
 
 <template>
@@ -44,27 +42,17 @@ const { getWorkflowStageColor } = useWorkflowStageColor();
             </div>
 
             <!-- Created Date -->
-            <div class="flex items-center gap-2">
-                <span class="text-sm font-medium text-indigo-700">
-                    Created:
-                </span>
+            <div
+                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0"
+            >
                 <span class="text-sm text-indigo-500">
                     {{ new Date(createdAt).toLocaleString() }}
                 </span>
             </div>
 
             <!-- Workflow Stage -->
-            <div
-                class="flex items-center gap-2 border-r border-indigo-200 pr-4 last:border-r-0 sm:pr-6"
-            >
-                <span
-                    :class="[
-                        'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                        getWorkflowStageColor(workflowStage),
-                    ]"
-                >
-                    {{ workflowStage }}
-                </span>
+            <div class="flex items-center gap-2 sm:pr-6">
+                <StatusBadge :workflow-stage="workflowStage" />
             </div>
         </div>
     </Card>

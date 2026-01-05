@@ -366,7 +366,7 @@ const expandedUseCases = ref<string[]>([]);
                     <StepCard
                         :number="1"
                         title="Describe Your Challenge"
-                        description="What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language - we'll handle the rest."
+                        description="What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language."
                         bg-colour="bg-indigo-600"
                     />
 
