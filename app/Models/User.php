@@ -106,6 +106,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the prompt runs owned by this user
+     */
+    public function promptRuns(): HasMany
+    {
+        return $this->hasMany(PromptRun::class);
+    }
+
+    /**
      * Generate and set a unique referral code for this user
      */
     public function generateReferralCode(): string
