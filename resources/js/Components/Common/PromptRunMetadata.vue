@@ -50,7 +50,7 @@ const metadataItems = computed<MetadataItem[]>(() => {
 <template>
     <div class="space-y-3">
         <!-- Metadata items -->
-        <CompactMetadataCard :items="metadataItems" />
+        <CompactMetadataCard :items="metadataItems" :user-id="user?.id" />
 
         <!-- Workflow Stage (displayed separately for special styling) -->
         <div>
