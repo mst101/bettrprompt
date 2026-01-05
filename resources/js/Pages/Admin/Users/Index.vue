@@ -94,13 +94,15 @@ watch(search, debouncedSearch);
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-indigo-200 bg-white">
+                    <tbody
+                        class="divide-y divide-indigo-200 bg-white dark:bg-indigo-50"
+                    >
                         <Link
                             v-for="user in props.users.data"
                             :key="user.id"
                             :href="route('admin.users.show', { user })"
                             as="tr"
-                            class="cursor-pointer transition hover:bg-indigo-50"
+                            class="cursor-pointer transition hover:bg-indigo-50 dark:hover:bg-indigo-100"
                         >
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -119,7 +121,7 @@ watch(search, debouncedSearch);
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-indigo-500">
+                            <td class="px-6 py-4 text-sm text-indigo-600">
                                 {{ user.email }}
                             </td>
                             <td class="px-6 py-4">

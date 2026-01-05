@@ -94,7 +94,9 @@ watch(search, debouncedSearch);
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-indigo-200 bg-white">
+                        <tbody
+                            class="divide-y divide-indigo-200 bg-white dark:bg-indigo-50"
+                        >
                             <Link
                                 v-for="task in props.tasks.data"
                                 :key="task.task_description"
@@ -104,7 +106,7 @@ watch(search, debouncedSearch);
                                     })
                                 "
                                 as="tr"
-                                class="cursor-pointer transition hover:bg-indigo-50"
+                                class="cursor-pointer transition hover:bg-indigo-50 dark:hover:bg-indigo-100"
                             >
                                 <td class="px-6 py-4 text-sm text-indigo-900">
                                     {{ task.task_description }}

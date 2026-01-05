@@ -20,6 +20,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+console.log(props.user);
 </script>
 
 <template>
@@ -70,25 +72,6 @@ const props = defineProps<Props>();
                                 class="inline-flex rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-800"
                             >
                                 {{ props.user.personalityType }}
-                            </span>
-                        </p>
-                    </div>
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-indigo-700"
-                        >
-                            Administrator
-                        </label>
-                        <p class="mt-1">
-                            <span
-                                :class="[
-                                    'inline-flex rounded-full px-3 py-1 text-sm font-semibold',
-                                    props.user.isAdmin
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-indigo-100 text-indigo-800',
-                                ]"
-                            >
-                                {{ props.user.isAdmin ? 'Yes' : 'No' }}
                             </span>
                         </p>
                     </div>

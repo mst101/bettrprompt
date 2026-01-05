@@ -114,11 +114,13 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-indigo-200 bg-white">
+                        <tbody
+                            class="divide-y divide-indigo-200 bg-white dark:bg-indigo-50"
+                        >
                             <tr
                                 v-for="run in props.promptRuns"
                                 :key="run.id"
-                                class="group cursor-pointer transition hover:bg-indigo-50"
+                                class="group cursor-pointer transition hover:bg-indigo-50 dark:hover:bg-indigo-100"
                                 @click="handleRowClick($event, run.id)"
                                 @auxclick.prevent="
                                     handleMiddleClick($event, run.id)

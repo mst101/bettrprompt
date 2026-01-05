@@ -62,8 +62,7 @@ class UserController extends Controller
             ->count();
 
         return Inertia::render('Admin/Users/Show', [
-            //            'user' => UserResource::make($user)->resolve(),
-            'user' => new UserResource($user),
+            'user' => UserResource::make($user)->resolve(),
             'promptRunsCount' => $promptRunsCount,
         ]);
     }
