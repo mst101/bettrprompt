@@ -75,7 +75,8 @@ class UserController extends Controller
         } elseif ($sortBy === 'workflow_stage') {
             $promptRunsQuery->orderBy('workflow_stage', $sortDirection);
         } elseif ($sortBy === 'selected_framework') {
-            $promptRunsQuery->orderBy('selected_framework', $sortDirection);
+            // selected_framework is JSON, so we need to extract the 'name' field
+            $promptRunsQuery->orderByRaw("selected_framework->>'name' {$sortDirection}");
         }
 
         $promptRuns = $promptRunsQuery
