@@ -125,7 +125,7 @@ const close = () => {
                 <ButtonText
                     id="forgot-password"
                     type="button"
-                    @click="emit('switchToForgotPassword')"
+                    @click="emit('switchToForgotPassword', form.email)"
                 >
                     Forgot password?
                 </ButtonText>
