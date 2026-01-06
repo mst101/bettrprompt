@@ -30,14 +30,14 @@ watch(
     },
 );
 
-// Focus the first password field when modal opens
+// Focus the password field when modal opens (email is pre-populated)
 watch(
     () => props.show,
     async (newValue) => {
         if (newValue) {
             await nextTick();
             const inputElement = document.getElementById(
-                'reset-password-email',
+                'reset-password-password',
             ) as HTMLInputElement;
             if (inputElement) {
                 inputElement.focus();
@@ -86,7 +86,6 @@ const close = () => {
                 type="email"
                 :error="form.errors.email"
                 required
-                autofocus
                 autocomplete="username"
             />
 
@@ -98,6 +97,7 @@ const close = () => {
                 :error="form.errors.password"
                 class="mt-4"
                 required
+                autofocus
                 autocomplete="new-password"
             />
 
