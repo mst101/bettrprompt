@@ -89,7 +89,7 @@ const closeDropdownOnNavigate = () => {
 let removeRouterListener: (() => void) | null = null;
 
 const openLogin = (email?: string) => {
-    if (email) {
+    if (email && typeof email === 'string') {
         currentEmail.value = email;
     }
     showRegisterModal.value = false;
@@ -99,7 +99,7 @@ const openLogin = (email?: string) => {
 };
 
 const openRegister = (email?: string) => {
-    if (email) {
+    if (email && typeof email === 'string') {
         currentEmail.value = email;
     }
     showLoginModal.value = false;
@@ -109,7 +109,7 @@ const openRegister = (email?: string) => {
 };
 
 const openForgotPassword = (email?: string) => {
-    if (email) {
+    if (email && typeof email === 'string') {
         currentEmail.value = email;
     }
     showLoginModal.value = false;
