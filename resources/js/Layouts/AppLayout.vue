@@ -9,6 +9,7 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ModalForgotPassword from '@/Components/Base/Modal/ModalForgotPassword.vue';
 import ModalLogin from '@/Components/Base/Modal/ModalLogin.vue';
 import ModalRegister from '@/Components/Base/Modal/ModalRegister.vue';
+import ModalResetPassword from '@/Components/Base/Modal/ModalResetPassword.vue';
 import NavLink from '@/Components/Base/NavLink.vue';
 import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
 import CookieBanner from '@/Components/Common/CookieBanner.vue';
@@ -69,6 +70,9 @@ const showingNavigationDropdown = ref(false);
 const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 const showForgotPasswordModal = ref(false);
+const showResetPasswordModal = ref(false);
+const resetPasswordEmail = ref('');
+const resetPasswordToken = ref('');
 const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
 const firstMobileNavLink = ref<InstanceType<typeof ResponsiveNavLink> | null>(
     null,
@@ -86,19 +90,31 @@ let removeRouterListener: (() => void) | null = null;
 const openLogin = () => {
     showRegisterModal.value = false;
     showForgotPasswordModal.value = false;
+    showResetPasswordModal.value = false;
     showLoginModal.value = true;
 };
 
 const openRegister = () => {
     showLoginModal.value = false;
     showForgotPasswordModal.value = false;
+    showResetPasswordModal.value = false;
     showRegisterModal.value = true;
 };
 
 const openForgotPassword = () => {
     showLoginModal.value = false;
     showRegisterModal.value = false;
+    showResetPasswordModal.value = false;
     showForgotPasswordModal.value = true;
+};
+
+const openResetPassword = (email: string, token: string) => {
+    showLoginModal.value = false;
+    showRegisterModal.value = false;
+    showForgotPasswordModal.value = false;
+    resetPasswordEmail.value = email;
+    resetPasswordToken.value = token;
+    showResetPasswordModal.value = true;
 };
 
 onMounted(() => {
@@ -113,6 +129,10 @@ onMounted(() => {
         openLogin();
     } else if (modalParam === 'register') {
         openRegister();
+    } else if (modalParam === 'reset-password') {
+        const email = urlParams.get('email') || '';
+        const token = urlParams.get('token') || '';
+        openResetPassword(email, token);
     }
 });
 
@@ -409,6 +429,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <ModalForgotPassword
             :show="showForgotPasswordModal"
             @close="showForgotPasswordModal = false"
+            @switch-to-login="openLogin"
+        />
+
+        <ModalResetPassword
+            :show="showResetPasswordModal"
+            :email="resetPasswordEmail"
+            :token="resetPasswordToken"
+            @close="showResetPasswordModal = false"
             @switch-to-login="openLogin"
         />
 
