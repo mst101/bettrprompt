@@ -117,7 +117,7 @@ const close = () => {
             <ButtonText
                 id="switch-to-login-from-reset"
                 type="button"
-                @click="emit('switchToLogin')"
+                @click="emit('switchToLogin', form.email)"
             >
                 Back to log in
             </ButtonText>

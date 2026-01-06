@@ -71,6 +71,7 @@ const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 const showForgotPasswordModal = ref(false);
 const showResetPasswordModal = ref(false);
+const currentEmail = ref('');
 const resetPasswordEmail = ref('');
 const resetPasswordToken = ref('');
 const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
@@ -87,21 +88,30 @@ const closeDropdownOnNavigate = () => {
 // Store the cleanup function returned by router.on
 let removeRouterListener: (() => void) | null = null;
 
-const openLogin = () => {
+const openLogin = (email?: string) => {
+    if (email) {
+        currentEmail.value = email;
+    }
     showRegisterModal.value = false;
     showForgotPasswordModal.value = false;
     showResetPasswordModal.value = false;
     showLoginModal.value = true;
 };
 
-const openRegister = () => {
+const openRegister = (email?: string) => {
+    if (email) {
+        currentEmail.value = email;
+    }
     showLoginModal.value = false;
     showForgotPasswordModal.value = false;
     showResetPasswordModal.value = false;
     showRegisterModal.value = true;
 };
 
-const openForgotPassword = () => {
+const openForgotPassword = (email?: string) => {
+    if (email) {
+        currentEmail.value = email;
+    }
     showLoginModal.value = false;
     showRegisterModal.value = false;
     showResetPasswordModal.value = false;
@@ -109,6 +119,7 @@ const openForgotPassword = () => {
 };
 
 const openResetPassword = (email: string, token: string) => {
+    currentEmail.value = email;
     showLoginModal.value = false;
     showRegisterModal.value = false;
     showForgotPasswordModal.value = false;
@@ -415,6 +426,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <!-- Auth Modals -->
         <ModalLogin
             :show="showLoginModal"
+            :email="currentEmail"
             @close="showLoginModal = false"
             @switch-to-register="openRegister"
             @switch-to-forgot-password="openForgotPassword"
@@ -422,12 +434,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
         <ModalRegister
             :show="showRegisterModal"
+            :email="currentEmail"
             @close="showRegisterModal = false"
             @switch-to-login="openLogin"
         />
 
         <ModalForgotPassword
             :show="showForgotPasswordModal"
+            :email="currentEmail"
             @close="showForgotPasswordModal = false"
             @switch-to-login="openLogin"
         />

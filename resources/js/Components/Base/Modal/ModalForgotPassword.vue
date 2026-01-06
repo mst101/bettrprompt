@@ -9,13 +9,24 @@ import BaseAuthModal from './BaseAuthModal.vue';
 const props = defineProps<{
     show: boolean;
     status?: string;
+    email?: string;
 }>();
 
 const emit = defineEmits(['close', 'switchToLogin']);
 
 const form = useForm({
-    email: '',
+    email: props.email || '',
 });
+
+// Update form when email prop changes
+watch(
+    () => props.email,
+    (newEmail) => {
+        if (newEmail) {
+            form.email = newEmail;
+        }
+    },
+);
 
 // Focus the first field when modal opens
 watch(
@@ -88,7 +99,7 @@ const close = () => {
             <ButtonText
                 id="switch-to-login"
                 type="button"
-                @click="emit('switchToLogin')"
+                @click="emit('switchToLogin', form.email)"
             >
                 Back to log in
             </ButtonText>

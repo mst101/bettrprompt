@@ -10,6 +10,7 @@ import BaseAuthModal from './BaseAuthModal.vue';
 
 const props = defineProps<{
     show: boolean;
+    email?: string;
 }>();
 
 const emit = defineEmits([
@@ -19,19 +20,31 @@ const emit = defineEmits([
 ]);
 
 const form = useForm({
-    email: '',
+    email: props.email || '',
     password: '',
     remember: false,
 });
 
-// Focus the first field when modal opens
+// Update form when email prop changes
+watch(
+    () => props.email,
+    (newEmail) => {
+        if (newEmail) {
+            form.email = newEmail;
+        }
+    },
+);
+
+// Focus the appropriate field when modal opens
 watch(
     () => props.show,
     async (newValue) => {
         if (newValue) {
             await nextTick();
+            // If email is already populated, focus password field
+            const fieldId = form.email ? 'login-password' : 'login-email';
             const inputElement = document.getElementById(
-                'login-email',
+                fieldId,
             ) as HTMLInputElement;
             if (inputElement) {
                 inputElement.focus();
@@ -120,7 +133,7 @@ const close = () => {
                 <ButtonText
                     id="switch-to-register"
                     type="button"
-                    @click="emit('switchToRegister')"
+                    @click="emit('switchToRegister', form.email)"
                 >
                     Need an account?
                 </ButtonText>
