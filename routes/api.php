@@ -3,6 +3,7 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
+use App\Http\Controllers\MailgunWebhookController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
@@ -207,6 +208,12 @@ Route::post('/restore-visitor', function (Request $request) {
 
     return response()->json(['restored' => false], 404);
 })->middleware('throttle:10,1');
+
+// Mailgun webhooks
+Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60,1'])->group(function () {
+    Route::post('/events', [MailgunWebhookController::class, 'handleEvent']);
+    Route::post('/inbound', [MailgunWebhookController::class, 'handleInbound']);
+});
 
 // Test-only endpoints for E2E testing
 if (config('app.env') === 'e2e') {

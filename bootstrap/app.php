@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'mailgun.signature' => \App\Http\Middleware\VerifyMailgunSignature::class,
         ]);
 
         // Trust all proxies for local development (Caddy reverse proxy)
@@ -48,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook/api/n8n/webhook/*',
             'debug/workflow/*',  // Debug workflow endpoints
             'workflow/docs/api/*',  // Reference documents API endpoints
+            'webhooks/mailgun/*',  // Mailgun webhooks (protected by signature verification)
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
