@@ -42,7 +42,18 @@ This guide walks you through setting up Mailgun for BettrPrompt.ai from scratch.
    - ✅ Isolates email reputation
    - ✅ Easier migration later
 4. Select **EU** region
-5. Click **Add Domain**
+5. **IP assignment option**: Select **Shared IP** (only option for most plans)
+6. **Advanced settings**:
+   - ✅ Choose **"Use automatic sender security"** (recommended)
+   - ❌ Don't choose "Self-manage DKIM keys" unless you have specific compliance requirements
+
+   **Why automatic?**
+   - Mailgun generates and manages DKIM keys for you
+   - Automatic key rotation for better security
+   - Simpler setup with less room for error
+   - Industry best practice
+
+7. Click **Add Domain**
 
 ### 2.2 Get DNS Records
 
@@ -167,19 +178,28 @@ Later, you can change `p=none` to `p=quarantine` or `p=reject` once you're confi
 
 ## Part 4: SMTP Credentials
 
-### 4.1 Get SMTP Password
+### 4.1 Create SMTP User and Get Password
 
 1. In Mailgun, go to **Sending → Domain Settings → SMTP credentials**
-2. You'll see:
-   ```
-   Hostname: smtp.eu.mailgun.org
-   Port: 587 (or 465 for SSL)
-   Username: postmaster@mg.bettrprompt.ai
-   Password: [Click "Reset password" to generate]
-   ```
+2. Click **"Add new SMTP user"** button
+3. **Login field**: Enter `postmaster`
+   - Mailgun will append `@mg.bettrprompt.ai` automatically
+   - This creates: `postmaster@mg.bettrprompt.ai`
+   - Standard convention for primary SMTP account
 
-3. Click **Reset password** button
-4. **Copy the password immediately** - you won't see it again!
+   **Note:** The SMTP username is just for authentication, not the FROM address users see. Your emails will still appear from `hello@bettrprompt.ai` (set in Laravel).
+
+4. Click **Create**
+5. Click **Reset password** to generate the password
+6. **Copy the password immediately** - you won't see it again!
+
+You should now see:
+```
+Hostname: smtp.eu.mailgun.org
+Port: 587 (or 465 for SSL)
+Username: postmaster@mg.bettrprompt.ai
+Password: [your-generated-password]
+```
 
 ### 4.2 Save Credentials
 
@@ -218,26 +238,33 @@ MAILGUN_WEBHOOK_SIGNING_KEY=<paste-signing-key-here>
 
 1. Still in **Sending → Webhooks**
 2. Click **Add webhook** button
-3. **For each event type**, configure:
 
-**Webhook URL:**
+**Webhook URL for all events:**
 ```
 https://bettrprompt.ai/api/webhooks/mailgun/events
 ```
 
-**Events to enable:**
-- ✅ **delivered** - Email successfully delivered
-- ✅ **opened** - Recipient opened the email
-- ✅ **clicked** - Recipient clicked a link
-- ✅ **bounced** - Email bounced (hard or soft)
-- ✅ **complained** - Recipient marked as spam
-- ✅ **unsubscribed** - Recipient unsubscribed
+**Events to enable** (as they appear in Mailgun dashboard):
 
-**For each event:**
+Create a webhook for each of these **7 events** (skip "Accepted"):
+
+1. ✅ **Clicks** - User clicked a link in your email
+2. ✅ **SPAM complaints** - User marked email as spam
+3. ✅ **Delivered messages** - Email successfully delivered to inbox
+4. ✅ **Opens** - User opened the email
+5. ✅ **Permanent failure** - Hard bounce (invalid email, doesn't exist)
+6. ✅ **Temporary failure** - Soft bounce (mailbox full, server temporarily down)
+7. ✅ **Unsubscribes** - User clicked unsubscribe link
+
+❌ **Skip "Accepted"** - Not useful (just confirms Mailgun received it from Laravel)
+
+**For each of the 7 events:**
 1. Select event type from dropdown
 2. Enter webhook URL: `https://bettrprompt.ai/api/webhooks/mailgun/events`
 3. Click **Create webhook**
-4. Repeat for all 6 events
+4. Repeat for all 7 events
+
+**All webhooks use the same URL** - your Laravel code automatically handles different event types.
 
 **Test the webhook:**
 1. Click **Test webhook** next to any configured webhook
@@ -258,17 +285,33 @@ https://bettrprompt.ai/api/webhooks/mailgun/events
 
 **Expression type:** Match Recipient
 
-**Match Expression:**
+**Recipient field:** (just enter the pattern, not the function)
 ```
-match_recipient(".*@mg.bettrprompt.ai")
+.*@mg.bettrprompt.ai
 ```
-This matches any email sent to `*@mg.bettrprompt.ai`
+
+**What this means:**
+- `.*` = any characters (anything before @)
+- `@mg.bettrprompt.ai` = your domain
+- Matches: `hello@mg.bettrprompt.ai`, `reply+123@mg.bettrprompt.ai`, etc.
+
+**Note:** Since you selected "Match Recipient" as the expression type, Mailgun automatically wraps this in `match_recipient()`. Just enter the pattern itself.
 
 **Actions:**
-- Select **forward()**
-- Enter URL: `https://bettrprompt.ai/api/webhooks/mailgun/inbound`
+1. ✅ Add **Forward** action
+   - URL: `https://bettrprompt.ai/api/webhooks/mailgun/inbound`
+
+2. ❌ **Don't add "Store and notify"**
+   - Not needed - your webhook receives the complete email immediately
+   - You're storing everything in your database
+   - Mailgun's 3-day storage limit is restrictive
 
 **Priority:** 0 (highest)
+
+**Stop toggle:** ✅ **Enable "Stop"**
+- Prevents other routes from evaluating after this one matches
+- Since `.*@mg.bettrprompt.ai` matches everything, stop processing here
+- Prevents duplicate processing if you add more routes later
 
 **Description:** Forward all inbound emails to Laravel webhook
 
@@ -289,36 +332,68 @@ This matches any email sent to `*@mg.bettrprompt.ai`
 
 ---
 
-## Part 7: Sending Configuration
+## Part 7: Tracking & Sending Settings (Optional)
 
-### 7.1 Configure Sender Identity
+**Note:** This section is optional. Your email system works without these settings. Sender identity is configured in Laravel (`.env`), not in Mailgun.
 
-1. Go to **Sending → Domain Settings → Sender Identity**
-2. Set **Default FROM address**: `hello@bettrprompt.ai`
-3. Set **Default FROM name**: `BettrPrompt`
+### 7.1 Skip "Sending Keys" ⚠️
 
-### 7.2 Enable Tracking (Optional)
+Under **Sending → Domain Settings**, you'll see tabs including **"Sending keys"**.
 
-1. Go to **Sending → Domain Settings → Tracking**
+**Don't create a sending key** - these are for Mailgun's HTTP API only. Since you're using SMTP (configured in Part 4), you don't need API keys.
+
+**Your sender identity** (`hello@bettrprompt.ai`) is configured in Laravel's `.env` file:
+```bash
+MAIL_FROM_ADDRESS="hello@bettrprompt.ai"
+MAIL_FROM_NAME="BettrPrompt"
+```
+
+### 7.2 Configure Tracking (Optional)
+
+1. Go to **Sending → Domain Settings → Settings** tab
+2. Scroll to **Tracking** section
+
+**Tracking hostname:**
+- Should show: `email.mg` or `email.mg.bettrprompt.ai`
+- Must match the CNAME record you created in Cloudflare
+- If it just shows "email", try typing: `email.mg`
 
 **Click tracking:**
-- ✅ Enable - Tracks when users click links
-- Choose: HTML only (or HTML and text)
+- ✅ Turn **ON** - Tracks when users click links in your emails
+- Choose: HTML only (recommended)
 
 **Open tracking:**
-- ✅ Enable - Tracks when users open emails
-- Adds invisible pixel to emails
+- ✅ Turn **ON** - Tracks when users open emails
+- ❌ **Don't enable "Place open tracking pixel at top"** - Keep at bottom (default)
 
-⚠️ **Privacy consideration**: Open tracking uses invisible pixels. Consider user privacy preferences.
+**Why bottom placement?**
+- Your transactional emails are short (won't be truncated)
+- Better email client compatibility
+- Industry standard
+- Gmail truncates at 102KB (your emails will be much smaller)
 
-### 7.3 Configure Unsubscribe Handling
+**Only use top placement if:**
+- Sending long newsletter-style emails (thousands of words)
+- Emails approaching 102KB size limit
 
-1. Go to **Sending → Domain Settings → Unsubscribe**
-2. Enable **Unsubscribe tracking**
-3. When users unsubscribe:
-   - Mailgun sends `unsubscribed` event to your webhook
-   - Your `MailgunEventService` processes it
-   - Update user preferences in your database
+### 7.3 Configure Unsubscribe Settings (Optional)
+
+1. Still in **Settings** tab, scroll to **Unsubscribes** section
+2. ✅ Turn **ON** - Enables unsubscribe tracking
+
+**Customize templates (optional):**
+- Click "Customize unsubscribe templates" if you want to brand them
+- **For now, keep the defaults** - you can polish later
+- Default templates work fine and are clear
+
+**When these are used:**
+- Marketing/bulk emails with `List-Unsubscribe` header
+- Not used for transactional emails (welcome, password reset)
+
+**When users unsubscribe:**
+- Mailgun sends `unsubscribed` event to your webhook
+- Your `MailgunEventService` processes it
+- Update user preferences in your database (see TODO in code)
 
 ---
 
