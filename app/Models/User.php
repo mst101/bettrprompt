@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Billable, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +60,11 @@ class User extends Authenticatable
         'primary_programming_language',
         'profile_completion_percentage',
         'profile_last_updated_at',
+        // Subscription fields
+        'subscription_tier',
+        'subscription_ends_at',
+        'monthly_prompt_count',
+        'prompt_count_reset_at',
     ];
 
     /**
@@ -94,6 +100,10 @@ class User extends Authenticatable
             'preferred_tools' => 'array',
             'profile_last_updated_at' => 'datetime',
             'profile_completion_percentage' => 'integer',
+            // Subscription
+            'subscription_ends_at' => 'datetime',
+            'prompt_count_reset_at' => 'datetime',
+            'trial_ends_at' => 'datetime',
         ];
     }
 
@@ -438,5 +448,76 @@ class User extends Authenticatable
             ]);
             $this->updateProfileCompletion();
         });
+    }
+
+    /**
+     * Check if user is on Pro tier (either via active subscription or grace period)
+     */
+    public function isPro(): bool
+    {
+        return $this->subscribed('default') ||
+               ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
+    }
+
+    /**
+     * Check if user is on free tier
+     */
+    public function isFree(): bool
+    {
+        return ! $this->isPro();
+    }
+
+    /**
+     * Get remaining prompts for free tier users
+     */
+    public function getPromptsRemaining(): int
+    {
+        if ($this->isPro()) {
+            return PHP_INT_MAX; // Unlimited
+        }
+
+        $limit = config('stripe.free_tier.monthly_prompt_limit', 10);
+
+        return max(0, $limit - $this->monthly_prompt_count);
+    }
+
+    /**
+     * Check if user can create a prompt
+     */
+    public function canCreatePrompt(): bool
+    {
+        return $this->isPro() || $this->getPromptsRemaining() > 0;
+    }
+
+    /**
+     * Increment prompt count (for free tier tracking)
+     */
+    public function incrementPromptCount(): void
+    {
+        // Reset if new month
+        if (! $this->prompt_count_reset_at || $this->prompt_count_reset_at->isLastMonth()) {
+            $this->update([
+                'monthly_prompt_count' => 1,
+                'prompt_count_reset_at' => now(),
+            ]);
+        } else {
+            $this->increment('monthly_prompt_count');
+        }
+    }
+
+    /**
+     * Get subscription status for frontend
+     */
+    public function getSubscriptionStatus(): array
+    {
+        return [
+            'tier' => $this->isPro() ? 'pro' : 'free',
+            'isPro' => $this->isPro(),
+            'promptsUsed' => $this->monthly_prompt_count ?? 0,
+            'promptsRemaining' => $this->getPromptsRemaining(),
+            'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),
+            'subscriptionEndsAt' => $this->subscription_ends_at?->toIso8601String(),
+            'onGracePeriod' => $this->subscription('default')?->onGracePeriod() ?? false,
+        ];
     }
 }

@@ -32,6 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'mailgun.signature' => \App\Http\Middleware\VerifyMailgunSignature::class,
+            'prompt.limit' => \App\Http\Middleware\EnforcePromptLimit::class,
+            'prompt.track' => \App\Http\Middleware\TrackPromptUsage::class,
         ]);
 
         // Trust all proxies for local development (Caddy reverse proxy)
@@ -50,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'debug/workflow/*',  // Debug workflow endpoints
             'workflow/docs/api/*',  // Reference documents API endpoints
             'webhooks/mailgun/*',  // Mailgun webhooks (protected by signature verification)
+            'api/stripe/webhook',  // Stripe webhooks (protected by Stripe signature verification)
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

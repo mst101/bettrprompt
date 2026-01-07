@@ -1,5 +1,6 @@
 import { Config } from 'ziggy-js';
 import type { UserResource } from './resources';
+import type { SubscriptionStatus } from './shared/subscription';
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
@@ -8,6 +9,7 @@ export type PageProps<
         user?: UserResource;
     };
     ziggy: Config & { location: string };
+    subscription?: SubscriptionStatus | null;
 };
 
 // Re-export everything from shared

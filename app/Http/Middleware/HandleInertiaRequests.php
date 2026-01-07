@@ -58,6 +58,7 @@ class HandleInertiaRequests extends Middleware
                 'previous_answer' => fn () => $request->session()->get('previous_answer'),
             ],
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
+            'subscription' => fn () => $request->user()?->getSubscriptionStatus(),
         ];
     }
 }

@@ -215,6 +215,10 @@ Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60
     Route::post('/inbound', [MailgunWebhookController::class, 'handleInbound']);
 });
 
+// Stripe webhooks (handled by Laravel Cashier)
+Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])
+    ->name('cashier.webhook');
+
 // Test-only endpoints for E2E testing
 if (config('app.env') === 'e2e') {
     Route::prefix('test')->group(function () {

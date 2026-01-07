@@ -5,6 +5,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MockN8nController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,36 @@ Route::get('/privacy', function () {
 Route::get('/cookies', function () {
     return Inertia::render('Legal/Cookies');
 })->name('cookies');
+
+// Pricing page (public)
+Route::get('/pricing', [SubscriptionController::class, 'pricing'])
+    ->name('pricing');
+
+// Subscription routes (authenticated)
+Route::middleware(['auth'])->group(function () {
+    // Checkout
+    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout'])
+        ->name('subscription.checkout');
+
+    Route::get('/subscription/success', [SubscriptionController::class, 'success'])
+        ->name('subscription.success');
+
+    Route::get('/subscription/cancelled', [SubscriptionController::class, 'cancelled'])
+        ->name('subscription.cancelled');
+
+    // Subscription management
+    Route::get('/settings/subscription', [SubscriptionController::class, 'show'])
+        ->name('settings.subscription');
+
+    Route::get('/billing-portal', [SubscriptionController::class, 'billingPortal'])
+        ->name('billing.portal');
+
+    Route::post('/subscription/cancel', [SubscriptionController::class, 'cancel'])
+        ->name('subscription.cancel');
+
+    Route::post('/subscription/resume', [SubscriptionController::class, 'resume'])
+        ->name('subscription.resume');
+});
 
 // Google OAuth routes
 Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
