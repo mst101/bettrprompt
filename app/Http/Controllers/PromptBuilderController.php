@@ -289,6 +289,7 @@ class PromptBuilderController extends Controller
         // Check if visitor has already completed a prompt (for client-side modal)
         // Guests always get 'advanced' UI complexity, authenticated users get their preference
         $visitorHasCompletedPrompts = false;
+        $visitorHasAccount = false;
         $uiComplexity = 'advanced'; // default for guests
 
         if (auth()->check()) {
@@ -299,6 +300,7 @@ class PromptBuilderController extends Controller
                 $visitor = Visitor::find($visitorId);
                 if ($visitor) {
                     $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts();
+                    $visitorHasAccount = $visitor->user_id !== null;
                 }
             }
         }
@@ -320,6 +322,7 @@ class PromptBuilderController extends Controller
                 'total' => count($promptRun->framework_questions ?? []),
             ],
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
+            'visitorHasAccount' => $visitorHasAccount,
             'uiComplexity' => $uiComplexity,
             'claudeModels' => $claudeModels,
         ]);

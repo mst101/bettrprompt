@@ -26,9 +26,9 @@ import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskIn
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { useAlert } from '@/Composables/ui/useAlert';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { ClaudeModel, PromptRunResource } from '@/Types';
+import type { ClaudeModel, PromptRunResource, User } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
+import { computed, inject, nextTick, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps<Props>();
 
@@ -40,6 +40,8 @@ const page = usePage<{
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.isAdmin ?? false);
 const isGuest = computed(() => !user.value);
+const openRegisterModal = inject<() => void>('openRegisterModal');
+const openLoginModal = inject<() => void>('openLoginModal');
 
 // Show banner for guests who just completed their prompt
 // We show it if the guest has an optimized prompt available
@@ -72,6 +74,7 @@ interface Props {
     currentQuestionAnswer?: string | null;
     progress?: Progress;
     visitorHasCompletedPrompts?: boolean;
+    visitorHasAccount?: boolean;
     uiComplexity?: 'simple' | 'advanced';
     claudeModels?: ClaudeModel[];
 }
@@ -737,7 +740,9 @@ onUnmounted(() => {
         <!-- First Prompt Banner for Guests -->
         <VisitorLimitBanner
             v-if="showFirstPromptBanner"
-            @register="$inertia.visit(route('register'))"
+            :visitor-has-account="visitorHasAccount"
+            @register="openRegisterModal"
+            @login="openLoginModal"
         />
     </ContainerPage>
 </template>
