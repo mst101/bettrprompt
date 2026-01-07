@@ -5,6 +5,17 @@
 
 import type { UserResource, VisitorResource } from '@/Types';
 
+export interface PreAnalysisQuestion {
+    readonly id: string;
+    readonly type: 'choice' | 'yes_no' | 'text';
+    readonly question: string;
+    readonly options?: Array<{
+        readonly value: string;
+        readonly label: string;
+    }>;
+    readonly allowsOther?: boolean;
+}
+
 export interface PromptRunResource {
     readonly id: number;
     readonly userId: number | null;

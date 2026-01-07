@@ -25,6 +25,30 @@ const questions = computed<PreAnalysisQuestion[]>(
     () => props.promptRun.preAnalysisQuestions ?? [],
 );
 
+// Add "Other" option to questions that allow it
+const questionsWithOtherOption = computed<PreAnalysisQuestion[]>(() => {
+    return questions.value.map((question) => {
+        if (!question.allowsOther || question.type === 'text') {
+            return question;
+        }
+
+        const hasOtherOption = question.options?.some(
+            (opt) => opt.value === 'other',
+        );
+        if (hasOtherOption) {
+            return question;
+        }
+
+        return {
+            ...question,
+            options: [
+                ...(question.options || []),
+                { value: 'other', label: 'Other (please specify)' },
+            ],
+        };
+    });
+});
+
 const answers = computed<Record<string, string>>(
     () => props.promptRun.preAnalysisAnswers ?? {},
 );
@@ -116,39 +140,12 @@ watch(
     { deep: true },
 );
 
-// Detect if an option represents "Other"
-const isOtherOption = (label: string): boolean => {
-    const lowerLabel = label.toLowerCase();
-    return (
-        lowerLabel.includes('other') ||
-        lowerLabel.includes('different') ||
-        lowerLabel.includes('custom')
-    );
-};
-
-// Check if user has selected an option that needs elaboration
-// First checks for elaborationNeeded flag from workflow, falls back to detecting "Other" options
+// Check if user has selected the "Other" option
 const selectedOtherOption = (question: PreAnalysisQuestion): boolean => {
-    const selectedAnswer = currentAnswers.value[question.id];
-    if (selectedAnswer === undefined || selectedAnswer === '') {
-        return false;
-    }
-
-    const selectedOption = question.options?.find(
-        (opt) => opt.value === selectedAnswer,
+    return (
+        question.allowsOther === true &&
+        currentAnswers.value[question.id] === 'other'
     );
-
-    if (!selectedOption) {
-        return false;
-    }
-
-    // Check for elaborationNeeded flag first (from workflow)
-    if ('elaborationNeeded' in selectedOption) {
-        return selectedOption.elaborationNeeded === true;
-    }
-
-    // Fallback: detect "Other" options by label for backwards compatibility
-    return isOtherOption(selectedOption.label);
 };
 
 // Get display label for an answer
@@ -157,11 +154,11 @@ const getAnswerLabel = (
     value: string,
 ): string => {
     if (question.type === 'choice' || question.type === 'yes_no') {
-        const option = question.options?.find((opt) => opt.value === value);
-        if (option && isOtherOption(option.label) && value.includes(':')) {
-            // For "Other" responses, extract the user's explanation
+        // For "Other" responses, extract the user's explanation
+        if (value.includes(':')) {
             return value.split(':').slice(1).join(':').trim();
         }
+        const option = question.options?.find((opt) => opt.value === value);
         return option?.label || value;
     }
     return value;
@@ -175,7 +172,7 @@ const startEditing = () => {
     // Parse "Other" responses from combined answers
     questions.value.forEach((question) => {
         const answer = answers.value[question.id];
-        if (answer && isOtherOption(getAnswerLabel(question, answer))) {
+        if (answer && answer.includes(':')) {
             const parts = answer.split(':');
             if (parts.length > 1) {
                 otherResponses.value[question.id] = parts
@@ -390,7 +387,7 @@ const isDisabled = computed(() =>
         <!-- View Mode (only show if has answers and not editing) -->
         <div v-if="!isEditing && hasAnswers" class="space-y-3">
             <div
-                v-for="(question, index) in questions"
+                v-for="(question, index) in questionsWithOtherOption"
                 :key="question.id"
                 class="flex items-start gap-3 rounded-md bg-indigo-50 p-4 shadow-xs dark:bg-indigo-100"
             >
@@ -464,7 +461,10 @@ const isDisabled = computed(() =>
                 </ButtonPrimary>
             </div>
 
-            <div v-for="(question, index) in questions" :key="question.id">
+            <div
+                v-for="(question, index) in questionsWithOtherOption"
+                :key="question.id"
+            >
                 <!-- Multiple choice questions -->
                 <div v-if="question.type === 'choice'" class="space-y-3">
                     <div class="flex items-start gap-3">
