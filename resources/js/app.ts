@@ -123,18 +123,33 @@ router.on('error', (event) => {
 
     // Check if the error is a 419 (Page Expired / CSRF token mismatch)
     if (response?.status === 419) {
-        console.warn('Session expired (419 error). Reloading page...');
+        console.warn('Session expired (419 error)');
 
-        // Use notification system to display graceful error message
-        const { error } = useNotification();
-        error(
-            'Your session has expired. The page will reload to restore your session.',
-            false, // Don't auto-dismiss - let user see the message
+        // Emit a custom event that components (like login form) can listen to
+        // This allows login form to retry with a fresh token instead of reloading
+        window.dispatchEvent(
+            new CustomEvent('csrf-token-expired', {
+                detail: { response },
+            }),
         );
 
-        // Reload the page after a short delay to let the notification appear
+        // Fallback: if no component handles the event within 2 seconds, reload the page
         setTimeout(() => {
-            window.location.reload();
-        }, 1500);
+            // Only reload if the event wasn't handled by a component
+            if (!window.csrfTokenRefreshHandled) {
+                const { error } = useNotification();
+                error(
+                    'Your session has expired. The page will reload to restore your session.',
+                    false,
+                );
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            }
+
+            // Reset the flag for the next error
+            window.csrfTokenRefreshHandled = false;
+        }, 2000);
     }
 });

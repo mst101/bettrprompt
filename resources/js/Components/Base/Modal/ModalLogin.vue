@@ -4,7 +4,7 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
-import { useForm } from '@inertiajs/vue3';
+import { useLoginFormWithRetry } from '@/Composables/useLoginFormWithRetry';
 import { nextTick, watch } from 'vue';
 import BaseAuthModal from './BaseAuthModal.vue';
 
@@ -19,10 +19,8 @@ const emit = defineEmits([
     'switchToForgotPassword',
 ]);
 
-const form = useForm({
-    email: props.email || '',
-    password: '',
-    remember: false,
+const { form, submit: submitForm } = useLoginFormWithRetry(() => {
+    emit('close');
 });
 
 // Update form when email prop changes
@@ -54,14 +52,7 @@ watch(
 );
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => {
-            form.reset('password');
-        },
-        onSuccess: () => {
-            emit('close');
-        },
-    });
+    submitForm();
 };
 
 const close = () => {
