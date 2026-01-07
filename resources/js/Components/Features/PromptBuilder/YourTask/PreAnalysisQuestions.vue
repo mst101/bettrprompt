@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
+import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import ButtonVoiceInput from '@/Components/Base/Button/ButtonVoiceInput.vue';
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
@@ -65,6 +66,9 @@ const otherTextareaRefs = ref<
 const firstAnswerRef = ref<HTMLElement | null>(null);
 const editButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
 const submitError = ref<string | null>(null);
+const showQuestionRationale = ref(false);
+const rationaleContainerRef = ref<HTMLDivElement | null>(null);
+const rationaleMaxHeight = ref('0px');
 
 const form = useForm({
     answers: {} as Record<string, string>,
@@ -139,6 +143,19 @@ watch(
     },
     { deep: true },
 );
+
+// Watch for rationale visibility changes and measure height
+watch(showQuestionRationale, async () => {
+    await nextTick();
+    if (rationaleContainerRef.value) {
+        if (showQuestionRationale.value) {
+            rationaleMaxHeight.value =
+                rationaleContainerRef.value.scrollHeight + 'px';
+        } else {
+            rationaleMaxHeight.value = '0px';
+        }
+    }
+});
 
 // Check if user has selected the "Other" option
 const selectedOtherOption = (question: PreAnalysisQuestion): boolean => {
@@ -361,16 +378,10 @@ const isDisabled = computed(() =>
         <div
             class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
         >
-            <div>
+            <div class="flex-1">
                 <h2 class="text-lg font-semibold text-indigo-900">
                     Quick Queries
                 </h2>
-                <p
-                    v-if="!hasAnswers && promptRun.preAnalysisReasoning"
-                    class="mt-1 text-sm text-indigo-600"
-                >
-                    {{ promptRun.preAnalysisReasoning }}
-                </p>
             </div>
             <ButtonSecondary
                 v-if="!isEditing && hasAnswers"
@@ -382,6 +393,33 @@ const isDisabled = computed(() =>
                 <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
                 Edit Answers
             </ButtonSecondary>
+        </div>
+
+        <!-- Question rationale -->
+        <div v-if="promptRun.preAnalysisReasoning">
+            <ButtonText
+                id="show-question-rationale"
+                type="button"
+                class="-ml-1 flex items-center gap-2 text-sm font-medium text-indigo-700 no-underline! hover:text-indigo-900"
+                @click="showQuestionRationale = !showQuestionRationale"
+            >
+                {{ showQuestionRationale ? 'Hide' : 'Show' }} question rationale
+                <DynamicIcon
+                    :name="
+                        showQuestionRationale ? 'chevron-down' : 'chevron-right'
+                    "
+                    class="h-4 w-4"
+                />
+            </ButtonText>
+            <div
+                ref="rationaleContainerRef"
+                class="overflow-hidden transition-all duration-300 ease-in-out"
+                :style="{ maxHeight: rationaleMaxHeight }"
+            >
+                <p class="pt-2 text-sm text-indigo-800">
+                    {{ promptRun.preAnalysisReasoning }}
+                </p>
+            </div>
         </div>
 
         <!-- View Mode (only show if has answers and not editing) -->
