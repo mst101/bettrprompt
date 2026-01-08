@@ -218,7 +218,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         route().current('prompt-builder.index')
                                     "
                                 >
-                                    Prompt Builder
+                                    {{ $t('navigation.promptBuilder') }}
                                 </NavLink>
                                 <NavLink
                                     :href="
@@ -230,20 +230,20 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         )
                                     "
                                 >
-                                    Prompt History
+                                    {{ $t('navigation.promptHistory') }}
                                 </NavLink>
                                 <NavLink
                                     :href="localeRoute('feedback.create')"
                                     :active="route().current('feedback.*')"
                                 >
-                                    Feedback
+                                    {{ $t('navigation.feedback') }}
                                 </NavLink>
                                 <NavLink
                                     v-if="isAdmin"
                                     :href="localeRoute('workflow.index')"
                                     :active="route().current('workflow.*')"
                                 >
-                                    Workflows
+                                    {{ $t('navigation.workflows') }}
                                 </NavLink>
                             </div>
                         </div>
@@ -265,7 +265,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             <button
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                                                aria-label="User menu"
+                                                :aria-label="
+                                                    $t('common.aria.userMenu')
+                                                "
                                             >
                                                 {{
                                                     $page.props.auth!.user!.name
