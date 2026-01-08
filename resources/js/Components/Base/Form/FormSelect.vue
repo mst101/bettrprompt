@@ -23,7 +23,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const select = ref<Nullable<HTMLSelectElement>>(null);
 const placeholderText = computed(

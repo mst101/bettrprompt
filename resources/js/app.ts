@@ -119,7 +119,9 @@ createInertiaApp({
             .mount(el);
 
         // Identify visitor in Fullstory on initial load
-        identifyVisitorInFullstory(props.initialPage.props.auth);
+        identifyVisitorInFullstory(
+            props.initialPage.props.auth as FullStoryAuth,
+        );
 
         return app;
     },
@@ -129,7 +131,7 @@ createInertiaApp({
 });
 
 // Global error handler for 419 Page Expired errors
-router.on('error', (event) => {
+router.on('invalid', (event) => {
     const response = event.detail?.response;
 
     // Check if the error is a 419 (Page Expired / CSRF token mismatch)

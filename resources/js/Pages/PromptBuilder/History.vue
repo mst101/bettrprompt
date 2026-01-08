@@ -105,7 +105,7 @@ const changePerPage = () => {
 const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 // Focus management for pagination buttons
@@ -466,6 +466,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     promptRuns.meta.from && promptRuns.meta.to
                                 "
                                 keypath="promptBuilder.history.pagination.resultsSummary"
+                                scope="global"
                                 tag="p"
                                 class="text-center"
                             >
@@ -526,6 +527,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     promptRuns.meta.from && promptRuns.meta.to
                                 "
                                 keypath="promptBuilder.history.pagination.resultsSummary"
+                                scope="global"
                                 tag="p"
                                 class="text-sm text-indigo-700"
                             >

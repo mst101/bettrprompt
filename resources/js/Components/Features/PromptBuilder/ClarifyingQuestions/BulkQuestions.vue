@@ -32,7 +32,7 @@ const emit = defineEmits<{
     (e: 'back'): void;
 }>();
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { appendText } = useTextAppend();
 
 const textareaRefs = ref<

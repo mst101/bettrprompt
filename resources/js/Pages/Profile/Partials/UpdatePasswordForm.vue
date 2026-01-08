@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n';
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
 const { success, error } = useNotification();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const form = useForm({
     currentPassword: '',

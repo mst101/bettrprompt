@@ -19,7 +19,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const budgetOptions = computed(() => [

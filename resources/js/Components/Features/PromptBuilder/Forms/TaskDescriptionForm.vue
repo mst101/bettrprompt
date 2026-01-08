@@ -59,6 +59,7 @@ defineExpose({ focus });
                 <span v-if="isAuthenticated && isDismissed" class="block">
                     <i18n-t
                         keypath="promptBuilder.components.taskDescriptionForm.profileHint"
+                        scope="global"
                         tag="span"
                     >
                         <template #link>

@@ -27,7 +27,7 @@ const form = useForm({
     desiredFeaturesOther: '',
 });
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const hasErrors = computed(() => Object.keys(form.errors).length > 0);

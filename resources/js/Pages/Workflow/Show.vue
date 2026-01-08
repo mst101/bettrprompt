@@ -64,7 +64,7 @@ const props = withDefaults(defineProps<Props>(), {
     outputNew: null,
 });
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { confirm, success, error: showError } = useAlert();
 const { localeRoute } = useLocaleRoute();
 

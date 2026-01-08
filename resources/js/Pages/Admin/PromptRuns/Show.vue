@@ -33,7 +33,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const { localeRoute } = useLocaleRoute();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const pageTitle = computed(
     () => `${t('promptBuilder.admin.promptRun')} #${props.promptRun.id}`,

@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n';
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 // Average completion time: 6 seconds
 const ESTIMATED_TOTAL_TIME = 6000; // ms

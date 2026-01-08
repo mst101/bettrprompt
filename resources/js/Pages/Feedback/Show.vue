@@ -36,7 +36,7 @@ interface Props {
 
 const isEditing = ref(false);
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const form = useForm({

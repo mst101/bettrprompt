@@ -43,7 +43,7 @@ const isEmbeddingAll = ref(false);
 const message = ref<{ type: 'success' | 'error'; text: string } | null>(null);
 const expandedView = ref<'editor' | 'preview' | null>(null);
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { confirm, success, error } = useAlert();
 
 // Rendered markdown preview

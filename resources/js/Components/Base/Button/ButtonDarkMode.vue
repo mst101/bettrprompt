@@ -5,7 +5,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const themeStore = useThemeStore();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const isDark = computed(() => themeStore.theme === 'dark');
 const otherMode = computed(() => (isDark.value ? 'light' : 'dark'));
 const otherModeLabel = computed(() =>

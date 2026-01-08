@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     clear: [];
 }>();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const resolvedLabel = computed(
     () => props.label || t('components.common.buttonTrash.label'),
 );

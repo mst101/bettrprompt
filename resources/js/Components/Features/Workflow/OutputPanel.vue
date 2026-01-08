@@ -48,7 +48,7 @@ const messagesExpanded = ref(true);
 
 // Track wrap lines mode for raw JSON
 const wrapRawJson = ref(false);
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const titleText = computed(() =>
     props.title ? props.title : t('workflow.outputPanel.title'),
 );

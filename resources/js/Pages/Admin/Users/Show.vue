@@ -55,7 +55,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const { localeRoute } = useLocaleRoute();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const sortBy = (column: string) => {
     const currentSortBy = props.filters.sort_by;
@@ -472,6 +472,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                 <i18n-t
                                     v-if="pagination.from && pagination.to"
                                     keypath="admin.pagination.resultsSummary"
+                                    scope="global"
                                     tag="p"
                                     class="text-center"
                                 >
@@ -522,6 +523,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                 <i18n-t
                                     v-if="pagination.from && pagination.to"
                                     keypath="admin.pagination.resultsSummary"
+                                    scope="global"
                                     tag="p"
                                     class="text-sm text-indigo-700"
                                 >

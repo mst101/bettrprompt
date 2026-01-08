@@ -22,7 +22,7 @@ const props = defineProps<Props>();
 
 const switchingFramework = ref<string | null>(null);
 const { confirm } = useAlert();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const handleSwitchFramework = async (frameworkCode: string) => {

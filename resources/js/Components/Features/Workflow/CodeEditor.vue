@@ -25,7 +25,7 @@ const emit = defineEmits<{
     save: [];
 }>();
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const placeholderText = computed(
     () => props.placeholder || t('workflow.codeEditor.placeholder'),
 );

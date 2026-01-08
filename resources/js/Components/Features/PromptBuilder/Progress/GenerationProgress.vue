@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 // Average completion time: 40 seconds
 const ESTIMATED_TOTAL_TIME = 40000; // ms

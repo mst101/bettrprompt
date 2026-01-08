@@ -69,7 +69,7 @@ onUnmounted(() => {
 
 // Group locales by tier for the dropdown
 const groupedLocales = computed(() => ({
-    essential: locales.filter((l) => ['en', 'en-GB'].includes(l.code)),
+    essential: locales.filter((l) => ['en-US', 'en-GB'].includes(l.code)),
     highValue: locales.filter((l) => ['de', 'ja', 'ko', 'fr'].includes(l.code)),
     nordic: locales.filter((l) =>
         ['sv', 'no', 'da', 'fi', 'nl'].includes(l.code),

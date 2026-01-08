@@ -20,7 +20,7 @@ const {
     startRecording,
     stopRecording,
 } = useAudioRecording();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const isActive = computed(() => isRecording.value || isProcessing.value);
 

@@ -81,7 +81,7 @@ const form = useForm({
     answers: {} as Record<string, string>,
 });
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 const { appendText } = useTextAppend();
 

@@ -32,7 +32,7 @@ const showPersonalityBox = computed(() => showPrompt.value);
 const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
     null,
 );
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const focus = () => {
     // Only focus on larger screens (sm breakpoint and above: 640px)
@@ -110,6 +110,7 @@ watch(
                         <p class="mt-2 text-sm">
                             <i18n-t
                                 keypath="promptBuilder.components.personalityTypePrompt.description"
+                                scope="global"
                                 tag="span"
                             >
                                 <template #link>

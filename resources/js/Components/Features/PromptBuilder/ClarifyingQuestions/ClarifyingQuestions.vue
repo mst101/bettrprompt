@@ -31,7 +31,7 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const allQuestions = computed<ClarifyingQuestion[]>(() => {

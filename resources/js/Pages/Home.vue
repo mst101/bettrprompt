@@ -17,7 +17,7 @@ defineOptions({
     layout: AppLayout,
 });
 
-const { t } = useI18n();
+const { t, tm } = useI18n({ useScope: 'global' });
 
 const pageTitle = computed(() => t('home.title'));
 
@@ -25,31 +25,27 @@ type UseCaseItem = CarouselItem & AccordionItem;
 
 // Build use cases from i18n translations
 const useCases = computed<UseCaseItem[]>(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const i18n = useI18n() as any;
     return [
         {
             id: 'work-career',
             icon: 'building-office',
             title: t('home.useCases.workCareer.title'),
             subtitle: t('home.useCases.workCareer.subtitle'),
-            bullets: i18n.tm('home.useCases.workCareer.bullets') as string[],
+            bullets: tm('home.useCases.workCareer.bullets') as string[],
         },
         {
             id: 'personal-decisions',
             icon: 'user',
             title: t('home.useCases.personalDecisions.title'),
             subtitle: t('home.useCases.personalDecisions.subtitle'),
-            bullets: i18n.tm(
-                'home.useCases.personalDecisions.bullets',
-            ) as string[],
+            bullets: tm('home.useCases.personalDecisions.bullets') as string[],
         },
         {
             id: 'learning-development',
             icon: 'book-open',
             title: t('home.useCases.learningDevelopment.title'),
             subtitle: t('home.useCases.learningDevelopment.subtitle'),
-            bullets: i18n.tm(
+            bullets: tm(
                 'home.useCases.learningDevelopment.bullets',
             ) as string[],
         },
@@ -58,25 +54,21 @@ const useCases = computed<UseCaseItem[]>(() => {
             icon: 'light-bulb',
             title: t('home.useCases.creativeProjects.title'),
             subtitle: t('home.useCases.creativeProjects.subtitle'),
-            bullets: i18n.tm(
-                'home.useCases.creativeProjects.bullets',
-            ) as string[],
+            bullets: tm('home.useCases.creativeProjects.bullets') as string[],
         },
         {
             id: 'business-strategy',
             icon: 'trending-up',
             title: t('home.useCases.businessStrategy.title'),
             subtitle: t('home.useCases.businessStrategy.subtitle'),
-            bullets: i18n.tm(
-                'home.useCases.businessStrategy.bullets',
-            ) as string[],
+            bullets: tm('home.useCases.businessStrategy.bullets') as string[],
         },
         {
             id: 'relationships-communication',
             icon: 'user-group',
             title: t('home.useCases.relationshipsCommunication.title'),
             subtitle: t('home.useCases.relationshipsCommunication.subtitle'),
-            bullets: i18n.tm(
+            bullets: tm(
                 'home.useCases.relationshipsCommunication.bullets',
             ) as string[],
         },
@@ -310,6 +302,7 @@ const expandedUseCases = ref<string[]>([]);
                 <div class="mx-auto mt-8 max-w-3xl text-center">
                     <i18n-t
                         keypath="home.comparison.keyInsight"
+                        scope="global"
                         tag="p"
                         class="text-lg text-indigo-800"
                     >

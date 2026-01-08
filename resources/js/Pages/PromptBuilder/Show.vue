@@ -44,7 +44,7 @@ const isAdmin = computed(() => user.value?.isAdmin ?? false);
 const isGuest = computed(() => !user.value);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 // Show banner for guests who just completed their prompt

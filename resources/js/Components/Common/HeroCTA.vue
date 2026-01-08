@@ -6,7 +6,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const page = usePage();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const buttonText = computed(() => {
     return page.props.auth?.user

@@ -36,7 +36,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 // Common timezones (still using common ones as not in database)

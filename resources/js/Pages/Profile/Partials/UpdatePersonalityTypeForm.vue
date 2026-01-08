@@ -38,7 +38,7 @@ const emit = defineEmits<{
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const { success, error } = useNotification();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 // Load from user data or visitor props

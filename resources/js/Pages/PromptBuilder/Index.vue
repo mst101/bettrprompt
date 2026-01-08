@@ -42,7 +42,7 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile

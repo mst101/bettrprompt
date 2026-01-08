@@ -15,7 +15,7 @@ defineProps<{
 
 const user = usePage().props.auth!.user!;
 const { success, error } = useNotification();
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
 
 const form = useForm({

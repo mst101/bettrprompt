@@ -96,6 +96,7 @@ function confirmSetup() {
                     </h3>
                     <i18n-t
                         keypath="privacy.setup.savePhrase.description"
+                        scope="global"
                         tag="p"
                         class="text-sm text-amber-700"
                     >

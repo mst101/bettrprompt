@@ -24,7 +24,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: number): void;
 }>();
 
-const { t } = useI18n();
+const { t } = useI18n({ useScope: 'global' });
 
 const activeIndex = computed({
     get: () => props.modelValue,
