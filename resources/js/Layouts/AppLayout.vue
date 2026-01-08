@@ -39,9 +39,11 @@ interface User {
 const page = usePage<{
     auth?: { user?: User };
     visitorHasCompletedPrompts?: boolean;
+    locale?: string;
 }>();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
+const currentLocale = computed(() => (page.props.locale as string) || 'en');
 
 // Initialize session timeout tracking for authenticated users
 // This prevents 419 CSRF errors by logging users out before session expires
@@ -49,22 +51,30 @@ if (isAuthenticated.value) {
     useSessionTimeout();
 }
 
+// Helper function to generate locale-aware routes
+const localeRoute = (name: string, parameters?: Record<string, any>) => {
+    return route(name, {
+        locale: currentLocale.value,
+        ...(parameters || {}),
+    });
+};
+
 // Determine logo destination based on admin status and current route
 const logoDestination = computed(() => {
     const currentRoute = route().current() || '';
 
     // If admin user and on admin pages, go to main site
     if (isAdmin.value && currentRoute.startsWith('admin.')) {
-        return route('home');
+        return localeRoute('home');
     }
 
     // If admin user and on main site, go to admin dashboard
     if (isAdmin.value) {
-        return route('admin.dashboard');
+        return localeRoute('admin.dashboard');
     }
 
     // Non-admin users always go to home/main site
-    return route('home');
+    return localeRoute('home');
 });
 
 const showingNavigationDropdown = ref(false);
@@ -203,7 +213,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:items-center"
                             >
                                 <NavLink
-                                    :href="route('prompt-builder.index')"
+                                    :href="localeRoute('prompt-builder.index')"
                                     :active="
                                         route().current('prompt-builder.index')
                                     "
@@ -211,7 +221,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     Prompt Builder
                                 </NavLink>
                                 <NavLink
-                                    :href="route('prompt-builder.history')"
+                                    :href="
+                                        localeRoute('prompt-builder.history')
+                                    "
                                     :active="
                                         route().current(
                                             'prompt-builder.history',
@@ -221,14 +233,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     Prompt History
                                 </NavLink>
                                 <NavLink
-                                    :href="route('feedback.create')"
+                                    :href="localeRoute('feedback.create')"
                                     :active="route().current('feedback.*')"
                                 >
                                     Feedback
                                 </NavLink>
                                 <NavLink
                                     v-if="isAdmin"
-                                    :href="route('workflow.index')"
+                                    :href="localeRoute('workflow.index')"
                                     :active="route().current('workflow.*')"
                                 >
                                     Workflows
@@ -269,12 +281,12 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                                     <template #content>
                                         <DropdownLink
-                                            :href="route('profile.edit')"
+                                            :href="localeRoute('profile.edit')"
                                         >
                                             Profile
                                         </DropdownLink>
                                         <DropdownLink
-                                            :href="route('logout')"
+                                            :href="localeRoute('logout')"
                                             method="post"
                                             as="button"
                                         >
@@ -327,7 +339,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 <div class="space-y-1 pt-2 pb-3">
                                     <ResponsiveNavLink
                                         ref="firstMobileNavLink"
-                                        :href="route('prompt-builder.index')"
+                                        :href="
+                                            localeRoute('prompt-builder.index')
+                                        "
                                         :active="
                                             route().current(
                                                 'prompt-builder.index',
@@ -341,7 +355,11 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="route('prompt-builder.history')"
+                                        :href="
+                                            localeRoute(
+                                                'prompt-builder.history',
+                                            )
+                                        "
                                         :active="
                                             route().current(
                                                 'prompt-builder.history',
@@ -355,7 +373,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="route('feedback.create')"
+                                        :href="localeRoute('feedback.create')"
                                         :active="route().current('feedback.*')"
                                         @click="
                                             showingNavigationDropdown = false
@@ -366,7 +384,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                                     <ResponsiveNavLink
                                         v-if="isAdmin"
-                                        :href="route('workflow.index')"
+                                        :href="localeRoute('workflow.index')"
                                         :active="route().current('workflow.*')"
                                         @click="
                                             showingNavigationDropdown = false
@@ -376,7 +394,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="route('profile.edit')"
+                                        :href="localeRoute('profile.edit')"
                                         @click="
                                             showingNavigationDropdown = false
                                         "
@@ -385,7 +403,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="route('logout')"
+                                        :href="localeRoute('logout')"
                                         method="post"
                                         as="button"
                                         @click="
