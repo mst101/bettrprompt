@@ -22,18 +22,17 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Confirm Password" />
+    <Head :title="$t('auth.confirmPassword.title')" />
 
     <div class="mb-4 text-sm text-indigo-600">
-        This is a secure area of the application. Please confirm your password
-        before continuing.
+        {{ $t('auth.confirmPassword.description') }}
     </div>
 
     <form @submit.prevent="submit">
         <FormInput
             id="password"
             v-model="form.password"
-            label="Password"
+            :label="$t('auth.confirmPassword.passwordLabel')"
             type="password"
             :error="form.errors.password"
             required
@@ -48,7 +47,7 @@ const submit = () => {
                 :disabled="form.processing"
                 :loading="form.processing"
             >
-                Confirm
+                {{ $t('common.buttons.confirm') }}
             </ButtonPrimary>
         </div>
     </form>

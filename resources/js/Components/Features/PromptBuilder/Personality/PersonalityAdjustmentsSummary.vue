@@ -12,7 +12,11 @@ defineProps<Props>();
 <template>
     <Card v-if="adjustments && adjustments.length > 0" class="space-y-4">
         <h2 class="text-lg font-semibold text-indigo-900">
-            Personality Adjustments Applied
+            {{
+                $t(
+                    'promptBuilder.components.personalityAdjustmentsSummary.title',
+                )
+            }}
         </h2>
 
         <ul class="space-y-2">

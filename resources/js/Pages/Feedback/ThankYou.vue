@@ -34,9 +34,9 @@ const copyToClipboard = async () => {
 </script>
 
 <template>
-    <Head title="Thank You for Your Feedback" />
+    <Head :title="$t('feedback.thankYou.title')" />
 
-    <HeaderPage title="Thank You!" />
+    <HeaderPage :title="$t('feedback.thankYou.heading')" />
 
     <ContainerPage spacing>
         <!-- Thank you message -->
@@ -49,10 +49,10 @@ const copyToClipboard = async () => {
                 <h1
                     class="mt-4 text-lg font-semibold text-indigo-900 sm:text-2xl"
                 >
-                    Thank you for your feedback!
+                    {{ $t('feedback.thankYou.message.title') }}
                 </h1>
                 <p class="mt-2 text-xs text-indigo-600 sm:text-sm">
-                    Your insights are much appreciated.
+                    {{ $t('feedback.thankYou.message.subtitle') }}
                 </p>
             </div>
         </Card>
@@ -60,13 +60,12 @@ const copyToClipboard = async () => {
         <!-- Referral Section -->
         <Card>
             <h2 class="mb-2 text-base font-semibold text-indigo-900 sm:text-lg">
-                Invite a Friend to Trial
+                {{ $t('feedback.thankYou.referral.title') }}
             </h2>
             <p class="mb-4 text-xs text-indigo-600 sm:text-sm">
-                Know someone who could benefit from personalised AI prompts?
-                Share your unique referral link with them. They can trial the
-                service until
-                <strong>31st January 2026</strong>.
+                {{ $t('feedback.thankYou.referral.descriptionPrefix') }}
+                <strong>{{ $t('feedback.thankYou.referral.deadline') }}</strong
+                >.
             </p>
 
             <div class="rounded-lg bg-indigo-50 p-4">
@@ -74,7 +73,7 @@ const copyToClipboard = async () => {
                     for="referral-url"
                     class="mb-2 block text-xs font-medium text-indigo-700 sm:text-sm"
                 >
-                    Your Referral Link
+                    {{ $t('feedback.thankYou.referral.linkLabel') }}
                 </label>
                 <div class="flex items-center gap-2">
                     <input
@@ -95,7 +94,11 @@ const copyToClipboard = async () => {
                             name="clipboard"
                             class="mr-2 h-5 w-5"
                         />
-                        {{ copied ? 'Copied!' : 'Copy' }}
+                        {{
+                            copied
+                                ? $t('feedback.thankYou.actions.copied')
+                                : $t('feedback.thankYou.actions.copy')
+                        }}
                     </ButtonPrimary>
                 </div>
             </div>
@@ -107,13 +110,20 @@ const copyToClipboard = async () => {
                         class="mr-3 h-5 w-5 shrink-0 text-blue-600"
                     />
                     <div class="text-xs text-blue-800 sm:text-sm">
-                        <p class="font-medium">Trial Deadline</p>
+                        <p class="font-medium">
+                            {{ $t('feedback.thankYou.trial.title') }}
+                        </p>
                         <p class="mt-1">
-                            Friends who sign up using your link can trial the
-                            service until <strong>31st January 2026</strong>.
-                            Share via email, WhatsApp, or any other direct
-                            messaging platform, but please don't post publicly
-                            (as this is still a trial service).
+                            {{
+                                $t('feedback.thankYou.trial.descriptionPrefix')
+                            }}
+                            <strong>{{
+                                $t('feedback.thankYou.referral.deadline')
+                            }}</strong
+                            >.
+                            {{
+                                $t('feedback.thankYou.trial.descriptionSuffix')
+                            }}
                         </p>
                     </div>
                 </div>

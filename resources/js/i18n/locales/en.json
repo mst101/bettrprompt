@@ -22,6 +22,7 @@
             "copied": "Copied!",
             "edit": "Edit",
             "delete": "Delete",
+            "clear": "Clear",
             "confirm": "Confirm"
         },
         "validation": {
@@ -53,20 +54,341 @@
             "signIn": "Sign in"
         },
         "forgotPassword": {
-            "title": "Reset your password",
-            "description": "Enter your email address and we'll send you a link to reset your password.",
-            "email": "Email address",
-            "submit": "Send reset link",
+            "title": "Forgot password",
+            "heading": "Reset your password",
+            "description": "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.",
+            "email": "Email",
+            "submit": "Email password reset link",
             "backToLogin": "Back to sign in"
         },
         "resetPassword": {
+            "headTitle": "Reset password",
             "title": "Create new password",
-            "password": "New password",
-            "confirmPassword": "Confirm new password",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
             "submit": "Reset password"
+        },
+        "confirmPassword": {
+            "title": "Confirm password",
+            "description": "This is a secure area of the application. Please confirm your password before continuing.",
+            "passwordLabel": "Password"
+        },
+        "verifyEmail": {
+            "title": "Email verification",
+            "heading": "Verify email address",
+            "description": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you did not receive the email, we will gladly send you another.",
+            "resent": "A new verification link has been sent to the email address you provided during registration.",
+            "resend": "Resend verification email",
+            "logout": "Log out"
+        },
+        "privacyRecovery": {
+            "title": "Recover privacy key",
+            "heading": "Recover your data",
+            "notice": {
+                "title": "Account recovery",
+                "description": "Enter your 12-word recovery phrase to regain access to your encrypted data. You will also need to set a new password."
+            },
+            "sections": {
+                "recoveryPhrase": "Recovery phrase",
+                "setPassword": "Set new password"
+            },
+            "newPassword": "New password",
+            "confirmPassword": "Confirm new password",
+            "submit": "Recover account"
         },
         "google": {
             "continueWith": "Continue with Google"
+        },
+        "modalLogin": {
+            "title": "Sign in",
+            "emailLabel": "Email address",
+            "passwordLabel": "Password",
+            "rememberMe": "Remember me",
+            "forgotPassword": "Forgot your password?",
+            "needAccount": "Need an account?",
+            "submit": "Sign in"
+        },
+        "modalRegister": {
+            "title": "Create your account",
+            "google": "Continue with Google",
+            "nameLabel": "Full name",
+            "emailLabel": "Email address",
+            "passwordLabel": "Password",
+            "confirmPasswordLabel": "Confirm password",
+            "alreadyRegistered": "Already have an account?",
+            "submit": "Create account"
+        },
+        "modalForgotPassword": {
+            "title": "Reset your password",
+            "description": "Enter your email address and we'll send you a reset link.",
+            "emailLabel": "Email address",
+            "backToLogin": "Back to sign in",
+            "submit": "Send reset link"
+        },
+        "modalResetPassword": {
+            "title": "Create a new password",
+            "description": "Enter your email and choose a new password.",
+            "emailLabel": "Email address",
+            "passwordLabel": "New password",
+            "confirmPasswordLabel": "Confirm new password",
+            "backToLogin": "Back to sign in",
+            "submit": "Reset password"
+        }
+    },
+    "components": {
+        "base": {
+            "accordion": {
+                "ariaLabel": "Accordion",
+                "empty": "No items available"
+            },
+            "buttonDarkMode": {
+                "title": "Switch to {mode}",
+                "mode": {
+                    "light": "light mode",
+                    "dark": "dark mode"
+                }
+            },
+            "buttonHamburger": {
+                "ariaLabel": "Open menu"
+            },
+            "buttonVoiceInput": {
+                "transcribing": "Transcribing...",
+                "listening": "Listening...",
+                "record": "Record",
+                "stopRecording": "Stop recording",
+                "startRecording": "Start recording",
+                "startRecordingTitle": "Start recording"
+            },
+            "carousel": {
+                "ariaLabel": "Carousel",
+                "previous": "Previous slide",
+                "next": "Next slide",
+                "slideRole": "slide",
+                "slideLabel": "Slide {current} of {total}",
+                "goToSlide": "Go to slide {index}",
+                "liveRegion": "Slide {current} of {total}: {title}",
+                "empty": "No slides available"
+            },
+            "formCheckboxGroup": {
+                "otherLabel": "Other",
+                "otherPlaceholder": "Please specify...",
+                "characterCount": "{count}/{max} characters"
+            },
+            "formSelect": {
+                "placeholder": "Select an option"
+            },
+            "likert": {
+                "optionLabel": "Select {value}"
+            },
+            "tabs": {
+                "menuLabel": "Tabs",
+                "ariaLabel": "Tabs"
+            }
+        },
+        "common": {
+            "buttonTrash": {
+                "label": "Clear",
+                "title": "{label}"
+            },
+            "compactMetadataCard": {
+                "showProfile": "Show profile"
+            },
+            "cookieBanner": {
+                "ariaLabel": "Cookie banner",
+                "title": "We use cookies",
+                "description": "We use cookies to enhance your experience. See our ",
+                "policyLink": "Cookie Policy",
+                "rejectAll": "Reject all",
+                "customize": "Customize",
+                "acceptAll": "Accept all"
+            },
+            "cookieSettings": {
+                "title": "Cookie preferences",
+                "description": "Manage your cookie settings. Learn more in our ",
+                "learnMore": "Cookie Policy",
+                "alwaysActive": "Always active",
+                "functionalLabel": "Functional cookies",
+                "analyticsLabel": "Analytics cookies",
+                "rejectAll": "Reject all",
+                "savePreferences": "Save preferences",
+                "acceptAll": "Accept all"
+            },
+            "exampleDemonstration": {
+                "stage1": {
+                    "title": "Enter your task",
+                    "description": "Start with a clear description of what you want to achieve.",
+                    "label": "Task",
+                    "example": "Create a marketing strategy to launch a new fitness app."
+                },
+                "stage2": {
+                    "title": "Quick queries",
+                    "description": "A few fast questions to refine the goal.",
+                    "question1": "Who is your target audience?",
+                    "answer1": "Busy professionals ages 25-40",
+                    "question2": "What is the primary goal?",
+                    "answer2": "Increase free-trial sign-ups"
+                },
+                "stage3": {
+                    "title": "Framework",
+                    "description": "We select a framework tailored to your task.",
+                    "frameworkName": "STP + 4Ps",
+                    "chipChallenge": "Challenge",
+                    "chipObjective": "Objective",
+                    "chipActions": "Actions",
+                    "chipStrategy": "Strategy",
+                    "chipTactics": "Tactics",
+                    "rationale": "Chosen to balance positioning with a clear execution plan."
+                },
+                "stage4": {
+                    "title": "Clarifying questions",
+                    "description": "We capture the details that make the prompt effective.",
+                    "question1": "What makes the app different from competitors?",
+                    "answer1": "Personalized workouts you can finish in 10 minutes",
+                    "question2": "Which channels will you use?",
+                    "answer2": "Instagram, TikTok, and fitness creator partnerships",
+                    "question3": "What is your budget?",
+                    "answer3": "$10k per month for the first quarter"
+                },
+                "stage5": {
+                    "title": "Optimized prompt",
+                    "description": "You get a structured prompt ready to use.",
+                    "ready": "Your prompt is ready.",
+                    "promptIntro": "Create a marketing strategy for a new fitness app. Include:",
+                    "promptChallengeLabel": "Challenge:",
+                    "promptChallengeText": "Standing out in a crowded market.",
+                    "promptObjectiveLabel": "Objective:",
+                    "promptObjectiveText": "Drive 5,000 trial sign-ups in 90 days.",
+                    "promptEtc": "Provide channels, messaging, and a 90-day action plan."
+                }
+            },
+            "footer": {
+                "copyright": "(c) {year} BettrPrompt. All rights reserved.",
+                "terms": "Terms",
+                "privacy": "Privacy",
+                "cookies": "Cookies",
+                "cookieSettings": "Cookie settings"
+            },
+            "heroCta": {
+                "tryNow": "Try it now",
+                "getStartedFree": "Get started free"
+            },
+            "languageSwitcher": {
+                "sections": {
+                    "english": "English",
+                    "major": "Major languages",
+                    "nordic": "Nordic",
+                    "other": "Other",
+                    "rtl": "Right-to-left"
+                }
+            },
+            "optionalBadge": {
+                "label": "Optional"
+            },
+            "profileCompletion": {
+                "title": "Profile completion",
+                "labels": {
+                    "complete": "Complete",
+                    "nearlyComplete": "Nearly complete",
+                    "goodProgress": "Good progress",
+                    "gettingStarted": "Getting started",
+                    "justBeginning": "Just beginning"
+                }
+            },
+            "promptRunMetadata": {
+                "user": "User",
+                "personality": "Personality",
+                "created": "Created",
+                "status": "Status"
+            },
+            "upgradePromptModal": {
+                "title": "Upgrade to Pro",
+                "description": "Unlock unlimited prompts and priority processing.",
+                "monthly": "Monthly",
+                "monthlyPrice": {
+                    "amount": "GBP 12",
+                    "period": "/month"
+                },
+                "annual": "Annual",
+                "annualPrice": {
+                    "amount": "GBP 99",
+                    "period": "/year"
+                },
+                "annualEquivalent": "GBP 8.25/month billed annually",
+                "maybeLater": "Maybe later",
+                "processing": "Processing...",
+                "upgradeNow": "Upgrade now"
+            },
+            "usageIndicator": {
+                "upgrade": "Upgrade"
+            },
+            "visitorLimitBanner": {
+                "fixed": {
+                    "titleNew": "Create a free account to keep going",
+                    "descriptionNew": "Save your prompts and get more runs when you sign up.",
+                    "titleReturning": "Welcome back - log in to continue",
+                    "descriptionReturning": "Log in to pick up where you left off.",
+                    "ctaRegister": "Create account"
+                },
+                "inline": {
+                    "titleNew": "Create a free account to continue",
+                    "descriptionNew": "Sign up to save your prompts and unlock more runs.",
+                    "titleReturning": "Log in to continue",
+                    "descriptionReturning": "Log in to access your saved prompt runs.",
+                    "ctaRegister": "Create account"
+                }
+            },
+            "visitorLimitModal": {
+                "title": "Create an account to continue",
+                "description": "Guest access is limited. Create a free account to save your prompts and keep building.",
+                "cta": "Create account"
+            },
+            "workflowError": {
+                "title": "Something went wrong",
+                "retry": "Try again"
+            }
+        }
+    },
+    "workflow": {
+        "variantSelector": {
+            "label": "Variant"
+        },
+        "codeEditor": {
+            "placeholder": "Paste or edit content...",
+            "characters": "{count} characters",
+            "notAvailable": "N/A",
+            "expandTitle": "Expand editor",
+            "expand": "Expand",
+            "saveTitle": "Save changes",
+            "save": "Save",
+            "collapsedHint": "Collapsed view - expand to edit."
+        },
+        "documentSidebar": {
+            "coreDocuments": "Core documents",
+            "usedIn": "Used in: {list}",
+            "none": "None",
+            "frameworkTemplates": "Framework templates ({count})",
+            "workflowVersion": "Workflow version"
+        },
+        "outputPanel": {
+            "title": "Output",
+            "header": "{title} - {count} characters",
+            "rawJson": "Raw JSON",
+            "copyTitle": "Copy to clipboard",
+            "copy": "Copy",
+            "wrapDisable": "Disable line wrapping",
+            "wrapEnable": "Enable line wrapping",
+            "wrapOn": "Wrap on",
+            "wrapOff": "Wrap off",
+            "system": "System",
+            "messages": "Messages",
+            "rawLabel": "Raw",
+            "formattedLabel": "Formatted",
+            "switchRaw": "Show raw",
+            "switchFormatted": "Show formatted",
+            "expandTitle": "Expand",
+            "expand": "Expand",
+            "empty": "No output available"
         }
     },
     "home": {
@@ -77,9 +399,10 @@
             "subtitle": "Great AI results start with great questions. BettrPrompt asks the right ones - then builds structured prompts that actually work."
         },
         "features": {
+            "heading": "Features",
             "feature1": {
                 "title": "The Right Approach, Automatically",
-                "description": "We analyse your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
+                "description": "We analyze your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
             },
             "feature2": {
                 "title": "Questions You Haven't Thought Of",
@@ -109,11 +432,12 @@
                 "title": "Using BettrPrompt",
                 "yourPrompt": "I need to write a best man speech for my friend's wedding",
                 "label": "BettrPrompt:",
-                "response": "Selects a framework for memorable personal storytelling. Then asks: \"How did you two meet? What's a story that captures who he really is? What's the couple's sense of humour? Who's in the audience?\"",
+                "response": "Selects a framework for memorable personal storytelling. Then asks: \"How did you two meet? What's a story that captures who he really is? What's the couple's sense of humor? Who's in the audience?\"",
                 "result": "A prompt that captures your friendship, fits the audience, and plays to your strengths - so the AI output actually sounds like something you'd say.",
                 "footer": "You get what AI is actually capable of"
             },
-            "keyInsight": "ChatGPT answers what you ask. <strong>BettrPrompt uncovers what you should have asked</strong> - then builds a prompt that gets you AI's best work, not its first guess."
+            "keyInsight": "ChatGPT answers what you ask. {0} - then builds a prompt that gets you AI's best work, not its first guess.",
+            "keyInsightEmphasis": "BettrPrompt uncovers what you should have asked"
         },
         "objections": {
             "templates": {
@@ -122,7 +446,7 @@
             },
             "learning": {
                 "title": "Should I Learn Prompt Engineering?",
-                "description": "You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need - we'll handle the rest."
+                "description": "You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorize them. Describe what you need - we'll handle the rest."
             }
         },
         "howItWorks": {
@@ -137,7 +461,7 @@
                 "description": "We structure your thinking - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
             },
             "step3": {
-                "title": "Get Your Optimised Prompt",
+                "title": "Get Your Optimized Prompt",
                 "description": "Copy your prompt into ChatGPT, Claude, or any AI tool. It's built for results and shaped by your answers - not a generic template."
             }
         },
@@ -151,7 +475,7 @@
                     "Asking your manager for a promotion",
                     "Preparing for a difficult performance review",
                     "Delegating a complex project to your team",
-                    "Writing a proposal that convinces sceptical stakeholders"
+                    "Writing a proposal that convinces skeptical stakeholders"
                 ]
             },
             "personalDecisions": {
@@ -161,7 +485,7 @@
                     "Deciding whether to accept a job offer or stay put",
                     "Working through a major life change with your partner",
                     "Setting boundaries with someone who's draining you",
-                    "Planning a difficult conversation with ageing parents"
+                    "Planning a difficult conversation with aging parents"
                 ]
             },
             "learningDevelopment": {
@@ -189,7 +513,7 @@
                 "subtitle": "Think through high-stakes decisions with clarity.",
                 "bullets": [
                     "Developing a marketing strategy for a new product",
-                    "Analysing whether to expand into a new market",
+                    "Analyzing whether to expand into a new market",
                     "Preparing for a board presentation or investor pitch",
                     "Improving team productivity or processes"
                 ]
@@ -210,12 +534,74 @@
             "subtitle": "A real example: creating a marketing strategy"
         }
     },
+    "pilot": {
+        "headTitle": "Join the Pilot Program - BettrPrompt",
+        "hero": {
+            "line1": "Stop Guessing.",
+            "line2": "Start Getting Results from AI.",
+            "subtitle": "BettrPrompt asks the right questions first - so your prompts actually work."
+        },
+        "problem": {
+            "title": "The Problem",
+            "paragraph1": "You type something into ChatGPT. It's not quite right. You tweak, rephrase, try again. Three attempts later, you've got something usable - but no idea why this version worked.",
+            "paragraph2": "You're not doing anything wrong. AI just expects you to know exactly what you want before you've thought it through."
+        },
+        "how": {
+            "title": "How BettrPrompt Works Differently",
+            "steps": {
+                "step1": {
+                    "title": "We ask before we generate.",
+                    "description": "Targeted questions help you clarify what you actually need - before we create anything."
+                },
+                "step2": {
+                    "title": "We select from 60+ proven frameworks.",
+                    "description": "Intelligent selection based on your task, not guesswork."
+                },
+                "step3": {
+                    "title": "We adapt to how you think.",
+                    "description": "Questions tailored to your personality, with transparency about why we're asking."
+                }
+            },
+            "result": "The result: a structured prompt ready to paste into ChatGPT or Claude - that actually works."
+        },
+        "join": {
+            "title": "Join the Free Pilot",
+            "description": "We're inviting a small group to test BettrPrompt before public launch. Your feedback will shape the product.",
+            "commitmentTitle": "The commitment:",
+            "commitments": {
+                "use": "Use BettrPrompt for 2 weeks",
+                "feedback": "Submit brief feedback at the end"
+            },
+            "note": "That's it. No cost. No obligation to continue.",
+            "ctaRegister": "Join the Pilot Program",
+            "ctaInvite": "Request an Invitation"
+        },
+        "footer": {
+            "questions": "Questions?",
+            "contact": "Get in touch"
+        }
+    },
     "pricing": {
+        "pageTitle": "Pricing",
         "title": "Simple, Transparent Pricing",
         "subtitle": "Choose the plan that works for you",
+        "tagline": "Start free, upgrade when you need more",
+        "currency": "GBP",
+        "popularBadge": "Most popular",
         "monthly": "Monthly",
         "yearly": "Yearly",
         "save": "Save {percent}%",
+        "billing": {
+            "monthly": "Monthly",
+            "yearly": "Annual"
+        },
+        "period": {
+            "month": "month",
+            "year": "year"
+        },
+        "actions": {
+            "processing": "Processing..."
+        },
         "free": {
             "name": "Free",
             "price": "0",
@@ -225,10 +611,13 @@
         },
         "pro": {
             "name": "Pro",
+            "priceMonthly": "12",
+            "priceYearly": "99",
             "period": "per month",
             "periodYearly": "per year",
             "description": "For power users who want the best results",
-            "cta": "Upgrade to Pro"
+            "cta": "Start Pro",
+            "yearlySavings": "{amount} / {period} - Save {percent}%"
         },
         "features": {
             "title": "All features included",
@@ -236,37 +625,198 @@
             "priority": "Priority processing",
             "privacy": "Privacy encryption",
             "support": "Priority support"
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "items": {
+                "limit": {
+                    "question": "What happens when I reach my free limit?",
+                    "answer": "Free accounts are limited to 10 prompts per month. Your limit resets on the first of each month. You can upgrade to Pro at any time for unlimited prompts."
+                },
+                "privacy": {
+                    "question": "What is privacy encryption?",
+                    "answer": "Pro users get their prompt data encrypted at rest. This means your prompts and responses are protected with encryption keys that only you control, ensuring maximum privacy for sensitive tasks."
+                },
+                "cancel": {
+                    "question": "Can I cancel my subscription?",
+                    "answer": "Yes, you can cancel anytime. You'll retain Pro access until the end of your current billing period, then you'll be moved to the Free plan."
+                },
+                "payment": {
+                    "question": "What payment methods do you accept?",
+                    "answer": "We accept all major credit and debit cards, as well as Apple Pay and Google Pay through our secure payment provider, Stripe."
+                }
+            }
+        }
+    },
+    "feedback": {
+        "create": {
+            "title": "Feedback",
+            "heading": "Feedback",
+            "intro": {
+                "title": "We'd love to hear from you!",
+                "description": "Your feedback will help us decide whether to improve this project - or to abandon it! Please be honest."
+            },
+            "errors": {
+                "title": "Please correct the errors below",
+                "labels": {
+                    "experienceLevel": "Experience level:",
+                    "usefulness": "Usefulness:",
+                    "usageIntent": "Usage likelihood:",
+                    "suggestions": "Suggestions:",
+                    "desiredFeatures": "Features:",
+                    "desiredFeaturesOther": "Feature description:"
+                }
+            },
+            "actions": {
+                "submit": "Submit feedback"
+            }
+        },
+        "show": {
+            "title": "Your feedback",
+            "heading": "Your feedback",
+            "thankYou": "Thank you for your feedback!",
+            "subtitle": "You can update your responses at any time.",
+            "lastUpdated": "Last updated: {date}",
+            "actions": {
+                "edit": "Edit responses",
+                "update": "Update feedback"
+            }
+        },
+        "thankYou": {
+            "title": "Thank you for your feedback",
+            "heading": "Thank you!",
+            "message": {
+                "title": "Thank you for your feedback!",
+                "subtitle": "Your insights are much appreciated."
+            },
+            "referral": {
+                "title": "Invite a friend to trial",
+                "descriptionPrefix": "Know someone who could benefit from personalized AI prompts? Share your unique referral link with them. They can trial the service until",
+                "deadline": "January 31, 2026",
+                "linkLabel": "Your referral link"
+            },
+            "actions": {
+                "copy": "Copy",
+                "copied": "Copied!"
+            },
+            "trial": {
+                "title": "Trial deadline",
+                "descriptionPrefix": "Friends who sign up using your link can trial the service until",
+                "descriptionSuffix": "Share via email, WhatsApp, or any other direct messaging platform, but please do not post publicly (as this is still a trial service)."
+            }
+        },
+        "questions": {
+            "experience": {
+                "label": "1. How experienced are you with AI tools like ChatGPT or Claude?",
+                "left": "Novice",
+                "right": "Experienced"
+            },
+            "usefulness": {
+                "label": "2. How useful was the app for improving your prompt?",
+                "left": "Not useful",
+                "right": "Extremely useful"
+            },
+            "usageIntent": {
+                "label": "3. How likely are you to use this app the next time you need to work with an AI assistant?",
+                "left": "Very unlikely",
+                "right": "Very likely"
+            },
+            "suggestions": {
+                "label": "4. What's one thing you'd change or improve about the app?",
+                "placeholder": "Mention any steps you found confusing or features you'd like to see next."
+            },
+            "features": {
+                "label": "5. Which features would you most want to see added next?",
+                "hint": "(Select at least one)",
+                "hintAll": "(Select all that apply)",
+                "note": "If you select \"Other\", please describe the feature you'd like to see."
+            }
+        },
+        "features": {
+            "documentUpload": {
+                "label": "Upload documents and/or images",
+                "description": "Upload files and images to provide context for prompt generation, e.g., analyze documents or refine prompts based on visual content."
+            },
+            "templates": {
+                "label": "Prompt templates library",
+                "description": "Pre-built templates for common use cases (content writing, data analysis, code review, etc.)"
+            },
+            "compare": {
+                "label": "Compare prompt versions side-by-side",
+                "description": "Visual comparison tool showing differences between prompt versions and their effectiveness"
+            },
+            "apiIntegration": {
+                "label": "Integration with ChatGPT/Claude APIs",
+                "description": "Test prompts directly with AI models, see real responses, and iterate within the app"
+            },
+            "collaboration": {
+                "label": "Team collaboration features",
+                "description": "Share prompts within your organization, add comments, track versions, and manage permissions"
+            },
+            "modelSpecific": {
+                "label": "AI model-specific optimization",
+                "description": "Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences"
+            },
+            "other": {
+                "label": "Other",
+                "description": "Something else? Let us know what you'd like to see!"
+            }
         }
     },
     "subscription": {
+        "pageTitle": "Subscription settings",
+        "heading": "Subscription",
+        "backToProfile": "Back to Profile",
         "currentPlan": "Current Plan",
         "manage": "Manage Subscription",
         "updatePayment": "Update Payment Method",
         "cancel": "Cancel Subscription",
         "resume": "Resume Subscription",
+        "actions": {
+            "upgrade": "Upgrade to Pro"
+        },
         "cancelConfirm": {
             "title": "Cancel Subscription?",
             "description": "You will retain Pro access until the end of your current billing period. After that, you'll be moved to the Free plan with 10 prompts per month.",
             "keep": "Keep Subscription",
-            "confirm": "Cancel Subscription"
+            "confirm": "Cancel Subscription",
+            "processing": "Canceling..."
         },
         "status": {
             "active": "Active subscription",
             "cancelling": "Cancels on {date}",
-            "promptsRemaining": "{count} of {total} prompts remaining this month"
+            "promptsRemaining": "{count} of {total} prompts remaining this month",
+            "promptsUsed": "{used}/{total} prompts used"
         },
         "billing": {
             "title": "Billing History",
             "download": "Download"
+        },
+        "success": {
+            "title": "Welcome to Pro!",
+            "description": "You now have unlimited prompts and privacy encryption. Start creating powerful, personality-calibrated prompts!",
+            "cta": "Start creating prompts"
+        },
+        "cancelled": {
+            "title": "Checkout canceled",
+            "heading": "Checkout canceled",
+            "description": "{message} No worries - you can continue using the free tier or try again whenever you're ready.",
+            "actions": {
+                "continueFree": "Continue with Free",
+                "viewPricing": "View Pricing"
+            }
         }
     },
     "privacy": {
+        "pageTitle": "Privacy settings",
         "title": "Privacy Encryption",
+        "backToProfile": "Back to Profile",
         "proRequired": {
             "title": "Pro Feature",
             "description": "Privacy encryption is available exclusively for Pro subscribers. Your prompt data and personal information will be encrypted at rest, ensuring only you can access your data."
         },
         "status": {
+            "title": "Encryption Status",
             "enabled": "Encryption Enabled",
             "enabledOn": "Enabled on {date}",
             "enabledDescription": "Your prompt data is encrypted at rest. Only you can access your data by entering your password.",
@@ -297,7 +847,8 @@
             "title": "Enable Privacy Encryption",
             "savePhrase": {
                 "title": "Important: Save Your Recovery Phrase",
-                "description": "Write down these 12 words in order. This is the only way to recover your data if you forget your password. Store it securely and never share it."
+                "description": "Write down these 12 words in order. This is the {0} to recover your data if you forget your password. Store it securely and never share it.",
+                "emphasis": "only way"
             },
             "yourPhrase": "Your Recovery Phrase",
             "copyPhrase": "Copy to Clipboard",
@@ -309,7 +860,8 @@
         },
         "unlock": {
             "title": "Unlock Your Data",
-            "forgotPassword": "Forgot password? Use recovery phrase"
+            "forgotPassword": "Forgot password? Use recovery phrase",
+            "submit": "Unlock"
         },
         "recovery": {
             "title": "Recover Your Data",
@@ -323,18 +875,365 @@
             "title": "Disable Privacy Encryption?",
             "description": "This will decrypt all your stored data. Your prompts will no longer be encrypted at rest.",
             "passwordLabel": "Enter your password to confirm",
-            "confirmLabel": "I understand my data will no longer be encrypted"
+            "confirmLabel": "I understand my data will no longer be encrypted",
+            "processing": "Disabling..."
         }
     },
     "promptBuilder": {
         "title": "Prompt Builder",
+        "analysis": {
+            "title": "Prompt Analysis"
+        },
+        "actions": {
+            "createNew": "CREATE NEW"
+        },
+        "errors": {
+            "submitTitle": "Error submitting prompt",
+            "submitFailed": "Failed to submit prompt. Please check your connection and try again.",
+            "retryFailed": "Failed to retry generation. Please try again."
+        },
+        "messages": {
+            "preAnalysisSkippedTitle": "Excellent! Your task is clear",
+            "preAnalysisSkippedDescription": "Your task description is sufficiently clear for us to proceed directly to the main analysis. We're now selecting the best prompt framework for you."
+        },
+        "tabs": {
+            "task": "Your Task",
+            "framework": "Framework",
+            "frameworkMobile": "Selected Framework",
+            "personality": "Personality",
+            "questions": "Questions",
+            "recommendations": "Recommendations",
+            "costs": "Costs",
+            "prompt": "Optimized Prompt"
+        },
+        "confirmations": {
+            "deletePromptRun": {
+                "title": "Delete Prompt Run",
+                "message": "Are you sure you want to delete this prompt run? This action cannot be undone."
+            }
+        },
+        "history": {
+            "title": "Prompt History",
+            "empty": {
+                "title": "No prompt history yet.",
+                "cta": "Create your first optimized prompt"
+            },
+            "table": {
+                "personalityType": "Personality Type",
+                "taskDescription": "Task Description",
+                "framework": "Framework",
+                "status": "Status",
+                "created": "Created"
+            },
+            "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "pageOf": "Page {current} of {total}",
+                "resultsSummary": "Showing {0} to {1} of {2} results",
+                "show": "Show",
+                "perPage": "per page",
+                "ariaLabel": "Pagination"
+            }
+        },
+        "components": {
+            "taskDescriptionForm": {
+                "intro": "Tell us what you're trying to accomplish.",
+                "withPersonality": "We'll tailor the prompt to your personality type.",
+                "withoutPersonality": "Add your personality type for more tailored questions.",
+                "profileHint": "Visit your {link} to add your personality type.",
+                "profileHintLink": "profile settings",
+                "label": "Task description",
+                "helpText": "Include context, constraints, and the outcome you want.",
+                "placeholder": "Describe your task in detail...",
+                "processing": "Analyzing...",
+                "submit": "Analyze Task"
+            },
+            "personalityTypePrompt": {
+                "title": "Want more tailored prompts?",
+                "description": "Add your personality type to personalize your prompts. Take the free test at {link}.",
+                "linkText": "16personalities.com",
+                "addButton": "Add personality type",
+                "maybeLater": "Maybe later",
+                "maybeLaterNotification": "No problem - your prompt will still work. You can add your personality type later.",
+                "label": "Personality type:"
+            },
+            "questionAnsweringForm": {
+                "progressLabel": "Question {current} of {total}",
+                "percentComplete": "{percent}% complete",
+                "answerLabel": "Your answer",
+                "answerPlaceholder": "Type your answer here...",
+                "submitAll": "Submit all answers",
+                "nextQuestion": "Next question"
+            },
+            "selectedFramework": {
+                "title": "Selected framework",
+                "components": "Framework components",
+                "rationale": "Why this framework",
+                "proceed": "Proceed to questions"
+            },
+            "recommendations": {
+                "title": "Recommendations",
+                "models": {
+                    "title": "Recommended AI models"
+                },
+                "iterations": {
+                    "title": "Iteration suggestions",
+                    "description": "If the results aren't quite what you need, try these refinements:"
+                },
+                "empty": "No recommendations available"
+            },
+            "taskClassification": {
+                "title": "Classification",
+                "category": "Category",
+                "complexity": "Complexity",
+                "reasoning": "Reasoning"
+            },
+            "cognitiveRequirements": {
+                "title": "Cognitive requirements",
+                "primary": "Primary requirements",
+                "secondary": "Secondary requirements",
+                "reasoning": "Reasoning"
+            },
+            "relatedPromptRuns": {
+                "title": "Related prompt optimizations",
+                "parent": "Parent prompt",
+                "children": "Child prompts ({count})",
+                "promptId": "Prompt ID ({id})",
+                "created": "Created {date}"
+            },
+            "optimizedPrompt": {
+                "title": "Your optimized prompt",
+                "copy": "Copy to clipboard",
+                "showSource": "Show source",
+                "showPreview": "Show preview",
+                "edit": "Edit prompt",
+                "saveChanges": "Save changes",
+                "label": "Optimized prompt",
+                "useProvider": "Use with AI provider"
+            },
+            "aiProviderLinks": {
+                "description": "Click a provider to copy your optimized prompt and open their chat in a new tab. Then paste your prompt for a better response:",
+                "copied": "Prompt copied! Opening {provider}...",
+                "openTitle": "Open {provider} (prompt copied to clipboard)"
+            },
+            "alternativeFrameworks": {
+                "title": "Alternative frameworks",
+                "whenToUse": "When to use:",
+                "useButton": "Use this framework",
+                "empty": "No alternative frameworks suggested",
+                "confirm": {
+                    "title": "Switch framework",
+                    "message": "This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?"
+                }
+            },
+            "answeredList": {
+                "title": "Your previous answers",
+                "skipped": "Skipped"
+            },
+            "bulkQuestions": {
+                "submitAll": "Submit all answers",
+                "backToSingle": "Back to one-at-a-time",
+                "answerLabel": "Answer {number}",
+                "answerPlaceholder": "Type your answer here, or record a quick note..."
+            },
+            "clarifyingQuestions": {
+                "title": "Clarifying questions",
+                "allQuestions": "Show all questions",
+                "singleQuestion": "One at a time",
+                "edit": "Edit answers",
+                "cancelEdit": "Cancel edit",
+                "submitAll": "Submit all answers",
+                "submitEdited": "Optimize prompt with edited answers",
+                "optionalQuestion": "{count} optional question (to improve your prompt)",
+                "optionalQuestions": "{count} optional questions (to improve your prompt)",
+                "rationale": {
+                    "show": "Show question rationale",
+                    "hide": "Hide question rationale"
+                },
+                "errors": {
+                    "save": "Failed to save answer. Please try again.",
+                    "submit": "Failed to submit answers.",
+                    "edit": "Failed to optimize with edited answers. Please try again."
+                }
+            },
+            "preAnalysisQuestions": {
+                "title": "Quick queries",
+                "edit": "Edit answers",
+                "optimise": "Optimize prompt",
+                "generateNewPrompt": "Generate new prompt",
+                "otherOption": "Other (please specify)",
+                "answerLabel": "Answer {number}",
+                "answerPlaceholder": "Type your answer here...",
+                "additionalDetailsLabel": "Additional details (optional):",
+                "additionalDetailsPlaceholder": "Add any additional information...",
+                "characterCount": "{count}/{max} characters",
+                "errors": {
+                    "submit": "Failed to submit answers. Please try again.",
+                    "continue": "Failed to continue to analysis. Please try again."
+                },
+                "rationale": {
+                    "show": "Show question rationale",
+                    "hide": "Hide question rationale"
+                }
+            },
+            "taskInformation": {
+                "title": "Your task",
+                "editTitle": "Edit task & create new optimization",
+                "editAction": "Edit task",
+                "descriptionLabel": "Task description",
+                "descriptionEditLabel": "Edit task description",
+                "descriptionPlaceholder": "Describe the task you want to create a prompt for...",
+                "optimise": "Optimize prompt"
+            },
+            "taskTraitAlignment": {
+                "title": "Task-trait alignment",
+                "amplified": "Amplified traits (strengths leveraged)",
+                "alignsWith": "aligns with {requirement}",
+                "counterbalanced": "Counterbalanced traits (adjusted for)",
+                "opposes": "opposes {requirement}",
+                "adjustmentApplied": "Adjustment applied:",
+                "neutral": "Neutral traits ({count})"
+            },
+            "personalityAdjustments": {
+                "title": "Personality adjustments",
+                "level": "Adjustment level",
+                "applied": "Adjustments applied",
+                "tiers": {
+                    "full": "Full",
+                    "partial": "Partial",
+                    "none": "None"
+                }
+            },
+            "personalityAdjustmentsSummary": {
+                "title": "Personality adjustments applied"
+            },
+            "apiUsage": {
+                "title": "API usage",
+                "preAnalysis": "Pre-analysis workflow",
+                "analysis": "Analysis workflow",
+                "generation": "Generation workflow",
+                "pass": "Pass {number}",
+                "modelLabel": "Model:",
+                "inputTokensLabel": "Input tokens:",
+                "outputTokensLabel": "Output tokens:",
+                "totalLabel": "Total:",
+                "costLabel": "Cost:",
+                "model": "Model",
+                "inputTokens": "Input tokens",
+                "outputTokens": "Output tokens",
+                "total": "Total",
+                "costHeader": "Cost (GBP)",
+                "combinedTotalLabel": "Combined total:",
+                "totalCostLabel": "Total cost:",
+                "tokens": "{count} tokens",
+                "summary": "Summary",
+                "combinedTotal": "Combined total",
+                "empty": "No API usage data available"
+            }
+        },
+        "progress": {
+            "almostDone": "Almost done",
+            "secondsRemaining": "{seconds} seconds remaining",
+            "percentComplete": "{percent}% complete",
+            "timeRemaining": "Time remaining: {time}",
+            "preAnalysis": {
+                "title": "Preparing quick questions",
+                "subtitle": "Clarifying your task before analysis.",
+                "pipeline": "Pre-analysis pipeline",
+                "stages": {
+                    "understand": {
+                        "label": "Understand",
+                        "activity": "Understanding your task",
+                        "description": "Reviewing your description and intent."
+                    },
+                    "identify": {
+                        "label": "Identify",
+                        "activity": "Identifying missing details",
+                        "description": "Looking for gaps in context."
+                    },
+                    "prepare": {
+                        "label": "Prepare",
+                        "activity": "Preparing questions",
+                        "description": "Drafting quick clarifying questions."
+                    }
+                }
+            },
+            "analysis": {
+                "title": "Analyzing your task",
+                "subtitle": "Selecting the best framework for your goal.",
+                "pipeline": "Analysis pipeline",
+                "stages": {
+                    "classifying": {
+                        "label": "Classify",
+                        "activity": "Classifying the task",
+                        "description": "Determining the task type and complexity."
+                    },
+                    "analyzing": {
+                        "label": "Analyze",
+                        "activity": "Analyzing requirements",
+                        "description": "Identifying constraints and intent."
+                    },
+                    "framework": {
+                        "label": "Framework",
+                        "activity": "Selecting a framework",
+                        "description": "Choosing the best structure for your prompt."
+                    },
+                    "personalizing": {
+                        "label": "Personalize",
+                        "activity": "Personalizing the prompt",
+                        "description": "Adapting the tone to your preferences."
+                    },
+                    "questions": {
+                        "label": "Questions",
+                        "activity": "Preparing questions",
+                        "description": "Drafting clarifying questions."
+                    }
+                }
+            },
+            "generation": {
+                "title": "Generating your prompt",
+                "subtitle": "Building a structured prompt with your answers.",
+                "pipeline": "Generation pipeline",
+                "errorTitle": "Generation failed",
+                "errorDescription": "Please try again. If the problem persists, refresh the page.",
+                "retryButton": "Retry",
+                "backButton": "Go back",
+                "stages": {
+                    "framework": {
+                        "label": "Framework",
+                        "activity": "Applying the framework",
+                        "description": "Structuring the prompt."
+                    },
+                    "personality": {
+                        "label": "Personality",
+                        "activity": "Adjusting tone",
+                        "description": "Aligning with your style."
+                    },
+                    "context": {
+                        "label": "Context",
+                        "activity": "Adding context",
+                        "description": "Incorporating your details."
+                    },
+                    "prompt": {
+                        "label": "Prompt",
+                        "activity": "Drafting the prompt",
+                        "description": "Composing the final output."
+                    },
+                    "final": {
+                        "label": "Finalize",
+                        "activity": "Finalizing output",
+                        "description": "Polishing and formatting."
+                    }
+                }
+            }
+        },
         "taskInput": {
             "label": "What would you like to accomplish?",
             "placeholder": "Describe your task in detail...",
-            "submit": "Analyse Task"
+            "submit": "Analyze Task"
         },
         "processing": {
-            "analysing": "Analysing your task...",
+            "analysing": "Analyzing your task...",
             "generating": "Generating your optimized prompt..."
         },
         "result": {
@@ -351,6 +1250,360 @@
             "professional": "Professional",
             "team": "Team",
             "preferences": "Preferences"
+        },
+        "profileInfo": {
+            "title": "Profile Information",
+            "subtitle": "Update your name and email address.",
+            "fields": {
+                "name": "Name",
+                "email": "Email"
+            },
+            "emailVerification": {
+                "notice": "Your email address is unverified.",
+                "resend": "Click here to re-send the verification email."
+            },
+            "notifications": {
+                "updated": "Profile information updated successfully"
+            }
+        },
+        "password": {
+            "title": "Update Password",
+            "subtitle": "Ensure your account is using a long, random password to stay secure.",
+            "fields": {
+                "current": "Current Password",
+                "new": "New Password",
+                "confirm": "Confirm Password"
+            },
+            "notifications": {
+                "updated": "Password updated successfully"
+            }
+        },
+        "personality": {
+            "title": "Your Personality",
+            "subtitle": "Update your personality type to get more personalized AI prompts.",
+            "fields": {
+                "type": "Personality Type",
+                "identity": "Identity"
+            },
+            "placeholders": {
+                "type": "Your personality type"
+            },
+            "identity": {
+                "assertive": "Assertive (A)",
+                "turbulent": "Turbulent (T)",
+                "help": "Please select Assertive or Turbulent to complete your personality type"
+            },
+            "selected": "Selected: {type}",
+            "traits": {
+                "toggleAdd": "+ Add",
+                "toggleHide": "- Hide",
+                "label": "Trait Percentages (optional)",
+                "sourcePrefix": "Enter your trait percentages from",
+                "sourceLink": "16personalities.com",
+                "fields": {
+                    "mind": "Introversion/Extraversion",
+                    "energy": "Intuitive/Observant",
+                    "nature": "Thinking/Feeling",
+                    "tactics": "Judging/Prospecting",
+                    "identity": "Assertive/Turbulent"
+                }
+            },
+            "actions": {
+                "enterTask": "Enter your Task"
+            },
+            "notifications": {
+                "updated": "Personality type updated successfully",
+                "cleared": "Personality information cleared",
+                "clearFailed": "Failed to clear personality information"
+            },
+            "clearConfirm": {
+                "title": "Clear Personality Information",
+                "message": "Are you sure you want to clear all personality information?"
+            }
+        },
+        "location": {
+            "title": "Location & Language",
+            "subtitle": "Set your location and language preferences for better optimized AI prompts.",
+            "fields": {
+                "country": "Country",
+                "region": "Region/State",
+                "city": "City",
+                "timezone": "Timezone",
+                "currency": "Currency",
+                "language": "Language"
+            },
+            "placeholders": {
+                "country": "Select country",
+                "region": "e.g., California, Lancashire",
+                "city": "e.g., San Francisco, London",
+                "timezone": "Select timezone",
+                "currency": "Select currency",
+                "language": "Select language"
+            },
+            "actions": {
+                "save": "Save Location",
+                "detect": "Auto-Detect"
+            },
+            "notifications": {
+                "updated": "Location updated successfully",
+                "detected": "Location detected successfully",
+                "detectFailed": "Failed to detect location",
+                "cleared": "Location cleared successfully",
+                "clearFailed": "Failed to clear location"
+            },
+            "clearConfirm": {
+                "title": "Clear Location",
+                "message": "Are you sure you want to clear all location data?"
+            }
+        },
+        "professional": {
+            "title": "Professional Context",
+            "subtitle": "Tell us about your professional background to help optimize prompts for your role.",
+            "fields": {
+                "jobTitle": "Job Title",
+                "industry": "Industry",
+                "experienceLevel": "Experience Level",
+                "companySize": "Company Size"
+            },
+            "placeholders": {
+                "jobTitle": "e.g., Software Engineer, Product Manager",
+                "industry": "e.g., Technology",
+                "experienceLevel": "Select your level",
+                "companySize": "Select company size"
+            },
+            "help": {
+                "jobTitle": "Your current or primary job title",
+                "industry": "Your industry or sector"
+            },
+            "options": {
+                "entry": "Entry Level",
+                "mid": "Mid-Level",
+                "senior": "Senior",
+                "expert": "Expert/Principal"
+            },
+            "companySize": {
+                "solo": "Freelancer/Solo",
+                "small": "Small (2-10 people)",
+                "medium": "Medium (11-100 people)",
+                "large": "Large (100-1000 people)",
+                "enterprise": "Enterprise (1000+ people)"
+            },
+            "actions": {
+                "save": "Save Professional Context"
+            },
+            "notifications": {
+                "updated": "Professional information updated successfully",
+                "cleared": "Professional information cleared successfully",
+                "clearFailed": "Failed to clear professional information"
+            },
+            "clearConfirm": {
+                "title": "Clear Professional Context",
+                "message": "Are you sure you want to clear all professional information?"
+            }
+        },
+        "team": {
+            "title": "Team & Work Context",
+            "subtitle": "Share information about your team structure and work environment.",
+            "fields": {
+                "teamSize": "Team Size",
+                "role": "Your Role",
+                "workMode": "Work Mode"
+            },
+            "placeholders": {
+                "teamSize": "Select team size",
+                "role": "Select your role",
+                "workMode": "Select work mode"
+            },
+            "options": {
+                "size": {
+                    "solo": "Just Me (Solo)",
+                    "small": "Small (2-5 people)",
+                    "medium": "Medium (6-20 people)",
+                    "large": "Large (20+ people)"
+                },
+                "role": {
+                    "individual": "Individual Contributor",
+                    "lead": "Team Lead",
+                    "manager": "Manager",
+                    "director": "Director",
+                    "executive": "Executive"
+                },
+                "mode": {
+                    "office": "Office (On-Site)",
+                    "hybrid": "Hybrid",
+                    "remote": "Remote",
+                    "freelance": "Freelance"
+                }
+            },
+            "actions": {
+                "save": "Save Team Context"
+            },
+            "notifications": {
+                "updated": "Team context updated successfully",
+                "cleared": "Team information cleared successfully",
+                "clearFailed": "Failed to clear team information"
+            },
+            "clearConfirm": {
+                "title": "Clear Team & Work Context",
+                "message": "Are you sure you want to clear all team and work information?"
+            }
+        },
+        "budget": {
+            "title": "Budget & Tool Preferences",
+            "subtitle": "Tell us about your budget for tools and services so we can recommend appropriate solutions.",
+            "fieldLabel": "Budget Preference",
+            "actions": {
+                "save": "Save Budget Preferences"
+            },
+            "options": {
+                "freeOnly": {
+                    "label": "Free Only",
+                    "description": "I only use free tools and services"
+                },
+                "freeFirst": {
+                    "label": "Prefer Free",
+                    "description": "I prefer free options but will pay if necessary"
+                },
+                "mixed": {
+                    "label": "Mixed",
+                    "description": "I use a mix of free and premium tools"
+                },
+                "premiumOk": {
+                    "label": "Premium OK",
+                    "description": "I'm comfortable using premium tools"
+                },
+                "enterprise": {
+                    "label": "Enterprise",
+                    "description": "I have access to enterprise solutions"
+                }
+            },
+            "notifications": {
+                "updated": "Budget preferences updated successfully",
+                "cleared": "Budget preferences cleared successfully",
+                "clearFailed": "Failed to clear budget preferences"
+            },
+            "clearConfirm": {
+                "title": "Clear Budget Preferences",
+                "message": "Are you sure you want to clear your budget preferences?"
+            }
+        },
+        "tools": {
+            "title": "Tools & Technologies",
+            "subtitle": "Share the tools and programming languages you work with to improve prompt recommendations.",
+            "fields": {
+                "preferred": "Preferred Tools (Click to select)",
+                "primaryLanguage": "Primary Programming Language"
+            },
+            "placeholders": {
+                "primaryLanguage": "Select language"
+            },
+            "categories": {
+                "operatingSystems": "Operating Systems",
+                "idesEditors": "IDEs & Editors",
+                "cloudPlatforms": "Cloud Platforms",
+                "aiMlTools": "AI & ML Tools",
+                "designTools": "Design Tools",
+                "projectManagement": "Project Management"
+            },
+            "selectedCount": "You've selected {count} tool(s)",
+            "actions": {
+                "save": "Save Tools & Languages"
+            },
+            "notifications": {
+                "updated": "Tools & languages updated successfully",
+                "cleared": "Tools & technologies cleared successfully",
+                "clearFailed": "Failed to clear tools & technologies"
+            },
+            "clearConfirm": {
+                "title": "Clear Tools & Technologies",
+                "message": "Are you sure you want to clear all tools and programming languages?"
+            }
+        },
+        "uiComplexity": {
+            "title": "Interface Complexity",
+            "subtitle": "Choose how much detail you'd like to see when creating prompts.",
+            "fieldLabel": "Interface Mode",
+            "options": {
+                "simple": "Simple",
+                "advanced": "Advanced"
+            },
+            "help": {
+                "simple": "Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details.",
+                "advanced": "Shows all features including task classification, cognitive requirements, and personality insights."
+            },
+            "notifications": {
+                "updated": "Interface complexity updated successfully"
+            }
+        },
+        "deleteAccount": {
+            "title": "Delete Account",
+            "subtitle": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
+            "actions": {
+                "open": "Delete Account",
+                "confirm": "Delete Account"
+            },
+            "modal": {
+                "title": "Are you sure you want to delete your account?",
+                "description": "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account."
+            }
+        }
+    },
+    "promptBuilder": {
+        "admin": {
+            "promptRun": "Prompt Run",
+            "backToTasks": "Back to Tasks"
+        }
+    },
+    "legal": {
+        "lastUpdated": "Last updated",
+        "privacy": {
+            "title": "Privacy Policy"
+        },
+        "terms": {
+            "title": "Terms of Use"
+        },
+        "cookies": {
+            "title": "Cookie Policy",
+            "alwaysActive": "Always Active"
+        }
+    },
+    "workflow": {
+        "index": {
+            "title": "Workflow System",
+            "subtitle": "Debug and manage n8n workflows",
+            "howToUse": "How to Use",
+            "infoPages": {
+                "title": "Workflow pages:",
+                "description": "Debug individual workflows, inspect input/output, and test JavaScript code"
+            },
+            "infoDocuments": {
+                "title": "Reference Documents:",
+                "description": "View and edit the markdown documents used in workflows, then embed them into the workflow JSON files"
+            },
+            "infoFrameworks": {
+                "title": "Framework Templates:",
+                "description": "60+ different prompting frameworks available for use in workflow optimisation"
+            },
+            "workflow0": {
+                "title": "Workflow 0",
+                "subtitle": "Pre-Analysis Workflow",
+                "description": "Gathers clarifying questions based on task classification"
+            },
+            "workflow1": {
+                "title": "Workflow 1",
+                "subtitle": "Question Generation Workflow",
+                "description": "Generates task classification and clarifying questions"
+            },
+            "workflow2": {
+                "title": "Workflow 2",
+                "subtitle": "Prompt Optimization Workflow",
+                "description": "Generates optimized prompts using selected frameworks"
+            },
+            "referenceDocs": {
+                "title": "Reference Documents",
+                "subtitle": "Document Management",
+                "description": "View, edit, and manage reference documents"
+            }
         }
     },
     "language": {
@@ -361,7 +1614,7 @@
     "errors": {
         "generic": "Something went wrong. Please try again.",
         "notFound": "Page not found",
-        "unauthorized": "You are not authorised to access this page.",
+        "unauthorized": "You are not authorized to access this page.",
         "serverError": "Server error. Please try again later."
     }
 }

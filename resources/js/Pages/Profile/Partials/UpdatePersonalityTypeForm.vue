@@ -14,6 +14,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     personalityTypes: Record<string, string>;
@@ -36,6 +37,7 @@ const emit = defineEmits<{
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const { success, error } = useNotification();
+const { t } = useI18n();
 
 // Load from user data or visitor props
 const savedPersonalityType = props.visitorMode
@@ -117,7 +119,7 @@ const submit = () => {
     form.patch(route(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
-            success('Personality type updated successfully');
+            success(t('profile.personality.notifications.updated'));
             emit('saved');
 
             // If we're on the prompt builder, navigate back there instead of profile
@@ -140,9 +142,12 @@ const { confirm } = useAlert();
 
 const clearPersonality = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all personality information?',
-        'Clear Personality Information',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.personality.clearConfirm.message'),
+        t('profile.personality.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -176,7 +181,7 @@ const clearPersonality = async () => {
                 form.traitPercentages.nature = null;
                 form.traitPercentages.tactics = null;
                 form.traitPercentages.identity = null;
-                success('Personality information cleared');
+                success(t('profile.personality.notifications.cleared'));
 
                 // If we're on the prompt builder, navigate back there instead of profile
                 if (isOnPromptBuilder) {
@@ -184,7 +189,7 @@ const clearPersonality = async () => {
                 }
             },
             onError: () => {
-                error('Failed to clear personality information');
+                error(t('profile.personality.notifications.clearFailed'));
             },
         });
     }
@@ -195,8 +200,8 @@ const clearPersonality = async () => {
     <!-- Collapsible version for profile page -->
     <section v-if="collapsible">
         <CollapsibleSection
-            title="Your Personality"
-            subtitle="Update your personality type to get more personalised AI prompts."
+            :title="$t('profile.personality.title')"
+            :subtitle="$t('profile.personality.subtitle')"
             data-testid="personality"
             icon="personality"
         >
@@ -222,10 +227,12 @@ const clearPersonality = async () => {
                         id="personality-base"
                         v-model="personalityBase"
                         class="max-w-sm"
-                        label="Personality Type"
+                        :label="$t('profile.personality.fields.type')"
                         :options="personalityTypeOptions"
                         :error="form.errors.personalityType"
-                        placeholder="Your personality type"
+                        :placeholder="
+                            $t('profile.personality.placeholders.type')
+                        "
                         :autofocus="true"
                     />
 
@@ -233,7 +240,7 @@ const clearPersonality = async () => {
                     <div v-if="personalityBase">
                         <InputLabel
                             for="identity"
-                            value="Identity"
+                            :value="$t('profile.personality.fields.identity')"
                             :required="true"
                         />
                         <div class="mt-2 flex gap-6">
@@ -242,7 +249,9 @@ const clearPersonality = async () => {
                                 v-model="identity"
                                 name="identity"
                                 value="A"
-                                label="Assertive (A)"
+                                :label="
+                                    $t('profile.personality.identity.assertive')
+                                "
                                 :required="true"
                             />
                             <FormRadio
@@ -250,7 +259,9 @@ const clearPersonality = async () => {
                                 v-model="identity"
                                 name="identity"
                                 value="T"
-                                label="Turbulent (T)"
+                                :label="
+                                    $t('profile.personality.identity.turbulent')
+                                "
                                 :required="true"
                             />
                         </div>
@@ -261,7 +272,11 @@ const clearPersonality = async () => {
                         v-if="fullPersonalityType"
                         class="max-w-sm rounded-md bg-indigo-50 p-2 text-indigo-900 dark:bg-indigo-100"
                     >
-                        Selected: {{ fullPersonalityType }}
+                        {{
+                            $t('profile.personality.selected', {
+                                type: fullPersonalityType,
+                            })
+                        }}
                     </p>
                 </div>
 
@@ -272,18 +287,24 @@ const clearPersonality = async () => {
                         type="button"
                         @click="showTraitPercentages = !showTraitPercentages"
                     >
-                        {{ showTraitPercentages ? '− Hide' : '+ Add' }}
-                        Trait Percentages (optional)
+                        {{
+                            showTraitPercentages
+                                ? $t('profile.personality.traits.toggleHide')
+                                : $t('profile.personality.traits.toggleAdd')
+                        }}
+                        {{ $t('profile.personality.traits.label') }}
                     </ButtonText>
 
                     <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                         <p class="text-indigo-600">
-                            Enter your trait percentages from
+                            {{ $t('profile.personality.traits.sourcePrefix') }}
                             <LinkText
                                 href="https://16personalities.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                >16personalities.com</LinkText
+                                >{{
+                                    $t('profile.personality.traits.sourceLink')
+                                }}</LinkText
                             >.
                         </p>
 
@@ -293,7 +314,11 @@ const clearPersonality = async () => {
                                     id="mind"
                                     v-model="form.traitPercentages.mind"
                                     type="number"
-                                    label="Introversion/Extraversion"
+                                    :label="
+                                        $t(
+                                            'profile.personality.traits.fields.mind',
+                                        )
+                                    "
                                     :min="50"
                                     :max="100"
                                     class="pr-6 text-right text-lg!"
@@ -310,7 +335,11 @@ const clearPersonality = async () => {
                                     id="energy"
                                     v-model="form.traitPercentages.energy"
                                     type="number"
-                                    label="Intuitive/Observant"
+                                    :label="
+                                        $t(
+                                            'profile.personality.traits.fields.energy',
+                                        )
+                                    "
                                     :min="50"
                                     :max="100"
                                     class="pr-6 text-right text-lg!"
@@ -327,7 +356,11 @@ const clearPersonality = async () => {
                                     id="nature"
                                     v-model="form.traitPercentages.nature"
                                     type="number"
-                                    label="Thinking/Feeling"
+                                    :label="
+                                        $t(
+                                            'profile.personality.traits.fields.nature',
+                                        )
+                                    "
                                     :min="50"
                                     :max="100"
                                     class="pr-6 text-right text-lg!"
@@ -344,7 +377,11 @@ const clearPersonality = async () => {
                                     id="tactics"
                                     v-model="form.traitPercentages.tactics"
                                     type="number"
-                                    label="Judging/Prospecting"
+                                    :label="
+                                        $t(
+                                            'profile.personality.traits.fields.tactics',
+                                        )
+                                    "
                                     :min="50"
                                     :max="100"
                                     class="pr-6 text-right text-lg!"
@@ -361,7 +398,11 @@ const clearPersonality = async () => {
                                     id="identity-percent"
                                     v-model="form.traitPercentages.identity"
                                     type="number"
-                                    label="Assertive/Turbulent"
+                                    :label="
+                                        $t(
+                                            'profile.personality.traits.fields.identity',
+                                        )
+                                    "
                                     :min="50"
                                     :max="100"
                                     class="pr-6 text-right text-lg!"
@@ -383,12 +424,12 @@ const clearPersonality = async () => {
                         :loading="form.processing"
                         icon="download"
                     >
-                        Save
+                        {{ $t('common.buttons.save') }}
                     </ButtonPrimary>
 
                     <ButtonTrash
                         v-if="personalityBase"
-                        label="Clear"
+                        :label="$t('common.buttons.clear')"
                         @clear="clearPersonality"
                     />
 
@@ -404,7 +445,7 @@ const clearPersonality = async () => {
                             ref="taskCtaButton"
                             :href="route('prompt-builder.index')"
                         >
-                            Enter your Task
+                            {{ $t('profile.personality.actions.enterTask') }}
                             <DynamicIcon name="arrow-right" class="h-4 w-4" />
                         </LinkButton>
                     </Transition>
@@ -436,23 +477,27 @@ const clearPersonality = async () => {
                 id="personality-base"
                 v-model="personalityBase"
                 class="max-w-sm"
-                label="Personality Type"
+                :label="$t('profile.personality.fields.type')"
                 :options="personalityTypeOptions"
                 :error="form.errors.personalityType"
-                placeholder="Your personality type"
+                :placeholder="$t('profile.personality.placeholders.type')"
                 :autofocus="true"
             />
 
             <!-- Identity Selection -->
             <div v-if="personalityBase">
-                <InputLabel for="identity" value="Identity" :required="true" />
+                <InputLabel
+                    for="identity"
+                    :value="$t('profile.personality.fields.identity')"
+                    :required="true"
+                />
                 <div class="mt-2 flex gap-6">
                     <FormRadio
                         id="identity-assertive"
                         v-model="identity"
                         name="identity"
                         value="A"
-                        label="Assertive (A)"
+                        :label="$t('profile.personality.identity.assertive')"
                         :required="true"
                     />
                     <FormRadio
@@ -460,7 +505,7 @@ const clearPersonality = async () => {
                         v-model="identity"
                         name="identity"
                         value="T"
-                        label="Turbulent (T)"
+                        :label="$t('profile.personality.identity.turbulent')"
                         :required="true"
                     />
                 </div>
@@ -472,18 +517,24 @@ const clearPersonality = async () => {
                 type="button"
                 @click="showTraitPercentages = !showTraitPercentages"
             >
-                {{ showTraitPercentages ? '− Hide' : '+ Add' }}
-                Trait Percentages (optional)
+                {{
+                    showTraitPercentages
+                        ? $t('profile.personality.traits.toggleHide')
+                        : $t('profile.personality.traits.toggleAdd')
+                }}
+                {{ $t('profile.personality.traits.label') }}
             </ButtonText>
 
             <div v-if="showTraitPercentages" class="mt-4 space-y-3">
                 <p class="text-indigo-600">
-                    Enter your trait percentages from
+                    {{ $t('profile.personality.traits.sourcePrefix') }}
                     <LinkText
                         href="https://16personalities.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        >16personalities.com</LinkText
+                        >{{
+                            $t('profile.personality.traits.sourceLink')
+                        }}</LinkText
                     >.
                 </p>
 
@@ -493,7 +544,9 @@ const clearPersonality = async () => {
                             id="mind"
                             v-model="form.traitPercentages.mind"
                             type="number"
-                            label="Introversion/Extraversion"
+                            :label="
+                                $t('profile.personality.traits.fields.mind')
+                            "
                             :min="50"
                             :max="100"
                             class="pr-6 text-right text-lg!"
@@ -510,7 +563,9 @@ const clearPersonality = async () => {
                             id="energy"
                             v-model="form.traitPercentages.energy"
                             type="number"
-                            label="Intuitive/Observant"
+                            :label="
+                                $t('profile.personality.traits.fields.energy')
+                            "
                             :min="50"
                             :max="100"
                             class="pr-6 text-right text-lg!"
@@ -527,7 +582,9 @@ const clearPersonality = async () => {
                             id="nature"
                             v-model="form.traitPercentages.nature"
                             type="number"
-                            label="Thinking/Feeling"
+                            :label="
+                                $t('profile.personality.traits.fields.nature')
+                            "
                             :min="50"
                             :max="100"
                             class="pr-6 text-right text-lg!"
@@ -544,7 +601,9 @@ const clearPersonality = async () => {
                             id="tactics"
                             v-model="form.traitPercentages.tactics"
                             type="number"
-                            label="Judging/Prospecting"
+                            :label="
+                                $t('profile.personality.traits.fields.tactics')
+                            "
                             :min="50"
                             :max="100"
                             class="pr-6 text-right text-lg!"
@@ -561,7 +620,9 @@ const clearPersonality = async () => {
                             id="identity-percent"
                             v-model="form.traitPercentages.identity"
                             type="number"
-                            label="Assertive/Turbulent"
+                            :label="
+                                $t('profile.personality.traits.fields.identity')
+                            "
                             :min="50"
                             :max="100"
                             class="pr-6 text-right text-lg!"
@@ -585,12 +646,11 @@ const clearPersonality = async () => {
                 :loading="form.processing"
                 icon="download"
             >
-                Save
+                {{ $t('common.buttons.save') }}
             </ButtonPrimary>
 
             <p v-if="personalityBase && !identity" class="text-sm">
-                Please select Assertive or Turbulent to complete your
-                personality type
+                {{ $t('profile.personality.identity.help') }}
             </p>
         </div>
     </form>

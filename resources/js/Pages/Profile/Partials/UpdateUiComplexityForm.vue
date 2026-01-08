@@ -5,6 +5,7 @@ import InputLabel from '@/Components/Base/InputLabel.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     uiComplexity: 'simple' | 'advanced';
@@ -12,6 +13,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
 const form = useForm({
     uiComplexity: props.uiComplexity,
@@ -21,7 +23,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Interface complexity updated successfully');
+            success(t('profile.uiComplexity.notifications.updated'));
         }
     },
 );
@@ -52,22 +54,25 @@ watch(
 <template>
     <section>
         <CollapsibleSection
-            title="Interface Complexity"
-            subtitle="Choose how much detail you'd like to see when creating prompts."
+            :title="$t('profile.uiComplexity.title')"
+            :subtitle="$t('profile.uiComplexity.subtitle')"
             data-testid="ui-complexity"
             icon="cog"
         >
             <div class="space-y-6">
                 <div>
-                    <InputLabel for="uiComplexity" value="Interface Mode" />
+                    <InputLabel
+                        for="uiComplexity"
+                        :value="$t('profile.uiComplexity.fieldLabel')"
+                    />
                     <div class="mt-3 space-y-3">
                         <FormRadio
                             id="ui-simple"
                             v-model="form.uiComplexity"
                             name="uiComplexity"
                             value="simple"
-                            label="Simple"
-                            help-text="Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details."
+                            :label="$t('profile.uiComplexity.options.simple')"
+                            :help-text="$t('profile.uiComplexity.help.simple')"
                         />
 
                         <FormRadio
@@ -75,8 +80,10 @@ watch(
                             v-model="form.uiComplexity"
                             name="uiComplexity"
                             value="advanced"
-                            label="Advanced"
-                            help-text="Shows all features including task classification, cognitive requirements, and personality insights."
+                            :label="$t('profile.uiComplexity.options.advanced')"
+                            :help-text="
+                                $t('profile.uiComplexity.help.advanced')
+                            "
                         />
                     </div>
                 </div>

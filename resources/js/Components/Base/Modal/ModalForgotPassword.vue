@@ -62,16 +62,14 @@ const close = () => {
 <template>
     <BaseAuthModal
         :show="show"
-        title="Forgot Password"
+        :title="$t('auth.modalForgotPassword.title')"
         :show-google-divider="false"
         @close="close"
         @submit="submit"
     >
         <template #status>
             <div class="mt-4 text-sm text-indigo-600">
-                Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that will
-                allow you to choose a new one.
+                {{ $t('auth.modalForgotPassword.description') }}
             </div>
 
             <div
@@ -86,7 +84,7 @@ const close = () => {
             <FormInput
                 id="forgot-password-email"
                 v-model="form.email"
-                label="Email"
+                :label="$t('auth.modalForgotPassword.emailLabel')"
                 type="email"
                 :error="form.errors.email"
                 required
@@ -101,7 +99,7 @@ const close = () => {
                 type="button"
                 @click="emit('switchToLogin', form.email)"
             >
-                Back to log in
+                {{ $t('auth.modalForgotPassword.backToLogin') }}
             </ButtonText>
         </template>
 
@@ -111,7 +109,7 @@ const close = () => {
                 :disabled="form.processing"
                 :loading="form.processing"
             >
-                Email Password Reset Link
+                {{ $t('auth.modalForgotPassword.submit') }}
             </ButtonPrimary>
         </template>
     </BaseAuthModal>

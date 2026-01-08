@@ -11,6 +11,7 @@ import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 import AnsweredList from './AnsweredList.vue';
 import BulkQuestions from './BulkQuestions.vue';
 
@@ -29,6 +30,7 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
+const { t } = useI18n();
 
 const allQuestions = computed<ClarifyingQuestion[]>(() => {
     const raw =
@@ -223,7 +225,7 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
         submitError.value =
             axiosError?.response?.data?.error?.message ||
             axiosError?.message ||
-            'Failed to save answer. Please try again.';
+            t('promptBuilder.components.clarifyingQuestions.errors.save');
         throw error;
     } finally {
         isSubmitting.value = false;
@@ -291,7 +293,7 @@ const submitAllAnswers = async () => {
         submitError.value =
             axiosError?.response?.data?.error?.message ||
             axiosError?.message ||
-            'Failed to submit answers';
+            t('promptBuilder.components.clarifyingQuestions.errors.submit');
     } finally {
         isSubmitting.value = false;
     }
@@ -321,8 +323,9 @@ const submitEditedAnswers = () => {
                 window.scrollTo(0, 0);
             },
             onError: () => {
-                submitError.value =
-                    'Failed to optimise with edited answers. Please try again.';
+                submitError.value = t(
+                    'promptBuilder.components.clarifyingQuestions.errors.edit',
+                );
             },
             onFinish: () => {
                 isSubmitting.value = false;
@@ -390,16 +393,28 @@ defineExpose({ focus });
 
 const bulkSubmitLabel = computed(() =>
     viewMode.value === 'editing'
-        ? 'Optimise Prompt with Edited Answers'
-        : 'Submit All Answers',
+        ? t('promptBuilder.components.clarifyingQuestions.submitEdited')
+        : t('promptBuilder.components.clarifyingQuestions.submitAll'),
 );
 
 const hasOptionalQuestions = computed(() => optionalQuestions.value.length > 0);
 
 const optionalQuestionsLabel = computed(() => {
     const count = optionalQuestions.value.length;
-    return `${count} optional question${count !== 1 ? 's' : ''} <span class="text-xs">(to improve your prompt)</span>`;
+    return count === 1
+        ? t('promptBuilder.components.clarifyingQuestions.optionalQuestion', {
+              count,
+          })
+        : t('promptBuilder.components.clarifyingQuestions.optionalQuestions', {
+              count,
+          });
 });
+
+const backLabel = computed(() =>
+    viewMode.value === 'editing'
+        ? t('promptBuilder.components.clarifyingQuestions.cancelEdit')
+        : undefined,
+);
 </script>
 
 <template>
@@ -416,7 +431,7 @@ const optionalQuestionsLabel = computed(() => {
             <h2
                 class="sr-only text-lg font-semibold text-indigo-900 sm:not-sr-only"
             >
-                Clarifying Questions
+                {{ $t('promptBuilder.components.clarifyingQuestions.title') }}
             </h2>
 
             <div
@@ -436,8 +451,12 @@ const optionalQuestionsLabel = computed(() => {
                     >
                         {{
                             showAllQuestions
-                                ? 'One at a time'
-                                : 'Show all questions'
+                                ? $t(
+                                      'promptBuilder.components.clarifyingQuestions.singleQuestion',
+                                  )
+                                : $t(
+                                      'promptBuilder.components.clarifyingQuestions.allQuestions',
+                                  )
                         }}
                     </ButtonSecondary>
                 </div>
@@ -456,7 +475,11 @@ const optionalQuestionsLabel = computed(() => {
                         @click="startEditingAnswers"
                     >
                         <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
-                        Edit Answers
+                        {{
+                            $t(
+                                'promptBuilder.components.clarifyingQuestions.edit',
+                            )
+                        }}
                     </ButtonSecondary>
                     <div
                         v-else-if="viewMode === 'editing'"
@@ -468,7 +491,7 @@ const optionalQuestionsLabel = computed(() => {
                             class="w-full sm:w-auto"
                             @click="cancelEditingAnswers"
                         >
-                            Cancel
+                            {{ $t('common.buttons.cancel') }}
                         </ButtonSecondary>
                         <ButtonPrimary
                             type="button"
@@ -479,7 +502,11 @@ const optionalQuestionsLabel = computed(() => {
                             class="w-full sm:w-auto"
                             @click="submitEditedAnswers"
                         >
-                            Optimise Prompt with Edited Answers
+                            {{
+                                $t(
+                                    'promptBuilder.components.clarifyingQuestions.submitEdited',
+                                )
+                            }}
                         </ButtonPrimary>
                     </div>
                 </div>
@@ -493,7 +520,15 @@ const optionalQuestionsLabel = computed(() => {
                 class="-ml-1 flex items-center gap-2 text-sm font-medium text-indigo-700 no-underline! hover:text-indigo-900"
                 @click="showQuestionRationale = !showQuestionRationale"
             >
-                {{ showQuestionRationale ? 'Hide' : 'Show' }} question rationale
+                {{
+                    showQuestionRationale
+                        ? $t(
+                              'promptBuilder.components.clarifyingQuestions.rationale.hide',
+                          )
+                        : $t(
+                              'promptBuilder.components.clarifyingQuestions.rationale.show',
+                          )
+                }}
                 <DynamicIcon
                     :name="
                         showQuestionRationale ? 'chevron-down' : 'chevron-right'
@@ -549,7 +584,7 @@ const optionalQuestionsLabel = computed(() => {
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
             :show-back="viewMode === 'answering'"
-            :back-label="viewMode === 'editing' ? 'Cancel edit' : undefined"
+            :back-label="backLabel"
             @update:answer="
                 (index: number, value: string) => (answers[index] = value)
             "

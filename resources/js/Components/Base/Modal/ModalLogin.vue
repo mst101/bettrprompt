@@ -65,7 +65,7 @@ const close = () => {
 <template>
     <BaseAuthModal
         :show="show"
-        title="Log in"
+        :title="$t('auth.modalLogin.title')"
         :show-google-divider="true"
         @close="close"
         @submit="submit"
@@ -78,7 +78,7 @@ const close = () => {
             <FormInput
                 id="login-email"
                 v-model="form.email"
-                label="Email"
+                :label="$t('auth.modalLogin.emailLabel')"
                 type="email"
                 :error="form.errors.email"
                 required
@@ -89,7 +89,7 @@ const close = () => {
             <FormInput
                 id="login-password"
                 v-model="form.password"
-                label="Password"
+                :label="$t('auth.modalLogin.passwordLabel')"
                 type="password"
                 :error="form.errors.password"
                 class="mt-4"
@@ -104,9 +104,9 @@ const close = () => {
                         v-model="form.remember"
                         name="remember"
                     />
-                    <span class="ms-2 text-sm text-indigo-600"
-                        >Remember me</span
-                    >
+                    <span class="ms-2 text-sm text-indigo-600">
+                        {{ $t('auth.modalLogin.rememberMe') }}
+                    </span>
                 </label>
             </div>
         </template>
@@ -118,7 +118,7 @@ const close = () => {
                     type="button"
                     @click="emit('switchToForgotPassword', form.email)"
                 >
-                    Forgot password?
+                    {{ $t('auth.modalLogin.forgotPassword') }}
                 </ButtonText>
 
                 <ButtonText
@@ -126,7 +126,7 @@ const close = () => {
                     type="button"
                     @click="emit('switchToRegister', form.email)"
                 >
-                    Need an account?
+                    {{ $t('auth.modalLogin.needAccount') }}
                 </ButtonText>
             </div>
         </template>
@@ -138,7 +138,7 @@ const close = () => {
                 :loading="form.processing"
                 class="ml-4 whitespace-nowrap"
             >
-                Log in
+                {{ $t('auth.modalLogin.submit') }}
             </ButtonPrimary>
         </template>
     </BaseAuthModal>

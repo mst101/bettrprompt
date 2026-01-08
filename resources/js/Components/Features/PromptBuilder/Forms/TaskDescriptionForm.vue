@@ -40,19 +40,35 @@ defineExpose({ focus });
 <template>
     <div>
         <p class="mb-6 max-w-4xl text-indigo-700">
-            Create optimised AI prompts using expert frameworks.
+            {{ $t('promptBuilder.components.taskDescriptionForm.intro') }}
             <span v-if="hasPersonalityType">
-                Prompts will be customised to your personality type and task
-                requirements.
+                {{
+                    $t(
+                        'promptBuilder.components.taskDescriptionForm.withPersonality',
+                    )
+                }}
             </span>
             <span v-else>
-                Prompts will be optimised for your specific task requirements.
+                {{
+                    $t(
+                        'promptBuilder.components.taskDescriptionForm.withoutPersonality',
+                    )
+                }}
                 <span v-if="isAuthenticated && isDismissed" class="block">
-                    You can further optimise your prompts by adding your
-                    personality type in
-                    <LinkText :href="route('profile.edit')">
-                        your profile settings</LinkText
-                    >.
+                    <i18n-t
+                        keypath="promptBuilder.components.taskDescriptionForm.profileHint"
+                        tag="span"
+                    >
+                        <template #link>
+                            <LinkText :href="route('profile.edit')">
+                                {{
+                                    $t(
+                                        'promptBuilder.components.taskDescriptionForm.profileHintLink',
+                                    )
+                                }}
+                            </LinkText>
+                        </template>
+                    </i18n-t>
                 </span>
             </span>
         </p>
@@ -63,11 +79,19 @@ defineExpose({ focus });
                 id="task-description"
                 ref="taskDescriptionTextarea"
                 :model-value="form.taskDescription"
-                label="Task Description"
+                :label="
+                    $t('promptBuilder.components.taskDescriptionForm.label')
+                "
                 :error="form.errors.taskDescription"
-                help-text="Minimum 10 characters. Be specific about your goals and requirements."
+                :help-text="
+                    $t('promptBuilder.components.taskDescriptionForm.helpText')
+                "
                 required
-                placeholder="Describe what you're trying to accomplish..."
+                :placeholder="
+                    $t(
+                        'promptBuilder.components.taskDescriptionForm.placeholder',
+                    )
+                "
                 @update:model-value="
                     (value) => emit('update:taskDescription', value)
                 "
@@ -95,8 +119,20 @@ defineExpose({ focus });
                         form.processing || form.taskDescription.length < 10
                     "
                 >
-                    <span v-if="form.processing">Processing...</span>
-                    <span v-else>Optimise Prompt</span>
+                    <span v-if="form.processing">
+                        {{
+                            $t(
+                                'promptBuilder.components.taskDescriptionForm.processing',
+                            )
+                        }}
+                    </span>
+                    <span v-else>
+                        {{
+                            $t(
+                                'promptBuilder.components.taskDescriptionForm.submit',
+                            )
+                        }}
+                    </span>
                 </ButtonPrimary>
             </div>
         </form>

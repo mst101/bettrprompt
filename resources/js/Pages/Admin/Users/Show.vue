@@ -15,6 +15,7 @@ import type { PromptRunResource } from '@/Types';
 import { truncateText } from '@/Utils/formatting/formatters';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface User {
     id: number;
@@ -54,6 +55,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const { localeRoute } = useLocaleRoute();
+const { t } = useI18n();
 
 const sortBy = (column: string) => {
     const currentSortBy = props.filters.sort_by;
@@ -206,18 +208,18 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
     const items: MetadataItem[] = [];
 
     items.push({
-        label: 'Name',
+        label: t('admin.users.metadata.name'),
         value: props.user.name,
     });
 
     items.push({
-        label: 'Email',
+        label: t('admin.users.metadata.email'),
         value: props.user.email,
     });
 
     if (props.user.personalityType) {
         items.push({
-            label: 'Personality',
+            label: t('admin.users.metadata.personality'),
             value: props.user.personalityType,
             badge: true,
             badgeColor: 'purple',
@@ -226,15 +228,15 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
 
     if (props.user.isAdmin) {
         items.push({
-            label: 'Role',
-            value: 'Admin',
+            label: t('admin.users.metadata.role'),
+            value: t('admin.users.metadata.adminRole'),
             badge: true,
             badgeColor: 'indigo',
         });
     }
 
     items.push({
-        label: 'Joined',
+        label: t('admin.users.metadata.joined'),
         value: new Date(props.user.createdAt).toLocaleDateString(),
     });
 
@@ -243,15 +245,15 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
 </script>
 
 <template>
-    <Head :title="`Admin - User: ${props.user.name}`" />
+    <Head :title="$t('admin.users.headTitleUser', { name: props.user.name })" />
     <AppLayout>
-        <HeaderPage title="User Details">
+        <HeaderPage :title="$t('admin.users.detailsTitle')">
             <template #actions>
                 <Link
                     :href="localeRoute('admin.users.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
-                    ← Back to Users
+                    {{ $t('admin.users.backToUsers') }}
                 </Link>
             </template>
         </HeaderPage>
@@ -262,7 +264,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
 
             <!-- Prompts Heading -->
             <div class="mt-6 flex items-baseline gap-2">
-                <h2 class="text-lg font-semibold text-indigo-900">Prompts</h2>
+                <h2 class="text-lg font-semibold text-indigo-900">
+                    {{ $t('admin.users.promptsTitle') }}
+                </h2>
                 <span class="text-sm text-indigo-500">
                     ({{ props.promptRunsCount }})
                 </span>
@@ -274,7 +278,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                     v-if="props.promptRuns.length === 0"
                     class="p-6 text-center text-indigo-500"
                 >
-                    <p>No prompts yet.</p>
+                    <p>{{ $t('admin.users.emptyPrompts') }}</p>
                 </div>
 
                 <div v-else>
@@ -293,7 +297,11 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
-                                            Task Description
+                                            {{
+                                                $t(
+                                                    'admin.users.table.taskDescription',
+                                                )
+                                            }}
                                         </TableHeaderSortable>
                                     </th>
                                     <th
@@ -306,7 +314,11 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
-                                            Framework
+                                            {{
+                                                $t(
+                                                    'admin.users.table.framework',
+                                                )
+                                            }}
                                         </TableHeaderSortable>
                                     </th>
                                     <th
@@ -319,7 +331,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
-                                            Status
+                                            {{ $t('admin.users.table.status') }}
                                         </TableHeaderSortable>
                                     </th>
                                     <th
@@ -332,7 +344,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
-                                            Created
+                                            {{
+                                                $t('admin.users.table.created')
+                                            }}
                                         </TableHeaderSortable>
                                     </th>
                                 </tr>
@@ -371,7 +385,10 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     <td
                                         class="hidden px-6 py-4 text-sm font-medium whitespace-nowrap text-indigo-900 lg:table-cell"
                                     >
-                                        {{ run.selectedFramework?.name || '—' }}
+                                        {{
+                                            run.selectedFramework?.name ||
+                                            $t('admin.common.notAvailable')
+                                        }}
                                     </td>
                                     <td
                                         class="hidden px-6 py-4 text-sm whitespace-nowrap sm:table-cell"
@@ -414,7 +431,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                 :href="pagination.prev_page_url"
                                 @click="handlePaginationClick('prev')"
                             >
-                                Previous
+                                {{ $t('admin.pagination.previous') }}
                             </LinkButton>
                         </div>
 
@@ -422,10 +439,12 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                             v-if="pagination.last_page > 1"
                             class="text-center text-sm text-indigo-700"
                         >
-                            Page
-                            {{ pagination.current_page }}
-                            of
-                            {{ pagination.last_page }}
+                            {{
+                                $t('admin.pagination.pageOf', {
+                                    current: pagination.current_page,
+                                    total: pagination.last_page,
+                                })
+                            }}
                         </p>
 
                         <div class="flex justify-end">
@@ -435,7 +454,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                 :href="pagination.next_page_url"
                                 @click="handlePaginationClick('next')"
                             >
-                                Next
+                                {{ $t('admin.pagination.next') }}
                             </LinkButton>
                         </div>
                     </div>
@@ -450,24 +469,22 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                             <div
                                 class="mb-3 space-y-1 text-center text-sm text-indigo-700"
                             >
-                                <p
+                                <i18n-t
                                     v-if="pagination.from && pagination.to"
+                                    keypath="admin.pagination.resultsSummary"
+                                    tag="p"
                                     class="text-center"
                                 >
-                                    Showing
                                     <span class="font-medium">{{
                                         pagination.from
                                     }}</span>
-                                    to
                                     <span class="font-medium">{{
                                         pagination.to
                                     }}</span>
-                                    of
                                     <span class="font-medium">{{
                                         pagination.total
                                     }}</span>
-                                    results
-                                </p>
+                                </i18n-t>
                             </div>
 
                             <!-- Per-page selector -->
@@ -478,7 +495,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     for="per-page"
                                     class="text-sm text-indigo-700"
                                 >
-                                    Show
+                                    {{ $t('admin.pagination.show') }}
                                 </label>
                                 <input
                                     id="per-page"
@@ -490,9 +507,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     @blur="changePerPage"
                                     @keydown.enter="changePerPage"
                                 />
-                                <span class="text-sm text-indigo-700"
-                                    >per page</span
-                                >
+                                <span class="text-sm text-indigo-700">
+                                    {{ $t('admin.pagination.perPage') }}
+                                </span>
                             </div>
                         </div>
 
@@ -502,24 +519,22 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                         >
                             <!-- Results info -->
                             <div>
-                                <p
+                                <i18n-t
                                     v-if="pagination.from && pagination.to"
+                                    keypath="admin.pagination.resultsSummary"
+                                    tag="p"
                                     class="text-sm text-indigo-700"
                                 >
-                                    Showing
                                     <span class="font-medium">{{
                                         pagination.from
                                     }}</span>
-                                    to
                                     <span class="font-medium">{{
                                         pagination.to
                                     }}</span>
-                                    of
                                     <span class="font-medium">{{
                                         pagination.total
                                     }}</span>
-                                    results
-                                </p>
+                                </i18n-t>
                             </div>
 
                             <!-- Per-page selector (centred) -->
@@ -528,7 +543,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     for="per-page-desktop"
                                     class="text-sm text-indigo-700"
                                 >
-                                    Show
+                                    {{ $t('admin.pagination.show') }}
                                 </label>
                                 <input
                                     id="per-page-desktop"
@@ -540,9 +555,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     @blur="changePerPage"
                                     @keydown.enter="changePerPage"
                                 />
-                                <span class="text-sm text-indigo-700"
-                                    >per page</span
-                                >
+                                <span class="text-sm text-indigo-700">
+                                    {{ $t('admin.pagination.perPage') }}
+                                </span>
                             </div>
 
                             <!-- Navigation -->
@@ -558,15 +573,18 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                         variant="rounded-left"
                                         @click="handlePaginationClick('prev')"
                                     >
-                                        Previous
+                                        {{ $t('admin.pagination.previous') }}
                                     </LinkButton>
                                     <span
                                         class="relative inline-flex items-center border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
                                     >
-                                        Page
-                                        {{ pagination.current_page }}
-                                        of
-                                        {{ pagination.last_page }}
+                                        {{
+                                            $t('admin.pagination.pageOf', {
+                                                current:
+                                                    pagination.current_page,
+                                                total: pagination.last_page,
+                                            })
+                                        }}
                                     </span>
                                     <LinkButton
                                         v-if="pagination.next_page_url"
@@ -575,7 +593,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                         variant="rounded-right"
                                         @click="handlePaginationClick('next')"
                                     >
-                                        Next
+                                        {{ $t('admin.pagination.next') }}
                                     </LinkButton>
                                 </nav>
                             </div>

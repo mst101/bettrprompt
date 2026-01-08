@@ -15,6 +15,7 @@ import { getFullPersonalityType } from '@/Utils/data/personalityTypes';
 import { formatDate, truncateText } from '@/Utils/formatting/formatters';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<Props>();
 
@@ -103,6 +104,7 @@ const changePerPage = () => {
 const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
+const { t } = useI18n();
 
 // Focus management for pagination buttons
 const handlePaginationClick = (direction: 'prev' | 'next') => {
@@ -156,9 +158,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
     event.stopPropagation(); // Prevent row click from firing
 
     const confirmed = await confirm(
-        'Are you sure you want to delete this prompt run? This action cannot be undone.',
-        'Delete Prompt Run',
-        { confirmButtonStyle: 'danger', confirmText: 'Delete' },
+        t('promptBuilder.confirmations.deletePromptRun.message'),
+        t('promptBuilder.confirmations.deletePromptRun.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.delete'),
+        },
     );
 
     if (!confirmed) {
@@ -175,9 +180,9 @@ const handleDelete = async (promptRunId: number, event: Event) => {
 </script>
 
 <template>
-    <Head title="Prompt History" />
+    <Head :title="$t('promptBuilder.history.title')" />
 
-    <HeaderPage title="Prompt History">
+    <HeaderPage :title="$t('promptBuilder.history.title')">
         <template #actions>
             <LinkButton
                 :href="route('prompt-builder.index')"
@@ -185,7 +190,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                 icon="plus"
                 icon-position="left"
             >
-                CREATE NEW
+                {{ $t('promptBuilder.actions.createNew') }}
             </LinkButton>
         </template>
     </HeaderPage>
@@ -196,12 +201,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                 v-if="promptRuns.data.length === 0"
                 class="p-6 text-center text-indigo-500"
             >
-                <p>No prompt history yet.</p>
+                <p>{{ $t('promptBuilder.history.empty.title') }}</p>
                 <a
                     :href="route('prompt-builder.index')"
                     class="mt-2 text-indigo-700 hover:text-indigo-800"
                 >
-                    Create your first optimised prompt
+                    {{ $t('promptBuilder.history.empty.cta') }}
                 </a>
             </div>
 
@@ -221,7 +226,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
-                                        Personality Type
+                                        {{
+                                            $t(
+                                                'promptBuilder.history.table.personalityType',
+                                            )
+                                        }}
                                     </TableHeaderSortable>
                                 </th>
                                 <th
@@ -234,7 +243,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
-                                        Task Description
+                                        {{
+                                            $t(
+                                                'promptBuilder.history.table.taskDescription',
+                                            )
+                                        }}
                                     </TableHeaderSortable>
                                 </th>
                                 <th
@@ -247,7 +260,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
-                                        Framework
+                                        {{
+                                            $t(
+                                                'promptBuilder.history.table.framework',
+                                            )
+                                        }}
                                     </TableHeaderSortable>
                                 </th>
                                 <th
@@ -260,7 +277,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
-                                        Status
+                                        {{
+                                            $t(
+                                                'promptBuilder.history.table.status',
+                                            )
+                                        }}
                                     </TableHeaderSortable>
                                 </th>
                                 <th
@@ -273,7 +294,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
-                                        Created
+                                        {{
+                                            $t(
+                                                'promptBuilder.history.table.created',
+                                            )
+                                        }}
                                     </TableHeaderSortable>
                                 </th>
                             </tr>
@@ -374,7 +399,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                                 name="trash"
                                                 class="mr-2 -ml-1 h-4 w-4"
                                             />
-                                            Delete
+                                            {{ $t('common.buttons.delete') }}
                                         </ButtonSecondary>
                                     </div>
                                 </td>
@@ -394,7 +419,9 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             :href="promptRuns.meta.prevPageUrl"
                             @click="handlePaginationClick('prev')"
                         >
-                            Previous
+                            {{
+                                $t('promptBuilder.history.pagination.previous')
+                            }}
                         </LinkButton>
                     </div>
 
@@ -402,10 +429,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                         v-if="promptRuns.meta.lastPage > 1"
                         class="text-center text-sm text-indigo-700"
                     >
-                        Page
-                        {{ promptRuns.meta.currentPage }}
-                        of
-                        {{ promptRuns.meta.lastPage }}
+                        {{
+                            $t('promptBuilder.history.pagination.pageOf', {
+                                current: promptRuns.meta.currentPage,
+                                total: promptRuns.meta.lastPage,
+                            })
+                        }}
                     </p>
 
                     <div class="flex justify-end">
@@ -415,7 +444,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             :href="promptRuns.meta.nextPageUrl"
                             @click="handlePaginationClick('next')"
                         >
-                            Next
+                            {{ $t('promptBuilder.history.pagination.next') }}
                         </LinkButton>
                     </div>
                 </div>
@@ -430,26 +459,24 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                         <div
                             class="mb-3 space-y-1 text-center text-sm text-indigo-700"
                         >
-                            <p
+                            <i18n-t
                                 v-if="
                                     promptRuns.meta.from && promptRuns.meta.to
                                 "
+                                keypath="promptBuilder.history.pagination.resultsSummary"
+                                tag="p"
                                 class="text-center"
                             >
-                                Showing
                                 <span class="font-medium">{{
                                     promptRuns.meta.from
                                 }}</span>
-                                to
                                 <span class="font-medium">{{
                                     promptRuns.meta.to
                                 }}</span>
-                                of
                                 <span class="font-medium">{{
                                     promptRuns.meta.total
                                 }}</span>
-                                results
-                            </p>
+                            </i18n-t>
                         </div>
 
                         <!-- Per-page selector -->
@@ -461,7 +488,9 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 data-testid="per-page-label"
                                 class="text-sm text-indigo-700"
                             >
-                                Show
+                                {{
+                                    $t('promptBuilder.history.pagination.show')
+                                }}
                             </label>
                             <input
                                 id="per-page"
@@ -474,9 +503,13 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
-                            <span class="text-sm text-indigo-700"
-                                >per page</span
-                            >
+                            <span class="text-sm text-indigo-700">
+                                {{
+                                    $t(
+                                        'promptBuilder.history.pagination.perPage',
+                                    )
+                                }}
+                            </span>
                         </div>
                     </div>
 
@@ -486,26 +519,24 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                     >
                         <!-- Results info -->
                         <div>
-                            <p
+                            <i18n-t
                                 v-if="
                                     promptRuns.meta.from && promptRuns.meta.to
                                 "
+                                keypath="promptBuilder.history.pagination.resultsSummary"
+                                tag="p"
                                 class="text-sm text-indigo-700"
                             >
-                                Showing
                                 <span class="font-medium">{{
                                     promptRuns.meta.from
                                 }}</span>
-                                to
                                 <span class="font-medium">{{
                                     promptRuns.meta.to
                                 }}</span>
-                                of
                                 <span class="font-medium">{{
                                     promptRuns.meta.total
                                 }}</span>
-                                results
-                            </p>
+                            </i18n-t>
                         </div>
 
                         <!-- Per-page selector (centred) -->
@@ -514,7 +545,9 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 for="per-page-desktop"
                                 class="text-sm text-indigo-700"
                             >
-                                Show
+                                {{
+                                    $t('promptBuilder.history.pagination.show')
+                                }}
                             </label>
                             <input
                                 id="per-page-desktop"
@@ -527,9 +560,13 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 @blur="changePerPage"
                                 @keydown.enter="changePerPage"
                             />
-                            <span class="text-sm text-indigo-700"
-                                >per page</span
-                            >
+                            <span class="text-sm text-indigo-700">
+                                {{
+                                    $t(
+                                        'promptBuilder.history.pagination.perPage',
+                                    )
+                                }}
+                            </span>
                         </div>
 
                         <!-- Navigation -->
@@ -537,7 +574,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             <nav
                                 v-if="promptRuns.meta.lastPage > 1"
                                 class="isolate inline-flex -space-x-px rounded-md shadow-xs"
-                                aria-label="Pagination"
+                                :aria-label="
+                                    $t(
+                                        'promptBuilder.history.pagination.ariaLabel',
+                                    )
+                                "
                             >
                                 <LinkButton
                                     v-if="promptRuns.meta.prevPageUrl"
@@ -546,15 +587,25 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     variant="rounded-left"
                                     @click="handlePaginationClick('prev')"
                                 >
-                                    Previous
+                                    {{
+                                        $t(
+                                            'promptBuilder.history.pagination.previous',
+                                        )
+                                    }}
                                 </LinkButton>
                                 <span
                                     class="relative inline-flex items-center border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
                                 >
-                                    Page
-                                    {{ promptRuns.meta.currentPage }}
-                                    of
-                                    {{ promptRuns.meta.lastPage }}
+                                    {{
+                                        $t(
+                                            'promptBuilder.history.pagination.pageOf',
+                                            {
+                                                current:
+                                                    promptRuns.meta.currentPage,
+                                                total: promptRuns.meta.lastPage,
+                                            },
+                                        )
+                                    }}
                                 </span>
                                 <LinkButton
                                     v-if="promptRuns.meta.nextPageUrl"
@@ -563,7 +614,11 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                     variant="rounded-right"
                                     @click="handlePaginationClick('next')"
                                 >
-                                    Next
+                                    {{
+                                        $t(
+                                            'promptBuilder.history.pagination.next',
+                                        )
+                                    }}
                                 </LinkButton>
                             </nav>
                         </div>

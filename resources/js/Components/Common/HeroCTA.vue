@@ -3,11 +3,15 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const page = usePage();
+const { t } = useI18n();
 
 const buttonText = computed(() => {
-    return page.props.auth?.user ? 'Try It Now' : 'Get Started for Free';
+    return page.props.auth?.user
+        ? t('components.common.heroCta.tryNow')
+        : t('components.common.heroCta.getStartedFree');
 });
 </script>
 

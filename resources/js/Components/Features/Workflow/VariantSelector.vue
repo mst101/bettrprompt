@@ -39,7 +39,7 @@ const handleVariantChange = () => {
         <FormSelect
             id="variant-selector"
             v-model="selectedVariant"
-            label="Variant:"
+            :label="$t('workflow.variantSelector.label')"
             label-sr-only
             :options="variantOptions"
             :show-placeholder="false"

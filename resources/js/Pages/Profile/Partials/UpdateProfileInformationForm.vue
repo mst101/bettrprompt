@@ -5,6 +5,7 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
     mustVerifyEmail?: boolean;
@@ -13,6 +14,7 @@ defineProps<{
 
 const user = usePage().props.auth!.user!;
 const { success, error } = useNotification();
+const { t } = useI18n();
 
 const form = useForm({
     name: user.name,
@@ -23,7 +25,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Profile information updated successfully');
+            success(t('profile.profileInfo.notifications.updated'));
         }
     },
 );
@@ -44,8 +46,8 @@ watch(
 <template>
     <section>
         <CollapsibleSection
-            title="Profile Information"
-            subtitle="Update your name and email address."
+            :title="$t('profile.profileInfo.title')"
+            :subtitle="$t('profile.profileInfo.subtitle')"
             data-testid="profile-information"
             icon="user"
         >
@@ -57,7 +59,7 @@ watch(
                     id="name"
                     v-model="form.name"
                     class="max-w-sm"
-                    label="Name"
+                    :label="$t('profile.profileInfo.fields.name')"
                     type="text"
                     :error="form.errors.name"
                     required
@@ -68,7 +70,7 @@ watch(
                     id="email"
                     v-model="form.email"
                     class="max-w-sm"
-                    label="Email"
+                    :label="$t('profile.profileInfo.fields.email')"
                     type="email"
                     :error="form.errors.email"
                     required
@@ -77,14 +79,18 @@ watch(
 
                 <div v-if="mustVerifyEmail && user.emailVerifiedAt === null">
                     <p class="mt-2 text-sm text-indigo-800">
-                        Your email address is unverified.
+                        {{ $t('profile.profileInfo.emailVerification.notice') }}
                         <Link
                             :href="route('verification.send')"
                             method="post"
                             as="button"
                             class="rounded-md text-sm text-indigo-600 underline hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"
                         >
-                            Click here to re-send the verification email.
+                            {{
+                                $t(
+                                    'profile.profileInfo.emailVerification.resend',
+                                )
+                            }}
                         </Link>
                     </p>
 
@@ -92,8 +98,7 @@ watch(
                         v-show="status === 'verification-link-sent'"
                         class="mt-2 text-sm font-medium text-green-600"
                     >
-                        A new verification link has been sent to your email
-                        address.
+                        {{ $t('auth.verifyEmail.resent') }}
                     </div>
                 </div>
 
@@ -104,7 +109,7 @@ watch(
                         :loading="form.processing"
                         icon="download"
                     >
-                        Save
+                        {{ $t('common.buttons.save') }}
                     </ButtonPrimary>
                 </div>
             </form>

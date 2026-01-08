@@ -56,12 +56,12 @@ function getStarted() {
 </script>
 
 <template>
-    <Head title="Pricing" />
+    <Head :title="$t('pricing.pageTitle')" />
 
-    <HeaderPage title="Simple, transparent pricing">
+    <HeaderPage :title="$t('pricing.title')">
         <template #actions>
             <p class="mt-2 text-indigo-600">
-                Start free, upgrade when you need more
+                {{ $t('pricing.tagline') }}
             </p>
         </template>
     </HeaderPage>
@@ -74,10 +74,11 @@ function getStarted() {
                     class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
                 >
                     <h2 class="mb-2 text-2xl font-bold text-indigo-900">
-                        Free
+                        {{ $t('pricing.free.name') }}
                     </h2>
                     <div class="mb-6 text-4xl font-bold text-indigo-900">
-                        &pound;0
+                        {{ $t('pricing.currency') }}
+                        {{ $t('pricing.free.price') }}
                     </div>
 
                     <ul class="mb-8 space-y-3">
@@ -97,7 +98,7 @@ function getStarted() {
                                 name="x-mark"
                                 class="h-5 w-5 text-indigo-300"
                             />
-                            Privacy encryption
+                            {{ $t('pricing.features.privacy') }}
                         </li>
                     </ul>
 
@@ -106,7 +107,7 @@ function getStarted() {
                         data-testid="get-started-button"
                         @click="getStarted"
                     >
-                        Get Started
+                        {{ $t('pricing.free.cta') }}
                     </ButtonSecondary>
                 </div>
 
@@ -117,10 +118,12 @@ function getStarted() {
                     <div
                         class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-4 py-1 text-sm font-medium text-white"
                     >
-                        Most Popular
+                        {{ $t('pricing.popularBadge') }}
                     </div>
 
-                    <h2 class="mb-2 text-2xl font-bold text-indigo-900">Pro</h2>
+                    <h2 class="mb-2 text-2xl font-bold text-indigo-900">
+                        {{ $t('pricing.pro.name') }}
+                    </h2>
 
                     <!-- Plan Toggle -->
                     <div class="mb-4 flex gap-2">
@@ -135,7 +138,7 @@ function getStarted() {
                             ]"
                             @click="selectedPlan = 'monthly'"
                         >
-                            Monthly
+                            {{ $t('pricing.billing.monthly') }}
                         </button>
                         <button
                             type="button"
@@ -148,16 +151,23 @@ function getStarted() {
                             ]"
                             @click="selectedPlan = 'yearly'"
                         >
-                            Annual
+                            {{ $t('pricing.billing.yearly') }}
                         </button>
                     </div>
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
-                            &pound;{{ selectedPlan === 'yearly' ? '99' : '12' }}
+                            {{ $t('pricing.currency') }}
+                            {{
+                                selectedPlan === 'yearly'
+                                    ? $t('pricing.pro.priceYearly')
+                                    : $t('pricing.pro.priceMonthly')
+                            }}
                             <span class="text-lg font-normal text-indigo-500">
                                 /{{
-                                    selectedPlan === 'yearly' ? 'year' : 'month'
+                                    selectedPlan === 'yearly'
+                                        ? $t('pricing.period.year')
+                                        : $t('pricing.period.month')
                                 }}
                             </span>
                         </div>
@@ -165,7 +175,13 @@ function getStarted() {
                             v-if="selectedPlan === 'yearly'"
                             class="mt-1 text-sm text-green-600"
                         >
-                            &pound;8.25/month - Save 18%
+                            {{
+                                $t('pricing.pro.yearlySavings', {
+                                    amount: `${$t('pricing.currency')} 8.25`,
+                                    period: $t('pricing.period.month'),
+                                    percent: 18,
+                                })
+                            }}
                         </div>
                     </div>
 
@@ -190,9 +206,13 @@ function getStarted() {
                         :loading="isLoading"
                         @click="subscribe"
                     >
-                        <span v-if="subscription?.isPro">Current Plan</span>
-                        <span v-else-if="isLoading">Processing...</span>
-                        <span v-else>Start Pro</span>
+                        <span v-if="subscription?.isPro">{{
+                            $t('subscription.currentPlan')
+                        }}</span>
+                        <span v-else-if="isLoading">{{
+                            $t('pricing.actions.processing')
+                        }}</span>
+                        <span v-else>{{ $t('pricing.pro.cta') }}</span>
                     </ButtonPrimary>
                 </div>
             </div>
@@ -200,53 +220,43 @@ function getStarted() {
             <!-- FAQ Section -->
             <div class="mt-16">
                 <h2 class="mb-8 text-center text-2xl font-bold text-indigo-900">
-                    Frequently Asked Questions
+                    {{ $t('pricing.faq.title') }}
                 </h2>
 
                 <div class="space-y-6">
                     <div class="rounded-lg bg-indigo-50 p-6">
                         <h3 class="mb-2 font-semibold text-indigo-900">
-                            What happens when I reach my free limit?
+                            {{ $t('pricing.faq.items.limit.question') }}
                         </h3>
                         <p class="text-indigo-700">
-                            Free accounts are limited to 10 prompts per month.
-                            Your limit resets on the first of each month. You
-                            can upgrade to Pro at any time for unlimited
-                            prompts.
+                            {{ $t('pricing.faq.items.limit.answer') }}
                         </p>
                     </div>
 
                     <div class="rounded-lg bg-indigo-50 p-6">
                         <h3 class="mb-2 font-semibold text-indigo-900">
-                            What is privacy encryption?
+                            {{ $t('pricing.faq.items.privacy.question') }}
                         </h3>
                         <p class="text-indigo-700">
-                            Pro users get their prompt data encrypted at rest.
-                            This means your prompts and responses are protected
-                            with encryption keys that only you control, ensuring
-                            maximum privacy for sensitive tasks.
+                            {{ $t('pricing.faq.items.privacy.answer') }}
                         </p>
                     </div>
 
                     <div class="rounded-lg bg-indigo-50 p-6">
                         <h3 class="mb-2 font-semibold text-indigo-900">
-                            Can I cancel my subscription?
+                            {{ $t('pricing.faq.items.cancel.question') }}
                         </h3>
                         <p class="text-indigo-700">
-                            Yes, you can cancel anytime. You'll retain Pro
-                            access until the end of your current billing period,
-                            then you'll be moved to the Free plan.
+                            {{ $t('pricing.faq.items.cancel.answer') }}
                         </p>
                     </div>
 
                     <div class="rounded-lg bg-indigo-50 p-6">
                         <h3 class="mb-2 font-semibold text-indigo-900">
-                            What payment methods do you accept?
+                            {{ $t('pricing.faq.items.payment.question') }}
                         </h3>
                         <p class="text-indigo-700">
-                            We accept all major credit and debit cards, as well
-                            as Apple Pay and Google Pay through our secure
-                            payment provider, Stripe.
+                            {{ $t('pricing.faq.items.payment.answer') }}
                         </p>
                     </div>
                 </div>

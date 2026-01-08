@@ -22,16 +22,14 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head :title="$t('auth.forgotPassword.title')" />
 
     <h1 class="mb-6 text-lg font-bold text-indigo-900 sm:text-2xl">
-        Reset Your Password
+        {{ $t('auth.forgotPassword.heading') }}
     </h1>
 
     <div class="mb-4 text-xs text-indigo-600 sm:text-sm">
-        Forgot your password? No problem. Just let us know your email address
-        and we will email you a password reset link that will allow you to
-        choose a new one.
+        {{ $t('auth.forgotPassword.description') }}
     </div>
 
     <div
@@ -45,7 +43,7 @@ const submit = () => {
         <FormInput
             id="email"
             v-model="form.email"
-            label="Email"
+            :label="$t('auth.forgotPassword.email')"
             type="email"
             :error="form.errors.email"
             required
@@ -60,7 +58,7 @@ const submit = () => {
                 :loading="form.processing"
                 icon="envelope"
             >
-                Email Password Reset Link
+                {{ $t('auth.forgotPassword.submit') }}
             </ButtonPrimary>
         </div>
     </form>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonSmall from '@/Components/Base/Button/ButtonSmall.vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     modelValue: string;
@@ -12,7 +13,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    placeholder: 'Enter content here...',
+    placeholder: '',
     readonly: false,
     collapsed: false,
     showSave: true,
@@ -24,8 +25,17 @@ const emit = defineEmits<{
     save: [];
 }>();
 
+const { t } = useI18n();
+const placeholderText = computed(
+    () => props.placeholder || t('workflow.codeEditor.placeholder'),
+);
+
 const characterCount = computed(() => {
-    return props.modelValue ? `${props.modelValue.length} characters` : 'N/A';
+    return props.modelValue
+        ? t('workflow.codeEditor.characters', {
+              count: props.modelValue.length,
+          })
+        : t('workflow.codeEditor.notAvailable');
 });
 </script>
 
@@ -35,29 +45,29 @@ const characterCount = computed(() => {
             <span class="font-semibold text-indigo-800">{{ title }}</span>
             <div class="flex gap-2">
                 <ButtonSmall
-                    title="Expand to full screen"
+                    :title="$t('workflow.codeEditor.expandTitle')"
                     @click="emit('expand')"
                 >
-                    ⛶ Expand
+                    {{ $t('workflow.codeEditor.expand') }}
                 </ButtonSmall>
                 <ButtonSmall
                     v-if="!readonly && showSave"
-                    title="Save to file"
+                    :title="$t('workflow.codeEditor.saveTitle')"
                     @click="emit('save')"
                 >
-                    Save
+                    {{ $t('workflow.codeEditor.save') }}
                 </ButtonSmall>
             </div>
         </div>
         <div v-if="collapsed" class="flex-1 overflow-auto bg-indigo-100 p-6">
             <p class="text-xs text-indigo-600 italic">
-                Click "Expand" to view or edit this content
+                {{ $t('workflow.codeEditor.collapsedHint') }}
             </p>
         </div>
         <textarea
             v-else
             :value="modelValue"
-            :placeholder="placeholder"
+            :placeholder="placeholderText"
             :readonly="readonly"
             class="flex-1 resize-none border-0 bg-indigo-100 p-6 font-mono text-xs text-black focus:outline-none"
             @input="

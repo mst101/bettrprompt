@@ -67,14 +67,14 @@ const close = () => {
 <template>
     <BaseAuthModal
         :show="show"
-        title="Create New Password"
+        :title="$t('auth.modalResetPassword.title')"
         :show-google-divider="false"
         @close="close"
         @submit="submit"
     >
         <template #status>
             <div class="mt-4 text-sm text-indigo-600">
-                Please enter your email address and choose a new password.
+                {{ $t('auth.modalResetPassword.description') }}
             </div>
         </template>
 
@@ -82,7 +82,7 @@ const close = () => {
             <FormInput
                 id="reset-password-email"
                 v-model="form.email"
-                label="Email"
+                :label="$t('auth.modalResetPassword.emailLabel')"
                 type="email"
                 :error="form.errors.email"
                 required
@@ -92,7 +92,7 @@ const close = () => {
             <FormInput
                 id="reset-password-password"
                 v-model="form.password"
-                label="Password"
+                :label="$t('auth.modalResetPassword.passwordLabel')"
                 type="password"
                 :error="form.errors.password"
                 class="mt-4"
@@ -104,7 +104,7 @@ const close = () => {
             <FormInput
                 id="reset-password-confirmation"
                 v-model="form.passwordConfirmation"
-                label="Confirm Password"
+                :label="$t('auth.modalResetPassword.confirmPasswordLabel')"
                 type="password"
                 :error="form.errors.passwordConfirmation"
                 class="mt-4"
@@ -119,7 +119,7 @@ const close = () => {
                 type="button"
                 @click="emit('switchToLogin', form.email)"
             >
-                Back to log in
+                {{ $t('auth.modalResetPassword.backToLogin') }}
             </ButtonText>
         </template>
 
@@ -130,7 +130,7 @@ const close = () => {
                 :loading="form.processing"
                 icon="check"
             >
-                Reset Password
+                {{ $t('auth.modalResetPassword.submit') }}
             </ButtonPrimary>
         </template>
     </BaseAuthModal>

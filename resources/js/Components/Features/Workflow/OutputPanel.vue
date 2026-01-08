@@ -3,7 +3,8 @@ import ButtonSmall from '@/Components/Base/Button/ButtonSmall.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Message {
     role?: string;
@@ -24,7 +25,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    title: 'Output',
+    title: '',
     showRawJson: false,
 });
 
@@ -47,6 +48,10 @@ const messagesExpanded = ref(true);
 
 // Track wrap lines mode for raw JSON
 const wrapRawJson = ref(false);
+const { t } = useI18n();
+const titleText = computed(() =>
+    props.title ? props.title : t('workflow.outputPanel.title'),
+);
 
 const renderMarkdown = (text: string | null | undefined): string => {
     if (!text) return '';
@@ -119,7 +124,12 @@ const getJsonCharacterCount = (data: unknown): string => {
 <template>
     <div class="flex flex-col overflow-hidden rounded-lg bg-white shadow-md">
         <div class="bg-indigo-300 px-6 py-4 font-semibold text-indigo-800">
-            {{ props.title }} - {{ getJsonCharacterCount(output) }} characters
+            {{
+                $t('workflow.outputPanel.header', {
+                    title: titleText,
+                    count: getJsonCharacterCount(output),
+                })
+            }}
         </div>
         <div class="flex-1 overflow-auto bg-indigo-100 p-6">
             <div v-if="output">
@@ -127,24 +137,32 @@ const getJsonCharacterCount = (data: unknown): string => {
                 <div v-if="props.showRawJson">
                     <div class="mb-2 flex items-center justify-between">
                         <div class="text-xs font-semibold text-indigo-900">
-                            Raw JSON
+                            {{ $t('workflow.outputPanel.rawJson') }}
                         </div>
                         <div class="flex gap-2">
                             <ButtonSmall
-                                title="Copy to clipboard"
+                                :title="$t('workflow.outputPanel.copyTitle')"
                                 @click="
                                     copyToClipboard(
                                         JSON.stringify(output, null, 2),
                                     )
                                 "
                             >
-                                📋 Copy
+                                {{ $t('workflow.outputPanel.copy') }}
                             </ButtonSmall>
                             <ButtonSmall
-                                :title="`${wrapRawJson ? 'Disable' : 'Enable'} line wrapping`"
+                                :title="
+                                    wrapRawJson
+                                        ? $t('workflow.outputPanel.wrapDisable')
+                                        : $t('workflow.outputPanel.wrapEnable')
+                                "
                                 @click="wrapRawJson = !wrapRawJson"
                             >
-                                {{ wrapRawJson ? '↔ Wrap' : '↔ No Wrap' }}
+                                {{
+                                    wrapRawJson
+                                        ? $t('workflow.outputPanel.wrapOn')
+                                        : $t('workflow.outputPanel.wrapOff')
+                                }}
                             </ButtonSmall>
                         </div>
                     </div>
@@ -178,28 +196,46 @@ const getJsonCharacterCount = (data: unknown): string => {
                                         'rotate-90': systemExpanded,
                                     }"
                                 />
-                                System
+                                {{ $t('workflow.outputPanel.system') }}
                             </button>
                             <div class="flex gap-2">
                                 <ButtonSmall
-                                    title="Copy to clipboard"
+                                    :title="
+                                        $t('workflow.outputPanel.copyTitle')
+                                    "
                                     @click="copyToClipboard(output.system)"
                                 >
-                                    📋 Copy
+                                    {{ $t('workflow.outputPanel.copy') }}
                                 </ButtonSmall>
                                 <ButtonSmall
-                                    :title="`Switch to ${showRawSystem ? 'formatted' : 'raw'} markdown`"
+                                    :title="
+                                        showRawSystem
+                                            ? $t(
+                                                  'workflow.outputPanel.switchFormatted',
+                                              )
+                                            : $t(
+                                                  'workflow.outputPanel.switchRaw',
+                                              )
+                                    "
                                     @click="toggleRawMode('system')"
                                 >
                                     {{
-                                        showRawSystem ? '◆ Formatted' : '◇ Raw'
+                                        showRawSystem
+                                            ? $t(
+                                                  'workflow.outputPanel.formattedLabel',
+                                              )
+                                            : $t(
+                                                  'workflow.outputPanel.rawLabel',
+                                              )
                                     }}
                                 </ButtonSmall>
                                 <ButtonSmall
-                                    title="Expand to full screen"
+                                    :title="
+                                        $t('workflow.outputPanel.expandTitle')
+                                    "
                                     @click="emit('expandSystem')"
                                 >
-                                    ⛶ Expand
+                                    {{ $t('workflow.outputPanel.expand') }}
                                 </ButtonSmall>
                             </div>
                         </div>
@@ -233,34 +269,50 @@ const getJsonCharacterCount = (data: unknown): string => {
                                         'rotate-90': messagesExpanded,
                                     }"
                                 />
-                                Messages
+                                {{ $t('workflow.outputPanel.messages') }}
                             </button>
                             <div class="flex gap-2">
                                 <ButtonSmall
-                                    title="Copy to clipboard"
+                                    :title="
+                                        $t('workflow.outputPanel.copyTitle')
+                                    "
                                     @click="
                                         copyToClipboard(
                                             getMessagesAsText(output.messages),
                                         )
                                     "
                                 >
-                                    📋 Copy
+                                    {{ $t('workflow.outputPanel.copy') }}
                                 </ButtonSmall>
                                 <ButtonSmall
-                                    :title="`Switch to ${showRawMessages ? 'formatted' : 'raw'} markdown`"
+                                    :title="
+                                        showRawMessages
+                                            ? $t(
+                                                  'workflow.outputPanel.switchFormatted',
+                                              )
+                                            : $t(
+                                                  'workflow.outputPanel.switchRaw',
+                                              )
+                                    "
                                     @click="toggleRawMode('messages')"
                                 >
                                     {{
                                         showRawMessages
-                                            ? '◆ Formatted'
-                                            : '◇ Raw'
+                                            ? $t(
+                                                  'workflow.outputPanel.formattedLabel',
+                                              )
+                                            : $t(
+                                                  'workflow.outputPanel.rawLabel',
+                                              )
                                     }}
                                 </ButtonSmall>
                                 <ButtonSmall
-                                    title="Expand to full screen"
+                                    :title="
+                                        $t('workflow.outputPanel.expandTitle')
+                                    "
                                     @click="emit('expandMessages')"
                                 >
-                                    ⛶ Expand
+                                    {{ $t('workflow.outputPanel.expand') }}
                                 </ButtonSmall>
                             </div>
                         </div>
@@ -320,7 +372,7 @@ const getJsonCharacterCount = (data: unknown): string => {
                 </template>
             </div>
             <p v-else class="text-indigo-500 italic">
-                No output yet. Execute the JavaScript to see results.
+                {{ $t('workflow.outputPanel.empty') }}
             </p>
         </div>
     </div>

@@ -59,15 +59,15 @@ function formatDate(dateString: string | null): string {
 </script>
 
 <template>
-    <Head title="Subscription Settings" />
+    <Head :title="$t('subscription.pageTitle')" />
 
-    <HeaderPage title="Subscription">
+    <HeaderPage :title="$t('subscription.heading')">
         <template #actions>
             <Link
                 :href="localeRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
-                Back to Profile
+                {{ $t('subscription.backToProfile') }}
             </Link>
         </template>
     </HeaderPage>
@@ -79,30 +79,42 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Current Plan
+                    {{ $t('subscription.currentPlan') }}
                 </h2>
 
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-2xl font-bold text-indigo-900">
-                            {{ subscription.isPro ? 'Pro' : 'Free' }}
+                            {{
+                                subscription.isPro
+                                    ? $t('pricing.pro.name')
+                                    : $t('pricing.free.name')
+                            }}
                         </div>
                         <div v-if="subscription.isPro" class="text-indigo-600">
                             <span
                                 v-if="subscription.onGracePeriod"
                                 class="text-amber-600"
                             >
-                                Cancels on
                                 {{
-                                    formatDate(subscription.subscriptionEndsAt)
+                                    $t('subscription.status.cancelling', {
+                                        date: formatDate(
+                                            subscription.subscriptionEndsAt,
+                                        ),
+                                    })
                                 }}
                             </span>
-                            <span v-else>Active subscription</span>
+                            <span v-else>{{
+                                $t('subscription.status.active')
+                            }}</span>
                         </div>
                         <div v-else class="text-indigo-600">
-                            {{ subscription.promptsRemaining }} of
-                            {{ subscription.promptLimit }} prompts remaining
-                            this month
+                            {{
+                                $t('subscription.status.promptsRemaining', {
+                                    count: subscription.promptsRemaining,
+                                    total: subscription.promptLimit,
+                                })
+                            }}
                         </div>
                     </div>
 
@@ -111,7 +123,7 @@ function formatDate(dateString: string | null): string {
                             :href="localeRoute('pricing')"
                             class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                         >
-                            Upgrade to Pro
+                            {{ $t('subscription.actions.upgrade') }}
                         </Link>
                     </div>
                 </div>
@@ -136,10 +148,12 @@ function formatDate(dateString: string | null): string {
                         />
                     </div>
                     <div class="mt-1 text-sm text-indigo-500">
-                        {{ subscription.promptsUsed }}/{{
-                            subscription.promptLimit
+                        {{
+                            $t('subscription.status.promptsUsed', {
+                                used: subscription.promptsUsed,
+                                total: subscription.promptLimit,
+                            })
                         }}
-                        prompts used
                     </div>
                 </div>
             </div>
@@ -152,19 +166,19 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Manage Subscription
+                    {{ $t('subscription.manage') }}
                 </h2>
 
                 <div class="space-y-4">
                     <ButtonSecondary @click="openBillingPortal">
-                        Update Payment Method
+                        {{ $t('subscription.updatePayment') }}
                     </ButtonSecondary>
 
                     <ButtonPrimary
                         v-if="subscription.onGracePeriod"
                         @click="resumeSubscription"
                     >
-                        Resume Subscription
+                        {{ $t('subscription.resume') }}
                     </ButtonPrimary>
 
                     <ButtonDanger
@@ -172,7 +186,7 @@ function formatDate(dateString: string | null): string {
                         data-testid="cancel-subscription-button"
                         @click="showCancelModal = true"
                     >
-                        Cancel Subscription
+                        {{ $t('subscription.cancel') }}
                     </ButtonDanger>
                 </div>
             </div>
@@ -185,7 +199,7 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Billing History
+                    {{ $t('subscription.billing.title') }}
                 </h2>
 
                 <div class="divide-y divide-indigo-100">
@@ -207,7 +221,7 @@ function formatDate(dateString: string | null): string {
                             target="_blank"
                             class="text-indigo-600 hover:underline"
                         >
-                            Download
+                            {{ $t('subscription.billing.download') }}
                         </a>
                     </div>
                 </div>
@@ -222,19 +236,17 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h3 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Cancel Subscription?
+                    {{ $t('subscription.cancelConfirm.title') }}
                 </h3>
                 <p class="mb-6 text-indigo-600">
-                    You will retain Pro access until the end of your current
-                    billing period. After that, you'll be moved to the Free plan
-                    with 10 prompts per month.
+                    {{ $t('subscription.cancelConfirm.description') }}
                 </p>
                 <div class="flex gap-4">
                     <ButtonSecondary
                         class="flex-1"
                         @click="showCancelModal = false"
                     >
-                        Keep Subscription
+                        {{ $t('subscription.cancelConfirm.keep') }}
                     </ButtonSecondary>
                     <ButtonDanger
                         class="flex-1"
@@ -244,8 +256,8 @@ function formatDate(dateString: string | null): string {
                     >
                         {{
                             isCancelling
-                                ? 'Cancelling...'
-                                : 'Cancel Subscription'
+                                ? $t('subscription.cancelConfirm.processing')
+                                : $t('subscription.cancelConfirm.confirm')
                         }}
                     </ButtonDanger>
                 </div>

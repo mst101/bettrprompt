@@ -11,6 +11,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineOptions({
     layout: AppLayout,
@@ -25,51 +26,47 @@ const form = useForm({
     desiredFeaturesOther: '',
 });
 
+const { t } = useI18n();
+
 const hasErrors = computed(() => Object.keys(form.errors).length > 0);
 
-const featureOptions = [
+const featureOptions = computed(() => [
     {
         value: 'document-upload',
-        label: 'Upload documents and/or images',
-        description:
-            'Upload files and images to provide context for prompt generation, e.g., analyse documents or refine prompts based on visual content',
+        label: t('feedback.features.documentUpload.label'),
+        description: t('feedback.features.documentUpload.description'),
     },
     {
         value: 'templates',
-        label: 'Prompt templates library',
-        description:
-            'Pre-built templates for common use cases (content writing, data analysis, code review, etc.)',
+        label: t('feedback.features.templates.label'),
+        description: t('feedback.features.templates.description'),
     },
     {
         value: 'compare',
-        label: 'Compare prompt versions side-by-side',
-        description:
-            'Visual comparison tool showing differences between prompt versions and their effectiveness',
+        label: t('feedback.features.compare.label'),
+        description: t('feedback.features.compare.description'),
     },
     {
         value: 'api-integration',
-        label: 'Integration with ChatGPT/Claude APIs',
-        description:
-            'Test prompts directly with AI models, see real responses, and iterate within the app',
+        label: t('feedback.features.apiIntegration.label'),
+        description: t('feedback.features.apiIntegration.description'),
     },
     {
         value: 'collaboration',
-        label: 'Team collaboration features',
-        description:
-            'Share prompts within your organisation, add comments, track versions, and manage permissions',
+        label: t('feedback.features.collaboration.label'),
+        description: t('feedback.features.collaboration.description'),
     },
     {
         value: 'model-specific',
-        label: 'AI model-specific optimisation',
-        description:
-            'Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences',
+        label: t('feedback.features.modelSpecific.label'),
+        description: t('feedback.features.modelSpecific.description'),
     },
     {
         value: 'other',
-        label: 'Other',
-        description: "Something else? Let us know what you'd like to see!",
+        label: t('feedback.features.other.label'),
+        description: t('feedback.features.other.description'),
     },
-];
+]);
 
 const submit = () => {
     form.post(route('feedback.store'), {
@@ -81,20 +78,18 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Feedback" />
+    <Head :title="$t('feedback.create.title')" />
 
-    <HeaderPage title="Feedback" />
+    <HeaderPage :title="$t('feedback.create.heading')" />
 
     <ContainerPage>
         <Card>
             <div class="mb-6">
                 <h2 class="font-semibold text-indigo-900">
-                    We'd love to hear from you!
+                    {{ $t('feedback.create.intro.title') }}
                 </h2>
                 <p class="mt-1 text-indigo-600">
-                    Your feedback will help us decide whether to improve this
-                    project - or to abandon it!<br />
-                    Please be honest.
+                    {{ $t('feedback.create.intro.description') }}
                 </p>
             </div>
 
@@ -111,7 +106,7 @@ const submit = () => {
                     />
                     <div class="flex-1">
                         <h3 class="font-semibold text-red-900">
-                            Please correct the errors below
+                            {{ $t('feedback.create.errors.title') }}
                         </h3>
                         <ul
                             class="mt-2 list-inside list-disc space-y-1 text-red-700"
@@ -120,39 +115,63 @@ const submit = () => {
                                 v-if="form.errors.experienceLevel"
                                 key="experience-level"
                             >
-                                <strong>Experience level:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.experienceLevel',
+                                    )
+                                }}</strong>
                                 {{ form.errors.experienceLevel }}
                             </li>
                             <li v-if="form.errors.usefulness" key="usefulness">
-                                <strong>Usefulness:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.usefulness',
+                                    )
+                                }}</strong>
                                 {{ form.errors.usefulness }}
                             </li>
                             <li
                                 v-if="form.errors.usageIntent"
                                 key="usage-intent"
                             >
-                                <strong>Usage likelihood:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.usageIntent',
+                                    )
+                                }}</strong>
                                 {{ form.errors.usageIntent }}
                             </li>
                             <li
                                 v-if="form.errors.suggestions"
                                 key="suggestions"
                             >
-                                <strong>Suggestions:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.suggestions',
+                                    )
+                                }}</strong>
                                 {{ form.errors.suggestions }}
                             </li>
                             <li
                                 v-if="form.errors.desiredFeatures"
                                 key="desired-features"
                             >
-                                <strong>Features:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.desiredFeatures',
+                                    )
+                                }}</strong>
                                 {{ form.errors.desiredFeatures }}
                             </li>
                             <li
                                 v-if="form.errors.desiredFeaturesOther"
                                 key="desired-features-other"
                             >
-                                <strong>Feature description:</strong>
+                                <strong>{{
+                                    $t(
+                                        'feedback.create.errors.labels.desiredFeaturesOther',
+                                    )
+                                }}</strong>
                                 {{ form.errors.desiredFeaturesOther }}
                             </li>
                         </ul>
@@ -173,13 +192,12 @@ const submit = () => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        1. How experienced are you with AI tools like ChatGPT or
-                        Claude?
+                        {{ $t('feedback.questions.experience.label') }}
                     </label>
                     <LikertScale
                         v-model="form.experienceLevel"
-                        left-label="Novice"
-                        right-label="Experienced"
+                        :left-label="$t('feedback.questions.experience.left')"
+                        :right-label="$t('feedback.questions.experience.right')"
                         :disabled="form.processing"
                     />
                     <p
@@ -202,12 +220,12 @@ const submit = () => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        2. How useful was the app for improving your prompt?
+                        {{ $t('feedback.questions.usefulness.label') }}
                     </label>
                     <LikertScale
                         v-model="form.usefulness"
-                        left-label="Not useful"
-                        right-label="Extremely useful"
+                        :left-label="$t('feedback.questions.usefulness.left')"
+                        :right-label="$t('feedback.questions.usefulness.right')"
                         :disabled="form.processing"
                     />
                     <p
@@ -230,13 +248,14 @@ const submit = () => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        3. How likely are you to use this app the next time you
-                        need to work with an AI assistant?
+                        {{ $t('feedback.questions.usageIntent.label') }}
                     </label>
                     <LikertScale
                         v-model="form.usageIntent"
-                        left-label="Very unlikely"
-                        right-label="Very likely"
+                        :left-label="$t('feedback.questions.usageIntent.left')"
+                        :right-label="
+                            $t('feedback.questions.usageIntent.right')
+                        "
                         :disabled="form.processing"
                     />
                     <p
@@ -252,10 +271,12 @@ const submit = () => {
                     <FormTextarea
                         id="suggestions"
                         v-model="form.suggestions"
-                        label="4. What's one thing you'd change or improve about the app?"
+                        :label="$t('feedback.questions.suggestions.label')"
                         :error="form.errors.suggestions"
                         :disabled="form.processing"
-                        placeholder="Mention any steps you found confusing or features you'd like to see next."
+                        :placeholder="
+                            $t('feedback.questions.suggestions.placeholder')
+                        "
                         :rows="5"
                     />
                 </div>
@@ -273,14 +294,13 @@ const submit = () => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        5. Which features would you most want to see added next?
-                        <span class="font-normal text-indigo-600"
-                            >(Select at least one)</span
-                        >
+                        {{ $t('feedback.questions.features.label') }}
+                        <span class="font-normal text-indigo-600">{{
+                            $t('feedback.questions.features.hint')
+                        }}</span>
                     </label>
                     <p class="mb-3 text-xs text-indigo-600">
-                        If you select "Other", please describe the feature you'd
-                        like to see.
+                        {{ $t('feedback.questions.features.note') }}
                     </p>
                     <FormCheckboxGroup
                         v-model="form.desiredFeatures"
@@ -304,14 +324,14 @@ const submit = () => {
                         :disabled="form.processing"
                         @click="$inertia.visit(route('prompt-builder.history'))"
                     >
-                        Cancel
+                        {{ $t('common.buttons.cancel') }}
                     </ButtonSecondary>
                     <ButtonPrimary
                         type="submit"
                         :disabled="form.processing"
                         :loading="form.processing"
                     >
-                        Submit Feedback
+                        {{ $t('feedback.create.actions.submit') }}
                     </ButtonPrimary>
                 </div>
             </form>

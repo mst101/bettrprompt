@@ -124,8 +124,10 @@ watch(
             >
                 {{
                     isEditing
-                        ? 'Edit Task & Create New Optimisation'
-                        : 'Your Task'
+                        ? $t(
+                              'promptBuilder.components.taskInformation.editTitle',
+                          )
+                        : $t('promptBuilder.components.taskInformation.title')
                 }}
             </h2>
 
@@ -137,7 +139,7 @@ watch(
                 @click="startEditing"
             >
                 <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
-                Edit Task
+                {{ $t('promptBuilder.components.taskInformation.editAction') }}
             </ButtonSecondary>
 
             <ButtonSecondary
@@ -146,7 +148,7 @@ watch(
                 :disabled="form.processing"
                 @click="cancelEditing"
             >
-                Cancel
+                {{ $t('common.buttons.cancel') }}
             </ButtonSecondary>
         </div>
 
@@ -155,7 +157,9 @@ watch(
             v-if="!isEditing"
             id="task-description"
             :model-value="promptRun.taskDescription"
-            label="Task Description"
+            :label="
+                $t('promptBuilder.components.taskInformation.descriptionLabel')
+            "
             :sr-only-label="true"
             :disabled="true"
             required
@@ -167,11 +171,19 @@ watch(
                 id="task-description-edit"
                 ref="taskTextareaRef"
                 v-model="form.task_description"
-                label="Edit Task Description"
+                :label="
+                    $t(
+                        'promptBuilder.components.taskInformation.descriptionEditLabel',
+                    )
+                "
                 :sr-only-label="true"
                 :error="form.errors.task_description"
                 required
-                placeholder="Describe the task you want to create a prompt for..."
+                :placeholder="
+                    $t(
+                        'promptBuilder.components.taskInformation.descriptionPlaceholder',
+                    )
+                "
             />
 
             <div class="mt-4 flex items-center justify-between">
@@ -187,7 +199,9 @@ watch(
                     "
                     :loading="form.processing"
                 >
-                    Optimise Prompt
+                    {{
+                        $t('promptBuilder.components.taskInformation.optimise')
+                    }}
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>

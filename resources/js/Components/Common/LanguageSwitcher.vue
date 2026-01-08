@@ -131,7 +131,11 @@ const groupedLocales = computed(() => ({
                         <div
                             class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
                         >
-                            English
+                            {{
+                                $t(
+                                    'components.common.languageSwitcher.sections.english',
+                                )
+                            }}
                         </div>
                         <button
                             v-for="locale in groupedLocales.essential"
@@ -175,7 +179,11 @@ const groupedLocales = computed(() => ({
                         <div
                             class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
                         >
-                            Major Languages
+                            {{
+                                $t(
+                                    'components.common.languageSwitcher.sections.major',
+                                )
+                            }}
                         </div>
                         <button
                             v-for="locale in groupedLocales.highValue"
@@ -219,7 +227,11 @@ const groupedLocales = computed(() => ({
                         <div
                             class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
                         >
-                            Nordic
+                            {{
+                                $t(
+                                    'components.common.languageSwitcher.sections.nordic',
+                                )
+                            }}
                         </div>
                         <button
                             v-for="locale in groupedLocales.nordic"
@@ -263,7 +275,11 @@ const groupedLocales = computed(() => ({
                         <div
                             class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
                         >
-                            Other
+                            {{
+                                $t(
+                                    'components.common.languageSwitcher.sections.other',
+                                )
+                            }}
                         </div>
                         <button
                             v-for="locale in groupedLocales.volume"
@@ -307,7 +323,11 @@ const groupedLocales = computed(() => ({
                         <div
                             class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
                         >
-                            RTL
+                            {{
+                                $t(
+                                    'components.common.languageSwitcher.sections.rtl',
+                                )
+                            }}
                         </div>
                         <button
                             v-for="locale in groupedLocales.rtl"

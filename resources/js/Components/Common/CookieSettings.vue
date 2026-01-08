@@ -77,13 +77,14 @@ const analyticsEnabled = computed({
             <div class="flex items-start justify-between">
                 <div>
                     <h2 class="text-xl font-semibold text-indigo-900">
-                        Cookie Settings
+                        {{ $t('components.common.cookieSettings.title') }}
                     </h2>
                     <p class="mt-1 text-sm text-indigo-600">
-                        Manage your cookie preferences. You can enable or
-                        disable different types of cookies below.
+                        {{ $t('components.common.cookieSettings.description') }}
                         <LinkText :href="localeRoute('cookies')">
-                            Learn more about our cookies
+                            {{
+                                $t('components.common.cookieSettings.learnMore')
+                            }}
                         </LinkText>
                     </p>
                 </div>
@@ -107,7 +108,11 @@ const analyticsEnabled = computed({
                             <span
                                 class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
                             >
-                                Always Active
+                                {{
+                                    $t(
+                                        'components.common.cookieSettings.alwaysActive',
+                                    )
+                                }}
                             </span>
                         </div>
                     </div>
@@ -129,7 +134,11 @@ const analyticsEnabled = computed({
                         <div class="ml-4">
                             <FormToggle
                                 v-model="functionalEnabled"
-                                label="Functional cookies"
+                                :label="
+                                    $t(
+                                        'components.common.cookieSettings.functionalLabel',
+                                    )
+                                "
                             />
                         </div>
                     </div>
@@ -151,7 +160,11 @@ const analyticsEnabled = computed({
                         <div class="ml-4">
                             <FormToggle
                                 v-model="analyticsEnabled"
-                                label="Analytics cookies"
+                                :label="
+                                    $t(
+                                        'components.common.cookieSettings.analyticsLabel',
+                                    )
+                                "
                             />
                         </div>
                     </div>
@@ -161,13 +174,13 @@ const analyticsEnabled = computed({
             <!-- Action Buttons -->
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
                 <ButtonSecondary type="button" @click="handleRejectAll">
-                    Reject All
+                    {{ $t('components.common.cookieSettings.rejectAll') }}
                 </ButtonSecondary>
                 <ButtonSecondary type="button" @click="handleSave">
-                    Save Preferences
+                    {{ $t('components.common.cookieSettings.savePreferences') }}
                 </ButtonSecondary>
                 <ButtonPrimary type="button" @click="handleAcceptAll">
-                    Accept All
+                    {{ $t('components.common.cookieSettings.acceptAll') }}
                 </ButtonPrimary>
             </div>
         </div>

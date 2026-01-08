@@ -121,7 +121,7 @@ const expandedUseCases = ref<string[]>([]);
 
             <!-- Features Grid -->
             <div class="mt-8 sm:mt-16">
-                <h2 class="sr-only">Features</h2>
+                <h2 class="sr-only">{{ $t('home.features.heading') }}</h2>
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
                         icon="sparkles"
@@ -308,11 +308,15 @@ const expandedUseCases = ref<string[]>([]);
 
                 <!-- The Key Insight -->
                 <div class="mx-auto mt-8 max-w-3xl text-center">
-                    <!-- eslint-disable vue/no-v-html -->
-                    <p
+                    <i18n-t
+                        keypath="home.comparison.keyInsight"
+                        tag="p"
                         class="text-lg text-indigo-800"
-                        v-html="$t('home.comparison.keyInsight')"
-                    ></p>
+                    >
+                        <strong>{{
+                            $t('home.comparison.keyInsightEmphasis')
+                        }}</strong>
+                    </i18n-t>
                 </div>
 
                 <!-- Secondary Objections -->

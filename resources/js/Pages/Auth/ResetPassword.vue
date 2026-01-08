@@ -30,17 +30,17 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
+    <Head :title="$t('auth.resetPassword.headTitle')" />
 
     <h1 class="mb-6 text-lg font-bold text-indigo-900 sm:text-2xl">
-        Create New Password
+        {{ $t('auth.resetPassword.title') }}
     </h1>
 
     <form @submit.prevent="submit">
         <FormInput
             id="email"
             v-model="form.email"
-            label="Email"
+            :label="$t('auth.resetPassword.email')"
             type="email"
             :error="form.errors.email"
             required
@@ -51,7 +51,7 @@ const submit = () => {
         <FormInput
             id="password"
             v-model="form.password"
-            label="Password"
+            :label="$t('auth.resetPassword.password')"
             type="password"
             :error="form.errors.password"
             class="mt-4"
@@ -62,7 +62,7 @@ const submit = () => {
         <FormInput
             id="password-confirmation"
             v-model="form.passwordConfirmation"
-            label="Confirm Password"
+            :label="$t('auth.resetPassword.confirmPassword')"
             type="password"
             :error="form.errors.passwordConfirmation"
             class="mt-4"
@@ -77,7 +77,7 @@ const submit = () => {
                 :loading="form.processing"
                 icon="check"
             >
-                Reset Password
+                {{ $t('auth.resetPassword.submit') }}
             </ButtonPrimary>
         </div>
     </form>

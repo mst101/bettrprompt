@@ -4,6 +4,9 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { COMPANY_INFO } from '@/Constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: AppLayout,
@@ -11,12 +14,12 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Terms of Use" />
+    <Head :title="t('legal.terms.title')" />
 
-    <HeaderPage title="Terms of Use">
+    <HeaderPage :title="t('legal.terms.title')">
         <template #actions>
             <p class="mt-2 text-sm text-indigo-600">
-                Last updated:
+                {{ t('legal.lastUpdated') }}:
                 {{
                     new Date().toLocaleDateString('en-GB', {
                         year: 'numeric',

@@ -8,6 +8,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     budgetData: {
@@ -17,34 +18,35 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
-const budgetOptions = [
+const budgetOptions = computed(() => [
     {
         value: 'free_only',
-        label: 'Free Only',
-        description: 'I only use free tools and services',
+        label: t('profile.budget.options.freeOnly.label'),
+        description: t('profile.budget.options.freeOnly.description'),
     },
     {
         value: 'free_first',
-        label: 'Prefer Free',
-        description: 'I prefer free options but will pay if necessary',
+        label: t('profile.budget.options.freeFirst.label'),
+        description: t('profile.budget.options.freeFirst.description'),
     },
     {
         value: 'mixed',
-        label: 'Mixed',
-        description: 'I use a mix of free and premium tools',
+        label: t('profile.budget.options.mixed.label'),
+        description: t('profile.budget.options.mixed.description'),
     },
     {
         value: 'premium_ok',
-        label: 'Premium OK',
-        description: "I'm comfortable using premium tools",
+        label: t('profile.budget.options.premiumOk.label'),
+        description: t('profile.budget.options.premiumOk.description'),
     },
     {
         value: 'enterprise',
-        label: 'Enterprise',
-        description: 'I have access to enterprise solutions',
+        label: t('profile.budget.options.enterprise.label'),
+        description: t('profile.budget.options.enterprise.description'),
     },
-];
+]);
 
 const form = useForm({
     budgetConsciousness: props.budgetData.budgetConsciousness || '',
@@ -54,7 +56,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Budget preferences updated successfully');
+            success(t('profile.budget.notifications.updated'));
         }
     },
 );
@@ -85,9 +87,12 @@ const { confirm } = useAlert();
 
 const clearBudget = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear your budget preferences?',
-        'Clear Budget Preferences',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.budget.clearConfirm.message'),
+        t('profile.budget.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -95,12 +100,12 @@ const clearBudget = async () => {
         clearForm.delete(route('profile.budget.clear'), {
             preserveScroll: true,
             onSuccess: () => {
-                success('Budget preferences cleared successfully');
+                success(t('profile.budget.notifications.cleared'));
                 // Clear the form field
                 form.budgetConsciousness = '';
             },
             onError: () => {
-                error('Failed to clear budget preferences');
+                error(t('profile.budget.notifications.clearFailed'));
             },
         });
     }
@@ -109,8 +114,8 @@ const clearBudget = async () => {
 
 <template>
     <CollapsibleSection
-        title="Budget & Tool Preferences"
-        subtitle="Tell us about your budget for tools and services so we can recommend appropriate solutions."
+        :title="$t('profile.budget.title')"
+        :subtitle="$t('profile.budget.subtitle')"
         data-testid="budget"
         icon="chart-bar"
     >
@@ -119,7 +124,7 @@ const clearBudget = async () => {
             <div>
                 <InputLabel
                     for="budget-free-only"
-                    value="Budget Preference"
+                    :value="$t('profile.budget.fieldLabel')"
                     :required="false"
                 />
 
@@ -162,13 +167,13 @@ const clearBudget = async () => {
                     :loading="form.processing"
                     icon="download"
                 >
-                    Save Budget Preferences
+                    {{ $t('profile.budget.actions.save') }}
                 </ButtonPrimary>
 
                 <ButtonTrash
                     v-if="hasBudgetData"
                     id="clear-budget-form"
-                    label="Clear"
+                    :label="$t('common.buttons.clear')"
                     @clear="clearBudget"
                 />
             </div>

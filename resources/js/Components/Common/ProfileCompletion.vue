@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 withDefaults(
     defineProps<{
         percentage?: number;
@@ -8,12 +10,18 @@ withDefaults(
     },
 );
 
+const { t } = useI18n();
+
 const getCompletionLabel = (percentage: number) => {
-    if (percentage === 100) return 'Complete';
-    if (percentage >= 80) return 'Nearly Complete';
-    if (percentage >= 60) return 'Good Progress';
-    if (percentage >= 40) return 'Getting Started';
-    return 'Just Beginning';
+    if (percentage === 100)
+        return t('components.common.profileCompletion.labels.complete');
+    if (percentage >= 80)
+        return t('components.common.profileCompletion.labels.nearlyComplete');
+    if (percentage >= 60)
+        return t('components.common.profileCompletion.labels.goodProgress');
+    if (percentage >= 40)
+        return t('components.common.profileCompletion.labels.gettingStarted');
+    return t('components.common.profileCompletion.labels.justBeginning');
 };
 </script>
 
@@ -21,7 +29,7 @@ const getCompletionLabel = (percentage: number) => {
     <div>
         <div class="flex items-center justify-between">
             <p class="text-xs font-medium text-indigo-900 sm:text-sm">
-                Profile Completion
+                {{ $t('components.common.profileCompletion.title') }}
             </p>
             <span class="text-xs font-medium text-indigo-600 sm:text-sm">
                 {{ percentage }}%

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSelectProps, Nullable } from '@/Types';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(defineProps<FormSelectProps>(), {
     modelValue: '',
@@ -8,7 +9,7 @@ const props = withDefaults(defineProps<FormSelectProps>(), {
     required: false,
     disabled: false,
     labelSrOnly: false,
-    placeholder: 'Please select...',
+    placeholder: '',
     showPlaceholder: true,
     helpText: '',
     autofocus: false,
@@ -22,7 +23,12 @@ defineOptions({
     inheritAttrs: false,
 });
 
+const { t } = useI18n();
+
 const select = ref<Nullable<HTMLSelectElement>>(null);
+const placeholderText = computed(
+    () => props.placeholder || t('components.base.formSelect.placeholder'),
+);
 
 onMounted(() => {
     if (props.autofocus && select.value) {
@@ -59,7 +65,7 @@ onMounted(() => {
             "
         >
             <option v-if="props.showPlaceholder" value="" disabled>
-                {{ props.placeholder }}
+                {{ placeholderText }}
             </option>
             <option
                 v-for="option in props.options"

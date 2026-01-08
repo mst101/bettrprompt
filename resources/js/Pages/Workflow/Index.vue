@@ -3,65 +3,73 @@ import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import WorkflowCard from '@/Components/Features/Workflow/WorkflowCard.vue';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: WorkflowLayout,
 });
 
-const infoItems = [
+const infoItems = computed(() => [
     {
-        strong: 'Workflow pages:',
-        text: 'Debug individual workflows, inspect input/output, and test JavaScript code',
+        strong: t('workflow.index.infoPages.title'),
+        text: t('workflow.index.infoPages.description'),
     },
     {
-        strong: 'Reference Documents:',
-        text: 'View and edit the markdown documents used in workflows, then embed them into the workflow JSON files',
+        strong: t('workflow.index.infoDocuments.title'),
+        text: t('workflow.index.infoDocuments.description'),
     },
     {
-        strong: 'Framework Templates:',
-        text: '60+ different prompting frameworks available for use in workflow optimisation',
+        strong: t('workflow.index.infoFrameworks.title'),
+        text: t('workflow.index.infoFrameworks.description'),
     },
-];
+]);
 </script>
 
 <template>
     <div>
         <PageHeader
-            title="Workflow System"
-            subtitle="Debug and manage n8n workflows"
+            :title="t('workflow.index.title')"
+            :subtitle="t('workflow.index.subtitle')"
         />
 
         <div class="grid gap-6 md:grid-cols-2">
             <WorkflowCard
                 href="/workflow/0"
-                title="Workflow 0"
-                subtitle="Pre-Analysis Workflow"
-                description="Gathers clarifying questions based on task classification"
+                :title="t('workflow.index.workflow0.title')"
+                :subtitle="t('workflow.index.workflow0.subtitle')"
+                :description="t('workflow.index.workflow0.description')"
             />
 
             <WorkflowCard
                 href="/workflow/1"
-                title="Workflow 1"
-                subtitle="Question Generation Workflow"
-                description="Generates task classification and clarifying questions"
+                :title="t('workflow.index.workflow1.title')"
+                :subtitle="t('workflow.index.workflow1.subtitle')"
+                :description="t('workflow.index.workflow1.description')"
             />
 
             <WorkflowCard
                 href="/workflow/2"
-                title="Workflow 2"
-                subtitle="Prompt Optimisation Workflow"
-                description="Generates optimised prompts using selected frameworks"
+                :title="t('workflow.index.workflow2.title')"
+                :subtitle="t('workflow.index.workflow2.subtitle')"
+                :description="t('workflow.index.workflow2.description')"
             />
 
             <WorkflowCard
                 href="/workflow/docs"
-                title="Reference Documents"
-                subtitle="Document Management"
-                description="View, edit, and manage reference documents"
+                :title="t('workflow.index.referenceDocs.title')"
+                :subtitle="t('workflow.index.referenceDocs.subtitle')"
+                :description="t('workflow.index.referenceDocs.description')"
                 icon="📄"
             />
         </div>
 
-        <InfoSection class="mt-8" title="How to Use" :items="infoItems" />
+        <InfoSection
+            class="mt-8"
+            :title="t('workflow.index.howToUse')"
+            :items="infoItems"
+        />
     </div>
 </template>

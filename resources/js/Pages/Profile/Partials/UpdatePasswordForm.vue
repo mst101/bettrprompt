@@ -5,10 +5,12 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
 const { success, error } = useNotification();
+const { t } = useI18n();
 
 const form = useForm({
     currentPassword: '',
@@ -21,7 +23,7 @@ const updatePassword = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
-            success('Password updated successfully');
+            success(t('profile.password.notifications.updated'));
         },
         onError: () => {
             if (form.errors.password) {
@@ -42,8 +44,8 @@ const updatePassword = () => {
 <template>
     <section>
         <CollapsibleSection
-            title="Update Password"
-            subtitle="Ensure your account is using a long, random password to stay secure."
+            :title="$t('profile.password.title')"
+            :subtitle="$t('profile.password.subtitle')"
             data-testid="password"
             icon="lock-closed"
         >
@@ -52,7 +54,7 @@ const updatePassword = () => {
                     id="current-password"
                     v-model="form.currentPassword"
                     class="max-w-sm"
-                    label="Current Password"
+                    :label="$t('profile.password.fields.current')"
                     type="password"
                     :error="form.errors.currentPassword"
                     autocomplete="current-password"
@@ -62,7 +64,7 @@ const updatePassword = () => {
                     id="password"
                     v-model="form.password"
                     class="max-w-sm"
-                    label="New Password"
+                    :label="$t('profile.password.fields.new')"
                     type="password"
                     :error="form.errors.password"
                     autocomplete="new-password"
@@ -72,7 +74,7 @@ const updatePassword = () => {
                     id="password-confirmation"
                     v-model="form.passwordConfirmation"
                     class="max-w-sm"
-                    label="Confirm Password"
+                    :label="$t('profile.password.fields.confirm')"
                     type="password"
                     :error="form.errors.passwordConfirmation"
                     autocomplete="new-password"
@@ -85,7 +87,7 @@ const updatePassword = () => {
                         :loading="form.processing"
                         icon="download"
                     >
-                        Save
+                        {{ $t('common.buttons.save') }}
                     </ButtonPrimary>
                 </div>
             </form>

@@ -5,6 +5,9 @@ import { COOKIE_CATEGORIES } from '@/Constants/cookies';
 import { COMPANY_INFO } from '@/Constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: AppLayout,
@@ -12,12 +15,12 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Cookie Policy" />
+    <Head :title="t('legal.cookies.title')" />
 
-    <HeaderPage title="Cookie Policy">
+    <HeaderPage :title="t('legal.cookies.title')">
         <template #actions>
             <p class="mt-2 text-sm text-indigo-700">
-                Last updated:
+                {{ t('legal.lastUpdated') }}:
                 {{
                     new Date().toLocaleDateString('en-GB', {
                         year: 'numeric',
@@ -77,7 +80,7 @@ defineOptions({
                             <span
                                 class="mt-1 inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
                             >
-                                Always Active
+                                {{ t('legal.cookies.alwaysActive') }}
                             </span>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ const hasRelations =
 <template>
     <Card v-if="hasRelations" class="mt-6">
         <h3 class="mb-4 text-lg font-semibold text-indigo-900">
-            Related Prompt Optimisations
+            {{ $t('promptBuilder.components.relatedPromptRuns.title') }}
         </h3>
 
         <div class="space-y-4">
@@ -36,7 +36,11 @@ const hasRelations =
                         class="h-4 w-4 text-indigo-700"
                     />
                     <span class="text-sm font-medium text-indigo-800">
-                        Parent Prompt
+                        {{
+                            $t(
+                                'promptBuilder.components.relatedPromptRuns.parent',
+                            )
+                        }}
                     </span>
                     <StatusBadge :workflow-stage="parent.workflowStage" />
                 </div>
@@ -51,12 +55,28 @@ const hasRelations =
                     {{ truncateText(parent.taskDescription) }}
                 </LinkText>
                 <p class="mt-3 text-xs text-indigo-700">
-                    Prompt ID ({{ parent.id }}) •
+                    {{
+                        $t(
+                            'promptBuilder.components.relatedPromptRuns.promptId',
+                            {
+                                id: parent.id,
+                            },
+                        )
+                    }}
+                    •
                     <span v-if="parent.selectedFramework?.name">
                         {{ parent.selectedFramework.name }} •
                     </span>
-                    Created
-                    {{ new Date(parent.createdAt).toLocaleDateString() }}
+                    {{
+                        $t(
+                            'promptBuilder.components.relatedPromptRuns.created',
+                            {
+                                date: new Date(
+                                    parent.createdAt,
+                                ).toLocaleDateString(),
+                            },
+                        )
+                    }}
                 </p>
             </div>
 
@@ -69,7 +89,16 @@ const hasRelations =
                         name="arrow-down"
                         class="h-4 w-4 text-indigo-500"
                     />
-                    <span>Child Prompts ({{ children.length }})</span>
+                    <span>
+                        {{
+                            $t(
+                                'promptBuilder.components.relatedPromptRuns.children',
+                                {
+                                    count: children.length,
+                                },
+                            )
+                        }}
+                    </span>
                 </div>
                 <div
                     v-for="child in children"
@@ -90,12 +119,28 @@ const hasRelations =
                         {{ truncateText(child.taskDescription) }}
                     </LinkText>
                     <p class="mt-3 text-xs text-indigo-500">
-                        Prompt ID ({{ child.id }}) •
+                        {{
+                            $t(
+                                'promptBuilder.components.relatedPromptRuns.promptId',
+                                {
+                                    id: child.id,
+                                },
+                            )
+                        }}
+                        •
                         <span v-if="child.selectedFramework?.name">
                             {{ child.selectedFramework.name }} •
                         </span>
-                        Created
-                        {{ new Date(child.createdAt).toLocaleDateString() }}
+                        {{
+                            $t(
+                                'promptBuilder.components.relatedPromptRuns.created',
+                                {
+                                    date: new Date(
+                                        child.createdAt,
+                                    ).toLocaleDateString(),
+                                },
+                            )
+                        }}
                     </p>
                 </div>
             </div>

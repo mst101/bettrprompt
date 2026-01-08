@@ -26,19 +26,21 @@ const emit = defineEmits<{
                 />
                 <div class="flex-1">
                     <h3 class="text-lg font-semibold text-indigo-900">
-                        You've reached your visitor limit
+                        {{ $t('components.common.visitorLimitModal.title') }}
                     </h3>
                     <p class="mt-2 text-indigo-700">
-                        You've already created an optimised prompt as a visitor.
-                        To create more prompts and iterate on existing ones,
-                        you'll need to create a free account.
+                        {{
+                            $t(
+                                'components.common.visitorLimitModal.description',
+                            )
+                        }}
                     </p>
                     <div class="mt-6 flex gap-3">
                         <ButtonPrimary @click="emit('register')">
-                            Create Free Account
+                            {{ $t('components.common.visitorLimitModal.cta') }}
                         </ButtonPrimary>
                         <ButtonSecondary type="button" @click="emit('close')">
-                            Cancel
+                            {{ $t('common.buttons.cancel') }}
                         </ButtonSecondary>
                     </div>
                 </div>

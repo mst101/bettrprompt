@@ -43,16 +43,16 @@ watch(search, debouncedSearch);
 </script>
 
 <template>
-    <Head title="Admin - Tasks" />
+    <Head :title="$t('admin.tasks.headTitle')" />
 
     <AppLayout>
-        <HeaderPage title="Tasks">
+        <HeaderPage :title="$t('admin.tasks.title')">
             <template #actions>
                 <Link
                     :href="localeRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
-                    ← Back to Dashboard
+                    {{ $t('admin.tasks.backToDashboard') }}
                 </Link>
             </template>
         </HeaderPage>
@@ -71,7 +71,7 @@ watch(search, debouncedSearch);
                         class="pl-12"
                         label=""
                         type="text"
-                        placeholder="Search tasks..."
+                        :placeholder="$t('admin.tasks.searchPlaceholder')"
                     />
                 </div>
             </Card>
@@ -85,12 +85,12 @@ watch(search, debouncedSearch);
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Task Description
+                                    {{ $t('admin.tasks.columns.description') }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Runs
+                                    {{ $t('admin.tasks.columns.runs') }}
                                 </th>
                             </tr>
                         </thead>
@@ -127,7 +127,7 @@ watch(search, debouncedSearch);
                                     colspan="2"
                                     class="px-6 py-4 text-center text-sm text-indigo-500"
                                 >
-                                    No tasks found
+                                    {{ $t('admin.tasks.empty') }}
                                 </td>
                             </tr>
                         </tbody>
@@ -145,7 +145,7 @@ watch(search, debouncedSearch);
                             :href="props.tasks.links[0].url"
                             class="relative inline-flex items-center rounded-md border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                         >
-                            Previous
+                            {{ $t('admin.pagination.previous') }}
                         </Link>
                         <Link
                             v-if="
@@ -157,7 +157,7 @@ watch(search, debouncedSearch);
                             "
                             class="relative ml-3 inline-flex items-center rounded-md border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                         >
-                            Next
+                            {{ $t('admin.pagination.next') }}
                         </Link>
                     </div>
                     <div
@@ -165,14 +165,12 @@ watch(search, debouncedSearch);
                     >
                         <div>
                             <p class="text-sm text-indigo-700">
-                                Page
-                                <span class="font-medium">{{
-                                    props.tasks.current_page
-                                }}</span>
-                                of
-                                <span class="font-medium">{{
-                                    props.tasks.last_page
-                                }}</span>
+                                {{
+                                    $t('admin.pagination.pageOf', {
+                                        current: props.tasks.current_page,
+                                        total: props.tasks.last_page,
+                                    })
+                                }}
                             </p>
                         </div>
                         <div>

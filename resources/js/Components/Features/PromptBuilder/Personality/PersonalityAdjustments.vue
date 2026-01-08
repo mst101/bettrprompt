@@ -1,33 +1,45 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     tier: 'full' | 'partial' | 'none';
     adjustments: string[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const { t } = useI18n();
+const tierLabel = computed(() =>
+    t(`promptBuilder.components.personalityAdjustments.tiers.${props.tier}`),
+);
 </script>
 
 <template>
     <Card class="space-y-4">
         <h2 class="text-lg font-semibold text-indigo-900">
-            Personality Adjustments
+            {{ $t('promptBuilder.components.personalityAdjustments.title') }}
         </h2>
 
         <div>
             <h3 class="mb-2 text-sm font-medium text-indigo-700">
-                Adjustment Level
+                {{
+                    $t('promptBuilder.components.personalityAdjustments.level')
+                }}
             </h3>
             <div class="rounded-lg bg-indigo-50 p-3">
-                <span class="text-indigo-900 capitalize">{{ tier }}</span>
+                <span class="text-indigo-900">{{ tierLabel }}</span>
             </div>
         </div>
 
         <div v-if="adjustments.length > 0">
             <h3 class="mb-2 text-sm font-medium text-indigo-700">
-                Adjustments Applied
+                {{
+                    $t(
+                        'promptBuilder.components.personalityAdjustments.applied',
+                    )
+                }}
             </h3>
             <ul class="space-y-2">
                 <li

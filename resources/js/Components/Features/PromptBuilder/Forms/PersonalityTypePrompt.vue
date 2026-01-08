@@ -8,6 +8,7 @@ import { usePersonalityPromptPreference } from '@/Composables/features/usePerson
 import { useNotification } from '@/Composables/ui/useNotification';
 import UpdatePersonalityTypeForm from '@/Pages/Profile/Partials/UpdatePersonalityTypeForm.vue';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     hasPersonalityType: boolean;
@@ -31,6 +32,7 @@ const showPersonalityBox = computed(() => showPrompt.value);
 const addPersonalityButtonRef = ref<InstanceType<typeof ButtonText> | null>(
     null,
 );
+const { t } = useI18n();
 
 const focus = () => {
     // Only focus on larger screens (sm breakpoint and above: 640px)
@@ -51,8 +53,9 @@ const handlePersonalitySaved = () => {
 const handleMaybeLater = () => {
     dismissPrompt();
     addNotification({
-        message:
-            'You can always add your personality type later in the Profile section of your account.',
+        message: t(
+            'promptBuilder.components.personalityTypePrompt.maybeLaterNotification',
+        ),
         type: 'info',
         autoDismiss: true,
         dismissDelay: 5000,
@@ -98,19 +101,31 @@ watch(
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-indigo-900">
-                            Get personalised prompts (optional)
+                            {{
+                                $t(
+                                    'promptBuilder.components.personalityTypePrompt.title',
+                                )
+                            }}
                         </h3>
                         <p class="mt-2 text-sm">
-                            For personalised prompts tailored to your way of
-                            thinking and communication style, add your
-                            <LinkText
-                                href="https://16personalities.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                >16personalities.com</LinkText
+                            <i18n-t
+                                keypath="promptBuilder.components.personalityTypePrompt.description"
+                                tag="span"
                             >
-                            type. Otherwise, we'll select the best framework and
-                            questions based purely on your task.
+                                <template #link>
+                                    <LinkText
+                                        href="https://16personalities.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {{
+                                            $t(
+                                                'promptBuilder.components.personalityTypePrompt.linkText',
+                                            )
+                                        }}
+                                    </LinkText>
+                                </template>
+                            </i18n-t>
                         </p>
                     </div>
                 </div>
@@ -125,7 +140,11 @@ watch(
                         class="w-full sm:w-fit"
                         @click="showPersonalityForm = true"
                     >
-                        Add personality type
+                        {{
+                            $t(
+                                'promptBuilder.components.personalityTypePrompt.addButton',
+                            )
+                        }}
                     </ButtonPrimary>
                     <ButtonSecondary
                         id="maybe-later"
@@ -133,7 +152,11 @@ watch(
                         class="w-full sm:w-fit"
                         @click="handleMaybeLater"
                     >
-                        Maybe later
+                        {{
+                            $t(
+                                'promptBuilder.components.personalityTypePrompt.maybeLater',
+                            )
+                        }}
                     </ButtonSecondary>
                 </div>
                 <div v-else class="mt-3">
@@ -161,7 +184,11 @@ watch(
                 <div class="flex-1">
                     <div class="flex items-center justify-between gap-4">
                         <h3 class="text-sm font-medium text-indigo-800">
-                            Personality Type:
+                            {{
+                                $t(
+                                    'promptBuilder.components.personalityTypePrompt.label',
+                                )
+                            }}
                             <span class="whitespace-nowrap">{{
                                 visitorPersonalityType
                             }}</span>
@@ -171,7 +198,11 @@ watch(
                             type="button"
                             @click="showPersonalityForm = !showPersonalityForm"
                         >
-                            {{ showPersonalityForm ? 'Cancel' : 'Edit' }}
+                            {{
+                                showPersonalityForm
+                                    ? $t('common.buttons.cancel')
+                                    : $t('common.buttons.edit')
+                            }}
                         </ButtonSecondary>
                     </div>
                     <div v-if="showPersonalityForm" class="mt-2">

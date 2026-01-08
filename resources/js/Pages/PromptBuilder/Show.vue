@@ -29,6 +29,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource, User } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, inject, nextTick, onUnmounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<Props>();
 
@@ -42,6 +43,7 @@ const isAdmin = computed(() => user.value?.isAdmin ?? false);
 const isGuest = computed(() => !user.value);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
+const { t } = useI18n();
 
 // Show banner for guests who just completed their prompt
 // We show it if the guest has an optimized prompt available
@@ -86,7 +88,7 @@ const tabs = computed<Tab[]>(() => {
     // Your Task tab (always shown)
     allTabs.push({
         id: 'task',
-        label: 'Your Task',
+        label: t('promptBuilder.tabs.task'),
         icon: 'squares-2x2',
     });
 
@@ -94,8 +96,8 @@ const tabs = computed<Tab[]>(() => {
     if (props.promptRun.selectedFramework) {
         allTabs.push({
             id: 'framework',
-            label: 'Framework',
-            mobileLabel: 'Selected Framework',
+            label: t('promptBuilder.tabs.framework'),
+            mobileLabel: t('promptBuilder.tabs.frameworkMobile'),
             icon: 'cube',
         });
     }
@@ -108,7 +110,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'personality',
-            label: 'Personality',
+            label: t('promptBuilder.tabs.personality'),
             icon: 'user',
         });
     }
@@ -120,7 +122,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'questions',
-            label: 'Questions',
+            label: t('promptBuilder.tabs.questions'),
             icon: 'question-mark-circle',
         });
     }
@@ -132,7 +134,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'recommendations',
-            label: 'Recommendations',
+            label: t('promptBuilder.tabs.recommendations'),
             icon: 'light-bulb',
         });
     }
@@ -141,7 +143,7 @@ const tabs = computed<Tab[]>(() => {
     if (props.uiComplexity === 'advanced' && isAdmin.value) {
         allTabs.push({
             id: 'api-usage',
-            label: 'Costs',
+            label: t('promptBuilder.tabs.costs'),
             icon: 'chart-bar',
         });
     }
@@ -150,7 +152,7 @@ const tabs = computed<Tab[]>(() => {
     if (props.promptRun.optimizedPrompt) {
         allTabs.push({
             id: 'prompt',
-            label: 'Optimised Prompt',
+            label: t('promptBuilder.tabs.prompt'),
             icon: 'sparkles',
         });
     }
@@ -439,9 +441,12 @@ const { confirm } = useAlert();
 
 const handleDelete = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to delete this prompt run? This action cannot be undone.',
-        'Delete Prompt Run',
-        { confirmButtonStyle: 'danger', confirmText: 'Delete' },
+        t('promptBuilder.confirmations.deletePromptRun.message'),
+        t('promptBuilder.confirmations.deletePromptRun.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.delete'),
+        },
     );
 
     if (!confirmed) {
@@ -469,7 +474,7 @@ const retryWorkflow = () => {
                 // The retry endpoint redirects, so just follow it
             },
             onError: () => {
-                alert('Failed to retry generation. Please try again.');
+                alert(t('promptBuilder.errors.retryFailed'));
             },
         },
     );
@@ -484,9 +489,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <Head title="Prompt Analysis" />
+    <Head :title="$t('promptBuilder.analysis.title')" />
 
-    <HeaderPage title="Prompt Builder">
+    <HeaderPage :title="$t('promptBuilder.title')">
         <template #actions>
             <div class="flex items-center space-x-4">
                 <ButtonSecondary
@@ -495,7 +500,7 @@ onUnmounted(() => {
                     icon="trash"
                     @click="handleDelete"
                 >
-                    Delete
+                    {{ $t('common.buttons.delete') }}
                 </ButtonSecondary>
                 <LinkButton
                     :href="route('prompt-builder.index')"
@@ -503,7 +508,7 @@ onUnmounted(() => {
                     icon="plus"
                     icon-position="left"
                 >
-                    CREATE NEW
+                    {{ $t('promptBuilder.actions.createNew') }}
                 </LinkButton>
             </div>
         </template>
@@ -574,13 +579,18 @@ onUnmounted(() => {
                         </svg>
                         <div class="flex-1">
                             <h4 class="font-semibold text-green-900">
-                                Excellent! Your task is clear
+                                {{
+                                    $t(
+                                        'promptBuilder.messages.preAnalysisSkippedTitle',
+                                    )
+                                }}
                             </h4>
                             <p class="mt-1 text-sm text-green-700">
-                                Your task description is sufficiently clear for
-                                us to proceed directly to the main analysis.
-                                We're now selecting the best prompt framework
-                                for you.
+                                {{
+                                    $t(
+                                        'promptBuilder.messages.preAnalysisSkippedDescription',
+                                    )
+                                }}
                             </p>
                         </div>
                     </div>

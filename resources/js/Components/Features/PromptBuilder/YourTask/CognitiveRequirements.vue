@@ -15,12 +15,14 @@ defineProps<Props>();
 <template>
     <Card class="space-y-4">
         <h2 class="text-lg font-semibold text-indigo-900">
-            Cognitive Requirements
+            {{ $t('promptBuilder.components.cognitiveRequirements.title') }}
         </h2>
 
         <div>
             <h3 class="mb-2 text-sm font-medium text-indigo-700">
-                Primary Requirements
+                {{
+                    $t('promptBuilder.components.cognitiveRequirements.primary')
+                }}
             </h3>
             <div class="flex flex-wrap gap-2">
                 <span
@@ -35,7 +37,11 @@ defineProps<Props>();
 
         <div v-if="requirements.secondary && requirements.secondary.length > 0">
             <h3 class="mb-2 text-sm font-medium text-indigo-700">
-                Secondary Requirements
+                {{
+                    $t(
+                        'promptBuilder.components.cognitiveRequirements.secondary',
+                    )
+                }}
             </h3>
             <div class="flex flex-wrap gap-2">
                 <span
@@ -49,7 +55,13 @@ defineProps<Props>();
         </div>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-indigo-700">Reasoning</h3>
+            <h3 class="mb-2 text-sm font-medium text-indigo-700">
+                {{
+                    $t(
+                        'promptBuilder.components.cognitiveRequirements.reasoning',
+                    )
+                }}
+            </h3>
             <div class="rounded-lg bg-indigo-50 p-3 dark:bg-indigo-100">
                 <p class="text-indigo-900">
                     {{ requirements.reasoning }}

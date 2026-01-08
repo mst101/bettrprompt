@@ -4,6 +4,7 @@ import CompactMetadataCard, {
 } from '@/Components/Common/CompactMetadataCard.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     workflowStage: string;
@@ -17,13 +18,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { t } = useI18n();
 
 const metadataItems = computed<MetadataItem[]>(() => {
     const items: MetadataItem[] = [];
 
     if (props.user) {
         items.push({
-            label: 'User',
+            label: t('components.common.promptRunMetadata.user'),
             value: props.user.name,
             url: route('admin.users.show', { user: props.user.id }),
         });
@@ -31,7 +33,7 @@ const metadataItems = computed<MetadataItem[]>(() => {
 
     if (props.personalityType) {
         items.push({
-            label: 'Personality',
+            label: t('components.common.promptRunMetadata.personality'),
             value: props.personalityType,
             badge: true,
             badgeColor: 'purple',
@@ -39,7 +41,7 @@ const metadataItems = computed<MetadataItem[]>(() => {
     }
 
     items.push({
-        label: 'Created',
+        label: t('components.common.promptRunMetadata.created'),
         value: new Date(props.createdAt).toLocaleString(),
     });
 
@@ -57,7 +59,7 @@ const metadataItems = computed<MetadataItem[]>(() => {
             <div
                 class="text-xs font-semibold tracking-wider text-indigo-600 uppercase sm:hidden"
             >
-                Status
+                {{ $t('components.common.promptRunMetadata.status') }}
             </div>
             <div class="mt-1 sm:mt-0">
                 <StatusBadge :workflow-stage="workflowStage" />

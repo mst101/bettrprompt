@@ -103,15 +103,17 @@ const handleProviderClick = async (provider: AIProvider) => {
     <div class="space-y-3">
         <div class="flex items-center justify-between">
             <h4 class="text-indigo-800">
-                Click any provider to copy your optimised prompt and open their
-                chat interface in a new tab. Then paste your prompt for a better
-                response:
+                {{ $t('promptBuilder.components.aiProviderLinks.description') }}
             </h4>
             <p
                 v-if="copiedProvider"
                 class="animate-fade-in text-xs text-green-600"
             >
-                Prompt copied! Opening {{ copiedProvider }}...
+                {{
+                    $t('promptBuilder.components.aiProviderLinks.copied', {
+                        provider: copiedProvider,
+                    })
+                }}
             </p>
         </div>
         <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
@@ -121,7 +123,11 @@ const handleProviderClick = async (provider: AIProvider) => {
                 variant="secondary"
                 size="sm"
                 type="button"
-                :title="`Open ${provider.name} (prompt copied to clipboard)`"
+                :title="
+                    $t('promptBuilder.components.aiProviderLinks.openTitle', {
+                        provider: provider.name,
+                    })
+                "
                 class="group relative justify-center px-3 py-2 sm:justify-start"
                 :class="
                     prompt.length > 0

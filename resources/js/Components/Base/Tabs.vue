@@ -48,7 +48,7 @@ const selectTab = (tabId: string) => {
             <FormSelect
                 id="tabs"
                 v-model="activeTab"
-                label="Menu"
+                :label="$t('components.base.tabs.menuLabel')"
                 :options="selectOptions"
                 :show-placeholder="false"
                 :label-sr-only="true"
@@ -59,7 +59,7 @@ const selectTab = (tabId: string) => {
         <nav
             class="-mb-px hidden flex-wrap sm:flex"
             :class="tabs.length > 6 ? 'gap-x-5' : 'gap-x-8'"
-            aria-label="Tabs"
+            :aria-label="$t('components.base.tabs.ariaLabel')"
         >
             <button
                 v-for="tab in tabs"

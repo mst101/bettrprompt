@@ -38,7 +38,7 @@ defineExpose({ focus });
             <h2
                 class="sr-only mb-4 text-lg font-semibold text-indigo-900 sm:not-sr-only"
             >
-                Selected Framework
+                {{ $t('promptBuilder.components.selectedFramework.title') }}
             </h2>
             <div
                 class="rounded-lg bg-indigo-50 p-3 text-indigo-800 sm:mt-4 dark:bg-indigo-100"
@@ -48,7 +48,11 @@ defineExpose({ focus });
         </div>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-indigo-800">Components</h3>
+            <h3 class="mb-2 text-sm font-medium text-indigo-800">
+                {{
+                    $t('promptBuilder.components.selectedFramework.components')
+                }}
+            </h3>
             <div class="flex flex-wrap gap-2">
                 <span
                     v-for="component in framework.components"
@@ -61,7 +65,9 @@ defineExpose({ focus });
         </div>
 
         <div>
-            <h3 class="mb-2 text-sm font-medium text-indigo-800">Rationale</h3>
+            <h3 class="mb-2 text-sm font-medium text-indigo-800">
+                {{ $t('promptBuilder.components.selectedFramework.rationale') }}
+            </h3>
             <div class="rounded-lg bg-indigo-50 p-3 dark:bg-indigo-100">
                 <p class="text-indigo-800">
                     {{ framework.rationale }}
@@ -76,7 +82,7 @@ defineExpose({ focus });
                 icon-position="right"
                 @click="emit('proceed')"
             >
-                Proceed to Questions
+                {{ $t('promptBuilder.components.selectedFramework.proceed') }}
             </ButtonPrimary>
         </div>
     </Card>

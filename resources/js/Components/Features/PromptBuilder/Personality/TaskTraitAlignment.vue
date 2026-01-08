@@ -33,13 +33,15 @@ defineProps<Props>();
 <template>
     <Card class="space-y-6">
         <h2 class="text-lg font-semibold text-indigo-900">
-            Task-Trait Alignment
+            {{ $t('promptBuilder.components.taskTraitAlignment.title') }}
         </h2>
 
         <!-- Amplified Traits -->
         <div v-if="alignment.amplified && alignment.amplified.length > 0">
             <h3 class="mb-3 text-sm font-medium text-blue-700">
-                Amplified Traits (Strengths Leveraged)
+                {{
+                    $t('promptBuilder.components.taskTraitAlignment.amplified')
+                }}
             </h3>
             <div class="space-y-3">
                 <div
@@ -56,7 +58,14 @@ defineProps<Props>();
                         <div
                             class="ml-2 flex-1 text-sm font-medium text-blue-900"
                         >
-                            aligns with {{ item.requirement_aligned }}
+                            {{
+                                $t(
+                                    'promptBuilder.components.taskTraitAlignment.alignsWith',
+                                    {
+                                        requirement: item.requirement_aligned,
+                                    },
+                                )
+                            }}
                         </div>
                     </div>
                     <p class="text-sm text-blue-800">
@@ -74,7 +83,11 @@ defineProps<Props>();
             "
         >
             <h3 class="mb-3 text-sm font-medium text-indigo-700">
-                Counterbalanced Traits (Adjusted For)
+                {{
+                    $t(
+                        'promptBuilder.components.taskTraitAlignment.counterbalanced',
+                    )
+                }}
             </h3>
             <div class="space-y-3">
                 <div
@@ -89,7 +102,14 @@ defineProps<Props>();
                             {{ item.trait }}
                         </span>
                         <span class="ml-2 text-sm font-medium text-indigo-900">
-                            opposes {{ item.requirement_opposed }}
+                            {{
+                                $t(
+                                    'promptBuilder.components.taskTraitAlignment.opposes',
+                                    {
+                                        requirement: item.requirement_opposed,
+                                    },
+                                )
+                            }}
                         </span>
                     </div>
                     <p class="mb-2 text-sm text-indigo-700">
@@ -99,7 +119,11 @@ defineProps<Props>();
                         class="rounded border-l-4 border-indigo-400 bg-indigo-100 p-3"
                     >
                         <p class="text-xs font-medium text-indigo-900">
-                            Adjustment Applied:
+                            {{
+                                $t(
+                                    'promptBuilder.components.taskTraitAlignment.adjustmentApplied',
+                                )
+                            }}
                         </p>
                         <p class="mt-1 text-sm text-indigo-950">
                             {{ item.injection }}
@@ -115,7 +139,14 @@ defineProps<Props>();
                 <summary
                     class="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-700"
                 >
-                    Neutral Traits ({{ alignment.neutral.length }})
+                    {{
+                        $t(
+                            'promptBuilder.components.taskTraitAlignment.neutral',
+                            {
+                                count: alignment.neutral.length,
+                            },
+                        )
+                    }}
                 </summary>
                 <div class="mt-3 space-y-2">
                     <div

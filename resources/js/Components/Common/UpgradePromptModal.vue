@@ -36,11 +36,10 @@ function subscribe() {
     <Modal :show="show" max-width="md" @close="emit('close')">
         <div class="p-6">
             <h2 class="mb-2 text-xl font-bold text-indigo-900">
-                You've reached your monthly limit
+                {{ $t('components.common.upgradePromptModal.title') }}
             </h2>
             <p class="mb-6 text-indigo-600">
-                Free accounts are limited to 10 prompts per month. Upgrade to
-                Pro for unlimited access.
+                {{ $t('components.common.upgradePromptModal.description') }}
             </p>
 
             <div class="mb-6 grid grid-cols-2 gap-4">
@@ -55,9 +54,20 @@ function subscribe() {
                     ]"
                     @click="selectedPlan = 'monthly'"
                 >
-                    <div class="font-semibold text-indigo-900">Monthly</div>
+                    <div class="font-semibold text-indigo-900">
+                        {{ $t('components.common.upgradePromptModal.monthly') }}
+                    </div>
                     <div class="text-2xl font-bold text-indigo-900">
-                        &pound;12<span class="text-sm font-normal">/mo</span>
+                        <span>{{
+                            $t(
+                                'components.common.upgradePromptModal.monthlyPrice.amount',
+                            )
+                        }}</span>
+                        <span class="text-sm font-normal">{{
+                            $t(
+                                'components.common.upgradePromptModal.monthlyPrice.period',
+                            )
+                        }}</span>
                     </div>
                 </button>
 
@@ -75,19 +85,36 @@ function subscribe() {
                     <div
                         class="absolute -top-2 -right-2 rounded-full bg-green-500 px-2 py-0.5 text-xs text-white"
                     >
-                        Save 18%
+                        {{ $t('pricing.save', { percent: 18 }) }}
                     </div>
-                    <div class="font-semibold text-indigo-900">Annual</div>
+                    <div class="font-semibold text-indigo-900">
+                        {{ $t('components.common.upgradePromptModal.annual') }}
+                    </div>
                     <div class="text-2xl font-bold text-indigo-900">
-                        &pound;99<span class="text-sm font-normal">/yr</span>
+                        <span>{{
+                            $t(
+                                'components.common.upgradePromptModal.annualPrice.amount',
+                            )
+                        }}</span>
+                        <span class="text-sm font-normal">{{
+                            $t(
+                                'components.common.upgradePromptModal.annualPrice.period',
+                            )
+                        }}</span>
                     </div>
-                    <div class="text-sm text-indigo-500">&pound;8.25/month</div>
+                    <div class="text-sm text-indigo-500">
+                        {{
+                            $t(
+                                'components.common.upgradePromptModal.annualEquivalent',
+                            )
+                        }}
+                    </div>
                 </button>
             </div>
 
             <div class="flex gap-4">
                 <ButtonSecondary class="flex-1" @click="emit('close')">
-                    Maybe Later
+                    {{ $t('components.common.upgradePromptModal.maybeLater') }}
                 </ButtonSecondary>
                 <ButtonPrimary
                     class="flex-1"
@@ -96,7 +123,15 @@ function subscribe() {
                     :loading="isLoading"
                     @click="subscribe"
                 >
-                    {{ isLoading ? 'Processing...' : 'Upgrade Now' }}
+                    {{
+                        isLoading
+                            ? $t(
+                                  'components.common.upgradePromptModal.processing',
+                              )
+                            : $t(
+                                  'components.common.upgradePromptModal.upgradeNow',
+                              )
+                    }}
                 </ButtonPrimary>
             </div>
         </div>

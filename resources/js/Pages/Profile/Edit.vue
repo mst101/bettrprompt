@@ -76,9 +76,9 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head :title="$t('common.nav.profile')" />
 
-    <HeaderPage title="Profile" />
+    <HeaderPage :title="$t('common.nav.profile')" />
 
     <ContainerPage spacing>
         <!-- Profile Completion Progress -->

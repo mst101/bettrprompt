@@ -43,9 +43,9 @@ function recover() {
 </script>
 
 <template>
-    <Head title="Recover Privacy Key" />
+    <Head :title="$t('auth.privacyRecovery.title')" />
 
-    <HeaderPage title="Recover Your Data" />
+    <HeaderPage :title="$t('auth.privacyRecovery.heading')" />
 
     <ContainerPage spacing>
         <div
@@ -56,18 +56,16 @@ function recover() {
                     class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4"
                 >
                     <h3 class="mb-2 font-semibold text-amber-900">
-                        Account Recovery
+                        {{ $t('auth.privacyRecovery.notice.title') }}
                     </h3>
                     <p class="text-sm text-amber-700">
-                        Enter your 12-word recovery phrase to regain access to
-                        your encrypted data. You will also need to set a new
-                        password.
+                        {{ $t('auth.privacyRecovery.notice.description') }}
                     </p>
                 </div>
 
                 <form @submit.prevent="recover">
                     <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                        Recovery Phrase
+                        {{ $t('auth.privacyRecovery.sections.recoveryPhrase') }}
                     </h2>
 
                     <div class="mb-6 grid grid-cols-3 gap-3">
@@ -101,14 +99,14 @@ function recover() {
                     </div>
 
                     <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                        Set New Password
+                        {{ $t('auth.privacyRecovery.sections.setPassword') }}
                     </h2>
 
                     <div class="space-y-4">
                         <FormInput
                             id="new-password"
                             v-model="form.new_password"
-                            label="New Password"
+                            :label="$t('auth.privacyRecovery.newPassword')"
                             type="password"
                             :error="form.errors.new_password"
                             data-testid="new-password"
@@ -119,7 +117,7 @@ function recover() {
                         <FormInput
                             id="new-password-confirmation"
                             v-model="form.new_password_confirmation"
-                            label="Confirm New Password"
+                            :label="$t('auth.privacyRecovery.confirmPassword')"
                             type="password"
                             data-testid="new-password-confirmation"
                             required
@@ -134,7 +132,7 @@ function recover() {
                             :loading="form.processing"
                             data-testid="recover-button"
                         >
-                            Recover Account
+                            {{ $t('auth.privacyRecovery.submit') }}
                         </ButtonPrimary>
                     </div>
                 </form>

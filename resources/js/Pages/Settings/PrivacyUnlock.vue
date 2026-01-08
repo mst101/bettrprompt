@@ -35,9 +35,9 @@ function unlock() {
 </script>
 
 <template>
-    <Head title="Unlock Privacy" />
+    <Head :title="$t('privacy.unlock.title')" />
 
-    <HeaderPage title="Unlock Your Data" />
+    <HeaderPage :title="$t('privacy.unlock.title')" />
 
     <ContainerPage spacing>
         <div
@@ -72,7 +72,7 @@ function unlock() {
                     <FormInput
                         id="unlock-password"
                         v-model="form.password"
-                        label="Password"
+                        :label="$t('auth.login.password')"
                         type="password"
                         :error="form.errors.password"
                         data-testid="unlock-password"
@@ -89,7 +89,7 @@ function unlock() {
                             :loading="form.processing"
                             data-testid="unlock-button"
                         >
-                            Unlock
+                            {{ $t('privacy.unlock.submit') }}
                         </ButtonPrimary>
                     </div>
                 </form>
@@ -99,7 +99,7 @@ function unlock() {
                         :href="localeRoute('privacy.recovery')"
                         class="text-sm text-indigo-600 hover:underline"
                     >
-                        Forgot password? Use recovery phrase
+                        {{ $t('privacy.unlock.forgotPassword') }}
                     </Link>
                 </div>
             </div>

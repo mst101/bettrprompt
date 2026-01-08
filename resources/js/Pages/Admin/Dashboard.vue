@@ -22,10 +22,10 @@ const { localeRoute } = useLocaleRoute();
 </script>
 
 <template>
-    <Head title="Admin Dashboard" />
+    <Head :title="$t('admin.dashboard.title')" />
 
     <AppLayout>
-        <HeaderPage title="Admin Dashboard" />
+        <HeaderPage :title="$t('admin.dashboard.title')" />
 
         <ContainerPage>
             <!-- Stats Grid -->
@@ -38,7 +38,7 @@ const { localeRoute } = useLocaleRoute();
                         </div>
                         <div class="ml-4">
                             <p class="text-xs text-indigo-500 sm:text-sm">
-                                Total Users
+                                {{ $t('admin.dashboard.stats.users') }}
                             </p>
                             <p
                                 class="text-lg font-semibold text-indigo-900 sm:text-2xl"
@@ -60,7 +60,7 @@ const { localeRoute } = useLocaleRoute();
                         </div>
                         <div class="ml-4">
                             <p class="text-xs text-indigo-500 sm:text-sm">
-                                Prompt Runs
+                                {{ $t('admin.dashboard.stats.promptRuns') }}
                             </p>
                             <p
                                 class="text-lg font-semibold text-indigo-900 sm:text-2xl"
@@ -81,7 +81,7 @@ const { localeRoute } = useLocaleRoute();
                         </div>
                         <div class="ml-4">
                             <p class="text-xs text-indigo-500 sm:text-sm">
-                                Unique Tasks
+                                {{ $t('admin.dashboard.stats.uniqueTasks') }}
                             </p>
                             <p
                                 class="text-lg font-semibold text-indigo-900 sm:text-2xl"
@@ -102,7 +102,7 @@ const { localeRoute } = useLocaleRoute();
                         </div>
                         <div class="ml-4">
                             <p class="text-sm text-indigo-500">
-                                Completed Runs
+                                {{ $t('admin.dashboard.stats.completedRuns') }}
                             </p>
                             <p class="text-2xl font-semibold text-indigo-900">
                                 {{ props.stats.completed_runs }}
@@ -126,10 +126,16 @@ const { localeRoute } = useLocaleRoute();
                             />
                             <div class="ml-4">
                                 <h3 class="font-semibold text-indigo-900">
-                                    Manage Users
+                                    {{
+                                        $t('admin.dashboard.links.users.title')
+                                    }}
                                 </h3>
                                 <p class="text-sm text-indigo-500">
-                                    View and search users
+                                    {{
+                                        $t(
+                                            'admin.dashboard.links.users.subtitle',
+                                        )
+                                    }}
                                 </p>
                             </div>
                             <DynamicIcon
@@ -152,10 +158,16 @@ const { localeRoute } = useLocaleRoute();
                             />
                             <div class="ml-4">
                                 <h3 class="font-semibold text-indigo-900">
-                                    Browse Tasks
+                                    {{
+                                        $t('admin.dashboard.links.tasks.title')
+                                    }}
                                 </h3>
                                 <p class="text-sm text-indigo-500">
-                                    Filter by task description
+                                    {{
+                                        $t(
+                                            'admin.dashboard.links.tasks.subtitle',
+                                        )
+                                    }}
                                 </p>
                             </div>
                             <DynamicIcon

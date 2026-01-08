@@ -118,7 +118,7 @@ const saveEdits = () => {
                     <DynamicIcon name="check-circle" class="h-6 w-6" />
                 </div>
                 <h3 class="text-lg font-semibold text-indigo-900">
-                    Your Optimised Prompt
+                    {{ $t('promptBuilder.components.optimizedPrompt.title') }}
                 </h3>
             </div>
 
@@ -135,7 +135,13 @@ const saveEdits = () => {
                     :icon="copyIcon"
                     @click="copyToClipboard(optimizedPrompt)"
                 >
-                    {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
+                    {{
+                        copied
+                            ? $t('common.buttons.copied')
+                            : $t(
+                                  'promptBuilder.components.optimizedPrompt.copy',
+                              )
+                    }}
                 </ButtonPrimary>
 
                 <ButtonSecondary
@@ -145,7 +151,15 @@ const saveEdits = () => {
                     :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
-                    {{ showFormatted ? 'Show Source' : 'Show Preview' }}
+                    {{
+                        showFormatted
+                            ? $t(
+                                  'promptBuilder.components.optimizedPrompt.showSource',
+                              )
+                            : $t(
+                                  'promptBuilder.components.optimizedPrompt.showPreview',
+                              )
+                    }}
                 </ButtonSecondary>
 
                 <ButtonSecondary
@@ -156,7 +170,7 @@ const saveEdits = () => {
                     icon="edit"
                     @click="startEditing"
                 >
-                    Edit Prompt
+                    {{ $t('promptBuilder.components.optimizedPrompt.edit') }}
                 </ButtonSecondary>
             </div>
 
@@ -169,7 +183,11 @@ const saveEdits = () => {
                     icon="check"
                     @click="saveEdits"
                 >
-                    Save Changes
+                    {{
+                        $t(
+                            'promptBuilder.components.optimizedPrompt.saveChanges',
+                        )
+                    }}
                 </ButtonPrimary>
 
                 <ButtonSecondary
@@ -178,7 +196,7 @@ const saveEdits = () => {
                     data-testid="cancel-edit-button"
                     @click="cancelEditing"
                 >
-                    Cancel
+                    {{ $t('common.buttons.cancel') }}
                 </ButtonSecondary>
             </div>
 
@@ -194,7 +212,13 @@ const saveEdits = () => {
                     class="mb-4 flex w-full items-center justify-between rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-900 hover:bg-indigo-100"
                     @click="showProvidersDropdown = !showProvidersDropdown"
                 >
-                    <span>Use with AI Provider</span>
+                    <span>
+                        {{
+                            $t(
+                                'promptBuilder.components.optimizedPrompt.useProvider',
+                            )
+                        }}
+                    </span>
                     <DynamicIcon
                         :name="
                             showProvidersDropdown
@@ -246,7 +270,7 @@ const saveEdits = () => {
                 v-model="editedPrompt"
                 data-testid="optimized-prompt-edit"
                 class="space-y-4 font-mono text-sm! sm:p-6"
-                label="Optimised Prompt"
+                :label="$t('promptBuilder.components.optimizedPrompt.label')"
                 :rows="15"
                 sr-only-label
             />
@@ -260,7 +284,13 @@ const saveEdits = () => {
                     :icon="copyIcon"
                     @click="copyToClipboard(optimizedPrompt)"
                 >
-                    {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
+                    {{
+                        copied
+                            ? $t('common.buttons.copied')
+                            : $t(
+                                  'promptBuilder.components.optimizedPrompt.copy',
+                              )
+                    }}
                 </ButtonPrimary>
 
                 <ButtonSecondary
@@ -270,7 +300,15 @@ const saveEdits = () => {
                     :icon="showFormatted ? 'code' : 'eye'"
                     @click="showFormatted = !showFormatted"
                 >
-                    {{ showFormatted ? 'Show Source' : 'Show Preview' }}
+                    {{
+                        showFormatted
+                            ? $t(
+                                  'promptBuilder.components.optimizedPrompt.showSource',
+                              )
+                            : $t(
+                                  'promptBuilder.components.optimizedPrompt.showPreview',
+                              )
+                    }}
                 </ButtonSecondary>
 
                 <ButtonSecondary
@@ -280,7 +318,7 @@ const saveEdits = () => {
                     icon="edit"
                     @click="startEditing"
                 >
-                    Edit Prompt
+                    {{ $t('promptBuilder.components.optimizedPrompt.edit') }}
                 </ButtonSecondary>
             </div>
 
@@ -293,7 +331,11 @@ const saveEdits = () => {
                     icon="check"
                     @click="saveEdits"
                 >
-                    Save Changes
+                    {{
+                        $t(
+                            'promptBuilder.components.optimizedPrompt.saveChanges',
+                        )
+                    }}
                 </ButtonPrimary>
 
                 <ButtonSecondary
@@ -302,7 +344,7 @@ const saveEdits = () => {
                     data-testid="cancel-edit-button-mobile"
                     @click="cancelEditing"
                 >
-                    Cancel
+                    {{ $t('common.buttons.cancel') }}
                 </ButtonSecondary>
             </div>
 

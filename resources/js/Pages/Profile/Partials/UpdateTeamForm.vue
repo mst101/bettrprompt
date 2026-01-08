@@ -7,6 +7,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     teamData: {
@@ -18,28 +19,29 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
-const teamSizeOptions = [
-    { value: 'solo', label: 'Just Me (Solo)' },
-    { value: 'small', label: 'Small (2-5 people)' },
-    { value: 'medium', label: 'Medium (6-20 people)' },
-    { value: 'large', label: 'Large (20+ people)' },
-];
+const teamSizeOptions = computed(() => [
+    { value: 'solo', label: t('profile.team.options.size.solo') },
+    { value: 'small', label: t('profile.team.options.size.small') },
+    { value: 'medium', label: t('profile.team.options.size.medium') },
+    { value: 'large', label: t('profile.team.options.size.large') },
+]);
 
-const teamRoleOptions = [
-    { value: 'individual', label: 'Individual Contributor' },
-    { value: 'lead', label: 'Team Lead' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'director', label: 'Director' },
-    { value: 'executive', label: 'Executive' },
-];
+const teamRoleOptions = computed(() => [
+    { value: 'individual', label: t('profile.team.options.role.individual') },
+    { value: 'lead', label: t('profile.team.options.role.lead') },
+    { value: 'manager', label: t('profile.team.options.role.manager') },
+    { value: 'director', label: t('profile.team.options.role.director') },
+    { value: 'executive', label: t('profile.team.options.role.executive') },
+]);
 
-const workModeOptions = [
-    { value: 'office', label: 'Office (On-Site)' },
-    { value: 'hybrid', label: 'Hybrid' },
-    { value: 'remote', label: 'Remote' },
-    { value: 'freelance', label: 'Freelance' },
-];
+const workModeOptions = computed(() => [
+    { value: 'office', label: t('profile.team.options.mode.office') },
+    { value: 'hybrid', label: t('profile.team.options.mode.hybrid') },
+    { value: 'remote', label: t('profile.team.options.mode.remote') },
+    { value: 'freelance', label: t('profile.team.options.mode.freelance') },
+]);
 
 const form = useForm({
     teamSize: props.teamData.teamSize || '',
@@ -51,7 +53,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Team context updated successfully');
+            success(t('profile.team.notifications.updated'));
         }
     },
 );
@@ -86,9 +88,12 @@ const { confirm } = useAlert();
 
 const clearTeam = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all team and work information?',
-        'Clear Team & Work Context',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.team.clearConfirm.message'),
+        t('profile.team.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -96,14 +101,14 @@ const clearTeam = async () => {
         clearForm.delete(route('profile.team.clear'), {
             preserveScroll: true,
             onSuccess: () => {
-                success('Team information cleared successfully');
+                success(t('profile.team.notifications.cleared'));
                 // Clear the form fields
                 form.teamSize = '';
                 form.teamRole = '';
                 form.workMode = '';
             },
             onError: () => {
-                error('Failed to clear team information');
+                error(t('profile.team.notifications.clearFailed'));
             },
         });
     }
@@ -112,8 +117,8 @@ const clearTeam = async () => {
 
 <template>
     <CollapsibleSection
-        title="Team & Work Context"
-        subtitle="Share information about your team structure and work environment."
+        :title="$t('profile.team.title')"
+        :subtitle="$t('profile.team.subtitle')"
         data-testid="team"
         icon="users"
     >
@@ -123,10 +128,10 @@ const clearTeam = async () => {
                 <FormSelect
                     id="team-size"
                     v-model="form.teamSize"
-                    label="Team Size"
+                    :label="$t('profile.team.fields.teamSize')"
                     :options="teamSizeOptions"
                     :error="form.errors.teamSize"
-                    placeholder="Select team size"
+                    :placeholder="$t('profile.team.placeholders.teamSize')"
                     show-placeholder
                 />
 
@@ -134,10 +139,10 @@ const clearTeam = async () => {
                 <FormSelect
                     id="team-role"
                     v-model="form.teamRole"
-                    label="Your Role"
+                    :label="$t('profile.team.fields.role')"
                     :options="teamRoleOptions"
                     :error="form.errors.teamRole"
-                    placeholder="Select your role"
+                    :placeholder="$t('profile.team.placeholders.role')"
                     show-placeholder
                 />
 
@@ -145,10 +150,10 @@ const clearTeam = async () => {
                 <FormSelect
                     id="work-mode"
                     v-model="form.workMode"
-                    label="Work Mode"
+                    :label="$t('profile.team.fields.workMode')"
                     :options="workModeOptions"
                     :error="form.errors.workMode"
-                    placeholder="Select work mode"
+                    :placeholder="$t('profile.team.placeholders.workMode')"
                     show-placeholder
                 />
             </div>
@@ -160,13 +165,13 @@ const clearTeam = async () => {
                     :loading="form.processing"
                     icon="download"
                 >
-                    Save Team Context
+                    {{ $t('profile.team.actions.save') }}
                 </ButtonPrimary>
 
                 <ButtonTrash
                     v-if="hasTeamData"
                     id="clear-team-form"
-                    label="Clear"
+                    :label="$t('common.buttons.clear')"
                     @clear="clearTeam"
                 />
             </div>

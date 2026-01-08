@@ -31,7 +31,7 @@ const emit = defineEmits<{
                 <h2
                     class="mb-3 text-sm font-semibold text-indigo-500 uppercase"
                 >
-                    Core Documents
+                    {{ $t('workflow.documentSidebar.coreDocuments') }}
                 </h2>
                 <div class="space-y-2">
                     <button
@@ -52,8 +52,13 @@ const emit = defineEmits<{
                             {{ doc.displayName }}
                         </span>
                         <span class="mt-1 block text-xs text-indigo-600">
-                            Used in:
-                            {{ doc.usedIn.join(', ') || 'None' }}
+                            {{
+                                $t('workflow.documentSidebar.usedIn', {
+                                    list:
+                                        doc.usedIn.join(', ') ||
+                                        $t('workflow.documentSidebar.none'),
+                                })
+                            }}
                         </span>
                     </button>
                 </div>
@@ -64,7 +69,11 @@ const emit = defineEmits<{
                 <h2
                     class="mb-3 text-sm font-semibold text-indigo-500 uppercase"
                 >
-                    Framework Templates ({{ documents.framework.length }})
+                    {{
+                        $t('workflow.documentSidebar.frameworkTemplates', {
+                            count: documents.framework.length,
+                        })
+                    }}
                 </h2>
                 <div class="max-h-96 space-y-2 overflow-y-auto pr-2">
                     <button
@@ -84,9 +93,9 @@ const emit = defineEmits<{
                         >
                             {{ doc.displayName }}
                         </span>
-                        <span class="mt-1 block text-indigo-600"
-                            >workflow_2</span
-                        >
+                        <span class="mt-1 block text-indigo-600">
+                            {{ $t('workflow.documentSidebar.workflowVersion') }}
+                        </span>
                     </button>
                 </div>
             </div>

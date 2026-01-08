@@ -18,6 +18,7 @@ import {
     ref,
     watch,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     visitorPersonalityType?: string | null;
@@ -40,6 +41,7 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
+const { t } = useI18n();
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile
     if (user.value) {
@@ -70,8 +72,7 @@ const submit = () => {
     submissionError.value = null;
     form.post(route('prompt-builder.pre-analyse'), {
         onError: () => {
-            submissionError.value =
-                'Failed to submit prompt. Please check your connection and try again.';
+            submissionError.value = t('promptBuilder.errors.submitFailed');
         },
     });
 };
@@ -157,9 +158,9 @@ watch(
 </script>
 
 <template>
-    <Head title="Prompt Builder" />
+    <Head :title="$t('promptBuilder.title')" />
 
-    <HeaderPage title="Prompt Builder" />
+    <HeaderPage :title="$t('promptBuilder.title')" />
 
     <ContainerPage>
         <Card>
@@ -169,7 +170,9 @@ watch(
                 class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700"
                 role="alert"
             >
-                <p class="font-medium">Error submitting prompt</p>
+                <p class="font-medium">
+                    {{ $t('promptBuilder.errors.submitTitle') }}
+                </p>
                 <p>{{ submissionError }}</p>
             </div>
 

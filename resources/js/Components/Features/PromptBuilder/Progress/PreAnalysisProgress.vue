@@ -3,11 +3,13 @@ import Card from '@/Components/Base/Card.vue';
 import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
 import StageIndicator from '@/Components/Common/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // Simulated progress tracking
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
+const { t } = useI18n();
 
 // Average completion time: 6 seconds
 const ESTIMATED_TOTAL_TIME = 6000; // ms
@@ -26,7 +28,9 @@ const estimatedTimeRemaining = computed(() => {
         0,
         Math.ceil((ESTIMATED_TOTAL_TIME - elapsedTime.value) / 1000),
     );
-    return remaining === 0 ? 'Almost done...' : `${remaining}s`;
+    return remaining === 0
+        ? t('promptBuilder.progress.almostDone')
+        : t('promptBuilder.progress.secondsRemaining', { seconds: remaining });
 });
 
 // Current stage based on progress
@@ -38,33 +42,47 @@ const currentStageIndex = computed(() => {
     return 2;
 });
 
-const stages = [
+const stages = computed(() => [
     {
         id: 0,
-        label: 'Understanding your task',
-        activity: 'Understanding your task',
-        description: 'Analysing the core intent and complexity of your request',
+        label: t('promptBuilder.progress.preAnalysis.stages.understand.label'),
+        activity: t(
+            'promptBuilder.progress.preAnalysis.stages.understand.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.preAnalysis.stages.understand.description',
+        ),
     },
     {
         id: 1,
-        label: 'Identifying clarification areas',
-        activity: 'Identifying areas for clarification',
-        description: 'Finding aspects that would benefit from more detail',
+        label: t('promptBuilder.progress.preAnalysis.stages.identify.label'),
+        activity: t(
+            'promptBuilder.progress.preAnalysis.stages.identify.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.preAnalysis.stages.identify.description',
+        ),
     },
     {
         id: 2,
-        label: 'Preparing Quick Queries',
-        activity: 'Preparing Quick Queries',
-        description: 'Formatting and prioritising your questions',
+        label: t('promptBuilder.progress.preAnalysis.stages.prepare.label'),
+        activity: t(
+            'promptBuilder.progress.preAnalysis.stages.prepare.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.preAnalysis.stages.prepare.description',
+        ),
     },
-];
+]);
 
-const currentStage = computed(() => stages[currentStageIndex.value].label);
+const currentStage = computed(
+    () => stages.value[currentStageIndex.value].label,
+);
 const currentActivity = computed(
-    () => stages[currentStageIndex.value].activity,
+    () => stages.value[currentStageIndex.value].activity,
 );
 const currentDescription = computed(
-    () => stages[currentStageIndex.value].description,
+    () => stages.value[currentStageIndex.value].description,
 );
 
 function getStageStatus(stageId: number): 'pending' | 'active' | 'complete' {
@@ -91,10 +109,10 @@ onUnmounted(() => {
     <Card class="space-y-6">
         <div class="text-center">
             <h3 class="text-lg font-semibold text-indigo-900">
-                Analysing your Task
+                {{ $t('promptBuilder.progress.preAnalysis.title') }}
             </h3>
             <p class="mt-2 text-sm text-indigo-600">
-                Initial check to determine if your task needs refining
+                {{ $t('promptBuilder.progress.preAnalysis.subtitle') }}
             </p>
         </div>
 
@@ -102,7 +120,11 @@ onUnmounted(() => {
         <div class="space-y-2">
             <div class="flex justify-between text-sm text-indigo-600">
                 <span>{{ currentStage }}</span>
-                <span>{{ Math.round(progress) }}% complete</span>
+                <span>{{
+                    $t('promptBuilder.progress.percentComplete', {
+                        percent: Math.round(progress),
+                    })
+                }}</span>
             </div>
             <div class="h-3 w-full overflow-hidden rounded-full bg-indigo-100">
                 <div
@@ -131,7 +153,11 @@ onUnmounted(() => {
 
         <!-- Time Estimate -->
         <div class="text-center text-sm text-indigo-500">
-            Estimated time remaining: {{ estimatedTimeRemaining }}
+            {{
+                $t('promptBuilder.progress.timeRemaining', {
+                    time: estimatedTimeRemaining,
+                })
+            }}
         </div>
 
         <!-- Pre-Analysis Stages (Educational) -->
@@ -139,7 +165,7 @@ onUnmounted(() => {
             class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <p class="text-xs font-semibold text-indigo-500 uppercase">
-                Quick Query Pipeline
+                {{ $t('promptBuilder.progress.preAnalysis.pipeline') }}
             </p>
             <div class="space-y-2">
                 <StageIndicator

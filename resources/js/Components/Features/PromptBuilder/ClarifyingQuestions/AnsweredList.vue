@@ -10,7 +10,7 @@ defineProps<{
 <template>
     <div v-if="answers && answers.length" class="space-y-3">
         <h3 class="text-sm font-semibold text-indigo-900">
-            Your previous answers
+            {{ $t('promptBuilder.components.answeredList.title') }}
         </h3>
         <div
             v-for="(question, index) in questions"
@@ -28,7 +28,10 @@ defineProps<{
                         {{ question.question }}
                     </p>
                     <p class="text-sm text-indigo-700">
-                        {{ answers[index] ?? 'Skipped' }}
+                        {{
+                            answers[index] ??
+                            $t('promptBuilder.components.answeredList.skipped')
+                        }}
                     </p>
                 </div>
             </div>

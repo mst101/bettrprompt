@@ -21,7 +21,7 @@ function goToPromptBuilder() {
 </script>
 
 <template>
-    <Head title="Welcome to Pro!" />
+    <Head :title="$t('subscription.success.title')" />
 
     <ContainerPage>
         <div class="flex min-h-[50vh] items-center justify-center">
@@ -37,15 +37,14 @@ function goToPromptBuilder() {
                 </h1>
 
                 <p class="mb-8 text-indigo-600">
-                    You now have unlimited prompts and privacy encryption. Start
-                    creating powerful, personality-calibrated prompts!
+                    {{ $t('subscription.success.description') }}
                 </p>
 
                 <ButtonPrimary
                     data-testid="go-to-prompt-builder"
                     @click="goToPromptBuilder"
                 >
-                    Start Creating Prompts
+                    {{ $t('subscription.success.cta') }}
                 </ButtonPrimary>
             </div>
         </div>

@@ -26,7 +26,9 @@ const emit = defineEmits<{
                     />
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-semibold text-red-900">Workflow Failed</h3>
+                    <h3 class="font-semibold text-red-900">
+                        {{ $t('components.common.workflowError.title') }}
+                    </h3>
                     <p class="mt-1 text-sm text-red-700">
                         {{ errorMessage }}
                     </p>
@@ -37,7 +39,7 @@ const emit = defineEmits<{
                 class="shrink-0 sm:self-start"
                 @click="emit('retry')"
             >
-                Retry Workflow
+                {{ $t('components.common.workflowError.retry') }}
             </ButtonDanger>
         </div>
     </div>

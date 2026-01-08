@@ -2,11 +2,20 @@
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { useThemeStore } from '@/Stores/themeStore';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const themeStore = useThemeStore();
+const { t } = useI18n();
 const isDark = computed(() => themeStore.theme === 'dark');
 const otherMode = computed(() => (isDark.value ? 'light' : 'dark'));
-const title = computed(() => `Switch to ${otherMode.value} mode`);
+const otherModeLabel = computed(() =>
+    t(`components.base.buttonDarkMode.mode.${otherMode.value}`),
+);
+const title = computed(() =>
+    t('components.base.buttonDarkMode.title', {
+        mode: otherModeLabel.value,
+    }),
+);
 </script>
 
 <template>

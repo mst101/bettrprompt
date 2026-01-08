@@ -58,15 +58,15 @@ function formatDate(dateString: string | null): string {
 </script>
 
 <template>
-    <Head title="Privacy Settings" />
+    <Head :title="$t('privacy.pageTitle')" />
 
-    <HeaderPage title="Privacy Encryption">
+    <HeaderPage :title="$t('privacy.title')">
         <template #actions>
             <Link
                 :href="localeRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
-                Back to Profile
+                {{ $t('privacy.backToProfile') }}
             </Link>
         </template>
     </HeaderPage>
@@ -79,19 +79,16 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-2 text-lg font-semibold text-amber-900">
-                    Pro Feature
+                    {{ $t('privacy.proRequired.title') }}
                 </h2>
                 <p class="mb-4 text-amber-700">
-                    Privacy encryption is available exclusively for Pro
-                    subscribers. Your prompt data and personal information will
-                    be encrypted at rest, ensuring only you can access your
-                    data.
+                    {{ $t('privacy.proRequired.description') }}
                 </p>
                 <Link
                     :href="localeRoute('pricing')"
                     class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                 >
-                    Upgrade to Pro
+                    {{ $t('subscription.actions.upgrade') }}
                 </Link>
             </div>
         </div>
@@ -103,7 +100,7 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Encryption Status
+                    {{ $t('privacy.status.title') }}
                 </h2>
 
                 <div v-if="privacy.enabled" class="space-y-4">
@@ -127,17 +124,20 @@ function formatDate(dateString: string | null): string {
                         </div>
                         <div>
                             <div class="font-semibold text-green-900">
-                                Encryption Enabled
+                                {{ $t('privacy.status.enabled') }}
                             </div>
                             <div class="text-sm text-green-600">
-                                Enabled on {{ formatDate(privacy.setupAt) }}
+                                {{
+                                    $t('privacy.status.enabledOn', {
+                                        date: formatDate(privacy.setupAt),
+                                    })
+                                }}
                             </div>
                         </div>
                     </div>
 
                     <p class="text-indigo-600">
-                        Your prompt data is encrypted at rest. Only you can
-                        access your data by entering your password.
+                        {{ $t('privacy.status.enabledDescription') }}
                     </p>
 
                     <div class="border-t border-indigo-100 pt-4">
@@ -145,7 +145,7 @@ function formatDate(dateString: string | null): string {
                             data-testid="disable-privacy-button"
                             @click="showDisableModal = true"
                         >
-                            Disable Encryption
+                            {{ $t('privacy.actions.disable') }}
                         </ButtonDanger>
                     </div>
                 </div>
@@ -171,26 +171,23 @@ function formatDate(dateString: string | null): string {
                         </div>
                         <div>
                             <div class="font-semibold text-indigo-900">
-                                Encryption Not Enabled
+                                {{ $t('privacy.status.notEnabled') }}
                             </div>
                             <div class="text-sm text-indigo-500">
-                                Your data is stored without end-to-end
-                                encryption
+                                {{ $t('privacy.status.notEnabledDescription') }}
                             </div>
                         </div>
                     </div>
 
                     <p class="text-indigo-600">
-                        Enable privacy encryption to protect your prompt data at
-                        rest. Once enabled, your data will be encrypted with a
-                        key derived from your password.
+                        {{ $t('privacy.status.enableDescription') }}
                     </p>
 
                     <ButtonPrimary
                         data-testid="enable-privacy-button"
                         @click="beginSetup"
                     >
-                        Enable Encryption
+                        {{ $t('privacy.actions.enable') }}
                     </ButtonPrimary>
                 </div>
             </div>
@@ -203,7 +200,7 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    How Privacy Encryption Works
+                    {{ $t('privacy.howItWorks.title') }}
                 </h2>
 
                 <div class="space-y-4 text-indigo-600">
@@ -215,10 +212,11 @@ function formatDate(dateString: string | null): string {
                         </div>
                         <p>
                             <strong class="text-indigo-900"
-                                >Password-Protected Key:</strong
+                                >{{
+                                    $t('privacy.howItWorks.step1.title')
+                                }}:</strong
                             >
-                            A unique encryption key is generated and protected
-                            by your account password.
+                            {{ $t('privacy.howItWorks.step1.description') }}
                         </p>
                     </div>
                     <div class="flex gap-3">
@@ -229,10 +227,11 @@ function formatDate(dateString: string | null): string {
                         </div>
                         <p>
                             <strong class="text-indigo-900"
-                                >Recovery Phrase:</strong
+                                >{{
+                                    $t('privacy.howItWorks.step2.title')
+                                }}:</strong
                             >
-                            You'll receive a 12-word recovery phrase that can
-                            restore access if you forget your password.
+                            {{ $t('privacy.howItWorks.step2.description') }}
                         </p>
                     </div>
                     <div class="flex gap-3">
@@ -243,11 +242,11 @@ function formatDate(dateString: string | null): string {
                         </div>
                         <p>
                             <strong class="text-indigo-900"
-                                >Encrypted At Rest:</strong
+                                >{{
+                                    $t('privacy.howItWorks.step3.title')
+                                }}:</strong
                             >
-                            All your prompt data is encrypted before being
-                            stored. Without your password, the data is
-                            unreadable.
+                            {{ $t('privacy.howItWorks.step3.description') }}
                         </p>
                     </div>
                 </div>
@@ -262,18 +261,17 @@ function formatDate(dateString: string | null): string {
         >
             <div class="p-6">
                 <h3 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Disable Privacy Encryption?
+                    {{ $t('privacy.disable.title') }}
                 </h3>
                 <p class="mb-4 text-indigo-600">
-                    This will decrypt all your stored data. Your prompts will no
-                    longer be encrypted at rest.
+                    {{ $t('privacy.disable.description') }}
                 </p>
 
                 <form @submit.prevent="disablePrivacy">
                     <FormInput
                         id="disable-password"
                         v-model="disableForm.password"
-                        label="Enter your password to confirm"
+                        :label="$t('privacy.disable.passwordLabel')"
                         type="password"
                         :error="disableForm.errors.password"
                         required
@@ -287,7 +285,7 @@ function formatDate(dateString: string | null): string {
                             class="h-4 w-4 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                         />
                         <span class="text-sm text-indigo-600">
-                            I understand my data will no longer be encrypted
+                            {{ $t('privacy.disable.confirmLabel') }}
                         </span>
                     </label>
 
@@ -297,7 +295,7 @@ function formatDate(dateString: string | null): string {
                             class="flex-1"
                             @click="showDisableModal = false"
                         >
-                            Cancel
+                            {{ $t('common.buttons.cancel') }}
                         </ButtonSecondary>
                         <ButtonDanger
                             type="submit"
@@ -311,8 +309,8 @@ function formatDate(dateString: string | null): string {
                         >
                             {{
                                 isDisabling
-                                    ? 'Disabling...'
-                                    : 'Disable Encryption'
+                                    ? $t('privacy.disable.processing')
+                                    : $t('privacy.actions.disable')
                             }}
                         </ButtonDanger>
                     </div>

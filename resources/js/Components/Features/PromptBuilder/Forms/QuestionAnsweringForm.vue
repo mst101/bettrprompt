@@ -103,12 +103,24 @@ const handleTranscription = (text: string) => {
         <div class="flex items-center justify-between text-sm">
             <div class="flex items-center gap-2">
                 <span class="font-medium text-indigo-700">
-                    Question {{ currentQuestionNumber }} of
-                    {{ totalQuestions }}
+                    {{
+                        $t(
+                            'promptBuilder.components.questionAnsweringForm.progressLabel',
+                            {
+                                current: currentQuestionNumber,
+                                total: totalQuestions,
+                            },
+                        )
+                    }}
                 </span>
             </div>
             <span class="text-indigo-700">
-                {{ Math.round(progressPercent) }}% complete
+                {{
+                    $t(
+                        'promptBuilder.components.questionAnsweringForm.percentComplete',
+                        { percent: Math.round(progressPercent) },
+                    )
+                }}
             </span>
         </div>
         <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-indigo-100">
@@ -145,10 +157,16 @@ const handleTranscription = (text: string) => {
             ref="textareaRef"
             data-testid="answer-textarea"
             :model-value="answer"
-            label="Your Answer"
+            :label="
+                $t('promptBuilder.components.questionAnsweringForm.answerLabel')
+            "
             sr-only-label
             :disabled="isSubmitting"
-            placeholder="Type your answer here, or record a quick note..."
+            :placeholder="
+                $t(
+                    'promptBuilder.components.questionAnsweringForm.answerPlaceholder',
+                )
+            "
             @update:model-value="(value) => emit('update:answer', value)"
         >
             <template #actions>
@@ -178,7 +196,7 @@ const handleTranscription = (text: string) => {
                     @click="emit('go-back')"
                 >
                     <DynamicIcon name="arrow-left" class="mr-2 -ml-1 h-4 w-4" />
-                    Back
+                    {{ $t('common.buttons.back') }}
                 </ButtonSecondary>
             </div>
 
@@ -193,7 +211,11 @@ const handleTranscription = (text: string) => {
                     class="w-full sm:w-auto"
                     @click="emit('submit-all')"
                 >
-                    Submit All Answers
+                    {{
+                        $t(
+                            'promptBuilder.components.questionAnsweringForm.submitAll',
+                        )
+                    }}
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonSecondary>
 
@@ -207,8 +229,12 @@ const handleTranscription = (text: string) => {
                 >
                     {{
                         currentQuestionNumber === totalQuestions
-                            ? 'Submit All Answers'
-                            : 'Next Question'
+                            ? $t(
+                                  'promptBuilder.components.questionAnsweringForm.submitAll',
+                              )
+                            : $t(
+                                  'promptBuilder.components.questionAnsweringForm.nextQuestion',
+                              )
                     }}
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>

@@ -52,17 +52,21 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
 
 <template>
     <Head
-        :title="`Admin - Task: ${props.taskDescription.substring(0, 50)}...`"
+        :title="
+            $t('admin.tasks.headTitleTask', {
+                task: props.taskDescription.substring(0, 50),
+            })
+        "
     />
 
     <AppLayout>
-        <HeaderPage title="Prompt Runs for Task">
+        <HeaderPage :title="$t('admin.tasks.promptRunsTitle')">
             <template #actions>
                 <Link
                     :href="route('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
-                    ← Back to Tasks
+                    {{ $t('admin.tasks.backToTasks') }}
                 </Link>
             </template>
         </HeaderPage>
@@ -71,7 +75,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
             <!-- Task Description -->
             <Card class="mb-6">
                 <h2 class="mb-2 font-semibold text-indigo-900">
-                    Task Description:
+                    {{ $t('admin.tasks.taskDescriptionLabel') }}
                 </h2>
                 <p class="text-indigo-700">{{ props.taskDescription }}</p>
             </Card>
@@ -85,32 +89,34 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    ID
+                                    {{ $t('admin.tasks.columns.id') }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    User
+                                    {{ $t('admin.tasks.columns.user') }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Personality
+                                    {{ $t('admin.tasks.columns.personality') }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Framework
+                                    {{ $t('admin.tasks.columns.framework') }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Workflow Stage
+                                    {{
+                                        $t('admin.tasks.columns.workflowStage')
+                                    }}
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-500 uppercase"
                                 >
-                                    Created
+                                    {{ $t('admin.tasks.columns.created') }}
                                 </th>
                             </tr>
                         </thead>
@@ -152,7 +158,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                         </div>
                                     </div>
                                     <span v-else class="text-indigo-400">
-                                        Guest
+                                        {{ $t('admin.tasks.guest') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-indigo-900">
@@ -163,11 +169,14 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                         {{ run.personalityType }}
                                     </span>
                                     <span v-else class="text-indigo-400">
-                                        N/A
+                                        {{ $t('admin.common.notAvailable') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-indigo-900">
-                                    {{ run.selectedFramework?.name || 'N/A' }}
+                                    {{
+                                        run.selectedFramework?.name ||
+                                        $t('admin.common.notAvailable')
+                                    }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
@@ -194,7 +203,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                     colspan="6"
                                     class="px-6 py-4 text-center text-sm text-indigo-500"
                                 >
-                                    No prompt runs found
+                                    {{ $t('admin.tasks.emptyRuns') }}
                                 </td>
                             </tr>
                         </tbody>
@@ -208,14 +217,12 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                 >
                     <div>
                         <p class="text-sm text-indigo-700">
-                            Page
-                            <span class="font-medium">{{
-                                props.promptRuns.currentPage
-                            }}</span>
-                            of
-                            <span class="font-medium">{{
-                                props.promptRuns.lastPage
-                            }}</span>
+                            {{
+                                $t('admin.pagination.pageOf', {
+                                    current: props.promptRuns.currentPage,
+                                    total: props.promptRuns.lastPage,
+                                })
+                            }}
                         </p>
                     </div>
                     <div>

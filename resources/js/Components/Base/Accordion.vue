@@ -94,7 +94,7 @@ const isPanelExpanded = (itemId: string) => {
     <div
         v-if="items.length > 0"
         role="region"
-        aria-label="Use case examples"
+        :aria-label="$t('components.base.accordion.ariaLabel')"
         class="space-y-3"
     >
         <div
@@ -186,6 +186,6 @@ const isPanelExpanded = (itemId: string) => {
 
     <!-- Empty State -->
     <div v-else class="text-center text-indigo-700">
-        <p>No use cases available</p>
+        <p>{{ $t('components.base.accordion.empty') }}</p>
     </div>
 </template>

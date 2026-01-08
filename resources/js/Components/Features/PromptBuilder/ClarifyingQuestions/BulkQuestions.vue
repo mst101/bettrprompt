@@ -7,7 +7,8 @@ import OptionalBadge from '@/Components/Common/OptionalBadge.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
     defineProps<{
@@ -21,9 +22,7 @@ const props = withDefaults(
         backLabel?: string;
     }>(),
     {
-        submitLabel: 'Submit All Answers',
         showBack: true,
-        backLabel: 'Back to One-at-a-Time',
     },
 );
 
@@ -33,6 +32,7 @@ const emit = defineEmits<{
     (e: 'back'): void;
 }>();
 
+const { t } = useI18n();
 const { appendText } = useTextAppend();
 
 const textareaRefs = ref<
@@ -71,6 +71,18 @@ const handleTranscription = (index: number, transcript: string) => {
     const current = props.answers[index] ?? '';
     updateAnswer(index, appendText(current, transcript));
 };
+
+const resolvedSubmitLabel = computed(
+    () =>
+        props.submitLabel ||
+        t('promptBuilder.components.bulkQuestions.submitAll'),
+);
+
+const resolvedBackLabel = computed(
+    () =>
+        props.backLabel ||
+        t('promptBuilder.components.bulkQuestions.backToSingle'),
+);
 </script>
 
 <template>
@@ -98,9 +110,20 @@ const handleTranscription = (index: number, transcript: string) => {
                     :id="`bulk-answer-${index}`"
                     :ref="(el: any) => setTextareaRef(el, index)"
                     :model-value="answers[index] ?? ''"
-                    :label="`Answer ${index + 1}`"
+                    :label="
+                        $t(
+                            'promptBuilder.components.bulkQuestions.answerLabel',
+                            {
+                                number: index + 1,
+                            },
+                        )
+                    "
                     :disabled="isSubmitting"
-                    placeholder="Type your answer here, or record a quick note..."
+                    :placeholder="
+                        $t(
+                            'promptBuilder.components.bulkQuestions.answerPlaceholder',
+                        )
+                    "
                     @update:model-value="
                         (value: string) => updateAnswer(index, value)
                     "
@@ -127,7 +150,7 @@ const handleTranscription = (index: number, transcript: string) => {
                 class="w-full sm:w-auto"
                 @click="emit('back')"
             >
-                {{ backLabel }}
+                {{ resolvedBackLabel }}
             </ButtonSecondary>
             <ButtonPrimary
                 type="button"
@@ -136,7 +159,7 @@ const handleTranscription = (index: number, transcript: string) => {
                 class="w-full sm:w-auto"
                 @click="emit('submit-all')"
             >
-                {{ submitLabel }}
+                {{ resolvedSubmitLabel }}
             </ButtonPrimary>
         </div>
     </div>

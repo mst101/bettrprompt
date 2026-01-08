@@ -9,7 +9,8 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<Props>();
 
@@ -34,6 +35,8 @@ interface Props {
 
 const isEditing = ref(false);
 
+const { t } = useI18n();
+
 const form = useForm({
     experienceLevel: props.feedback.experienceLevel,
     usefulness: props.feedback.usefulness,
@@ -43,49 +46,43 @@ const form = useForm({
     desiredFeaturesOther: props.feedback.desiredFeaturesOther || '',
 });
 
-const featureOptions = [
+const featureOptions = computed(() => [
     {
         value: 'templates',
-        label: 'Prompt templates library',
-        description:
-            'Pre-built templates for common use cases (code review, content writing, data analysis, etc.)',
+        label: t('feedback.features.templates.label'),
+        description: t('feedback.features.templates.description'),
     },
     {
         value: 'compare',
-        label: 'Compare prompt versions side-by-side',
-        description:
-            'Visual comparison tool showing differences between prompt versions and their effectiveness',
+        label: t('feedback.features.compare.label'),
+        description: t('feedback.features.compare.description'),
     },
     {
         value: 'api-integration',
-        label: 'Integration with ChatGPT/Claude APIs',
-        description:
-            'Test prompts directly with AI models, see real responses, and iterate within the app',
+        label: t('feedback.features.apiIntegration.label'),
+        description: t('feedback.features.apiIntegration.description'),
     },
     {
         value: 'collaboration',
-        label: 'Team collaboration features',
-        description:
-            'Share prompts within your organisation, add comments, track versions, and manage permissions',
+        label: t('feedback.features.collaboration.label'),
+        description: t('feedback.features.collaboration.description'),
     },
     {
         value: 'model-specific',
-        label: 'AI model-specific optimisation',
-        description:
-            'Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences',
+        label: t('feedback.features.modelSpecific.label'),
+        description: t('feedback.features.modelSpecific.description'),
     },
     {
         value: 'document-upload',
-        label: 'Upload documents and/or images',
-        description:
-            'Upload files and images to provide context for prompt generation, e.g., analyse documents or refine prompts based on visual content',
+        label: t('feedback.features.documentUpload.label'),
+        description: t('feedback.features.documentUpload.description'),
     },
     {
         value: 'other',
-        label: 'Other',
-        description: "Something else? Let us know what you'd like to see!",
+        label: t('feedback.features.other.label'),
+        description: t('feedback.features.other.description'),
     },
-];
+]);
 
 const submit = () => {
     form.put(route('feedback.update'), {
@@ -108,9 +105,9 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-    <Head title="Your Feedback" />
+    <Head :title="$t('feedback.show.title')" />
 
-    <HeaderPage title="Your Feedback" />
+    <HeaderPage :title="$t('feedback.show.heading')" />
 
     <ContainerPage>
         <Card>
@@ -118,10 +115,10 @@ const formatDate = (dateString: string) => {
                 <div class="flex items-start justify-between">
                     <div>
                         <h2 class="text-lg font-semibold text-indigo-900">
-                            Thank you for your feedback!
+                            {{ $t('feedback.show.thankYou') }}
                         </h2>
                         <p class="mt-1 text-sm text-indigo-600">
-                            You can update your responses at any time.
+                            {{ $t('feedback.show.subtitle') }}
                         </p>
                     </div>
                     <ButtonSecondary
@@ -130,11 +127,15 @@ const formatDate = (dateString: string) => {
                         icon="edit"
                         @click="isEditing = true"
                     >
-                        Edit Responses
+                        {{ $t('feedback.show.actions.edit') }}
                     </ButtonSecondary>
                 </div>
                 <p class="mt-2 text-xs text-indigo-500">
-                    Last updated: {{ formatDate(feedback.updatedAt) }}
+                    {{
+                        $t('feedback.show.lastUpdated', {
+                            date: formatDate(feedback.updatedAt),
+                        })
+                    }}
                 </p>
             </div>
 
@@ -144,13 +145,12 @@ const formatDate = (dateString: string) => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        1. How experienced are you with AI tools like ChatGPT or
-                        Claude?
+                        {{ $t('feedback.questions.experience.label') }}
                     </label>
                     <LikertScale
                         v-model="form.experienceLevel"
-                        left-label="Novice"
-                        right-label="Experienced"
+                        :left-label="$t('feedback.questions.experience.left')"
+                        :right-label="$t('feedback.questions.experience.right')"
                         :disabled="!isEditing || form.processing"
                     />
                     <p
@@ -166,12 +166,12 @@ const formatDate = (dateString: string) => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        2. How useful was the app for improving your prompt?
+                        {{ $t('feedback.questions.usefulness.label') }}
                     </label>
                     <LikertScale
                         v-model="form.usefulness"
-                        left-label="Not useful"
-                        right-label="Extremely useful"
+                        :left-label="$t('feedback.questions.usefulness.left')"
+                        :right-label="$t('feedback.questions.usefulness.right')"
                         :disabled="!isEditing || form.processing"
                     />
                     <p
@@ -187,13 +187,14 @@ const formatDate = (dateString: string) => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        3. How likely are you to use this app the next time you
-                        need to work with an AI assistant?
+                        {{ $t('feedback.questions.usageIntent.label') }}
                     </label>
                     <LikertScale
                         v-model="form.usageIntent"
-                        left-label="Very unlikely"
-                        right-label="Very likely"
+                        :left-label="$t('feedback.questions.usageIntent.left')"
+                        :right-label="
+                            $t('feedback.questions.usageIntent.right')
+                        "
                         :disabled="!isEditing || form.processing"
                     />
                     <p
@@ -209,10 +210,12 @@ const formatDate = (dateString: string) => {
                     <FormTextarea
                         id="suggestions"
                         v-model="form.suggestions"
-                        label="4. What's one thing you'd change or improve about the app?"
+                        :label="$t('feedback.questions.suggestions.label')"
                         :error="form.errors.suggestions"
                         :disabled="!isEditing || form.processing"
-                        placeholder="Mention any steps you found confusing or features you'd like to see next."
+                        :placeholder="
+                            $t('feedback.questions.suggestions.placeholder')
+                        "
                         :rows="5"
                     />
                 </div>
@@ -222,10 +225,10 @@ const formatDate = (dateString: string) => {
                     <label
                         class="mb-4 block text-sm font-medium text-indigo-900"
                     >
-                        5. Which features would you most want to see added next?
-                        <span class="font-normal text-indigo-600"
-                            >(Select all that apply)</span
-                        >
+                        {{ $t('feedback.questions.features.label') }}
+                        <span class="font-normal text-indigo-600">{{
+                            $t('feedback.questions.features.hintAll')
+                        }}</span>
                     </label>
                     <FormCheckboxGroup
                         v-model="form.desiredFeatures"
@@ -252,14 +255,14 @@ const formatDate = (dateString: string) => {
                             }
                         "
                     >
-                        Cancel
+                        {{ $t('common.buttons.cancel') }}
                     </ButtonSecondary>
                     <ButtonPrimary
                         type="submit"
                         :disabled="form.processing"
                         :loading="form.processing"
                     >
-                        Update Feedback
+                        {{ $t('feedback.show.actions.update') }}
                     </ButtonPrimary>
                 </div>
             </form>

@@ -26,7 +26,7 @@ function goToPromptBuilder() {
 </script>
 
 <template>
-    <Head title="Checkout Cancelled" />
+    <Head :title="$t('subscription.cancelled.title')" />
 
     <ContainerPage>
         <div class="flex min-h-[50vh] items-center justify-center">
@@ -41,23 +41,26 @@ function goToPromptBuilder() {
                 </div>
 
                 <h1 class="mb-4 text-3xl font-bold text-indigo-900">
-                    Checkout Cancelled
+                    {{ $t('subscription.cancelled.heading') }}
                 </h1>
 
                 <p class="mb-8 text-indigo-600">
-                    {{ message }} No worries - you can continue using the free
-                    tier or try again whenever you're ready.
+                    {{
+                        $t('subscription.cancelled.description', {
+                            message,
+                        })
+                    }}
                 </p>
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
                     <ButtonSecondary @click="goToPromptBuilder">
-                        Continue with Free
+                        {{ $t('subscription.cancelled.actions.continueFree') }}
                     </ButtonSecondary>
                     <ButtonPrimary
                         data-testid="try-again-button"
                         @click="goToPricing"
                     >
-                        View Pricing
+                        {{ $t('subscription.cancelled.actions.viewPricing') }}
                     </ButtonPrimary>
                 </div>
             </div>

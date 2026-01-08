@@ -23,6 +23,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/Types';
 import { Head, Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -32,6 +33,11 @@ interface Props {
 const props = defineProps<Props>();
 
 const { localeRoute } = useLocaleRoute();
+const { t } = useI18n();
+
+const pageTitle = computed(
+    () => `${t('promptBuilder.admin.promptRun')} #${props.promptRun.id}`,
+);
 
 // Define tabs dynamically based on available data
 const tabs = computed<Tab[]>(() => {
@@ -40,7 +46,7 @@ const tabs = computed<Tab[]>(() => {
     // Your Task tab (always shown)
     allTabs.push({
         id: 'task',
-        label: 'Your Task',
+        label: t('promptBuilder.tabs.task'),
         icon: 'squares-2x2',
     });
 
@@ -48,7 +54,7 @@ const tabs = computed<Tab[]>(() => {
     if (props.promptRun.selectedFramework) {
         allTabs.push({
             id: 'framework',
-            label: 'Framework',
+            label: t('promptBuilder.tabs.framework'),
             icon: 'cube',
         });
     }
@@ -60,7 +66,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'personality',
-            label: 'Personality',
+            label: t('promptBuilder.tabs.personality'),
             icon: 'user',
         });
     }
@@ -72,7 +78,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'questions',
-            label: 'Questions',
+            label: t('promptBuilder.tabs.questions'),
             icon: 'question-mark-circle',
         });
     }
@@ -84,7 +90,7 @@ const tabs = computed<Tab[]>(() => {
     ) {
         allTabs.push({
             id: 'recommendations',
-            label: 'Recommendations',
+            label: t('promptBuilder.tabs.recommendations'),
             icon: 'light-bulb',
         });
     }
@@ -92,7 +98,7 @@ const tabs = computed<Tab[]>(() => {
     // Costs tab (always shown for admin)
     allTabs.push({
         id: 'costs',
-        label: 'Costs',
+        label: t('promptBuilder.tabs.costs'),
         icon: 'chart-bar',
     });
 
@@ -100,7 +106,7 @@ const tabs = computed<Tab[]>(() => {
     if (props.promptRun.optimizedPrompt) {
         allTabs.push({
             id: 'prompt',
-            label: 'Optimised Prompt',
+            label: t('promptBuilder.tabs.prompt'),
             icon: 'sparkles',
         });
     }
@@ -125,16 +131,16 @@ const hasRelatedRuns = computed(
 </script>
 
 <template>
-    <Head :title="`Admin - Prompt Run #${props.promptRun.id}`" />
+    <Head :title="`Admin - ${pageTitle}`" />
 
     <AppLayout>
-        <HeaderPage :title="`Prompt Run #${props.promptRun.id}`">
+        <HeaderPage :title="pageTitle">
             <template #actions>
                 <Link
                     :href="localeRoute('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
-                    ← Back to Tasks
+                    ← {{ $t('promptBuilder.admin.backToTasks') }}
                 </Link>
             </template>
         </HeaderPage>

@@ -13,7 +13,7 @@ const emitClose = (event: Event) => {
 <template>
     <button
         type="button"
-        aria-label="Close"
+        :aria-label="$t('common.buttons.close')"
         class="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full text-indigo-400 transition hover:text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-indigo-100 focus:outline-hidden"
         @click="emitClose"
     >

@@ -3,11 +3,13 @@ import Card from '@/Components/Base/Card.vue';
 import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
 import StageIndicator from '@/Components/Common/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // Simulated progress tracking
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
+const { t } = useI18n();
 
 // Average completion time: 18 seconds
 const ESTIMATED_TOTAL_TIME = 18000; // ms
@@ -26,7 +28,9 @@ const estimatedTimeRemaining = computed(() => {
         0,
         Math.ceil((ESTIMATED_TOTAL_TIME - elapsedTime.value) / 1000),
     );
-    return remaining === 0 ? 'Almost done...' : `${remaining}s`;
+    return remaining === 0
+        ? t('promptBuilder.progress.almostDone')
+        : t('promptBuilder.progress.secondsRemaining', { seconds: remaining });
 });
 
 // Current stage based on progress
@@ -39,45 +43,67 @@ const currentStageIndex = computed(() => {
     return 4;
 });
 
-const stages = [
+const stages = computed(() => [
     {
         id: 0,
-        label: 'Classifying task',
-        activity: 'Classifying your task',
-        description: 'Identifying the task category and complexity',
+        label: t('promptBuilder.progress.analysis.stages.classifying.label'),
+        activity: t(
+            'promptBuilder.progress.analysis.stages.classifying.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.analysis.stages.classifying.description',
+        ),
     },
     {
         id: 1,
-        label: 'Analysing requirements',
-        activity: 'Analysing cognitive requirements',
-        description: 'Determining which thinking styles suit your task',
+        label: t('promptBuilder.progress.analysis.stages.analyzing.label'),
+        activity: t(
+            'promptBuilder.progress.analysis.stages.analyzing.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.analysis.stages.analyzing.description',
+        ),
     },
     {
         id: 2,
-        label: 'Selecting framework',
-        activity: 'Selecting optimal prompt framework',
-        description: 'Choosing from 62 frameworks based on your needs',
+        label: t('promptBuilder.progress.analysis.stages.framework.label'),
+        activity: t(
+            'promptBuilder.progress.analysis.stages.framework.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.analysis.stages.framework.description',
+        ),
     },
     {
         id: 3,
-        label: 'Personalising approach',
-        activity: 'Customising for your personality',
-        description: 'Tailoring recommendations to your unique traits',
+        label: t('promptBuilder.progress.analysis.stages.personalizing.label'),
+        activity: t(
+            'promptBuilder.progress.analysis.stages.personalizing.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.analysis.stages.personalizing.description',
+        ),
     },
     {
         id: 4,
-        label: 'Generating questions',
-        activity: 'Generating clarifying questions',
-        description: 'Creating targeted questions to refine your prompt',
+        label: t('promptBuilder.progress.analysis.stages.questions.label'),
+        activity: t(
+            'promptBuilder.progress.analysis.stages.questions.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.analysis.stages.questions.description',
+        ),
     },
-];
+]);
 
-const currentStage = computed(() => stages[currentStageIndex.value].label);
+const currentStage = computed(
+    () => stages.value[currentStageIndex.value].label,
+);
 const currentActivity = computed(
-    () => stages[currentStageIndex.value].activity,
+    () => stages.value[currentStageIndex.value].activity,
 );
 const currentDescription = computed(
-    () => stages[currentStageIndex.value].description,
+    () => stages.value[currentStageIndex.value].description,
 );
 
 function getStageStatus(stageId: number): 'pending' | 'active' | 'complete' {
@@ -104,10 +130,10 @@ onUnmounted(() => {
     <Card class="space-y-6">
         <div class="text-center">
             <h3 class="text-lg font-semibold text-indigo-900">
-                Analysing Your Task
+                {{ $t('promptBuilder.progress.analysis.title') }}
             </h3>
             <p class="mt-2 text-sm text-indigo-600">
-                Please wait while we determine the best prompt framework for you
+                {{ $t('promptBuilder.progress.analysis.subtitle') }}
             </p>
         </div>
 
@@ -115,7 +141,11 @@ onUnmounted(() => {
         <div class="space-y-2">
             <div class="flex justify-between text-sm text-indigo-600">
                 <span>{{ currentStage }}</span>
-                <span>{{ Math.round(progress) }}% complete</span>
+                <span>{{
+                    $t('promptBuilder.progress.percentComplete', {
+                        percent: Math.round(progress),
+                    })
+                }}</span>
             </div>
             <div class="h-3 w-full overflow-hidden rounded-full bg-indigo-100">
                 <div
@@ -144,7 +174,11 @@ onUnmounted(() => {
 
         <!-- Time Estimate -->
         <div class="text-center text-sm text-indigo-500">
-            Estimated time remaining: {{ estimatedTimeRemaining }}
+            {{
+                $t('promptBuilder.progress.timeRemaining', {
+                    time: estimatedTimeRemaining,
+                })
+            }}
         </div>
 
         <!-- Analysis Stages (Educational) -->
@@ -152,7 +186,7 @@ onUnmounted(() => {
             class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
         >
             <p class="text-xs font-semibold text-indigo-500 uppercase">
-                Analysis Pipeline
+                {{ $t('promptBuilder.progress.analysis.pipeline') }}
             </p>
             <div class="space-y-2">
                 <StageIndicator

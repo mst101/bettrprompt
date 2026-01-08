@@ -15,6 +15,7 @@ import type {
 } from '@/Types/resources/PromptRunResource';
 import { router, useForm } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     promptRun: PromptRunResource;
@@ -44,7 +45,12 @@ const questionsWithOtherOption = computed<PreAnalysisQuestion[]>(() => {
             ...question,
             options: [
                 ...(question.options || []),
-                { value: 'other', label: 'Other (please specify)' },
+                {
+                    value: 'other',
+                    label: t(
+                        'promptBuilder.components.preAnalysisQuestions.otherOption',
+                    ),
+                },
             ],
         };
     });
@@ -74,6 +80,7 @@ const form = useForm({
     answers: {} as Record<string, string>,
 });
 
+const { t } = useI18n();
 const { appendText } = useTextAppend();
 
 const handleTranscription = (transcript: string, questionId: string) => {
@@ -299,7 +306,9 @@ const submitAnswers = () => {
                 onError: (errors) => {
                     submitError.value =
                         (errors as Record<string, string>)?.message ||
-                        'Failed to submit answers. Please try again.';
+                        t(
+                            'promptBuilder.components.preAnalysisQuestions.errors.submit',
+                        );
                 },
                 onFinish: () => {
                     isSubmitting.value = false;
@@ -323,7 +332,9 @@ const continueToAnalysis = () => {
             onError: (errors) => {
                 submitError.value =
                     (errors as Record<string, string>)?.message ||
-                    'Failed to continue to analysis. Please try again.';
+                    t(
+                        'promptBuilder.components.preAnalysisQuestions.errors.continue',
+                    );
             },
             onFinish: () => {
                 isSubmitting.value = false;
@@ -358,7 +369,9 @@ const firstQuestionId = computed(() => questions.value[0]?.id);
 const shouldShow = computed(() => hasQuestions.value);
 
 const submitButtonText = computed(() =>
-    hasAnswers.value ? 'Generate New Prompt' : 'Continue',
+    hasAnswers.value
+        ? t('promptBuilder.components.preAnalysisQuestions.generateNewPrompt')
+        : t('common.buttons.continue'),
 );
 
 const isLoading = computed(() =>
@@ -380,7 +393,11 @@ const isDisabled = computed(() =>
         >
             <div class="flex-1">
                 <h2 class="text-lg font-semibold text-indigo-900">
-                    Quick Queries
+                    {{
+                        $t(
+                            'promptBuilder.components.preAnalysisQuestions.title',
+                        )
+                    }}
                 </h2>
             </div>
             <ButtonSecondary
@@ -391,7 +408,7 @@ const isDisabled = computed(() =>
                 @click="startEditing"
             >
                 <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
-                Edit Answers
+                {{ $t('promptBuilder.components.preAnalysisQuestions.edit') }}
             </ButtonSecondary>
         </div>
 
@@ -403,7 +420,15 @@ const isDisabled = computed(() =>
                 class="-ml-1 flex items-center gap-2 text-sm font-medium text-indigo-700 no-underline! hover:text-indigo-900"
                 @click="showQuestionRationale = !showQuestionRationale"
             >
-                {{ showQuestionRationale ? 'Hide' : 'Show' }} question rationale
+                {{
+                    showQuestionRationale
+                        ? $t(
+                              'promptBuilder.components.preAnalysisQuestions.rationale.hide',
+                          )
+                        : $t(
+                              'promptBuilder.components.preAnalysisQuestions.rationale.show',
+                          )
+                }}
                 <DynamicIcon
                     :name="
                         showQuestionRationale ? 'chevron-down' : 'chevron-right'
@@ -455,7 +480,9 @@ const isDisabled = computed(() =>
                     @click="startEditing"
                 >
                     <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
-                    Edit Answers
+                    {{
+                        $t('promptBuilder.components.preAnalysisQuestions.edit')
+                    }}
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -465,7 +492,11 @@ const isDisabled = computed(() =>
                     :loading="isLoading"
                     @click="continueToAnalysis"
                 >
-                    Optimise Prompt
+                    {{
+                        $t(
+                            'promptBuilder.components.preAnalysisQuestions.optimise',
+                        )
+                    }}
                     <DynamicIcon name="arrow-right" class="ml-2 h-4 w-4" />
                 </ButtonPrimary>
             </div>
@@ -486,7 +517,7 @@ const isDisabled = computed(() =>
                     :disabled="isLoading"
                     @click="cancelEditing"
                 >
-                    Cancel
+                    {{ $t('common.buttons.cancel') }}
                 </ButtonSecondary>
 
                 <ButtonPrimary
@@ -562,14 +593,31 @@ const isDisabled = computed(() =>
                                         el as InstanceType<typeof FormTextarea>)
                             "
                             v-model="otherResponses[question.id]"
-                            label="Additional details (optional):"
+                            :label="
+                                $t(
+                                    'promptBuilder.components.preAnalysisQuestions.additionalDetailsLabel',
+                                )
+                            "
                             :rows="3"
                             :maxlength="500"
-                            placeholder="Add any additional information..."
+                            :placeholder="
+                                $t(
+                                    'promptBuilder.components.preAnalysisQuestions.additionalDetailsPlaceholder',
+                                )
+                            "
                         ></FormTextarea>
                         <p class="mt-1 text-xs text-indigo-600">
-                            {{ (otherResponses[question.id] || '').length }}/500
-                            characters
+                            {{
+                                $t(
+                                    'promptBuilder.components.preAnalysisQuestions.characterCount',
+                                    {
+                                        count: (
+                                            otherResponses[question.id] || ''
+                                        ).length,
+                                        max: 500,
+                                    },
+                                )
+                            }}
                         </p>
                     </div>
                 </div>
@@ -642,8 +690,19 @@ const isDisabled = computed(() =>
                                 : undefined
                         "
                         v-model="currentAnswers[question.id]"
-                        :label="`Answer ${index + 1}`"
-                        placeholder="Type your answer here..."
+                        :label="
+                            $t(
+                                'promptBuilder.components.preAnalysisQuestions.answerLabel',
+                                {
+                                    number: index + 1,
+                                },
+                            )
+                        "
+                        :placeholder="
+                            $t(
+                                'promptBuilder.components.preAnalysisQuestions.answerPlaceholder',
+                            )
+                        "
                     >
                         <template #actions>
                             <div class="flex items-center justify-end gap-3">
@@ -685,7 +744,7 @@ const isDisabled = computed(() =>
                     :disabled="isLoading"
                     @click="cancelEditing"
                 >
-                    Cancel
+                    {{ $t('common.buttons.cancel') }}
                 </ButtonSecondary>
 
                 <ButtonPrimary

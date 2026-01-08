@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export interface CarouselItem {
     id: string;
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     (e: 'update:modelValue', value: number): void;
 }>();
+
+const { t } = useI18n();
 
 const activeIndex = computed({
     get: () => props.modelValue,
@@ -87,7 +90,7 @@ const currentItem = computed(() => props.items[activeIndex.value]);
     <div
         v-if="items.length > 0"
         role="region"
-        aria-label="Use case carousel"
+        :aria-label="$t('components.base.carousel.ariaLabel')"
         class="mx-auto max-w-4xl"
     >
         <!-- Carousel with Side Buttons -->
@@ -95,7 +98,7 @@ const currentItem = computed(() => props.items[activeIndex.value]);
             <!-- Previous Button (Left Side) -->
             <button
                 type="button"
-                aria-label="Previous slide"
+                :aria-label="$t('components.base.carousel.previous')"
                 class="shrink-0 rounded-full bg-indigo-50 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
                 @click="previousSlide"
             >
@@ -123,8 +126,15 @@ const currentItem = computed(() => props.items[activeIndex.value]);
                             v-if="currentItem"
                             :key="currentItem.id"
                             role="group"
-                            aria-roledescription="slide"
-                            :aria-label="`Slide ${activeIndex + 1} of ${items.length}`"
+                            :aria-roledescription="
+                                $t('components.base.carousel.slideRole')
+                            "
+                            :aria-label="
+                                $t('components.base.carousel.slideLabel', {
+                                    current: activeIndex + 1,
+                                    total: items.length,
+                                })
+                            "
                             class="w-full rounded-lg bg-white p-8 shadow-lg dark:bg-indigo-50"
                         >
                             <!-- Icon and Title -->
@@ -171,7 +181,7 @@ const currentItem = computed(() => props.items[activeIndex.value]);
             <!-- Next Button (Right Side) -->
             <button
                 type="button"
-                aria-label="Next slide"
+                :aria-label="$t('components.base.carousel.next')"
                 class="shrink-0 rounded-full bg-indigo-50 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
                 @click="nextSlide"
             >
@@ -187,7 +197,11 @@ const currentItem = computed(() => props.items[activeIndex.value]);
                     :key="item.id"
                     role="tab"
                     :aria-selected="index === activeIndex"
-                    :aria-label="`Go to slide ${index + 1}`"
+                    :aria-label="
+                        $t('components.base.carousel.goToSlide', {
+                            index: index + 1,
+                        })
+                    "
                     class="outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50"
                     :class="[
                         'size-2.5 rounded-full transition-all',
@@ -202,13 +216,18 @@ const currentItem = computed(() => props.items[activeIndex.value]);
 
         <!-- Live Region for Announcements -->
         <div aria-live="polite" aria-atomic="true" class="sr-only">
-            Slide {{ activeIndex + 1 }} of {{ items.length }}:
-            {{ currentItem?.title }}
+            {{
+                t('components.base.carousel.liveRegion', {
+                    current: activeIndex + 1,
+                    total: items.length,
+                    title: currentItem?.title || '',
+                })
+            }}
         </div>
     </div>
 
     <!-- Empty State -->
     <div v-else class="mx-auto max-w-3xl text-center text-indigo-700">
-        <p>No use cases available</p>
+        <p>{{ $t('components.base.carousel.empty') }}</p>
     </div>
 </template>

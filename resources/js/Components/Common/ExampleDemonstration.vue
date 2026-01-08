@@ -9,17 +9,25 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <!-- Stage 1: Enter Task -->
         <ExampleStageCard
             :stage="1"
-            title="Enter Your Task"
-            description="Describe what you want to achieve"
+            :title="$t('components.common.exampleDemonstration.stage1.title')"
+            :description="
+                $t('components.common.exampleDemonstration.stage1.description')
+            "
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
             <div class="space-y-2">
-                <label class="font-medium text-indigo-700">Your task:</label>
+                <label class="font-medium text-indigo-700">{{
+                    $t('components.common.exampleDemonstration.stage1.label')
+                }}</label>
                 <div
                     class="mt-2 rounded border border-indigo-100 bg-white p-2 text-indigo-800 dark:bg-indigo-100"
                 >
-                    I want to create a marketing strategy for my business.
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage1.example',
+                        )
+                    }}
                 </div>
             </div>
         </ExampleStageCard>
@@ -27,27 +35,39 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <!-- Stage 2: Quick Queries -->
         <ExampleStageCard
             :stage="2"
-            title="Answer Quick Queries"
-            description="A few questions to understand your context"
+            :title="$t('components.common.exampleDemonstration.stage2.title')"
+            :description="
+                $t('components.common.exampleDemonstration.stage2.description')
+            "
             bg-colour="bg-purple-600"
             content-bg-colour="bg-purple-50"
         >
             <div class="space-y-3">
                 <div>
                     <p class="font-medium text-purple-950">
-                        What type of business are you in, and what are your main
-                        products or services?
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage2.question1',
+                            )
+                        }}
                     </p>
                     <div
                         class="mt-2 rounded border border-purple-100 bg-white p-2 text-indigo-800 dark:bg-purple-100"
                     >
-                        We are a SaaS startup offering project management and
-                        team collaboration tools.
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage2.answer1',
+                            )
+                        }}
                     </div>
                 </div>
                 <div>
                     <p class="font-medium text-purple-950">
-                        Who is your target customer audience?
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage2.question2',
+                            )
+                        }}
                     </p>
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
@@ -56,9 +76,11 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                             >
                                 <div class="h-2 w-2 rounded-full bg-white" />
                             </div>
-                            <span class="text-purple-950"
-                                >Business-to-Business (B2B)</span
-                            >
+                            <span class="text-purple-950">{{
+                                $t(
+                                    'components.common.exampleDemonstration.stage2.answer2',
+                                )
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -68,8 +90,10 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <!-- Stage 3: Framework -->
         <ExampleStageCard
             :stage="3"
-            title="Review Selected Framework"
-            description="We recommend the best approach for your task"
+            :title="$t('components.common.exampleDemonstration.stage3.title')"
+            :description="
+                $t('components.common.exampleDemonstration.stage3.description')
+            "
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -77,33 +101,60 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                 <div
                     class="rounded bg-indigo-100 p-2 font-medium text-indigo-900"
                 >
-                    COAST Framework
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage3.frameworkName',
+                        )
+                    }}
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <span
                         class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Challenge</span
+                        >{{
+                            $t(
+                                'components.common.exampleDemonstration.stage3.chipChallenge',
+                            )
+                        }}</span
                     >
                     <span
                         class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Objective</span
+                        >{{
+                            $t(
+                                'components.common.exampleDemonstration.stage3.chipObjective',
+                            )
+                        }}</span
                     >
                     <span
                         class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Actions</span
+                        >{{
+                            $t(
+                                'components.common.exampleDemonstration.stage3.chipActions',
+                            )
+                        }}</span
                     >
                     <span
                         class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Strategy</span
+                        >{{
+                            $t(
+                                'components.common.exampleDemonstration.stage3.chipStrategy',
+                            )
+                        }}</span
                     >
                     <span
                         class="rounded-lg bg-blue-100 px-3 py-1 text-blue-900 dark:bg-blue-300"
-                        >Tactics</span
+                        >{{
+                            $t(
+                                'components.common.exampleDemonstration.stage3.chipTactics',
+                            )
+                        }}</span
                     >
                 </div>
                 <p class="text-indigo-700">
-                    COAST maps directly to strategy development with a clear
-                    progression from problem to action.
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage3.rationale',
+                        )
+                    }}
                 </p>
             </div>
         </ExampleStageCard>
@@ -111,42 +162,66 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <!-- Stage 4: Clarifying Questions -->
         <ExampleStageCard
             :stage="4"
-            title="Answer Clarifying Questions"
-            description="The details that make your prompt specific"
+            :title="$t('components.common.exampleDemonstration.stage4.title')"
+            :description="
+                $t('components.common.exampleDemonstration.stage4.description')
+            "
             bg-colour="bg-purple-600"
             content-bg-colour="bg-purple-50"
         >
             <div class="space-y-3">
                 <div>
                     <p class="mb-1 font-medium text-purple-950">
-                        1. What's your main customer acquisition challenge right
-                        now?
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.question1',
+                            )
+                        }}
                     </p>
                     <div
                         class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
-                        Low brand awareness in a crowded market; struggling to
-                        reach decision-makers
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.answer1',
+                            )
+                        }}
                     </div>
                 </div>
                 <div>
                     <p class="mb-1 font-medium text-purple-950">
-                        2. What marketing channels do you currently use?
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.question2',
+                            )
+                        }}
                     </p>
                     <div
                         class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
-                        Email list, LinkedIn, and some paid ads
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.answer2',
+                            )
+                        }}
                     </div>
                 </div>
                 <div>
                     <p class="mb-1 font-medium text-purple-950">
-                        3. What is your monthly marketing budget?
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.question3',
+                            )
+                        }}
                     </p>
                     <div
                         class="rounded border border-purple-100 bg-white p-2 text-purple-950 dark:bg-purple-100"
                     >
-                        £2,000 - £5,000
+                        {{
+                            $t(
+                                'components.common.exampleDemonstration.stage4.answer3',
+                            )
+                        }}
                     </div>
                 </div>
             </div>
@@ -155,8 +230,10 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
         <!-- Stage 5: Optimised Prompt -->
         <ExampleStageCard
             :stage="5"
-            title="Receive Your Optimised Prompt"
-            description="Ready to copy into any AI tool"
+            :title="$t('components.common.exampleDemonstration.stage5.title')"
+            :description="
+                $t('components.common.exampleDemonstration.stage5.description')
+            "
             bg-colour="bg-indigo-600"
             content-bg-colour="bg-indigo-50"
         >
@@ -168,22 +245,48 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                         name="check-circle"
                         class="h-5 w-5 text-green-600"
                     />
-                    Your prompt is ready!
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.ready',
+                        )
+                    }}
                 </div>
                 <div
                     class="rounded border border-indigo-100 bg-white p-2 text-sm text-indigo-800 dark:bg-indigo-100"
                 >
-                    Using the COAST framework, develop a marketing strategy for
-                    our B2B SaaS project management platform.
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptIntro',
+                        )
+                    }}
                     <br />
-                    <strong>Challenge:</strong> Low brand awareness in a crowded
-                    market; struggling to reach decision-makers at mid-size tech
-                    companies.
+                    <strong>{{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptChallengeLabel',
+                        )
+                    }}</strong>
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptChallengeText',
+                        )
+                    }}
                     <br />
-                    <strong>Objective:</strong> Increase qualified leads and
-                    establish thought leadership.
+                    <strong>{{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptObjectiveLabel',
+                        )
+                    }}</strong>
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptObjectiveText',
+                        )
+                    }}
                     <br />
-                    etc...
+                    {{
+                        $t(
+                            'components.common.exampleDemonstration.stage5.promptEtc',
+                        )
+                    }}
                 </div>
                 <div class="pt-1">
                     <AIProviderLinks prompt="" />

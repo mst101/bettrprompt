@@ -9,6 +9,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface SelectOption {
     value: string;
@@ -34,6 +35,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
 // Common timezones (still using common ones as not in database)
 const timezones = [
@@ -67,7 +69,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Location updated successfully');
+            success(t('profile.location.notifications.updated'));
         }
     },
 );
@@ -95,7 +97,7 @@ const detectLocation = () => {
     detectForm.post(route('profile.location.detect'), {
         preserveScroll: true,
         onSuccess: (page) => {
-            success('Location detected successfully');
+            success(t('profile.location.notifications.detected'));
             // Update form fields with detected location
             const locationData = page.props
                 .locationData as typeof props.locationData;
@@ -109,7 +111,7 @@ const detectLocation = () => {
             }
         },
         onError: () => {
-            error('Failed to detect location');
+            error(t('profile.location.notifications.detectFailed'));
         },
     });
 };
@@ -118,9 +120,12 @@ const { confirm } = useAlert();
 
 const clearLocation = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all location data?',
-        'Clear Location',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.location.clearConfirm.message'),
+        t('profile.location.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -128,7 +133,7 @@ const clearLocation = async () => {
         clearForm.delete(route('profile.location.clear'), {
             preserveScroll: true,
             onSuccess: () => {
-                success('Location cleared successfully');
+                success(t('profile.location.notifications.cleared'));
                 // Clear the form fields
                 form.countryCode = '';
                 form.region = '';
@@ -138,7 +143,7 @@ const clearLocation = async () => {
                 form.languageCode = '';
             },
             onError: () => {
-                error('Failed to clear location');
+                error(t('profile.location.notifications.clearFailed'));
             },
         });
     }
@@ -147,8 +152,8 @@ const clearLocation = async () => {
 
 <template>
     <CollapsibleSection
-        title="Location & Language"
-        subtitle="Set your location and language preferences for better optimised AI prompts."
+        :title="$t('profile.location.title')"
+        :subtitle="$t('profile.location.subtitle')"
         data-testid="location"
         icon="map-pin"
     >
@@ -158,10 +163,10 @@ const clearLocation = async () => {
                 <FormSelect
                     id="country-code"
                     v-model="form.countryCode"
-                    label="Country"
+                    :label="$t('profile.location.fields.country')"
                     :options="props.countries"
                     :error="form.errors.countryCode"
-                    placeholder="Select country"
+                    :placeholder="$t('profile.location.placeholders.country')"
                     show-placeholder
                 />
 
@@ -169,8 +174,8 @@ const clearLocation = async () => {
                 <FormInput
                     id="region"
                     v-model="form.region"
-                    label="Region/State"
-                    placeholder="e.g., California, Lancashire"
+                    :label="$t('profile.location.fields.region')"
+                    :placeholder="$t('profile.location.placeholders.region')"
                     :error="form.errors.region"
                 />
 
@@ -178,8 +183,8 @@ const clearLocation = async () => {
                 <FormInput
                     id="city"
                     v-model="form.city"
-                    label="City"
-                    placeholder="e.g., San Francisco, London"
+                    :label="$t('profile.location.fields.city')"
+                    :placeholder="$t('profile.location.placeholders.city')"
                     :error="form.errors.city"
                 />
 
@@ -187,10 +192,10 @@ const clearLocation = async () => {
                 <FormSelect
                     id="timezone"
                     v-model="form.timezone"
-                    label="Timezone"
+                    :label="$t('profile.location.fields.timezone')"
                     :options="timezones"
                     :error="form.errors.timezone"
-                    placeholder="Select timezone"
+                    :placeholder="$t('profile.location.placeholders.timezone')"
                     show-placeholder
                 />
 
@@ -198,10 +203,10 @@ const clearLocation = async () => {
                 <FormSelect
                     id="currency-code"
                     v-model="form.currencyCode"
-                    label="Currency"
+                    :label="$t('profile.location.fields.currency')"
                     :options="props.currencies"
                     :error="form.errors.currencyCode"
-                    placeholder="Select currency"
+                    :placeholder="$t('profile.location.placeholders.currency')"
                     show-placeholder
                 />
 
@@ -209,10 +214,10 @@ const clearLocation = async () => {
                 <FormSelect
                     id="language-code"
                     v-model="form.languageCode"
-                    label="Language"
+                    :label="$t('profile.location.fields.language')"
                     :options="props.languages"
                     :error="form.errors.languageCode"
-                    placeholder="Select language"
+                    :placeholder="$t('profile.location.placeholders.language')"
                     show-placeholder
                 />
             </div>
@@ -224,7 +229,7 @@ const clearLocation = async () => {
                     :loading="form.processing"
                     icon="download"
                 >
-                    Save Location
+                    {{ $t('profile.location.actions.save') }}
                 </ButtonPrimary>
 
                 <ButtonSecondary
@@ -233,13 +238,13 @@ const clearLocation = async () => {
                     icon="sparkles"
                     @click="detectLocation"
                 >
-                    Auto-Detect
+                    {{ $t('profile.location.actions.detect') }}
                 </ButtonSecondary>
 
                 <ButtonTrash
                     v-if="locationData.countryName"
                     id="clear-location-form"
-                    label="Clear"
+                    :label="$t('common.buttons.clear')"
                     @clear="clearLocation"
                 />
             </div>

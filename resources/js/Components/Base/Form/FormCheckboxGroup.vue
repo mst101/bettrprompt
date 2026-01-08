@@ -28,6 +28,7 @@ const emit = defineEmits<{
 }>();
 
 const otherTextarea = ref<InstanceType<typeof FormTextarea> | null>(null);
+const otherMaxLength = 500;
 
 const isChecked = (value: string) => {
     return props.modelValue.includes(value);
@@ -117,15 +118,22 @@ const showOtherInput = computed(() => {
                     id="other-text"
                     ref="otherTextarea"
                     :model-value="otherValue"
-                    label="Please describe the feature you'd like"
+                    :label="$t('components.base.formCheckboxGroup.otherLabel')"
                     :disabled="disabled"
-                    placeholder="Describe the feature you'd like to see..."
+                    :placeholder="
+                        $t('components.base.formCheckboxGroup.otherPlaceholder')
+                    "
                     :rows="3"
-                    :maxlength="500"
+                    :maxlength="otherMaxLength"
                     @update:model-value="emit('update:otherValue', $event)"
                 />
                 <div class="mt-1 text-right text-indigo-500">
-                    {{ otherValue.length }} / 500 characters
+                    {{
+                        $t('components.base.formCheckboxGroup.characterCount', {
+                            count: otherValue.length,
+                            max: otherMaxLength,
+                        })
+                    }}
                 </div>
             </div>
         </Transition>

@@ -4,6 +4,7 @@ import Card from '@/Components/Base/Card.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Framework {
     name: string;
@@ -20,11 +21,12 @@ const props = defineProps<Props>();
 
 const switchingFramework = ref<string | null>(null);
 const { confirm } = useAlert();
+const { t } = useI18n();
 
 const handleSwitchFramework = async (frameworkCode: string) => {
     const confirmed = await confirm(
-        'This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?',
-        'Switch Framework',
+        t('promptBuilder.components.alternativeFrameworks.confirm.message'),
+        t('promptBuilder.components.alternativeFrameworks.confirm.title'),
     );
 
     if (!confirmed) {
@@ -69,7 +71,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
 <template>
     <Card v-if="frameworks.length > 0" class="space-y-3">
         <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-            Alternative Frameworks
+            {{ $t('promptBuilder.components.alternativeFrameworks.title') }}
         </h2>
         <div
             v-for="framework in frameworks"
@@ -85,7 +87,13 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 class="mt-2 flex flex-col sm:flex-row sm:justify-between sm:space-x-4"
             >
                 <p class="text-sm text-indigo-700">
-                    <span class="font-bold">When to use:</span>
+                    <span class="font-bold">
+                        {{
+                            $t(
+                                'promptBuilder.components.alternativeFrameworks.whenToUse',
+                            )
+                        }}
+                    </span>
                     {{ framework.when_to_use_instead }}
                 </p>
                 <div class="mt-4 sm:whitespace-nowrap">
@@ -98,7 +106,11 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                         :loading="switchingFramework === framework.code"
                         @click="handleSwitchFramework(framework.code)"
                     >
-                        Use This Framework
+                        {{
+                            $t(
+                                'promptBuilder.components.alternativeFrameworks.useButton',
+                            )
+                        }}
                     </ButtonSecondary>
                 </div>
             </div>
@@ -106,7 +118,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     </Card>
     <Card v-else>
         <div class="text-center text-indigo-500">
-            No alternative frameworks suggested
+            {{ $t('promptBuilder.components.alternativeFrameworks.empty') }}
         </div>
     </Card>
 </template>

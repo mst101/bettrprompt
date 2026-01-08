@@ -68,20 +68,20 @@ const close = () => {
 <template>
     <BaseAuthModal
         :show="show"
-        title="Create your Account"
+        :title="$t('auth.modalRegister.title')"
         :show-google-divider="true"
         @close="close"
         @submit="submit"
     >
         <template #google-signin>
-            <ButtonGoogleSignIn text="Sign up with Google" />
+            <ButtonGoogleSignIn :text="$t('auth.modalRegister.google')" />
         </template>
 
         <template #fields>
             <FormInput
                 id="register-name"
                 v-model="form.name"
-                label="Name"
+                :label="$t('auth.modalRegister.nameLabel')"
                 type="text"
                 :error="form.errors.name"
                 required
@@ -92,7 +92,7 @@ const close = () => {
             <FormInput
                 id="register-email"
                 v-model="form.email"
-                label="Email"
+                :label="$t('auth.modalRegister.emailLabel')"
                 type="email"
                 :error="form.errors.email"
                 class="mt-4"
@@ -103,7 +103,7 @@ const close = () => {
             <FormInput
                 id="register-password"
                 v-model="form.password"
-                label="Password"
+                :label="$t('auth.modalRegister.passwordLabel')"
                 type="password"
                 :error="form.errors.password"
                 class="mt-4"
@@ -114,7 +114,7 @@ const close = () => {
             <FormInput
                 id="register-password-confirmation"
                 v-model="form.passwordConfirmation"
-                label="Confirm Password"
+                :label="$t('auth.modalRegister.confirmPasswordLabel')"
                 type="password"
                 :error="form.errors.passwordConfirmation"
                 class="mt-4"
@@ -129,7 +129,7 @@ const close = () => {
                 type="button"
                 @click="emit('switchToLogin', form.email)"
             >
-                Already registered?
+                {{ $t('auth.modalRegister.alreadyRegistered') }}
             </ButtonText>
         </template>
 
@@ -140,7 +140,7 @@ const close = () => {
                 :disabled="form.processing"
                 :loading="form.processing"
             >
-                Create Account
+                {{ $t('auth.modalRegister.submit') }}
             </ButtonPrimary>
         </template>
     </BaseAuthModal>

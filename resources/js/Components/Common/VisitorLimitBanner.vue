@@ -36,20 +36,34 @@ defineEmits<{
                     <div>
                         <p class="font-semibold">
                             <template v-if="visitorHasAccount">
-                                Welcome back!
+                                {{
+                                    $t(
+                                        'components.common.visitorLimitBanner.fixed.titleReturning',
+                                    )
+                                }}
                             </template>
                             <template v-else>
-                                You've created your first optimised prompt!
+                                {{
+                                    $t(
+                                        'components.common.visitorLimitBanner.fixed.titleNew',
+                                    )
+                                }}
                             </template>
                         </p>
                         <p class="mt-1 text-indigo-100">
                             <template v-if="visitorHasAccount">
-                                Log in to save your prompt, create new ones, and
-                                iterate on existing ones.
+                                {{
+                                    $t(
+                                        'components.common.visitorLimitBanner.fixed.descriptionReturning',
+                                    )
+                                }}
                             </template>
                             <template v-else>
-                                Create a free account to save your prompts,
-                                create new ones, and iterate on existing ones.
+                                {{
+                                    $t(
+                                        'components.common.visitorLimitBanner.fixed.descriptionNew',
+                                    )
+                                }}
                             </template>
                         </p>
                     </div>
@@ -59,8 +73,16 @@ defineEmits<{
                     icon="arrow-right"
                     @click="$emit(visitorHasAccount ? 'login' : 'register')"
                 >
-                    <template v-if="visitorHasAccount">Log in</template>
-                    <template v-else>Create Free Account</template>
+                    <template v-if="visitorHasAccount">
+                        {{ $t('common.nav.login') }}
+                    </template>
+                    <template v-else>
+                        {{
+                            $t(
+                                'components.common.visitorLimitBanner.fixed.ctaRegister',
+                            )
+                        }}
+                    </template>
                 </ButtonPrimary>
             </div>
         </div>
@@ -77,19 +99,37 @@ defineEmits<{
                 class="mt-0.5 h-6 w-6 shrink-0 text-indigo-600"
             />
             <h3 class="font-semibold text-indigo-900">
-                <template v-if="visitorHasAccount"> Welcome back! </template>
-                <template v-else> You've reached your visitor limit </template>
+                <template v-if="visitorHasAccount">
+                    {{
+                        $t(
+                            'components.common.visitorLimitBanner.inline.titleReturning',
+                        )
+                    }}
+                </template>
+                <template v-else>
+                    {{
+                        $t(
+                            'components.common.visitorLimitBanner.inline.titleNew',
+                        )
+                    }}
+                </template>
             </h3>
         </div>
         <div>
             <p class="mt-2 text-indigo-700">
                 <template v-if="visitorHasAccount">
-                    Log in to access your prompts and create new ones.
+                    {{
+                        $t(
+                            'components.common.visitorLimitBanner.inline.descriptionReturning',
+                        )
+                    }}
                 </template>
                 <template v-else>
-                    You've already created an optimised prompt as a visitor. To
-                    see your existing prompts, create more prompts, and iterate
-                    on existing ones, you'll need to create a free account.
+                    {{
+                        $t(
+                            'components.common.visitorLimitBanner.inline.descriptionNew',
+                        )
+                    }}
                 </template>
             </p>
             <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:justify-end">
@@ -99,7 +139,7 @@ defineEmits<{
                         icon="arrow-right"
                         @click="$emit('login')"
                     >
-                        Log in
+                        {{ $t('common.nav.login') }}
                     </ButtonPrimary>
                 </template>
                 <template v-else>
@@ -108,14 +148,18 @@ defineEmits<{
                         icon="arrow-right"
                         @click="$emit('register')"
                     >
-                        Create Free Account
+                        {{
+                            $t(
+                                'components.common.visitorLimitBanner.inline.ctaRegister',
+                            )
+                        }}
                     </ButtonPrimary>
                     <ButtonPrimary
                         class="w-full sm:w-fit"
                         icon="arrow-right"
                         @click="$emit('login')"
                     >
-                        Log in
+                        {{ $t('common.nav.login') }}
                     </ButtonPrimary>
                 </template>
             </div>

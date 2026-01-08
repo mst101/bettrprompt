@@ -20,12 +20,16 @@ defineProps<Props>();
 
 <template>
     <Card class="space-y-6">
-        <h2 class="text-lg font-semibold text-indigo-900">Recommendations</h2>
+        <h2 class="text-lg font-semibold text-indigo-900">
+            {{ $t('promptBuilder.components.recommendations.title') }}
+        </h2>
 
         <!-- Model Recommendations -->
         <div v-if="modelRecommendations && modelRecommendations.length > 0">
             <h3 class="mb-3 text-sm font-medium text-indigo-700">
-                Recommended AI Models
+                {{
+                    $t('promptBuilder.components.recommendations.models.title')
+                }}
             </h3>
             <div class="space-y-3">
                 <div
@@ -59,11 +63,18 @@ defineProps<Props>();
             class="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-4"
         >
             <h3 class="mb-3 text-sm font-medium text-blue-900">
-                Iteration Suggestions
+                {{
+                    $t(
+                        'promptBuilder.components.recommendations.iterations.title',
+                    )
+                }}
             </h3>
             <p class="mb-3 text-sm text-blue-800">
-                If the results aren't quite what you need, try these
-                refinements:
+                {{
+                    $t(
+                        'promptBuilder.components.recommendations.iterations.description',
+                    )
+                }}
             </p>
             <ul class="space-y-2">
                 <li
@@ -88,7 +99,7 @@ defineProps<Props>();
             "
             class="text-center text-indigo-500"
         >
-            No recommendations available
+            {{ $t('promptBuilder.components.recommendations.empty') }}
         </div>
     </Card>
 </template>

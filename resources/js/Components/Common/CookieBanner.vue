@@ -34,7 +34,7 @@ const closeSettings = () => {
                 class="pb-safe fixed inset-x-0 bottom-0 z-50"
                 role="dialog"
                 aria-modal="false"
-                aria-label="Cookie consent banner"
+                :aria-label="$t('components.common.cookieBanner.ariaLabel')"
             >
                 <div class="bg-indigo-800">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -45,22 +45,29 @@ const closeSettings = () => {
                                 <h2
                                     class="text-base font-semibold text-white sm:text-lg"
                                 >
-                                    We use cookies
+                                    {{
+                                        $t(
+                                            'components.common.cookieBanner.title',
+                                        )
+                                    }}
                                 </h2>
                                 <p
                                     class="mt-2 text-xs text-indigo-300 sm:text-sm"
                                 >
-                                    We use essential cookies to make our site
-                                    work. With your consent, we may also use
-                                    non-essential cookies to improve user
-                                    experience and analyse website traffic. By
-                                    clicking "Accept All", you agree to our use
-                                    of cookies.
+                                    {{
+                                        $t(
+                                            'components.common.cookieBanner.description',
+                                        )
+                                    }}
                                     <LinkText
                                         class="text-indigo-200! hover:text-indigo-300!"
                                         :href="localeRoute('cookies')"
                                     >
-                                        Read our Cookie Policy
+                                        {{
+                                            $t(
+                                                'components.common.cookieBanner.policyLink',
+                                            )
+                                        }}
                                     </LinkText>
                                 </p>
                             </div>
@@ -72,21 +79,33 @@ const closeSettings = () => {
                                     type="button"
                                     @click="rejectAll"
                                 >
-                                    Reject All
+                                    {{
+                                        $t(
+                                            'components.common.cookieBanner.rejectAll',
+                                        )
+                                    }}
                                 </ButtonSecondary>
                                 <ButtonSecondary
                                     class="focus:ring-offset-indigo-900"
                                     type="button"
                                     @click="openSettings"
                                 >
-                                    Customise
+                                    {{
+                                        $t(
+                                            'components.common.cookieBanner.customize',
+                                        )
+                                    }}
                                 </ButtonSecondary>
                                 <ButtonPrimary
                                     class="focus:ring-offset-indigo-900"
                                     type="button"
                                     @click="acceptAll"
                                 >
-                                    Accept All
+                                    {{
+                                        $t(
+                                            'components.common.cookieBanner.acceptAll',
+                                        )
+                                    }}
                                 </ButtonPrimary>
                             </div>
                         </div>

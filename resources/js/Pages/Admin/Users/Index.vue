@@ -37,15 +37,15 @@ watch(search, debouncedSearch);
 </script>
 
 <template>
-    <Head title="Admin - Users" />
+    <Head :title="$t('admin.users.headTitle')" />
     <AppLayout>
-        <HeaderPage title="Users">
+        <HeaderPage :title="$t('admin.users.title')">
             <template #actions>
                 <Link
                     :href="localeRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
-                    ← Back to Dashboard
+                    {{ $t('admin.users.backToDashboard') }}
                 </Link>
             </template>
         </HeaderPage>
@@ -62,7 +62,7 @@ watch(search, debouncedSearch);
                         v-model="search"
                         label=""
                         type="text"
-                        placeholder="Search users..."
+                        :placeholder="$t('admin.users.searchPlaceholder')"
                         class="w-full rounded-lg border-indigo-100 py-2 pr-4 pl-10"
                     />
                 </div>
@@ -75,22 +75,22 @@ watch(search, debouncedSearch);
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                Name
+                                {{ $t('admin.users.columns.name') }}
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                Email
+                                {{ $t('admin.users.columns.email') }}
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                Visitors
+                                {{ $t('admin.users.columns.visitors') }}
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                Prompt Runs
+                                {{ $t('admin.users.columns.promptRuns') }}
                             </th>
                         </tr>
                     </thead>
@@ -116,7 +116,7 @@ watch(search, debouncedSearch);
                                             v-if="user.isAdmin"
                                             class="text-xs text-indigo-600"
                                         >
-                                            Administrator
+                                            {{ $t('admin.users.adminLabel') }}
                                         </div>
                                     </div>
                                 </div>

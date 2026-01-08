@@ -5,6 +5,9 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { COMPANY_INFO, LEGAL_URLS } from '@/Constants/legal';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineOptions({
     layout: AppLayout,
@@ -12,12 +15,12 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Privacy Policy" />
+    <Head :title="t('legal.privacy.title')" />
 
-    <HeaderPage title="Privacy Policy">
+    <HeaderPage :title="t('legal.privacy.title')">
         <template #actions>
             <p class="mt-2 w-1/2 text-sm text-indigo-600">
-                Last updated:
+                {{ t('legal.lastUpdated') }}:
                 {{
                     new Date().toLocaleDateString('en-GB', {
                         year: 'numeric',

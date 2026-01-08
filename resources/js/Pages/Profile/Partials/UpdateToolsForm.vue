@@ -9,6 +9,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     toolsData: {
@@ -19,40 +20,53 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
-const toolCategories = {
-    'Operating Systems': ['Windows', 'macOS', 'Linux', 'Ubuntu', 'Fedora'],
-    'IDEs & Editors': [
-        'VS Code',
-        'JetBrains IDEs',
-        'Visual Studio',
-        'Sublime Text',
-        'Vim',
-        'Neovim',
-    ],
-    'Cloud Platforms': [
-        'AWS',
-        'Google Cloud',
-        'Microsoft Azure',
-        'DigitalOcean',
-        'Heroku',
-    ],
-    'AI & ML Tools': [
-        'ChatGPT',
-        'GitHub Copilot',
-        'Claude',
-        'TensorFlow',
-        'PyTorch',
-    ],
-    'Design Tools': [
-        'Figma',
-        'Adobe XD',
-        'Sketch',
-        'Adobe Photoshop',
-        'Inkscape',
-    ],
-    'Project Management': ['Jira', 'Asana', 'Monday.com', 'Notion', 'Trello'],
-};
+const toolCategories = computed(() => [
+    {
+        id: 'operating-systems',
+        label: t('profile.tools.categories.operatingSystems'),
+        tools: ['Windows', 'macOS', 'Linux', 'Ubuntu', 'Fedora'],
+    },
+    {
+        id: 'ides-editors',
+        label: t('profile.tools.categories.idesEditors'),
+        tools: [
+            'VS Code',
+            'JetBrains IDEs',
+            'Visual Studio',
+            'Sublime Text',
+            'Vim',
+            'Neovim',
+        ],
+    },
+    {
+        id: 'cloud-platforms',
+        label: t('profile.tools.categories.cloudPlatforms'),
+        tools: [
+            'AWS',
+            'Google Cloud',
+            'Microsoft Azure',
+            'DigitalOcean',
+            'Heroku',
+        ],
+    },
+    {
+        id: 'ai-ml-tools',
+        label: t('profile.tools.categories.aiMlTools'),
+        tools: ['ChatGPT', 'GitHub Copilot', 'Claude', 'TensorFlow', 'PyTorch'],
+    },
+    {
+        id: 'design-tools',
+        label: t('profile.tools.categories.designTools'),
+        tools: ['Figma', 'Adobe XD', 'Sketch', 'Adobe Photoshop', 'Inkscape'],
+    },
+    {
+        id: 'project-management',
+        label: t('profile.tools.categories.projectManagement'),
+        tools: ['Jira', 'Asana', 'Monday.com', 'Notion', 'Trello'],
+    },
+]);
 
 const programmingLanguages = [
     'JavaScript',
@@ -82,7 +96,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Tools & languages updated successfully');
+            success(t('profile.tools.notifications.updated'));
         }
     },
 );
@@ -125,9 +139,12 @@ const { confirm } = useAlert();
 
 const clearTools = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all tools and programming languages?',
-        'Clear Tools & Technologies',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.tools.clearConfirm.message'),
+        t('profile.tools.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -135,13 +152,13 @@ const clearTools = async () => {
         clearForm.delete(route('profile.tools.clear'), {
             preserveScroll: true,
             onSuccess: () => {
-                success('Tools & technologies cleared successfully');
+                success(t('profile.tools.notifications.cleared'));
                 // Clear the form fields
                 form.preferredTools = [];
                 form.primaryProgrammingLanguage = '';
             },
             onError: () => {
-                error('Failed to clear tools & technologies');
+                error(t('profile.tools.notifications.clearFailed'));
             },
         });
     }
@@ -150,8 +167,8 @@ const clearTools = async () => {
 
 <template>
     <CollapsibleSection
-        title="Tools & Technologies"
-        subtitle="Share the tools and programming languages you work with to improve prompt recommendations."
+        :title="$t('profile.tools.title')"
+        :subtitle="$t('profile.tools.subtitle')"
         data-testid="tools"
         icon="wrench"
     >
@@ -161,31 +178,34 @@ const clearTools = async () => {
                 <div class="mb-4">
                     <InputLabel
                         for="tools"
-                        value="Preferred Tools (Click to select)"
+                        :value="$t('profile.tools.fields.preferred')"
                         :required="false"
                     />
                     <p class="mt-1 text-sm text-indigo-600">
-                        You've selected
-                        {{ form.preferredTools.length }} tool(s)
+                        {{
+                            $t('profile.tools.selectedCount', {
+                                count: form.preferredTools.length,
+                            })
+                        }}
                     </p>
                 </div>
 
                 <!-- Tool Categories -->
                 <div class="space-y-4">
                     <div
-                        v-for="(tools, category) in toolCategories"
-                        :key="category"
+                        v-for="category in toolCategories"
+                        :key="category.id"
                         class="rounded-lg border border-indigo-200 bg-indigo-50 dark:bg-indigo-100"
                     >
                         <div class="border-b border-indigo-200 px-4 py-3">
                             <p class="font-medium text-indigo-900">
-                                {{ category }}
+                                {{ category.label }}
                             </p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
                             <FormCheckbox
-                                v-for="tool in tools"
+                                v-for="tool in category.tools"
                                 :id="`tool-${tool}`"
                                 :key="tool"
                                 v-model="form.preferredTools"
@@ -230,7 +250,7 @@ const clearTools = async () => {
                 id="primary-programming-language"
                 v-model="form.primaryProgrammingLanguage"
                 class="max-w-sm"
-                label="Primary Programming Language"
+                :label="$t('profile.tools.fields.primaryLanguage')"
                 :options="
                     programmingLanguages.map((lang) => ({
                         value: lang,
@@ -238,7 +258,7 @@ const clearTools = async () => {
                     }))
                 "
                 :error="form.errors.primaryProgrammingLanguage"
-                placeholder="Select language"
+                :placeholder="$t('profile.tools.placeholders.primaryLanguage')"
                 show-placeholder
             />
 
@@ -249,13 +269,13 @@ const clearTools = async () => {
                     :loading="form.processing"
                     icon="download"
                 >
-                    Save Tools & Languages
+                    {{ $t('profile.tools.actions.save') }}
                 </ButtonPrimary>
 
                 <ButtonTrash
                     v-if="hasToolsData"
                     id="clear-tools-form"
-                    label="Clear"
+                    :label="$t('common.buttons.clear')"
                     @clear="clearTools"
                 />
             </div>

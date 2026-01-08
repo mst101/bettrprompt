@@ -6,6 +6,7 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LoadingSpinner from '@/Components/Base/LoadingSpinner.vue';
 import StageIndicator from '@/Components/Common/StageIndicator.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     errorMessage?: string | null;
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 const startTime = ref(Date.now());
 const elapsedTime = ref(0);
 const interval = ref<number | null>(null);
+const { t } = useI18n();
 
 // Average completion time: 40 seconds
 const ESTIMATED_TOTAL_TIME = 40000; // ms
@@ -40,7 +42,9 @@ const estimatedTimeRemaining = computed(() => {
         0,
         Math.ceil((ESTIMATED_TOTAL_TIME - elapsedTime.value) / 1000),
     );
-    return remaining === 0 ? 'Almost done...' : `${remaining}s`;
+    return remaining === 0
+        ? t('promptBuilder.progress.almostDone')
+        : t('promptBuilder.progress.secondsRemaining', { seconds: remaining });
 });
 
 // Current stage based on progress
@@ -53,46 +57,63 @@ const currentStageIndex = computed(() => {
     return 4;
 });
 
-const stages = [
+const stages = computed(() => [
     {
         id: 0,
-        label: 'Loading framework details',
-        activity: 'Loading framework details',
-        description:
-            'Retrieving the structure and debug for your selected framework',
+        label: t('promptBuilder.progress.generation.stages.framework.label'),
+        activity: t(
+            'promptBuilder.progress.generation.stages.framework.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.generation.stages.framework.description',
+        ),
     },
     {
         id: 1,
-        label: 'Applying personality adjustments',
-        activity: 'Applying personality adjustments',
-        description: 'Customising the prompt based on your personality type',
+        label: t('promptBuilder.progress.generation.stages.personality.label'),
+        activity: t(
+            'promptBuilder.progress.generation.stages.personality.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.generation.stages.personality.description',
+        ),
     },
     {
         id: 2,
-        label: 'Preparing context',
-        activity: 'Preparing context',
-        description: 'Combining framework, personality, and your answers',
+        label: t('promptBuilder.progress.generation.stages.context.label'),
+        activity: t(
+            'promptBuilder.progress.generation.stages.context.activity',
+        ),
+        description: t(
+            'promptBuilder.progress.generation.stages.context.description',
+        ),
     },
     {
         id: 3,
-        label: 'Generating optimised prompt',
-        activity: 'Generating optimised prompt',
-        description: 'AI is crafting your personalised prompt',
+        label: t('promptBuilder.progress.generation.stages.prompt.label'),
+        activity: t('promptBuilder.progress.generation.stages.prompt.activity'),
+        description: t(
+            'promptBuilder.progress.generation.stages.prompt.description',
+        ),
     },
     {
         id: 4,
-        label: 'Finalising output',
-        activity: 'Finalising output',
-        description: 'Formatting and validating the final prompt',
+        label: t('promptBuilder.progress.generation.stages.final.label'),
+        activity: t('promptBuilder.progress.generation.stages.final.activity'),
+        description: t(
+            'promptBuilder.progress.generation.stages.final.description',
+        ),
     },
-];
+]);
 
-const currentStage = computed(() => stages[currentStageIndex.value].label);
+const currentStage = computed(
+    () => stages.value[currentStageIndex.value].label,
+);
 const currentActivity = computed(
-    () => stages[currentStageIndex.value].activity,
+    () => stages.value[currentStageIndex.value].activity,
 );
 const currentDescription = computed(
-    () => stages[currentStageIndex.value].description,
+    () => stages.value[currentStageIndex.value].description,
 );
 
 function getStageStatus(stageId: number): 'pending' | 'active' | 'complete' {
@@ -129,16 +150,21 @@ onUnmounted(() => {
                     </div>
                     <div class="flex-1">
                         <h3 class="font-semibold text-red-900">
-                            Prompt Generation Failed
+                            {{
+                                $t(
+                                    'promptBuilder.progress.generation.errorTitle',
+                                )
+                            }}
                         </h3>
                         <p class="mt-1 text-sm text-red-700">
                             {{ errorMessage }}
                         </p>
                         <p class="mt-3 text-xs text-red-600">
-                            This usually happens when the AI takes too long to
-                            generate the response. Please try again, or if the
-                            problem persists, try with a simpler task
-                            description.
+                            {{
+                                $t(
+                                    'promptBuilder.progress.generation.errorDescription',
+                                )
+                            }}
                         </p>
                     </div>
                 </div>
@@ -147,13 +173,13 @@ onUnmounted(() => {
             <!-- Retry Button -->
             <div class="flex gap-3">
                 <ButtonPrimary v-if="onRetry" class="flex-1" @click="onRetry">
-                    Retry Generation
+                    {{ $t('promptBuilder.progress.generation.retryButton') }}
                 </ButtonPrimary>
                 <ButtonSecondary
                     class="flex-1"
                     @click="() => window.history.back()"
                 >
-                    Go Back
+                    {{ $t('promptBuilder.progress.generation.backButton') }}
                 </ButtonSecondary>
             </div>
         </div>
@@ -162,10 +188,10 @@ onUnmounted(() => {
         <template v-else>
             <div class="text-center">
                 <h3 class="text-lg font-semibold text-indigo-900">
-                    Generating Your Optimised Prompt
+                    {{ $t('promptBuilder.progress.generation.title') }}
                 </h3>
                 <p class="mt-2 text-sm text-indigo-600">
-                    Please wait while we craft the perfect prompt for you
+                    {{ $t('promptBuilder.progress.generation.subtitle') }}
                 </p>
             </div>
 
@@ -173,7 +199,11 @@ onUnmounted(() => {
             <div class="space-y-2">
                 <div class="flex justify-between text-sm text-indigo-600">
                     <span>{{ currentStage }}</span>
-                    <span>{{ Math.round(progress) }}% complete</span>
+                    <span>{{
+                        $t('promptBuilder.progress.percentComplete', {
+                            percent: Math.round(progress),
+                        })
+                    }}</span>
                 </div>
                 <div
                     class="h-3 w-full overflow-hidden rounded-full bg-indigo-100"
@@ -204,7 +234,11 @@ onUnmounted(() => {
 
             <!-- Time Estimate -->
             <div class="text-center text-sm text-indigo-500">
-                Estimated time remaining: {{ estimatedTimeRemaining }}
+                {{
+                    $t('promptBuilder.progress.timeRemaining', {
+                        time: estimatedTimeRemaining,
+                    })
+                }}
             </div>
 
             <!-- Generation Stages (Educational) -->
@@ -212,7 +246,7 @@ onUnmounted(() => {
                 class="space-y-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:bg-indigo-100"
             >
                 <p class="text-xs font-semibold text-indigo-500 uppercase">
-                    Generation Pipeline
+                    {{ $t('promptBuilder.progress.generation.pipeline') }}
                 </p>
                 <div class="space-y-2">
                     <StageIndicator

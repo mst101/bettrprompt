@@ -77,9 +77,9 @@ function confirmSetup() {
 </script>
 
 <template>
-    <Head title="Enable Privacy Encryption" />
+    <Head :title="$t('privacy.setup.title')" />
 
-    <HeaderPage title="Enable Privacy Encryption" />
+    <HeaderPage :title="$t('privacy.setup.title')" />
 
     <ContainerPage spacing>
         <!-- Step 1: Show Recovery Phrase -->
@@ -92,18 +92,21 @@ function confirmSetup() {
                     class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4"
                 >
                     <h3 class="mb-2 font-semibold text-amber-900">
-                        Important: Save Your Recovery Phrase
+                        {{ $t('privacy.setup.savePhrase.title') }}
                     </h3>
-                    <p class="text-sm text-amber-700">
-                        Write down these 12 words in order. This is the
-                        <strong>only way</strong> to recover your data if you
-                        forget your password. Store it securely and never share
-                        it.
-                    </p>
+                    <i18n-t
+                        keypath="privacy.setup.savePhrase.description"
+                        tag="p"
+                        class="text-sm text-amber-700"
+                    >
+                        <strong>{{
+                            $t('privacy.setup.savePhrase.emphasis')
+                        }}</strong>
+                    </i18n-t>
                 </div>
 
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Your Recovery Phrase
+                    {{ $t('privacy.setup.yourPhrase') }}
                 </h2>
 
                 <div
@@ -134,7 +137,11 @@ function confirmSetup() {
                         data-testid="copy-phrase-button"
                         @click="copyPhrase"
                     >
-                        {{ hasCopied ? 'Copied!' : 'Copy to Clipboard' }}
+                        {{
+                            hasCopied
+                                ? $t('common.buttons.copied')
+                                : $t('privacy.setup.copyPhrase')
+                        }}
                     </ButtonSecondary>
                 </div>
 
@@ -146,8 +153,7 @@ function confirmSetup() {
                         data-testid="confirm-written-checkbox"
                     />
                     <span class="text-sm text-indigo-600">
-                        I have written down my recovery phrase and stored it
-                        securely
+                        {{ $t('privacy.setup.confirmWritten') }}
                     </span>
                 </label>
 
@@ -156,7 +162,7 @@ function confirmSetup() {
                     data-testid="continue-button"
                     @click="proceedToConfirmation"
                 >
-                    Continue
+                    {{ $t('common.buttons.continue') }}
                 </ButtonPrimary>
             </div>
         </div>
@@ -168,11 +174,10 @@ function confirmSetup() {
         >
             <div class="p-6">
                 <h2 class="mb-4 text-lg font-semibold text-indigo-900">
-                    Confirm Your Recovery Phrase
+                    {{ $t('privacy.setup.confirmTitle') }}
                 </h2>
                 <p class="mb-6 text-indigo-600">
-                    Enter the words at the specified positions to confirm you've
-                    saved your recovery phrase.
+                    {{ $t('privacy.setup.confirmDescription') }}
                 </p>
 
                 <form @submit.prevent="confirmSetup">
@@ -182,7 +187,11 @@ function confirmSetup() {
                             :id="`word-${idx}`"
                             :key="idx"
                             v-model="confirmForm.confirmation_words[idx]"
-                            :label="`Word #${idx + 1}`"
+                            :label="
+                                $t('privacy.setup.wordNumber', {
+                                    number: idx + 1,
+                                })
+                            "
                             :error="confirmForm.errors.confirmation_words"
                             :data-testid="`confirm-word-${idx}`"
                             required
@@ -193,7 +202,7 @@ function confirmSetup() {
                     <FormInput
                         id="setup-password"
                         v-model="confirmForm.password"
-                        label="Enter your account password"
+                        :label="$t('privacy.setup.enterPassword')"
                         type="password"
                         :error="confirmForm.errors.password"
                         data-testid="setup-password"
@@ -207,7 +216,7 @@ function confirmSetup() {
                             data-testid="back-button"
                             @click="goBack"
                         >
-                            Back
+                            {{ $t('common.buttons.back') }}
                         </ButtonSecondary>
                         <ButtonPrimary
                             type="submit"
@@ -215,7 +224,7 @@ function confirmSetup() {
                             :loading="confirmForm.processing"
                             data-testid="confirm-setup-button"
                         >
-                            Enable Encryption
+                            {{ $t('privacy.actions.enable') }}
                         </ButtonPrimary>
                     </div>
                 </form>

@@ -13,7 +13,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Join the Pilot Program - BettrPrompt" />
+    <Head :title="$t('pilot.headTitle')" />
 
     <div class="relative overflow-hidden bg-white">
         <!-- Decorative background gradient -->
@@ -53,14 +53,13 @@ defineOptions({
                 <h1
                     class="text-4xl font-bold tracking-tight text-indigo-950 sm:text-5xl lg:text-6xl"
                 >
-                    Stop Guessing.<br />
-                    Start Getting Results from AI.
+                    {{ $t('pilot.hero.line1') }}<br />
+                    {{ $t('pilot.hero.line2') }}
                 </h1>
                 <p
                     class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-indigo-700 sm:text-xl"
                 >
-                    BettrPrompt asks the right questions first—so your prompts
-                    actually work.
+                    {{ $t('pilot.hero.subtitle') }}
                 </p>
             </div>
 
@@ -72,21 +71,16 @@ defineOptions({
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-950 sm:text-3xl"
                     >
-                        The Problem
+                        {{ $t('pilot.problem.title') }}
                     </h2>
                     <div
                         class="mt-6 space-y-4 text-base leading-7 text-indigo-800 sm:text-lg"
                     >
                         <p>
-                            You type something into ChatGPT. It's not quite
-                            right. You tweak, rephrase, try again. Three
-                            attempts later, you've got something usable—but no
-                            idea why this version worked.
+                            {{ $t('pilot.problem.paragraph1') }}
                         </p>
                         <p class="font-semibold text-indigo-950">
-                            You're not doing anything wrong. AI just expects you
-                            to know exactly what you want before you've thought
-                            it through.
+                            {{ $t('pilot.problem.paragraph2') }}
                         </p>
                     </div>
                 </div>
@@ -97,7 +91,7 @@ defineOptions({
                 <h2
                     class="text-center text-2xl font-bold tracking-tight text-indigo-950 sm:text-3xl"
                 >
-                    How BettrPrompt Works Differently
+                    {{ $t('pilot.how.title') }}
                 </h2>
                 <div class="mt-10 space-y-8 sm:mt-12">
                     <!-- Step 1 -->
@@ -109,11 +103,10 @@ defineOptions({
                         </div>
                         <div class="flex-1">
                             <h3 class="text-xl font-semibold text-indigo-950">
-                                We ask before we generate.
+                                {{ $t('pilot.how.steps.step1.title') }}
                             </h3>
                             <p class="mt-2 text-base leading-7 text-indigo-700">
-                                Targeted questions help you clarify what you
-                                actually need—before we create anything.
+                                {{ $t('pilot.how.steps.step1.description') }}
                             </p>
                         </div>
                     </div>
@@ -127,11 +120,10 @@ defineOptions({
                         </div>
                         <div class="flex-1">
                             <h3 class="text-xl font-semibold text-indigo-950">
-                                We select from 60+ proven frameworks.
+                                {{ $t('pilot.how.steps.step2.title') }}
                             </h3>
                             <p class="mt-2 text-base leading-7 text-indigo-700">
-                                Intelligent selection based on your task, not
-                                guesswork.
+                                {{ $t('pilot.how.steps.step2.description') }}
                             </p>
                         </div>
                     </div>
@@ -145,11 +137,10 @@ defineOptions({
                         </div>
                         <div class="flex-1">
                             <h3 class="text-xl font-semibold text-indigo-950">
-                                We adapt to how you think.
+                                {{ $t('pilot.how.steps.step3.title') }}
                             </h3>
                             <p class="mt-2 text-base leading-7 text-indigo-700">
-                                Questions tailored to your personality, with
-                                transparency about why we're asking.
+                                {{ $t('pilot.how.steps.step3.description') }}
                             </p>
                         </div>
                     </div>
@@ -157,8 +148,7 @@ defineOptions({
                     <!-- Result -->
                     <div class="rounded-lg bg-indigo-100 px-6 py-5 sm:px-8">
                         <p class="text-lg font-semibold text-indigo-950">
-                            The result: a structured prompt ready to paste into
-                            ChatGPT or Claude—that actually works.
+                            {{ $t('pilot.how.result') }}
                         </p>
                     </div>
                 </div>
@@ -172,19 +162,18 @@ defineOptions({
                     <h2
                         class="text-3xl font-bold tracking-tight text-white sm:text-4xl"
                     >
-                        Join the Free Pilot
+                        {{ $t('pilot.join.title') }}
                     </h2>
                     <p
                         class="mx-auto mt-6 max-w-xl text-lg leading-8 text-indigo-50"
                     >
-                        We're inviting a small group to test BettrPrompt before
-                        public launch. Your feedback will shape the product.
+                        {{ $t('pilot.join.description') }}
                     </p>
 
                     <div class="mx-auto mt-10 max-w-md space-y-6 text-left">
                         <div>
                             <h3 class="text-lg font-semibold text-white">
-                                The commitment:
+                                {{ $t('pilot.join.commitmentTitle') }}
                             </h3>
                             <ul class="mt-3 space-y-2 text-base text-indigo-50">
                                 <li class="flex items-start gap-3">
@@ -199,7 +188,9 @@ defineOptions({
                                             clip-rule="evenodd"
                                         />
                                     </svg>
-                                    <span>Use BettrPrompt for 2 weeks</span>
+                                    <span>{{
+                                        $t('pilot.join.commitments.use')
+                                    }}</span>
                                 </li>
                                 <li class="flex items-start gap-3">
                                     <svg
@@ -213,15 +204,15 @@ defineOptions({
                                             clip-rule="evenodd"
                                         />
                                     </svg>
-                                    <span
-                                        >Submit brief feedback at the end</span
-                                    >
+                                    <span>{{
+                                        $t('pilot.join.commitments.feedback')
+                                    }}</span>
                                 </li>
                             </ul>
                         </div>
 
                         <p class="text-base text-indigo-50">
-                            That's it. No cost. No obligation to continue.
+                            {{ $t('pilot.join.note') }}
                         </p>
                     </div>
 
@@ -231,7 +222,7 @@ defineOptions({
                             :href="route('register')"
                             class="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition-all hover:bg-indigo-50 hover:shadow-xl focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 focus:outline-none"
                         >
-                            Join the Pilot Programme
+                            {{ $t('pilot.join.ctaRegister') }}
                             <svg
                                 class="h-5 w-5"
                                 fill="none"
@@ -251,7 +242,7 @@ defineOptions({
                             href="mailto:hello@bettrprompt.com"
                             class="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition-all hover:bg-indigo-50 hover:shadow-xl focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 focus:outline-none"
                         >
-                            Request an Invitation
+                            {{ $t('pilot.join.ctaInvite') }}
                             <svg
                                 class="h-5 w-5"
                                 fill="none"
@@ -273,12 +264,12 @@ defineOptions({
             <!-- Footer Contact -->
             <div class="mt-16 text-center">
                 <p class="text-sm text-indigo-600">
-                    Questions?
+                    {{ $t('pilot.footer.questions') }}
                     <a
                         href="mailto:hello@bettrprompt.com"
                         class="font-semibold underline hover:text-indigo-700"
                     >
-                        Get in touch
+                        {{ $t('pilot.footer.contact') }}
                     </a>
                 </p>
             </div>

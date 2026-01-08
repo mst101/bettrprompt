@@ -2,6 +2,7 @@
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { useAudioRecording } from '@/Composables/features/useAudioRecording';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
     disabled?: boolean;
@@ -19,18 +20,19 @@ const {
     startRecording,
     stopRecording,
 } = useAudioRecording();
+const { t } = useI18n();
 
 const isActive = computed(() => isRecording.value || isProcessing.value);
 const displayError = computed(() => recordingError.value);
 
 const buttonLabel = computed(() => {
     if (isProcessing.value) {
-        return 'Transcribing...';
+        return t('components.base.buttonVoiceInput.transcribing');
     }
     if (isActive.value) {
-        return 'Listening...';
+        return t('components.base.buttonVoiceInput.listening');
     }
-    return 'Record';
+    return t('components.base.buttonVoiceInput.record');
 });
 
 const toggleRecording = async () => {
@@ -54,8 +56,8 @@ const toggleRecording = async () => {
             :disabled="isProcessing || disabled"
             :aria-label="
                 isActive
-                    ? 'Stop recording'
-                    : 'Record voice input using your microphone'
+                    ? t('components.base.buttonVoiceInput.stopRecording')
+                    : t('components.base.buttonVoiceInput.startRecording')
             "
             class="inline-flex items-center justify-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition-colors duration-150 focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-75"
             :class="[
@@ -65,8 +67,8 @@ const toggleRecording = async () => {
             ]"
             :title="
                 isActive
-                    ? 'Stop recording'
-                    : 'Click to record using your microphone'
+                    ? t('components.base.buttonVoiceInput.stopRecording')
+                    : t('components.base.buttonVoiceInput.startRecordingTitle')
             "
             @click="toggleRecording"
         >

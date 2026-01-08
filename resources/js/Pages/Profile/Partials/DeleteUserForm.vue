@@ -41,37 +41,34 @@ const closeModal = () => {
 
 <template>
     <CollapsibleSection
-        title="Delete Account"
-        subtitle="Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain."
+        :title="$t('profile.deleteAccount.title')"
+        :subtitle="$t('profile.deleteAccount.subtitle')"
         data-testid="delete-account"
         icon="trash"
     >
         <div class="space-y-6">
-            <ButtonDanger icon="trash" @click="confirmUserDeletion"
-                >Delete Account</ButtonDanger
-            >
+            <ButtonDanger icon="trash" @click="confirmUserDeletion">
+                {{ $t('profile.deleteAccount.actions.open') }}
+            </ButtonDanger>
 
             <Modal :show="confirmingUserDeletion" @close="closeModal">
                 <div class="p-6">
                     <h2 class="text-lg font-medium text-indigo-900">
-                        Are you sure you want to delete your account?
+                        {{ $t('profile.deleteAccount.modal.title') }}
                     </h2>
 
                     <p class="mt-1 text-sm text-indigo-600">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                        {{ $t('profile.deleteAccount.modal.description') }}
                     </p>
 
                     <div class="mt-6">
                         <FormInput
                             id="password"
                             v-model="form.password"
-                            label="Password"
+                            :label="$t('auth.login.password')"
                             type="password"
                             :error="form.errors.password"
-                            placeholder="Password"
+                            :placeholder="$t('auth.login.password')"
                             class="w-3/4"
                             @keyup.enter="deleteUser"
                         />
@@ -79,7 +76,7 @@ const closeModal = () => {
 
                     <div class="mt-6 flex justify-end">
                         <ButtonSecondary @click="closeModal">
-                            Cancel
+                            {{ $t('common.buttons.cancel') }}
                         </ButtonSecondary>
 
                         <ButtonDanger
@@ -89,7 +86,7 @@ const closeModal = () => {
                             icon="trash"
                             @click="deleteUser"
                         >
-                            Delete Account
+                            {{ $t('profile.deleteAccount.actions.confirm') }}
                         </ButtonDanger>
                     </div>
                 </div>

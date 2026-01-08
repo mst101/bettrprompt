@@ -155,7 +155,7 @@ watch(
                     <h2 class="text-lg font-semibold">{{ title }}</h2>
                     <button
                         class="rounded px-3 py-1 hover:bg-indigo-700"
-                        title="Close"
+                        :title="$t('common.buttons.close')"
                         @click="emit('close')"
                     >
                         ✕

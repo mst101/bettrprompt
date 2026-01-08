@@ -44,7 +44,7 @@ function goToPricing() {
             class="text-sm whitespace-nowrap text-indigo-600 hover:underline"
             @click="goToPricing"
         >
-            Upgrade
+            {{ $t('components.common.usageIndicator.upgrade') }}
         </button>
     </div>
 </template>

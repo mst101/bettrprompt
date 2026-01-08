@@ -25,27 +25,30 @@ const closeCookieSettings = () => {
                 <div
                     class="text-center text-xs text-indigo-800 sm:text-left sm:text-sm"
                 >
-                    © {{ new Date().getFullYear() }} BettrPrompt. All rights
-                    reserved.
+                    {{
+                        $t('components.common.footer.copyright', {
+                            year: new Date().getFullYear(),
+                        })
+                    }}
                 </div>
 
                 <!-- Links -->
                 <div class="flex flex-wrap justify-center gap-6">
-                    <LinkText :href="localeRoute('terms')"
-                        >Terms of Use</LinkText
-                    >
-                    <LinkText :href="localeRoute('privacy')"
-                        >Privacy Policy</LinkText
-                    >
-                    <LinkText :href="localeRoute('cookies')"
-                        >Cookie Policy</LinkText
-                    >
+                    <LinkText :href="localeRoute('terms')">{{
+                        $t('components.common.footer.terms')
+                    }}</LinkText>
+                    <LinkText :href="localeRoute('privacy')">{{
+                        $t('components.common.footer.privacy')
+                    }}</LinkText>
+                    <LinkText :href="localeRoute('cookies')">{{
+                        $t('components.common.footer.cookies')
+                    }}</LinkText>
                     <ButtonText
                         id="cookie-settings"
                         type="button"
                         @click="openCookieSettings"
                     >
-                        Cookie Settings
+                        {{ $t('components.common.footer.cookieSettings') }}
                     </ButtonText>
                 </div>
             </div>

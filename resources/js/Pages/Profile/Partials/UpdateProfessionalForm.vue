@@ -8,6 +8,7 @@ import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     professionalData: {
@@ -20,21 +21,25 @@ interface Props {
 
 const props = defineProps<Props>();
 const { success, error } = useNotification();
+const { t } = useI18n();
 
-const experienceLevelOptions = [
-    { value: 'entry', label: 'Entry Level' },
-    { value: 'mid', label: 'Mid-Level' },
-    { value: 'senior', label: 'Senior' },
-    { value: 'expert', label: 'Expert/Principal' },
-];
+const experienceLevelOptions = computed(() => [
+    { value: 'entry', label: t('profile.professional.options.entry') },
+    { value: 'mid', label: t('profile.professional.options.mid') },
+    { value: 'senior', label: t('profile.professional.options.senior') },
+    { value: 'expert', label: t('profile.professional.options.expert') },
+]);
 
-const companySizeOptions = [
-    { value: 'solo', label: 'Freelancer/Solo' },
-    { value: 'small', label: 'Small (2-10 people)' },
-    { value: 'medium', label: 'Medium (11-100 people)' },
-    { value: 'large', label: 'Large (100-1000 people)' },
-    { value: 'enterprise', label: 'Enterprise (1000+ people)' },
-];
+const companySizeOptions = computed(() => [
+    { value: 'solo', label: t('profile.professional.companySize.solo') },
+    { value: 'small', label: t('profile.professional.companySize.small') },
+    { value: 'medium', label: t('profile.professional.companySize.medium') },
+    { value: 'large', label: t('profile.professional.companySize.large') },
+    {
+        value: 'enterprise',
+        label: t('profile.professional.companySize.enterprise'),
+    },
+]);
 
 const form = useForm({
     jobTitle: props.professionalData.jobTitle || '',
@@ -47,7 +52,7 @@ watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
-            success('Professional information updated successfully');
+            success(t('profile.professional.notifications.updated'));
         }
     },
 );
@@ -83,9 +88,12 @@ const { confirm } = useAlert();
 
 const clearProfessional = async () => {
     const confirmed = await confirm(
-        'Are you sure you want to clear all professional information?',
-        'Clear Professional Context',
-        { confirmButtonStyle: 'danger', confirmText: 'Clear' },
+        t('profile.professional.clearConfirm.message'),
+        t('profile.professional.clearConfirm.title'),
+        {
+            confirmButtonStyle: 'danger',
+            confirmText: t('common.buttons.clear'),
+        },
     );
 
     if (confirmed) {
@@ -93,7 +101,7 @@ const clearProfessional = async () => {
         clearForm.delete(route('profile.professional.clear'), {
             preserveScroll: true,
             onSuccess: () => {
-                success('Professional information cleared successfully');
+                success(t('profile.professional.notifications.cleared'));
                 // Clear the form fields
                 form.jobTitle = '';
                 form.industry = '';
@@ -101,7 +109,7 @@ const clearProfessional = async () => {
                 form.companySize = '';
             },
             onError: () => {
-                error('Failed to clear professional information');
+                error(t('profile.professional.notifications.clearFailed'));
             },
         });
     }
@@ -110,8 +118,8 @@ const clearProfessional = async () => {
 
 <template>
     <CollapsibleSection
-        title="Professional Context"
-        subtitle="Tell us about your professional background to help optimise prompts for your role."
+        :title="$t('profile.professional.title')"
+        :subtitle="$t('profile.professional.subtitle')"
         data-testid="professional"
         icon="building-office"
     >
@@ -121,30 +129,36 @@ const clearProfessional = async () => {
                 <FormInput
                     id="job-title"
                     v-model="form.jobTitle"
-                    label="Job Title"
-                    placeholder="e.g., Software Engineer, Product Manager"
+                    :label="$t('profile.professional.fields.jobTitle')"
+                    :placeholder="
+                        $t('profile.professional.placeholders.jobTitle')
+                    "
                     :error="form.errors.jobTitle"
-                    help-text="Your current or primary job title"
+                    :help-text="$t('profile.professional.help.jobTitle')"
                 />
 
                 <!-- Industry -->
                 <FormInput
                     id="industry"
                     v-model="form.industry"
-                    label="Industry"
-                    placeholder="e.g., Technology"
+                    :label="$t('profile.professional.fields.industry')"
+                    :placeholder="
+                        $t('profile.professional.placeholders.industry')
+                    "
                     :error="form.errors.industry"
-                    help-text="Your industry or sector"
+                    :help-text="$t('profile.professional.help.industry')"
                 />
 
                 <!-- Experience Level -->
                 <FormSelect
                     id="experience-level"
                     v-model="form.experienceLevel"
-                    label="Experience Level"
+                    :label="$t('profile.professional.fields.experienceLevel')"
                     :options="experienceLevelOptions"
                     :error="form.errors.experienceLevel"
-                    placeholder="Select your level"
+                    :placeholder="
+                        $t('profile.professional.placeholders.experienceLevel')
+                    "
                     show-placeholder
                 />
 
@@ -152,10 +166,12 @@ const clearProfessional = async () => {
                 <FormSelect
                     id="company-size"
                     v-model="form.companySize"
-                    label="Company Size"
+                    :label="$t('profile.professional.fields.companySize')"
                     :options="companySizeOptions"
                     :error="form.errors.companySize"
-                    placeholder="Select company size"
+                    :placeholder="
+                        $t('profile.professional.placeholders.companySize')
+                    "
                     show-placeholder
                 />
             </div>
@@ -167,13 +183,13 @@ const clearProfessional = async () => {
                     :loading="form.processing"
                     icon="download"
                 >
-                    Save Professional Context
+                    {{ $t('profile.professional.actions.save') }}
                 </ButtonPrimary>
 
                 <ButtonTrash
                     v-if="hasProfessionalData"
                     id="clear-professional-form"
-                    label="Clear"
+                    :label="$t('common.buttons.clear')"
                     @clear="clearProfessional"
                 />
             </div>

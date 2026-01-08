@@ -117,7 +117,9 @@ const selectOption = (value: number) => {
                         : 'cursor-pointer hover:scale-110',
                     modelValue !== value && 'bg-white dark:bg-indigo-50',
                 ]"
-                :aria-label="`Select option ${value}`"
+                :aria-label="
+                    $t('components.base.likert.optionLabel', { value })
+                "
                 :aria-pressed="modelValue === value"
                 @click="selectOption(value)"
             ></button>
