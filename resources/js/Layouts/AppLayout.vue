@@ -285,14 +285,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         <DropdownLink
                                             :href="localeRoute('profile.edit')"
                                         >
-                                            Profile
+                                            {{ $t('common.nav.profile') }}
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="localeRoute('logout')"
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            {{ $t('common.nav.logout') }}
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
@@ -301,7 +301,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             <!-- Guest Buttons -->
                             <nav v-else class="flex items-center gap-4">
                                 <ButtonSecondary @click="openLogin">
-                                    Log in
+                                    {{ $t('common.nav.login') }}
                                 </ButtonSecondary>
                             </nav>
                         </div>
@@ -353,7 +353,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Prompt Builder
+                                        {{ $t('navigation.promptBuilder') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -371,7 +371,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Prompt History
+                                        {{ $t('navigation.promptHistory') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -381,7 +381,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Feedback
+                                        {{ $t('navigation.feedback') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -392,7 +392,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Workflows
+                                        {{ $t('navigation.workflows') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -401,7 +401,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Profile
+                                        {{ $t('common.nav.profile') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
@@ -412,7 +412,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false
                                         "
                                     >
-                                        Log Out
+                                        {{ $t('common.nav.logout') }}
                                     </ResponsiveNavLink>
                                 </div>
                             </template>
@@ -428,7 +428,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             showingNavigationDropdown = false;
                                         "
                                     >
-                                        Log in
+                                        {{ $t('common.nav.login') }}
                                     </button>
                                 </div>
                             </template>
