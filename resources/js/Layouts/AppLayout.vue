@@ -14,6 +14,7 @@ import NavLink from '@/Components/Base/NavLink.vue';
 import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
 import CookieBanner from '@/Components/Common/CookieBanner.vue';
 import Footer from '@/Components/Common/Footer.vue';
+import LanguageSwitcher from '@/Components/Common/LanguageSwitcher.vue';
 import NotificationCenter from '@/Components/Common/NotificationCenter.vue';
 import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import SvgLogo from '@/Icons/SvgLogo.vue';
@@ -237,7 +238,8 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                         <!-- Right Side Navigation -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <ButtonDarkMode class="mr-2 size-10 shrink-0 p-2" />
+                            <LanguageSwitcher />
+                            <ButtonDarkMode class="ms-2 size-10 shrink-0 p-2" />
 
                             <!-- Authenticated User Dropdown -->
                             <div v-if="isAuthenticated" class="relative ms-3">
@@ -292,6 +294,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                         <!-- Hamburger (Mobile) -->
                         <div class="-me-2 flex items-center sm:hidden">
+                            <LanguageSwitcher />
                             <ButtonDarkMode />
 
                             <ButtonHamburger

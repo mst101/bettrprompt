@@ -1,3 +1,4 @@
+import 'flag-icons/css/flag-icons.min.css';
 import '../css/app.css';
 import './bootstrap';
 
