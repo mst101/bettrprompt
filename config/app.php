@@ -96,7 +96,7 @@ return [
 
     'supported_locales' => [
         // Tier 1: Essential
-        'en', 'en-GB',
+        'en-US', 'en-GB',
         // Tier 2: High Value
         'de', 'ja', 'ko', 'fr',
         // Tier 3: Nordic

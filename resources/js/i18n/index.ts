@@ -1,8 +1,8 @@
 import { createI18n } from 'vue-i18n';
-import en from './locales/en.json';
+import enUS from './locales/en-US.json';
 
 export type LocaleCode =
-    | 'en'
+    | 'en-US'
     | 'en-GB'
     | 'de'
     | 'ja'
@@ -31,7 +31,7 @@ export interface LocaleInfo {
 export const locales: LocaleInfo[] = [
     // Tier 1: Essential
     {
-        code: 'en',
+        code: 'en-US',
         name: 'English (US)',
         nativeName: 'English',
         flag: 'us',
@@ -157,10 +157,10 @@ export const locales: LocaleInfo[] = [
 
 export const i18n = createI18n({
     legacy: false,
-    locale: 'en',
-    fallbackLocale: 'en',
+    locale: 'en-US',
+    fallbackLocale: 'en-US',
     messages: {
-        en,
+        'en-US': enUS,
     },
 });
 
