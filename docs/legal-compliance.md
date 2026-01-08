@@ -68,6 +68,174 @@ This converts a potential adversary into a potential ally or partner.
 
 ---
 
+## Prompt Frameworks Intellectual Property
+
+BettrPrompt uses approximately 60+ prompt frameworks sourced from various origins. This section analyses the IP status of these frameworks and provides guidance on compliant usage.
+
+### Framework Sources
+
+The frameworks were primarily collated from:
+- [Juuzt.ai Knowledge Base](https://juuzt.ai/knowledge-base/prompt-frameworks/) - claims copyright on their content
+- Academic research papers (Google, Meta, universities)
+- Well-established business methodologies
+- AI/prompt engineering community resources
+
+### Framework Categories by IP Status
+
+#### 1. Trademarked/Licensed Frameworks - ⚠️ HIGH RISK
+
+| Framework | Owner | IP Status | Risk Level | Action Required |
+|-----------|-------|-----------|------------|-----------------|
+| **Six Thinking Hats** | Edward de Bono Limited | [Registered trademark](https://trademarks.justia.com/745/58/six-thinking-74558979.html) (USPTO #74558979) | 🔴 HIGH | See below |
+
+**Six Thinking Hats - Detailed Analysis:**
+
+Edward de Bono Limited has an explicit [IP Policy](https://www.debono.com/ip-policy) stating:
+- "Six Thinking Hats" is a registered trademark
+- All published material is protected by copyright
+- Use without permission may constitute infringement
+- They have licensed an official ChatGPT tool under their authorisation
+
+**Options:**
+1. **Remove entirely** - Safest option; replace with alternative multi-perspective frameworks
+2. **Seek licence** - Contact their [authorised distributors](https://www.debono.com/authorised-distributors)
+3. **Generic alternative** - Use "Multi-Perspective Analysis" with similar (but original) prompts
+
+**Recommendation:** Consider removing Six Thinking Hats or creating an original "Perspective Analysis" framework that achieves similar goals without using their trademarked terminology.
+
+#### 2. Copyrighted but Widely Used - 🟡 MEDIUM RISK
+
+| Framework | Origin | Status | Recommendation |
+|-----------|--------|--------|----------------|
+| **SCAMPER** | Bob Eberle (1971 book) | Copyrighted book, but methodology widely used | ✅ Safe to use concept; write original descriptions |
+| **Bloom's Taxonomy** | Benjamin Bloom (1956) | Original likely public domain; 2001 revision copyrighted | ✅ Safe to use concept; cite original source |
+
+**SCAMPER Analysis:**
+- Developed by Bob Eberle in his 1971 book "SCAMPER: Games for Imagination Development"
+- The [SCAMPER technique](https://en.wikipedia.org/wiki/SCAMPER) is widely used in education and business
+- The acronym and methodology are broadly applied without licensing
+- **Recommendation:** Safe to use; ensure descriptions are in your own words
+
+**Bloom's Taxonomy Analysis:**
+- Original taxonomy published in 1956 (likely public domain)
+- Revised taxonomy by Anderson & Krathwohl (2001) may be copyrighted
+- Extremely widely used in educational contexts globally
+- **Recommendation:** Safe to use; reference the educational concept generally
+
+#### 3. Academic Research Frameworks - ✅ LOW RISK
+
+These frameworks originated from published academic papers. Academic research is generally shared for knowledge advancement, and the concepts are freely usable with proper citation.
+
+| Framework | Academic Source | Year | Safe to Use |
+|-----------|-----------------|------|-------------|
+| **Chain of Thought** | Wei et al. (Google) | 2022 | ✅ Yes - cite paper |
+| **ReAct** | Yao et al. | 2023 | ✅ Yes - cite paper |
+| **Self-Refine** | Madaan et al. | 2023 | ✅ Yes - cite paper |
+| **Reflexion** | Shinn et al. | 2023 | ✅ Yes - cite paper |
+| **Tree of Thought** | Yao et al. | 2023 | ✅ Yes - cite paper |
+| **Step-Back Prompting** | Zheng et al. (Google DeepMind) | 2023 | ✅ Yes - cite paper |
+| **Skeleton-of-Thought** | Ning et al. | 2023 | ✅ Yes - cite paper |
+| **Few-Shot Learning** | Brown et al. (OpenAI) | 2020 | ✅ Yes - foundational concept |
+| **Zero-Shot Learning** | Various | - | ✅ Yes - foundational concept |
+| **Meta Prompting** | Various | - | ✅ Yes - general technique |
+
+**Recommendation:** These are safe to use. Consider adding academic citations to your documentation for transparency and credibility.
+
+#### 4. Attribution-Required Frameworks - 🟡 MEDIUM RISK
+
+| Framework | Origin | Attribution Required |
+|-----------|--------|---------------------|
+| **CO-STAR** | GovTech Singapore / Sheila Teo | Yes |
+
+**CO-STAR Analysis:**
+
+The CO-STAR framework was developed by [GovTech Singapore's Data Science & AI team](https://towardsdatascience.com/how-i-won-singapores-gpt-4-prompt-engineering-competition-34c195a93d41/) and popularised by Sheila Teo, winner of Singapore's GPT-4 Prompt Engineering competition.
+
+Sheila Teo has [publicly requested](https://medium.com/@sheilateozy/hello-there-it-appears-that-majority-of-your-content-on-co-star-was-almost-verbatim-taken-from-my-320b38da750a) that those using CO-STAR content "kindly credit my article as well as GovTech Singapore, who were the original inventors of this framework."
+
+**Recommendation:**
+- Add attribution in your framework documentation
+- Example: "CO-STAR framework developed by GovTech Singapore"
+- Do not copy her article verbatim; use your own descriptions
+
+#### 5. Public Domain / Widely Established - ✅ LOW RISK
+
+These frameworks are well-established methodologies used across industries without licensing requirements:
+
+| Framework | Origin | Status |
+|-----------|--------|--------|
+| **SMART Goals** | Peter Drucker / George Doran (1981) | ✅ Public methodology |
+| **STAR Method** | Behavioural interviewing standard | ✅ Public methodology |
+| **RICE Scoring** | Product management standard | ✅ Public methodology |
+| **Pros and Cons** | General reasoning | ✅ Public methodology |
+| **5W1H (Five Ws and One H)** | Journalism standard | ✅ Public methodology |
+| **Socratic Method** | Ancient Greek philosophy | ✅ Public domain |
+| **CAR/PAR/BAB** | Storytelling structures | ✅ Public methodology |
+| **HMW (How Might We)** | Design thinking | ✅ Public methodology |
+
+**Recommendation:** These are safe to use without attribution, though citing origins adds credibility.
+
+#### 6. Community/AI Prompt Frameworks - ✅ LOW RISK
+
+These frameworks appear to be community-developed within the AI/prompt engineering space. Origins are often unclear, and they're freely shared across multiple websites:
+
+| Frameworks | Status |
+|------------|--------|
+| CRISPE, RELIC, RISEN, RACEF, RODES, RHODES, GRADE, TRACI, CIDI, COAST, FOCUS, SPARK, SPEAR, ERA, CARE, TAG, APE, RTF, ICIO, CRAFT, etc. | ✅ Likely safe - community-developed |
+
+**Recommendation:** Safe to use, but ensure your descriptions are original (not copied verbatim from any source).
+
+### Juuzt.ai Content - Specific Guidance
+
+**Status:** Juuzt.ai claims "Copyright 2020-2026 Juuzt | All rights reserved" on their content.
+
+**What This Means:**
+- The underlying framework **concepts** (SMART, STAR, etc.) are generally not copyrightable
+- Juuzt's specific **instructional text and explanations** may be copyrighted
+- You cannot reproduce their content verbatim
+
+**Recommendation:**
+- ✅ Safe: Using the framework concepts and acronyms
+- ✅ Safe: Writing your own descriptions and explanations
+- ❌ Avoid: Copying their text verbatim
+- 🟡 Consider: Adding a general attribution if you used their site as a research source
+
+### Action Items for Framework Compliance
+
+#### Immediate Actions
+
+- [ ] **Six Thinking Hats** - Decide: remove, licence, or create generic alternative
+- [ ] **CO-STAR** - Add attribution to GovTech Singapore / Sheila Teo
+- [ ] **Review all framework descriptions** - Ensure none are copied verbatim from Juuzt.ai or other sources
+- [ ] **Rewrite any copied content** - All descriptions should be in your own words
+
+#### Recommended Additions
+
+- [ ] **Add academic citations** - For Chain of Thought, ReAct, Self-Refine, etc.
+- [ ] **Create attribution page** - "Framework sources and acknowledgments"
+- [ ] **Document framework origins** - Add `origin` field to framework templates where known
+
+### Summary Table
+
+| Risk Level | Frameworks | Action |
+|------------|------------|--------|
+| 🔴 HIGH | Six Thinking Hats | Remove or licence |
+| 🟡 MEDIUM | CO-STAR, SCAMPER, Bloom's | Add attribution; use own words |
+| ✅ LOW | All academic frameworks | Safe; cite papers for credibility |
+| ✅ LOW | All public methodologies (SMART, STAR, RICE, etc.) | Safe to use |
+| ✅ LOW | Community prompt frameworks | Safe; write original descriptions |
+
+### Resources
+
+- [de Bono IP Policy](https://www.debono.com/ip-policy)
+- [Six Thinking Hats Trademark](https://trademarks.justia.com/745/58/six-thinking-74558979.html)
+- [CO-STAR Framework Origin (Sheila Teo)](https://towardsdatascience.com/how-i-won-singapores-gpt-4-prompt-engineering-competition-34c195a93d41/)
+- [SCAMPER Wikipedia](https://en.wikipedia.org/wiki/SCAMPER)
+- [Chain of Thought Paper](https://arxiv.org/abs/2201.11903)
+- [ReAct Paper](https://arxiv.org/abs/2210.03629)
+
+---
+
 ## Privacy & Data Protection (Critical Priority)
 
 ### GDPR Compliance (If Serving EU Users)
@@ -280,6 +448,9 @@ consider generated prompts as starting points rather than copyrighted works.
 - [ ] **Cookie Policy** - Consent mechanism for non-essential cookies
 - [ ] **Accessibility** - WCAG 2.1 AA compliance (legal requirement in many jurisdictions)
 - [ ] **16personalities Logo** - Removed or explicit permission obtained
+- [ ] **Six Thinking Hats** - Removed or licence obtained from de Bono Limited
+- [ ] **CO-STAR Attribution** - Added credit to GovTech Singapore / Sheila Teo
+- [ ] **Framework Descriptions** - Reviewed to ensure none copied verbatim from sources
 - [ ] **AI Disclaimers** - Clearly state prompts are AI-generated, not professional advice
 - [ ] **Stripe Agreement** - Reviewed and accepted
 - [ ] **Data Processing Agreements** - With Mailgun, n8n, MaxMind
@@ -324,6 +495,8 @@ consider generated prompts as starting points rather than copyrighted works.
 - Promise AI outputs are "professional advice" (legal, financial, medical)
 - Imply endorsement from 16personalities.com without permission
 - Use their logo or branding without consent
+- Use trademarked framework names (Six Thinking Hats) without licence
+- Copy framework descriptions verbatim from other websites
 - Collect personal data without explicit consent
 - Make false or exaggerated claims about AI capabilities
 - Hide privacy policies or make them difficult to find
@@ -339,6 +512,9 @@ consider generated prompts as starting points rather than copyrighted works.
 - Maintain detailed records of user consent
 - Encrypt sensitive data in transit and at rest
 - Review terms annually with legal counsel
+- Add attribution for frameworks where creators request it (CO-STAR)
+- Write original descriptions for all frameworks
+- Cite academic papers for research-based frameworks
 
 ---
 
