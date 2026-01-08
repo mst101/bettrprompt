@@ -71,8 +71,9 @@ class DebugN8nController extends Controller
     /**
      * Validate and confirm a variant selection
      */
-    public function setVariant(Request $request, int $workflowNumber)
+    public function setVariant(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
         try {
             $variant = $request->input('variant');
             $availableVariants = $this->variantService->getVariants($workflowNumber);
@@ -103,8 +104,9 @@ class DebugN8nController extends Controller
     /**
      * Display the workflow page
      */
-    public function show(Request $request, int $workflowNumber)
+    public function show(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
         $currentVariant = $this->getVariant($request, $workflowNumber);
         $currentPass = $this->getPass($request);
         $availableVariants = $this->variantService->getVariants($workflowNumber);
@@ -196,8 +198,9 @@ class DebugN8nController extends Controller
     /**
      * Save webhook input data
      */
-    public function saveInput(Request $request, int $workflowNumber)
+    public function saveInput(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
         try {
             $this->ensureDebugDirectory('input');
             $inputFile = storage_path("app/n8n_debug/input/workflow_{$workflowNumber}_input.json");
@@ -219,8 +222,10 @@ class DebugN8nController extends Controller
      * Save pass-specific input data for Pass 2+
      * Stored as workflow_X_input_Y.json where Y is passNumber - 1
      */
-    public function savePassInput(Request $request, int $workflowNumber, int $passNumber)
+    public function savePassInput(Request $request, $workflowNumber, $passNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+        $passNumber = (int) $passNumber;
         try {
             $this->ensureDebugDirectory('input');
 
@@ -248,16 +253,20 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from the n8n workflow file
      */
-    public function reloadJavaScriptFromWorkflow(Request $request, int $workflowNumber)
+    public function reloadJavaScriptFromWorkflow(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->reloadJavaScriptFromWorkflowInternal($request, $workflowNumber, false);
     }
 
     /**
      * Reload JavaScript from workflow file and save as new version
      */
-    public function reloadJavaScriptFromWorkflowAsNew(Request $request, int $workflowNumber)
+    public function reloadJavaScriptFromWorkflowAsNew(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->reloadJavaScriptFromWorkflowInternal($request, $workflowNumber, true);
     }
 
@@ -322,16 +331,20 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript code (old version)
      */
-    public function saveOldJavaScript(Request $request, int $workflowNumber)
+    public function saveOldJavaScript(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->saveJavaScript($request, $workflowNumber, false);
     }
 
     /**
      * Save new JavaScript code version
      */
-    public function saveNewJavaScript(Request $request, int $workflowNumber)
+    public function saveNewJavaScript(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->saveJavaScript($request, $workflowNumber, true);
     }
 
@@ -390,8 +403,9 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript to the n8n workflow file
      */
-    public function saveJavaScriptToN8nWorkflow(Request $request, int $workflowNumber)
+    public function saveJavaScriptToN8nWorkflow(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
         try {
             $request->validate([
                 'code' => 'required|string',
@@ -451,16 +465,20 @@ class DebugN8nController extends Controller
     /**
      * Upload old workflow version to n8n server
      */
-    public function uploadOldWorkflowToN8n(Request $request, int $workflowNumber)
+    public function uploadOldWorkflowToN8n(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->uploadWorkflowToN8nInternal($request, $workflowNumber, false);
     }
 
     /**
      * Upload new workflow version to n8n server
      */
-    public function uploadNewWorkflowToN8n(Request $request, int $workflowNumber)
+    public function uploadNewWorkflowToN8n(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->uploadWorkflowToN8nInternal($request, $workflowNumber, true);
     }
 
@@ -569,8 +587,9 @@ class DebugN8nController extends Controller
     /**
      * Upload workflow to live production n8n server
      */
-    public function uploadWorkflowToLive(int $workflowNumber)
+    public function uploadWorkflowToLive($workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
         try {
             $n8nWorkflowFile = base_path("n8n/workflow_$workflowNumber.json");
             if (! file_exists($n8nWorkflowFile)) {
@@ -641,16 +660,20 @@ class DebugN8nController extends Controller
     /**
      * Prepare prompt using the old JavaScript version
      */
-    public function preparePromptOld(Request $request, int $workflowNumber)
+    public function preparePromptOld(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->preparePromptInternal($request, $workflowNumber, false);
     }
 
     /**
      * Prepare prompt using the new JavaScript version
      */
-    public function preparePromptNew(Request $request, int $workflowNumber)
+    public function preparePromptNew(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->preparePromptInternal($request, $workflowNumber, true);
     }
 
@@ -1277,16 +1300,20 @@ try {
     /**
      * Execute the actual n8n workflow for the old version
      */
-    public function executeOldWorkflow(Request $request, int $workflowNumber)
+    public function executeOldWorkflow(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->executeWorkflowInternal($request, $workflowNumber, false);
     }
 
     /**
      * Execute the actual n8n workflow for the new version
      */
-    public function executeNewWorkflow(Request $request, int $workflowNumber)
+    public function executeNewWorkflow(Request $request, $workflowNumber)
     {
+        $workflowNumber = (int) $workflowNumber;
+
         return $this->executeWorkflowInternal($request, $workflowNumber, true);
     }
 
