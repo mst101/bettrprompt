@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { locales, type LocaleCode, type LocaleInfo } from '@/i18n';
+import { locales, setLocale, type LocaleCode, type LocaleInfo } from '@/i18n';
 import { router, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
@@ -26,8 +26,16 @@ const currentPath = computed(() => {
     return url;
 });
 
-function switchLocale(locale: LocaleInfo) {
+async function switchLocale(locale: LocaleInfo) {
+    if (locale.code === currentLocale.value) {
+        isOpen.value = false;
+        return;
+    }
+
     isOpen.value = false;
+
+    // Update client-side i18n
+    await setLocale(locale.code);
 
     // Navigate to the same path with new locale
     const newPath = `/${locale.code}${currentPath.value}`;

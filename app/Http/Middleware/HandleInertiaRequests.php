@@ -42,6 +42,10 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
+        // Detect and set locale from user preference or session
+        $locale = SetLocale::detectLocale($request);
+        app()->setLocale($locale);
+
         return [
             ...parent::share($request),
             'auth' => [

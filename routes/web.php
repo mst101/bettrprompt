@@ -9,226 +9,338 @@ use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Root redirect to detected locale
 Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'isReturningVisitor' => request()->cookie('returning_visitor') !== null,
-        'modal' => request()->query('modal'),
-    ]);
-})->name('home');
+    $locale = SetLocale::detectLocale(request());
 
-Route::get('/pilot', function () {
-    return Inertia::render('Pilot', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
-})->name('pilot');
-
-Route::get('/terms', function () {
-    return Inertia::render('Legal/Terms');
-})->name('terms');
-
-Route::get('/privacy', function () {
-    return Inertia::render('Legal/Privacy');
-})->name('privacy');
-
-Route::get('/cookies', function () {
-    return Inertia::render('Legal/Cookies');
-})->name('cookies');
-
-// Pricing page (public)
-Route::get('/pricing', [SubscriptionController::class, 'pricing'])
-    ->name('pricing');
-
-// Subscription routes (authenticated)
-Route::middleware(['auth'])->group(function () {
-    // Checkout
-    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout'])
-        ->name('subscription.checkout');
-
-    Route::get('/subscription/success', [SubscriptionController::class, 'success'])
-        ->name('subscription.success');
-
-    Route::get('/subscription/cancelled', [SubscriptionController::class, 'cancelled'])
-        ->name('subscription.cancelled');
-
-    // Subscription management
-    Route::get('/settings/subscription', [SubscriptionController::class, 'show'])
-        ->name('settings.subscription');
-
-    Route::get('/billing-portal', [SubscriptionController::class, 'billingPortal'])
-        ->name('billing.portal');
-
-    Route::post('/subscription/cancel', [SubscriptionController::class, 'cancel'])
-        ->name('subscription.cancel');
-
-    Route::post('/subscription/resume', [SubscriptionController::class, 'resume'])
-        ->name('subscription.resume');
-
-    // Privacy settings routes
-    Route::get('/settings/privacy', [PrivacyController::class, 'show'])
-        ->name('settings.privacy');
-
-    Route::post('/privacy/begin-setup', [PrivacyController::class, 'beginSetup'])
-        ->name('privacy.begin-setup');
-
-    Route::post('/privacy/confirm-setup', [PrivacyController::class, 'confirmSetup'])
-        ->name('privacy.confirm-setup');
-
-    Route::post('/privacy/unlock', [PrivacyController::class, 'unlock'])
-        ->name('privacy.unlock');
-
-    Route::get('/privacy/recovery', [PrivacyController::class, 'showRecovery'])
-        ->name('privacy.recovery');
-
-    Route::post('/privacy/recover', [PrivacyController::class, 'recover'])
-        ->name('privacy.recover');
-
-    Route::post('/privacy/update-password', [PrivacyController::class, 'updatePassword'])
-        ->name('privacy.update-password');
-
-    Route::post('/privacy/disable', [PrivacyController::class, 'disable'])
-        ->name('privacy.disable');
+    return redirect("/{$locale}");
 });
 
-// Google OAuth routes
-Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+// Locale-prefixed routes (all user-facing pages)
+Route::prefix('{locale}')
+    ->middleware(['locale'])
+    ->where(['locale' => implode('|', config('app.supported_locales'))])
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('Home', [
+                'canLogin' => Route::has('login'),
+                'canRegister' => Route::has('register'),
+                'isReturningVisitor' => request()->cookie('returning_visitor') !== null,
+                'modal' => request()->query('modal'),
+            ]);
+        })->name('home');
 
-// Commented out the original dashboard route and the redundant alias
-// Users now navigate directly to /prompt-builder instead
-// Route::get('/dashboard', function () {
-//    return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+        Route::get('/pilot', function () {
+            return Inertia::render('Pilot', [
+                'canLogin' => Route::has('login'),
+                'canRegister' => Route::has('register'),
+            ]);
+        })->name('pilot');
 
-// Feedback routes (no authentication required)
-Route::get('/feedback/create', [FeedbackController::class, 'create'])
-    ->name('feedback.create');
-Route::get('/feedback', [FeedbackController::class, 'show'])
-    ->name('feedback.show');
-Route::post('/feedback', [FeedbackController::class, 'store'])
-    ->name('feedback.store');
-Route::put('/feedback', [FeedbackController::class, 'update'])
-    ->name('feedback.update');
-Route::get('/feedback/thank-you', [FeedbackController::class, 'thankYou'])
-    ->name('feedback.thank-you');
+        Route::get('/terms', function () {
+            return Inertia::render('Legal/Terms');
+        })->name('terms');
 
-// Voice transcription endpoint (no authentication required)
-Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
-    ->middleware('throttle:30,1');
+        Route::get('/privacy', function () {
+            return Inertia::render('Legal/Privacy');
+        })->name('privacy');
 
-// Visitor preferences (no authentication required)
-Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
-    ->name('visitor.personality.update');
+        Route::get('/cookies', function () {
+            return Inertia::render('Legal/Cookies');
+        })->name('cookies');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::patch('/profile/personality',
-        [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
-    Route::patch('/profile/ui-complexity',
-        [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
-    // Location profile routes
-    Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
-    Route::post('/profile/location/detect',
-        [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
-    Route::delete('/profile/location', [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
-    // Professional profile routes
-    Route::patch('/profile/professional',
-        [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
-    Route::delete('/profile/professional', [ProfileController::class, 'clearProfessional'])->name('profile.professional.clear');
-    // Team profile routes
-    Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
-    Route::delete('/profile/team', [ProfileController::class, 'clearTeam'])->name('profile.team.clear');
-    // Budget profile routes
-    Route::patch('/profile/budget', [ProfileController::class, 'updateBudget'])->name('profile.budget.update');
-    Route::delete('/profile/budget', [ProfileController::class, 'clearBudget'])->name('profile.budget.clear');
-    // Tools profile routes
-    Route::patch('/profile/tools', [ProfileController::class, 'updateTools'])->name('profile.tools.update');
-    Route::delete('/profile/tools', [ProfileController::class, 'clearTools'])->name('profile.tools.clear');
-    // Account deletion
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        // Pricing page (public)
+        Route::get('/pricing', [SubscriptionController::class, 'pricing'])
+            ->name('pricing');
 
-    // Prompt history (requires authentication)
-    Route::get('/history', [PromptBuilderController::class, 'history'])
-        ->name('prompt-builder.history');
-});
+        // Google OAuth routes
+        Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
+        Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
-// Admin routes (requires authentication and admin role)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('dashboard');
+        // Feedback routes (no authentication required)
+        Route::get('/feedback/create', [FeedbackController::class, 'create'])
+            ->name('feedback.create');
+        Route::get('/feedback', [FeedbackController::class, 'show'])
+            ->name('feedback.show');
+        Route::post('/feedback', [FeedbackController::class, 'store'])
+            ->name('feedback.store');
+        Route::put('/feedback', [FeedbackController::class, 'update'])
+            ->name('feedback.update');
+        Route::get('/feedback/thank-you', [FeedbackController::class, 'thankYou'])
+            ->name('feedback.thank-you');
 
-    // Users
-    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+        // Voice transcription endpoint (no authentication required)
+        Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
+            ->middleware('throttle:30,1');
 
-    // Tasks
-    Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/{taskId}',
-        [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
+        // Visitor preferences (no authentication required)
+        Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
+            ->name('visitor.personality.update');
 
-    // Prompt Runs
-    Route::get('/prompt-runs/{promptRun}',
-        [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
-});
+        // Subscription routes (authenticated)
+        Route::middleware(['auth'])->group(function () {
+            // Checkout
+            Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout'])
+                ->name('subscription.checkout');
 
+            Route::get('/subscription/success', [SubscriptionController::class, 'success'])
+                ->name('subscription.success');
+
+            Route::get('/subscription/cancelled', [SubscriptionController::class, 'cancelled'])
+                ->name('subscription.cancelled');
+
+            // Subscription management
+            Route::get('/settings/subscription', [SubscriptionController::class, 'show'])
+                ->name('settings.subscription');
+
+            Route::get('/billing-portal', [SubscriptionController::class, 'billingPortal'])
+                ->name('billing.portal');
+
+            Route::post('/subscription/cancel', [SubscriptionController::class, 'cancel'])
+                ->name('subscription.cancel');
+
+            Route::post('/subscription/resume', [SubscriptionController::class, 'resume'])
+                ->name('subscription.resume');
+
+            // Privacy settings routes
+            Route::get('/settings/privacy', [PrivacyController::class, 'show'])
+                ->name('settings.privacy');
+
+            Route::post('/privacy/begin-setup', [PrivacyController::class, 'beginSetup'])
+                ->name('privacy.begin-setup');
+
+            Route::post('/privacy/confirm-setup', [PrivacyController::class, 'confirmSetup'])
+                ->name('privacy.confirm-setup');
+
+            Route::post('/privacy/unlock', [PrivacyController::class, 'unlock'])
+                ->name('privacy.unlock');
+
+            Route::get('/privacy/recovery', [PrivacyController::class, 'showRecovery'])
+                ->name('privacy.recovery');
+
+            Route::post('/privacy/recover', [PrivacyController::class, 'recover'])
+                ->name('privacy.recover');
+
+            Route::post('/privacy/update-password', [PrivacyController::class, 'updatePassword'])
+                ->name('privacy.update-password');
+
+            Route::post('/privacy/disable', [PrivacyController::class, 'disable'])
+                ->name('privacy.disable');
+
+            // Profile routes
+            Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+            Route::patch('/profile/personality',
+                [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
+            Route::patch('/profile/ui-complexity',
+                [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
+            // Location profile routes
+            Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
+            Route::post('/profile/location/detect',
+                [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
+            Route::delete('/profile/location', [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
+            // Professional profile routes
+            Route::patch('/profile/professional',
+                [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
+            Route::delete('/profile/professional', [ProfileController::class, 'clearProfessional'])->name('profile.professional.clear');
+            // Team profile routes
+            Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
+            Route::delete('/profile/team', [ProfileController::class, 'clearTeam'])->name('profile.team.clear');
+            // Budget profile routes
+            Route::patch('/profile/budget', [ProfileController::class, 'updateBudget'])->name('profile.budget.update');
+            Route::delete('/profile/budget', [ProfileController::class, 'clearBudget'])->name('profile.budget.clear');
+            // Tools profile routes
+            Route::patch('/profile/tools', [ProfileController::class, 'updateTools'])->name('profile.tools.update');
+            Route::delete('/profile/tools', [ProfileController::class, 'clearTools'])->name('profile.tools.clear');
+            // Account deletion
+            Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+            // Prompt builder routes
+            Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
+                ->name('prompt-builder.index');
+            Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'preAnalyse'])
+                ->name('prompt-builder.pre-analyse');
+            Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
+                [PromptBuilderController::class, 'analyse'])
+                ->name('prompt-builder.pre-analysis-answers');
+            Route::post('/prompt-builder/{promptRun}/update-pre-analysis-answers', [PromptBuilderController::class, 'updatePreAnalysisAnswers'])
+                ->name('prompt-builder.update-pre-analysis-answers');
+            Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
+                ->name('prompt-builder.show');
+            Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
+                ->name('prompt-builder.full-details');
+            Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
+                ->name('prompt-builder.answer');
+            Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
+                ->name('prompt-builder.go-back');
+            Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
+                ->name('prompt-builder.retry');
+            Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
+                ->name('prompt-builder.generate');
+            Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
+                [PromptBuilderController::class, 'createChild'])
+                ->name('prompt-builder.create-child-from-task');
+            Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
+                [PromptBuilderController::class, 'createChildFromAnswers'])
+                ->name('prompt-builder.create-child-from-answers');
+            Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
+                [PromptBuilderController::class, 'switchFramework'])
+                ->name('prompt-builder.create-child-with-framework');
+            Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
+                ->name('prompt-builder.destroy');
+            Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
+                ->name('prompt-builder.update-prompt');
+
+            // Prompt history (requires authentication)
+            Route::get('/history', [PromptBuilderController::class, 'history'])
+                ->name('prompt-builder.history');
+        });
+
+        // Admin routes (requires authentication and admin role)
+        Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('dashboard');
+
+            // Users
+            Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+            Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+
+            // Tasks
+            Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
+            Route::get('/tasks/{taskId}',
+                [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
+
+            // Prompt Runs
+            Route::get('/prompt-runs/{promptRun}',
+                [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
+        });
+
+        // Workflow management system (admin only)
+        Route::middleware(['auth', 'admin'])->group(function () {
+            // Workflow index page
+            Route::get('/workflow', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
+                ->name('workflow.index');
+
+            // Reference documents management
+            Route::get('/workflow/docs', [\App\Http\Controllers\ReferenceDocumentsController::class, 'index'])
+                ->name('workflow.docs.index');
+
+            Route::get('/workflow/docs/api/list', [\App\Http\Controllers\ReferenceDocumentsController::class, 'list'])
+                ->name('workflow.docs.list');
+
+            Route::get('/workflow/docs/api/{type}/{filename}',
+                [\App\Http\Controllers\ReferenceDocumentsController::class, 'show'])
+                ->name('workflow.docs.show')
+                ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
+
+            Route::post('/workflow/docs/api/{type}/{filename}',
+                [\App\Http\Controllers\ReferenceDocumentsController::class, 'update'])
+                ->name('workflow.docs.update')
+                ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
+
+            Route::post('/workflow/docs/api/embed-all',
+                [\App\Http\Controllers\ReferenceDocumentsController::class, 'embedAll'])
+                ->name('workflow.docs.embed-all');
+
+            // Debug n8n workflow
+            Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
+                ->name('workflow.show')
+                ->where('workflowNumber', '[0-9]+');
+
+            // Set variant preference for workflow
+            Route::post('/debug/workflow/{workflowNumber}/variant',
+                [\App\Http\Controllers\DebugN8nController::class, 'setVariant'])
+                ->name('workflow.set-variant')
+                ->where('workflowNumber', '[0-9]+');
+
+            // Debug API endpoints
+            Route::post('/debug/workflow/{workflowNumber}/input',
+                [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
+                ->name('workflow.save-input')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/pass-input/{passNumber}',
+                [\App\Http\Controllers\DebugN8nController::class, 'savePassInput'])
+                ->name('workflow.save-pass-input')
+                ->where('workflowNumber', '[0-9]+')
+                ->where('passNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/javascript-old',
+                [\App\Http\Controllers\DebugN8nController::class, 'saveOldJavaScript'])
+                ->name('workflow.save-javascript-old')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/javascript-new',
+                [\App\Http\Controllers\DebugN8nController::class, 'saveNewJavaScript'])
+                ->name('workflow.save-javascript-new')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/reload-javascript-old',
+                [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
+                ->name('workflow.reload-javascript-old')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/reload-javascript-new',
+                [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
+                ->name('workflow.reload-javascript-new')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-old',
+                [\App\Http\Controllers\DebugN8nController::class, 'preparePromptOld'])
+                ->name('workflow.prepare-prompt-old')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-new',
+                [\App\Http\Controllers\DebugN8nController::class, 'preparePromptNew'])
+                ->name('workflow.prepare-prompt-new')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/save-to-n8n',
+                [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
+                ->name('workflow.save-to-n8n')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-old',
+                [\App\Http\Controllers\DebugN8nController::class, 'uploadOldWorkflowToN8n'])
+                ->name('workflow.upload-to-n8n-old')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-new',
+                [\App\Http\Controllers\DebugN8nController::class, 'uploadNewWorkflowToN8n'])
+                ->name('workflow.upload-to-n8n-new')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/execute-workflow-old',
+                [\App\Http\Controllers\DebugN8nController::class, 'executeOldWorkflow'])
+                ->name('workflow.execute-workflow-old')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/execute-workflow-new',
+                [\App\Http\Controllers\DebugN8nController::class, 'executeNewWorkflow'])
+                ->name('workflow.execute-workflow-new')
+                ->where('workflowNumber', '[0-9]+');
+
+            Route::post('/debug/workflow/{workflowNumber}/upload-to-live',
+                [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToLive'])
+                ->name('workflow.upload-to-live')
+                ->where('workflowNumber', '[0-9]+');
+        });
+    });
+
+// Auth routes (no locale prefix needed - handled by auth middleware)
 require __DIR__.'/auth.php';
 
-// Route::middleware(['auth'])->group(function () {
-Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
-    ->name('prompt-builder.index');
-Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'preAnalyse'])
-    ->name('prompt-builder.pre-analyse');
-Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
-    [PromptBuilderController::class, 'analyse'])
-    ->name('prompt-builder.pre-analysis-answers');
-Route::post('/prompt-builder/{promptRun}/update-pre-analysis-answers', [PromptBuilderController::class, 'updatePreAnalysisAnswers'])
-    ->name('prompt-builder.update-pre-analysis-answers');
-Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
-    ->name('prompt-builder.show');
-Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
-    ->name('prompt-builder.full-details');
-Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
-    ->name('prompt-builder.answer');
-Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
-    ->name('prompt-builder.go-back');
-Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
-    ->name('prompt-builder.retry');
-Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
-    ->name('prompt-builder.generate');
-Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
-    [PromptBuilderController::class, 'createChild'])
-    ->name('prompt-builder.create-child-from-task');
-Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
-    [PromptBuilderController::class, 'createChildFromAnswers'])
-    ->name('prompt-builder.create-child-from-answers');
-Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
-    [PromptBuilderController::class, 'switchFramework'])
-    ->name('prompt-builder.create-child-with-framework');
-Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
-    ->name('prompt-builder.destroy');
-Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
-    ->name('prompt-builder.update-prompt');
-// });
-
-// E2E Test-Only Routes
-// These routes provide a backdoor for E2E tests to authenticate without using the modal form
-// They check for a special header to ensure they're only used by Playwright tests
-// CSRF is automatically skipped for requests with X-Test-Auth header (see VerifyCsrfToken middleware)
+// E2E Test-Only Routes (no locale prefix)
 Route::post('/test/login', function (Illuminate\Http\Request $request) {
-    // Only allow if the request includes the test auth header
-    // This header is set by Playwright tests to prove they're authorized to use this endpoint
     if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
         abort(403, 'Unauthorized');
     }
 
     $user = \App\Models\User::where('email', $request->email)->first();
 
-    // Create user if it doesn't exist (for tests with unique users)
     if (! $user) {
         $user = \App\Models\User::create([
             'email' => $request->email,
@@ -239,16 +351,10 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
 
     \Illuminate\Support\Facades\Auth::login($user);
 
-    // Respond with success - session cookie is set by Laravel automatically
     return response()->json(['success' => true]);
 })->name('test.login');
 
-// Test OAuth endpoint for E2E tests
-// Allows tests to authenticate with a mock Google account without actual OAuth flow
 Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
-    // Note: CSRF protection is bypassed via middleware exemption for test routes
-
-    // Only allow if the request includes the test auth header
     if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
         abort(403, 'Unauthorized');
     }
@@ -257,13 +363,11 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
     $name = $request->input('name', 'OAuth Test User');
     $googleId = $request->input('google_id', 'test-google-id-'.uniqid());
 
-    // Find or create user with Google ID
     $user = \App\Models\User::where('google_id', $googleId)
         ->orWhere('email', $email)
         ->first();
 
     if (! $user) {
-        // Create new user from OAuth data
         $user = \App\Models\User::create([
             'name' => $name,
             'email' => $email,
@@ -271,7 +375,6 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
             'password' => bcrypt('oauth-'.$googleId),
         ]);
     } else {
-        // Update existing user with google_id if not already set
         $user->update([
             'google_id' => $googleId,
             'name' => $name,
@@ -284,7 +387,6 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
 })->name('test.oauth-login');
 
 // E2E Test-Only Broadcast Routes
-// These routes allow E2E tests to trigger WebSocket events manually
 Route::post('/test/broadcast/analysis-completed/{promptRunId}',
     [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])
     ->name('test.broadcast.analysis-completed');
@@ -298,7 +400,6 @@ Route::post('/test/create-prompt-run', [\App\Http\Controllers\TestBroadcastContr
 Route::post('/test/set-personality', [\App\Http\Controllers\TestBroadcastController::class, 'setPersonalityType'])
     ->name('test.set-personality');
 
-// Test broadcast trigger for debugging WebSocket issues
 Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     $promptRun = \App\Models\PromptRun::find($promptRunId);
     if ($promptRun) {
@@ -313,121 +414,7 @@ Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     return response()->json(['success' => false, 'message' => 'Prompt run not found'], 404);
 })->name('test.broadcast-event')->withoutMiddleware('Illuminate\Foundation\Http\Middleware\VerifyCsrfToken');
 
-// Workflow management system (admin only)
-Route::middleware(['auth', 'admin'])->group(function () {
-    // Workflow index page
-    Route::get('/workflow', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
-        ->name('workflow.index');
-
-    // Reference documents management
-    Route::get('/workflow/docs', [\App\Http\Controllers\ReferenceDocumentsController::class, 'index'])
-        ->name('workflow.docs.index');
-
-    Route::get('/workflow/docs/api/list', [\App\Http\Controllers\ReferenceDocumentsController::class, 'list'])
-        ->name('workflow.docs.list');
-
-    Route::get('/workflow/docs/api/{type}/{filename}',
-        [\App\Http\Controllers\ReferenceDocumentsController::class, 'show'])
-        ->name('workflow.docs.show')
-        ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
-
-    Route::post('/workflow/docs/api/{type}/{filename}',
-        [\App\Http\Controllers\ReferenceDocumentsController::class, 'update'])
-        ->name('workflow.docs.update')
-        ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
-
-    Route::post('/workflow/docs/api/embed-all',
-        [\App\Http\Controllers\ReferenceDocumentsController::class, 'embedAll'])
-        ->name('workflow.docs.embed-all');
-
-    // Debug n8n workflow - allows inspection of workflow input/output
-    // Access at: https://app.localhost/workflow/0, /workflow/1, /workflow/2
-    Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
-        ->name('workflow.show')
-        ->where('workflowNumber', '[0-9]+');
-
-    // Set variant preference for workflow
-    Route::post('/debug/workflow/{workflowNumber}/variant',
-        [\App\Http\Controllers\DebugN8nController::class, 'setVariant'])
-        ->name('workflow.set-variant')
-        ->where('workflowNumber', '[0-9]+');
-
-    // Debug API endpoints
-    Route::post('/debug/workflow/{workflowNumber}/input',
-        [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
-        ->name('workflow.save-input')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/pass-input/{passNumber}',
-        [\App\Http\Controllers\DebugN8nController::class, 'savePassInput'])
-        ->name('workflow.save-pass-input')
-        ->where('workflowNumber', '[0-9]+')
-        ->where('passNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/javascript-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'saveOldJavaScript'])
-        ->name('workflow.save-javascript-old')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/javascript-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'saveNewJavaScript'])
-        ->name('workflow.save-javascript-new')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/reload-javascript-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
-        ->name('workflow.reload-javascript-old')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/reload-javascript-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
-        ->name('workflow.reload-javascript-new')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'preparePromptOld'])
-        ->name('workflow.prepare-prompt-old')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'preparePromptNew'])
-        ->name('workflow.prepare-prompt-new')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/save-to-n8n',
-        [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
-        ->name('workflow.save-to-n8n')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'uploadOldWorkflowToN8n'])
-        ->name('workflow.upload-to-n8n-old')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'uploadNewWorkflowToN8n'])
-        ->name('workflow.upload-to-n8n-new')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/execute-workflow-old',
-        [\App\Http\Controllers\DebugN8nController::class, 'executeOldWorkflow'])
-        ->name('workflow.execute-workflow-old')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/execute-workflow-new',
-        [\App\Http\Controllers\DebugN8nController::class, 'executeNewWorkflow'])
-        ->name('workflow.execute-workflow-new')
-        ->where('workflowNumber', '[0-9]+');
-
-    Route::post('/debug/workflow/{workflowNumber}/upload-to-live',
-        [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToLive'])
-        ->name('workflow.upload-to-live')
-        ->where('workflowNumber', '[0-9]+');
-});
-
 // Mock n8n webhook endpoints for E2E testing (only in e2e environment)
-// These endpoints simulate n8n responses without requiring n8n to be running.
-// When N8N_URL=http://localhost, N8nWorkflowClient calls these instead of real n8n.
 if (config('app.env') === 'e2e') {
     Route::post('/webhook/api/n8n/webhook/pre-analysis', [MockN8nController::class, 'workflow0'])
         ->name('test.n8n.workflow0');

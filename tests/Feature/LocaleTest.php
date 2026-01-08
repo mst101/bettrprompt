@@ -68,7 +68,7 @@ test('SetLocale getDirection returns correct direction', function () {
 });
 
 test('locale is shared with inertia pages', function () {
-    $response = $this->get('/');
+    $response = $this->get('/en');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -79,7 +79,7 @@ test('locale is shared with inertia pages', function () {
 });
 
 test('locale shared data has correct default values', function () {
-    $response = $this->get('/');
+    $response = $this->get('/en');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -89,7 +89,7 @@ test('locale shared data has correct default values', function () {
 });
 
 test('supported locales shared data contains expected locales', function () {
-    $response = $this->get('/');
+    $response = $this->get('/en');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
