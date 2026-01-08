@@ -67,16 +67,12 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
 
-// Group locales by tier for the dropdown
-const groupedLocales = computed(() => ({
-    essential: locales.filter((l) => ['en-US', 'en-GB'].includes(l.code)),
-    highValue: locales.filter((l) => ['de', 'ja', 'ko', 'fr'].includes(l.code)),
-    nordic: locales.filter((l) =>
-        ['sv', 'no', 'da', 'fi', 'nl'].includes(l.code),
+// Show only currently supported languages
+const supportedLanguages = computed(() =>
+    locales.filter((l) =>
+        ['en-US', 'en-GB', 'de', 'fr', 'es'].includes(l.code),
     ),
-    volume: locales.filter((l) => ['es', 'pt', 'it', 'zh'].includes(l.code)),
-    rtl: locales.filter((l) => ['ar', 'he'].includes(l.code)),
-}));
+);
 </script>
 
 <template>
@@ -123,249 +119,44 @@ const groupedLocales = computed(() => ({
         >
             <div
                 v-if="isOpen"
-                class="origin-top-end absolute end-0 z-50 mt-2 max-h-96 w-56 overflow-y-auto rounded-lg border border-indigo-200 bg-white shadow-lg"
+                class="origin-top-end absolute end-0 z-50 mt-2 w-56 rounded-lg border border-indigo-200 bg-white shadow-lg"
             >
                 <div class="p-2">
-                    <!-- Essential Languages -->
-                    <div class="mb-2">
-                        <div
-                            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
+                    <button
+                        v-for="locale in supportedLanguages"
+                        :key="locale.code"
+                        class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
+                        :class="
+                            locale.code === currentLocale
+                                ? 'bg-indigo-100 text-indigo-900'
+                                : 'text-indigo-600 hover:bg-indigo-50'
+                        "
+                        :data-testid="`locale-option-${locale.code}`"
+                        @click="switchLocale(locale)"
+                    >
+                        <span
+                            class="fi"
+                            :class="`fi-${locale.flag}`"
+                            aria-hidden="true"
+                        />
+                        <span>{{ locale.nativeName }}</span>
+                        <span
+                            v-if="locale.code === currentLocale"
+                            class="ms-auto"
                         >
-                            {{
-                                $t(
-                                    'components.common.languageSwitcher.sections.english',
-                                )
-                            }}
-                        </div>
-                        <button
-                            v-for="locale in groupedLocales.essential"
-                            :key="locale.code"
-                            class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
-                            :class="
-                                locale.code === currentLocale
-                                    ? 'bg-indigo-100 text-indigo-900'
-                                    : 'text-indigo-600 hover:bg-indigo-50'
-                            "
-                            :data-testid="`locale-option-${locale.code}`"
-                            @click="switchLocale(locale)"
-                        >
-                            <span
-                                class="fi"
-                                :class="`fi-${locale.flag}`"
-                                aria-hidden="true"
-                            />
-                            <span>{{ locale.nativeName }}</span>
-                            <span
-                                v-if="locale.code === currentLocale"
-                                class="ms-auto"
+                            <svg
+                                class="h-4 w-4 text-indigo-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
                             >
-                                <svg
-                                    class="h-4 w-4 text-indigo-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-
-                    <!-- High Value Languages -->
-                    <div class="mb-2">
-                        <div
-                            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
-                        >
-                            {{
-                                $t(
-                                    'components.common.languageSwitcher.sections.major',
-                                )
-                            }}
-                        </div>
-                        <button
-                            v-for="locale in groupedLocales.highValue"
-                            :key="locale.code"
-                            class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
-                            :class="
-                                locale.code === currentLocale
-                                    ? 'bg-indigo-100 text-indigo-900'
-                                    : 'text-indigo-600 hover:bg-indigo-50'
-                            "
-                            :data-testid="`locale-option-${locale.code}`"
-                            @click="switchLocale(locale)"
-                        >
-                            <span
-                                class="fi"
-                                :class="`fi-${locale.flag}`"
-                                aria-hidden="true"
-                            />
-                            <span>{{ locale.nativeName }}</span>
-                            <span
-                                v-if="locale.code === currentLocale"
-                                class="ms-auto"
-                            >
-                                <svg
-                                    class="h-4 w-4 text-indigo-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-
-                    <!-- Nordic Languages -->
-                    <div class="mb-2">
-                        <div
-                            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
-                        >
-                            {{
-                                $t(
-                                    'components.common.languageSwitcher.sections.nordic',
-                                )
-                            }}
-                        </div>
-                        <button
-                            v-for="locale in groupedLocales.nordic"
-                            :key="locale.code"
-                            class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
-                            :class="
-                                locale.code === currentLocale
-                                    ? 'bg-indigo-100 text-indigo-900'
-                                    : 'text-indigo-600 hover:bg-indigo-50'
-                            "
-                            :data-testid="`locale-option-${locale.code}`"
-                            @click="switchLocale(locale)"
-                        >
-                            <span
-                                class="fi"
-                                :class="`fi-${locale.flag}`"
-                                aria-hidden="true"
-                            />
-                            <span>{{ locale.nativeName }}</span>
-                            <span
-                                v-if="locale.code === currentLocale"
-                                class="ms-auto"
-                            >
-                                <svg
-                                    class="h-4 w-4 text-indigo-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-
-                    <!-- Volume Languages -->
-                    <div class="mb-2">
-                        <div
-                            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
-                        >
-                            {{
-                                $t(
-                                    'components.common.languageSwitcher.sections.other',
-                                )
-                            }}
-                        </div>
-                        <button
-                            v-for="locale in groupedLocales.volume"
-                            :key="locale.code"
-                            class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
-                            :class="
-                                locale.code === currentLocale
-                                    ? 'bg-indigo-100 text-indigo-900'
-                                    : 'text-indigo-600 hover:bg-indigo-50'
-                            "
-                            :data-testid="`locale-option-${locale.code}`"
-                            @click="switchLocale(locale)"
-                        >
-                            <span
-                                class="fi"
-                                :class="`fi-${locale.flag}`"
-                                aria-hidden="true"
-                            />
-                            <span>{{ locale.nativeName }}</span>
-                            <span
-                                v-if="locale.code === currentLocale"
-                                class="ms-auto"
-                            >
-                                <svg
-                                    class="h-4 w-4 text-indigo-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-
-                    <!-- RTL Languages -->
-                    <div>
-                        <div
-                            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-400 uppercase"
-                        >
-                            {{
-                                $t(
-                                    'components.common.languageSwitcher.sections.rtl',
-                                )
-                            }}
-                        </div>
-                        <button
-                            v-for="locale in groupedLocales.rtl"
-                            :key="locale.code"
-                            class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-start text-sm transition-colors"
-                            :class="
-                                locale.code === currentLocale
-                                    ? 'bg-indigo-100 text-indigo-900'
-                                    : 'text-indigo-600 hover:bg-indigo-50'
-                            "
-                            :dir="locale.direction"
-                            :data-testid="`locale-option-${locale.code}`"
-                            @click="switchLocale(locale)"
-                        >
-                            <span
-                                class="fi"
-                                :class="`fi-${locale.flag}`"
-                                aria-hidden="true"
-                            />
-                            <span>{{ locale.nativeName }}</span>
-                            <span
-                                v-if="locale.code === currentLocale"
-                                class="ms-auto"
-                            >
-                                <svg
-                                    class="h-4 w-4 text-indigo-600"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </span>
+                    </button>
                 </div>
             </div>
         </Transition>
