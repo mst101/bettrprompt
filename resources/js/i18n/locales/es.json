@@ -1,0 +1,1770 @@
+{
+    "common": {
+        "nav": {
+            "home": "Inicio",
+            "pricing": "Precios",
+            "profile": "Perfil",
+            "settings": "Configuración",
+            "login": "Iniciar sesión",
+            "logout": "Cerrar sesión",
+            "register": "Registrarse"
+        },
+        "buttons": {
+            "submit": "Enviar",
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "close": "Cerrar",
+            "back": "Atrás",
+            "next": "Siguiente",
+            "continue": "Continuar",
+            "loading": "Cargando...",
+            "copy": "Copiar",
+            "copied": "¡Copiado!",
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "clear": "Limpiar",
+            "confirm": "Confirmar",
+            "ok": "Aceptar",
+            "embedAll": "Incrustar todo"
+        },
+        "aria": {
+            "userMenu": "Menú de usuario"
+        },
+        "errors": {
+            "copyFailed": "Error al copiar al portapapeles: {error}"
+        },
+        "validation": {
+            "required": "Este campo es obligatorio",
+            "email": "Por favor, introduce una dirección de correo electrónico válida",
+            "minLength": "Debe tener al menos {min} caracteres",
+            "maxLength": "No debe tener más de {max} caracteres"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Inicia sesión en tu cuenta",
+            "email": "Dirección de correo",
+            "password": "Contraseña",
+            "rememberMe": "Recuérdame",
+            "forgotPassword": "¿Olvidaste tu contraseña?",
+            "submit": "Iniciar sesión",
+            "noAccount": "¿No tienes cuenta?",
+            "signUp": "Regístrate"
+        },
+        "register": {
+            "title": "Crear una cuenta",
+            "name": "Nombre completo",
+            "email": "Dirección de correo",
+            "password": "Contraseña",
+            "confirmPassword": "Confirmar contraseña",
+            "submit": "Crear cuenta",
+            "hasAccount": "¿Ya tienes cuenta?",
+            "signIn": "Inicia sesión"
+        },
+        "forgotPassword": {
+            "title": "Olvidé mi contraseña",
+            "heading": "Reestablece tu contraseña",
+            "description": "¿Olvidaste tu contraseña? Sin problema. Solo cuéntanos tu dirección de correo y te enviaremos un enlace para reestablecerla que te permitirá elegir una nueva.",
+            "email": "Correo electrónico",
+            "submit": "Enviar enlace de reestablecimiento",
+            "backToLogin": "Volver a iniciar sesión"
+        },
+        "resetPassword": {
+            "headTitle": "Reestablecimiento de contraseña",
+            "title": "Crear nueva contraseña",
+            "email": "Correo electrónico",
+            "password": "Contraseña",
+            "confirmPassword": "Confirmar contraseña",
+            "submit": "Reestablecimiento de contraseña"
+        },
+        "confirmPassword": {
+            "title": "Confirmar contraseña",
+            "description": "Esta es un área segura de la aplicación. Por favor, confirma tu contraseña antes de continuar.",
+            "passwordLabel": "Contraseña"
+        },
+        "verifyEmail": {
+            "title": "Verificación de correo",
+            "heading": "Verifica tu dirección de correo",
+            "description": "¡Gracias por registrarte! Antes de empezar, ¿podrías verificar tu dirección de correo haciendo clic en el enlace que acabamos de enviarte? Si no recibiste el correo, con gusto te enviaremos otro.",
+            "resent": "Se ha enviado un nuevo enlace de verificación a la dirección de correo que proporcionaste durante el registro.",
+            "resend": "Reenviar correo de verificación",
+            "logout": "Cerrar sesión"
+        },
+        "privacyRecovery": {
+            "title": "Recuperar clave de privacidad",
+            "heading": "Recupera tus datos",
+            "notice": {
+                "title": "Recuperación de cuenta",
+                "description": "Introduce tu frase de recuperación de 12 palabras para recuperar el acceso a tus datos cifrados. También necesitarás establecer una nueva contraseña."
+            },
+            "sections": {
+                "recoveryPhrase": "Frase de recuperación",
+                "setPassword": "Establecer nueva contraseña"
+            },
+            "newPassword": "Nueva contraseña",
+            "confirmPassword": "Confirmar nueva contraseña",
+            "submit": "Recuperar cuenta"
+        },
+        "google": {
+            "continueWith": "Continuar con Google"
+        },
+        "modalLogin": {
+            "title": "Inicia sesión",
+            "emailLabel": "Dirección de correo",
+            "passwordLabel": "Contraseña",
+            "rememberMe": "Recuérdame",
+            "forgotPassword": "¿Olvidaste tu contraseña?",
+            "needAccount": "¿Necesitas una cuenta?",
+            "submit": "Iniciar sesión"
+        },
+        "modalRegister": {
+            "title": "Crea tu cuenta",
+            "google": "Continuar con Google",
+            "nameLabel": "Nombre completo",
+            "emailLabel": "Dirección de correo",
+            "passwordLabel": "Contraseña",
+            "confirmPasswordLabel": "Confirmar contraseña",
+            "alreadyRegistered": "¿Ya tienes cuenta?",
+            "submit": "Crear cuenta"
+        },
+        "modalForgotPassword": {
+            "title": "Reestablece tu contraseña",
+            "description": "Introduce tu dirección de correo y te enviaremos un enlace de reestablecimiento.",
+            "emailLabel": "Dirección de correo",
+            "backToLogin": "Volver a iniciar sesión",
+            "submit": "Enviar enlace de reestablecimiento"
+        },
+        "modalResetPassword": {
+            "title": "Crear una nueva contraseña",
+            "description": "Introduce tu correo y elige una nueva contraseña.",
+            "emailLabel": "Dirección de correo",
+            "passwordLabel": "Nueva contraseña",
+            "confirmPasswordLabel": "Confirmar nueva contraseña",
+            "backToLogin": "Volver a iniciar sesión",
+            "submit": "Reestablecimiento de contraseña"
+        }
+    },
+    "components": {
+        "base": {
+            "accordion": {
+                "ariaLabel": "Acordeón",
+                "empty": "No hay elementos disponibles"
+            },
+            "buttonDarkMode": {
+                "title": "Cambiar a {mode}",
+                "mode": {
+                    "light": "modo claro",
+                    "dark": "modo oscuro"
+                }
+            },
+            "buttonHamburger": {
+                "ariaLabel": "Abrir menú"
+            },
+            "buttonVoiceInput": {
+                "transcribing": "Transcribiendo...",
+                "listening": "Escuchando...",
+                "record": "Grabar",
+                "stopRecording": "Dejar de grabar",
+                "startRecording": "Comenzar a grabar",
+                "startRecordingTitle": "Comenzar a grabar"
+            },
+            "carousel": {
+                "ariaLabel": "Carrusel",
+                "previous": "Diapositiva anterior",
+                "next": "Siguiente diapositiva",
+                "slideRole": "diapositiva",
+                "slideLabel": "Diapositiva {current} de {total}",
+                "goToSlide": "Ir a la diapositiva {index}",
+                "liveRegion": "Diapositiva {current} de {total}: {title}",
+                "empty": "No hay diapositivas disponibles"
+            },
+            "formCheckboxGroup": {
+                "otherLabel": "Otro",
+                "otherPlaceholder": "Por favor, especifica...",
+                "characterCount": "{count}/{max} caracteres"
+            },
+            "formSelect": {
+                "placeholder": "Selecciona una opción"
+            },
+            "likert": {
+                "optionLabel": "Seleccionar {value}"
+            },
+            "tabs": {
+                "menuLabel": "Pestañas",
+                "ariaLabel": "Pestañas"
+            }
+        },
+        "common": {
+            "buttonTrash": {
+                "label": "Limpiar",
+                "title": "{label}"
+            },
+            "compactMetadataCard": {
+                "showProfile": "Mostrar perfil"
+            },
+            "cookieBanner": {
+                "ariaLabel": "Banner de cookies",
+                "title": "Utilizamos cookies",
+                "description": "Utilizamos cookies para mejorar tu experiencia. Consulta nuestro ",
+                "policyLink": "Política de cookies",
+                "rejectAll": "Rechazar todo",
+                "customize": "Personalizar",
+                "acceptAll": "Aceptar todo"
+            },
+            "cookieSettings": {
+                "title": "Preferencias de cookies",
+                "description": "Gestiona tus configuraciones de cookies. Más información en nuestra ",
+                "learnMore": "Política de cookies",
+                "alwaysActive": "Siempre activo",
+                "functionalLabel": "Cookies funcionales",
+                "analyticsLabel": "Cookies de análisis",
+                "rejectAll": "Rechazar todo",
+                "savePreferences": "Guardar preferencias",
+                "acceptAll": "Aceptar todo"
+            },
+            "exampleDemonstration": {
+                "stage1": {
+                    "title": "Introduce tu tarea",
+                    "description": "Comienza con una descripción clara de lo que quieres lograr.",
+                    "label": "Tarea",
+                    "example": "Crear una estrategia de marketing para lanzar una nueva aplicación de fitness."
+                },
+                "stage2": {
+                    "title": "Consultas rápidas",
+                    "description": "Un pequeño número de preguntas rápidas para refinar el objetivo.",
+                    "question1": "¿Cuál es tu público objetivo?",
+                    "answer1": "Profesionales ocupados de 25 a 40 años",
+                    "question2": "¿Cuál es el objetivo principal?",
+                    "answer2": "Aumentar los registros de prueba gratuita"
+                },
+                "stage3": {
+                    "title": "Marco de trabajo",
+                    "description": "Seleccionamos un marco adaptado a tu tarea.",
+                    "frameworkName": "STP + 4Ps",
+                    "chipChallenge": "Desafío",
+                    "chipObjective": "Objetivo",
+                    "chipActions": "Acciones",
+                    "chipStrategy": "Estrategia",
+                    "chipTactics": "Tácticas",
+                    "rationale": "Elegido para equilibrar el posicionamiento con un plan de ejecución claro."
+                },
+                "stage4": {
+                    "title": "Preguntas aclaratorias",
+                    "description": "Capturamos los detalles que hacen que el prompt sea efectivo.",
+                    "question1": "¿Qué hace que la aplicación sea diferente de los competidores?",
+                    "answer1": "Entrenamientos personalizados que se pueden completar en 10 minutos",
+                    "question2": "¿Qué canales utilizarás?",
+                    "answer2": "Instagram, TikTok y asociaciones con creadores de fitness",
+                    "question3": "¿Cuál es tu presupuesto?",
+                    "answer3": "€10k por mes durante el primer trimestre"
+                },
+                "stage5": {
+                    "title": "Prompt optimizado",
+                    "description": "Obtienes un prompt estructurado listo para usar.",
+                    "ready": "Tu prompt está listo.",
+                    "promptIntro": "Crea una estrategia de marketing para una nueva aplicación de fitness. Incluye:",
+                    "promptChallengeLabel": "Desafío:",
+                    "promptChallengeText": "Destacar en un mercado abarrotado.",
+                    "promptObjectiveLabel": "Objetivo:",
+                    "promptObjectiveText": "Impulsar 5.000 registros de prueba en 90 días.",
+                    "promptEtc": "Proporciona canales, mensajes y un plan de acción de 90 días."
+                }
+            },
+            "footer": {
+                "copyright": "(c) {year} BettrPrompt. Todos los derechos reservados.",
+                "terms": "Términos",
+                "privacy": "Privacidad",
+                "cookies": "Cookies",
+                "cookieSettings": "Configuración de cookies"
+            },
+            "heroCta": {
+                "tryNow": "Pruébalo ahora",
+                "getStartedFree": "Comenzar gratis"
+            },
+            "languageSwitcher": {
+                "sections": {
+                    "english": "Inglés",
+                    "major": "Idiomas principales",
+                    "nordic": "Nórdicos",
+                    "other": "Otros",
+                    "rtl": "De derecha a izquierda"
+                }
+            },
+            "optionalBadge": {
+                "label": "Opcional"
+            },
+            "profileCompletion": {
+                "title": "Finalización del perfil",
+                "labels": {
+                    "complete": "Completo",
+                    "nearlyComplete": "Casi completo",
+                    "goodProgress": "Buen progreso",
+                    "gettingStarted": "Comenzando",
+                    "justBeginning": "Apenas comenzando"
+                }
+            },
+            "promptRunMetadata": {
+                "user": "Usuario",
+                "personality": "Personalidad",
+                "created": "Creado",
+                "status": "Estado"
+            },
+            "upgradePromptModal": {
+                "title": "Actualizar a Pro",
+                "description": "Desbloquea prompts ilimitados y procesamiento prioritario.",
+                "monthly": "Mensual",
+                "monthlyPrice": {
+                    "amount": "€12",
+                    "period": "/mes"
+                },
+                "annual": "Anual",
+                "annualPrice": {
+                    "amount": "€99",
+                    "period": "/año"
+                },
+                "annualEquivalent": "€8,25/mes facturado anualmente",
+                "maybeLater": "Quizá más tarde",
+                "processing": "Procesando...",
+                "upgradeNow": "Actualizar ahora"
+            },
+            "usageIndicator": {
+                "upgrade": "Actualizar"
+            },
+            "visitorLimitBanner": {
+                "fixed": {
+                    "titleNew": "Crea una cuenta gratuita para continuar",
+                    "descriptionNew": "Guarda tus prompts y obtén más ejecuciones cuando te registres.",
+                    "titleReturning": "Bienvenido de vuelta: inicia sesión para continuar",
+                    "descriptionReturning": "Inicia sesión para continuar desde donde lo dejaste.",
+                    "ctaRegister": "Crear cuenta"
+                },
+                "inline": {
+                    "titleNew": "Crea una cuenta gratuita para continuar",
+                    "descriptionNew": "Regístrate para guardar tus prompts y desbloquear más ejecuciones.",
+                    "titleReturning": "Inicia sesión para continuar",
+                    "descriptionReturning": "Inicia sesión para acceder a tus ejecuciones de prompts guardadas.",
+                    "ctaRegister": "Crear cuenta"
+                }
+            },
+            "visitorLimitModal": {
+                "title": "Crea una cuenta para continuar",
+                "description": "El acceso de invitado es limitado. Crea una cuenta gratuita para guardar tus prompts y seguir creando.",
+                "cta": "Crear cuenta"
+            },
+            "workflowError": {
+                "title": "Algo salió mal",
+                "retry": "Intentar de nuevo"
+            }
+        }
+    },
+    "home": {
+        "title": "Bienvenido a BettrPrompt",
+        "hero": {
+            "title": "La forma simple de resolver",
+            "titleGradient": "problemas complejos",
+            "subtitle": "Los grandes resultados de la IA comienzan con grandes preguntas. BettrPrompt hace las correctas y luego construye prompts estructurados que realmente funcionan."
+        },
+        "features": {
+            "heading": "Características",
+            "feature1": {
+                "title": "El enfoque correcto, automáticamente",
+                "description": "Analizamos tu tarea y elegimos entre más de 60 metodologías probadas. Obtienes prompts efectivos sin necesidad de convertirte en un ingeniero de prompts."
+            },
+            "feature2": {
+                "title": "Preguntas en las que no habías pensado",
+                "description": "¿No estás seguro de por dónde empezar? Sacamos a la luz lo que realmente necesitas, así obtienes respuestas útiles al primer intento, no después de tres rondas de ida y vuelta."
+            },
+            "feature3": {
+                "title": "Adaptado a cómo piensas",
+                "description": "Añade tu tipo de personalidad y adaptaremos nuestras preguntas en consecuencia. Un pensador analítico y uno creativo trabajando en el mismo problema necesitan puntos de partida diferentes; te mostraremos por qué estamos preguntando lo que estamos preguntando."
+            }
+        },
+        "comparison": {
+            "title": "¿Pero no puedo simplemente preguntar a ChatGPT?",
+            "subtitle": "Puedes. ChatGPT incluso podría hacer una o dos preguntas aclaratorias. Pero hay una diferencia entre ser útil rápidamente y descubrir lo que realmente necesitas.",
+            "labels": {
+                "you": "Tú:",
+                "youGet": "Obtienes:"
+            },
+            "chatgpt": {
+                "title": "Preguntar a ChatGPT directamente",
+                "yourPrompt": "Necesito escribir un discurso de padrino para la boda de mi amigo",
+                "label": "ChatGPT:",
+                "response": "Genera un discurso inmediatamente, o hace una o dos preguntas rápidas antes de empezar. Está tratando de ayudarte rápido.",
+                "result": "Un discurso genérico que suena como cualquier otro discurso de padrino. Pasas la siguiente hora ajustándolo para que suene como tú.",
+                "footer": "Obtienes lo que pediste"
+            },
+            "bettrprompt": {
+                "title": "Usando BettrPrompt",
+                "yourPrompt": "Necesito escribir un discurso de padrino para la boda de mi amigo",
+                "label": "BettrPrompt:",
+                "response": "Selecciona un marco para la narración de historias personales memorables. Luego pregunta: \"¿Cómo se conocieron? ¿Hay alguna historia que capture quién es realmente? ¿Cuál es el sentido del humor de la pareja? ¿Quién está en la audiencia?\"",
+                "result": "Un prompt que captura tu amistad, se ajusta a la audiencia y juega con tus fortalezas, así que el resultado de la IA realmente suena como algo que dirías.",
+                "footer": "Obtienes lo que la IA es realmente capaz de hacer"
+            },
+            "keyInsight": "ChatGPT responde lo que preguntas. {0} - luego construye un prompt que te consiga el mejor trabajo de la IA, no su primer intento.",
+            "keyInsightEmphasis": "BettrPrompt descubre lo que deberías haber preguntado"
+        },
+        "objections": {
+            "templates": {
+                "title": "¿Qué pasa con las plantillas de prompts?",
+                "description": "Las plantillas son de talla única. Generamos prompts para tu situación específica a través del diálogo: tu contexto, tus limitaciones, tu voz. Ningún prompt es igual."
+            },
+            "learning": {
+                "title": "¿Debería aprender ingeniería de prompts?",
+                "description": "Podrías. Pero estás ocupado. BettrPrompt integra docenas de marcos probados para que no tengas que memorizarlos. Describe lo que necesitas; nosotros nos encargaremos del resto."
+            }
+        },
+        "howItWorks": {
+            "title": "Cómo funciona",
+            "subtitle": "Tres pasos simples para mejores prompts de IA",
+            "step1": {
+                "title": "Describe tu desafío",
+                "description": "¿Qué quieres lograr? ¿Planificar un proyecto? ¿Tomar una decisión? ¿Resolver un problema? Describe tu objetivo en lenguaje simple."
+            },
+            "step2": {
+                "title": "Responde algunas preguntas",
+                "description": "Estructuramos tu pensamiento, haciendo las preguntas que revelan lo que realmente necesitas, no lo que crees que necesitas. Esto es donde lo vago se vuelve específico."
+            },
+            "step3": {
+                "title": "Obtén tu prompt optimizado",
+                "description": "Copia tu prompt en ChatGPT, Claude o cualquier herramienta de IA. Está construido para resultados y moldeado por tus respuestas, no una plantilla genérica."
+            }
+        },
+        "useCases": {
+            "title": "Cuándo usar BettrPrompt",
+            "subtitle": "Si puedes describir lo que estás tratando de lograr, te ayudaremos a llegar.",
+            "workCareer": {
+                "title": "Trabajo y carrera",
+                "subtitle": "Navega las conversaciones y decisiones que moldean tu vida profesional.",
+                "bullets": [
+                    "Pedir a tu jefe un ascenso",
+                    "Prepararse para una evaluación del desempeño difícil",
+                    "Delegar un proyecto complejo a tu equipo",
+                    "Escribir una propuesta que convenza a las partes interesadas escépticas"
+                ]
+            },
+            "personalDecisions": {
+                "title": "Decisiones personales",
+                "subtitle": "Aporta claridad a las decisiones que más importan.",
+                "bullets": [
+                    "Decidir si aceptar una oferta de trabajo o quedarte",
+                    "Trabajar a través de un cambio de vida importante con tu pareja",
+                    "Establecer límites con alguien que te está agotando",
+                    "Planificar una conversación difícil con padres que envejecen"
+                ]
+            },
+            "learningDevelopment": {
+                "title": "Aprendizaje y desarrollo",
+                "subtitle": "Construye habilidades y hábitos de una forma que funcione para ti.",
+                "bullets": [
+                    "Crear un plan de estudio para una calificación profesional",
+                    "Ponerse al día rápidamente en una nueva industria",
+                    "Comenzar a aprender un nuevo idioma o habilidad desde cero",
+                    "Construir un hábito de lectura o aprendizaje sostenible"
+                ]
+            },
+            "creativeProjects": {
+                "title": "Proyectos creativos",
+                "subtitle": "Salir del atasco y encontrar tu punto de partida.",
+                "bullets": [
+                    "Planificar una novela, guión o proyecto creativo",
+                    "Escribir un discurso que sea divertido, sincero o ambos",
+                    "Crear contenido para un nuevo negocio o proyecto paralelo",
+                    "Diseñar un evento o celebración memorable"
+                ]
+            },
+            "businessStrategy": {
+                "title": "Empresa y estrategia",
+                "subtitle": "Piensa en decisiones de alto riesgo con claridad.",
+                "bullets": [
+                    "Desarrollar una estrategia de marketing para un nuevo producto",
+                    "Analizar si expandirse a un nuevo mercado",
+                    "Prepararse para una presentación de junta directiva o discurso de inversor",
+                    "Mejorar la productividad del equipo o los procesos"
+                ]
+            },
+            "relationshipsCommunication": {
+                "title": "Relaciones y comunicación",
+                "subtitle": "Maneja lo humano con más confianza.",
+                "bullets": [
+                    "Resolver un conflicto continuo con tu pareja",
+                    "Dar retroalimentación difícil sin dañar una relación",
+                    "Tener una conversación significativa con un adolescente sobre su futuro",
+                    "Reconectarse con un amigo del que te has alejado"
+                ]
+            }
+        },
+        "example": {
+            "title": "Míralo funcionar",
+            "subtitle": "Un ejemplo real: creando una estrategia de marketing"
+        }
+    },
+    "pilot": {
+        "headTitle": "Únete al Programa Piloto - BettrPrompt",
+        "hero": {
+            "line1": "Deja de adivinar.",
+            "line2": "Comienza a obtener resultados de la IA.",
+            "subtitle": "BettrPrompt hace las preguntas correctas primero, así tus prompts realmente funcionan."
+        },
+        "problem": {
+            "title": "El problema",
+            "paragraph1": "Escribes algo en ChatGPT. No es del todo correcto. Ajustas, reformulas, intentas de nuevo. Tres intentos después, tienes algo usable, pero no tienes idea de por qué esta versión funcionó.",
+            "paragraph2": "No estás haciendo nada mal. La IA solo espera que sepas exactamente lo que quieres antes de haberlo pensado."
+        },
+        "how": {
+            "title": "Cómo BettrPrompt funciona diferente",
+            "steps": {
+                "step1": {
+                    "title": "Preguntamos antes de generar.",
+                    "description": "Las preguntas dirigidas te ayudan a aclarar lo que realmente necesitas, antes de que creemos algo."
+                },
+                "step2": {
+                    "title": "Seleccionamos entre más de 60 marcos probados.",
+                    "description": "Selección inteligente basada en tu tarea, no adivinanza."
+                },
+                "step3": {
+                    "title": "Nos adaptamos a cómo piensas.",
+                    "description": "Preguntas adaptadas a tu personalidad, con transparencia sobre por qué estamos preguntando."
+                }
+            },
+            "result": "El resultado: un prompt estructurado listo para pegar en ChatGPT o Claude, que realmente funciona."
+        },
+        "join": {
+            "title": "Únete al programa piloto gratuito",
+            "description": "Estamos invitando a un pequeño grupo para probar BettrPrompt antes del lanzamiento público. Tu retroalimentación moldeará el producto.",
+            "commitmentTitle": "El compromiso:",
+            "commitments": {
+                "use": "Usa BettrPrompt durante 2 semanas",
+                "feedback": "Envía retroalimentación breve al final"
+            },
+            "note": "Eso es todo. Sin costo. Sin obligación de continuar.",
+            "ctaRegister": "Únete al Programa Piloto",
+            "ctaInvite": "Solicitar una invitación"
+        },
+        "footer": {
+            "questions": "¿Preguntas?",
+            "contact": "Ponte en contacto"
+        }
+    },
+    "pricing": {
+        "pageTitle": "Precios",
+        "title": "Precios simples y transparentes",
+        "subtitle": "Elige el plan que funcione para ti",
+        "tagline": "Comienza gratis, actualiza cuando necesites más",
+        "currency": "EUR",
+        "popularBadge": "Más popular",
+        "monthly": "Mensual",
+        "yearly": "Anual",
+        "save": "Ahorrar {percent}%",
+        "billing": {
+            "monthly": "Mensual",
+            "yearly": "Anual"
+        },
+        "period": {
+            "month": "mes",
+            "year": "año"
+        },
+        "actions": {
+            "processing": "Procesando..."
+        },
+        "free": {
+            "name": "Gratuito",
+            "price": "0",
+            "period": "para siempre",
+            "description": "Perfecto para probar BettrPrompt",
+            "cta": "Comenzar"
+        },
+        "pro": {
+            "name": "Pro",
+            "priceMonthly": "12",
+            "priceYearly": "99",
+            "period": "por mes",
+            "periodYearly": "por año",
+            "description": "Para usuarios avanzados que quieren los mejores resultados",
+            "cta": "Comenzar Pro",
+            "yearlySavings": "{amount} / {period} - Ahorrar {percent}%"
+        },
+        "features": {
+            "title": "Todas las características incluidas",
+            "unlimited": "Prompts ilimitados",
+            "priority": "Procesamiento prioritario",
+            "privacy": "Cifrado de privacidad",
+            "support": "Soporte prioritario"
+        },
+        "faq": {
+            "title": "Preguntas frecuentes",
+            "items": {
+                "limit": {
+                    "question": "¿Qué sucede cuando alcanzo mi límite gratuito?",
+                    "answer": "Las cuentas gratuitas están limitadas a 10 prompts por mes. Tu límite se reinicia el primer día de cada mes. Puedes actualizar a Pro en cualquier momento para obtener prompts ilimitados."
+                },
+                "privacy": {
+                    "question": "¿Qué es el cifrado de privacidad?",
+                    "answer": "Los usuarios de Pro obtienen sus datos de prompt cifrados en reposo. Esto significa que tus prompts y respuestas están protegidos con claves de cifrado que solo tú controlas, asegurando la máxima privacidad para tareas sensibles."
+                },
+                "cancel": {
+                    "question": "¿Puedo cancelar mi suscripción?",
+                    "answer": "Sí, puedes cancelar en cualquier momento. Conservarás acceso Pro hasta el final de tu período de facturación actual, luego serás movido al plan gratuito."
+                },
+                "payment": {
+                    "question": "¿Qué métodos de pago aceptan?",
+                    "answer": "Aceptamos todas las tarjetas de crédito y débito principales, así como Apple Pay y Google Pay a través de nuestro proveedor de pago seguro, Stripe."
+                }
+            }
+        }
+    },
+    "feedback": {
+        "create": {
+            "title": "Retroalimentación",
+            "heading": "Retroalimentación",
+            "intro": {
+                "title": "¡Nos encantaría saber de ti!",
+                "description": "Tu retroalimentación nos ayudará a decidir si mejorar este proyecto o abandonarlo. Por favor, sé honesto."
+            },
+            "errors": {
+                "title": "Por favor, corrige los errores a continuación",
+                "labels": {
+                    "experienceLevel": "Nivel de experiencia:",
+                    "usefulness": "Utilidad:",
+                    "usageIntent": "Probabilidad de uso:",
+                    "suggestions": "Sugerencias:",
+                    "desiredFeatures": "Características:",
+                    "desiredFeaturesOther": "Descripción de la característica:"
+                }
+            },
+            "actions": {
+                "submit": "Enviar retroalimentación"
+            }
+        },
+        "show": {
+            "title": "Tu retroalimentación",
+            "heading": "Tu retroalimentación",
+            "thankYou": "¡Gracias por tu retroalimentación!",
+            "subtitle": "Puedes actualizar tus respuestas en cualquier momento.",
+            "lastUpdated": "Última actualización: {date}",
+            "actions": {
+                "edit": "Editar respuestas",
+                "update": "Actualizar retroalimentación"
+            }
+        },
+        "thankYou": {
+            "title": "Gracias por tu retroalimentación",
+            "heading": "¡Gracias!",
+            "message": {
+                "title": "¡Gracias por tu retroalimentación!",
+                "subtitle": "Tus comentarios son muy apreciados."
+            },
+            "referral": {
+                "title": "Invita a un amigo a probar",
+                "descriptionPrefix": "¿Conoces a alguien que pueda beneficiarse de prompts de IA personalizados? Comparte tu enlace de referencia único con ellos. Pueden probar el servicio hasta el",
+                "deadline": "31 de enero de 2026",
+                "linkLabel": "Tu enlace de referencia"
+            },
+            "actions": {
+                "copy": "Copiar",
+                "copied": "¡Copiado!"
+            },
+            "trial": {
+                "title": "Plazo de prueba",
+                "descriptionPrefix": "Los amigos que se registren usando tu enlace pueden probar el servicio hasta",
+                "descriptionSuffix": "Comparte por correo electrónico, WhatsApp o cualquier otra plataforma de mensajería directa, pero por favor no publiques públicamente (ya que esto sigue siendo un servicio de prueba)."
+            }
+        },
+        "questions": {
+            "experience": {
+                "label": "1. ¿Qué tan experimentado eres con herramientas de IA como ChatGPT o Claude?",
+                "left": "Novato",
+                "right": "Experimentado"
+            },
+            "usefulness": {
+                "label": "2. ¿Qué tan útil fue la aplicación para mejorar tu prompt?",
+                "left": "No útil",
+                "right": "Extremadamente útil"
+            },
+            "usageIntent": {
+                "label": "3. ¿Qué tan probable es que uses esta aplicación la próxima vez que necesites trabajar con un asistente de IA?",
+                "left": "Muy improbable",
+                "right": "Muy probable"
+            },
+            "suggestions": {
+                "label": "4. ¿Hay algo que cambiarías o mejorarías de la aplicación?",
+                "placeholder": "Menciona cualquier paso que te pareciera confuso o características que te gustaría ver a continuación."
+            },
+            "features": {
+                "label": "5. ¿Qué características te gustaría ver añadidas a continuación?",
+                "hint": "(Selecciona al menos una)",
+                "hintAll": "(Selecciona todas las que apliquen)",
+                "note": "Si seleccionas \"Otro\", por favor describe la característica que te gustaría ver."
+            }
+        },
+        "features": {
+            "documentUpload": {
+                "label": "Subir documentos y/o imágenes",
+                "description": "Sube archivos e imágenes para proporcionar contexto para la generación de prompts, por ejemplo, analizar documentos o refinar prompts basados en contenido visual."
+            },
+            "templates": {
+                "label": "Biblioteca de plantillas de prompts",
+                "description": "Plantillas preconstruidas para casos de uso comunes (redacción de contenido, análisis de datos, revisión de código, etc.)"
+            },
+            "compare": {
+                "label": "Comparar versiones de prompts lado a lado",
+                "description": "Herramienta de comparación visual que muestra las diferencias entre versiones de prompts y su efectividad"
+            },
+            "apiIntegration": {
+                "label": "Integración con APIs de ChatGPT/Claude",
+                "description": "Prueba prompts directamente con modelos de IA, ve respuestas reales e itera dentro de la aplicación"
+            },
+            "collaboration": {
+                "label": "Características de colaboración en equipo",
+                "description": "Comparte prompts dentro de tu organización, añade comentarios, rastrea versiones y gestiona permisos"
+            },
+            "modelSpecific": {
+                "label": "Optimización específica para modelo de IA",
+                "description": "Adapta prompts para modelos específicos (GPT-4, Claude, Gemini) con sus preferencias y formatos únicos"
+            },
+            "other": {
+                "label": "Otro",
+                "description": "¿Algo más? ¡Cuéntanos qué te gustaría ver!"
+            }
+        }
+    },
+    "subscription": {
+        "pageTitle": "Configuración de suscripción",
+        "heading": "Suscripción",
+        "backToProfile": "Volver al perfil",
+        "currentPlan": "Plan actual",
+        "manage": "Gestionar suscripción",
+        "updatePayment": "Actualizar método de pago",
+        "cancel": "Cancelar suscripción",
+        "resume": "Reanudar suscripción",
+        "actions": {
+            "upgrade": "Actualizar a Pro"
+        },
+        "cancelConfirm": {
+            "title": "¿Cancelar suscripción?",
+            "description": "Conservarás acceso Pro hasta el final de tu período de facturación actual. Después de eso, serás movido al plan gratuito con 10 prompts por mes.",
+            "keep": "Mantener suscripción",
+            "confirm": "Cancelar suscripción",
+            "processing": "Cancelando..."
+        },
+        "status": {
+            "active": "Suscripción activa",
+            "cancelling": "Se cancela el {date}",
+            "promptsRemaining": "{count} de {total} prompts restantes este mes",
+            "promptsUsed": "{used}/{total} prompts usados"
+        },
+        "billing": {
+            "title": "Historial de facturación",
+            "download": "Descargar"
+        },
+        "success": {
+            "title": "¡Bienvenido a Pro!",
+            "description": "Ahora tienes prompts ilimitados y cifrado de privacidad. ¡Comienza a crear prompts poderosos y calibrados por personalidad!",
+            "cta": "Comenzar a crear prompts"
+        },
+        "cancelled": {
+            "title": "Compra cancelada",
+            "heading": "Compra cancelada",
+            "description": "{message} Sin preocupaciones; puedes seguir usando el nivel gratuito o intentar de nuevo cuando estés listo.",
+            "actions": {
+                "continueFree": "Continuar con gratuito",
+                "viewPricing": "Ver precios"
+            }
+        }
+    },
+    "privacy": {
+        "pageTitle": "Configuración de privacidad",
+        "title": "Cifrado de privacidad",
+        "backToProfile": "Volver al perfil",
+        "proRequired": {
+            "title": "Característica Pro",
+            "description": "El cifrado de privacidad está disponible exclusivamente para suscriptores de Pro. Tus datos de prompts e información personal serán cifrados en reposo, asegurando que solo tú puedas acceder a tus datos."
+        },
+        "status": {
+            "title": "Estado del cifrado",
+            "enabled": "Cifrado habilitado",
+            "enabledOn": "Habilitado el {date}",
+            "enabledDescription": "Tus datos de prompts están cifrados en reposo. Solo puedes acceder a tus datos introduciendo tu contraseña.",
+            "notEnabled": "Cifrado no habilitado",
+            "notEnabledDescription": "Tus datos se almacenan sin cifrado de extremo a extremo",
+            "enableDescription": "Habilita el cifrado de privacidad para proteger tus datos de prompts en reposo. Una vez habilitado, tus datos serán cifrados con una clave derivada de tu contraseña."
+        },
+        "actions": {
+            "enable": "Habilitar cifrado",
+            "disable": "Deshabilitar cifrado"
+        },
+        "howItWorks": {
+            "title": "Cómo funciona el cifrado de privacidad",
+            "step1": {
+                "title": "Clave protegida por contraseña",
+                "description": "Se genera una clave de cifrado única y está protegida por tu contraseña de cuenta."
+            },
+            "step2": {
+                "title": "Frase de recuperación",
+                "description": "Recibirás una frase de recuperación de 12 palabras que puede restaurar el acceso si olvidas tu contraseña."
+            },
+            "step3": {
+                "title": "Cifrado en reposo",
+                "description": "Todos tus datos de prompts se cifran antes de almacenarse. Sin tu contraseña, los datos no se pueden leer."
+            }
+        },
+        "setup": {
+            "title": "Habilitar cifrado de privacidad",
+            "savePhrase": {
+                "title": "Importante: guarda tu frase de recuperación",
+                "description": "Anota estas 12 palabras en orden. Esta es la {0} para recuperar tus datos si olvidas tu contraseña. Guárdala de forma segura y nunca la compartas.",
+                "emphasis": "única forma"
+            },
+            "yourPhrase": "Tu frase de recuperación",
+            "copyPhrase": "Copiar al portapapeles",
+            "confirmWritten": "He anotado mi frase de recuperación y la he guardado de forma segura",
+            "confirmTitle": "Confirma tu frase de recuperación",
+            "confirmDescription": "Introduce las palabras en las posiciones especificadas para confirmar que has guardado tu frase de recuperación.",
+            "wordNumber": "Palabra #{number}",
+            "enterPassword": "Introduce tu contraseña de cuenta"
+        },
+        "unlock": {
+            "title": "Desbloquea tus datos",
+            "forgotPassword": "¿Olvidaste la contraseña? Usa la frase de recuperación",
+            "submit": "Desbloquear"
+        },
+        "recovery": {
+            "title": "Recupera tus datos",
+            "description": "Introduce tu frase de recuperación de 12 palabras para recuperar el acceso a tus datos cifrados. También necesitarás establecer una nueva contraseña.",
+            "phraseLabel": "Frase de recuperación",
+            "newPasswordLabel": "Nueva contraseña",
+            "confirmPasswordLabel": "Confirma nueva contraseña",
+            "submit": "Recuperar cuenta"
+        },
+        "disable": {
+            "title": "¿Deshabilitar cifrado de privacidad?",
+            "description": "Esto descifrará todos tus datos almacenados. Tus prompts ya no estarán cifrados en reposo.",
+            "passwordLabel": "Introduce tu contraseña para confirmar",
+            "confirmLabel": "Entiendo que mis datos ya no estarán cifrados",
+            "processing": "Deshabilitando..."
+        }
+    },
+    "promptBuilder": {
+        "title": "Constructor de prompts",
+        "analysis": {
+            "title": "Análisis de prompts"
+        },
+        "actions": {
+            "createNew": "CREAR NUEVO"
+        },
+        "errors": {
+            "submitTitle": "Error al enviar prompt",
+            "submitFailed": "Error al enviar el prompt. Por favor, comprueba tu conexión e intenta de nuevo.",
+            "retryFailed": "Error al reintentar la generación. Por favor, intenta de nuevo."
+        },
+        "messages": {
+            "preAnalysisSkippedTitle": "¡Excelente! Tu tarea es clara",
+            "preAnalysisSkippedDescription": "Tu descripción de tarea es lo suficientemente clara para que procedamos directamente al análisis principal. Ahora estamos seleccionando el mejor marco de prompts para ti."
+        },
+        "tabs": {
+            "task": "Tu tarea",
+            "framework": "Marco",
+            "frameworkMobile": "Marco seleccionado",
+            "personality": "Personalidad",
+            "questions": "Preguntas",
+            "recommendations": "Recomendaciones",
+            "costs": "Costos",
+            "prompt": "Prompt optimizado"
+        },
+        "confirmations": {
+            "deletePromptRun": {
+                "title": "Eliminar ejecución de prompt",
+                "message": "¿Estás seguro de que quieres eliminar esta ejecución de prompt? Esta acción no se puede deshacer."
+            }
+        },
+        "history": {
+            "title": "Historial de prompts",
+            "empty": {
+                "title": "Sin historial de prompts aún.",
+                "cta": "Crear tu primer prompt optimizado"
+            },
+            "table": {
+                "personalityType": "Tipo de personalidad",
+                "taskDescription": "Descripción de la tarea",
+                "framework": "Marco",
+                "status": "Estado",
+                "created": "Creado"
+            },
+            "pagination": {
+                "previous": "Anterior",
+                "next": "Siguiente",
+                "pageOf": "Página {current} de {total}",
+                "resultsSummary": "Mostrando {0} a {1} de {2} resultados",
+                "show": "Mostrar",
+                "perPage": "por página",
+                "ariaLabel": "Paginación"
+            }
+        },
+        "components": {
+            "taskDescriptionForm": {
+                "intro": "Cuéntanos qué estás tratando de lograr.",
+                "withPersonality": "Adaptaremos el prompt a tu tipo de personalidad.",
+                "withoutPersonality": "Añade tu tipo de personalidad para preguntas más personalizadas.",
+                "profileHint": "Visita tu {link} para añadir tu tipo de personalidad.",
+                "profileHintLink": "configuración de perfil",
+                "label": "Descripción de la tarea",
+                "helpText": "Incluye contexto, limitaciones y el resultado que deseas.",
+                "placeholder": "Describe tu tarea en detalle...",
+                "processing": "Analizando...",
+                "submit": "Analizar tarea"
+            },
+            "personalityTypePrompt": {
+                "title": "¿Quieres prompts más personalizados?",
+                "description": "Añade tu tipo de personalidad para personalizar tus prompts. Haz la prueba gratuita en {link}.",
+                "linkText": "16personalities.com",
+                "addButton": "Añadir tipo de personalidad",
+                "maybeLater": "Quizá más tarde",
+                "maybeLaterNotification": "Sin problema; tu prompt seguirá funcionando. Puedes añadir tu tipo de personalidad más tarde.",
+                "label": "Tipo de personalidad:"
+            },
+            "questionAnsweringForm": {
+                "progressLabel": "Pregunta {current} de {total}",
+                "percentComplete": "{percent}% completo",
+                "answerLabel": "Tu respuesta",
+                "answerPlaceholder": "Escribe tu respuesta aquí...",
+                "submitAll": "Enviar todas las respuestas",
+                "nextQuestion": "Siguiente pregunta"
+            },
+            "selectedFramework": {
+                "title": "Marco seleccionado",
+                "components": "Componentes del marco",
+                "rationale": "Por qué este marco",
+                "proceed": "Proceder a preguntas"
+            },
+            "recommendations": {
+                "title": "Recomendaciones",
+                "models": {
+                    "title": "Modelos de IA recomendados"
+                },
+                "iterations": {
+                    "title": "Sugerencias de iteración",
+                    "description": "Si los resultados no son exactamente lo que necesitas, prueba estos refinamientos:"
+                },
+                "empty": "No hay recomendaciones disponibles"
+            },
+            "taskClassification": {
+                "title": "Clasificación",
+                "category": "Categoría",
+                "complexity": "Complejidad",
+                "reasoning": "Razonamiento"
+            },
+            "cognitiveRequirements": {
+                "title": "Requisitos cognitivos",
+                "primary": "Requisitos principales",
+                "secondary": "Requisitos secundarios",
+                "reasoning": "Razonamiento"
+            },
+            "relatedPromptRuns": {
+                "title": "Optimizaciones de prompts relacionadas",
+                "parent": "Prompt principal",
+                "children": "Prompts secundarios ({count})",
+                "promptId": "ID de prompt ({id})",
+                "created": "Creado {date}"
+            },
+            "optimizedPrompt": {
+                "title": "Tu prompt optimizado",
+                "copy": "Copiar al portapapeles",
+                "showSource": "Mostrar fuente",
+                "showPreview": "Mostrar vista previa",
+                "edit": "Editar prompt",
+                "saveChanges": "Guardar cambios",
+                "label": "Prompt optimizado",
+                "useProvider": "Usar con proveedor de IA"
+            },
+            "aiProviderLinks": {
+                "description": "Haz clic en un proveedor para copiar tu prompt optimizado y abrir su chat en una nueva pestaña. Luego pega tu prompt para una respuesta mejor:",
+                "copied": "¡Prompt copiado! Abriendo {provider}...",
+                "openTitle": "Abrir {provider} (prompt copiado al portapapeles)"
+            },
+            "alternativeFrameworks": {
+                "title": "Marcos alternativos",
+                "whenToUse": "Cuándo usar:",
+                "useButton": "Usar este marco",
+                "empty": "Sin marcos alternativos sugeridos",
+                "confirm": {
+                    "title": "Cambiar marco",
+                    "message": "Esto creará una nueva ejecución de prompt usando este marco. El análisis se ejecutará nuevamente con preguntas específicas del marco. ¿Continuar?"
+                }
+            },
+            "answeredList": {
+                "title": "Tus respuestas anteriores",
+                "skipped": "Omitido"
+            },
+            "bulkQuestions": {
+                "submitAll": "Enviar todas las respuestas",
+                "backToSingle": "Volver a una a la vez",
+                "answerLabel": "Respuesta {number}",
+                "answerPlaceholder": "Escribe tu respuesta aquí, o graba una nota rápida..."
+            },
+            "clarifyingQuestions": {
+                "title": "Preguntas aclaratorias",
+                "allQuestions": "Mostrar todas las preguntas",
+                "singleQuestion": "Una a la vez",
+                "edit": "Editar respuestas",
+                "cancelEdit": "Cancelar edición",
+                "submitAll": "Enviar todas las respuestas",
+                "submitEdited": "Optimizar prompt con respuestas editadas",
+                "optionalQuestion": "{count} pregunta opcional (para mejorar tu prompt)",
+                "optionalQuestions": "{count} preguntas opcionales (para mejorar tu prompt)",
+                "rationale": {
+                    "show": "Mostrar razonamiento de pregunta",
+                    "hide": "Ocultar razonamiento de pregunta"
+                },
+                "errors": {
+                    "save": "Error al guardar la respuesta. Por favor, intenta de nuevo.",
+                    "submit": "Error al enviar respuestas.",
+                    "edit": "Error al optimizar con respuestas editadas. Por favor, intenta de nuevo."
+                }
+            },
+            "preAnalysisQuestions": {
+                "title": "Consultas rápidas",
+                "edit": "Editar respuestas",
+                "optimise": "Optimizar prompt",
+                "generateNewPrompt": "Generar nuevo prompt",
+                "otherOption": "Otro (por favor especifica)",
+                "answerLabel": "Respuesta {number}",
+                "answerPlaceholder": "Escribe tu respuesta aquí...",
+                "additionalDetailsLabel": "Detalles adicionales (opcional):",
+                "additionalDetailsPlaceholder": "Añade información adicional...",
+                "characterCount": "{count}/{max} caracteres",
+                "errors": {
+                    "submit": "Error al enviar respuestas. Por favor, intenta de nuevo.",
+                    "continue": "Error al continuar al análisis. Por favor, intenta de nuevo."
+                },
+                "rationale": {
+                    "show": "Mostrar razonamiento de pregunta",
+                    "hide": "Ocultar razonamiento de pregunta"
+                }
+            },
+            "taskInformation": {
+                "title": "Tu tarea",
+                "editTitle": "Editar tarea y crear nueva optimización",
+                "editAction": "Editar tarea",
+                "descriptionLabel": "Descripción de la tarea",
+                "descriptionEditLabel": "Editar descripción de la tarea",
+                "descriptionPlaceholder": "Describe la tarea para la que quieres crear un prompt...",
+                "optimise": "Optimizar prompt"
+            },
+            "taskTraitAlignment": {
+                "title": "Alineación de tarea y rasgo",
+                "amplified": "Rasgos amplificados (fortalezas aprovechadas)",
+                "alignsWith": "se alinea con {requirement}",
+                "counterbalanced": "Rasgos contrapesados (ajustados para)",
+                "opposes": "se opone a {requirement}",
+                "adjustmentApplied": "Ajuste aplicado:",
+                "neutral": "Rasgos neutrales ({count})"
+            },
+            "personalityAdjustments": {
+                "title": "Ajustes de personalidad",
+                "level": "Nivel de ajuste",
+                "applied": "Ajustes aplicados",
+                "tiers": {
+                    "full": "Completo",
+                    "partial": "Parcial",
+                    "none": "Ninguno"
+                }
+            },
+            "personalityAdjustmentsSummary": {
+                "title": "Ajustes de personalidad aplicados"
+            },
+            "apiUsage": {
+                "title": "Uso de API",
+                "preAnalysis": "Flujo de trabajo de pre-análisis",
+                "analysis": "Flujo de trabajo de análisis",
+                "generation": "Flujo de trabajo de generación",
+                "pass": "Pase {number}",
+                "modelLabel": "Modelo:",
+                "inputTokensLabel": "Tokens de entrada:",
+                "outputTokensLabel": "Tokens de salida:",
+                "totalLabel": "Total:",
+                "costLabel": "Costo:",
+                "model": "Modelo",
+                "inputTokens": "Tokens de entrada",
+                "outputTokens": "Tokens de salida",
+                "total": "Total",
+                "costHeader": "Costo (EUR)",
+                "combinedTotalLabel": "Total combinado:",
+                "totalCostLabel": "Costo total:",
+                "tokens": "{count} tokens",
+                "summary": "Resumen",
+                "combinedTotal": "Total combinado",
+                "empty": "No hay datos de uso de API disponibles"
+            }
+        },
+        "progress": {
+            "almostDone": "Casi terminado",
+            "secondsRemaining": "{seconds} segundos restantes",
+            "percentComplete": "{percent}% completo",
+            "timeRemaining": "Tiempo restante: {time}",
+            "preAnalysis": {
+                "title": "Preparando consultas rápidas",
+                "subtitle": "Aclarando tu tarea antes del análisis.",
+                "pipeline": "Tubería de pre-análisis",
+                "stages": {
+                    "understand": {
+                        "label": "Entender",
+                        "activity": "Entendiendo tu tarea",
+                        "description": "Revisando tu descripción e intención."
+                    },
+                    "identify": {
+                        "label": "Identificar",
+                        "activity": "Identificando detalles faltantes",
+                        "description": "Buscando brechas de contexto."
+                    },
+                    "prepare": {
+                        "label": "Preparar",
+                        "activity": "Preparando preguntas",
+                        "description": "Redactando preguntas aclaratorias rápidas."
+                    }
+                }
+            },
+            "analysis": {
+                "title": "Analizando tu tarea",
+                "subtitle": "Seleccionando el mejor marco para tu objetivo.",
+                "pipeline": "Tubería de análisis",
+                "stages": {
+                    "classifying": {
+                        "label": "Clasificar",
+                        "activity": "Clasificando la tarea",
+                        "description": "Determinando el tipo y complejidad de la tarea."
+                    },
+                    "analyzing": {
+                        "label": "Analizar",
+                        "activity": "Analizando requisitos",
+                        "description": "Identificando restricciones e intención."
+                    },
+                    "framework": {
+                        "label": "Marco",
+                        "activity": "Seleccionando un marco",
+                        "description": "Eligiendo la mejor estructura para tu prompt."
+                    },
+                    "personalizing": {
+                        "label": "Personalizar",
+                        "activity": "Personalizando el prompt",
+                        "description": "Adaptando el tono a tus preferencias."
+                    },
+                    "questions": {
+                        "label": "Preguntas",
+                        "activity": "Preparando preguntas",
+                        "description": "Redactando preguntas aclaratorias."
+                    }
+                }
+            },
+            "generation": {
+                "title": "Generando tu prompt",
+                "subtitle": "Construyendo un prompt estructurado con tus respuestas.",
+                "pipeline": "Tubería de generación",
+                "errorTitle": "Error de generación",
+                "errorDescription": "Por favor, intenta de nuevo. Si el problema persiste, recarga la página.",
+                "retryButton": "Reintentar",
+                "backButton": "Volver atrás",
+                "stages": {
+                    "framework": {
+                        "label": "Marco",
+                        "activity": "Aplicando el marco",
+                        "description": "Estructurando el prompt."
+                    },
+                    "personality": {
+                        "label": "Personalidad",
+                        "activity": "Ajustando tono",
+                        "description": "Alineando con tu estilo."
+                    },
+                    "context": {
+                        "label": "Contexto",
+                        "activity": "Añadiendo contexto",
+                        "description": "Incorporando tus detalles."
+                    },
+                    "prompt": {
+                        "label": "Prompt",
+                        "activity": "Redactando el prompt",
+                        "description": "Componiendo el resultado final."
+                    },
+                    "final": {
+                        "label": "Finalizar",
+                        "activity": "Finalizando salida",
+                        "description": "Puliendo y formateando."
+                    }
+                }
+            }
+        },
+        "taskInput": {
+            "label": "¿Qué te gustaría lograr?",
+            "placeholder": "Describe tu tarea en detalle...",
+            "submit": "Analizar tarea"
+        },
+        "processing": {
+            "analysing": "Analizando tu tarea...",
+            "generating": "Generando tu prompt optimizado..."
+        },
+        "result": {
+            "title": "Tu prompt optimizado",
+            "copy": "Copiar prompt",
+            "tryAgain": "Intentar otra tarea"
+        },
+        "admin": {
+            "promptRun": "Ejecución de prompt",
+            "backToTasks": "Volver a tareas"
+        }
+    },
+    "admin": {
+        "dashboard": {
+            "title": "Panel de administración",
+            "stats": {
+                "users": "Total de usuarios",
+                "promptRuns": "Total de ejecuciones de prompts",
+                "uniqueTasks": "Tareas únicas",
+                "completedRuns": "Ejecuciones completadas"
+            },
+            "links": {
+                "users": {
+                    "title": "Gestionar usuarios",
+                    "subtitle": "Ver y gestionar cuentas de usuario"
+                },
+                "tasks": {
+                    "title": "Información de tareas",
+                    "subtitle": "Revisar tareas comunes y ejecuciones de prompts"
+                }
+            }
+        }
+    },
+    "profile": {
+        "title": "Configuración de perfil",
+        "sections": {
+            "personal": "Información personal",
+            "location": "Ubicación",
+            "professional": "Profesional",
+            "team": "Equipo",
+            "preferences": "Preferencias"
+        },
+        "profileInfo": {
+            "title": "Información de perfil",
+            "subtitle": "Actualiza tu nombre y dirección de correo.",
+            "fields": {
+                "name": "Nombre",
+                "email": "Correo electrónico"
+            },
+            "emailVerification": {
+                "notice": "Tu dirección de correo no está verificada.",
+                "resend": "Haz clic aquí para reenviar el correo de verificación."
+            },
+            "notifications": {
+                "updated": "Información de perfil actualizada exitosamente"
+            }
+        },
+        "password": {
+            "title": "Actualizar contraseña",
+            "subtitle": "Asegúrate de que tu cuenta esté usando una contraseña larga y aleatoria para mantenerla segura.",
+            "fields": {
+                "current": "Contraseña actual",
+                "new": "Nueva contraseña",
+                "confirm": "Confirmar contraseña"
+            },
+            "notifications": {
+                "updated": "Contraseña actualizada exitosamente"
+            }
+        },
+        "personality": {
+            "title": "Tu personalidad",
+            "subtitle": "Actualiza tu tipo de personalidad para obtener prompts de IA más personalizados.",
+            "fields": {
+                "type": "Tipo de personalidad",
+                "identity": "Identidad"
+            },
+            "placeholders": {
+                "type": "Tu tipo de personalidad"
+            },
+            "identity": {
+                "assertive": "Asertivo (A)",
+                "turbulent": "Turbulento (T)",
+                "help": "Por favor, selecciona Asertivo o Turbulento para completar tu tipo de personalidad"
+            },
+            "selected": "Seleccionado: {type}",
+            "traits": {
+                "toggleAdd": "+ Añadir",
+                "toggleHide": "- Ocultar",
+                "label": "Porcentajes de rasgos (opcional)",
+                "sourcePrefix": "Introduce tus porcentajes de rasgos desde",
+                "sourceLink": "16personalities.com",
+                "fields": {
+                    "mind": "Introversión/Extroversión",
+                    "energy": "Intuitivo/Observador",
+                    "nature": "Pensamiento/Sentimiento",
+                    "tactics": "Juzgar/Prospección",
+                    "identity": "Asertivo/Turbulento"
+                }
+            },
+            "actions": {
+                "enterTask": "Introduce tu tarea"
+            },
+            "notifications": {
+                "updated": "Tipo de personalidad actualizado exitosamente",
+                "cleared": "Información de personalidad limpiada",
+                "clearFailed": "Error al limpiar información de personalidad"
+            },
+            "clearConfirm": {
+                "title": "Limpiar información de personalidad",
+                "message": "¿Estás seguro de que quieres limpiar toda la información de personalidad?"
+            }
+        },
+        "location": {
+            "title": "Ubicación e idioma",
+            "subtitle": "Establece tu ubicación y preferencias de idioma para prompts de IA mejor optimizados.",
+            "fields": {
+                "country": "País",
+                "region": "Región/Estado",
+                "city": "Ciudad",
+                "timezone": "Zona horaria",
+                "currency": "Moneda",
+                "language": "Idioma"
+            },
+            "placeholders": {
+                "country": "Selecciona país",
+                "region": "p.ej., California, Lancashire",
+                "city": "p.ej., San Francisco, Londres",
+                "timezone": "Selecciona zona horaria",
+                "currency": "Selecciona moneda",
+                "language": "Selecciona idioma"
+            },
+            "actions": {
+                "save": "Guardar ubicación",
+                "detect": "Detectar automáticamente"
+            },
+            "notifications": {
+                "updated": "Ubicación actualizada exitosamente",
+                "detected": "Ubicación detectada exitosamente",
+                "detectFailed": "Error al detectar ubicación",
+                "cleared": "Ubicación limpiada exitosamente",
+                "clearFailed": "Error al limpiar ubicación"
+            },
+            "clearConfirm": {
+                "title": "Limpiar ubicación",
+                "message": "¿Estás seguro de que quieres limpiar todos los datos de ubicación?"
+            }
+        },
+        "professional": {
+            "title": "Contexto profesional",
+            "subtitle": "Cuéntanos sobre tu formación profesional para ayudarnos a optimizar prompts para tu rol.",
+            "fields": {
+                "jobTitle": "Título del puesto",
+                "industry": "Industria",
+                "experienceLevel": "Nivel de experiencia",
+                "companySize": "Tamaño de la empresa"
+            },
+            "placeholders": {
+                "jobTitle": "p.ej., Ingeniero de software, Director de producto",
+                "industry": "p.ej., Tecnología",
+                "experienceLevel": "Selecciona tu nivel",
+                "companySize": "Selecciona tamaño de empresa"
+            },
+            "help": {
+                "jobTitle": "Tu título de puesto actual o principal",
+                "industry": "Tu industria o sector"
+            },
+            "options": {
+                "entry": "Nivel inicial",
+                "mid": "Nivel medio",
+                "senior": "Senior",
+                "expert": "Experto/Principal"
+            },
+            "companySize": {
+                "solo": "Autónomo/Solo",
+                "small": "Pequeño (2-10 personas)",
+                "medium": "Medio (11-100 personas)",
+                "large": "Grande (100-1000 personas)",
+                "enterprise": "Empresa (1000+ personas)"
+            },
+            "actions": {
+                "save": "Guardar contexto profesional"
+            },
+            "notifications": {
+                "updated": "Información profesional actualizada exitosamente",
+                "cleared": "Información profesional limpiada exitosamente",
+                "clearFailed": "Error al limpiar información profesional"
+            },
+            "clearConfirm": {
+                "title": "Limpiar contexto profesional",
+                "message": "¿Estás seguro de que quieres limpiar toda la información profesional?"
+            }
+        },
+        "team": {
+            "title": "Equipo y contexto de trabajo",
+            "subtitle": "Comparte información sobre la estructura de tu equipo y tu entorno de trabajo.",
+            "fields": {
+                "teamSize": "Tamaño del equipo",
+                "role": "Tu rol",
+                "workMode": "Modo de trabajo"
+            },
+            "placeholders": {
+                "teamSize": "Selecciona tamaño del equipo",
+                "role": "Selecciona tu rol",
+                "workMode": "Selecciona modo de trabajo"
+            },
+            "options": {
+                "size": {
+                    "solo": "Solo yo",
+                    "small": "Pequeño (2-5 personas)",
+                    "medium": "Medio (6-20 personas)",
+                    "large": "Grande (20+ personas)"
+                },
+                "role": {
+                    "individual": "Colaborador individual",
+                    "lead": "Líder de equipo",
+                    "manager": "Gerente",
+                    "director": "Director",
+                    "executive": "Ejecutivo"
+                },
+                "mode": {
+                    "office": "Oficina (Presencial)",
+                    "hybrid": "Híbrido",
+                    "remote": "Remoto",
+                    "freelance": "Autónomo"
+                }
+            },
+            "actions": {
+                "save": "Guardar contexto de equipo"
+            },
+            "notifications": {
+                "updated": "Contexto del equipo actualizado exitosamente",
+                "cleared": "Información del equipo limpiada exitosamente",
+                "clearFailed": "Error al limpiar información del equipo"
+            },
+            "clearConfirm": {
+                "title": "Limpiar contexto del equipo y trabajo",
+                "message": "¿Estás seguro de que quieres limpiar toda la información del equipo y trabajo?"
+            }
+        },
+        "budget": {
+            "title": "Presupuesto y preferencias de herramientas",
+            "subtitle": "Cuéntanos sobre tu presupuesto para herramientas y servicios para que podamos recomendar soluciones apropiadas.",
+            "fieldLabel": "Preferencia de presupuesto",
+            "actions": {
+                "save": "Guardar preferencias de presupuesto"
+            },
+            "options": {
+                "freeOnly": {
+                    "label": "Solo gratuito",
+                    "description": "Solo uso herramientas y servicios gratuitos"
+                },
+                "freeFirst": {
+                    "label": "Prefiero gratuito",
+                    "description": "Prefiero opciones gratuitas pero pagaré si es necesario"
+                },
+                "mixed": {
+                    "label": "Mixto",
+                    "description": "Uso una mezcla de herramientas gratuitas y de pago"
+                },
+                "premiumOk": {
+                    "label": "Premium está bien",
+                    "description": "Me siento cómodo usando herramientas de pago"
+                },
+                "enterprise": {
+                    "label": "Empresa",
+                    "description": "Tengo acceso a soluciones empresariales"
+                }
+            },
+            "notifications": {
+                "updated": "Preferencias de presupuesto actualizadas exitosamente",
+                "cleared": "Preferencias de presupuesto limpiadas exitosamente",
+                "clearFailed": "Error al limpiar preferencias de presupuesto"
+            },
+            "clearConfirm": {
+                "title": "Limpiar preferencias de presupuesto",
+                "message": "¿Estás seguro de que quieres limpiar tus preferencias de presupuesto?"
+            }
+        },
+        "tools": {
+            "title": "Herramientas y tecnologías",
+            "subtitle": "Comparte las herramientas y lenguajes de programación con los que trabajas para mejorar las recomendaciones de prompts.",
+            "fields": {
+                "preferred": "Herramientas preferidas (Haz clic para seleccionar)",
+                "primaryLanguage": "Lenguaje de programación principal"
+            },
+            "placeholders": {
+                "primaryLanguage": "Selecciona idioma"
+            },
+            "categories": {
+                "operatingSystems": "Sistemas operativos",
+                "idesEditors": "IDEs y editores",
+                "cloudPlatforms": "Plataformas en la nube",
+                "aiMlTools": "Herramientas de IA y ML",
+                "designTools": "Herramientas de diseño",
+                "projectManagement": "Gestión de proyectos"
+            },
+            "selectedCount": "Has seleccionado {count} herramienta(s)",
+            "actions": {
+                "save": "Guardar herramientas e idiomas"
+            },
+            "notifications": {
+                "updated": "Herramientas e idiomas actualizados exitosamente",
+                "cleared": "Herramientas y tecnologías limpiadas exitosamente",
+                "clearFailed": "Error al limpiar herramientas y tecnologías"
+            },
+            "clearConfirm": {
+                "title": "Limpiar herramientas y tecnologías",
+                "message": "¿Estás seguro de que quieres limpiar todas las herramientas y lenguajes de programación?"
+            }
+        },
+        "uiComplexity": {
+            "title": "Complejidad de la interfaz",
+            "subtitle": "Elige cuánto detalle te gustaría ver al crear prompts.",
+            "fieldLabel": "Modo de interfaz",
+            "options": {
+                "simple": "Simple",
+                "advanced": "Avanzado"
+            },
+            "help": {
+                "simple": "Muestra solo características esenciales. Oculta clasificación de tareas, requisitos cognitivos y detalles técnicos avanzados.",
+                "advanced": "Muestra todas las características, incluida clasificación de tareas, requisitos cognitivos e información sobre personalidad."
+            },
+            "notifications": {
+                "updated": "Complejidad de interfaz actualizada exitosamente"
+            }
+        },
+        "deleteAccount": {
+            "title": "Eliminar cuenta",
+            "subtitle": "Una vez que se elimine tu cuenta, todos sus recursos y datos se eliminarán permanentemente. Antes de eliminar tu cuenta, descarga cualquier dato o información que desees conservar.",
+            "actions": {
+                "open": "Eliminar cuenta",
+                "confirm": "Eliminar cuenta"
+            },
+            "modal": {
+                "title": "¿Estás seguro de que quieres eliminar tu cuenta?",
+                "description": "Una vez que se elimine tu cuenta, todos sus recursos y datos se eliminarán permanentemente. Por favor, introduce tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta."
+            }
+        }
+    },
+    "legal": {
+        "lastUpdated": "Última actualización",
+        "privacy": {
+            "title": "Política de privacidad"
+        },
+        "terms": {
+            "title": "Términos de uso"
+        },
+        "cookies": {
+            "title": "Política de cookies",
+            "alwaysActive": "Siempre activo"
+        }
+    },
+    "workflow": {
+        "variantSelector": {
+            "label": "Variante"
+        },
+        "codeEditor": {
+            "placeholder": "Pega o edita contenido...",
+            "characters": "{count} caracteres",
+            "notAvailable": "N/A",
+            "expandTitle": "Expandir editor",
+            "expand": "Expandir",
+            "saveTitle": "Guardar cambios",
+            "save": "Guardar",
+            "collapsedHint": "Vista contraída; expande para editar."
+        },
+        "documentSidebar": {
+            "coreDocuments": "Documentos principales",
+            "usedIn": "Utilizado en: {list}",
+            "none": "Ninguno",
+            "frameworkTemplates": "Plantillas de marco ({count})",
+            "workflowVersion": "Versión del flujo de trabajo"
+        },
+        "outputPanel": {
+            "title": "Salida",
+            "header": "{title} - {count} caracteres",
+            "rawJson": "JSON sin procesar",
+            "copyTitle": "Copiar al portapapeles",
+            "copy": "Copiar",
+            "wrapDisable": "Deshabilitar ajuste de línea",
+            "wrapEnable": "Habilitar ajuste de línea",
+            "wrapOn": "Ajuste activado",
+            "wrapOff": "Ajuste desactivado",
+            "system": "Sistema",
+            "messages": "Mensajes",
+            "rawLabel": "Sin procesar",
+            "formattedLabel": "Formateado",
+            "switchRaw": "Mostrar sin procesar",
+            "switchFormatted": "Mostrar formateado",
+            "expandTitle": "Expandir",
+            "expand": "Expandir",
+            "empty": "No hay salida disponible"
+        },
+        "index": {
+            "title": "Sistema de flujo de trabajo",
+            "subtitle": "Depurar y gestionar flujos de trabajo de n8n",
+            "howToUse": "Cómo usar",
+            "infoPages": {
+                "title": "Páginas de flujo de trabajo:",
+                "description": "Depura flujos de trabajo individuales, inspecciona entrada/salida y prueba código JavaScript"
+            },
+            "infoDocuments": {
+                "title": "Documentos de referencia:",
+                "description": "Ver y editar los documentos markdown utilizados en flujos de trabajo, luego incrustarlos en archivos JSON de flujo de trabajo"
+            },
+            "infoFrameworks": {
+                "title": "Plantillas de marco:",
+                "description": "Más de 60 marcos de prompting diferentes disponibles para usar en optimización de flujo de trabajo"
+            },
+            "workflow0": {
+                "title": "Flujo de trabajo 0",
+                "subtitle": "Flujo de trabajo de pre-análisis",
+                "description": "Recopila preguntas aclaratorias basadas en la clasificación de tareas"
+            },
+            "workflow1": {
+                "title": "Flujo de trabajo 1",
+                "subtitle": "Flujo de trabajo de generación de preguntas",
+                "description": "Genera clasificación de tareas y preguntas aclaratorias"
+            },
+            "workflow2": {
+                "title": "Flujo de trabajo 2",
+                "subtitle": "Flujo de trabajo de optimización de prompts",
+                "description": "Genera prompts optimizados usando marcos seleccionados"
+            },
+            "referenceDocs": {
+                "title": "Documentos de referencia",
+                "subtitle": "Gestión de documentos",
+                "description": "Ver, editar y gestionar documentos de referencia"
+            }
+        },
+        "passLabel": "Pase {number}",
+        "confirmUploadTitle": "¿Subir al servidor en vivo?",
+        "confirmUploadMessage": "Esto subirá el archivo workflow_0.json actual al servidor n8n de producción en vivo en https://n8n.bettrprompt.ai/. Esta acción no se puede deshacer. ¿Estás seguro de que quieres proceder?",
+        "uploadToLiveButton": "Subir a vivo",
+        "uploadSuccessTitle": "Subida exitosa",
+        "uploadSuccessMessage": "¡Flujo de trabajo subido exitosamente al servidor de producción en vivo!",
+        "uploadFailedTitle": "Error en la subida",
+        "uploadFailedMessage": "Error al subir el flujo de trabajo al servidor en vivo",
+        "uploadErrorPrefix": "Error de subida:",
+        "docs": {
+            "saveSuccessMessage": "✓ {filename} guardado exitosamente e incrustado en flujos de trabajo",
+            "confirmEmbedTitle": "¿Incrustar todos los documentos?",
+            "confirmEmbedMessage": "Esto incrustará todos los documentos principales y plantillas de marco en sus respectivos archivos JSON de flujo de trabajo n8n. Esta acción no se puede deshacer.",
+            "errors": {
+                "save": "Error al guardar documento: {error}",
+                "embed": "Error al incrustar documentos",
+                "embedFailed": "Error al incrustar documentos: {error}"
+            },
+            "page": {
+                "title": "Documentos de referencia",
+                "subtitle": "Gestionar documentación de flujo de trabajo"
+            },
+            "infoItems": {
+                "coreDocuments": {
+                    "title": "Documentos principales (3):",
+                    "description": "Taxonomía de marcos, calibración de personalidad y banco de preguntas utilizados por flujos de trabajo"
+                },
+                "frameworks": {
+                    "title": "Plantillas de marco (64):",
+                    "description": "Marcos de prompting disponibles para optimización de flujo de trabajo"
+                },
+                "saveEmbed": {
+                    "title": "Guardar e incrustar:",
+                    "description": "Guarda cambios en documentos e incrustalos en archivos JSON de flujo de trabajo"
+                },
+                "embedAll": {
+                    "title": "Incrustar todos los documentos:",
+                    "description": "Incrustar todos los documentos principales y plantillas de marco en sus flujos de trabajo de n8n"
+                },
+                "livePreview": {
+                    "title": "Vista previa en vivo:",
+                    "description": "Ver vista previa en tiempo real de tus documentos markdown"
+                }
+            },
+            "buttons": {
+                "saveEmbed": "Guardar e incrustar",
+                "saving": "Guardando...",
+                "embedding": "Incrustando...",
+                "expand": "⛶ Expandir"
+            },
+            "sections": {
+                "markdownEditor": "Editor de Markdown",
+                "preview": "Vista previa"
+            },
+            "placeholders": {
+                "editMarkdown": "Edita markdown aquí..."
+            }
+        },
+        "show": {
+            "pageTitle": "Flujo de trabajo {workflowNumber}",
+            "subtitle": "Inspecciona entrada de flujo de trabajo, código JavaScript y salida",
+            "buttons": {
+                "inputData": "Datos de entrada",
+                "passInput": "Entrada de pase {passNumber}",
+                "uploadLive": "Subir a n8n (en vivo)",
+                "viewJavaScript": "Ver JavaScript",
+                "copy": "Copiar"
+            },
+            "sections": {
+                "preparePrompt": "Preparar prompt",
+                "workflowOutput": "Salida de flujo de trabajo"
+            },
+            "states": {
+                "preparing": "Preparando...",
+                "uploading": "Subiendo...",
+                "executing": "Ejecutando..."
+            },
+            "placeholders": {
+                "inputJson": "Introduce datos de entrada como JSON...",
+                "javascriptCode": "Edita código JavaScript aquí...",
+                "javascriptCodeNew": "Escribe código JavaScript aquí...",
+                "passInput": "Introduce datos de entrada de pase..."
+            },
+            "metadata": {
+                "characters": "caracteres",
+                "messages": "Mensajes",
+                "na": "N/A"
+            }
+        }
+    },
+    "language": {
+        "title": "Idioma",
+        "select": "Selecciona idioma",
+        "current": "Actual: {language}"
+    },
+    "errors": {
+        "generic": "Algo salió mal. Por favor, intenta de nuevo.",
+        "notFound": "Página no encontrada",
+        "unauthorized": "No estás autorizado para acceder a esta página.",
+        "serverError": "Error del servidor. Por favor, intenta más tarde."
+    },
+    "navigation": {
+        "promptBuilder": "Constructor de prompts",
+        "promptHistory": "Historial de prompts",
+        "feedback": "Retroalimentación",
+        "workflows": "Flujos de trabajo",
+        "profile": "Perfil",
+        "logout": "Cerrar sesión"
+    },
+    "alert": {
+        "successTitle": "Éxito",
+        "warningTitle": "Advertencia",
+        "errorTitle": "Error",
+        "confirmTitle": "Confirmar",
+        "infoTitle": "Información"
+    },
+    "audio": {
+        "errors": {
+            "accessDenied": "Acceso al micrófono denegado. Por favor, habilita los permisos del micrófono.",
+            "notFound": "No se encontró micrófono. Por favor, comprueba tu dispositivo.",
+            "recordingFailed": "Error al iniciar la grabación. Por favor, intenta de nuevo.",
+            "noActiveRecording": "Sin grabación activa",
+            "transcriptionFailed": "Error al transcribir audio. Por favor, intenta de nuevo.",
+            "transcriptionRequestFailed": "Error en la solicitud de transcripción"
+        }
+    },
+    "status": {
+        "unknown": "Desconocido",
+        "completed": "Completado",
+        "processing": "Procesando",
+        "awaitingQuestions": "Esperando preguntas",
+        "awaitingAnswers": "Esperando respuestas",
+        "failed": "Fallido"
+    },
+    "icons": {
+        "hashIcon": "Icono de hash de BettrPrompt"
+    }
+}
