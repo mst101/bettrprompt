@@ -16,7 +16,7 @@ const buttonText = computed(() => {
         <LinkButton
             variant="primary"
             size="lg"
-            :href="route('prompt-builder.index')"
+            :href="localeRoute('prompt-builder.index')"
             class="sm:px-6 sm:py-3 sm:text-base"
         >
             <div class="flex items-center gap-3">

@@ -8,6 +8,7 @@ import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useNotification } from './Composables/ui/useNotification';
+import { createLocaleRoutePlugin } from './Plugins/localeRoutePlugin';
 import { getCookie, getCsrfToken } from './Utils/cookies';
 import { i18n, setLocale, type LocaleCode } from './i18n';
 
@@ -112,6 +113,7 @@ createInertiaApp({
             .use(pinia)
             .use(ZiggyVue)
             .use(i18n)
+            .use(createLocaleRoutePlugin())
             .mount(el);
 
         // Identify visitor in Fullstory on initial load
