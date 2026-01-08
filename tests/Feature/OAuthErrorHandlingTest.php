@@ -32,7 +32,7 @@ test('handles invalid state exception', function () {
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect(route('login', ['locale' => $this->testLocale]));
     $response->assertSessionHas('error', 'Authentication session expired. Please try logging in again.');
 });
 
@@ -51,7 +51,7 @@ test('handles network errors from oauth provider', function () {
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect(route('login', ['locale' => $this->testLocale]));
     $response->assertSessionHas('error', 'Failed to communicate with Google. Please try again later.');
 });
 
@@ -63,7 +63,7 @@ test('handles missing or invalid email from oauth provider', function (string $g
 
     $response = $this->get(route('auth.google.callback'));
 
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect(route('login', ['locale' => $this->testLocale]));
     $response->assertSessionHas('error', $expectedError);
 })->with([
     ['google123', null, 'Could not retrieve your account information from Google. Please try again.'],

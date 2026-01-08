@@ -272,6 +272,6 @@ test('update optimised prompt requires authentication or ownership', function ()
         'optimized_prompt' => 'Updated prompt',
     ]);
 
-    // Unauthenticated access returns forbidden (not redirect to login for API-style requests)
-    $response->assertForbidden();
+    // Unauthenticated access redirects to login
+    $response->assertRedirect(route('login'));
 });

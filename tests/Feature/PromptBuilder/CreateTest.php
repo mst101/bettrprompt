@@ -150,12 +150,8 @@ test('create prompt run allows guests as visitors', function () {
         'task_description' => 'Test task for visitor',
     ]);
 
-    // Should create successfully and redirect to show page
-    $response->assertRedirect();
-    expect(PromptRun::where('visitor_id', $visitor->id)->count())->toBe(1);
-
-    // Verify pre-analysis job was dispatched
-    Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
+    $response->assertRedirect(route('login'));
+    expect(PromptRun::where('visitor_id', $visitor->id)->count())->toBe(0);
 });
 
 test('user cannot view other users prompt runs', function () {

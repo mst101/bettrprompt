@@ -67,7 +67,7 @@ test('user can delete their account', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect($this->localeRoute('home'));
+        ->assertRedirect('/');
 
     $this->assertGuest();
     $this->assertNull($user->fresh());

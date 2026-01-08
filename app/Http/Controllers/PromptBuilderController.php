@@ -170,7 +170,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate workflow stage
@@ -224,7 +224,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate workflow stage - should have pre-analysis questions
@@ -275,7 +275,7 @@ class PromptBuilderController extends Controller
      */
     public function show(Request $request, string $locale, PromptRun|string $promptRun)
     {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Load parent/children relationships (minimal data only via PromptRunRelationshipResource)
@@ -347,7 +347,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -367,7 +367,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
@@ -423,7 +423,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -476,7 +476,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that the prompt run is completed
@@ -520,7 +520,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $parentPromptRun
     ) {
-        $parentPromptRun = $this->resolvePromptRun($parentPromptRun);
+        $parentPromptRun = $this->resolvePromptRun($request, $parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
         // Check if unregistered visitor has already completed a prompt
@@ -590,7 +590,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $parentPromptRun
     ) {
-        $parentPromptRun = $this->resolvePromptRun($parentPromptRun);
+        $parentPromptRun = $this->resolvePromptRun($request, $parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
         // Check if unregistered visitor has already completed a prompt
@@ -681,7 +681,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -745,7 +745,7 @@ class PromptBuilderController extends Controller
      */
     public function retry(Request $request, string $locale, PromptRun|string $promptRun)
     {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Only allow retry for failed runs
@@ -840,7 +840,7 @@ class PromptBuilderController extends Controller
      */
     public function destroy(Request $request, string $locale, PromptRun|string $promptRun)
     {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         try {
@@ -937,7 +937,7 @@ class PromptBuilderController extends Controller
         string $locale,
         PromptRun|string $promptRun
     ) {
-        $promptRun = $this->resolvePromptRun($promptRun);
+        $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         return response()->json([
@@ -962,10 +962,20 @@ class PromptBuilderController extends Controller
     /**
      * Resolve prompt run when route model binding is unavailable.
      */
-    private function resolvePromptRun(PromptRun|string $promptRun): PromptRun
+    private function resolvePromptRun(Request $request, PromptRun|string $promptRun): PromptRun
     {
         if ($promptRun instanceof PromptRun) {
             return $promptRun;
+        }
+
+        if (! is_numeric($promptRun)) {
+            $routeValue = $request->route('promptRun');
+            if ($routeValue instanceof PromptRun) {
+                return $routeValue;
+            }
+            if (is_numeric($routeValue)) {
+                $promptRun = $routeValue;
+            }
         }
 
         return PromptRun::findOrFail($promptRun);
