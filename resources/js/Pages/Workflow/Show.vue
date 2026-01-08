@@ -10,7 +10,9 @@ import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import VariantSelector from '@/Components/Features/Workflow/VariantSelector.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import { getCsrfToken } from '@/Utils/cookies';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -64,10 +66,21 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { t } = useI18n();
 const { confirm, success, error: showError } = useAlert();
+const { localeRoute } = useLocaleRoute();
 
 defineOptions({
     layout: WorkflowLayout,
 });
+
+const workflowRoute = (
+    name: string,
+    parameters: Record<string, unknown> = {},
+) => {
+    return localeRoute(name, {
+        workflowNumber: props.workflowNumber,
+        ...parameters,
+    });
+};
 
 const isPreparingOld = ref(false);
 const isPreparingNew = ref(false);
@@ -133,32 +146,21 @@ const rawModeWorkflowMessagesNew = ref(false);
 const rawModeWorkflowSystemOld = ref(false);
 const rawModeWorkflowSystemNew = ref(false);
 
-const getCsrfToken = () => {
-    const token = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content');
-    if (!token) {
-        // Fallback: try to extract from cookies
-        const name = 'XSRF-TOKEN';
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift();
-    }
-    return token;
-};
-
 const makeRequest = async (url: string, method: string, body?: unknown) => {
     const csrfToken = getCsrfToken();
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
     if (csrfToken) {
-        headers['X-CSRF-TOKEN'] = csrfToken;
+        const decodedToken = decodeURIComponent(csrfToken);
+        headers['X-CSRF-TOKEN'] = decodedToken;
+        headers['X-XSRF-TOKEN'] = decodedToken;
     }
 
     const config: RequestInit = {
         method,
         headers,
+        credentials: 'same-origin',
     };
     if (body) {
         config.body = JSON.stringify(body);
@@ -170,7 +172,9 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
 const reloadJavaScriptFromWorkflowAsOld = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript-old?variant=${props.currentVariant}`,
+            workflowRoute('workflow.reload-javascript-old', {
+                variant: props.currentVariant,
+            }),
             'POST',
         );
 
@@ -204,7 +208,9 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
 const reloadJavaScriptFromWorkflowAsNew = async () => {
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/reload-javascript-new?variant=${props.currentVariant}`,
+            workflowRoute('workflow.reload-javascript-new', {
+                variant: props.currentVariant,
+            }),
             'POST',
         );
 
@@ -255,7 +261,9 @@ const executeWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-workflow-old?variant=${props.currentVariant}`,
+            workflowRoute('workflow.execute-workflow-old', {
+                variant: props.currentVariant,
+            }),
             'POST',
             { input: inputData, nodeName },
         );
@@ -300,7 +308,9 @@ const executeWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/execute-workflow-new?variant=${props.currentVariant}`,
+            workflowRoute('workflow.execute-workflow-new', {
+                variant: props.currentVariant,
+            }),
             'POST',
             { input: inputData, nodeName },
         );
@@ -334,7 +344,9 @@ const uploadWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-old?variant=${props.currentVariant}`,
+            workflowRoute('workflow.upload-to-n8n-old', {
+                variant: props.currentVariant,
+            }),
             'POST',
             { nodeName },
         );
@@ -368,7 +380,9 @@ const uploadWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-n8n-new?variant=${props.currentVariant}`,
+            workflowRoute('workflow.upload-to-n8n-new', {
+                variant: props.currentVariant,
+            }),
             'POST',
             { nodeName },
         );
@@ -414,7 +428,7 @@ const uploadWorkflowToLive = async () => {
 
     try {
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/upload-to-live`,
+            workflowRoute('workflow.upload-to-live'),
             'POST',
         );
 
@@ -523,7 +537,7 @@ const saveInputData = async () => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/input`,
+            workflowRoute('workflow.save-input'),
             'POST',
             Array.isArray(inputData) ? inputData : [inputData],
         );
@@ -550,7 +564,7 @@ const saveOldJavaScriptToFile = async () => {
         const nodeName = currentNode.value?.name || 'Prepare Prompt';
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/javascript-old`,
+            workflowRoute('workflow.save-javascript-old'),
             'POST',
             { code, variant: props.currentVariant, nodeName },
         );
@@ -582,7 +596,7 @@ const saveNewJavaScriptToFile = async () => {
         const nodeName = currentNode.value?.name || 'Prepare Prompt';
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/javascript-new`,
+            workflowRoute('workflow.save-javascript-new'),
             'POST',
             { code, variant: props.currentVariant, nodeName },
         );
@@ -656,7 +670,7 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/prepare-prompt-old`,
+            workflowRoute('workflow.prepare-prompt-old'),
             'POST',
             { input: inputData, variant: props.currentVariant, nodeName },
         );
@@ -745,7 +759,7 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/prepare-prompt-new`,
+            workflowRoute('workflow.prepare-prompt-new'),
             'POST',
             { input: inputData, variant: props.currentVariant, nodeName },
         );
@@ -801,7 +815,7 @@ const savePassInputData = async (nodeName: string, passNumber: number) => {
         }
 
         const response = await makeRequest(
-            `/debug/workflow/${props.workflowNumber}/pass-input/${passNumber}`,
+            workflowRoute('workflow.save-pass-input', { passNumber }),
             'POST',
             Array.isArray(inputData) ? inputData : [inputData],
         );

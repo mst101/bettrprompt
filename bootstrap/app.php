@@ -51,8 +51,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'test/set-personality',
             'test/echo-info',
             'webhook/api/n8n/webhook/*',
-            'debug/workflow/*',  // Debug workflow endpoints
-            'workflow/docs/api/*',  // Reference documents API endpoints
+            '*/debug/workflow/*',  // Debug workflow endpoints (locale-prefixed)
+            '*/workflow/docs/api/*',  // Reference documents API endpoints (locale-prefixed)
             'webhooks/mailgun/*',  // Mailgun webhooks (protected by signature verification)
             'api/stripe/webhook',  // Stripe webhooks (protected by Stripe signature verification)
         ]);
