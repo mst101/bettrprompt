@@ -36,7 +36,7 @@ class AnswerQuestionRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'answer.required' => 'Please provide an answer to the question.',
+            'answer.required' => __('messages.form.answer_required'),
             'answer.max' => __('messages.form.answer_max'),
         ];
     }

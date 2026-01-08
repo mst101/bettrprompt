@@ -55,7 +55,7 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerateToken();
 
-            return redirect('/')->with('status', 'You have been logged out successfully.');
+            return redirect('/')->with('status', __('messages.auth.logged_out'));
 
         } catch (Exception $e) {
             Log::error('Logout failed', [
@@ -72,7 +72,7 @@ class AuthenticatedSessionController extends Controller
                 // Ignore session errors at this point
             }
 
-            return redirect('/')->with('status', 'You have been logged out.');
+            return redirect('/')->with('status', __('messages.auth.logged_out_session'));
         }
     }
 }

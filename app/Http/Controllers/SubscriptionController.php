@@ -91,7 +91,7 @@ class SubscriptionController extends Controller
         $user->update(['subscription_tier' => 'pro']);
 
         return Inertia::render('Subscription/Success', [
-            'message' => 'Welcome to BettrPrompt Pro!',
+            'message' => __('messages.subscription.welcome_pro'),
         ]);
     }
 
@@ -101,7 +101,7 @@ class SubscriptionController extends Controller
     public function cancelled(): Response
     {
         return Inertia::render('Subscription/Cancelled', [
-            'message' => 'Subscription checkout was cancelled.',
+            'message' => __('messages.subscription.checkout_cancelled'),
         ]);
     }
 

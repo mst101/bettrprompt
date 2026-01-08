@@ -50,7 +50,7 @@ class ReferenceDocumentsController extends Controller
             if (! file_exists($path)) {
                 return response()->json([
                     'success' => false,
-                    'error' => "Document not found: $filename",
+                    'error' => __('messages.reference_documents.not_found', ['filename' => $filename]),
                 ], 404);
             }
 
@@ -98,7 +98,7 @@ class ReferenceDocumentsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Document '$filename' saved successfully and embedded into workflows",
+                'message' => __('messages.reference_documents.saved', ['filename' => $filename]),
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -135,7 +135,7 @@ class ReferenceDocumentsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'All '.count($embedded).' documents embedded successfully into workflows',
+                'message' => __('messages.reference_documents.embedded', ['count' => count($embedded)]),
                 'embedded' => $embedded,
             ]);
         } catch (Exception $e) {
@@ -161,7 +161,7 @@ class ReferenceDocumentsController extends Controller
             return "$baseDir/framework_templates/$filename";
         }
 
-        throw new Exception("Invalid document type: $type");
+        throw new Exception(__('messages.reference_documents.invalid_type', ['type' => $type]));
     }
 
     /**

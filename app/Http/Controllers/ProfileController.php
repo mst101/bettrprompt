@@ -204,7 +204,7 @@ class ProfileController extends Controller
             });
 
             return Redirect::to('/')
-                ->with('status', 'Your account has been deleted.');
+                ->with('status', __('messages.profile.account_deleted'));
 
         } catch (QueryException $e) {
             Log::error('Failed to delete user account', [

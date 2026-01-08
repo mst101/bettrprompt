@@ -37,7 +37,7 @@ class RequirePrivacyUnlock
         if ($request->expectsJson()) {
             return response()->json([
                 'error' => 'privacy_locked',
-                'message' => 'Please unlock your privacy key to continue.',
+                'message' => __('messages.privacy.unlock_required'),
                 'unlock_url' => route('privacy.unlock'),
             ], 403);
         }
@@ -46,7 +46,7 @@ class RequirePrivacyUnlock
         session(['url.intended' => $request->url()]);
 
         return Inertia::render('Settings/PrivacyUnlock', [
-            'message' => 'Please enter your password to unlock your encrypted data.',
+            'message' => __('messages.privacy.unlock_prompt'),
         ])->toResponse($request);
     }
 }

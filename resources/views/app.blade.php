@@ -6,7 +6,7 @@
     <meta name="description"
           content="BettrPrompt helps you solve complex problems by transforming vague ideas into structured AI prompts using 60+ proven frameworks. Get better AI results without learning prompt engineering.">
 
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    <title inertia>{{ config('app.name', __('messages.app.default_title')) }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

@@ -59,7 +59,7 @@ class TaskController extends Controller
         $taskIndex = $taskId - 1;
 
         if ($taskIndex < 0 || $taskIndex >= $tasks->count()) {
-            abort(404, 'Task not found');
+            abort(404, __('messages.admin.task_not_found'));
         }
 
         $taskDescription = $tasks[$taskIndex]->task_description;

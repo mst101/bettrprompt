@@ -60,7 +60,7 @@ class ProcessAnalysis implements ShouldQueue
 
             if (! $result['success']) {
                 $this->handleFailure(
-                    $result['error']['message'] ?? 'Analysis workflow failed',
+                    $result['error']['message'] ?? __('messages.workflow.analysis_failed'),
                     $result
                 );
 
@@ -106,7 +106,7 @@ class ProcessAnalysis implements ShouldQueue
             ]);
 
             $this->handleFailure(
-                'An error occurred whilst analysing the task: '.$e->getMessage(),
+                __('messages.workflow.analysis_exception', ['error' => $e->getMessage()]),
                 null
             );
 

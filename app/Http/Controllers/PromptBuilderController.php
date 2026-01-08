@@ -38,22 +38,22 @@ class PromptBuilderController extends Controller
         $personalityData = $this->getPersonalityData($request);
 
         $personalityTypes = [
-            'INTJ' => 'Architect',
-            'INTP' => 'Logician',
-            'ENTJ' => 'Commander',
-            'ENTP' => 'Debater',
-            'INFJ' => 'Advocate',
-            'INFP' => 'Mediator',
-            'ENFJ' => 'Protagonist',
-            'ENFP' => 'Campaigner',
-            'ISTJ' => 'Logistician',
-            'ISFJ' => 'Defender',
-            'ESTJ' => 'Executive',
-            'ESFJ' => 'Consul',
-            'ISTP' => 'Virtuoso',
-            'ISFP' => 'Adventurer',
-            'ESTP' => 'Entrepreneur',
-            'ESFP' => 'Entertainer',
+            'INTJ' => __('messages.personality_types.intj'),
+            'INTP' => __('messages.personality_types.intp'),
+            'ENTJ' => __('messages.personality_types.entj'),
+            'ENTP' => __('messages.personality_types.entp'),
+            'INFJ' => __('messages.personality_types.infj'),
+            'INFP' => __('messages.personality_types.infp'),
+            'ENFJ' => __('messages.personality_types.enfj'),
+            'ENFP' => __('messages.personality_types.enfp'),
+            'ISTJ' => __('messages.personality_types.istj'),
+            'ISFJ' => __('messages.personality_types.isfj'),
+            'ESTJ' => __('messages.personality_types.estj'),
+            'ESFJ' => __('messages.personality_types.esfj'),
+            'ISTP' => __('messages.personality_types.istp'),
+            'ISFP' => __('messages.personality_types.isfp'),
+            'ESTP' => __('messages.personality_types.estp'),
+            'ESFP' => __('messages.personality_types.esfp'),
         ];
 
         return Inertia::render('PromptBuilder/Index', [
@@ -449,7 +449,7 @@ class PromptBuilderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Generating your optimised prompt...',
+                'message' => __('messages.prompt_builder.generating_optimised_prompt'),
             ]);
 
         } catch (Exception $e) {
@@ -461,7 +461,7 @@ class PromptBuilderController extends Controller
 
             return response()->json([
                 'success' => false,
-                'error' => ['message' => 'Failed to start prompt generation. Please try again.'],
+                'error' => ['message' => __('messages.prompt_builder.prompt_generation_start_failed')],
             ], 500);
         }
     }

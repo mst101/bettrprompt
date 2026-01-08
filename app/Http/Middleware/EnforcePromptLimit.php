@@ -26,7 +26,7 @@ class EnforcePromptLimit
             if ($request->expectsJson()) {
                 return response()->json([
                     'error' => 'prompt_limit_reached',
-                    'message' => 'You have reached your monthly prompt limit.',
+                    'message' => __('messages.subscription.prompt_limit_reached'),
                     'promptsUsed' => $user->monthly_prompt_count,
                     'promptLimit' => config('stripe.free_tier.monthly_prompt_limit'),
                     'upgradeUrl' => route('pricing'),
@@ -34,7 +34,7 @@ class EnforcePromptLimit
             }
 
             return redirect()->route('pricing')
-                ->with('error', 'You have reached your monthly prompt limit. Upgrade to Pro for unlimited prompts.');
+                ->with('error', __('messages.subscription.prompt_limit_reached_upgrade'));
         }
 
         return $next($request);

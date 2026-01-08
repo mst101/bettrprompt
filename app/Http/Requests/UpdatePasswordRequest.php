@@ -33,9 +33,9 @@ class UpdatePasswordRequest extends BaseFormRequest
     public function attributes(): array
     {
         return [
-            'current_password' => 'current password',
-            'password' => 'password',
-            'password_confirmation' => 'password confirmation',
+            'current_password' => __('messages.form.current_password'),
+            'password' => __('messages.form.password'),
+            'password_confirmation' => __('messages.form.password_confirmation'),
         ];
     }
 }

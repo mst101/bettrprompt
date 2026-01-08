@@ -75,7 +75,7 @@ class VoiceTranscriptionController extends Controller
                 'success' => false,
                 'error' => config('app.debug')
                     ? $e->getMessage()
-                    : 'Failed to transcribe audio. Please try again.',
+                    : __('messages.voice.transcription_failed'),
             ], 500);
         }
     }

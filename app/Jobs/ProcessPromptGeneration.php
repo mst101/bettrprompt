@@ -81,7 +81,7 @@ class ProcessPromptGeneration implements ShouldQueue
             // and wait for the webhook to update it
             if (! $result['success']) {
                 // Check if this is just "workflow queued" (async response) vs actual error
-                $errorMsg = $result['error'] ?? $result['error']['message'] ?? 'Unknown error';
+                $errorMsg = $result['error'] ?? $result['error']['message'] ?? __('messages.workflow.unknown_error');
 
                 // If n8n returned a 202 Accepted or similar (async), it's not really a failure
                 // The actual result will come via webhook
@@ -146,7 +146,7 @@ class ProcessPromptGeneration implements ShouldQueue
             ]);
 
             $this->handleFailure(
-                'An error occurred whilst generating the prompt: '.$e->getMessage(),
+                __('messages.workflow.prompt_generation_exception', ['error' => $e->getMessage()]),
                 null
             );
 

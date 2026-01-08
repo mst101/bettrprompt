@@ -136,7 +136,7 @@ class ProcessPreAnalysis implements ShouldQueue
             ]);
 
             $this->handleFailure(
-                'An error occurred whilst generating Quick Queries: '.$e->getMessage(),
+                __('messages.workflow.quick_queries_failed', ['error' => $e->getMessage()]),
                 null
             );
 

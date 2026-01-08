@@ -127,7 +127,7 @@ class Visitor extends Model
     public function getLocationSummary(): string
     {
         if (! $this->hasLocationData()) {
-            return 'Unknown location';
+            return __('messages.location.unknown');
         }
 
         if (is_null($this->city)) {

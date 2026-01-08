@@ -23,7 +23,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                 'user_agent' => $request->userAgent(),
             ]);
 
-            return response()->json(['error' => 'Unauthorised'], 403);
+            return response()->json(['error' => __('messages.api.unauthorized')], 403);
         }
 
         // Validate payload structure
@@ -55,7 +55,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             return response()->json([
                 'success' => false,
-                'error' => 'Invalid payload',
+                'error' => __('messages.api.invalid_payload'),
                 'details' => $validator->errors(),
             ], 422);
         }
@@ -78,7 +78,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             return response()->json([
                 'success' => false,
-                'error' => 'Prompt run not found',
+                'error' => __('messages.api.prompt_run_not_found'),
             ], 404);
         }
 
@@ -162,7 +162,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
         return response()->json([
             'success' => false,
-            'error' => 'Database error',
+            'error' => __('messages.api.database_error'),
         ], 500);
 
     } catch (\Exception $e) {
@@ -174,7 +174,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
         return response()->json([
             'success' => false,
-            'error' => 'Internal server error',
+            'error' => __('messages.api.internal_server_error'),
         ], 500);
     }
 })->middleware('throttle:60,1');

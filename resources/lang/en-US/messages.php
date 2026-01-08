@@ -91,6 +91,7 @@ return [
 
     // Form validation messages
     'form' => [
+        'answer_required' => 'Please provide an answer to the question.',
         'answer_max' => 'The answer must not exceed 1000 characters.',
         'task_description_required' => 'Please describe the task you want to accomplish.',
         'task_description_min' => 'The task description must be at least 10 characters.',
@@ -106,6 +107,9 @@ return [
         'email_unique' => 'This email address is already registered.',
         'password_required' => 'Please enter a password.',
         'password_confirmed' => 'The password confirmation does not match.',
+        'current_password' => 'current password',
+        'password' => 'password',
+        'password_confirmation' => 'password confirmation',
     ],
 
     // Prompt Builder messages
@@ -127,6 +131,7 @@ return [
         'create_prompt_run_failed' => 'An error occurred whilst creating the new prompt run. Please try again.',
         'no_clarifying_questions' => 'Parent prompt run does not have clarifying questions.',
         'generating_optimised_prompt' => 'Generating your optimised prompt with edited answers...',
+        'prompt_generation_start_failed' => 'Failed to start prompt generation. Please try again.',
         'switching_framework' => 'Re-analysing with selected framework...',
         'switch_framework_failed' => 'An error occurred whilst switching frameworks. Please try again.',
         'only_failed_runs_can_retry' => 'Only failed runs can be retried.',
@@ -139,8 +144,29 @@ return [
         'delete_failed' => 'Failed to delete prompt run. Please try again.',
     ],
 
+    // Personality type labels
+    'personality_types' => [
+        'intj' => 'Architect',
+        'intp' => 'Logician',
+        'entj' => 'Commander',
+        'entp' => 'Debater',
+        'infj' => 'Advocate',
+        'infp' => 'Mediator',
+        'enfj' => 'Protagonist',
+        'enfp' => 'Campaigner',
+        'istj' => 'Logistician',
+        'isfj' => 'Defender',
+        'estj' => 'Executive',
+        'esfj' => 'Consul',
+        'istp' => 'Virtuoso',
+        'isfp' => 'Adventurer',
+        'estp' => 'Entrepreneur',
+        'esfp' => 'Entertainer',
+    ],
+
     // Profile messages
     'profile' => [
+        'account_deleted' => 'Your account has been deleted.',
         'update_failed' => 'Failed to update profile. Please try again.',
         'personality_update_failed' => 'Failed to update personality type. Please try again.',
         'location_update_failed' => 'Failed to update location. Please try again.',
@@ -168,6 +194,10 @@ return [
     // Subscription messages
     'subscription' => [
         'invalid_plan' => 'Invalid plan selected.',
+        'prompt_limit_reached' => 'You have reached your monthly prompt limit.',
+        'prompt_limit_reached_upgrade' => 'You have reached your monthly prompt limit. Upgrade to Pro for unlimited prompts.',
+        'welcome_pro' => 'Welcome to BettrPrompt Pro!',
+        'checkout_cancelled' => 'Subscription checkout was cancelled.',
         'cancelled_pro_until' => 'Your subscription has been cancelled. You will retain Pro access until {date}.',
         'resumed' => 'Your subscription has been resumed.',
     ],
@@ -176,6 +206,7 @@ return [
     'auth' => [
         'logged_out' => 'You have been logged out successfully.',
         'logged_out_session' => 'You have been logged out.',
+        'admin_required' => 'Unauthorized. Administrator access required.',
         'google_connection_failed' => 'Unable to connect to Google. Please try again later.',
         'google_account_info_failed' => 'Could not retrieve your account information from Google. Please try again.',
         'google_invalid_email' => 'Invalid email address received from Google. Please try again.',
@@ -185,6 +216,15 @@ return [
         'unexpected_error' => 'An unexpected error occurred. Please try again.',
     ],
 
+    // API responses
+    'api' => [
+        'unauthorized' => 'Unauthorized',
+        'invalid_payload' => 'Invalid payload',
+        'prompt_run_not_found' => 'Prompt run not found',
+        'database_error' => 'Database error',
+        'internal_server_error' => 'Internal server error',
+    ],
+
     // Privacy messages
     'privacy' => [
         'pro_required' => 'You must be a Pro subscriber to enable privacy encryption.',
@@ -192,6 +232,8 @@ return [
         'recovery_mismatch' => 'Recovery phrase words do not match.',
         'enabled' => 'Privacy encryption has been enabled. Your data is now protected.',
         'not_enabled' => 'Privacy is not enabled for this account.',
+        'unlock_required' => 'Please unlock your privacy key to continue.',
+        'unlock_prompt' => 'Please enter your password to unlock your encrypted data.',
         'key_unlocked' => 'Privacy key unlocked.',
         'incorrect_password' => 'Incorrect password.',
         'invalid_format' => 'Invalid recovery phrase format.',
@@ -209,8 +251,40 @@ return [
         'missing_clarification_field' => 'Missing needs_clarification field.',
         'proceeding_to_analysis' => 'Proceeding directly to analysis.',
         'analysis_failed' => 'Analysis workflow failed.',
+        'analysis_exception' => 'An error occurred while analyzing the task: {error}',
         'generation_failed' => 'Generation workflow failed.',
+        'prompt_generation_exception' => 'An error occurred while generating the prompt: {error}',
         'n8n_connection_failed' => 'Failed to connect to n8n: {error}',
         'n8n_request_failed' => 'n8n request failed: {error}',
+        'quick_queries_failed' => 'An error occurred while generating Quick Queries: {error}',
+        'unknown_error' => 'Unknown error',
+    ],
+
+    // Admin messages
+    'admin' => [
+        'task_not_found' => 'Task not found.',
+    ],
+
+    // Reference documents
+    'reference_documents' => [
+        'not_found' => 'Document not found: {filename}',
+        'saved' => 'Document \'{filename}\' saved successfully and embedded into workflows',
+        'embedded' => 'All {count} documents embedded successfully into workflows',
+        'invalid_type' => 'Invalid document type: {type}',
+    ],
+
+    // Location messages
+    'location' => [
+        'unknown' => 'Unknown location',
+    ],
+
+    // Voice transcription
+    'voice' => [
+        'transcription_failed' => 'Failed to transcribe audio. Please try again.',
+    ],
+
+    // App metadata
+    'app' => [
+        'default_title' => 'BettrPrompt',
     ],
 ];
