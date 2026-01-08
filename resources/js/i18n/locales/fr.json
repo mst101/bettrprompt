@@ -1619,13 +1619,83 @@
         "uploadFailedMessage": "Failed to upload workflow to live server",
         "uploadErrorPrefix": "Upload error:",
         "docs": {
-            "saveSuccessMessage": "✓ {filename} saved successfully and embedded into workflows",
-            "confirmEmbedTitle": "Embed All Documents?",
-            "confirmEmbedMessage": "This will embed all core documents and framework templates into their respective n8n workflow JSON files. This action cannot be undone.",
+            "saveSuccessMessage": "✓ {filename} enregistré et intégré avec succès aux workflows",
+            "confirmEmbedTitle": "Intégrer tous les documents ?",
+            "confirmEmbedMessage": "Cela intègrera tous les documents principaux et les modèles de framework dans leurs fichiers JSON de workflow n8n respectifs. Cette action ne peut pas être annulée.",
             "errors": {
-                "save": "Error saving document: {error}",
-                "embed": "Failed to embed documents",
-                "embedFailed": "Error embedding documents: {error}"
+                "save": "Erreur lors de l'enregistrement du document : {error}",
+                "embed": "Échec de l'intégration des documents",
+                "embedFailed": "Erreur lors de l'intégration des documents : {error}"
+            },
+            "page": {
+                "title": "Documents de référence",
+                "subtitle": "Gérer la documentation du workflow"
+            },
+            "infoItems": {
+                "coreDocuments": {
+                    "title": "Documents principaux (3) :",
+                    "description": "Taxonomie du framework, étalonnage de la personnalité et banque de questions utilisés par les workflows"
+                },
+                "frameworks": {
+                    "title": "Modèles de framework (64) :",
+                    "description": "Frameworks d'invite disponibles pour l'optimisation des workflows"
+                },
+                "saveEmbed": {
+                    "title": "Enregistrer et intégrer :",
+                    "description": "Enregistrer les modifications des documents et les intégrer dans les fichiers JSON du workflow"
+                },
+                "embedAll": {
+                    "title": "Intégrer tous les documents :",
+                    "description": "Intégrer tous les documents principaux et les modèles de framework dans leurs workflows n8n"
+                },
+                "livePreview": {
+                    "title": "Aperçu en direct :",
+                    "description": "Voir un aperçu en temps réel de vos documents markdown"
+                }
+            },
+            "buttons": {
+                "saveEmbed": "Enregistrer et intégrer",
+                "saving": "Enregistrement...",
+                "embedding": "Intégration...",
+                "expand": "⛶ Développer"
+            },
+            "sections": {
+                "markdownEditor": "Éditeur Markdown",
+                "preview": "Aperçu"
+            },
+            "placeholders": {
+                "editMarkdown": "Modifier le markdown ici..."
+            }
+        },
+        "show": {
+            "pageTitle": "Workflow {workflowNumber}",
+            "subtitle": "Inspectez l'entrée du workflow, le code JavaScript et la sortie",
+            "buttons": {
+                "inputData": "Données d'entrée",
+                "passInput": "Entrée de passage {passNumber}",
+                "uploadLive": "Télécharger vers n8n (en direct)",
+                "viewJavaScript": "Voir JavaScript",
+                "copy": "Copier"
+            },
+            "sections": {
+                "preparePrompt": "Préparer l'invite",
+                "workflowOutput": "Sortie du workflow"
+            },
+            "states": {
+                "preparing": "Préparation...",
+                "uploading": "Téléchargement...",
+                "executing": "Exécution..."
+            },
+            "placeholders": {
+                "inputJson": "Entrez les données d'entrée au format JSON...",
+                "javascriptCode": "Modifier le code JavaScript ici...",
+                "javascriptCodeNew": "Écrire du code JavaScript ici...",
+                "passInput": "Entrez les données d'entrée de passage..."
+            },
+            "metadata": {
+                "characters": "caractères",
+                "messages": "Messages",
+                "na": "N/A"
             }
         }
     },

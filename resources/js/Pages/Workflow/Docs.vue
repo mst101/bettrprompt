@@ -269,34 +269,36 @@ watch(
     { immediate: true },
 );
 
-const infoItems = [
-    {
-        strong: 'Core Documents (3):',
-        text: 'Framework Taxonomy, Personality Calibration, and Question Bank used by workflows',
-    },
-    {
-        strong: 'Framework Templates (64):',
-        text: 'Individual prompting frameworks that can be selected during prompt optimisation',
-    },
-    {
-        strong: 'Save & Embed:',
-        text: 'Clicking "Save & Embed" updates both the markdown file and embeds the content into the relevant n8n workflow JSON files',
-    },
-    {
-        strong: 'Embed All Documents:',
-        text: 'Embeds all core documents and framework templates into their respective workflow JSON files in one operation',
-    },
-    {
-        strong: 'Live Preview:',
-        text: 'The right pane shows a rendered markdown preview as you type',
-    },
-];
+const infoItems = computed(() => {
+    return [
+        {
+            strong: t('workflow.docs.infoItems.coreDocuments.title'),
+            text: t('workflow.docs.infoItems.coreDocuments.description'),
+        },
+        {
+            strong: t('workflow.docs.infoItems.frameworks.title'),
+            text: t('workflow.docs.infoItems.frameworks.description'),
+        },
+        {
+            strong: t('workflow.docs.infoItems.saveEmbed.title'),
+            text: t('workflow.docs.infoItems.saveEmbed.description'),
+        },
+        {
+            strong: t('workflow.docs.infoItems.embedAll.title'),
+            text: t('workflow.docs.infoItems.embedAll.description'),
+        },
+        {
+            strong: t('workflow.docs.infoItems.livePreview.title'),
+            text: t('workflow.docs.infoItems.livePreview.description'),
+        },
+    ];
+});
 </script>
 
 <template>
     <div>
         <PageHeader
-            title="Reference Documents"
+            :title="t('workflow.docs.page.title')"
             subtitle="View and edit markdown documents used in n8n workflows"
         />
 
@@ -353,7 +355,11 @@ const infoItems = [
                                 :loading="isSaving"
                                 @click="saveDocument"
                             >
-                                {{ isSaving ? 'Saving...' : 'Save & Embed' }}
+                                {{
+                                    isSaving
+                                        ? t('workflow.docs.buttons.saving')
+                                        : t('workflow.docs.buttons.saveEmbed')
+                                }}
                             </ButtonPrimary>
                             <ButtonDanger
                                 :disabled="isEmbeddingAll"
@@ -362,8 +368,8 @@ const infoItems = [
                             >
                                 {{
                                     isEmbeddingAll
-                                        ? 'Embedding...'
-                                        : 'Embed All Documents'
+                                        ? t('workflow.docs.buttons.embedding')
+                                        : t('common.buttons.embedAll')
                                 }}
                             </ButtonDanger>
                         </div>
@@ -380,20 +386,22 @@ const infoItems = [
                             class="flex items-center justify-between border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
                             <h3 class="text-sm font-semibold">
-                                Markdown Editor
+                                {{ t('workflow.docs.sections.markdownEditor') }}
                             </h3>
                             <button
                                 class="rounded px-2 py-1 text-xs hover:bg-indigo-400"
-                                title="Expand editor"
+                                :title="t('workflow.codeEditor.expandTitle')"
                                 @click="expandedView = 'editor'"
                             >
-                                ⛶ Expand
+                                {{ t('workflow.docs.buttons.expand') }}
                             </button>
                         </div>
                         <textarea
                             v-model="content"
                             class="h-96 w-full resize-none border-0 bg-indigo-50 p-4 font-mono text-sm text-black dark:bg-indigo-100"
-                            placeholder="Edit markdown here..."
+                            :placeholder="
+                                t('workflow.docs.placeholders.editMarkdown')
+                            "
                         />
                     </div>
 
@@ -404,13 +412,15 @@ const infoItems = [
                         <div
                             class="flex items-center justify-between border-b border-indigo-200 bg-indigo-300 px-4 py-2 text-indigo-800"
                         >
-                            <h3 class="text-sm font-semibold">Preview</h3>
+                            <h3 class="text-sm font-semibold">
+                                {{ t('workflow.docs.sections.preview') }}
+                            </h3>
                             <button
                                 class="rounded px-2 py-1 text-xs hover:bg-indigo-400"
-                                title="Expand preview"
+                                :title="t('workflow.codeEditor.expandTitle')"
                                 @click="expandedView = 'preview'"
                             >
-                                ⛶ Expand
+                                {{ t('workflow.docs.buttons.expand') }}
                             </button>
                         </div>
                         <div
@@ -432,7 +442,7 @@ const infoItems = [
                 <textarea
                     v-model="content"
                     class="flex-1 resize-none overflow-auto border-0 bg-white p-6 font-mono text-sm leading-6 focus:outline-none"
-                    placeholder="Edit markdown here..."
+                    :placeholder="t('workflow.docs.placeholders.editMarkdown')"
                     style="
                         line-height: 1.5;
                         white-space: pre;
@@ -443,7 +453,11 @@ const infoItems = [
                     class="flex shrink-0 items-center justify-between border-t bg-indigo-50 px-6 py-3"
                 >
                     <span class="text-xs text-indigo-600">
-                        {{ content ? `${content.length} characters` : 'N/A' }}
+                        {{
+                            content
+                                ? `${content.length} ${t('workflow.show.metadata.characters')}`
+                                : t('workflow.show.metadata.na')
+                        }}
                     </span>
                     <ButtonPrimary
                         :disabled="isSaving"
@@ -453,7 +467,11 @@ const infoItems = [
                             expandedView = null;
                         "
                     >
-                        {{ isSaving ? 'Saving...' : 'Save & Embed' }}
+                        {{
+                            isSaving
+                                ? t('workflow.docs.buttons.saving')
+                                : t('workflow.docs.buttons.saveEmbed')
+                        }}
                     </ButtonPrimary>
                 </div>
             </div>
@@ -476,7 +494,7 @@ const infoItems = [
         <!-- Info Section -->
         <InfoSection
             class="mt-8"
-            title="About Reference Documents"
+            title="How to Use Reference Documents"
             :items="infoItems"
         />
 

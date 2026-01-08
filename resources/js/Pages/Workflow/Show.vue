@@ -868,8 +868,8 @@ onMounted(async () => {
         <!-- Header -->
         <div class="flex items-center justify-between">
             <PageHeader
-                :title="`Workflow ${workflowNumber}`"
-                subtitle="Inspect workflow input, JavaScript code, and output"
+                :title="t('workflow.show.pageTitle', { workflowNumber })"
+                :subtitle="t('workflow.show.subtitle')"
             />
 
             <div class="flex items-center gap-4">
@@ -893,7 +893,7 @@ onMounted(async () => {
                 />
 
                 <ButtonPrimary @click="expandedView = 'input'">
-                    Input Data
+                    {{ t('workflow.show.buttons.inputData') }}
                 </ButtonPrimary>
 
                 <!-- Pass Input button for Pass 2+ -->
@@ -901,7 +901,11 @@ onMounted(async () => {
                     v-if="currentNode.passNumber > 1"
                     @click="expandedView = `pass-input-${selectedPass}`"
                 >
-                    Pass {{ currentNode.passNumber }} Input
+                    {{
+                        t('workflow.show.buttons.passInput', {
+                            passNumber: currentNode.passNumber,
+                        })
+                    }}
                 </ButtonPrimary>
 
                 <ButtonDanger
@@ -910,8 +914,8 @@ onMounted(async () => {
                 >
                     {{
                         isUploadingToLive
-                            ? 'Uploading...'
-                            : 'Upload to n8n (live)'
+                            ? t('workflow.show.states.uploading')
+                            : t('workflow.show.buttons.uploadLive')
                     }}
                 </ButtonDanger>
             </div>
@@ -924,7 +928,8 @@ onMounted(async () => {
                 <!-- Node heading -->
                 <div class="items-centre flex justify-between">
                     <h3 class="text-lg font-semibold text-indigo-800">
-                        Prepare Prompt{{
+                        {{ t('workflow.show.sections.preparePrompt')
+                        }}{{
                             preparePromptNodes.length > 1
                                 ? ` ${selectedPass + 1}`
                                 : ''
@@ -938,21 +943,29 @@ onMounted(async () => {
                     <ButtonSecondary
                         @click="expandedView = `javascript-old-${selectedPass}`"
                     >
-                        View JavaScript
+                        {{ t('workflow.show.buttons.viewJavaScript') }}
                     </ButtonSecondary>
 
                     <ButtonPrimary
                         :disabled="!currentNode.javascriptOld || !input"
                         @click="preparePromptOld(currentNode.name)"
                     >
-                        {{ isPreparingOld ? 'Preparing...' : 'Prepare Prompt' }}
+                        {{
+                            isPreparingOld
+                                ? t('workflow.show.states.preparing')
+                                : t('workflow.show.sections.preparePrompt')
+                        }}
                     </ButtonPrimary>
 
                     <ButtonDanger
                         :disabled="!currentNode.javascriptOld || !input"
                         @click="uploadWorkflowOld(currentNode.name)"
                     >
-                        {{ isUploadingOld ? 'Uploading...' : 'Upload to n8n' }}
+                        {{
+                            isUploadingOld
+                                ? t('workflow.show.states.uploading')
+                                : 'Upload to n8n'
+                        }}
                     </ButtonDanger>
 
                     <ButtonSuccess
@@ -968,21 +981,29 @@ onMounted(async () => {
                     <ButtonSecondary
                         @click="expandedView = `javascript-new-${selectedPass}`"
                     >
-                        View JavaScript
+                        {{ t('workflow.show.buttons.viewJavaScript') }}
                     </ButtonSecondary>
 
                     <ButtonPrimary
                         :disabled="!currentNode.javascriptNew || !input"
                         @click="preparePromptNew(currentNode.name)"
                     >
-                        {{ isPreparingNew ? 'Preparing...' : 'Prepare Prompt' }}
+                        {{
+                            isPreparingNew
+                                ? t('workflow.show.states.preparing')
+                                : t('workflow.show.sections.preparePrompt')
+                        }}
                     </ButtonPrimary>
 
                     <ButtonDanger
                         :disabled="!currentNode.javascriptNew || !input"
                         @click="uploadWorkflowNew(currentNode.name)"
                     >
-                        {{ isUploadingNew ? 'Uploading...' : 'Upload to n8n' }}
+                        {{
+                            isUploadingNew
+                                ? t('workflow.show.states.uploading')
+                                : 'Upload to n8n'
+                        }}
                     </ButtonDanger>
 
                     <ButtonSuccess
@@ -1025,7 +1046,7 @@ onMounted(async () => {
             <!-- Workflow Output Sections (shown at the end after all nodes) -->
             <div class="border-t-2 border-indigo-300 pt-8">
                 <h3 class="mb-4 text-lg font-semibold text-indigo-800">
-                    Workflow Output
+                    {{ t('workflow.show.sections.workflowOutput') }}
                 </h3>
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <OutputPanel

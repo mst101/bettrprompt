@@ -1626,6 +1626,76 @@
                 "save": "Error saving document: {error}",
                 "embed": "Failed to embed documents",
                 "embedFailed": "Error embedding documents: {error}"
+            },
+            "page": {
+                "title": "Reference Documents",
+                "subtitle": "Manage workflow documentation"
+            },
+            "infoItems": {
+                "coreDocuments": {
+                    "title": "Core Documents (3):",
+                    "description": "Framework Taxonomy, Personality Calibration, and Question Bank used by workflows"
+                },
+                "frameworks": {
+                    "title": "Framework Templates (64):",
+                    "description": "Prompting frameworks available for workflow optimisation"
+                },
+                "saveEmbed": {
+                    "title": "Save & Embed:",
+                    "description": "Save changes to documents and embed them into workflow JSON files"
+                },
+                "embedAll": {
+                    "title": "Embed All Documents:",
+                    "description": "Embed all core documents and framework templates into their n8n workflows"
+                },
+                "livePreview": {
+                    "title": "Live Preview:",
+                    "description": "See real-time preview of your markdown documents"
+                }
+            },
+            "buttons": {
+                "saveEmbed": "Save & Embed",
+                "saving": "Saving...",
+                "embedding": "Embedding...",
+                "expand": "⛶ Expand"
+            },
+            "sections": {
+                "markdownEditor": "Markdown Editor",
+                "preview": "Preview"
+            },
+            "placeholders": {
+                "editMarkdown": "Edit markdown here..."
+            }
+        },
+        "show": {
+            "pageTitle": "Workflow {workflowNumber}",
+            "subtitle": "Inspect workflow input, JavaScript code, and output",
+            "buttons": {
+                "inputData": "Input Data",
+                "passInput": "Pass {passNumber} Input",
+                "uploadLive": "Upload to n8n (live)",
+                "viewJavaScript": "View JavaScript",
+                "copy": "Copy"
+            },
+            "sections": {
+                "preparePrompt": "Prepare Prompt",
+                "workflowOutput": "Workflow Output"
+            },
+            "states": {
+                "preparing": "Preparing...",
+                "uploading": "Uploading...",
+                "executing": "Executing..."
+            },
+            "placeholders": {
+                "inputJson": "Enter input data as JSON...",
+                "javascriptCode": "Edit JavaScript code here...",
+                "javascriptCodeNew": "Write JavaScript code here...",
+                "passInput": "Enter pass input data..."
+            },
+            "metadata": {
+                "characters": "characters",
+                "messages": "Messages",
+                "na": "N/A"
             }
         }
     },
