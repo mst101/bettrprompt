@@ -1,0 +1,1770 @@
+{
+    "common": {
+        "nav": {
+            "home": "Startseite",
+            "pricing": "Preisgestaltung",
+            "profile": "Profil",
+            "settings": "Einstellungen",
+            "login": "Anmelden",
+            "logout": "Abmelden",
+            "register": "Registrieren"
+        },
+        "buttons": {
+            "submit": "Senden",
+            "save": "Speichern",
+            "cancel": "Abbrechen",
+            "close": "Schließen",
+            "back": "Zurück",
+            "next": "Weiter",
+            "continue": "Fortfahren",
+            "loading": "Wird geladen...",
+            "copy": "Kopieren",
+            "copied": "Kopiert!",
+            "edit": "Bearbeiten",
+            "delete": "Löschen",
+            "clear": "Löschen",
+            "confirm": "Bestätigen",
+            "ok": "OK",
+            "embedAll": "Alle einbetten"
+        },
+        "aria": {
+            "userMenu": "Benutzermenü"
+        },
+        "errors": {
+            "copyFailed": "Kopieren in die Zwischenablage fehlgeschlagen: {error}"
+        },
+        "validation": {
+            "required": "Dieses Feld ist erforderlich",
+            "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+            "minLength": "Mindestens {min} Zeichen erforderlich",
+            "maxLength": "Darf nicht mehr als {max} Zeichen enthalten"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Melden Sie sich in Ihrem Konto an",
+            "email": "E-Mail-Adresse",
+            "password": "Passwort",
+            "rememberMe": "Angemeldet bleiben",
+            "forgotPassword": "Passwort vergessen?",
+            "submit": "Anmelden",
+            "noAccount": "Kein Konto?",
+            "signUp": "Registrieren"
+        },
+        "register": {
+            "title": "Konto erstellen",
+            "name": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
+            "password": "Passwort",
+            "confirmPassword": "Passwort bestätigen",
+            "submit": "Konto erstellen",
+            "hasAccount": "Haben Sie bereits ein Konto?",
+            "signIn": "Anmelden"
+        },
+        "forgotPassword": {
+            "title": "Passwort vergessen",
+            "heading": "Passwort zurücksetzen",
+            "description": "Passwort vergessen? Kein Problem. Teilen Sie uns einfach Ihre E-Mail-Adresse mit und wir senden Ihnen einen Link zum Zurücksetzen des Passworts, mit dem Sie ein neues Passwort wählen können.",
+            "email": "E-Mail",
+            "submit": "Link zum Zurücksetzen des Passworts per E-Mail senden",
+            "backToLogin": "Zurück zur Anmeldung"
+        },
+        "resetPassword": {
+            "headTitle": "Passwort zurücksetzen",
+            "title": "Neues Passwort erstellen",
+            "email": "E-Mail",
+            "password": "Passwort",
+            "confirmPassword": "Passwort bestätigen",
+            "submit": "Passwort zurücksetzen"
+        },
+        "confirmPassword": {
+            "title": "Passwort bestätigen",
+            "description": "Dies ist ein sicherer Bereich der Anwendung. Bitte bestätigen Sie Ihr Passwort, bevor Sie fortfahren.",
+            "passwordLabel": "Passwort"
+        },
+        "verifyEmail": {
+            "title": "E-Mail-Verifikation",
+            "heading": "E-Mail-Adresse überprüfen",
+            "description": "Danke für die Registrierung! Bevor Sie beginnen, überprüfen Sie bitte Ihre E-Mail-Adresse, indem Sie auf den Link klicken, den wir Ihnen gerade gesendet haben. Falls Sie die E-Mail nicht erhalten haben, senden wir Ihnen gerne eine weitere.",
+            "resent": "Ein neuer Verifikationslink wurde an die E-Mail-Adresse gesendet, die Sie bei der Registrierung angegeben haben.",
+            "resend": "Verifikations-E-Mail erneut senden",
+            "logout": "Abmelden"
+        },
+        "privacyRecovery": {
+            "title": "Datenschlüssel wiederherstellen",
+            "heading": "Stellen Sie Ihre Daten wieder her",
+            "notice": {
+                "title": "Kontowiederherstellung",
+                "description": "Geben Sie Ihre 12-Wort-Wiederherstellungsphrase ein, um auf Ihre verschlüsselten Daten zuzugreifen. Sie müssen auch ein neues Passwort festlegen."
+            },
+            "sections": {
+                "recoveryPhrase": "Wiederherstellungsphrase",
+                "setPassword": "Neues Passwort festlegen"
+            },
+            "newPassword": "Neues Passwort",
+            "confirmPassword": "Neues Passwort bestätigen",
+            "submit": "Konto wiederherstellen"
+        },
+        "google": {
+            "continueWith": "Mit Google fortfahren"
+        },
+        "modalLogin": {
+            "title": "Anmelden",
+            "emailLabel": "E-Mail-Adresse",
+            "passwordLabel": "Passwort",
+            "rememberMe": "Angemeldet bleiben",
+            "forgotPassword": "Passwort vergessen?",
+            "needAccount": "Benötigen Sie ein Konto?",
+            "submit": "Anmelden"
+        },
+        "modalRegister": {
+            "title": "Erstellen Sie Ihr Konto",
+            "google": "Mit Google fortfahren",
+            "nameLabel": "Vollständiger Name",
+            "emailLabel": "E-Mail-Adresse",
+            "passwordLabel": "Passwort",
+            "confirmPasswordLabel": "Passwort bestätigen",
+            "alreadyRegistered": "Haben Sie bereits ein Konto?",
+            "submit": "Konto erstellen"
+        },
+        "modalForgotPassword": {
+            "title": "Passwort zurücksetzen",
+            "description": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Zurücksetzen-Link.",
+            "emailLabel": "E-Mail-Adresse",
+            "backToLogin": "Zurück zur Anmeldung",
+            "submit": "Link zum Zurücksetzen senden"
+        },
+        "modalResetPassword": {
+            "title": "Neues Passwort erstellen",
+            "description": "Geben Sie Ihre E-Mail und ein neues Passwort ein.",
+            "emailLabel": "E-Mail-Adresse",
+            "passwordLabel": "Neues Passwort",
+            "confirmPasswordLabel": "Neues Passwort bestätigen",
+            "backToLogin": "Zurück zur Anmeldung",
+            "submit": "Passwort zurücksetzen"
+        }
+    },
+    "components": {
+        "base": {
+            "accordion": {
+                "ariaLabel": "Akkordeon",
+                "empty": "Keine Elemente verfügbar"
+            },
+            "buttonDarkMode": {
+                "title": "Wechsel zu {mode}",
+                "mode": {
+                    "light": "Heller Modus",
+                    "dark": "Dunkler Modus"
+                }
+            },
+            "buttonHamburger": {
+                "ariaLabel": "Menü öffnen"
+            },
+            "buttonVoiceInput": {
+                "transcribing": "Wird transkribiert...",
+                "listening": "Wird gelauscht...",
+                "record": "Aufnehmen",
+                "stopRecording": "Aufnahme stoppen",
+                "startRecording": "Aufnahme starten",
+                "startRecordingTitle": "Aufnahme starten"
+            },
+            "carousel": {
+                "ariaLabel": "Karussell",
+                "previous": "Vorherige Folie",
+                "next": "Nächste Folie",
+                "slideRole": "Folie",
+                "slideLabel": "Folie {current} von {total}",
+                "goToSlide": "Zur Folie {index} gehen",
+                "liveRegion": "Folie {current} von {total}: {title}",
+                "empty": "Keine Folien verfügbar"
+            },
+            "formCheckboxGroup": {
+                "otherLabel": "Sonstiges",
+                "otherPlaceholder": "Bitte spezifizieren Sie...",
+                "characterCount": "{count}/{max} Zeichen"
+            },
+            "formSelect": {
+                "placeholder": "Option wählen"
+            },
+            "likert": {
+                "optionLabel": "{value} auswählen"
+            },
+            "tabs": {
+                "menuLabel": "Registerkarten",
+                "ariaLabel": "Registerkarten"
+            }
+        },
+        "common": {
+            "buttonTrash": {
+                "label": "Löschen",
+                "title": "{label}"
+            },
+            "compactMetadataCard": {
+                "showProfile": "Profil anzeigen"
+            },
+            "cookieBanner": {
+                "ariaLabel": "Cookie-Banner",
+                "title": "Wir verwenden Cookies",
+                "description": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern. Siehe unsere ",
+                "policyLink": "Cookie-Richtlinie",
+                "rejectAll": "Alle ablehnen",
+                "customize": "Anpassen",
+                "acceptAll": "Alle akzeptieren"
+            },
+            "cookieSettings": {
+                "title": "Cookie-Einstellungen",
+                "description": "Verwalten Sie Ihre Cookie-Einstellungen. Weitere Informationen in unserer ",
+                "learnMore": "Cookie-Richtlinie",
+                "alwaysActive": "Immer aktiv",
+                "functionalLabel": "Funktionale Cookies",
+                "analyticsLabel": "Analyse-Cookies",
+                "rejectAll": "Alle ablehnen",
+                "savePreferences": "Einstellungen speichern",
+                "acceptAll": "Alle akzeptieren"
+            },
+            "exampleDemonstration": {
+                "stage1": {
+                    "title": "Geben Sie Ihre Aufgabe ein",
+                    "description": "Beginnen Sie mit einer klaren Beschreibung dessen, was Sie erreichen möchten.",
+                    "label": "Aufgabe",
+                    "example": "Erstellen Sie eine Marketingstrategie für die Einführung einer neuen Fitness-App."
+                },
+                "stage2": {
+                    "title": "Schnelle Fragen",
+                    "description": "Ein paar schnelle Fragen, um das Ziel zu verfeinern.",
+                    "question1": "Wer ist Ihre Zielgruppe?",
+                    "answer1": "Berufstätige im Alter von 25-40 Jahren",
+                    "question2": "Was ist das Hauptziel?",
+                    "answer2": "Kostenlose Testanmeldungen erhöhen"
+                },
+                "stage3": {
+                    "title": "Rahmenwerk",
+                    "description": "Wir wählen ein Rahmenwerk passend zu Ihrer Aufgabe.",
+                    "frameworkName": "STP + 4P",
+                    "chipChallenge": "Herausforderung",
+                    "chipObjective": "Ziel",
+                    "chipActions": "Aktionen",
+                    "chipStrategy": "Strategie",
+                    "chipTactics": "Taktiken",
+                    "rationale": "Ausgewählt, um Positionierung mit einem klaren Ausführungsplan zu verbinden."
+                },
+                "stage4": {
+                    "title": "Klärungsfragen",
+                    "description": "Wir erfassen die Details, die die Anfrage effektiv machen.",
+                    "question1": "Was unterscheidet die App von Konkurrenten?",
+                    "answer1": "Personalisierte Trainingseinheiten, die Sie in 10 Minuten durchführen können",
+                    "question2": "Welche Kanäle werden Sie nutzen?",
+                    "answer2": "Instagram, TikTok und Partnerschaften mit Fitness-Erstellern",
+                    "question3": "Was ist Ihr Budget?",
+                    "answer3": "10.000 EUR pro Monat für das erste Quartal"
+                },
+                "stage5": {
+                    "title": "Optimierte Anfrage",
+                    "description": "Sie erhalten eine strukturierte Anfrage, die sofort einsatzbereit ist.",
+                    "ready": "Ihre Anfrage ist bereit.",
+                    "promptIntro": "Erstellen Sie eine Marketingstrategie für eine neue Fitness-App. Fügen Sie ein:",
+                    "promptChallengeLabel": "Herausforderung:",
+                    "promptChallengeText": "Sich auf einem überfüllten Markt abheben.",
+                    "promptObjectiveLabel": "Ziel:",
+                    "promptObjectiveText": "5.000 Testanmeldungen in 90 Tagen gewinnen.",
+                    "promptEtc": "Stellen Sie Kanäle, Nachrichten und einen 90-Tage-Aktionsplan bereit."
+                }
+            },
+            "footer": {
+                "copyright": "(c) {year} BettrPrompt. Alle Rechte vorbehalten.",
+                "terms": "Bedingungen",
+                "privacy": "Datenschutz",
+                "cookies": "Cookies",
+                "cookieSettings": "Cookie-Einstellungen"
+            },
+            "heroCta": {
+                "tryNow": "Jetzt ausprobieren",
+                "getStartedFree": "Kostenlos starten"
+            },
+            "languageSwitcher": {
+                "sections": {
+                    "english": "Englisch",
+                    "major": "Hauptsprachen",
+                    "nordic": "Nordisch",
+                    "other": "Sonstige",
+                    "rtl": "Rechts-zu-Links"
+                }
+            },
+            "optionalBadge": {
+                "label": "Optional"
+            },
+            "profileCompletion": {
+                "title": "Profilvollständigkeit",
+                "labels": {
+                    "complete": "Abgeschlossen",
+                    "nearlyComplete": "Fast abgeschlossen",
+                    "goodProgress": "Guter Fortschritt",
+                    "gettingStarted": "Erste Schritte",
+                    "justBeginning": "Gerade anfangend"
+                }
+            },
+            "promptRunMetadata": {
+                "user": "Benutzer",
+                "personality": "Persönlichkeit",
+                "created": "Erstellt",
+                "status": "Status"
+            },
+            "upgradePromptModal": {
+                "title": "Auf Pro upgraden",
+                "description": "Entsperren Sie unbegrenzte Anfragen und Prioritätsverarbeitung.",
+                "monthly": "Monatlich",
+                "monthlyPrice": {
+                    "amount": "12 EUR",
+                    "period": "/Monat"
+                },
+                "annual": "Jährlich",
+                "annualPrice": {
+                    "amount": "99 EUR",
+                    "period": "/Jahr"
+                },
+                "annualEquivalent": "8,25 EUR/Monat jährlich abgerechnet",
+                "maybeLater": "Vielleicht später",
+                "processing": "Wird verarbeitet...",
+                "upgradeNow": "Jetzt upgraden"
+            },
+            "usageIndicator": {
+                "upgrade": "Upgraden"
+            },
+            "visitorLimitBanner": {
+                "fixed": {
+                    "titleNew": "Erstellen Sie ein kostenloses Konto, um fortzufahren",
+                    "descriptionNew": "Speichern Sie Ihre Anfragen und erhalten Sie mehr Durchläufe, wenn Sie sich anmelden.",
+                    "titleReturning": "Willkommen zurück - melden Sie sich an, um fortzufahren",
+                    "descriptionReturning": "Melden Sie sich an, um dort anzuknüpfen, wo Sie aufgehört haben.",
+                    "ctaRegister": "Konto erstellen"
+                },
+                "inline": {
+                    "titleNew": "Erstellen Sie ein kostenloses Konto, um fortzufahren",
+                    "descriptionNew": "Melden Sie sich an, um Ihre Anfragen zu speichern und mehr Durchläufe freizuschalten.",
+                    "titleReturning": "Melden Sie sich an, um fortzufahren",
+                    "descriptionReturning": "Melden Sie sich an, um auf Ihre gespeicherten Anfrage-Durchläufe zuzugreifen.",
+                    "ctaRegister": "Konto erstellen"
+                }
+            },
+            "visitorLimitModal": {
+                "title": "Erstellen Sie ein Konto, um fortzufahren",
+                "description": "Der Gastzugriff ist begrenzt. Erstellen Sie ein kostenloses Konto, um Ihre Anfragen zu speichern und weiter zu bauen.",
+                "cta": "Konto erstellen"
+            },
+            "workflowError": {
+                "title": "Etwas ist schief gelaufen",
+                "retry": "Versuchen Sie es erneut"
+            }
+        }
+    },
+    "home": {
+        "title": "Willkommen bei BettrPrompt",
+        "hero": {
+            "title": "Die einfache Art, zu lösen",
+            "titleGradient": "Komplexe Probleme",
+            "subtitle": "Großartige KI-Ergebnisse beginnen mit großartigen Fragen. BettrPrompt stellt die richtigen - und erstellt dann strukturierte Anfragen, die wirklich funktionieren."
+        },
+        "features": {
+            "heading": "Funktionen",
+            "feature1": {
+                "title": "Der richtige Ansatz, automatisch",
+                "description": "Wir analysieren Ihre Aufgabe und wählen aus über 60 bewährten Methoden. Sie erhalten effektive Anfragen, ohne ein Anfrage-Ingenieur werden zu müssen."
+            },
+            "feature2": {
+                "title": "Fragen, die Sie nicht bedacht haben",
+                "description": "Nicht sicher, wo Sie anfangen sollen? Wir zeigen, was Sie wirklich brauchen - damit Sie beim ersten Versuch nützliche Antworten erhalten, nicht nach drei Runden hin und her."
+            },
+            "feature3": {
+                "title": "Angepasst an Ihre Denkweise",
+                "description": "Fügen Sie Ihren Persönlichkeitstyp hinzu und wir passen unsere Fragen entsprechend an. Ein analytischer Denker und ein kreativer Denker, die an demselben Problem arbeiten, benötigen unterschiedliche Ausgangspunkte - wir zeigen Ihnen, warum wir das fragen, was wir fragen."
+            }
+        },
+        "comparison": {
+            "title": "Kann ich nicht einfach ChatGPT fragen?",
+            "subtitle": "Sie können. ChatGPT könnte sogar eine oder zwei Klärungsfragen stellen. Aber es gibt einen Unterschied zwischen schneller Hilfe und dem Herausarbeiten von dem, was Sie wirklich brauchen.",
+            "labels": {
+                "you": "Sie:",
+                "youGet": "Sie erhalten:"
+            },
+            "chatgpt": {
+                "title": "ChatGPT direkt fragen",
+                "yourPrompt": "Ich muss eine Rede des Trauzeuge für die Hochzeit meines Freundes schreiben",
+                "label": "ChatGPT:",
+                "response": "Generiert sofort eine Rede oder stellt ein oder zwei schnelle Fragen, bevor es losgeht. Es versucht, Ihnen schnell zu helfen.",
+                "result": "Eine generische Rede, die wie jede andere Trauzeugenrede klingt. Sie verbringen die nächste Stunde damit, sie so klingen zu lassen wie Sie.",
+                "footer": "Sie erhalten, was Sie gefragt haben"
+            },
+            "bettrprompt": {
+                "title": "BettrPrompt verwenden",
+                "yourPrompt": "Ich muss eine Rede des Trauzeuge für die Hochzeit meines Freundes schreiben",
+                "label": "BettrPrompt:",
+                "response": "Wählt einen Rahmen für denkwürdiges persönliches Erzählen. Dann fragt: \"Wie habt ihr euch kennengelernt? Welche Geschichte zeigt wirklich, wer er ist? Wie ist der Sinn für Humor des Paares? Wer ist im Publikum?\"",
+                "result": "Eine Anfrage, die Ihre Freundschaft erfasst, zum Publikum passt und Ihre Stärken nutzt - so klingt die KI-Ausgabe wirklich wie etwas, das Sie sagen würden.",
+                "footer": "Sie erhalten, wozu KI wirklich fähig ist"
+            },
+            "keyInsight": "ChatGPT antwortet, was Sie fragen. {0} - erstellt dann eine Anfrage, die Ihnen KIs beste Arbeit bringt, nicht seine erste Vermutung.",
+            "keyInsightEmphasis": "BettrPrompt deckt auf, was Sie hätten fragen sollen"
+        },
+        "objections": {
+            "templates": {
+                "title": "Was ist mit Anfrage-Vorlagen?",
+                "description": "Vorlagen sind Einheitslösungen. Wir generieren Anfragen für Ihre spezifische Situation durch Dialog - Ihr Kontext, Ihre Einschränkungen, Ihre Stimme. Keine zwei Anfragen sind gleich."
+            },
+            "learning": {
+                "title": "Sollte ich Anfrage-Engineering lernen?",
+                "description": "Sie könnten. Aber Sie sind beschäftigt. BettrPrompt integriert Dutzende bewährter Rahmen, damit Sie sie nicht auswendig lernen müssen. Beschreiben Sie, was Sie brauchen - wir kümmern uns um den Rest."
+            }
+        },
+        "howItWorks": {
+            "title": "Wie es funktioniert",
+            "subtitle": "Drei einfache Schritte für bessere KI-Anfragen",
+            "step1": {
+                "title": "Beschreiben Sie Ihre Herausforderung",
+                "description": "Was möchten Sie erreichen? Ein Projekt planen? Eine Entscheidung treffen? Ein Problem lösen? Beschreiben Sie Ihr Ziel in einfacher Sprache."
+            },
+            "step2": {
+                "title": "Beantworten Sie einige Fragen",
+                "description": "Wir strukturieren Ihr Denken - stellen die Fragen, die aufdecken, was Sie wirklich brauchen, nicht was Sie denken zu brauchen. Hier wird Vages konkret."
+            },
+            "step3": {
+                "title": "Erhalten Sie Ihre optimierte Anfrage",
+                "description": "Kopieren Sie Ihre Anfrage in ChatGPT, Claude oder ein beliebiges KI-Tool. Sie ist für Ergebnisse gebaut und von Ihren Antworten geprägt - keine generische Vorlage."
+            }
+        },
+        "useCases": {
+            "title": "Wann BettrPrompt verwenden",
+            "subtitle": "Wenn Sie beschreiben können, was Sie erreichen möchten, helfen wir Ihnen dorthin.",
+            "workCareer": {
+                "title": "Arbeit & Karriere",
+                "subtitle": "Navigieren Sie die Gespräche und Entscheidungen, die Ihr Berufsleben prägen.",
+                "bullets": [
+                    "Ihren Manager um eine Beförderung bitten",
+                    "Sich auf eine schwierige Beurteilung vorbereiten",
+                    "Ein komplexes Projekt an Ihr Team delegieren",
+                    "Einen Vorschlag schreiben, der skeptische Interessenvertreter überzeugt"
+                ]
+            },
+            "personalDecisions": {
+                "title": "Persönliche Entscheidungen",
+                "subtitle": "Bringen Sie Klarheit in die Entscheidungen, die am meisten zählen.",
+                "bullets": [
+                    "Entscheiden, ob Sie ein Jobangebot annehmen oder bleiben",
+                    "Eine große Lebensveränderung mit Ihrem Partner bewältigen",
+                    "Grenzen mit jemandem setzen, der Sie auslaugt",
+                    "Ein schwieriges Gespräch mit älteren Eltern planen"
+                ]
+            },
+            "learningDevelopment": {
+                "title": "Lernen & Entwicklung",
+                "subtitle": "Bauen Sie Fähigkeiten und Gewohnheiten auf eine Weise auf, die zu Ihrem Lernstil passt.",
+                "bullets": [
+                    "Einen Studienplan für eine berufliche Qualifikation erstellen",
+                    "Schnell in einer neuen Industrie in die Tiefe gehen",
+                    "Eine neue Sprache oder Fähigkeit von Grund auf lernen",
+                    "Eine nachhaltige Lese- oder Lerngewohnheit aufbauen"
+                ]
+            },
+            "creativeProjects": {
+                "title": "Kreative Projekte",
+                "subtitle": "Kommen Sie aus einer Sackgasse heraus und finden Sie Ihren Startpunkt.",
+                "bullets": [
+                    "Ein Roman, Drehbuch oder kreatives Projekt planen",
+                    "Eine Rede schreiben, die lustig, herzzerreißend oder beides ist",
+                    "Inhalte für ein neues Geschäft oder Nebenprojekt erstellen",
+                    "Ein unvergessliches Ereignis oder eine Feier entwerfen"
+                ]
+            },
+            "businessStrategy": {
+                "title": "Geschäft & Strategie",
+                "subtitle": "Durchdenken Sie hochrisikoreiche Entscheidungen mit Klarheit.",
+                "bullets": [
+                    "Eine Marketingstrategie für ein neues Produkt entwickeln",
+                    "Analysieren, ob Sie in einen neuen Markt expandieren",
+                    "Eine Vorstandspräsentation oder ein Investorenpitch vorbereiten",
+                    "Teamproduktivität oder Prozesse verbessern"
+                ]
+            },
+            "relationshipsCommunication": {
+                "title": "Beziehungen & Kommunikation",
+                "subtitle": "Bewältigen Sie zwischenmenschliche Dinge mit mehr Sicherheit.",
+                "bullets": [
+                    "Ein laufendes Konflikt mit Ihrem Partner lösen",
+                    "Schwieriges Feedback geben, ohne eine Beziehung zu beschädigen",
+                    "Ein bedeutsames Gespräch mit einem Teenager über ihre Zukunft führen",
+                    "Sich mit einem Freund wieder verbinden, von dem Sie sich entfernt haben"
+                ]
+            }
+        },
+        "example": {
+            "title": "Sehen Sie es in Aktion",
+            "subtitle": "Ein echtes Beispiel: Erstellen einer Marketingstrategie"
+        }
+    },
+    "pilot": {
+        "headTitle": "Treten Sie dem Pilotprogramm bei - BettrPrompt",
+        "hero": {
+            "line1": "Hören Sie auf zu raten.",
+            "line2": "Beginnen Sie, Ergebnisse von KI zu erhalten.",
+            "subtitle": "BettrPrompt stellt zuerst die richtigen Fragen - damit Ihre Anfragen wirklich funktionieren."
+        },
+        "problem": {
+            "title": "Das Problem",
+            "paragraph1": "Sie geben etwas in ChatGPT ein. Es ist nicht ganz richtig. Sie passen an, formulieren um, versuchen es erneut. Nach drei Versuchen haben Sie etwas Brauchbares - aber keine Ahnung, warum diese Version funktioniert.",
+            "paragraph2": "Sie tun nichts falsch. KI erwartet einfach, dass Sie genau wissen, was Sie wollen, bevor Sie es durchdacht haben."
+        },
+        "how": {
+            "title": "Wie BettrPrompt anders funktioniert",
+            "steps": {
+                "step1": {
+                    "title": "Wir fragen, bevor wir generieren.",
+                    "description": "Gezielte Fragen helfen Ihnen, das zu klären, was Sie tatsächlich brauchen - bevor wir etwas erstellen."
+                },
+                "step2": {
+                    "title": "Wir wählen aus über 60 bewährten Rahmen.",
+                    "description": "Intelligente Auswahl basierend auf Ihrer Aufgabe, nicht auf Vermutungen."
+                },
+                "step3": {
+                    "title": "Wir passen uns an Ihre Denkweise an.",
+                    "description": "Fragen, die auf Ihre Persönlichkeit abgestimmt sind, mit Transparenz über die Fragen, die wir stellen."
+                }
+            },
+            "result": "Das Ergebnis: eine strukturierte Anfrage, die bereit ist, in ChatGPT oder Claude eingefügt zu werden - die wirklich funktioniert."
+        },
+        "join": {
+            "title": "Treten Sie dem kostenlosen Pilot bei",
+            "description": "Wir laden eine kleine Gruppe ein, BettrPrompt vor der öffentlichen Einführung zu testen. Ihr Feedback wird das Produkt prägen.",
+            "commitmentTitle": "Die Verpflichtung:",
+            "commitments": {
+                "use": "Verwenden Sie BettrPrompt 2 Wochen lang",
+                "feedback": "Senden Sie am Ende kurzes Feedback"
+            },
+            "note": "Das war's. Keine Kosten. Keine Verpflichtung weiterzumachen.",
+            "ctaRegister": "Treten Sie dem Pilotprogramm bei",
+            "ctaInvite": "Eine Einladung anfordern"
+        },
+        "footer": {
+            "questions": "Fragen?",
+            "contact": "Kontaktieren Sie uns"
+        }
+    },
+    "pricing": {
+        "pageTitle": "Preisgestaltung",
+        "title": "Einfache, transparente Preisgestaltung",
+        "subtitle": "Wählen Sie den Plan, der zu Ihnen passt",
+        "tagline": "Kostenlos starten, upgraden wenn nötig",
+        "currency": "EUR",
+        "popularBadge": "Am beliebtesten",
+        "monthly": "Monatlich",
+        "yearly": "Jährlich",
+        "save": "{percent}% sparen",
+        "billing": {
+            "monthly": "Monatlich",
+            "yearly": "Jährlich"
+        },
+        "period": {
+            "month": "Monat",
+            "year": "Jahr"
+        },
+        "actions": {
+            "processing": "Wird verarbeitet..."
+        },
+        "free": {
+            "name": "Kostenlos",
+            "price": "0",
+            "period": "für immer",
+            "description": "Perfekt zum Ausprobieren von BettrPrompt",
+            "cta": "Erste Schritte"
+        },
+        "pro": {
+            "name": "Pro",
+            "priceMonthly": "12",
+            "priceYearly": "99",
+            "period": "pro Monat",
+            "periodYearly": "pro Jahr",
+            "description": "Für Power-User, die die besten Ergebnisse möchten",
+            "cta": "Pro starten",
+            "yearlySavings": "{amount} / {period} - {percent}% sparen"
+        },
+        "features": {
+            "title": "Alle Funktionen enthalten",
+            "unlimited": "Unbegrenzte Anfragen",
+            "priority": "Prioritätsverarbeitung",
+            "privacy": "Datenschutzverschlüsselung",
+            "support": "Prioritätssupport"
+        },
+        "faq": {
+            "title": "Häufig gestellte Fragen",
+            "items": {
+                "limit": {
+                    "question": "Was passiert, wenn ich mein kostenloses Limit erreiche?",
+                    "answer": "Kostenlose Konten sind auf 10 Anfragen pro Monat begrenzt. Ihr Limit wird am ersten Tag des Monats zurückgesetzt. Sie können jederzeit auf Pro upgraden, um unbegrenzte Anfragen zu erhalten."
+                },
+                "privacy": {
+                    "question": "Was ist Datenschutzverschlüsselung?",
+                    "answer": "Pro-Benutzer erhalten ihre Anfragedaten im Ruhezustand verschlüsselt. Dies bedeutet, dass Ihre Anfragen und Antworten mit Verschlüsselungsschlüsseln geschützt sind, die nur Sie kontrollieren, um maximale Datenschutz für sensible Aufgaben zu gewährleisten."
+                },
+                "cancel": {
+                    "question": "Kann ich mein Abonnement stornieren?",
+                    "answer": "Ja, Sie können jederzeit kündigen. Sie behalten Pro-Zugriff bis zum Ende Ihres aktuellen Abrechnungszeitraums, dann werden Sie zum kostenlosen Plan verschoben."
+                },
+                "payment": {
+                    "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+                    "answer": "Wir akzeptieren alle großen Kredit- und Debitkarten sowie Apple Pay und Google Pay über unseren sicheren Zahlungsanbieter Stripe."
+                }
+            }
+        }
+    },
+    "feedback": {
+        "create": {
+            "title": "Feedback",
+            "heading": "Feedback",
+            "intro": {
+                "title": "Wir würden gerne von Ihnen hören!",
+                "description": "Ihr Feedback hilft uns zu entscheiden, ob wir dieses Projekt verbessern - oder aufgeben! Seien Sie bitte ehrlich."
+            },
+            "errors": {
+                "title": "Bitte beheben Sie die folgenden Fehler",
+                "labels": {
+                    "experienceLevel": "Erfahrungsniveau:",
+                    "usefulness": "Nützlichkeit:",
+                    "usageIntent": "Verwendungswahrscheinlichkeit:",
+                    "suggestions": "Vorschläge:",
+                    "desiredFeatures": "Funktionen:",
+                    "desiredFeaturesOther": "Funktionsbeschreibung:"
+                }
+            },
+            "actions": {
+                "submit": "Feedback senden"
+            }
+        },
+        "show": {
+            "title": "Ihr Feedback",
+            "heading": "Ihr Feedback",
+            "thankYou": "Danke für Ihr Feedback!",
+            "subtitle": "Sie können Ihre Antworten jederzeit aktualisieren.",
+            "lastUpdated": "Zuletzt aktualisiert: {date}",
+            "actions": {
+                "edit": "Antworten bearbeiten",
+                "update": "Feedback aktualisieren"
+            }
+        },
+        "thankYou": {
+            "title": "Danke für Ihr Feedback",
+            "heading": "Vielen Dank!",
+            "message": {
+                "title": "Danke für Ihr Feedback!",
+                "subtitle": "Ihre Einsichten sind sehr willkommen."
+            },
+            "referral": {
+                "title": "Laden Sie einen Freund zum Testen ein",
+                "descriptionPrefix": "Kennen Sie jemanden, der von personalisierten KI-Anfragen profitieren könnte? Teilen Sie Ihren eindeutigen Empfehlungslink mit ihm. Er kann den Service testen bis",
+                "deadline": "31. Januar 2026",
+                "linkLabel": "Ihr Empfehlungslink"
+            },
+            "actions": {
+                "copy": "Kopieren",
+                "copied": "Kopiert!"
+            },
+            "trial": {
+                "title": "Test-Deadline",
+                "descriptionPrefix": "Freunde, die sich mit Ihrem Link anmelden, können den Service testen bis",
+                "descriptionSuffix": "Teilen Sie per E-Mail, WhatsApp oder einer anderen direkten Messaging-Plattform, posten Sie aber bitte nicht öffentlich (da dies noch ein Test-Service ist)."
+            }
+        },
+        "questions": {
+            "experience": {
+                "label": "1. Wie erfahren sind Sie mit KI-Tools wie ChatGPT oder Claude?",
+                "left": "Anfänger",
+                "right": "Erfahren"
+            },
+            "usefulness": {
+                "label": "2. Wie nützlich war die App zur Verbesserung Ihrer Anfrage?",
+                "left": "Nicht nützlich",
+                "right": "Äußerst nützlich"
+            },
+            "usageIntent": {
+                "label": "3. Wie wahrscheinlich ist es, dass Sie diese App das nächste Mal verwenden, wenn Sie mit einem KI-Assistenten arbeiten müssen?",
+                "left": "Sehr unwahrscheinlich",
+                "right": "Sehr wahrscheinlich"
+            },
+            "suggestions": {
+                "label": "4. Was würden Sie an der App ändern oder verbessern?",
+                "placeholder": "Erwähnen Sie alle Schritte, die Sie verwirrt haben, oder Funktionen, die Sie gerne später sehen möchten."
+            },
+            "features": {
+                "label": "5. Welche Funktionen möchten Sie am meisten als nächstes hinzugefügt sehen?",
+                "hint": "(Wählen Sie mindestens eine)",
+                "hintAll": "(Wählen Sie alle zutreffend aus)",
+                "note": "Wenn Sie \"Sonstiges\" auswählen, beschreiben Sie bitte die Funktion, die Sie sehen möchten."
+            }
+        },
+        "features": {
+            "documentUpload": {
+                "label": "Dokumente und/oder Bilder hochladen",
+                "description": "Laden Sie Dateien und Bilder hoch, um Kontext für die Anfragegenerierung bereitzustellen, z. B. Dokumente analysieren oder Anfragen auf Basis von visuellem Inhalt verfeinern."
+            },
+            "templates": {
+                "label": "Anfrage-Vorlagenbibliothek",
+                "description": "Vorgefertigte Vorlagen für häufige Anwendungsfälle (Schreiben, Datenanalyse, Code-Überprüfung, usw.)"
+            },
+            "compare": {
+                "label": "Anfrage-Versionen Seite an Seite vergleichen",
+                "description": "Visuelles Vergleichstool, das Unterschiede zwischen Anfrageverssen und deren Effektivität zeigt"
+            },
+            "apiIntegration": {
+                "label": "Integration mit ChatGPT/Claude APIs",
+                "description": "Testen Sie Anfragen direkt mit KI-Modellen, sehen Sie echte Antworten und iterieren Sie in der App"
+            },
+            "collaboration": {
+                "label": "Team-Zusammenarbeitsfunktionen",
+                "description": "Teilen Sie Anfragen in Ihrer Organisation, fügen Sie Kommentare hinzu, verfolgen Sie Versionen und verwalten Sie Berechtigungen"
+            },
+            "modelSpecific": {
+                "label": "Modellspezifische KI-Optimierung",
+                "description": "Passen Sie Anfragen für spezifische Modelle an (GPT-4, Claude, Gemini) mit ihren einzigartigen Formatierungen und Einstellungen"
+            },
+            "other": {
+                "label": "Sonstiges",
+                "description": "Etwas anderes? Lassen Sie uns wissen, was Sie sehen möchten!"
+            }
+        }
+    },
+    "subscription": {
+        "pageTitle": "Abonnement-Einstellungen",
+        "heading": "Abonnement",
+        "backToProfile": "Zurück zu Profil",
+        "currentPlan": "Aktueller Plan",
+        "manage": "Abonnement verwalten",
+        "updatePayment": "Zahlungsmethode aktualisieren",
+        "cancel": "Abonnement stornieren",
+        "resume": "Abonnement fortsetzen",
+        "actions": {
+            "upgrade": "Auf Pro upgraden"
+        },
+        "cancelConfirm": {
+            "title": "Abonnement stornieren?",
+            "description": "Sie behalten Pro-Zugriff bis zum Ende Ihres aktuellen Abrechnungszeitraums. Danach werden Sie zum kostenlosen Plan mit 10 Anfragen pro Monat verschoben.",
+            "keep": "Abonnement beibehalten",
+            "confirm": "Abonnement stornieren",
+            "processing": "Wird storniert..."
+        },
+        "status": {
+            "active": "Aktives Abonnement",
+            "cancelling": "Endet am {date}",
+            "promptsRemaining": "{count} von {total} Anfragen verbleibend diesen Monat",
+            "promptsUsed": "{used}/{total} Anfragen verwendet"
+        },
+        "billing": {
+            "title": "Rechnungsverlauf",
+            "download": "Download"
+        },
+        "success": {
+            "title": "Willkommen bei Pro!",
+            "description": "Sie haben jetzt unbegrenzte Anfragen und Datenschutzverschlüsselung. Beginnen Sie mit dem Erstellen leistungsstarker, persönlichkeitskalibrierter Anfragen!",
+            "cta": "Anfragen erstellen"
+        },
+        "cancelled": {
+            "title": "Checkout abgebrochen",
+            "heading": "Checkout abgebrochen",
+            "description": "{message} Keine Sorge - Sie können weiterhin die kostenlose Version verwenden oder es später erneut versuchen.",
+            "actions": {
+                "continueFree": "Kostenlos fortfahren",
+                "viewPricing": "Preisgestaltung anzeigen"
+            }
+        }
+    },
+    "privacy": {
+        "pageTitle": "Datenschutzeinstellungen",
+        "title": "Datenschutzverschlüsselung",
+        "backToProfile": "Zurück zu Profil",
+        "proRequired": {
+            "title": "Pro-Funktion",
+            "description": "Datenschutzverschlüsselung ist ausschließlich für Pro-Abonnenten verfügbar. Ihre Anfragedaten und persönlichen Informationen werden im Ruhezustand verschlüsselt, sodass nur Sie auf Ihre Daten zugreifen können."
+        },
+        "status": {
+            "title": "Verschlüsselungsstatus",
+            "enabled": "Verschlüsselung aktiviert",
+            "enabledOn": "Aktiviert am {date}",
+            "enabledDescription": "Ihre Anfragedaten sind verschlüsselt. Nur Sie können auf Ihre Daten zugreifen, indem Sie Ihr Passwort eingeben.",
+            "notEnabled": "Verschlüsselung nicht aktiviert",
+            "notEnabledDescription": "Ihre Daten werden ohne End-to-End-Verschlüsselung gespeichert",
+            "enableDescription": "Aktivieren Sie Datenschutzverschlüsselung, um Ihre Anfragedaten im Ruhezustand zu schützen. Nach der Aktivierung werden Ihre Daten mit einem von Ihrem Passwort abgeleiteten Schlüssel verschlüsselt."
+        },
+        "actions": {
+            "enable": "Verschlüsselung aktivieren",
+            "disable": "Verschlüsselung deaktivieren"
+        },
+        "howItWorks": {
+            "title": "Wie Datenschutzverschlüsselung funktioniert",
+            "step1": {
+                "title": "Passwortgeschützter Schlüssel",
+                "description": "Ein eindeutiger Verschlüsselungsschlüssel wird generiert und durch Ihr Kontopasswort geschützt."
+            },
+            "step2": {
+                "title": "Wiederherstellungsphrase",
+                "description": "Sie erhalten eine 12-Wort-Wiederherstellungsphrase, die Zugriff wiederherstellt, wenn Sie Ihr Passwort vergessen."
+            },
+            "step3": {
+                "title": "Verschlüsselt im Ruhezustand",
+                "description": "Alle Ihre Anfragedaten werden vor dem Speichern verschlüsselt. Ohne Ihr Passwort sind die Daten unlesbar."
+            }
+        },
+        "setup": {
+            "title": "Datenschutzverschlüsselung aktivieren",
+            "savePhrase": {
+                "title": "Wichtig: Speichern Sie Ihre Wiederherstellungsphrase",
+                "description": "Schreiben Sie diese 12 Wörter in Reihenfolge auf. Dies ist die {0} zur Wiederherstellung Ihrer Daten, wenn Sie Ihr Passwort vergessen. Speichern Sie es sicher und teilen Sie es niemals.",
+                "emphasis": "einzige Möglichkeit"
+            },
+            "yourPhrase": "Ihre Wiederherstellungsphrase",
+            "copyPhrase": "In Zwischenablage kopieren",
+            "confirmWritten": "Ich habe meine Wiederherstellungsphrase notiert und sicher gespeichert",
+            "confirmTitle": "Bestätigen Sie Ihre Wiederherstellungsphrase",
+            "confirmDescription": "Geben Sie die Wörter an den angegebenen Positionen ein, um zu bestätigen, dass Sie Ihre Wiederherstellungsphrase gespeichert haben.",
+            "wordNumber": "Wort #{number}",
+            "enterPassword": "Geben Sie Ihr Kontopasswort ein"
+        },
+        "unlock": {
+            "title": "Entsperren Sie Ihre Daten",
+            "forgotPassword": "Passwort vergessen? Wiederherstellungsphrase verwenden",
+            "submit": "Entsperren"
+        },
+        "recovery": {
+            "title": "Stellen Sie Ihre Daten wieder her",
+            "description": "Geben Sie Ihre 12-Wort-Wiederherstellungsphrase ein, um auf Ihre verschlüsselten Daten zuzugreifen. Sie müssen auch ein neues Passwort festlegen.",
+            "phraseLabel": "Wiederherstellungsphrase",
+            "newPasswordLabel": "Neues Passwort",
+            "confirmPasswordLabel": "Neues Passwort bestätigen",
+            "submit": "Konto wiederherstellen"
+        },
+        "disable": {
+            "title": "Datenschutzverschlüsselung deaktivieren?",
+            "description": "Dies wird alle Ihre gespeicherten Daten entschlüsseln. Ihre Anfragen werden nicht mehr im Ruhezustand verschlüsselt.",
+            "passwordLabel": "Geben Sie Ihr Passwort zur Bestätigung ein",
+            "confirmLabel": "Ich verstehe, dass meine Daten nicht mehr verschlüsselt werden",
+            "processing": "Wird deaktiviert..."
+        }
+    },
+    "promptBuilder": {
+        "title": "Anfrage-Generator",
+        "analysis": {
+            "title": "Anfrage-Analyse"
+        },
+        "actions": {
+            "createNew": "NEU ERSTELLEN"
+        },
+        "errors": {
+            "submitTitle": "Fehler beim Senden der Anfrage",
+            "submitFailed": "Anfrage konnte nicht gesendet werden. Überprüfen Sie bitte Ihre Verbindung und versuchen Sie es erneut.",
+            "retryFailed": "Fehler beim Wiederholen der Generierung. Bitte versuchen Sie es erneut."
+        },
+        "messages": {
+            "preAnalysisSkippedTitle": "Ausgezeichnet! Ihre Aufgabe ist klar",
+            "preAnalysisSkippedDescription": "Ihre Aufgabenbeschreibung ist ausreichend klar, um direkt zur Hauptanalyse überzugehen. Wir wählen nun das beste Anfrage-Rahmenwerk für Sie aus."
+        },
+        "tabs": {
+            "task": "Ihre Aufgabe",
+            "framework": "Rahmenwerk",
+            "frameworkMobile": "Ausgewähltes Rahmenwerk",
+            "personality": "Persönlichkeit",
+            "questions": "Fragen",
+            "recommendations": "Empfehlungen",
+            "costs": "Kosten",
+            "prompt": "Optimierte Anfrage"
+        },
+        "confirmations": {
+            "deletePromptRun": {
+                "title": "Anfrage-Durchlauf löschen",
+                "message": "Sind Sie sicher, dass Sie diesen Anfrage-Durchlauf löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+            }
+        },
+        "history": {
+            "title": "Anfrage-Verlauf",
+            "empty": {
+                "title": "Noch kein Anfrage-Verlauf.",
+                "cta": "Erstellen Sie Ihre erste optimierte Anfrage"
+            },
+            "table": {
+                "personalityType": "Persönlichkeitstyp",
+                "taskDescription": "Aufgabenbeschreibung",
+                "framework": "Rahmenwerk",
+                "status": "Status",
+                "created": "Erstellt"
+            },
+            "pagination": {
+                "previous": "Zurück",
+                "next": "Weiter",
+                "pageOf": "Seite {current} von {total}",
+                "resultsSummary": "Zeige {0} bis {1} von {2} Ergebnissen",
+                "show": "Zeige",
+                "perPage": "pro Seite",
+                "ariaLabel": "Paginierung"
+            }
+        },
+        "components": {
+            "taskDescriptionForm": {
+                "intro": "Sagen Sie uns, was Sie erreichen möchten.",
+                "withPersonality": "Wir passen die Anfrage an Ihren Persönlichkeitstyp an.",
+                "withoutPersonality": "Fügen Sie Ihren Persönlichkeitstyp für gezielteren Fragen hinzu.",
+                "profileHint": "Besuchen Sie Ihre {link}, um Ihren Persönlichkeitstyp hinzuzufügen.",
+                "profileHintLink": "Profileinstellungen",
+                "label": "Aufgabenbeschreibung",
+                "helpText": "Beziehen Sie Kontext, Einschränkungen und das gewünschte Ergebnis ein.",
+                "placeholder": "Beschreiben Sie Ihre Aufgabe ausführlich...",
+                "processing": "Wird analysiert...",
+                "submit": "Aufgabe analysieren"
+            },
+            "personalityTypePrompt": {
+                "title": "Möchten Sie gezielteren Anfragen?",
+                "description": "Fügen Sie Ihren Persönlichkeitstyp hinzu, um Ihre Anfragen zu personalisieren. Machen Sie den kostenlosen Test auf {link}.",
+                "linkText": "16personalities.com",
+                "addButton": "Persönlichkeitstyp hinzufügen",
+                "maybeLater": "Vielleicht später",
+                "maybeLaterNotification": "Kein Problem - Ihre Anfrage funktioniert trotzdem. Sie können Ihren Persönlichkeitstyp später hinzufügen.",
+                "label": "Persönlichkeitstyp:"
+            },
+            "questionAnsweringForm": {
+                "progressLabel": "Frage {current} von {total}",
+                "percentComplete": "{percent}% abgeschlossen",
+                "answerLabel": "Ihre Antwort",
+                "answerPlaceholder": "Geben Sie Ihre Antwort hier ein...",
+                "submitAll": "Alle Antworten senden",
+                "nextQuestion": "Nächste Frage"
+            },
+            "selectedFramework": {
+                "title": "Ausgewähltes Rahmenwerk",
+                "components": "Rahmenwerk-Komponenten",
+                "rationale": "Warum dieses Rahmenwerk",
+                "proceed": "Zu den Fragen fortfahren"
+            },
+            "recommendations": {
+                "title": "Empfehlungen",
+                "models": {
+                    "title": "Empfohlene KI-Modelle"
+                },
+                "iterations": {
+                    "title": "Iterationsvorschläge",
+                    "description": "Wenn die Ergebnisse nicht ganz das sind, was Sie brauchen, versuchen Sie diese Verfeinerungen:"
+                },
+                "empty": "Keine Empfehlungen verfügbar"
+            },
+            "taskClassification": {
+                "title": "Klassifikation",
+                "category": "Kategorie",
+                "complexity": "Komplexität",
+                "reasoning": "Begründung"
+            },
+            "cognitiveRequirements": {
+                "title": "Kognitive Anforderungen",
+                "primary": "Primäre Anforderungen",
+                "secondary": "Sekundäre Anforderungen",
+                "reasoning": "Begründung"
+            },
+            "relatedPromptRuns": {
+                "title": "Zugehörige Anfrage-Optimierungen",
+                "parent": "Übergeordnete Anfrage",
+                "children": "Untergeordnete Anfragen ({count})",
+                "promptId": "Anfrage-ID ({id})",
+                "created": "Erstellt {date}"
+            },
+            "optimizedPrompt": {
+                "title": "Ihre optimierte Anfrage",
+                "copy": "In Zwischenablage kopieren",
+                "showSource": "Quelle anzeigen",
+                "showPreview": "Vorschau anzeigen",
+                "edit": "Anfrage bearbeiten",
+                "saveChanges": "Änderungen speichern",
+                "label": "Optimierte Anfrage",
+                "useProvider": "Mit KI-Anbieter verwenden"
+            },
+            "aiProviderLinks": {
+                "description": "Klicken Sie auf einen Anbieter, um Ihre optimierte Anfrage zu kopieren und seinen Chat in einem neuen Tab zu öffnen. Fügen Sie dann Ihre Anfrage ein, um eine bessere Antwort zu erhalten:",
+                "copied": "Anfrage kopiert! Öffne {provider}...",
+                "openTitle": "Öffne {provider} (Anfrage in Zwischenablage kopiert)"
+            },
+            "alternativeFrameworks": {
+                "title": "Alternative Rahmenwerke",
+                "whenToUse": "Wann verwendet:",
+                "useButton": "Dieses Rahmenwerk verwenden",
+                "empty": "Keine Rahmenwerk-Alternativen vorgeschlagen",
+                "confirm": {
+                    "title": "Rahmenwerk wechseln",
+                    "message": "Dies erstellt einen neuen Anfrage-Durchlauf mit diesem Rahmenwerk. Die Analyse wird mit rahmenwerk-spezifischen Fragen erneut ausgeführt. Fortfahren?"
+                }
+            },
+            "answeredList": {
+                "title": "Ihre bisherigen Antworten",
+                "skipped": "Übersprungen"
+            },
+            "bulkQuestions": {
+                "submitAll": "Alle Antworten senden",
+                "backToSingle": "Zurück zu eins nach dem anderen",
+                "answerLabel": "Antwort {number}",
+                "answerPlaceholder": "Geben Sie Ihre Antwort ein oder nehmen Sie eine schnelle Notiz auf..."
+            },
+            "clarifyingQuestions": {
+                "title": "Klärungsfragen",
+                "allQuestions": "Alle Fragen anzeigen",
+                "singleQuestion": "Eins nach dem anderen",
+                "edit": "Antworten bearbeiten",
+                "cancelEdit": "Bearbeitung abbrechen",
+                "submitAll": "Alle Antworten senden",
+                "submitEdited": "Anfrage mit geänderten Antworten optimieren",
+                "optionalQuestion": "{count} optionale Frage (zur Verbesserung Ihrer Anfrage)",
+                "optionalQuestions": "{count} optionale Fragen (zur Verbesserung Ihrer Anfrage)",
+                "rationale": {
+                    "show": "Fragelogik anzeigen",
+                    "hide": "Fragelogik verbergen"
+                },
+                "errors": {
+                    "save": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+                    "submit": "Fehler beim Senden der Antworten.",
+                    "edit": "Fehler bei der Optimierung mit geänderten Antworten. Bitte versuchen Sie es erneut."
+                }
+            },
+            "preAnalysisQuestions": {
+                "title": "Schnelle Abfragen",
+                "edit": "Antworten bearbeiten",
+                "optimise": "Anfrage optimieren",
+                "generateNewPrompt": "Neue Anfrage generieren",
+                "otherOption": "Sonstiges (bitte spezifizieren)",
+                "answerLabel": "Antwort {number}",
+                "answerPlaceholder": "Geben Sie Ihre Antwort hier ein...",
+                "additionalDetailsLabel": "Zusätzliche Details (optional):",
+                "additionalDetailsPlaceholder": "Fügen Sie zusätzliche Informationen hinzu...",
+                "characterCount": "{count}/{max} Zeichen",
+                "errors": {
+                    "submit": "Fehler beim Senden der Antworten. Bitte versuchen Sie es erneut.",
+                    "continue": "Fehler beim Fortfahren zur Analyse. Bitte versuchen Sie es erneut."
+                },
+                "rationale": {
+                    "show": "Fragelogik anzeigen",
+                    "hide": "Fragelogik verbergen"
+                }
+            },
+            "taskInformation": {
+                "title": "Ihre Aufgabe",
+                "editTitle": "Aufgabe bearbeiten und neue Optimierung erstellen",
+                "editAction": "Aufgabe bearbeiten",
+                "descriptionLabel": "Aufgabenbeschreibung",
+                "descriptionEditLabel": "Aufgabenbeschreibung bearbeiten",
+                "descriptionPlaceholder": "Beschreiben Sie die Aufgabe, für die Sie eine Anfrage erstellen möchten...",
+                "optimise": "Anfrage optimieren"
+            },
+            "taskTraitAlignment": {
+                "title": "Aufgabe-Merkmal-Ausrichtung",
+                "amplified": "Verstärkte Merkmale (Stärken genutzt)",
+                "alignsWith": "passt zu {requirement}",
+                "counterbalanced": "Ausgleichende Merkmale (angepasst für)",
+                "opposes": "widersetzt sich {requirement}",
+                "adjustmentApplied": "Anpassung angewendet:",
+                "neutral": "Neutrale Merkmale ({count})"
+            },
+            "personalityAdjustments": {
+                "title": "Persönlichkeitsanpassungen",
+                "level": "Anpassungsstufe",
+                "applied": "Anpassungen angewendet",
+                "tiers": {
+                    "full": "Vollständig",
+                    "partial": "Teilweise",
+                    "none": "Keine"
+                }
+            },
+            "personalityAdjustmentsSummary": {
+                "title": "Angewendete Persönlichkeitsanpassungen"
+            },
+            "apiUsage": {
+                "title": "API-Nutzung",
+                "preAnalysis": "Pré-Analyse-Workflow",
+                "analysis": "Analyse-Workflow",
+                "generation": "Generierungs-Workflow",
+                "pass": "Durchgang {number}",
+                "modelLabel": "Modell:",
+                "inputTokensLabel": "Eingabe-Token:",
+                "outputTokensLabel": "Ausgabe-Token:",
+                "totalLabel": "Gesamt:",
+                "costLabel": "Kosten:",
+                "model": "Modell",
+                "inputTokens": "Eingabe-Token",
+                "outputTokens": "Ausgabe-Token",
+                "total": "Gesamt",
+                "costHeader": "Kosten (EUR)",
+                "combinedTotalLabel": "Gesamtsumme:",
+                "totalCostLabel": "Gesamtkosten:",
+                "tokens": "{count} Token",
+                "summary": "Zusammenfassung",
+                "combinedTotal": "Gesamtsumme",
+                "empty": "Keine API-Nutzungsdaten verfügbar"
+            }
+        },
+        "progress": {
+            "almostDone": "Fast fertig",
+            "secondsRemaining": "{seconds} Sekunden verbleibend",
+            "percentComplete": "{percent}% abgeschlossen",
+            "timeRemaining": "Verbleibende Zeit: {time}",
+            "preAnalysis": {
+                "title": "Schnelle Fragen vorbereiten",
+                "subtitle": "Klärung Ihrer Aufgabe vor der Analyse.",
+                "pipeline": "Pré-Analyse-Pipeline",
+                "stages": {
+                    "understand": {
+                        "label": "Verstehen",
+                        "activity": "Ihre Aufgabe verstehen",
+                        "description": "Überprüfung Ihrer Beschreibung und Absicht."
+                    },
+                    "identify": {
+                        "label": "Identifizieren",
+                        "activity": "Fehlende Details identifizieren",
+                        "description": "Nach Lücken im Kontext suchen."
+                    },
+                    "prepare": {
+                        "label": "Vorbereiten",
+                        "activity": "Fragen vorbereiten",
+                        "description": "Schnelle Klärungsfragen ausarbeiten."
+                    }
+                }
+            },
+            "analysis": {
+                "title": "Ihre Aufgabe analysieren",
+                "subtitle": "Auswahl des besten Rahmenwerks für Ihr Ziel.",
+                "pipeline": "Analyse-Pipeline",
+                "stages": {
+                    "classifying": {
+                        "label": "Klassifizieren",
+                        "activity": "Aufgabe klassifizieren",
+                        "description": "Bestimmung des Aufgabentyps und der Komplexität."
+                    },
+                    "analyzing": {
+                        "label": "Analysieren",
+                        "activity": "Anforderungen analysieren",
+                        "description": "Identifikation von Einschränkungen und Absicht."
+                    },
+                    "framework": {
+                        "label": "Rahmenwerk",
+                        "activity": "Rahmenwerk auswählen",
+                        "description": "Auswahl der besten Struktur für Ihre Anfrage."
+                    },
+                    "personalizing": {
+                        "label": "Personalisieren",
+                        "activity": "Anfrage personalisieren",
+                        "description": "Anpassung des Tons an Ihre Einstellungen."
+                    },
+                    "questions": {
+                        "label": "Fragen",
+                        "activity": "Fragen vorbereiten",
+                        "description": "Klärungsfragen ausarbeiten."
+                    }
+                }
+            },
+            "generation": {
+                "title": "Ihre Anfrage generieren",
+                "subtitle": "Erstellung einer strukturierten Anfrage mit Ihren Antworten.",
+                "pipeline": "Generierungs-Pipeline",
+                "errorTitle": "Generierung fehlgeschlagen",
+                "errorDescription": "Bitte versuchen Sie es erneut. Wenn das Problem besteht, aktualisieren Sie die Seite.",
+                "retryButton": "Erneut versuchen",
+                "backButton": "Zurück",
+                "stages": {
+                    "framework": {
+                        "label": "Rahmenwerk",
+                        "activity": "Rahmenwerk anwenden",
+                        "description": "Strukturierung der Anfrage."
+                    },
+                    "personality": {
+                        "label": "Persönlichkeit",
+                        "activity": "Ton anpassen",
+                        "description": "Ausrichtung mit Ihrem Stil."
+                    },
+                    "context": {
+                        "label": "Kontext",
+                        "activity": "Kontext hinzufügen",
+                        "description": "Einbeziehung Ihrer Details."
+                    },
+                    "prompt": {
+                        "label": "Anfrage",
+                        "activity": "Anfrage ausarbeiten",
+                        "description": "Zusammenstellung der endgültigen Ausgabe."
+                    },
+                    "final": {
+                        "label": "Abschließen",
+                        "activity": "Ausgabe abschließen",
+                        "description": "Verfeinerung und Formatierung."
+                    }
+                }
+            }
+        },
+        "taskInput": {
+            "label": "Was möchten Sie erreichen?",
+            "placeholder": "Beschreiben Sie Ihre Aufgabe ausführlich...",
+            "submit": "Aufgabe analysieren"
+        },
+        "processing": {
+            "analysing": "Ihre Aufgabe wird analysiert...",
+            "generating": "Ihre optimierte Anfrage wird generiert..."
+        },
+        "result": {
+            "title": "Ihre optimierte Anfrage",
+            "copy": "Anfrage kopieren",
+            "tryAgain": "Eine andere Aufgabe versuchen"
+        },
+        "admin": {
+            "promptRun": "Anfrage-Durchlauf",
+            "backToTasks": "Zurück zu Aufgaben"
+        }
+    },
+    "admin": {
+        "dashboard": {
+            "title": "Admin-Dashboard",
+            "stats": {
+                "users": "Gesamtbenutzer",
+                "promptRuns": "Gesamt-Anfrage-Durchläufe",
+                "uniqueTasks": "Eindeutige Aufgaben",
+                "completedRuns": "Abgeschlossene Durchläufe"
+            },
+            "links": {
+                "users": {
+                    "title": "Benutzer verwalten",
+                    "subtitle": "Benutzerkonten anzeigen und verwalten"
+                },
+                "tasks": {
+                    "title": "Aufgabe-Einblicke",
+                    "subtitle": "Überprüfung häufiger Aufgaben und Anfrage-Durchläufe"
+                }
+            }
+        }
+    },
+    "profile": {
+        "title": "Profileinstellungen",
+        "sections": {
+            "personal": "Persönliche Informationen",
+            "location": "Standort",
+            "professional": "Beruflich",
+            "team": "Team",
+            "preferences": "Einstellungen"
+        },
+        "profileInfo": {
+            "title": "Profilinformationen",
+            "subtitle": "Aktualisieren Sie Ihren Namen und Ihre E-Mail-Adresse.",
+            "fields": {
+                "name": "Name",
+                "email": "E-Mail"
+            },
+            "emailVerification": {
+                "notice": "Ihre E-Mail-Adresse ist nicht verifiziert.",
+                "resend": "Klicken Sie hier, um die Verifikations-E-Mail erneut zu senden."
+            },
+            "notifications": {
+                "updated": "Profilinformationen erfolgreich aktualisiert"
+            }
+        },
+        "password": {
+            "title": "Passwort aktualisieren",
+            "subtitle": "Stellen Sie sicher, dass Ihr Konto ein langes, zufälliges Passwort verwendet, um sicher zu bleiben.",
+            "fields": {
+                "current": "Aktuelles Passwort",
+                "new": "Neues Passwort",
+                "confirm": "Passwort bestätigen"
+            },
+            "notifications": {
+                "updated": "Passwort erfolgreich aktualisiert"
+            }
+        },
+        "personality": {
+            "title": "Ihre Persönlichkeit",
+            "subtitle": "Aktualisieren Sie Ihren Persönlichkeitstyp, um gezielteren Anfragen zu erhalten.",
+            "fields": {
+                "type": "Persönlichkeitstyp",
+                "identity": "Identität"
+            },
+            "placeholders": {
+                "type": "Ihr Persönlichkeitstyp"
+            },
+            "identity": {
+                "assertive": "Selbstbewusst (A)",
+                "turbulent": "Volatil (T)",
+                "help": "Bitte wählen Sie \"Selbstbewusst\" oder \"Volatil\" zur Vervollständigung Ihres Persönlichkeitstyps"
+            },
+            "selected": "Ausgewählt: {type}",
+            "traits": {
+                "toggleAdd": "+ Hinzufügen",
+                "toggleHide": "- Verbergen",
+                "label": "Merkmal-Prozentsätze (optional)",
+                "sourcePrefix": "Geben Sie Ihre Merkmal-Prozentsätze ein von",
+                "sourceLink": "16personalities.com",
+                "fields": {
+                    "mind": "Introversion/Extraversion",
+                    "energy": "Intuitiv/Beobachtend",
+                    "nature": "Denken/Fühlen",
+                    "tactics": "Urteil/Wahrnehmen",
+                    "identity": "Selbstbewusst/Volatil"
+                }
+            },
+            "actions": {
+                "enterTask": "Geben Sie Ihre Aufgabe ein"
+            },
+            "notifications": {
+                "updated": "Persönlichkeitstyp erfolgreich aktualisiert",
+                "cleared": "Persönlichkeitsinformationen gelöscht",
+                "clearFailed": "Fehler beim Löschen der Persönlichkeitsinformationen"
+            },
+            "clearConfirm": {
+                "title": "Persönlichkeitsinformationen löschen",
+                "message": "Sind Sie sicher, dass Sie alle Persönlichkeitsinformationen löschen möchten?"
+            }
+        },
+        "location": {
+            "title": "Standort & Sprache",
+            "subtitle": "Legen Sie Ihre Standort- und Spracheinstellungen fest für besser optimierte KI-Anfragen.",
+            "fields": {
+                "country": "Land",
+                "region": "Region/Bundesland",
+                "city": "Stadt",
+                "timezone": "Zeitzone",
+                "currency": "Währung",
+                "language": "Sprache"
+            },
+            "placeholders": {
+                "country": "Land auswählen",
+                "region": "z. B. Bayern, Kalifornien",
+                "city": "z. B. München, San Francisco",
+                "timezone": "Zeitzone auswählen",
+                "currency": "Währung auswählen",
+                "language": "Sprache auswählen"
+            },
+            "actions": {
+                "save": "Standort speichern",
+                "detect": "Automatische Erkennung"
+            },
+            "notifications": {
+                "updated": "Standort erfolgreich aktualisiert",
+                "detected": "Standort erfolgreich erkannt",
+                "detectFailed": "Standort konnte nicht erkannt werden",
+                "cleared": "Standort erfolgreich gelöscht",
+                "clearFailed": "Fehler beim Löschen des Standorts"
+            },
+            "clearConfirm": {
+                "title": "Standort löschen",
+                "message": "Sind Sie sicher, dass Sie alle Standortdaten löschen möchten?"
+            }
+        },
+        "professional": {
+            "title": "Beruflicher Kontext",
+            "subtitle": "Erzählen Sie uns von Ihrem beruflichen Hintergrund, um Anfragen für Ihre Rolle zu optimieren.",
+            "fields": {
+                "jobTitle": "Berufsbezeichnung",
+                "industry": "Branche",
+                "experienceLevel": "Erfahrungsstufe",
+                "companySize": "Unternehmensgröße"
+            },
+            "placeholders": {
+                "jobTitle": "z. B. Softwareentwickler, Produktmanager",
+                "industry": "z. B. Technologie",
+                "experienceLevel": "Wählen Sie Ihre Stufe",
+                "companySize": "Wählen Sie die Unternehmensgröße"
+            },
+            "help": {
+                "jobTitle": "Ihre aktuelle oder primäre Berufsbezeichnung",
+                "industry": "Ihre Branche oder Ihr Sektor"
+            },
+            "options": {
+                "entry": "Eintritt",
+                "mid": "Mittelstufe",
+                "senior": "Leitender Angestellter",
+                "expert": "Experte/Führungskraft"
+            },
+            "companySize": {
+                "solo": "Freiberufler/Solo",
+                "small": "Klein (2-10 Personen)",
+                "medium": "Mittel (11-100 Personen)",
+                "large": "Groß (100-1000 Personen)",
+                "enterprise": "Unternehmen (1000+ Personen)"
+            },
+            "actions": {
+                "save": "Beruflichen Kontext speichern"
+            },
+            "notifications": {
+                "updated": "Berufliche Informationen erfolgreich aktualisiert",
+                "cleared": "Berufliche Informationen gelöscht",
+                "clearFailed": "Fehler beim Löschen der beruflichen Informationen"
+            },
+            "clearConfirm": {
+                "title": "Beruflichen Kontext löschen",
+                "message": "Sind Sie sicher, dass Sie alle beruflichen Informationen löschen möchten?"
+            }
+        },
+        "team": {
+            "title": "Team & Arbeitskontext",
+            "subtitle": "Geben Sie Informationen über Ihre Teamstruktur und Arbeitsumgebung an.",
+            "fields": {
+                "teamSize": "Teamgröße",
+                "role": "Ihre Rolle",
+                "workMode": "Arbeitsmodus"
+            },
+            "placeholders": {
+                "teamSize": "Teamgröße auswählen",
+                "role": "Wählen Sie Ihre Rolle",
+                "workMode": "Arbeitsmodus auswählen"
+            },
+            "options": {
+                "size": {
+                    "solo": "Nur ich (Solo)",
+                    "small": "Klein (2-5 Personen)",
+                    "medium": "Mittel (6-20 Personen)",
+                    "large": "Groß (20+ Personen)"
+                },
+                "role": {
+                    "individual": "Einzelner Mitwirkender",
+                    "lead": "Teamleiter",
+                    "manager": "Manager",
+                    "director": "Direktor",
+                    "executive": "Geschäftsführer"
+                },
+                "mode": {
+                    "office": "Büro (vor Ort)",
+                    "hybrid": "Hybrid",
+                    "remote": "Fernarbeit",
+                    "freelance": "Freiberuflich"
+                }
+            },
+            "actions": {
+                "save": "Team-Kontext speichern"
+            },
+            "notifications": {
+                "updated": "Team-Kontext erfolgreich aktualisiert",
+                "cleared": "Team-Informationen gelöscht",
+                "clearFailed": "Fehler beim Löschen der Team-Informationen"
+            },
+            "clearConfirm": {
+                "title": "Team & Arbeitskontext löschen",
+                "message": "Sind Sie sicher, dass Sie alle Team- und Arbeitsinformationen löschen möchten?"
+            }
+        },
+        "budget": {
+            "title": "Budget & Tool-Einstellungen",
+            "subtitle": "Erzählen Sie uns von Ihrem Budget für Tools und Services, damit wir geeignete Lösungen empfehlen können.",
+            "fieldLabel": "Budget-Einstellung",
+            "actions": {
+                "save": "Budget-Einstellungen speichern"
+            },
+            "options": {
+                "freeOnly": {
+                    "label": "Nur kostenlos",
+                    "description": "Ich verwende nur kostenlose Tools und Services"
+                },
+                "freeFirst": {
+                    "label": "Kostenlos bevorzugen",
+                    "description": "Ich bevorzuge kostenlose Optionen, zahle aber wenn nötig"
+                },
+                "mixed": {
+                    "label": "Gemischt",
+                    "description": "Ich verwende eine Mischung aus kostenlosen und Premium-Tools"
+                },
+                "premiumOk": {
+                    "label": "Premium OK",
+                    "description": "Ich bin mit der Verwendung von Premium-Tools komfortabel"
+                },
+                "enterprise": {
+                    "label": "Unternehmen",
+                    "description": "Ich habe Zugriff auf Unternehmenslösungen"
+                }
+            },
+            "notifications": {
+                "updated": "Budget-Einstellungen erfolgreich aktualisiert",
+                "cleared": "Budget-Einstellungen gelöscht",
+                "clearFailed": "Fehler beim Löschen der Budget-Einstellungen"
+            },
+            "clearConfirm": {
+                "title": "Budget-Einstellungen löschen",
+                "message": "Sind Sie sicher, dass Sie Ihre Budget-Einstellungen löschen möchten?"
+            }
+        },
+        "tools": {
+            "title": "Tools & Technologien",
+            "subtitle": "Geben Sie die Tools und Programmiersprachen an, mit denen Sie arbeiten, um Anfrage-Empfehlungen zu verbesseren.",
+            "fields": {
+                "preferred": "Bevorzugte Tools (Klicken zum Auswählen)",
+                "primaryLanguage": "Primäre Programmiersprache"
+            },
+            "placeholders": {
+                "primaryLanguage": "Sprache auswählen"
+            },
+            "categories": {
+                "operatingSystems": "Betriebssysteme",
+                "idesEditors": "IDEs & Editoren",
+                "cloudPlatforms": "Cloud-Plattformen",
+                "aiMlTools": "KI & ML-Tools",
+                "designTools": "Design-Tools",
+                "projectManagement": "Projektmanagement"
+            },
+            "selectedCount": "Sie haben {count} Tool(s) ausgewählt",
+            "actions": {
+                "save": "Tools & Sprachen speichern"
+            },
+            "notifications": {
+                "updated": "Tools & Sprachen erfolgreich aktualisiert",
+                "cleared": "Tools & Technologien gelöscht",
+                "clearFailed": "Fehler beim Löschen von Tools & Technologien"
+            },
+            "clearConfirm": {
+                "title": "Tools & Technologien löschen",
+                "message": "Sind Sie sicher, dass Sie alle Tools und Programmiersprachen löschen möchten?"
+            }
+        },
+        "uiComplexity": {
+            "title": "Oberflächenkomplexität",
+            "subtitle": "Wählen Sie, wie viel Detail Sie beim Erstellen von Anfragen sehen möchten.",
+            "fieldLabel": "Oberflächenmodus",
+            "options": {
+                "simple": "Einfach",
+                "advanced": "Erweitert"
+            },
+            "help": {
+                "simple": "Zeigt nur wichtige Funktionen. Verbirgt Aufgaben-Klassifikation, kognitive Anforderungen und erweiterte technische Details.",
+                "advanced": "Zeigt alle Funktionen an, einschließlich Aufgaben-Klassifikation, kognitiver Anforderungen und Persönlichkeits-Einblicke."
+            },
+            "notifications": {
+                "updated": "Oberflächenkomplexität erfolgreich aktualisiert"
+            }
+        },
+        "deleteAccount": {
+            "title": "Konto löschen",
+            "subtitle": "Sobald Ihr Konto gelöscht ist, werden alle Ressourcen und Daten permanent gelöscht. Bevor Sie Ihr Konto löschen, laden Sie bitte alle Daten oder Informationen herunter, die Sie beibehalten möchten.",
+            "actions": {
+                "open": "Konto löschen",
+                "confirm": "Konto löschen"
+            },
+            "modal": {
+                "title": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
+                "description": "Sobald Ihr Konto gelöscht ist, werden alle Ressourcen und Daten permanent gelöscht. Bitte geben Sie Ihr Passwort ein, um zu bestätigen, dass Sie Ihr Konto permanent löschen möchten."
+            }
+        }
+    },
+    "legal": {
+        "lastUpdated": "Zuletzt aktualisiert",
+        "privacy": {
+            "title": "Datenschutzrichtlinie"
+        },
+        "terms": {
+            "title": "Nutzungsbedingungen"
+        },
+        "cookies": {
+            "title": "Cookie-Richtlinie",
+            "alwaysActive": "Immer aktiv"
+        }
+    },
+    "workflow": {
+        "variantSelector": {
+            "label": "Variante"
+        },
+        "codeEditor": {
+            "placeholder": "Inhalte einfügen oder bearbeiten...",
+            "characters": "{count} Zeichen",
+            "notAvailable": "N/A",
+            "expandTitle": "Editor erweitern",
+            "expand": "Erweitern",
+            "saveTitle": "Änderungen speichern",
+            "save": "Speichern",
+            "collapsedHint": "Eingeklappte Ansicht - zum Bearbeiten erweitern."
+        },
+        "documentSidebar": {
+            "coreDocuments": "Kerndokumente",
+            "usedIn": "Verwendet in: {list}",
+            "none": "Keine",
+            "frameworkTemplates": "Rahmenwerk-Vorlagen ({count})",
+            "workflowVersion": "Workflow-Version"
+        },
+        "outputPanel": {
+            "title": "Ausgabe",
+            "header": "{title} - {count} Zeichen",
+            "rawJson": "Rohes JSON",
+            "copyTitle": "In Zwischenablage kopieren",
+            "copy": "Kopieren",
+            "wrapDisable": "Zeilenumbruch deaktivieren",
+            "wrapEnable": "Zeilenumbruch aktivieren",
+            "wrapOn": "Umbruch an",
+            "wrapOff": "Umbruch aus",
+            "system": "System",
+            "messages": "Nachrichten",
+            "rawLabel": "Roh",
+            "formattedLabel": "Formatiert",
+            "switchRaw": "Roh anzeigen",
+            "switchFormatted": "Formatiert anzeigen",
+            "expandTitle": "Erweitern",
+            "expand": "Erweitern",
+            "empty": "Keine Ausgabe verfügbar"
+        },
+        "index": {
+            "title": "Workflow-System",
+            "subtitle": "Debug und Verwaltung von n8n-Workflows",
+            "howToUse": "Wie man verwendet",
+            "infoPages": {
+                "title": "Workflow-Seiten:",
+                "description": "Debug einzelner Workflows, Überprüfung von Eingabe/Ausgabe und JavaScript-Code testen"
+            },
+            "infoDocuments": {
+                "title": "Referenzdokumente:",
+                "description": "Anzeigen und Bearbeitung von Markdown-Dokumenten in Workflows, dann in Workflow-JSON-Dateien einbetten"
+            },
+            "infoFrameworks": {
+                "title": "Rahmenwerk-Vorlagen:",
+                "description": "60+ verschiedene Anfrage-Rahmenwerke für die Verwendung in Workflow-Optimierung verfügbar"
+            },
+            "workflow0": {
+                "title": "Workflow 0",
+                "subtitle": "Pré-Analyse-Workflow",
+                "description": "Sammelt Klärungsfragen basierend auf Aufgaben-Klassifikation"
+            },
+            "workflow1": {
+                "title": "Workflow 1",
+                "subtitle": "Frage-Generierungs-Workflow",
+                "description": "Generiert Aufgaben-Klassifikation und Klärungsfragen"
+            },
+            "workflow2": {
+                "title": "Workflow 2",
+                "subtitle": "Anfrage-Optimierungs-Workflow",
+                "description": "Generiert optimierte Anfragen mit ausgewählten Rahmenwerken"
+            },
+            "referenceDocs": {
+                "title": "Referenzdokumente",
+                "subtitle": "Dokumentverwaltung",
+                "description": "Anzeigen, Bearbeitung und Verwaltung von Referenzdokumenten"
+            }
+        },
+        "passLabel": "Durchgang {number}",
+        "confirmUploadTitle": "Auf Live-Server hochladen?",
+        "confirmUploadMessage": "Dies lädt die aktuelle workflow_0.json-Datei auf den LIVE-Produktions-n8n-Server unter https://n8n.bettrprompt.ai/ hoch. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?",
+        "uploadToLiveButton": "Auf Live hochladen",
+        "uploadSuccessTitle": "Upload erfolgreich",
+        "uploadSuccessMessage": "Workflow erfolgreich auf Live-Produktionsserver hochgeladen!",
+        "uploadFailedTitle": "Upload fehlgeschlagen",
+        "uploadFailedMessage": "Fehler beim Hochladen des Workflows auf den Live-Server",
+        "uploadErrorPrefix": "Upload-Fehler:",
+        "docs": {
+            "saveSuccessMessage": "✓ {filename} erfolgreich gespeichert und in Workflows eingebettet",
+            "confirmEmbedTitle": "Alle Dokumente einbetten?",
+            "confirmEmbedMessage": "Dies bettet alle Kerndokumente und Rahmenwerk-Vorlagen in ihre jeweiligen n8n-Workflow-JSON-Dateien ein. Diese Aktion kann nicht rückgängig gemacht werden.",
+            "errors": {
+                "save": "Fehler beim Speichern des Dokuments: {error}",
+                "embed": "Fehler beim Einbetten von Dokumenten",
+                "embedFailed": "Fehler beim Einbetten von Dokumenten: {error}"
+            },
+            "page": {
+                "title": "Referenzdokumente",
+                "subtitle": "Verwaltung von Workflow-Dokumentation"
+            },
+            "infoItems": {
+                "coreDocuments": {
+                    "title": "Kerndokumente (3):",
+                    "description": "Rahmenwerk-Taxonomie, Persönlichkeits-Kalibrierung und Frage-Bank von Workflows verwendet"
+                },
+                "frameworks": {
+                    "title": "Rahmenwerk-Vorlagen (64):",
+                    "description": "Anfrage-Rahmenwerke für Workflow-Optimierung verfügbar"
+                },
+                "saveEmbed": {
+                    "title": "Speichern & Einbetten:",
+                    "description": "Speichern von Änderungen an Dokumenten und Einbetten in Workflow-JSON-Dateien"
+                },
+                "embedAll": {
+                    "title": "Alle Dokumente einbetten:",
+                    "description": "Alle Kerndokumente und Rahmenwerk-Vorlagen in ihre n8n-Workflows einbetten"
+                },
+                "livePreview": {
+                    "title": "Live-Vorschau:",
+                    "description": "Live-Vorschau Ihrer Markdown-Dokumente anzeigen"
+                }
+            },
+            "buttons": {
+                "saveEmbed": "Speichern & Einbetten",
+                "saving": "Wird gespeichert...",
+                "embedding": "Wird eingebettet...",
+                "expand": "⛶ Erweitern"
+            },
+            "sections": {
+                "markdownEditor": "Markdown-Editor",
+                "preview": "Vorschau"
+            },
+            "placeholders": {
+                "editMarkdown": "Markdown hier bearbeiten..."
+            }
+        },
+        "show": {
+            "pageTitle": "Workflow {workflowNumber}",
+            "subtitle": "Überprüfung von Workflow-Eingabe, JavaScript-Code und Ausgabe",
+            "buttons": {
+                "inputData": "Eingabedaten",
+                "passInput": "Durchgang {passNumber} Eingabe",
+                "uploadLive": "Zu n8n hochladen (live)",
+                "viewJavaScript": "JavaScript anzeigen",
+                "copy": "Kopieren"
+            },
+            "sections": {
+                "preparePrompt": "Anfrage vorbereiten",
+                "workflowOutput": "Workflow-Ausgabe"
+            },
+            "states": {
+                "preparing": "Wird vorbereitet...",
+                "uploading": "Wird hochgeladen...",
+                "executing": "Wird ausgeführt..."
+            },
+            "placeholders": {
+                "inputJson": "Eingabedaten als JSON eingeben...",
+                "javascriptCode": "JavaScript-Code hier bearbeiten...",
+                "javascriptCodeNew": "JavaScript-Code hier schreiben...",
+                "passInput": "Durchgang-Eingabedaten eingeben..."
+            },
+            "metadata": {
+                "characters": "Zeichen",
+                "messages": "Nachrichten",
+                "na": "N/A"
+            }
+        }
+    },
+    "language": {
+        "title": "Sprache",
+        "select": "Sprache auswählen",
+        "current": "Aktuell: {language}"
+    },
+    "errors": {
+        "generic": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+        "notFound": "Seite nicht gefunden",
+        "unauthorized": "Sie sind nicht berechtigt, auf diese Seite zuzugreifen.",
+        "serverError": "Serverfehler. Bitte versuchen Sie es später erneut."
+    },
+    "navigation": {
+        "promptBuilder": "Anfrage-Generator",
+        "promptHistory": "Anfrage-Verlauf",
+        "feedback": "Feedback",
+        "workflows": "Workflows",
+        "profile": "Profil",
+        "logout": "Abmelden"
+    },
+    "alert": {
+        "successTitle": "Erfolg",
+        "warningTitle": "Warnung",
+        "errorTitle": "Fehler",
+        "confirmTitle": "Bestätigen",
+        "infoTitle": "Information"
+    },
+    "audio": {
+        "errors": {
+            "accessDenied": "Mikrofonzugriff verweigert. Bitte aktivieren Sie Mikrofonberechtigungen.",
+            "notFound": "Kein Mikrofon gefunden. Bitte überprüfen Sie Ihr Gerät.",
+            "recordingFailed": "Fehler beim Starten der Aufnahme. Bitte versuchen Sie es erneut.",
+            "noActiveRecording": "Keine aktive Aufnahme",
+            "transcriptionFailed": "Fehler beim Transkribieren von Audio. Bitte versuchen Sie es erneut.",
+            "transcriptionRequestFailed": "Transkriptionsanfrage fehlgeschlagen"
+        }
+    },
+    "status": {
+        "unknown": "Unbekannt",
+        "completed": "Abgeschlossen",
+        "processing": "Wird verarbeitet",
+        "awaitingQuestions": "Fragen erwartet",
+        "awaitingAnswers": "Antworten erwartet",
+        "failed": "Fehlgeschlagen"
+    },
+    "icons": {
+        "hashIcon": "BettrPrompt Hash-Symbol"
+    }
+}
