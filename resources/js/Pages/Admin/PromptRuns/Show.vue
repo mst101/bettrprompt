@@ -18,6 +18,7 @@ import PreAnalysisQuestions from '@/Components/Features/PromptBuilder/YourTask/P
 import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/Types';
 import { Head, Link } from '@inertiajs/vue3';
@@ -29,6 +30,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const { localeRoute } = useLocaleRoute();
 
 // Define tabs dynamically based on available data
 const tabs = computed<Tab[]>(() => {
@@ -128,7 +131,7 @@ const hasRelatedRuns = computed(
         <HeaderPage :title="`Prompt Run #${props.promptRun.id}`">
             <template #actions>
                 <Link
-                    :href="route('admin.tasks.index')"
+                    :href="localeRoute('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Tasks

@@ -6,6 +6,7 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PrivacyStatus, SubscriptionStatus } from '@/Types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
@@ -22,6 +23,7 @@ defineOptions({
     layout: AppLayout,
 });
 
+const { localeRoute } = useLocaleRoute();
 const showDisableModal = ref(false);
 const isDisabling = ref(false);
 
@@ -31,12 +33,12 @@ const disableForm = useForm({
 });
 
 function beginSetup() {
-    router.post(route('privacy.begin-setup'));
+    router.post(localeRoute('privacy.begin-setup'));
 }
 
 function disablePrivacy() {
     isDisabling.value = true;
-    disableForm.post(route('privacy.disable'), {
+    disableForm.post(localeRoute('privacy.disable'), {
         onFinish: () => {
             isDisabling.value = false;
             showDisableModal.value = false;
@@ -61,7 +63,7 @@ function formatDate(dateString: string | null): string {
     <HeaderPage title="Privacy Encryption">
         <template #actions>
             <Link
-                :href="route('profile.edit')"
+                :href="localeRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
                 Back to Profile
@@ -86,7 +88,7 @@ function formatDate(dateString: string | null): string {
                     data.
                 </p>
                 <Link
-                    :href="route('pricing')"
+                    :href="localeRoute('pricing')"
                     class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                 >
                     Upgrade to Pro

@@ -5,6 +5,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Invoice, SubscriptionStatus } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -21,17 +22,18 @@ defineOptions({
     layout: AppLayout,
 });
 
+const { localeRoute } = useLocaleRoute();
 const showCancelModal = ref(false);
 const isCancelling = ref(false);
 
 function openBillingPortal() {
-    router.visit(route('billing.portal'));
+    router.visit(localeRoute('billing.portal'));
 }
 
 function cancelSubscription() {
     isCancelling.value = true;
     router.post(
-        route('subscription.cancel'),
+        localeRoute('subscription.cancel'),
         {},
         {
             onFinish: () => {
@@ -43,7 +45,7 @@ function cancelSubscription() {
 }
 
 function resumeSubscription() {
-    router.post(route('subscription.resume'));
+    router.post(localeRoute('subscription.resume'));
 }
 
 function formatDate(dateString: string | null): string {
@@ -62,7 +64,7 @@ function formatDate(dateString: string | null): string {
     <HeaderPage title="Subscription">
         <template #actions>
             <Link
-                :href="route('profile.edit')"
+                :href="localeRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
                 Back to Profile
@@ -106,7 +108,7 @@ function formatDate(dateString: string | null): string {
 
                     <div v-if="!subscription.isPro">
                         <Link
-                            :href="route('pricing')"
+                            :href="localeRoute('pricing')"
                             class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                         >
                             Upgrade to Pro
