@@ -10,7 +10,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useNotification } from './Composables/ui/useNotification';
 import { createLocaleRoutePlugin } from './Plugins/localeRoutePlugin';
 import { getCookie, getCsrfToken } from './Utils/cookies';
-import { i18n, setLocale, type LocaleCode } from './i18n';
+import { i18n, initializeI18n, setLocale, type LocaleCode } from './i18n';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();
@@ -103,10 +103,12 @@ createInertiaApp({
             `./Pages/${name}.vue`,
             import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
         ),
-    setup({ el, App, props, plugin }) {
-        // Set locale from server-side props
-        const locale = (props.initialPage.props.locale as LocaleCode) || 'en';
-        setLocale(locale);
+    async setup({ el, App, props, plugin }) {
+        // Initialize i18n and set locale from server-side props
+        const locale =
+            (props.initialPage.props.locale as LocaleCode) || 'en-US';
+        await initializeI18n();
+        await setLocale(locale);
 
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)

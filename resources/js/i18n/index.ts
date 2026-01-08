@@ -1,5 +1,4 @@
 import { createI18n } from 'vue-i18n';
-import enUS from './locales/en-US.json';
 
 export type LocaleCode =
     | 'en-US'
@@ -159,16 +158,21 @@ export const i18n = createI18n({
     legacy: false,
     locale: 'en-US',
     fallbackLocale: 'en-US',
-    messages: {
-        'en-US': enUS,
-    },
+    messages: {},
 });
+
+/**
+ * Initialize i18n with default locale messages
+ */
+export async function initializeI18n(): Promise<void> {
+    await loadLocaleMessages('en-US');
+}
 
 /**
  * Lazy load locale messages
  */
 export async function loadLocaleMessages(locale: LocaleCode): Promise<void> {
-    // Skip if already loaded or is the default
+    // Skip if already loaded
     if (i18n.global.availableLocales.includes(locale)) {
         return;
     }
