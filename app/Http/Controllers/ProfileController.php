@@ -139,8 +139,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error',
-                'Failed to update profile. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.update_failed'));
         }
     }
 
@@ -167,8 +166,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error',
-                'Failed to update personality type. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.personality_update_failed'));
         }
     }
 
@@ -217,8 +215,7 @@ class ProfileController extends Controller
             // Re-login the user since we logged them out
             Auth::login($user);
 
-            return Redirect::back()->with('error',
-                'Failed to delete account. Please try again or contact support.');
+            return Redirect::back()->with('error', __('messages.profile.delete_account_failed'));
         } catch (Throwable $e) {
             Log::error('Unexpected error during account deletion', [
                 'user_id' => $user->id,
@@ -228,8 +225,7 @@ class ProfileController extends Controller
             // Re-login the user
             Auth::login($user);
 
-            return Redirect::back()->with('error',
-                'An unexpected error occurred. Please contact support.');
+            return Redirect::back()->with('error', __('messages.profile.unexpected_error'));
         }
     }
 
@@ -249,7 +245,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to update location. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.location_update_failed'));
         }
     }
 
@@ -269,7 +265,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to update professional context. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.professional_update_failed'));
         }
     }
 
@@ -289,7 +285,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to update team context. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.team_update_failed'));
         }
     }
 
@@ -309,7 +305,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to update budget preferences. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.budget_update_failed'));
         }
     }
 
@@ -329,7 +325,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to update tool preferences. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.tools_update_failed'));
         }
     }
 
@@ -343,8 +339,7 @@ class ProfileController extends Controller
             $locationData = $geolocationService->lookupIp($request->ip());
 
             if ($locationData === null) {
-                return Redirect::back()->with('error',
-                    'Could not detect location from your IP address. Please set it manually.');
+                return Redirect::back()->with('error', __('messages.profile.location_detect_failed'));
             }
 
             DatabaseService::retryOnDeadlock(function () use ($request, $locationData) {
@@ -362,7 +357,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to detect location. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.location_detection_failed'));
         }
     }
 
@@ -382,7 +377,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to clear location. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.location_clear_failed'));
         }
     }
 
@@ -399,7 +394,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to clear professional information. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.professional_clear_failed'));
         }
     }
 
@@ -416,7 +411,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to clear team information. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.team_clear_failed'));
         }
     }
 
@@ -433,7 +428,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to clear budget preferences. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.budget_clear_failed'));
         }
     }
 
@@ -450,7 +445,7 @@ class ProfileController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return Redirect::back()->with('error', 'Failed to clear tools & technologies. Please try again.');
+            return Redirect::back()->with('error', __('messages.profile.tools_clear_failed'));
         }
     }
 }

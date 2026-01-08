@@ -255,7 +255,7 @@ class PromptBuilderController extends Controller
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
-                ->with('success', 'Re-analysing your task with updated answers...');
+                ->with('success', __('messages.prompt_builder.updating_answers'));
 
         } catch (Exception $e) {
             Log::error('Failed to update quick queries', [
@@ -264,7 +264,7 @@ class PromptBuilderController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Failed to update answers. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.update_answers_failed'));
         }
     }
 
@@ -372,13 +372,13 @@ class PromptBuilderController extends Controller
 
         // Validate that we're in the correct workflow stage
         if ($promptRun->workflow_stage !== '1_completed') {
-            return back()->with('error', 'Cannot go back at this stage.');
+            return back()->with('error', __('messages.prompt_builder.cannot_go_back'));
         }
 
         // Check if we can go back
         $currentIndex = $promptRun->current_question_index ?? 0;
         if ($currentIndex === 0) {
-            return back()->with('error', 'Already at first question.');
+            return back()->with('error', __('messages.prompt_builder.already_first_question'));
         }
 
         try {
@@ -407,7 +407,7 @@ class PromptBuilderController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'Failed to go back. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.go_back_failed'));
         }
     }
 
@@ -481,7 +481,7 @@ class PromptBuilderController extends Controller
 
         // Validate that the prompt run is completed
         if ($promptRun->workflow_stage !== '2_completed') {
-            return back()->with('error', 'Can only edit completed prompt runs.');
+            return back()->with('error', __('messages.prompt_builder.can_only_edit_completed'));
         }
 
         $validated = $request->validated();
@@ -504,7 +504,7 @@ class PromptBuilderController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'Failed to update prompt. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.update_prompt_failed'));
         }
     }
 
@@ -529,8 +529,7 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error',
-                        'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
                 }
             }
         }
@@ -576,7 +575,7 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()
-                ->with('error', 'An error occurred whilst creating the new prompt run. Please try again.');
+                ->with('error', __('messages.prompt_builder.create_prompt_run_failed'));
         }
     }
 
@@ -599,14 +598,13 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error',
-                        'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.');
+                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
                 }
             }
         }
 
         if (empty($parentPromptRun->framework_questions)) {
-            return back()->with('error', 'Parent prompt run does not have clarifying questions.');
+            return back()->with('error', __('messages.prompt_builder.no_clarifying_questions'));
         }
 
         $validated = $request->validated();
@@ -658,7 +656,7 @@ class PromptBuilderController extends Controller
 
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
-                ->with('success', 'Generating your optimised prompt with edited answers...');
+                ->with('success', __('messages.prompt_builder.generating_optimised_prompt'));
         } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
@@ -667,7 +665,7 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()
-                ->with('error', 'An error occurred whilst creating the new prompt run. Please try again.');
+                ->with('error', __('messages.prompt_builder.create_prompt_run_failed'));
         }
     }
 
@@ -722,7 +720,7 @@ class PromptBuilderController extends Controller
             // Inertia will handle the redirect and fetch the full page data
             return redirect()
                 ->route('prompt-builder.show', $childPromptRun)
-                ->with('success', 'Re-analysing with selected framework...');
+                ->with('success', __('messages.prompt_builder.switching_framework'));
         } catch (Exception $e) {
             Log::error('Failed to switch framework (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
@@ -732,7 +730,7 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()
-                ->with('error', 'An error occurred whilst switching frameworks. Please try again.');
+                ->with('error', __('messages.prompt_builder.switch_framework_failed'));
         }
     }
 
@@ -750,7 +748,7 @@ class PromptBuilderController extends Controller
 
         // Only allow retry for failed runs
         if (! $promptRun->isFailed()) {
-            return back()->with('error', 'Only failed runs can be retried.');
+            return back()->with('error', __('messages.prompt_builder.only_failed_runs_can_retry'));
         }
 
         try {
@@ -829,7 +827,7 @@ class PromptBuilderController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'An error occurred whilst retrying. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.retry_failed'));
         }
     }
 
@@ -861,7 +859,7 @@ class PromptBuilderController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'Failed to delete prompt run. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.delete_failed'));
         }
     }
 
