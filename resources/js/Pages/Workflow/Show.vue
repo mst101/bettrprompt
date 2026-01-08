@@ -14,6 +14,7 @@ import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Variant {
     key: string;
@@ -61,6 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
     outputNew: null,
 });
 
+const { t } = useI18n();
 const { confirm, success, error: showError } = useAlert();
 
 defineOptions({
@@ -100,7 +102,7 @@ const currentNode = computed(() => {
 const passOptions = computed(() => {
     return preparePromptNodes.value.map((_, index) => ({
         value: String(index),
-        label: `Pass ${index + 1}`,
+        label: t('workflow.passLabel', { number: index + 1 }),
     }));
 });
 
@@ -394,11 +396,11 @@ const uploadWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
 const uploadWorkflowToLive = async () => {
     // Show confirmation dialog
     const confirmed = await confirm(
-        'This will upload the current workflow_0.json file to the LIVE production n8n server at https://n8n.bettrprompt.ai/. This action cannot be undone. Are you sure you want to proceed?',
-        'Upload to Live Server?',
+        t('workflow.confirmUploadMessage'),
+        t('workflow.confirmUploadTitle'),
         {
-            confirmText: 'Upload to Live',
-            cancelText: 'Cancel',
+            confirmText: t('workflow.uploadToLiveButton'),
+            cancelText: t('common.buttons.cancel'),
             confirmButtonStyle: 'danger',
         },
     );
@@ -427,21 +429,21 @@ const uploadWorkflowToLive = async () => {
             error.value =
                 result.error || 'Failed to upload workflow to live server';
             await showError(
-                result.error || 'Failed to upload workflow to live server',
-                'Upload Failed',
+                result.error || t('workflow.uploadFailedMessage'),
+                t('workflow.uploadFailedTitle'),
             );
             return;
         }
 
         await success(
-            'Workflow successfully uploaded to live production server!',
-            'Upload Successful',
+            t('workflow.uploadSuccessMessage'),
+            t('workflow.uploadSuccessTitle'),
         );
         error.value = null;
     } catch (err) {
-        const errorMessage = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        const errorMessage = `${t('workflow.uploadErrorPrefix')} ${err instanceof Error ? err.message : 'Unknown error'}`;
         error.value = errorMessage;
-        await showError(errorMessage, 'Upload Failed');
+        await showError(errorMessage, t('workflow.uploadFailedTitle'));
     } finally {
         isUploadingToLive.value = false;
     }

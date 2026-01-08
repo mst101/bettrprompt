@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export function useAudioRecording() {
+    const { t } = useI18n();
     const isRecording = ref(false);
     const isProcessing = ref(false);
     const error = ref<string | null>(null);
@@ -34,12 +36,11 @@ export function useAudioRecording() {
             isRecording.value = true;
         } catch (err: any) {
             if (err.name === 'NotAllowedError') {
-                error.value =
-                    'Microphone access denied. Please enable microphone permissions.';
+                error.value = t('audio.errors.accessDenied');
             } else if (err.name === 'NotFoundError') {
-                error.value = 'No microphone found. Please check your device.';
+                error.value = t('audio.errors.notFound');
             } else {
-                error.value = 'Failed to start recording. Please try again.';
+                error.value = t('audio.errors.recordingFailed');
             }
             console.error('Audio recording error:', err);
 
@@ -53,7 +54,7 @@ export function useAudioRecording() {
     const stopRecording = (): Promise<string> => {
         return new Promise((resolve, reject) => {
             if (!mediaRecorder || !isRecording.value) {
-                reject(new Error('No active recording'));
+                reject(new Error(t('audio.errors.noActiveRecording')));
                 return;
             }
 
@@ -79,8 +80,7 @@ export function useAudioRecording() {
                     resolve(transcript);
                 } catch (err: any) {
                     isProcessing.value = false;
-                    error.value =
-                        'Failed to transcribe audio. Please try again.';
+                    error.value = t('audio.errors.transcriptionFailed');
 
                     // Auto-dismiss error after 5 seconds
                     setTimeout(() => {
@@ -127,7 +127,7 @@ export function useAudioRecording() {
             });
 
             if (!response.ok) {
-                throw new Error('Transcription request failed');
+                throw new Error(t('audio.errors.transcriptionRequestFailed'));
             }
 
             const data = await response.json();

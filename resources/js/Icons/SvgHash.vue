@@ -1,10 +1,16 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+</script>
+
 <template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 120 120"
         fill="none"
         role="img"
-        aria-label="BettrPrompt hash icon"
+        :aria-label="t('icons.hashIcon')"
     >
         <g fill="currentColor">
             <path

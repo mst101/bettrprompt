@@ -12,6 +12,7 @@ import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<Props>();
 
@@ -42,6 +43,7 @@ const isEmbeddingAll = ref(false);
 const message = ref<{ type: 'success' | 'error'; text: string } | null>(null);
 const expandedView = ref<'editor' | 'preview' | null>(null);
 
+const { t } = useI18n();
 const { confirm, success, error } = useAlert();
 
 // Rendered markdown preview
@@ -161,7 +163,9 @@ async function saveDocument() {
         if (data.success) {
             message.value = {
                 type: 'success',
-                text: `✓ ${selectedDocument.value.filename} saved successfully and embedded into workflows`,
+                text: t('workflow.docs.saveSuccessMessage', {
+                    filename: selectedDocument.value.filename,
+                }),
             };
             setTimeout(() => {
                 message.value = null;
@@ -172,7 +176,9 @@ async function saveDocument() {
     } catch (err) {
         message.value = {
             type: 'error',
-            text: `Error saving document: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            text: t('workflow.docs.errors.save', {
+                error: err instanceof Error ? err.message : 'Unknown error',
+            }),
         };
     } finally {
         isSaving.value = false;
@@ -184,11 +190,11 @@ async function saveDocument() {
  */
 async function handleEmbedAll() {
     const confirmed = await confirm(
-        'This will embed all core documents and framework templates into their respective n8n workflow JSON files. This action cannot be undone.',
-        'Embed All Documents?',
+        t('workflow.docs.confirmEmbedMessage'),
+        t('workflow.docs.confirmEmbedTitle'),
         {
-            confirmText: 'Embed All',
-            cancelText: 'Cancel',
+            confirmText: t('common.buttons.embedAll'),
+            cancelText: t('common.buttons.cancel'),
             confirmButtonStyle: 'danger',
         },
     );
@@ -228,15 +234,16 @@ async function handleEmbedAll() {
                 message.value = null;
             }, 5000);
         } else {
-            throw new Error(data.error || 'Failed to embed documents');
+            throw new Error(data.error || t('workflow.docs.errors.embed'));
         }
     } catch (err) {
-        await error(
-            `Error embedding documents: ${err instanceof Error ? err.message : 'Unknown error'}`,
-        );
+        const errorMsg = t('workflow.docs.errors.embedFailed', {
+            error: err instanceof Error ? err.message : 'Unknown error',
+        });
+        await error(errorMsg);
         message.value = {
             type: 'error',
-            text: `Error embedding documents: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            text: errorMsg,
         };
     } finally {
         isEmbeddingAll.value = false;
