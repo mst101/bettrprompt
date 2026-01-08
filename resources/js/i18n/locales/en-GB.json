@@ -23,7 +23,15 @@
             "edit": "Edit",
             "delete": "Delete",
             "clear": "Clear",
-            "confirm": "Confirm"
+            "confirm": "Confirm",
+            "ok": "OK",
+            "embedAll": "Embed All"
+        },
+        "aria": {
+            "userMenu": "User menu"
+        },
+        "errors": {
+            "copyFailed": "Failed to copy to clipboard: {error}"
         },
         "validation": {
             "required": "This field is required",
@@ -1612,5 +1620,13 @@
         "notFound": "Page not found",
         "unauthorized": "You are not authorised to access this page.",
         "serverError": "Server error. Please try again later."
+    },
+    "navigation": {
+        "promptBuilder": "Prompt Builder",
+        "promptHistory": "Prompt History",
+        "feedback": "Feedback",
+        "workflows": "Workflows",
+        "profile": "Profile",
+        "logout": "Log Out"
     }
 }
