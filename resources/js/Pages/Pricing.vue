@@ -4,6 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PricingFeatures, PricingPlans } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
@@ -21,6 +22,7 @@ defineOptions({
 });
 
 const page = usePage();
+const { localeRoute } = useLocaleRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
@@ -50,7 +52,7 @@ function getStarted() {
     if (!isAuthenticated.value) {
         router.visit('/?modal=register');
     } else {
-        router.visit(route('prompt-builder.index'));
+        router.visit(localeRoute('prompt-builder.index'));
     }
 }
 </script>

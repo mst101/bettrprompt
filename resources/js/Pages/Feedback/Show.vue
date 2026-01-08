@@ -7,6 +7,7 @@ import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import LikertScale from '@/Components/Base/LikertScale.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -36,6 +37,7 @@ interface Props {
 const isEditing = ref(false);
 
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const form = useForm({
     experienceLevel: props.feedback.experienceLevel,
@@ -85,7 +87,7 @@ const featureOptions = computed(() => [
 ]);
 
 const submit = () => {
-    form.put(route('feedback.update'), {
+    form.put(localeRoute('feedback.update'), {
         onSuccess: () => {
             isEditing.value = false;
         },

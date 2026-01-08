@@ -8,6 +8,7 @@ import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import LikertScale from '@/Components/Base/LikertScale.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -27,6 +28,7 @@ const form = useForm({
 });
 
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const hasErrors = computed(() => Object.keys(form.errors).length > 0);
 
@@ -69,7 +71,7 @@ const featureOptions = computed(() => [
 ]);
 
 const submit = () => {
-    form.post(route('feedback.store'), {
+    form.post(localeRoute('feedback.store'), {
         onSuccess: () => {
             // Redirect will be handled by controller
         },
@@ -322,7 +324,11 @@ const submit = () => {
                     <ButtonSecondary
                         type="button"
                         :disabled="form.processing"
-                        @click="$inertia.visit(route('prompt-builder.history'))"
+                        @click="
+                            $inertia.visit(
+                                localeRoute('prompt-builder.history'),
+                            )
+                        "
                     >
                         {{ $t('common.buttons.cancel') }}
                     </ButtonSecondary>

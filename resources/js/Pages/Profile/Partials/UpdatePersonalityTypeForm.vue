@@ -12,6 +12,7 @@ import LinkText from '@/Components/Base/LinkText.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -38,6 +39,7 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const { success, error } = useNotification();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 // Load from user data or visitor props
 const savedPersonalityType = props.visitorMode
@@ -124,7 +126,7 @@ const submit = () => {
 
             // If we're on the prompt builder, navigate back there instead of profile
             if (isOnPromptBuilder) {
-                router.visit(route('prompt-builder.index'));
+                router.visit(localeRoute('prompt-builder.index'));
             } else if (isAuthenticated) {
                 // Show CTA after saving (only for authenticated users on profile page)
                 showTaskCta.value = true;
@@ -185,7 +187,7 @@ const clearPersonality = async () => {
 
                 // If we're on the prompt builder, navigate back there instead of profile
                 if (isOnPromptBuilder) {
-                    router.visit(route('prompt-builder.index'));
+                    router.visit(localeRoute('prompt-builder.index'));
                 }
             },
             onError: () => {
@@ -443,7 +445,7 @@ const clearPersonality = async () => {
                         <LinkButton
                             v-if="showTaskCta"
                             ref="taskCtaButton"
-                            :href="route('prompt-builder.index')"
+                            :href="localeRoute('prompt-builder.index')"
                         >
                             {{ $t('profile.personality.actions.enterTask') }}
                             <DynamicIcon name="arrow-right" class="h-4 w-4" />

@@ -1,3 +1,4 @@
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 
@@ -20,6 +21,7 @@ export function usePromptAnswering(
     promptRunId: number,
     onNavigate?: () => void,
 ) {
+    const { localeRoute } = useLocaleRoute();
     const isSubmitting = ref(false);
 
     const answerForm = useForm({
@@ -30,7 +32,7 @@ export function usePromptAnswering(
         if (!answerForm.answer.trim()) return;
 
         isSubmitting.value = true;
-        answerForm.post(route('prompt-builder.answer', promptRunId), {
+        answerForm.post(localeRoute('prompt-builder.answer', promptRunId), {
             preserveScroll: true,
             onSuccess: async () => {
                 // Don't reset the form here - the watcher will set the correct answer
@@ -60,7 +62,7 @@ export function usePromptAnswering(
     const goBackToPreviousQuestion = () => {
         isSubmitting.value = true;
         router.post(
-            route('prompt-builder.go-back', promptRunId),
+            localeRoute('prompt-builder.go-back', promptRunId),
             {},
             {
                 preserveScroll: true,

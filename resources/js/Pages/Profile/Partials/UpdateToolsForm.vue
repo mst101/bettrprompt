@@ -7,6 +7,7 @@ import InputLabel from '@/Components/Base/InputLabel.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -21,6 +22,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const toolCategories = computed(() => [
     {
@@ -123,7 +125,7 @@ const toggleTool = (tool: string) => {
 };
 
 const submit = () => {
-    form.patch(route('profile.tools.update'), {
+    form.patch(localeRoute('profile.tools.update'), {
         preserveScroll: true,
     });
 };
@@ -149,7 +151,7 @@ const clearTools = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(route('profile.tools.clear'), {
+        clearForm.delete(localeRoute('profile.tools.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.tools.notifications.cleared'));

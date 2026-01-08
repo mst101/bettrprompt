@@ -2,6 +2,7 @@
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -22,6 +23,7 @@ const props = defineProps<Props>();
 const switchingFramework = ref<string | null>(null);
 const { confirm } = useAlert();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const handleSwitchFramework = async (frameworkCode: string) => {
     const confirmed = await confirm(
@@ -36,7 +38,10 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     switchingFramework.value = frameworkCode;
 
     router.post(
-        route('prompt-builder.create-child-with-framework', props.promptRunId),
+        localeRoute(
+            'prompt-builder.create-child-with-framework',
+            props.promptRunId,
+        ),
         {
             framework_code: frameworkCode,
         },
@@ -48,10 +53,13 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 // Force a fresh navigation to the new promptRun's analyse page
                 // This ensures the component mounts with completely fresh props
                 if (newPromptRunId) {
-                    router.visit(route('prompt-builder.show', newPromptRunId), {
-                        method: 'get',
-                        preserveScroll: true,
-                    });
+                    router.visit(
+                        localeRoute('prompt-builder.show', newPromptRunId),
+                        {
+                            method: 'get',
+                            preserveScroll: true,
+                        },
+                    );
                 }
             },
             onError: (errors) => {

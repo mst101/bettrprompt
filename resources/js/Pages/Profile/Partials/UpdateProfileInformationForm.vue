@@ -3,6 +3,7 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -15,6 +16,7 @@ defineProps<{
 const user = usePage().props.auth!.user!;
 const { success, error } = useNotification();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const form = useForm({
     name: user.name,
@@ -53,7 +55,7 @@ watch(
         >
             <form
                 class="space-y-6"
-                @submit.prevent="form.patch(route('profile.update'))"
+                @submit.prevent="form.patch(localeRoute('profile.update'))"
             >
                 <FormInput
                     id="name"

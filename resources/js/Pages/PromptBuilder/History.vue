@@ -9,6 +9,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { useAlert } from '@/Composables/ui/useAlert';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/Types';
 import { getFullPersonalityType } from '@/Utils/data/personalityTypes';
@@ -42,7 +43,7 @@ const sortBy = (column: string) => {
     }
 
     router.get(
-        route('prompt-builder.history'),
+        localeRoute('prompt-builder.history'),
         {
             sort_by: column,
             sort_direction: newDirection,
@@ -88,7 +89,7 @@ const changePerPage = () => {
     perPageStorage.value = perPage;
 
     router.get(
-        route('prompt-builder.history'),
+        localeRoute('prompt-builder.history'),
         {
             sort_by: props.filters.sort_by,
             sort_direction: props.filters.sort_direction,
@@ -105,6 +106,7 @@ const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 // Focus management for pagination buttons
 const handlePaginationClick = (direction: 'prev' | 'next') => {
@@ -116,7 +118,7 @@ onMounted(() => {
     const storedPerPage = perPageStorage.value;
     if (storedPerPage !== props.filters.per_page) {
         router.get(
-            route('prompt-builder.history'),
+            localeRoute('prompt-builder.history'),
             {
                 sort_by: props.filters.sort_by,
                 sort_direction: props.filters.sort_direction,
@@ -170,7 +172,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
         return;
     }
 
-    router.delete(route('prompt-builder.destroy', promptRunId), {
+    router.delete(localeRoute('prompt-builder.destroy', promptRunId), {
         preserveScroll: true,
         onSuccess: () => {
             // Success feedback is handled by flash message
@@ -185,7 +187,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
     <HeaderPage :title="$t('promptBuilder.history.title')">
         <template #actions>
             <LinkButton
-                :href="route('prompt-builder.index')"
+                :href="localeRoute('prompt-builder.index')"
                 variant="primary"
                 icon="plus"
                 icon-position="left"
@@ -203,7 +205,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
             >
                 <p>{{ $t('promptBuilder.history.empty.title') }}</p>
                 <a
-                    :href="route('prompt-builder.index')"
+                    :href="localeRoute('prompt-builder.index')"
                     class="mt-2 text-indigo-700 hover:text-indigo-800"
                 >
                     {{ $t('promptBuilder.history.empty.cta') }}

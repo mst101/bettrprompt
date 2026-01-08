@@ -7,6 +7,7 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -36,6 +37,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 // Common timezones (still using common ones as not in database)
 const timezones = [
@@ -87,14 +89,14 @@ watch(
 );
 
 const submit = () => {
-    form.patch(route('profile.location.update'), {
+    form.patch(localeRoute('profile.location.update'), {
         preserveScroll: true,
     });
 };
 
 const detectLocation = () => {
     const detectForm = useForm({});
-    detectForm.post(route('profile.location.detect'), {
+    detectForm.post(localeRoute('profile.location.detect'), {
         preserveScroll: true,
         onSuccess: (page) => {
             success(t('profile.location.notifications.detected'));
@@ -130,7 +132,7 @@ const clearLocation = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(route('profile.location.clear'), {
+        clearForm.delete(localeRoute('profile.location.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.location.notifications.cleared'));

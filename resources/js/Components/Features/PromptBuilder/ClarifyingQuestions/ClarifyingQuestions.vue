@@ -6,6 +6,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/Forms/QuestionAnsweringForm.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import type { PromptRunResource } from '@/Types';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
@@ -31,6 +32,7 @@ const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const allQuestions = computed<ClarifyingQuestion[]>(() => {
     const raw =
@@ -200,7 +202,7 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
 
     try {
         const response = await axios.post(
-            route('prompt-builder.answer', props.promptRun.id),
+            localeRoute('prompt-builder.answer', props.promptRun.id),
             {
                 question_index: questionIndex,
                 answer: value,
@@ -278,9 +280,12 @@ const submitAllAnswers = async () => {
     const payload = answers.value.map((value) => normalizeAnswer(value));
 
     try {
-        await axios.post(route('prompt-builder.generate', props.promptRun.id), {
-            question_answers: payload,
-        });
+        await axios.post(
+            localeRoute('prompt-builder.generate', props.promptRun.id),
+            {
+                question_answers: payload,
+            },
+        );
 
         window.scrollTo(0, 0);
         router.reload({ only: ['promptRun'] });
@@ -314,7 +319,7 @@ const submitEditedAnswers = () => {
     const payload = answers.value.map((value) => normalizeAnswer(value));
 
     router.post(
-        route('prompt-builder.create-child-from-answers', {
+        localeRoute('prompt-builder.create-child-from-answers', {
             parentPromptRun: props.promptRun.id,
         }),
         { clarifying_answers: payload },

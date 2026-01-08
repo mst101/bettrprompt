@@ -7,6 +7,7 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import type { PromptRunResource } from '@/Types';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, inject, ref, watch, watchEffect } from 'vue';
@@ -19,6 +20,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     visitorHasCompletedPrompts: false,
 });
+const { localeRoute } = useLocaleRoute();
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -80,7 +82,7 @@ const submit = () => {
     }
 
     form.post(
-        route('prompt-builder.create-child-from-task', {
+        localeRoute('prompt-builder.create-child-from-task', {
             parentPromptRun: props.promptRun.id,
         }),
         {

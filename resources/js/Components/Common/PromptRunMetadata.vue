@@ -3,6 +3,7 @@ import CompactMetadataCard, {
     type MetadataItem,
 } from '@/Components/Common/CompactMetadataCard.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -19,6 +20,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const metadataItems = computed<MetadataItem[]>(() => {
     const items: MetadataItem[] = [];
@@ -27,7 +29,7 @@ const metadataItems = computed<MetadataItem[]>(() => {
         items.push({
             label: t('components.common.promptRunMetadata.user'),
             value: props.user.name,
-            url: route('admin.users.show', { user: props.user.id }),
+            url: localeRoute('admin.users.show', { user: props.user.id }),
         });
     }
 

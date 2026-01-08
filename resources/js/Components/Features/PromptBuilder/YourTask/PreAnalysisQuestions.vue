@@ -9,6 +9,7 @@ import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
@@ -81,6 +82,7 @@ const form = useForm({
 });
 
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 const { appendText } = useTextAppend();
 
 const handleTranscription = (transcript: string, questionId: string) => {
@@ -282,7 +284,7 @@ const submitAnswers = () => {
     if (hasAnswers.value) {
         form.answers = finalAnswers;
         form.post(
-            route('prompt-builder.update-pre-analysis-answers', {
+            localeRoute('prompt-builder.update-pre-analysis-answers', {
                 promptRun: props.promptRun.id,
             }),
             {
@@ -297,7 +299,10 @@ const submitAnswers = () => {
         submitError.value = null;
 
         router.post(
-            route('prompt-builder.pre-analysis-answers', props.promptRun.id),
+            localeRoute(
+                'prompt-builder.pre-analysis-answers',
+                props.promptRun.id,
+            ),
             { answers: finalAnswers },
             {
                 onSuccess: () => {
@@ -323,7 +328,7 @@ const continueToAnalysis = () => {
     submitError.value = null;
 
     router.post(
-        route('prompt-builder.pre-analysis-answers', props.promptRun.id),
+        localeRoute('prompt-builder.pre-analysis-answers', props.promptRun.id),
         { answers: answers.value },
         {
             onSuccess: () => {

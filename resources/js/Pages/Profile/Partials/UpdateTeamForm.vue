@@ -5,6 +5,7 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -20,6 +21,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n();
+const { localeRoute } = useLocaleRoute();
 
 const teamSizeOptions = computed(() => [
     { value: 'solo', label: t('profile.team.options.size.solo') },
@@ -71,7 +73,7 @@ watch(
 );
 
 const submit = () => {
-    form.patch(route('profile.team.update'), {
+    form.patch(localeRoute('profile.team.update'), {
         preserveScroll: true,
     });
 };
@@ -98,7 +100,7 @@ const clearTeam = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(route('profile.team.clear'), {
+        clearForm.delete(localeRoute('profile.team.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.team.notifications.cleared'));

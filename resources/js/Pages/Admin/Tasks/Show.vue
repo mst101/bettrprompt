@@ -3,6 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
+import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { PromptRunResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { localeRoute } = useLocaleRoute();
 
 const { getWorkflowStageColor } = useWorkflowStageColor();
 
@@ -30,20 +32,20 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
         globalThis.window.open(
-            route('admin.prompt-runs.show', runId),
+            localeRoute('admin.prompt-runs.show', runId),
             '_blank',
         );
         return;
     }
 
     // Normal left click - use Inertia navigation
-    router.visit(route('admin.prompt-runs.show', runId));
+    router.visit(localeRoute('admin.prompt-runs.show', runId));
 };
 
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
     if (event.button === 1) {
         globalThis.window.open(
-            route('admin.prompt-runs.show', runId),
+            localeRoute('admin.prompt-runs.show', runId),
             '_blank',
         );
     }
@@ -63,7 +65,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
         <HeaderPage :title="$t('admin.tasks.promptRunsTitle')">
             <template #actions>
                 <Link
-                    :href="route('admin.tasks.index')"
+                    :href="localeRoute('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     {{ $t('admin.tasks.backToTasks') }}
