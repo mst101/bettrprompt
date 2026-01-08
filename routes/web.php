@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MockN8nController;
+use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\SubscriptionController;
@@ -67,6 +68,31 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/subscription/resume', [SubscriptionController::class, 'resume'])
         ->name('subscription.resume');
+
+    // Privacy settings routes
+    Route::get('/settings/privacy', [PrivacyController::class, 'show'])
+        ->name('settings.privacy');
+
+    Route::post('/privacy/begin-setup', [PrivacyController::class, 'beginSetup'])
+        ->name('privacy.begin-setup');
+
+    Route::post('/privacy/confirm-setup', [PrivacyController::class, 'confirmSetup'])
+        ->name('privacy.confirm-setup');
+
+    Route::post('/privacy/unlock', [PrivacyController::class, 'unlock'])
+        ->name('privacy.unlock');
+
+    Route::get('/privacy/recovery', [PrivacyController::class, 'showRecovery'])
+        ->name('privacy.recovery');
+
+    Route::post('/privacy/recover', [PrivacyController::class, 'recover'])
+        ->name('privacy.recover');
+
+    Route::post('/privacy/update-password', [PrivacyController::class, 'updatePassword'])
+        ->name('privacy.update-password');
+
+    Route::post('/privacy/disable', [PrivacyController::class, 'disable'])
+        ->name('privacy.disable');
 });
 
 // Google OAuth routes

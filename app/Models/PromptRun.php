@@ -50,6 +50,8 @@ class PromptRun extends Model
         'iteration_suggestions',
         'analysis_api_usage',
         'generation_api_usage',
+        // Privacy
+        'is_encrypted',
     ];
 
     protected $casts = [
@@ -77,6 +79,8 @@ class PromptRun extends Model
         'iteration_suggestions' => 'array',
         'analysis_api_usage' => 'array',
         'generation_api_usage' => 'array',
+        // Privacy
+        'is_encrypted' => 'boolean',
     ];
 
     public function visitor(): BelongsTo

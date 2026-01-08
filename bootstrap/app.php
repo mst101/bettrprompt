@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'mailgun.signature' => \App\Http\Middleware\VerifyMailgunSignature::class,
             'prompt.limit' => \App\Http\Middleware\EnforcePromptLimit::class,
             'prompt.track' => \App\Http\Middleware\TrackPromptUsage::class,
+            'privacy.unlock' => \App\Http\Middleware\RequirePrivacyUnlock::class,
         ]);
 
         // Trust all proxies for local development (Caddy reverse proxy)

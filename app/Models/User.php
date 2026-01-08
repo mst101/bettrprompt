@@ -65,6 +65,11 @@ class User extends Authenticatable
         'subscription_ends_at',
         'monthly_prompt_count',
         'prompt_count_reset_at',
+        // Privacy fields
+        'privacy_enabled',
+        'encrypted_dek',
+        'recovery_dek',
+        'dek_created_at',
     ];
 
     /**
@@ -75,6 +80,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'encrypted_dek',
+        'recovery_dek',
     ];
 
     /**
@@ -104,6 +111,9 @@ class User extends Authenticatable
             'subscription_ends_at' => 'datetime',
             'prompt_count_reset_at' => 'datetime',
             'trial_ends_at' => 'datetime',
+            // Privacy
+            'privacy_enabled' => 'boolean',
+            'dek_created_at' => 'datetime',
         ];
     }
 
@@ -518,6 +528,48 @@ class User extends Authenticatable
             'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),
             'subscriptionEndsAt' => $this->subscription_ends_at?->toIso8601String(),
             'onGracePeriod' => $this->subscription('default')?->onGracePeriod() ?? false,
+        ];
+    }
+
+    // ========================
+    // Privacy Methods
+    // ========================
+
+    /**
+     * Check if user has privacy encryption enabled
+     */
+    public function hasPrivacyEnabled(): bool
+    {
+        return $this->privacy_enabled && $this->encrypted_dek !== null;
+    }
+
+    /**
+     * Check if user can enable privacy (must be Pro)
+     */
+    public function canEnablePrivacy(): bool
+    {
+        return $this->isPro() && ! $this->privacy_enabled;
+    }
+
+    /**
+     * Check if user needs a password to enable privacy (OAuth users)
+     */
+    public function needsPasswordForPrivacy(): bool
+    {
+        // OAuth users have no password (google_id set but password may be the hash of OAuth token)
+        return $this->google_id !== null && $this->password === null;
+    }
+
+    /**
+     * Get privacy status for frontend
+     */
+    public function getPrivacyStatus(): array
+    {
+        return [
+            'enabled' => $this->hasPrivacyEnabled(),
+            'canEnable' => $this->canEnablePrivacy(),
+            'needsPassword' => $this->needsPasswordForPrivacy(),
+            'setupAt' => $this->dek_created_at?->toIso8601String(),
         ];
     }
 }
