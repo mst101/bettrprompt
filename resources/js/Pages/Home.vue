@@ -10,88 +10,72 @@ import HeroCTA from '@/Components/Common/HeroCTA.vue';
 import StepCard from '@/Components/Common/StepCard.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineOptions({
     layout: AppLayout,
 });
 
+const { t } = useI18n();
+
 type UseCaseItem = CarouselItem & AccordionItem;
 
-const useCases = ref<UseCaseItem[]>([
+// Build use cases from i18n translations
+const useCases = computed<UseCaseItem[]>(() => [
     {
         id: 'work-career',
         icon: 'building-office',
-        title: 'Work & Career',
-        subtitle:
-            'Navigate the conversations and decisions that shape your professional life.',
-        bullets: [
-            'Asking your manager for a promotion',
-            'Preparing for a difficult performance review',
-            'Delegating a complex project to your team',
-            'Writing a proposal that convinces sceptical stakeholders',
-        ],
+        title: t('home.useCases.workCareer.title'),
+        subtitle: t('home.useCases.workCareer.subtitle'),
+        bullets: t('home.useCases.workCareer.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
     {
         id: 'personal-decisions',
         icon: 'user',
-        title: 'Personal Decisions',
-        subtitle: 'Bring clarity to the choices that matter most.',
-        bullets: [
-            'Deciding whether to accept a job offer or stay put',
-            'Working through a major life change with your partner',
-            "Setting boundaries with someone who's draining you",
-            'Planning a difficult conversation with ageing parents',
-        ],
+        title: t('home.useCases.personalDecisions.title'),
+        subtitle: t('home.useCases.personalDecisions.subtitle'),
+        bullets: t('home.useCases.personalDecisions.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
     {
         id: 'learning-development',
         icon: 'book-open',
-        title: 'Learning & Development',
-        subtitle:
-            'Build skills and habits in a way that works for how you learn.',
-        bullets: [
-            'Creating a study plan for a professional qualification',
-            'Getting up to speed on a new industry quickly',
-            'Starting to learn a new language or skill from scratch',
-            'Building a sustainable reading or learning habit',
-        ],
+        title: t('home.useCases.learningDevelopment.title'),
+        subtitle: t('home.useCases.learningDevelopment.subtitle'),
+        bullets: t('home.useCases.learningDevelopment.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
     {
         id: 'creative-projects',
         icon: 'light-bulb',
-        title: 'Creative Projects',
-        subtitle: 'Get unstuck and find your starting point.',
-        bullets: [
-            'Planning a novel, screenplay, or creative project',
-            "Writing a speech that's funny, heartfelt, or both",
-            'Creating content for a new business or side project',
-            'Designing a memorable event or celebration',
-        ],
+        title: t('home.useCases.creativeProjects.title'),
+        subtitle: t('home.useCases.creativeProjects.subtitle'),
+        bullets: t('home.useCases.creativeProjects.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
     {
         id: 'business-strategy',
         icon: 'trending-up',
-        title: 'Business & Strategy',
-        subtitle: 'Think through high-stakes decisions with clarity.',
-        bullets: [
-            'Developing a marketing strategy for a new product',
-            'Analysing whether to expand into a new market',
-            'Preparing for a board presentation or investor pitch',
-            'Improving team productivity or processes',
-        ],
+        title: t('home.useCases.businessStrategy.title'),
+        subtitle: t('home.useCases.businessStrategy.subtitle'),
+        bullets: t('home.useCases.businessStrategy.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
     {
         id: 'relationships-communication',
         icon: 'user-group',
-        title: 'Relationships & Communication',
-        subtitle: 'Handle the human stuff with more confidence.',
-        bullets: [
-            'Resolving an ongoing conflict with your partner',
-            'Giving difficult feedback without damaging a relationship',
-            'Having a meaningful conversation with a teenager about their future',
-            "Reconnecting with a friend you've drifted apart from",
-        ],
+        title: t('home.useCases.relationshipsCommunication.title'),
+        subtitle: t('home.useCases.relationshipsCommunication.subtitle'),
+        bullets: t('home.useCases.relationshipsCommunication.bullets', [], {
+            returnObjects: true,
+        }) as string[],
     },
 ]);
 
@@ -112,11 +96,11 @@ const expandedUseCases = ref<string[]>([]);
                 <h1
                     class="text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl lg:text-5xl xl:text-6xl"
                 >
-                    The Simple Way to Solve
+                    {{ $t('home.hero.title') }}
                     <span
                         data-testid="hero-gradient-text"
                         class="bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
-                        >Complex Problems</span
+                        >{{ $t('home.hero.titleGradient') }}</span
                     >
                 </h1>
 
@@ -124,9 +108,7 @@ const expandedUseCases = ref<string[]>([]);
                 <p
                     class="text-md mx-auto mt-6 max-w-2xl text-indigo-700 sm:text-lg lg:text-2xl"
                 >
-                    Great AI results start with great questions. BettrPrompt
-                    asks the right ones - then builds structured prompts that
-                    actually work.
+                    {{ $t('home.hero.subtitle') }}
                 </p>
 
                 <!-- CTA Button -->
@@ -139,16 +121,16 @@ const expandedUseCases = ref<string[]>([]);
                 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <FeatureCard
                         icon="sparkles"
-                        title="The Right Approach, Automatically"
-                        description="We analyse your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
+                        :title="$t('home.features.feature1.title')"
+                        :description="$t('home.features.feature1.description')"
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
 
                     <FeatureCard
                         icon="chat"
-                        title="Questions You Haven't Thought Of"
-                        description="Not sure where to start? We surface what you actually need - so you get useful answers on the first try, not after three rounds of back-and-forth."
+                        :title="$t('home.features.feature2.title')"
+                        :description="$t('home.features.feature2.description')"
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -156,8 +138,8 @@ const expandedUseCases = ref<string[]>([]);
 
                     <FeatureCard
                         icon="user"
-                        title="Adapted to How You Think"
-                        description="Add your personality type and we'll tailor our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
+                        :title="$t('home.features.feature3.title')"
+                        :description="$t('home.features.feature3.description')"
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -170,12 +152,10 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        "But Can't I Just Ask ChatGPT?"
+                        {{ $t('home.comparison.title') }}
                     </h2>
                     <p class="mx-auto mt-4 max-w-2xl text-lg text-indigo-700">
-                        You can. ChatGPT might even ask a clarifying question or
-                        two. But there's a difference between being helpful
-                        quickly and drawing out what you actually need.
+                        {{ $t('home.comparison.subtitle') }}
                     </p>
                 </div>
 
@@ -197,7 +177,7 @@ const expandedUseCases = ref<string[]>([]);
                                 />
                             </div>
                             <h3 class="text-lg font-semibold text-gray-700">
-                                Asking ChatGPT directly
+                                {{ $t('home.comparison.chatgpt.title') }}
                             </h3>
                         </div>
 
@@ -209,8 +189,11 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-700"
                                 >
-                                    "I need to write a best man speech for my
-                                    friend's wedding"
+                                    "{{
+                                        $t(
+                                            'home.comparison.chatgpt.yourPrompt',
+                                        )
+                                    }}"
                                 </p>
                             </div>
                             <div>
@@ -220,9 +203,7 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
                                 >
-                                    Generates a speech immediately, or asks one
-                                    or two quick questions before diving in.
-                                    It's trying to help you fast.
+                                    {{ $t('home.comparison.chatgpt.response') }}
                                 </p>
                             </div>
                             <div>
@@ -232,9 +213,7 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
                                 >
-                                    A generic speech that sounds like every
-                                    other best man speech. You spend the next
-                                    hour tweaking it to sound like you.
+                                    {{ $t('home.comparison.chatgpt.result') }}
                                 </p>
                             </div>
                         </div>
@@ -243,7 +222,9 @@ const expandedUseCases = ref<string[]>([]);
                             class="mt-4 flex items-center gap-2 text-sm text-gray-500"
                         >
                             <DynamicIcon name="clock" class="h-4 w-4" />
-                            <span>You get what you asked for</span>
+                            <span>{{
+                                $t('home.comparison.chatgpt.footer')
+                            }}</span>
                         </div>
                     </div>
 
@@ -261,7 +242,7 @@ const expandedUseCases = ref<string[]>([]);
                                 />
                             </div>
                             <h3 class="text-lg font-semibold text-indigo-900">
-                                Using BettrPrompt
+                                {{ $t('home.comparison.bettrprompt.title') }}
                             </h3>
                         </div>
 
@@ -273,8 +254,11 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-800"
                                 >
-                                    "I need to write a best man speech for my
-                                    friend's wedding"
+                                    "{{
+                                        $t(
+                                            'home.comparison.bettrprompt.yourPrompt',
+                                        )
+                                    }}"
                                 </p>
                             </div>
                             <div>
@@ -284,11 +268,11 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
-                                    Selects a framework for memorable personal
-                                    storytelling. Then asks: "How did you two
-                                    meet? What's a story that captures who he
-                                    really is? What's the couple's sense of
-                                    humour? Who's in the audience?"
+                                    {{
+                                        $t(
+                                            'home.comparison.bettrprompt.response',
+                                        )
+                                    }}
                                 </p>
                             </div>
                             <div>
@@ -298,10 +282,9 @@ const expandedUseCases = ref<string[]>([]);
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
                                 >
-                                    A prompt that captures your friendship, fits
-                                    the audience, and plays to your strengths -
-                                    so the AI output actually sounds like
-                                    something you'd say.
+                                    {{
+                                        $t('home.comparison.bettrprompt.result')
+                                    }}
                                 </p>
                             </div>
                         </div>
@@ -310,30 +293,30 @@ const expandedUseCases = ref<string[]>([]);
                             class="mt-4 flex items-center gap-2 text-sm text-indigo-600"
                         >
                             <DynamicIcon name="check-circle" class="h-4 w-4" />
-                            <span>You get what AI is actually capable of</span>
+                            <span>{{
+                                $t('home.comparison.bettrprompt.footer')
+                            }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- The Key Insight -->
                 <div class="mx-auto mt-8 max-w-3xl text-center">
-                    <p class="text-lg text-indigo-800">
-                        ChatGPT answers what you ask.
-                        <strong class="text-indigo-900"
-                            >BettrPrompt uncovers what you should have
-                            asked</strong
-                        >
-                        - then builds a prompt that gets you AI's best work, not
-                        its first guess.
-                    </p>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <p
+                        class="text-lg text-indigo-800"
+                        v-html="$t('home.comparison.keyInsight')"
+                    ></p>
                 </div>
 
                 <!-- Secondary Objections -->
                 <div class="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
                     <FeatureCard
                         icon="document-text"
-                        title="What About Prompt Templates?"
-                        description="Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue - your context, your constraints, your voice. No two prompts are the same."
+                        :title="$t('home.objections.templates.title')"
+                        :description="
+                            $t('home.objections.templates.description')
+                        "
                         icon-bg-colour="bg-purple-100"
                         icon-colour="text-purple-600"
                         dark-bg-colour="dark:bg-purple-50"
@@ -341,8 +324,10 @@ const expandedUseCases = ref<string[]>([]);
 
                     <FeatureCard
                         icon="academic-cap"
-                        title="Should I Learn Prompt Engineering?"
-                        description="You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need - we'll handle the rest."
+                        :title="$t('home.objections.learning.title')"
+                        :description="
+                            $t('home.objections.learning.description')
+                        "
                         icon-bg-colour="bg-indigo-100"
                         icon-colour="text-indigo-600"
                     />
@@ -355,32 +340,32 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        How It Works
+                        {{ $t('home.howItWorks.title') }}
                     </h2>
                     <p class="mt-4 text-lg text-indigo-700">
-                        Three simple steps to better AI prompts
+                        {{ $t('home.howItWorks.subtitle') }}
                     </p>
                 </div>
 
                 <div class="mt-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     <StepCard
                         :number="1"
-                        title="Describe Your Challenge"
-                        description="What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language."
+                        :title="$t('home.howItWorks.step1.title')"
+                        :description="$t('home.howItWorks.step1.description')"
                         bg-colour="bg-indigo-600"
                     />
 
                     <StepCard
                         :number="2"
-                        title="Answer a Few Questions"
-                        description="We structure your thinking - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
+                        :title="$t('home.howItWorks.step2.title')"
+                        :description="$t('home.howItWorks.step2.description')"
                         bg-colour="bg-purple-600"
                     />
 
                     <StepCard
                         :number="3"
-                        title="Get Your Optimised Prompt"
-                        description="Copy your prompt into ChatGPT, Claude, or any AI tool. It's built for results and shaped by your answers - not a generic template."
+                        :title="$t('home.howItWorks.step3.title')"
+                        :description="$t('home.howItWorks.step3.description')"
                         bg-colour="bg-indigo-600"
                     />
                 </div>
@@ -392,11 +377,10 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        When to Use BettrPrompt
+                        {{ $t('home.useCases.title') }}
                     </h2>
                     <p class="mt-4 text-lg text-indigo-700">
-                        If you can describe what you're trying to achieve, we'll
-                        help you get there.
+                        {{ $t('home.useCases.subtitle') }}
                     </p>
                 </div>
 
@@ -421,10 +405,10 @@ const expandedUseCases = ref<string[]>([]);
                     <h2
                         class="text-2xl font-bold tracking-tight text-indigo-900 sm:text-3xl lg:text-4xl"
                     >
-                        Watch It Work
+                        {{ $t('home.example.title') }}
                     </h2>
                     <p class="mt-4 text-lg text-indigo-600">
-                        A real example: creating a marketing strategy
+                        {{ $t('home.example.subtitle') }}
                     </p>
                 </div>
 

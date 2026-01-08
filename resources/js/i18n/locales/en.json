@@ -71,24 +71,136 @@
     },
     "home": {
         "hero": {
-            "title": "AI Prompts Calibrated to Your Personality",
-            "subtitle": "Get better results from AI by using prompts optimised for how you think and communicate.",
-            "cta": "Get Started Free"
+            "title": "The Simple Way to Solve",
+            "titleGradient": "Complex Problems",
+            "subtitle": "Great AI results start with great questions. BettrPrompt asks the right ones - then builds structured prompts that actually work."
         },
         "features": {
-            "title": "How It Works",
-            "personality": {
-                "title": "Personality Analysis",
-                "description": "We analyse your cognitive style to understand how you process information."
+            "feature1": {
+                "title": "The Right Approach, Automatically",
+                "description": "We analyse your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
             },
-            "prompts": {
-                "title": "Smart Prompts",
-                "description": "AI-generated prompts tailored to your unique way of thinking."
+            "feature2": {
+                "title": "Questions You Haven't Thought Of",
+                "description": "Not sure where to start? We surface what you actually need - so you get useful answers on the first try, not after three rounds of back-and-forth."
             },
-            "results": {
-                "title": "Better Results",
-                "description": "Get more relevant and useful responses from any AI model."
+            "feature3": {
+                "title": "Adapted to How You Think",
+                "description": "Add your personality type and we'll tailor our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
             }
+        },
+        "comparison": {
+            "title": "But Can't I Just Ask ChatGPT?",
+            "subtitle": "You can. ChatGPT might even ask a clarifying question or two. But there's a difference between being helpful quickly and drawing out what you actually need.",
+            "chatgpt": {
+                "title": "Asking ChatGPT directly",
+                "yourPrompt": "I need to write a best man speech for my friend's wedding",
+                "response": "Generates a speech immediately, or asks one or two quick questions before diving in. It's trying to help you fast.",
+                "result": "A generic speech that sounds like every other best man speech. You spend the next hour tweaking it to sound like you.",
+                "footer": "You get what you asked for"
+            },
+            "bettrprompt": {
+                "title": "Using BettrPrompt",
+                "yourPrompt": "I need to write a best man speech for my friend's wedding",
+                "response": "Selects a framework for memorable personal storytelling. Then asks: \"How did you two meet? What's a story that captures who he really is? What's the couple's sense of humour? Who's in the audience?\"",
+                "result": "A prompt that captures your friendship, fits the audience, and plays to your strengths - so the AI output actually sounds like something you'd say.",
+                "footer": "You get what AI is actually capable of"
+            },
+            "keyInsight": "ChatGPT answers what you ask. <strong>BettrPrompt uncovers what you should have asked</strong> - then builds a prompt that gets you AI's best work, not its first guess."
+        },
+        "objections": {
+            "templates": {
+                "title": "What About Prompt Templates?",
+                "description": "Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue - your context, your constraints, your voice. No two prompts are the same."
+            },
+            "learning": {
+                "title": "Should I Learn Prompt Engineering?",
+                "description": "You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorise them. Describe what you need - we'll handle the rest."
+            }
+        },
+        "howItWorks": {
+            "title": "How It Works",
+            "subtitle": "Three simple steps to better AI prompts",
+            "step1": {
+                "title": "Describe Your Challenge",
+                "description": "What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language."
+            },
+            "step2": {
+                "title": "Answer a Few Questions",
+                "description": "We structure your thinking - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
+            },
+            "step3": {
+                "title": "Get Your Optimised Prompt",
+                "description": "Copy your prompt into ChatGPT, Claude, or any AI tool. It's built for results and shaped by your answers - not a generic template."
+            }
+        },
+        "useCases": {
+            "title": "When to Use BettrPrompt",
+            "subtitle": "If you can describe what you're trying to achieve, we'll help you get there.",
+            "workCareer": {
+                "title": "Work & Career",
+                "subtitle": "Navigate the conversations and decisions that shape your professional life.",
+                "bullets": [
+                    "Asking your manager for a promotion",
+                    "Preparing for a difficult performance review",
+                    "Delegating a complex project to your team",
+                    "Writing a proposal that convinces sceptical stakeholders"
+                ]
+            },
+            "personalDecisions": {
+                "title": "Personal Decisions",
+                "subtitle": "Bring clarity to the choices that matter most.",
+                "bullets": [
+                    "Deciding whether to accept a job offer or stay put",
+                    "Working through a major life change with your partner",
+                    "Setting boundaries with someone who's draining you",
+                    "Planning a difficult conversation with ageing parents"
+                ]
+            },
+            "learningDevelopment": {
+                "title": "Learning & Development",
+                "subtitle": "Build skills and habits in a way that works for how you learn.",
+                "bullets": [
+                    "Creating a study plan for a professional qualification",
+                    "Getting up to speed on a new industry quickly",
+                    "Starting to learn a new language or skill from scratch",
+                    "Building a sustainable reading or learning habit"
+                ]
+            },
+            "creativeProjects": {
+                "title": "Creative Projects",
+                "subtitle": "Get unstuck and find your starting point.",
+                "bullets": [
+                    "Planning a novel, screenplay, or creative project",
+                    "Writing a speech that's funny, heartfelt, or both",
+                    "Creating content for a new business or side project",
+                    "Designing a memorable event or celebration"
+                ]
+            },
+            "businessStrategy": {
+                "title": "Business & Strategy",
+                "subtitle": "Think through high-stakes decisions with clarity.",
+                "bullets": [
+                    "Developing a marketing strategy for a new product",
+                    "Analysing whether to expand into a new market",
+                    "Preparing for a board presentation or investor pitch",
+                    "Improving team productivity or processes"
+                ]
+            },
+            "relationshipsCommunication": {
+                "title": "Relationships & Communication",
+                "subtitle": "Handle the human stuff with more confidence.",
+                "bullets": [
+                    "Resolving an ongoing conflict with your partner",
+                    "Giving difficult feedback without damaging a relationship",
+                    "Having a meaningful conversation with a teenager about their future",
+                    "Reconnecting with a friend you've drifted apart from"
+                ]
+            }
+        },
+        "example": {
+            "title": "Watch It Work",
+            "subtitle": "A real example: creating a marketing strategy"
         }
     },
     "pricing": {
@@ -216,10 +328,10 @@
         },
         "processing": {
             "analysing": "Analysing your task...",
-            "generating": "Generating your optimised prompt..."
+            "generating": "Generating your optimized prompt..."
         },
         "result": {
-            "title": "Your Optimised Prompt",
+            "title": "Your Optimized Prompt",
             "copy": "Copy Prompt",
             "tryAgain": "Try Another Task"
         }
