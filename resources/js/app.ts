@@ -8,6 +8,7 @@ import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useNotification } from './Composables/ui/useNotification';
 import { getCookie, getCsrfToken } from './Utils/cookies';
+import { i18n, setLocale, type LocaleCode } from './i18n';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();
@@ -101,10 +102,15 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        // Set locale from server-side props
+        const locale = (props.initialPage.props.locale as LocaleCode) || 'en';
+        setLocale(locale);
+
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(pinia)
             .use(ZiggyVue)
+            .use(i18n)
             .mount(el);
 
         // Identify visitor in Fullstory on initial load

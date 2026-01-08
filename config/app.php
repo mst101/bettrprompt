@@ -86,6 +86,40 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Supported Locales
+    |--------------------------------------------------------------------------
+    |
+    | List of all supported locales for internationalisation.
+    | Organised by tier: Essential, High Value, Nordic, Volume, RTL
+    |
+    */
+
+    'supported_locales' => [
+        // Tier 1: Essential
+        'en', 'en-GB',
+        // Tier 2: High Value
+        'de', 'ja', 'ko', 'fr',
+        // Tier 3: Nordic
+        'sv', 'no', 'da', 'fi', 'nl',
+        // Tier 4: Volume
+        'es', 'pt', 'it', 'zh',
+        // Tier 5: RTL
+        'ar', 'he',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | RTL Locales
+    |--------------------------------------------------------------------------
+    |
+    | List of locales that use right-to-left text direction.
+    |
+    */
+
+    'rtl_locales' => ['ar', 'he'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

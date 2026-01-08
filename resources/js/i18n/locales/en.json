@@ -1,0 +1,248 @@
+{
+    "common": {
+        "nav": {
+            "home": "Home",
+            "pricing": "Pricing",
+            "profile": "Profile",
+            "settings": "Settings",
+            "login": "Log in",
+            "logout": "Log out",
+            "register": "Register"
+        },
+        "buttons": {
+            "submit": "Submit",
+            "save": "Save",
+            "cancel": "Cancel",
+            "close": "Close",
+            "back": "Back",
+            "next": "Next",
+            "continue": "Continue",
+            "loading": "Loading...",
+            "copy": "Copy",
+            "copied": "Copied!",
+            "edit": "Edit",
+            "delete": "Delete",
+            "confirm": "Confirm"
+        },
+        "validation": {
+            "required": "This field is required",
+            "email": "Please enter a valid email address",
+            "minLength": "Must be at least {min} characters",
+            "maxLength": "Must be no more than {max} characters"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Sign in to your account",
+            "email": "Email address",
+            "password": "Password",
+            "rememberMe": "Remember me",
+            "forgotPassword": "Forgot your password?",
+            "submit": "Sign in",
+            "noAccount": "Don't have an account?",
+            "signUp": "Sign up"
+        },
+        "register": {
+            "title": "Create an account",
+            "name": "Full name",
+            "email": "Email address",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
+            "submit": "Create account",
+            "hasAccount": "Already have an account?",
+            "signIn": "Sign in"
+        },
+        "forgotPassword": {
+            "title": "Reset your password",
+            "description": "Enter your email address and we'll send you a link to reset your password.",
+            "email": "Email address",
+            "submit": "Send reset link",
+            "backToLogin": "Back to sign in"
+        },
+        "resetPassword": {
+            "title": "Create new password",
+            "password": "New password",
+            "confirmPassword": "Confirm new password",
+            "submit": "Reset password"
+        },
+        "google": {
+            "continueWith": "Continue with Google"
+        }
+    },
+    "home": {
+        "hero": {
+            "title": "AI Prompts Calibrated to Your Personality",
+            "subtitle": "Get better results from AI by using prompts optimised for how you think and communicate.",
+            "cta": "Get Started Free"
+        },
+        "features": {
+            "title": "How It Works",
+            "personality": {
+                "title": "Personality Analysis",
+                "description": "We analyse your cognitive style to understand how you process information."
+            },
+            "prompts": {
+                "title": "Smart Prompts",
+                "description": "AI-generated prompts tailored to your unique way of thinking."
+            },
+            "results": {
+                "title": "Better Results",
+                "description": "Get more relevant and useful responses from any AI model."
+            }
+        }
+    },
+    "pricing": {
+        "title": "Simple, Transparent Pricing",
+        "subtitle": "Choose the plan that works for you",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "save": "Save {percent}%",
+        "free": {
+            "name": "Free",
+            "price": "0",
+            "period": "forever",
+            "description": "Perfect for trying out BettrPrompt",
+            "cta": "Get Started"
+        },
+        "pro": {
+            "name": "Pro",
+            "period": "per month",
+            "periodYearly": "per year",
+            "description": "For power users who want the best results",
+            "cta": "Upgrade to Pro"
+        },
+        "features": {
+            "title": "All features included",
+            "unlimited": "Unlimited prompts",
+            "priority": "Priority processing",
+            "privacy": "Privacy encryption",
+            "support": "Priority support"
+        }
+    },
+    "subscription": {
+        "currentPlan": "Current Plan",
+        "manage": "Manage Subscription",
+        "updatePayment": "Update Payment Method",
+        "cancel": "Cancel Subscription",
+        "resume": "Resume Subscription",
+        "cancelConfirm": {
+            "title": "Cancel Subscription?",
+            "description": "You will retain Pro access until the end of your current billing period. After that, you'll be moved to the Free plan with 10 prompts per month.",
+            "keep": "Keep Subscription",
+            "confirm": "Cancel Subscription"
+        },
+        "status": {
+            "active": "Active subscription",
+            "cancelling": "Cancels on {date}",
+            "promptsRemaining": "{count} of {total} prompts remaining this month"
+        },
+        "billing": {
+            "title": "Billing History",
+            "download": "Download"
+        }
+    },
+    "privacy": {
+        "title": "Privacy Encryption",
+        "proRequired": {
+            "title": "Pro Feature",
+            "description": "Privacy encryption is available exclusively for Pro subscribers. Your prompt data and personal information will be encrypted at rest, ensuring only you can access your data."
+        },
+        "status": {
+            "enabled": "Encryption Enabled",
+            "enabledOn": "Enabled on {date}",
+            "enabledDescription": "Your prompt data is encrypted at rest. Only you can access your data by entering your password.",
+            "notEnabled": "Encryption Not Enabled",
+            "notEnabledDescription": "Your data is stored without end-to-end encryption",
+            "enableDescription": "Enable privacy encryption to protect your prompt data at rest. Once enabled, your data will be encrypted with a key derived from your password."
+        },
+        "actions": {
+            "enable": "Enable Encryption",
+            "disable": "Disable Encryption"
+        },
+        "howItWorks": {
+            "title": "How Privacy Encryption Works",
+            "step1": {
+                "title": "Password-Protected Key",
+                "description": "A unique encryption key is generated and protected by your account password."
+            },
+            "step2": {
+                "title": "Recovery Phrase",
+                "description": "You'll receive a 12-word recovery phrase that can restore access if you forget your password."
+            },
+            "step3": {
+                "title": "Encrypted At Rest",
+                "description": "All your prompt data is encrypted before being stored. Without your password, the data is unreadable."
+            }
+        },
+        "setup": {
+            "title": "Enable Privacy Encryption",
+            "savePhrase": {
+                "title": "Important: Save Your Recovery Phrase",
+                "description": "Write down these 12 words in order. This is the only way to recover your data if you forget your password. Store it securely and never share it."
+            },
+            "yourPhrase": "Your Recovery Phrase",
+            "copyPhrase": "Copy to Clipboard",
+            "confirmWritten": "I have written down my recovery phrase and stored it securely",
+            "confirmTitle": "Confirm Your Recovery Phrase",
+            "confirmDescription": "Enter the words at the specified positions to confirm you've saved your recovery phrase.",
+            "wordNumber": "Word #{number}",
+            "enterPassword": "Enter your account password"
+        },
+        "unlock": {
+            "title": "Unlock Your Data",
+            "forgotPassword": "Forgot password? Use recovery phrase"
+        },
+        "recovery": {
+            "title": "Recover Your Data",
+            "description": "Enter your 12-word recovery phrase to regain access to your encrypted data. You will also need to set a new password.",
+            "phraseLabel": "Recovery Phrase",
+            "newPasswordLabel": "New Password",
+            "confirmPasswordLabel": "Confirm New Password",
+            "submit": "Recover Account"
+        },
+        "disable": {
+            "title": "Disable Privacy Encryption?",
+            "description": "This will decrypt all your stored data. Your prompts will no longer be encrypted at rest.",
+            "passwordLabel": "Enter your password to confirm",
+            "confirmLabel": "I understand my data will no longer be encrypted"
+        }
+    },
+    "promptBuilder": {
+        "title": "Prompt Builder",
+        "taskInput": {
+            "label": "What would you like to accomplish?",
+            "placeholder": "Describe your task in detail...",
+            "submit": "Analyse Task"
+        },
+        "processing": {
+            "analysing": "Analysing your task...",
+            "generating": "Generating your optimised prompt..."
+        },
+        "result": {
+            "title": "Your Optimised Prompt",
+            "copy": "Copy Prompt",
+            "tryAgain": "Try Another Task"
+        }
+    },
+    "profile": {
+        "title": "Profile Settings",
+        "sections": {
+            "personal": "Personal Information",
+            "location": "Location",
+            "professional": "Professional",
+            "team": "Team",
+            "preferences": "Preferences"
+        }
+    },
+    "language": {
+        "title": "Language",
+        "select": "Select Language",
+        "current": "Current: {language}"
+    },
+    "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "notFound": "Page not found",
+        "unauthorized": "You are not authorised to access this page.",
+        "serverError": "Server error. Please try again later."
+    }
+}
