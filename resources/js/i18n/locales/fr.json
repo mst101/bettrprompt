@@ -64,7 +64,7 @@
         "forgotPassword": {
             "title": "Mot de passe oublié",
             "heading": "Réinitialiser votre mot de passe",
-            "description": "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.",
+            "description": "Mot de passe oublié ? Pas de problème. Dites-nous simplement votre adresse e-mail et nous vous enverrons un lien de réinitialisation qui vous permettra de choisir un nouveau mot de passe.",
             "email": "E-mail",
             "submit": "Envoyer le lien de réinitialisation du mot de passe par e-mail",
             "backToLogin": "Retour à la connexion"
@@ -79,13 +79,13 @@
         },
         "confirmPassword": {
             "title": "Confirmer le mot de passe",
-            "description": "This is a secure area of the application. Please confirm your password before continuing.",
+            "description": "Ceci est une zone sécurisée de l'application. Veuillez confirmer votre mot de passe avant de continuer.",
             "passwordLabel": "Mot de passe"
         },
         "verifyEmail": {
             "title": "Vérification de l'e-mail",
             "heading": "Vérifier l'adresse e-mail",
-            "description": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you did not receive the email, we will gladly send you another.",
+            "description": "Merci de vous être inscrit ! Avant de commencer, pourriez-vous vérifier votre adresse e-mail en cliquant sur le lien que nous venons de vous envoyer ? Si vous n'avez pas reçu l'e-mail, nous vous en enverrons un autre.",
             "resent": "Un nouveau lien de vérification a été envoyé à l'adresse e-mail que vous avez fournie lors de l'inscription.",
             "resend": "Renvoyer l'e-mail de vérification",
             "logout": "Se déconnecter"
@@ -95,7 +95,7 @@
             "heading": "Récupérez vos données",
             "notice": {
                 "title": "Récupération de compte",
-                "description": "Enter your 12-word recovery phrase to regain access to your encrypted data. You will also need to set a new password."
+                "description": "Entrez votre phrase de récupération de 12 mots pour retrouver l'accès à vos données chiffrées. Vous devrez également définir un nouveau mot de passe."
             },
             "sections": {
                 "recoveryPhrase": "Phrase de récupération",
@@ -114,11 +114,11 @@
             "passwordLabel": "Mot de passe",
             "rememberMe": "Se souvenir de moi",
             "forgotPassword": "Mot de passe oublié ?",
-            "needAccount": "Need an account?",
+            "needAccount": "Vous n'avez pas de compte ?",
             "submit": "Se connecter"
         },
         "modalRegister": {
-            "title": "Create your account",
+            "title": "Créer votre compte",
             "google": "Continuer avec Google",
             "nameLabel": "Nom complet",
             "emailLabel": "Adresse e-mail",
@@ -129,14 +129,14 @@
         },
         "modalForgotPassword": {
             "title": "Réinitialiser votre mot de passe",
-            "description": "Enter your email address and we'll send you a reset link.",
+            "description": "Entrez votre adresse e-mail et nous vous enverrons un lien de réinitialisation.",
             "emailLabel": "Adresse e-mail",
             "backToLogin": "Retour à la connexion",
-            "submit": "Send reset link"
+            "submit": "Envoyer le lien de réinitialisation"
         },
         "modalResetPassword": {
-            "title": "Create a new password",
-            "description": "Enter your email and choose a new password.",
+            "title": "Créer un nouveau mot de passe",
+            "description": "Entrez votre e-mail et choisissez un nouveau mot de passe.",
             "emailLabel": "Adresse e-mail",
             "passwordLabel": "Nouveau mot de passe",
             "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
@@ -147,51 +147,51 @@
     "components": {
         "base": {
             "accordion": {
-                "ariaLabel": "Accordion",
-                "empty": "No items available"
+                "ariaLabel": "Accordéon",
+                "empty": "Aucun élément disponible"
             },
             "buttonDarkMode": {
-                "title": "Switch to {mode}",
+                "title": "Basculer vers le {mode}",
                 "mode": {
-                    "light": "light mode",
-                    "dark": "dark mode"
+                    "light": "mode clair",
+                    "dark": "mode sombre"
                 }
             },
             "buttonHamburger": {
-                "ariaLabel": "Open menu"
+                "ariaLabel": "Ouvrir le menu"
             },
             "buttonVoiceInput": {
-                "transcribing": "Transcribing...",
-                "listening": "Listening...",
-                "record": "Record",
-                "stopRecording": "Stop recording",
-                "startRecording": "Start recording",
-                "startRecordingTitle": "Start recording"
+                "transcribing": "Transcription en cours...",
+                "listening": "Écoute en cours...",
+                "record": "Enregistrer",
+                "stopRecording": "Arrêter l'enregistrement",
+                "startRecording": "Démarrer l'enregistrement",
+                "startRecordingTitle": "Démarrer l'enregistrement"
             },
             "carousel": {
-                "ariaLabel": "Carousel",
-                "previous": "Previous slide",
-                "next": "Next slide",
-                "slideRole": "slide",
-                "slideLabel": "Slide {current} of {total}",
-                "goToSlide": "Go to slide {index}",
-                "liveRegion": "Slide {current} of {total}: {title}",
-                "empty": "No slides available"
+                "ariaLabel": "Carrousel",
+                "previous": "Diapositive précédente",
+                "next": "Diapositive suivante",
+                "slideRole": "diapositive",
+                "slideLabel": "Diapositive {current} sur {total}",
+                "goToSlide": "Accéder à la diapositive {index}",
+                "liveRegion": "Diapositive {current} sur {total} : {title}",
+                "empty": "Aucune diapositive disponible"
             },
             "formCheckboxGroup": {
-                "otherLabel": "Other",
-                "otherPlaceholder": "Please specify...",
-                "characterCount": "{count}/{max} characters"
+                "otherLabel": "Autre",
+                "otherPlaceholder": "Veuillez préciser...",
+                "characterCount": "{count}/{max} caractères"
             },
             "formSelect": {
-                "placeholder": "Select an option"
+                "placeholder": "Sélectionner une option"
             },
             "likert": {
-                "optionLabel": "Select {value}"
+                "optionLabel": "Sélectionner {value}"
             },
             "tabs": {
-                "menuLabel": "Tabs",
-                "ariaLabel": "Tabs"
+                "menuLabel": "Onglets",
+                "ariaLabel": "Onglets"
             }
         },
         "common": {
@@ -200,416 +200,416 @@
                 "title": "{label}"
             },
             "compactMetadataCard": {
-                "showProfile": "Show profile"
+                "showProfile": "Afficher le profil"
             },
             "cookieBanner": {
-                "ariaLabel": "Cookie banner",
-                "title": "We use cookies",
-                "description": "We use cookies to enhance your experience. See our ",
-                "policyLink": "Cookie Policy",
-                "rejectAll": "Reject all",
-                "customize": "Customize",
-                "acceptAll": "Accept all"
+                "ariaLabel": "Banneau de cookies",
+                "title": "Nous utilisons des cookies",
+                "description": "Nous utilisons des cookies pour améliorer votre expérience. Consultez notre ",
+                "policyLink": "Politique de cookies",
+                "rejectAll": "Tout refuser",
+                "customize": "Personnaliser",
+                "acceptAll": "Tout accepter"
             },
             "cookieSettings": {
-                "title": "Cookie preferences",
-                "description": "Manage your cookie settings. Learn more in our ",
-                "learnMore": "Cookie Policy",
-                "alwaysActive": "Always active",
-                "functionalLabel": "Functional cookies",
-                "analyticsLabel": "Analytics cookies",
-                "rejectAll": "Reject all",
-                "savePreferences": "Save preferences",
-                "acceptAll": "Accept all"
+                "title": "Préférences de cookies",
+                "description": "Gérez vos paramètres de cookies. Apprenez-en plus dans notre ",
+                "learnMore": "Politique de cookies",
+                "alwaysActive": "Toujours actif",
+                "functionalLabel": "Cookies fonctionnels",
+                "analyticsLabel": "Cookies d'analyse",
+                "rejectAll": "Tout refuser",
+                "savePreferences": "Enregistrer les préférences",
+                "acceptAll": "Tout accepter"
             },
             "exampleDemonstration": {
                 "stage1": {
-                    "title": "Enter your task",
-                    "description": "Start with a clear description of what you want to achieve.",
-                    "label": "Task",
-                    "example": "Create a marketing strategy to launch a new fitness app."
+                    "title": "Entrez votre tâche",
+                    "description": "Commencez par une description claire de ce que vous souhaitez accomplir.",
+                    "label": "Tâche",
+                    "example": "Créer une stratégie marketing pour lancer une nouvelle application de remise en forme."
                 },
                 "stage2": {
-                    "title": "Quick queries",
-                    "description": "A few fast questions to refine the goal.",
-                    "question1": "Who is your target audience?",
-                    "answer1": "Busy professionals ages 25-40",
-                    "question2": "What is the primary goal?",
-                    "answer2": "Increase free-trial sign-ups"
+                    "title": "Questions rapides",
+                    "description": "Quelques questions rapides pour affiner l'objectif.",
+                    "question1": "Qui est votre public cible ?",
+                    "answer1": "Les professionnels occupés âgés de 25 à 40 ans",
+                    "question2": "Quel est l'objectif principal ?",
+                    "answer2": "Augmenter les inscriptions à l'essai gratuit"
                 },
                 "stage3": {
-                    "title": "Framework",
-                    "description": "We select a framework tailored to your task.",
-                    "frameworkName": "STP + 4Ps",
-                    "chipChallenge": "Challenge",
-                    "chipObjective": "Objective",
+                    "title": "Cadre",
+                    "description": "Nous sélectionnons un cadre adapté à votre tâche.",
+                    "frameworkName": "STP + 4P",
+                    "chipChallenge": "Défi",
+                    "chipObjective": "Objectif",
                     "chipActions": "Actions",
-                    "chipStrategy": "Strategy",
-                    "chipTactics": "Tactics",
-                    "rationale": "Chosen to balance positioning with a clear execution plan."
+                    "chipStrategy": "Stratégie",
+                    "chipTactics": "Tactiques",
+                    "rationale": "Choisi pour équilibrer le positionnement avec un plan d'exécution clair."
                 },
                 "stage4": {
-                    "title": "Clarifying questions",
-                    "description": "We capture the details that make the prompt effective.",
-                    "question1": "What makes the app different from competitors?",
-                    "answer1": "Personalized workouts you can finish in 10 minutes",
-                    "question2": "Which channels will you use?",
-                    "answer2": "Instagram, TikTok, and fitness creator partnerships",
-                    "question3": "What is your budget?",
-                    "answer3": "$10k per month for the first quarter"
+                    "title": "Questions clarificatrices",
+                    "description": "Nous capturons les détails qui rendent l'invite efficace.",
+                    "question1": "Qu'est-ce qui rend l'application différente de ses concurrents ?",
+                    "answer1": "Des entraînements personnalisés que vous pouvez terminer en 10 minutes",
+                    "question2": "Quels canaux utiliserez-vous ?",
+                    "answer2": "Instagram, TikTok et partenariats avec des créateurs de fitness",
+                    "question3": "Quel est votre budget ?",
+                    "answer3": "10 000 $ par mois pour le premier trimestre"
                 },
                 "stage5": {
-                    "title": "Optimized prompt",
-                    "description": "You get a structured prompt ready to use.",
-                    "ready": "Your prompt is ready.",
-                    "promptIntro": "Create a marketing strategy for a new fitness app. Include:",
-                    "promptChallengeLabel": "Challenge:",
-                    "promptChallengeText": "Standing out in a crowded market.",
-                    "promptObjectiveLabel": "Objective:",
-                    "promptObjectiveText": "Drive 5,000 trial sign-ups in 90 days.",
-                    "promptEtc": "Provide channels, messaging, and a 90-day action plan."
+                    "title": "Invite optimisée",
+                    "description": "Vous obtenez une invite structurée prête à l'emploi.",
+                    "ready": "Votre invite est prête.",
+                    "promptIntro": "Créer une stratégie marketing pour une nouvelle application de remise en forme. Inclure :",
+                    "promptChallengeLabel": "Défi :",
+                    "promptChallengeText": "Se démarquer sur un marché encombré.",
+                    "promptObjectiveLabel": "Objectif :",
+                    "promptObjectiveText": "Attirer 5 000 inscriptions à l'essai en 90 jours.",
+                    "promptEtc": "Fournir les canaux, la messagerie et un plan d'action de 90 jours."
                 }
             },
             "footer": {
-                "copyright": "(c) {year} BettrPrompt. All rights reserved.",
-                "terms": "Terms",
-                "privacy": "Privacy",
+                "copyright": "(c) {year} BettrPrompt. Tous droits réservés.",
+                "terms": "Conditions",
+                "privacy": "Confidentialité",
                 "cookies": "Cookies",
-                "cookieSettings": "Cookie settings"
+                "cookieSettings": "Paramètres des cookies"
             },
             "heroCta": {
-                "tryNow": "Try it now",
-                "getStartedFree": "Get started free"
+                "tryNow": "Essayer maintenant",
+                "getStartedFree": "Commencer gratuitement"
             },
             "languageSwitcher": {
                 "sections": {
-                    "english": "English",
-                    "major": "Major languages",
-                    "nordic": "Nordic",
-                    "other": "Other",
-                    "rtl": "Right-to-left"
+                    "english": "Anglais",
+                    "major": "Langues principales",
+                    "nordic": "Nordiques",
+                    "other": "Autres",
+                    "rtl": "De droite à gauche"
                 }
             },
             "optionalBadge": {
-                "label": "Optional"
+                "label": "Facultatif"
             },
             "profileCompletion": {
-                "title": "Profile completion",
+                "title": "Profil complet",
                 "labels": {
-                    "complete": "Complete",
-                    "nearlyComplete": "Nearly complete",
-                    "goodProgress": "Good progress",
-                    "gettingStarted": "Getting started",
-                    "justBeginning": "Just beginning"
+                    "complete": "Complet",
+                    "nearlyComplete": "Presque complet",
+                    "goodProgress": "Bons progrès",
+                    "gettingStarted": "Premiers pas",
+                    "justBeginning": "Tout juste commencé"
                 }
             },
             "promptRunMetadata": {
-                "user": "User",
-                "personality": "Personality",
-                "created": "Created",
-                "status": "Status"
+                "user": "Utilisateur",
+                "personality": "Personnalité",
+                "created": "Créé",
+                "status": "Statut"
             },
             "upgradePromptModal": {
-                "title": "Upgrade to Pro",
-                "description": "Unlock unlimited prompts and priority processing.",
-                "monthly": "Monthly",
+                "title": "Passer à Pro",
+                "description": "Débloquez des invites illimitées et un traitement prioritaire.",
+                "monthly": "Mensuel",
                 "monthlyPrice": {
-                    "amount": "GBP 12",
-                    "period": "/month"
+                    "amount": "12 GBP",
+                    "period": "/mois"
                 },
-                "annual": "Annual",
+                "annual": "Annuel",
                 "annualPrice": {
-                    "amount": "GBP 99",
-                    "period": "/year"
+                    "amount": "99 GBP",
+                    "period": "/an"
                 },
-                "annualEquivalent": "GBP 8.25/month billed annually",
-                "maybeLater": "Maybe later",
-                "processing": "Processing...",
-                "upgradeNow": "Upgrade now"
+                "annualEquivalent": "8,25 GBP/mois facturés annuellement",
+                "maybeLater": "Peut-être plus tard",
+                "processing": "Traitement en cours...",
+                "upgradeNow": "Passer à Pro"
             },
             "usageIndicator": {
-                "upgrade": "Upgrade"
+                "upgrade": "Passer à Pro"
             },
             "visitorLimitBanner": {
                 "fixed": {
-                    "titleNew": "Create a free account to keep going",
-                    "descriptionNew": "Save your prompts and get more runs when you sign up.",
-                    "titleReturning": "Welcome back - log in to continue",
-                    "descriptionReturning": "Log in to pick up where you left off.",
+                    "titleNew": "Créez un compte gratuit pour continuer",
+                    "descriptionNew": "Enregistrez vos invites et obtenez plus d'exécutions quand vous vous inscrivez.",
+                    "titleReturning": "Bienvenue de retour - connectez-vous pour continuer",
+                    "descriptionReturning": "Connectez-vous pour reprendre là où vous avez laissé.",
                     "ctaRegister": "Créer un compte"
                 },
                 "inline": {
-                    "titleNew": "Create a free account to continue",
-                    "descriptionNew": "Sign up to save your prompts and unlock more runs.",
-                    "titleReturning": "Log in to continue",
-                    "descriptionReturning": "Log in to access your saved prompt runs.",
+                    "titleNew": "Créez un compte gratuit pour continuer",
+                    "descriptionNew": "Inscrivez-vous pour enregistrer vos invites et débloquer plus d'exécutions.",
+                    "titleReturning": "Connectez-vous pour continuer",
+                    "descriptionReturning": "Connectez-vous pour accéder à vos exécutions d'invites enregistrées.",
                     "ctaRegister": "Créer un compte"
                 }
             },
             "visitorLimitModal": {
-                "title": "Create an account to continue",
-                "description": "Guest access is limited. Create a free account to save your prompts and keep building.",
+                "title": "Créez un compte pour continuer",
+                "description": "L'accès en tant qu'invité est limité. Créez un compte gratuit pour enregistrer vos invites et continuer à construire.",
                 "cta": "Créer un compte"
             },
             "workflowError": {
-                "title": "Something went wrong",
-                "retry": "Try again"
+                "title": "Une erreur s'est produite",
+                "retry": "Réessayer"
             }
         }
     },
     "home": {
-        "title": "Welcome to BettrPrompt",
+        "title": "Bienvenue sur BettrPrompt",
         "hero": {
-            "title": "The Simple Way to Solve",
-            "titleGradient": "Complex Problems",
-            "subtitle": "Great AI results start with great questions. BettrPrompt asks the right ones - then builds structured prompts that actually work."
+            "title": "Le moyen simple de résoudre",
+            "titleGradient": "les problèmes complexes",
+            "subtitle": "Les excellents résultats avec l'IA commencent par d'excellentes questions. BettrPrompt pose les bonnes questions, puis crée des invites structurées qui fonctionnent vraiment."
         },
         "features": {
-            "heading": "Features",
+            "heading": "Fonctionnalités",
             "feature1": {
-                "title": "The Right Approach, Automatically",
-                "description": "We analyze your task and choose from 60+ proven methodologies. You get effective prompts without needing to become a prompt engineer."
+                "title": "La bonne approche, automatiquement",
+                "description": "Nous analysons votre tâche et choisissons parmi plus de 60 méthodologies éprouvées. Vous obtenez des invites efficaces sans avoir besoin de devenir un ingénieur en invite."
             },
             "feature2": {
-                "title": "Questions You Haven't Thought Of",
-                "description": "Not sure where to start? We surface what you actually need - so you get useful answers on the first try, not after three rounds of back-and-forth."
+                "title": "Des questions auxquelles vous n'aviez pas pensé",
+                "description": "Vous ne savez pas par où commencer ? Nous surfaçons ce dont vous avez réellement besoin, afin que vous obteniez des réponses utiles du premier coup, pas après trois allers-retours."
             },
             "feature3": {
-                "title": "Adapted to How You Think",
-                "description": "Add your personality type and we'll tailor our questions accordingly. An analytical thinker and a creative thinker working on the same problem need different starting points - we'll show you why we're asking what we're asking."
+                "title": "Adapté à votre façon de penser",
+                "description": "Ajoutez votre type de personnalité et nous adapterons nos questions en conséquence. Un penseur analytique et un penseur créatif travaillant sur le même problème ont besoin de points de départ différents - nous vous montrerons pourquoi nous posons ces questions."
             }
         },
         "comparison": {
-            "title": "But Can't I Just Ask ChatGPT?",
-            "subtitle": "You can. ChatGPT might even ask a clarifying question or two. But there's a difference between being helpful quickly and drawing out what you actually need.",
+            "title": "Mais ne puis-je pas simplement demander à ChatGPT ?",
+            "subtitle": "Si, vous pouvez. ChatGPT pourrait même poser une ou deux questions clarificatrices. Mais il y a une différence entre être utile rapidement et découvrir ce dont vous avez réellement besoin.",
             "labels": {
-                "you": "You:",
-                "youGet": "You get:"
+                "you": "Vous :",
+                "youGet": "Vous obtenez :"
             },
             "chatgpt": {
-                "title": "Asking ChatGPT directly",
-                "yourPrompt": "I need to write a best man speech for my friend's wedding",
-                "label": "ChatGPT:",
-                "response": "Generates a speech immediately, or asks one or two quick questions before diving in. It's trying to help you fast.",
-                "result": "A generic speech that sounds like every other best man speech. You spend the next hour tweaking it to sound like you.",
-                "footer": "You get what you asked for"
+                "title": "Demander directement à ChatGPT",
+                "yourPrompt": "Je dois écrire un discours de garçon d'honneur pour le mariage de mon ami",
+                "label": "ChatGPT :",
+                "response": "Génère un discours immédiatement, ou pose une ou deux questions rapides avant de plonger. Il essaie de vous aider rapidement.",
+                "result": "Un discours générique qui ressemble à tous les autres discours de garçon d'honneur. Vous passez l'heure suivante à le retoucher pour qu'il vous ressemble.",
+                "footer": "Vous obtenez ce que vous avez demandé"
             },
             "bettrprompt": {
-                "title": "Using BettrPrompt",
-                "yourPrompt": "I need to write a best man speech for my friend's wedding",
-                "label": "BettrPrompt:",
-                "response": "Selects a framework for memorable personal storytelling. Then asks: \"How did you two meet? What's a story that captures who he really is? What's the couple's sense of humor? Who's in the audience?\"",
-                "result": "A prompt that captures your friendship, fits the audience, and plays to your strengths - so the AI output actually sounds like something you'd say.",
-                "footer": "You get what AI is actually capable of"
+                "title": "Utiliser BettrPrompt",
+                "yourPrompt": "Je dois écrire un discours de garçon d'honneur pour le mariage de mon ami",
+                "label": "BettrPrompt :",
+                "response": "Sélectionne un cadre pour la narration personnelle mémorable. Puis demande : « Comment vous deux vous êtes-vous rencontrés ? Quelle histoire capture qui il est vraiment ? Quel est le sens de l'humour du couple ? Qui sera dans l'audience ? »",
+                "result": "Une invite qui capture votre amitié, s'adapte à l'audience et joue sur vos forces - afin que la sortie de l'IA ressemble vraiment à quelque chose que vous diriez.",
+                "footer": "Vous obtenez ce dont l'IA est réellement capable"
             },
-            "keyInsight": "ChatGPT answers what you ask. {0} - then builds a prompt that gets you AI's best work, not its first guess.",
-            "keyInsightEmphasis": "BettrPrompt uncovers what you should have asked"
+            "keyInsight": "ChatGPT répond à ce que vous demandez. {0} - puis crée une invite qui vous donne le meilleur travail de l'IA, pas sa première supposition.",
+            "keyInsightEmphasis": "BettrPrompt découvre ce que vous auriez dû demander"
         },
         "objections": {
             "templates": {
-                "title": "What About Prompt Templates?",
-                "description": "Templates are one-size-fits-all. We generate prompts for your specific situation through dialogue - your context, your constraints, your voice. No two prompts are the same."
+                "title": "Qu'en est-il des modèles d'invite ?",
+                "description": "Les modèles sont universels. Nous générons des invites pour votre situation spécifique par le dialogue - votre contexte, vos contraintes, votre voix. Aucune invite n'est identique."
             },
             "learning": {
-                "title": "Should I Learn Prompt Engineering?",
-                "description": "You could. But you're busy. BettrPrompt embeds dozens of proven frameworks so you don't have to memorize them. Describe what you need - we'll handle the rest."
+                "title": "Dois-je apprendre l'ingénierie des invites ?",
+                "description": "Vous pourriez. Mais vous êtes occupé. BettrPrompt intègre des dizaines de cadres éprouvés pour que vous n'ayez pas à les mémoriser. Décrivez ce dont vous avez besoin - nous nous occupons du reste."
             }
         },
         "howItWorks": {
-            "title": "How It Works",
-            "subtitle": "Three simple steps to better AI prompts",
+            "title": "Comment ça marche",
+            "subtitle": "Trois étapes simples pour de meilleures invites IA",
             "step1": {
-                "title": "Describe Your Challenge",
-                "description": "What do you want to achieve? Planning a project? Making a decision? Solving a problem? Describe your goal in plain language."
+                "title": "Décrivez votre défi",
+                "description": "Qu'est-ce que vous voulez accomplir ? Planifier un projet ? Prendre une décision ? Résoudre un problème ? Décrivez votre objectif en langage naturel."
             },
             "step2": {
-                "title": "Answer a Few Questions",
-                "description": "We structure your thinking - asking the questions that surface what you actually need, not what you think you need. This is where vague becomes specific."
+                "title": "Répondez à quelques questions",
+                "description": "Nous structurons votre réflexion - posant les questions qui surfacent ce dont vous avez réellement besoin, pas ce que vous pensez avoir besoin. C'est là que le vague devient spécifique."
             },
             "step3": {
-                "title": "Get Your Optimized Prompt",
-                "description": "Copy your prompt into ChatGPT, Claude, or any AI tool. It's built for results and shaped by your answers - not a generic template."
+                "title": "Obtenez votre invite optimisée",
+                "description": "Copiez votre invite dans ChatGPT, Claude ou n'importe quel outil IA. Il est construit pour les résultats et façonné par vos réponses - pas un modèle générique."
             }
         },
         "useCases": {
-            "title": "When to Use BettrPrompt",
-            "subtitle": "If you can describe what you're trying to achieve, we'll help you get there.",
+            "title": "Quand utiliser BettrPrompt",
+            "subtitle": "Si vous pouvez décrire ce que vous essayez d'accomplir, nous vous aiderons à y parvenir.",
             "workCareer": {
-                "title": "Work & Career",
-                "subtitle": "Navigate the conversations and decisions that shape your professional life.",
+                "title": "Travail et carrière",
+                "subtitle": "Naviguez dans les conversations et les décisions qui façonnent votre vie professionnelle.",
                 "bullets": [
-                    "Asking your manager for a promotion",
-                    "Preparing for a difficult performance review",
-                    "Delegating a complex project to your team",
-                    "Writing a proposal that convinces skeptical stakeholders"
+                    "Demander une promotion à votre manager",
+                    "Se préparer à un examen de performance difficile",
+                    "Déléguer un projet complexe à votre équipe",
+                    "Rédiger une proposition qui convainc les parties prenantes septiques"
                 ]
             },
             "personalDecisions": {
-                "title": "Personal Decisions",
-                "subtitle": "Bring clarity to the choices that matter most.",
+                "title": "Décisions personnelles",
+                "subtitle": "Apportez de la clarté aux choix qui comptent le plus.",
                 "bullets": [
-                    "Deciding whether to accept a job offer or stay put",
-                    "Working through a major life change with your partner",
-                    "Setting boundaries with someone who's draining you",
-                    "Planning a difficult conversation with aging parents"
+                    "Décider d'accepter une offre d'emploi ou de rester sur place",
+                    "Traverser un grand changement de vie avec votre partenaire",
+                    "Établir des limites avec quelqu'un qui vous épuise",
+                    "Planifier une conversation difficile avec vos parents vieillissants"
                 ]
             },
             "learningDevelopment": {
-                "title": "Learning & Development",
-                "subtitle": "Build skills and habits in a way that works for how you learn.",
+                "title": "Apprentissage et développement",
+                "subtitle": "Développer des compétences et des habitudes d'une manière qui correspond à votre apprentissage.",
                 "bullets": [
-                    "Creating a study plan for a professional qualification",
-                    "Getting up to speed on a new industry quickly",
-                    "Starting to learn a new language or skill from scratch",
-                    "Building a sustainable reading or learning habit"
+                    "Créer un plan d'étude pour une qualification professionnelle",
+                    "Vous mettre à jour rapidement sur une nouvelle industrie",
+                    "Commencer à apprendre une nouvelle langue ou une nouvelle compétence à partir de zéro",
+                    "Construire une habitude de lecture ou d'apprentissage durable"
                 ]
             },
             "creativeProjects": {
-                "title": "Creative Projects",
-                "subtitle": "Get unstuck and find your starting point.",
+                "title": "Projets créatifs",
+                "subtitle": "Sortez de l'impasse et trouvez votre point de départ.",
                 "bullets": [
-                    "Planning a novel, screenplay, or creative project",
-                    "Writing a speech that's funny, heartfelt, or both",
-                    "Creating content for a new business or side project",
-                    "Designing a memorable event or celebration"
+                    "Planifier un roman, un scénario ou un projet créatif",
+                    "Rédiger un discours amusant, sincère ou les deux",
+                    "Créer du contenu pour une nouvelle entreprise ou un projet secondaire",
+                    "Concevoir un événement ou une célébration mémorable"
                 ]
             },
             "businessStrategy": {
-                "title": "Business & Strategy",
-                "subtitle": "Think through high-stakes decisions with clarity.",
+                "title": "Affaires et stratégie",
+                "subtitle": "Réfléchissez aux décisions à enjeux élevés avec clarté.",
                 "bullets": [
-                    "Developing a marketing strategy for a new product",
-                    "Analyzing whether to expand into a new market",
-                    "Preparing for a board presentation or investor pitch",
-                    "Improving team productivity or processes"
+                    "Développer une stratégie marketing pour un nouveau produit",
+                    "Analyser l'expansion sur un nouveau marché",
+                    "Se préparer à une présentation au conseil ou à un pitch d'investisseurs",
+                    "Améliorer la productivité ou les processus de l'équipe"
                 ]
             },
             "relationshipsCommunication": {
-                "title": "Relationships & Communication",
-                "subtitle": "Handle the human stuff with more confidence.",
+                "title": "Relations et communication",
+                "subtitle": "Gérez les aspects humains avec plus de confiance.",
                 "bullets": [
-                    "Resolving an ongoing conflict with your partner",
-                    "Giving difficult feedback without damaging a relationship",
-                    "Having a meaningful conversation with a teenager about their future",
-                    "Reconnecting with a friend you've drifted apart from"
+                    "Résoudre un conflit continu avec votre partenaire",
+                    "Donner un retour difficile sans endommager une relation",
+                    "Avoir une conversation significative avec un adolescent sur son avenir",
+                    "Renouer avec un ami dont vous vous êtes éloigné"
                 ]
             }
         },
         "example": {
-            "title": "Watch It Work",
-            "subtitle": "A real example: creating a marketing strategy"
+            "title": "Regardez-le en action",
+            "subtitle": "Un vrai exemple : créer une stratégie marketing"
         }
     },
     "pilot": {
-        "headTitle": "Join the Pilot Program - BettrPrompt",
+        "headTitle": "Rejoignez le programme pilote - BettrPrompt",
         "hero": {
-            "line1": "Stop Guessing.",
-            "line2": "Start Getting Results from AI.",
-            "subtitle": "BettrPrompt asks the right questions first - so your prompts actually work."
+            "line1": "Arrêtez de deviner.",
+            "line2": "Commencez à obtenir des résultats de l'IA.",
+            "subtitle": "BettrPrompt pose d'abord les bonnes questions - afin que vos invites fonctionnent réellement."
         },
         "problem": {
-            "title": "The Problem",
-            "paragraph1": "You type something into ChatGPT. It's not quite right. You tweak, rephrase, try again. Three attempts later, you've got something usable - but no idea why this version worked.",
-            "paragraph2": "You're not doing anything wrong. AI just expects you to know exactly what you want before you've thought it through."
+            "title": "Le problème",
+            "paragraph1": "Vous tapez quelque chose dans ChatGPT. Ce n'est pas tout à fait juste. Vous ajustez, reformulez, réessayez. Trois tentatives plus tard, vous avez quelque chose d'utilisable - mais aucune idée de pourquoi cette version a fonctionné.",
+            "paragraph2": "Vous ne faites rien de mal. L'IA s'attend simplement à ce que vous sachiez exactement ce que vous voulez avant d'y avoir réfléchi."
         },
         "how": {
-            "title": "How BettrPrompt Works Differently",
+            "title": "Comment BettrPrompt fonctionne différemment",
             "steps": {
                 "step1": {
-                    "title": "We ask before we generate.",
-                    "description": "Targeted questions help you clarify what you actually need - before we create anything."
+                    "title": "Nous posons des questions avant de générer.",
+                    "description": "Des questions ciblées vous aident à clarifier ce dont vous avez réellement besoin - avant que nous créions quoi que ce soit."
                 },
                 "step2": {
-                    "title": "We select from 60+ proven frameworks.",
-                    "description": "Intelligent selection based on your task, not guesswork."
+                    "title": "Nous sélectionnons parmi plus de 60 cadres éprouvés.",
+                    "description": "Sélection intelligente basée sur votre tâche, pas de suppositions."
                 },
                 "step3": {
-                    "title": "We adapt to how you think.",
-                    "description": "Questions tailored to your personality, with transparency about why we're asking."
+                    "title": "Nous nous adaptons à votre façon de penser.",
+                    "description": "Questions adaptées à votre personnalité, avec transparence sur les raisons pour lesquelles nous posons des questions."
                 }
             },
-            "result": "The result: a structured prompt ready to paste into ChatGPT or Claude - that actually works."
+            "result": "Le résultat : une invite structurée prête à être colléée dans ChatGPT ou Claude - qui fonctionne réellement."
         },
         "join": {
-            "title": "Join the Free Pilot",
-            "description": "We're inviting a small group to test BettrPrompt before public launch. Your feedback will shape the product.",
-            "commitmentTitle": "The commitment:",
+            "title": "Rejoignez le programme pilote gratuit",
+            "description": "Nous invitons un petit groupe à tester BettrPrompt avant le lancement public. Vos commentaires façonneront le produit.",
+            "commitmentTitle": "L'engagement :",
             "commitments": {
-                "use": "Use BettrPrompt for 2 weeks",
-                "feedback": "Submit brief feedback at the end"
+                "use": "Utilisez BettrPrompt pendant 2 semaines",
+                "feedback": "Soumettez un bref retour d'information à la fin"
             },
-            "note": "That's it. No cost. No obligation to continue.",
-            "ctaRegister": "Join the Pilot Program",
-            "ctaInvite": "Request an Invitation"
+            "note": "C'est tout. Aucun coût. Aucune obligation de continuer.",
+            "ctaRegister": "Rejoindre le programme pilote",
+            "ctaInvite": "Demander une invitation"
         },
         "footer": {
-            "questions": "Questions?",
-            "contact": "Get in touch"
+            "questions": "Des questions ?",
+            "contact": "Nous contacter"
         }
     },
     "pricing": {
         "pageTitle": "Tarification",
-        "title": "Simple, Transparent Pricing",
-        "subtitle": "Choose the plan that works for you",
-        "tagline": "Start free, upgrade when you need more",
+        "title": "Tarification simple et transparente",
+        "subtitle": "Choisissez le plan qui vous convient",
+        "tagline": "Commencez gratuitement, mettez à niveau quand vous en avez besoin",
         "currency": "GBP",
-        "popularBadge": "Most popular",
-        "monthly": "Monthly",
-        "yearly": "Yearly",
-        "save": "Save {percent}%",
+        "popularBadge": "Le plus populaire",
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "save": "Économiser {percent}%",
         "billing": {
-            "monthly": "Monthly",
-            "yearly": "Annual"
+            "monthly": "Mensuel",
+            "yearly": "Annuel"
         },
         "period": {
-            "month": "month",
-            "year": "year"
+            "month": "mois",
+            "year": "an"
         },
         "actions": {
-            "processing": "Processing..."
+            "processing": "Traitement en cours..."
         },
         "free": {
-            "name": "Free",
+            "name": "Gratuit",
             "price": "0",
-            "period": "forever",
-            "description": "Perfect for trying out BettrPrompt",
-            "cta": "Get Started"
+            "period": "pour toujours",
+            "description": "Parfait pour essayer BettrPrompt",
+            "cta": "Commencer"
         },
         "pro": {
             "name": "Pro",
             "priceMonthly": "12",
             "priceYearly": "99",
-            "period": "per month",
-            "periodYearly": "per year",
-            "description": "For power users who want the best results",
-            "cta": "Start Pro",
-            "yearlySavings": "{amount} / {period} - Save {percent}%"
+            "period": "par mois",
+            "periodYearly": "par an",
+            "description": "Pour les utilisateurs avancés qui veulent les meilleurs résultats",
+            "cta": "Commencer Pro",
+            "yearlySavings": "{amount} / {period} - Économiser {percent}%"
         },
         "features": {
-            "title": "All features included",
-            "unlimited": "Unlimited prompts",
-            "priority": "Priority processing",
-            "privacy": "Privacy encryption",
-            "support": "Priority support"
+            "title": "Toutes les fonctionnalités incluses",
+            "unlimited": "Invites illimitées",
+            "priority": "Traitement prioritaire",
+            "privacy": "Chiffrement de confidentialité",
+            "support": "Support prioritaire"
         },
         "faq": {
-            "title": "Frequently Asked Questions",
+            "title": "Questions fréquemment posées",
             "items": {
                 "limit": {
-                    "question": "What happens when I reach my free limit?",
-                    "answer": "Free accounts are limited to 10 prompts per month. Your limit resets on the first of each month. You can upgrade to Pro at any time for unlimited prompts."
+                    "question": "Que se passe-t-il quand j'atteins ma limite gratuite ?",
+                    "answer": "Les comptes gratuits sont limités à 10 invites par mois. Votre limite se réinitialise le premier de chaque mois. Vous pouvez passer à Pro à tout moment pour des invites illimitées."
                 },
                 "privacy": {
-                    "question": "What is privacy encryption?",
-                    "answer": "Pro users get their prompt data encrypted at rest. This means your prompts and responses are protected with encryption keys that only you control, ensuring maximum privacy for sensitive tasks."
+                    "question": "Qu'est-ce que le chiffrement de confidentialité ?",
+                    "answer": "Les utilisateurs Pro obtiennent leurs données d'invite chiffrées au repos. Cela signifie que vos invites et réponses sont protégées par des clés de chiffrement que seul vous contrôlez, garantissant une confidentialité maximale pour les tâches sensibles."
                 },
                 "cancel": {
-                    "question": "Can I cancel my subscription?",
-                    "answer": "Yes, you can cancel anytime. You'll retain Pro access until the end of your current billing period, then you'll be moved to the Free plan."
+                    "question": "Puis-je annuler mon abonnement ?",
+                    "answer": "Oui, vous pouvez annuler à tout moment. Vous conserverez l'accès Pro jusqu'à la fin de votre période de facturation actuelle, puis vous serez transféré au plan gratuit."
                 },
                 "payment": {
-                    "question": "What payment methods do you accept?",
-                    "answer": "We accept all major credit and debit cards, as well as Apple Pay and Google Pay through our secure payment provider, Stripe."
+                    "question": "Quels modes de paiement acceptez-vous ?",
+                    "answer": "Nous acceptons toutes les cartes de crédit et de débit principales, ainsi qu'Apple Pay et Google Pay via notre fournisseur de paiement sécurisé, Stripe."
                 }
             }
         }
@@ -885,636 +885,636 @@
                 "cta": "Create your first optimized prompt"
             },
             "table": {
-                "personalityType": "Personality Type",
-                "taskDescription": "Task Description",
-                "framework": "Framework",
-                "status": "Status",
-                "created": "Created"
+                "personalityType": "Type de personnalité",
+                "taskDescription": "Description de la tâche",
+                "framework": "Cadre",
+                "status": "Statut",
+                "created": "Créé"
             },
             "pagination": {
-                "previous": "Previous",
+                "previous": "Précédent",
                 "next": "Suivant",
-                "pageOf": "Page {current} of {total}",
-                "resultsSummary": "Showing {0} to {1} of {2} results",
-                "show": "Show",
-                "perPage": "per page",
+                "pageOf": "Page {current} sur {total}",
+                "resultsSummary": "Affichage de {0} à {1} sur {2} résultats",
+                "show": "Afficher",
+                "perPage": "par page",
                 "ariaLabel": "Pagination"
             }
         },
         "components": {
             "taskDescriptionForm": {
-                "intro": "Tell us what you're trying to accomplish.",
-                "withPersonality": "We'll tailor the prompt to your personality type.",
-                "withoutPersonality": "Add your personality type for more tailored questions.",
-                "profileHint": "Visit your {link} to add your personality type.",
-                "profileHintLink": "profile settings",
-                "label": "Task description",
-                "helpText": "Include context, constraints, and the outcome you want.",
-                "placeholder": "Describe your task in detail...",
-                "processing": "Analyzing...",
-                "submit": "Analyze Task"
+                "intro": "Dites-nous ce que vous essayez d'accomplir.",
+                "withPersonality": "Nous adapterons l'invite à votre type de personnalité.",
+                "withoutPersonality": "Ajoutez votre type de personnalité pour des questions plus adaptées.",
+                "profileHint": "Visitez votre {link} pour ajouter votre type de personnalité.",
+                "profileHintLink": "paramètres de profil",
+                "label": "Description de la tâche",
+                "helpText": "Inclure le contexte, les contraintes et le résultat souhaité.",
+                "placeholder": "Décrivez votre tâche en détail...",
+                "processing": "Analyse en cours...",
+                "submit": "Analyser la tâche"
             },
             "personalityTypePrompt": {
-                "title": "Want more tailored prompts?",
-                "description": "Add your personality type to personalize your prompts. Take the free test at {link}.",
+                "title": "Voulez-vous des invites plus personnalisées ?",
+                "description": "Ajoutez votre type de personnalité pour personnaliser vos invites. Faites le test gratuit sur {link}.",
                 "linkText": "16personalities.com",
-                "addButton": "Add personality type",
-                "maybeLater": "Maybe later",
-                "maybeLaterNotification": "No problem - your prompt will still work. You can add your personality type later.",
-                "label": "Personality type:"
+                "addButton": "Ajouter le type de personnalité",
+                "maybeLater": "Peut-être plus tard",
+                "maybeLaterNotification": "Pas de problème - votre invite fonctionnera toujours. Vous pouvez ajouter votre type de personnalité plus tard.",
+                "label": "Type de personnalité :"
             },
             "questionAnsweringForm": {
-                "progressLabel": "Question {current} of {total}",
-                "percentComplete": "{percent}% complete",
-                "answerLabel": "Your answer",
-                "answerPlaceholder": "Type your answer here...",
-                "submitAll": "Submit all answers",
-                "nextQuestion": "Next question"
+                "progressLabel": "Question {current} sur {total}",
+                "percentComplete": "{percent}% complété",
+                "answerLabel": "Votre réponse",
+                "answerPlaceholder": "Tapez votre réponse ici...",
+                "submitAll": "Soumettre toutes les réponses",
+                "nextQuestion": "Question suivante"
             },
             "selectedFramework": {
-                "title": "Selected framework",
-                "components": "Framework components",
-                "rationale": "Why this framework",
-                "proceed": "Proceed to questions"
+                "title": "Cadre sélectionné",
+                "components": "Composants du cadre",
+                "rationale": "Pourquoi ce cadre",
+                "proceed": "Passer aux questions"
             },
             "recommendations": {
-                "title": "Recommendations",
+                "title": "Recommandations",
                 "models": {
-                    "title": "Recommended AI models"
+                    "title": "Modèles d'IA recommandés"
                 },
                 "iterations": {
-                    "title": "Iteration suggestions",
-                    "description": "If the results aren't quite what you need, try these refinements:"
+                    "title": "Suggestions d'itération",
+                    "description": "Si les résultats ne sont pas exactement ce dont vous avez besoin, essayez ces raffinements :"
                 },
-                "empty": "No recommendations available"
+                "empty": "Aucune recommandation disponible"
             },
             "taskClassification": {
                 "title": "Classification",
-                "category": "Category",
-                "complexity": "Complexity",
-                "reasoning": "Reasoning"
+                "category": "Catégorie",
+                "complexity": "Complexité",
+                "reasoning": "Justification"
             },
             "cognitiveRequirements": {
-                "title": "Cognitive requirements",
-                "primary": "Primary requirements",
-                "secondary": "Secondary requirements",
-                "reasoning": "Reasoning"
+                "title": "Exigences cognitives",
+                "primary": "Exigences primaires",
+                "secondary": "Exigences secondaires",
+                "reasoning": "Justification"
             },
             "relatedPromptRuns": {
-                "title": "Related prompt optimizations",
-                "parent": "Parent prompt",
-                "children": "Child prompts ({count})",
-                "promptId": "Prompt ID ({id})",
-                "created": "Created {date}"
+                "title": "Optimisations d'invites associées",
+                "parent": "Invite parent",
+                "children": "Invites enfants ({count})",
+                "promptId": "ID d'invite ({id})",
+                "created": "Créé {date}"
             },
             "optimizedPrompt": {
-                "title": "Your optimized prompt",
-                "copy": "Copy to clipboard",
-                "showSource": "Show source",
-                "showPreview": "Show preview",
-                "edit": "Edit prompt",
-                "saveChanges": "Save changes",
-                "label": "Optimized prompt",
-                "useProvider": "Use with AI provider"
+                "title": "Votre invite optimisée",
+                "copy": "Copier dans le presse-papiers",
+                "showSource": "Afficher la source",
+                "showPreview": "Afficher l'aperçu",
+                "edit": "Modifier l'invite",
+                "saveChanges": "Enregistrer les modifications",
+                "label": "Invite optimisée",
+                "useProvider": "Utiliser avec le fournisseur d'IA"
             },
             "aiProviderLinks": {
-                "description": "Click a provider to copy your optimized prompt and open their chat in a new tab. Then paste your prompt for a better response:",
-                "copied": "Prompt copied! Opening {provider}...",
-                "openTitle": "Open {provider} (prompt copied to clipboard)"
+                "description": "Cliquez sur un fournisseur pour copier votre invite optimisée et ouvrir son chat dans un nouvel onglet. Collez ensuite votre invite pour une meilleure réponse :",
+                "copied": "Invite copiée ! Ouverture de {provider}...",
+                "openTitle": "Ouvrir {provider} (invite copiée dans le presse-papiers)"
             },
             "alternativeFrameworks": {
-                "title": "Alternative frameworks",
-                "whenToUse": "When to use:",
-                "useButton": "Use this framework",
-                "empty": "No alternative frameworks suggested",
+                "title": "Cadres alternatifs",
+                "whenToUse": "Quand l'utiliser :",
+                "useButton": "Utiliser ce cadre",
+                "empty": "Aucun cadre alternatif suggéré",
                 "confirm": {
-                    "title": "Switch framework",
-                    "message": "This will create a new prompt run using this framework. The analysis will be re-run with framework-specific questions. Continue?"
+                    "title": "Changer de cadre",
+                    "message": "Cela créera une nouvelle exécution d'invite utilisant ce cadre. L'analyse sera relancée avec des questions spécifiques au cadre. Continuer ?"
                 }
             },
             "answeredList": {
-                "title": "Your previous answers",
-                "skipped": "Skipped"
+                "title": "Vos réponses précédentes",
+                "skipped": "Ignoré"
             },
             "bulkQuestions": {
-                "submitAll": "Submit all answers",
-                "backToSingle": "Back to one-at-a-time",
-                "answerLabel": "Answer {number}",
-                "answerPlaceholder": "Type your answer here, or record a quick note..."
+                "submitAll": "Soumettre toutes les réponses",
+                "backToSingle": "Retour au un par un",
+                "answerLabel": "Réponse {number}",
+                "answerPlaceholder": "Tapez votre réponse ici, ou enregistrez une note rapide..."
             },
             "clarifyingQuestions": {
-                "title": "Clarifying questions",
-                "allQuestions": "Show all questions",
-                "singleQuestion": "One at a time",
-                "edit": "Edit answers",
-                "cancelEdit": "Cancel edit",
-                "submitAll": "Submit all answers",
-                "submitEdited": "Optimize prompt with edited answers",
-                "optionalQuestion": "{count} optional question (to improve your prompt)",
-                "optionalQuestions": "{count} optional questions (to improve your prompt)",
+                "title": "Questions clarificatrices",
+                "allQuestions": "Afficher toutes les questions",
+                "singleQuestion": "Un à la fois",
+                "edit": "Modifier les réponses",
+                "cancelEdit": "Annuler la modification",
+                "submitAll": "Soumettre toutes les réponses",
+                "submitEdited": "Optimiser l'invite avec les réponses modifiées",
+                "optionalQuestion": "{count} question facultative (pour améliorer votre invite)",
+                "optionalQuestions": "{count} questions facultatives (pour améliorer votre invite)",
                 "rationale": {
-                    "show": "Show question rationale",
-                    "hide": "Hide question rationale"
+                    "show": "Afficher la justification de la question",
+                    "hide": "Masquer la justification de la question"
                 },
                 "errors": {
-                    "save": "Failed to save answer. Please try again.",
-                    "submit": "Failed to submit answers.",
-                    "edit": "Failed to optimize with edited answers. Please try again."
+                    "save": "Impossible d'enregistrer la réponse. Veuillez réessayer.",
+                    "submit": "Impossible de soumettre les réponses.",
+                    "edit": "Impossible d'optimiser avec les réponses modifiées. Veuillez réessayer."
                 }
             },
             "preAnalysisQuestions": {
-                "title": "Quick queries",
-                "edit": "Edit answers",
-                "optimise": "Optimize prompt",
-                "generateNewPrompt": "Generate new prompt",
-                "otherOption": "Other (please specify)",
-                "answerLabel": "Answer {number}",
-                "answerPlaceholder": "Type your answer here...",
-                "additionalDetailsLabel": "Additional details (optional):",
-                "additionalDetailsPlaceholder": "Add any additional information...",
-                "characterCount": "{count}/{max} characters",
+                "title": "Questions rapides",
+                "edit": "Modifier les réponses",
+                "optimise": "Optimiser l'invite",
+                "generateNewPrompt": "Générer une nouvelle invite",
+                "otherOption": "Autre (veuillez préciser)",
+                "answerLabel": "Réponse {number}",
+                "answerPlaceholder": "Tapez votre réponse ici...",
+                "additionalDetailsLabel": "Détails supplémentaires (facultatif) :",
+                "additionalDetailsPlaceholder": "Ajoutez des informations supplémentaires...",
+                "characterCount": "{count}/{max} caractères",
                 "errors": {
-                    "submit": "Failed to submit answers. Please try again.",
-                    "continue": "Failed to continue to analysis. Please try again."
+                    "submit": "Impossible de soumettre les réponses. Veuillez réessayer.",
+                    "continue": "Impossible de continuer l'analyse. Veuillez réessayer."
                 },
                 "rationale": {
-                    "show": "Show question rationale",
-                    "hide": "Hide question rationale"
+                    "show": "Afficher la justification de la question",
+                    "hide": "Masquer la justification de la question"
                 }
             },
             "taskInformation": {
-                "title": "Your task",
-                "editTitle": "Edit task & create new optimization",
-                "editAction": "Edit task",
-                "descriptionLabel": "Task description",
-                "descriptionEditLabel": "Edit task description",
-                "descriptionPlaceholder": "Describe the task you want to create a prompt for...",
-                "optimise": "Optimize prompt"
+                "title": "Votre tâche",
+                "editTitle": "Modifier la tâche et créer une nouvelle optimisation",
+                "editAction": "Modifier la tâche",
+                "descriptionLabel": "Description de la tâche",
+                "descriptionEditLabel": "Modifier la description de la tâche",
+                "descriptionPlaceholder": "Décrivez la tâche pour laquelle vous souhaitez créer une invite...",
+                "optimise": "Optimiser l'invite"
             },
             "taskTraitAlignment": {
-                "title": "Task-trait alignment",
-                "amplified": "Amplified traits (strengths leveraged)",
-                "alignsWith": "aligns with {requirement}",
-                "counterbalanced": "Counterbalanced traits (adjusted for)",
-                "opposes": "opposes {requirement}",
-                "adjustmentApplied": "Adjustment applied:",
-                "neutral": "Neutral traits ({count})"
+                "title": "Alignement tâche-trait",
+                "amplified": "Traits amplifiés (forces exploitées)",
+                "alignsWith": "s'aligne avec {requirement}",
+                "counterbalanced": "Traits contrebalancés (ajustés pour)",
+                "opposes": "s'oppose à {requirement}",
+                "adjustmentApplied": "Ajustement appliqué :",
+                "neutral": "Traits neutres ({count})"
             },
             "personalityAdjustments": {
-                "title": "Personality adjustments",
-                "level": "Adjustment level",
-                "applied": "Adjustments applied",
+                "title": "Ajustements de personnalité",
+                "level": "Niveau d'ajustement",
+                "applied": "Ajustements appliqués",
                 "tiers": {
-                    "full": "Full",
-                    "partial": "Partial",
-                    "none": "None"
+                    "full": "Complet",
+                    "partial": "Partiel",
+                    "none": "Aucun"
                 }
             },
             "personalityAdjustmentsSummary": {
-                "title": "Personality adjustments applied"
+                "title": "Ajustements de personnalité appliqués"
             },
             "apiUsage": {
-                "title": "API usage",
-                "preAnalysis": "Pre-analysis workflow",
-                "analysis": "Analysis workflow",
-                "generation": "Generation workflow",
-                "pass": "Pass {number}",
-                "modelLabel": "Model:",
-                "inputTokensLabel": "Input tokens:",
-                "outputTokensLabel": "Output tokens:",
-                "totalLabel": "Total:",
-                "costLabel": "Cost:",
-                "model": "Model",
-                "inputTokens": "Input tokens",
-                "outputTokens": "Output tokens",
+                "title": "Utilisation de l'API",
+                "preAnalysis": "Flux de travail de pré-analyse",
+                "analysis": "Flux de travail d'analyse",
+                "generation": "Flux de travail de génération",
+                "pass": "Passage {number}",
+                "modelLabel": "Modèle :",
+                "inputTokensLabel": "Jetons d'entrée :",
+                "outputTokensLabel": "Jetons de sortie :",
+                "totalLabel": "Total :",
+                "costLabel": "Coût :",
+                "model": "Modèle",
+                "inputTokens": "Jetons d'entrée",
+                "outputTokens": "Jetons de sortie",
                 "total": "Total",
-                "costHeader": "Cost (GBP)",
-                "combinedTotalLabel": "Combined total:",
-                "totalCostLabel": "Total cost:",
-                "tokens": "{count} tokens",
-                "summary": "Summary",
-                "combinedTotal": "Combined total",
-                "empty": "No API usage data available"
+                "costHeader": "Coût (GBP)",
+                "combinedTotalLabel": "Total combiné :",
+                "totalCostLabel": "Coût total :",
+                "tokens": "{count} jetons",
+                "summary": "Résumé",
+                "combinedTotal": "Total combiné",
+                "empty": "Aucune donnée d'utilisation d'API disponible"
             }
         },
         "progress": {
-            "almostDone": "Almost done",
-            "secondsRemaining": "{seconds} seconds remaining",
-            "percentComplete": "{percent}% complete",
-            "timeRemaining": "Time remaining: {time}",
+            "almostDone": "Presque terminé",
+            "secondsRemaining": "{seconds} secondes restantes",
+            "percentComplete": "{percent}% complété",
+            "timeRemaining": "Temps restant : {time}",
             "preAnalysis": {
-                "title": "Preparing quick questions",
-                "subtitle": "Clarifying your task before analysis.",
-                "pipeline": "Pre-analysis pipeline",
+                "title": "Préparation de questions rapides",
+                "subtitle": "Clarification de votre tâche avant l'analyse.",
+                "pipeline": "Pipeline de pré-analyse",
                 "stages": {
                     "understand": {
-                        "label": "Understand",
-                        "activity": "Understanding your task",
-                        "description": "Reviewing your description and intent."
+                        "label": "Comprendre",
+                        "activity": "Comprendre votre tâche",
+                        "description": "Examen de votre description et intention."
                     },
                     "identify": {
-                        "label": "Identify",
-                        "activity": "Identifying missing details",
-                        "description": "Looking for gaps in context."
+                        "label": "Identifier",
+                        "activity": "Identification des détails manquants",
+                        "description": "Recherche de lacunes dans le contexte."
                     },
                     "prepare": {
-                        "label": "Prepare",
-                        "activity": "Preparing questions",
-                        "description": "Drafting quick clarifying questions."
+                        "label": "Préparer",
+                        "activity": "Préparation des questions",
+                        "description": "Rédaction de questions clarificatrices rapides."
                     }
                 }
             },
             "analysis": {
-                "title": "Analyzing your task",
-                "subtitle": "Selecting the best framework for your goal.",
-                "pipeline": "Analysis pipeline",
+                "title": "Analyse de votre tâche",
+                "subtitle": "Sélection du meilleur cadre pour votre objectif.",
+                "pipeline": "Pipeline d'analyse",
                 "stages": {
                     "classifying": {
-                        "label": "Classify",
-                        "activity": "Classifying the task",
-                        "description": "Determining the task type and complexity."
+                        "label": "Classifier",
+                        "activity": "Classification de la tâche",
+                        "description": "Détermination du type et de la complexité de la tâche."
                     },
                     "analyzing": {
-                        "label": "Analyze",
-                        "activity": "Analyzing requirements",
-                        "description": "Identifying constraints and intent."
+                        "label": "Analyser",
+                        "activity": "Analyse des exigences",
+                        "description": "Identification des contraintes et intentions."
                     },
                     "framework": {
-                        "label": "Framework",
-                        "activity": "Selecting a framework",
-                        "description": "Choosing the best structure for your prompt."
+                        "label": "Cadre",
+                        "activity": "Sélection d'un cadre",
+                        "description": "Choix de la meilleure structure pour votre invite."
                     },
                     "personalizing": {
-                        "label": "Personalize",
-                        "activity": "Personalizing the prompt",
-                        "description": "Adapting the tone to your preferences."
+                        "label": "Personnaliser",
+                        "activity": "Personnalisation de l'invite",
+                        "description": "Adaptation du ton à vos préférences."
                     },
                     "questions": {
                         "label": "Questions",
-                        "activity": "Preparing questions",
-                        "description": "Drafting clarifying questions."
+                        "activity": "Préparation des questions",
+                        "description": "Rédaction de questions clarificatrices."
                     }
                 }
             },
             "generation": {
-                "title": "Generating your prompt",
-                "subtitle": "Building a structured prompt with your answers.",
-                "pipeline": "Generation pipeline",
-                "errorTitle": "Generation failed",
-                "errorDescription": "Please try again. If the problem persists, refresh the page.",
-                "retryButton": "Retry",
-                "backButton": "Go back",
+                "title": "Génération de votre invite",
+                "subtitle": "Création d'une invite structurée avec vos réponses.",
+                "pipeline": "Pipeline de génération",
+                "errorTitle": "Génération échouée",
+                "errorDescription": "Veuillez réessayer. Si le problème persiste, actualisez la page.",
+                "retryButton": "Réessayer",
+                "backButton": "Retour",
                 "stages": {
                     "framework": {
-                        "label": "Framework",
-                        "activity": "Applying the framework",
-                        "description": "Structuring the prompt."
+                        "label": "Cadre",
+                        "activity": "Application du cadre",
+                        "description": "Structuration de l'invite."
                     },
                     "personality": {
-                        "label": "Personality",
-                        "activity": "Adjusting tone",
-                        "description": "Aligning with your style."
+                        "label": "Personnalité",
+                        "activity": "Ajustement du ton",
+                        "description": "Alignement avec votre style."
                     },
                     "context": {
-                        "label": "Context",
-                        "activity": "Adding context",
-                        "description": "Incorporating your details."
+                        "label": "Contexte",
+                        "activity": "Ajout du contexte",
+                        "description": "Intégration de vos détails."
                     },
                     "prompt": {
-                        "label": "Prompt",
-                        "activity": "Drafting the prompt",
-                        "description": "Composing the final output."
+                        "label": "Invite",
+                        "activity": "Rédaction de l'invite",
+                        "description": "Composition de la sortie finale."
                     },
                     "final": {
-                        "label": "Finalize",
-                        "activity": "Finalizing output",
-                        "description": "Polishing and formatting."
+                        "label": "Finaliser",
+                        "activity": "Finalisation de la sortie",
+                        "description": "Peaufinage et formatage."
                     }
                 }
             }
         },
         "taskInput": {
-            "label": "What would you like to accomplish?",
-            "placeholder": "Describe your task in detail...",
-            "submit": "Analyze Task"
+            "label": "Qu'aimeriez-vous accomplir ?",
+            "placeholder": "Décrivez votre tâche en détail...",
+            "submit": "Analyser la tâche"
         },
         "processing": {
-            "analysing": "Analyzing your task...",
-            "generating": "Generating your optimized prompt..."
+            "analysing": "Analyse de votre tâche...",
+            "generating": "Génération de votre invite optimisée..."
         },
         "result": {
-            "title": "Your Optimized Prompt",
-            "copy": "Copy Prompt",
-            "tryAgain": "Try Another Task"
+            "title": "Votre invite optimisée",
+            "copy": "Copier l'invite",
+            "tryAgain": "Essayer une autre tâche"
         },
         "admin": {
-            "promptRun": "Prompt Run",
-            "backToTasks": "Back to Tasks"
+            "promptRun": "Exécution d'invite",
+            "backToTasks": "Retour aux tâches"
         }
     },
     "profile": {
-        "title": "Profile Settings",
+        "title": "Paramètres de profil",
         "sections": {
-            "personal": "Personal Information",
-            "location": "Location",
-            "professional": "Professional",
-            "team": "Team",
-            "preferences": "Preferences"
+            "personal": "Informations personnelles",
+            "location": "Localisation",
+            "professional": "Professionnel",
+            "team": "Équipe",
+            "preferences": "Préférences"
         },
         "profileInfo": {
-            "title": "Profile Information",
-            "subtitle": "Update your name and email address.",
+            "title": "Informations de profil",
+            "subtitle": "Mettez à jour votre nom et votre adresse e-mail.",
             "fields": {
-                "name": "Name",
+                "name": "Nom",
                 "email": "E-mail"
             },
             "emailVerification": {
-                "notice": "Your email address is unverified.",
-                "resend": "Click here to re-send the verification email."
+                "notice": "Votre adresse e-mail n'est pas vérifiée.",
+                "resend": "Cliquez ici pour renvoyer l'e-mail de vérification."
             },
             "notifications": {
-                "updated": "Profile information updated successfully"
+                "updated": "Informations de profil mises à jour avec succès"
             }
         },
         "password": {
-            "title": "Update Password",
-            "subtitle": "Ensure your account is using a long, random password to stay secure.",
+            "title": "Mettre à jour le mot de passe",
+            "subtitle": "Assurez-vous que votre compte utilise un mot de passe long et aléatoire pour rester sécurisé.",
             "fields": {
-                "current": "Current Password",
-                "new": "New Password",
-                "confirm": "Confirm Password"
+                "current": "Mot de passe actuel",
+                "new": "Nouveau mot de passe",
+                "confirm": "Confirmer le mot de passe"
             },
             "notifications": {
-                "updated": "Password updated successfully"
+                "updated": "Mot de passe mis à jour avec succès"
             }
         },
         "personality": {
-            "title": "Your Personality",
-            "subtitle": "Update your personality type to get more personalized AI prompts.",
+            "title": "Votre personnalité",
+            "subtitle": "Mettez à jour votre type de personnalité pour obtenir des invites d'IA plus personnalisées.",
             "fields": {
-                "type": "Personality Type",
-                "identity": "Identity"
+                "type": "Type de personnalité",
+                "identity": "Identité"
             },
             "placeholders": {
-                "type": "Your personality type"
+                "type": "Votre type de personnalité"
             },
             "identity": {
-                "assertive": "Assertive (A)",
+                "assertive": "Affirmatif (A)",
                 "turbulent": "Turbulent (T)",
-                "help": "Please select Assertive or Turbulent to complete your personality type"
+                "help": "Veuillez sélectionner Affirmatif ou Turbulent pour compléter votre type de personnalité"
             },
-            "selected": "Selected: {type}",
+            "selected": "Sélectionné : {type}",
             "traits": {
-                "toggleAdd": "+ Add",
-                "toggleHide": "- Hide",
-                "label": "Trait Percentages (optional)",
-                "sourcePrefix": "Enter your trait percentages from",
+                "toggleAdd": "+ Ajouter",
+                "toggleHide": "- Masquer",
+                "label": "Pourcentages de traits (facultatif)",
+                "sourcePrefix": "Entrez vos pourcentages de traits de",
                 "sourceLink": "16personalities.com",
                 "fields": {
                     "mind": "Introversion/Extraversion",
-                    "energy": "Intuitive/Observant",
-                    "nature": "Thinking/Feeling",
-                    "tactics": "Judging/Prospecting",
-                    "identity": "Assertive/Turbulent"
+                    "energy": "Intuitif/Observant",
+                    "nature": "Réflexion/Sentiment",
+                    "tactics": "Jugement/Prospection",
+                    "identity": "Affirmatif/Turbulent"
                 }
             },
             "actions": {
-                "enterTask": "Enter your Task"
+                "enterTask": "Entrez votre tâche"
             },
             "notifications": {
-                "updated": "Personality type updated successfully",
-                "cleared": "Personality information cleared",
-                "clearFailed": "Failed to clear personality information"
+                "updated": "Type de personnalité mis à jour avec succès",
+                "cleared": "Informations de personnalité effacées",
+                "clearFailed": "Impossible d'effacer les informations de personnalité"
             },
             "clearConfirm": {
-                "title": "Clear Personality Information",
-                "message": "Are you sure you want to clear all personality information?"
+                "title": "Effacer les informations de personnalité",
+                "message": "Êtes-vous sûr de vouloir effacer toutes les informations de personnalité ?"
             }
         },
         "location": {
-            "title": "Location & Language",
-            "subtitle": "Set your location and language preferences for better optimized AI prompts.",
+            "title": "Localisation et langue",
+            "subtitle": "Définissez votre localisation et vos préférences linguistiques pour des invites d'IA mieux optimisées.",
             "fields": {
-                "country": "Country",
-                "region": "Region/State",
-                "city": "City",
-                "timezone": "Timezone",
-                "currency": "Currency",
-                "language": "Language"
+                "country": "Pays",
+                "region": "Région/État",
+                "city": "Ville",
+                "timezone": "Fuseau horaire",
+                "currency": "Devise",
+                "language": "Langue"
             },
             "placeholders": {
-                "country": "Select country",
-                "region": "e.g., California, Lancashire",
-                "city": "e.g., San Francisco, London",
-                "timezone": "Select timezone",
-                "currency": "Select currency",
-                "language": "Select language"
+                "country": "Sélectionner le pays",
+                "region": "par exemple, Californie, Lancashire",
+                "city": "par exemple, San Francisco, Londres",
+                "timezone": "Sélectionner le fuseau horaire",
+                "currency": "Sélectionner la devise",
+                "language": "Sélectionner la langue"
             },
             "actions": {
-                "save": "Save Location",
-                "detect": "Auto-Detect"
+                "save": "Enregistrer la localisation",
+                "detect": "Détection automatique"
             },
             "notifications": {
-                "updated": "Location updated successfully",
-                "detected": "Location detected successfully",
-                "detectFailed": "Failed to detect location",
-                "cleared": "Location cleared successfully",
-                "clearFailed": "Failed to clear location"
+                "updated": "Localisation mise à jour avec succès",
+                "detected": "Localisation détectée avec succès",
+                "detectFailed": "Impossible de détecter la localisation",
+                "cleared": "Localisation effacée avec succès",
+                "clearFailed": "Impossible d'effacer la localisation"
             },
             "clearConfirm": {
-                "title": "Clear Location",
-                "message": "Are you sure you want to clear all location data?"
+                "title": "Effacer la localisation",
+                "message": "Êtes-vous sûr de vouloir effacer toutes les données de localisation ?"
             }
         },
         "professional": {
-            "title": "Professional Context",
-            "subtitle": "Tell us about your professional background to help optimize prompts for your role.",
+            "title": "Contexte professionnel",
+            "subtitle": "Parlez-nous de vos antécédents professionnels pour aider à optimiser les invites de votre rôle.",
             "fields": {
-                "jobTitle": "Job Title",
-                "industry": "Industry",
-                "experienceLevel": "Experience Level",
-                "companySize": "Company Size"
+                "jobTitle": "Titre du poste",
+                "industry": "Industrie",
+                "experienceLevel": "Niveau d'expérience",
+                "companySize": "Taille de l'entreprise"
             },
             "placeholders": {
-                "jobTitle": "e.g., Software Engineer, Product Manager",
-                "industry": "e.g., Technology",
-                "experienceLevel": "Select your level",
-                "companySize": "Select company size"
+                "jobTitle": "par exemple, Ingénieur logiciel, Chef de produit",
+                "industry": "par exemple, Technologie",
+                "experienceLevel": "Sélectionnez votre niveau",
+                "companySize": "Sélectionnez la taille de l'entreprise"
             },
             "help": {
-                "jobTitle": "Your current or primary job title",
-                "industry": "Your industry or sector"
+                "jobTitle": "Votre titre de poste actuel ou principal",
+                "industry": "Votre industrie ou secteur"
             },
             "options": {
-                "entry": "Entry Level",
-                "mid": "Mid-Level",
-                "senior": "Senior",
+                "entry": "Débutant",
+                "mid": "Intermédiaire",
+                "senior": "Supérieur",
                 "expert": "Expert/Principal"
             },
             "companySize": {
-                "solo": "Freelancer/Solo",
-                "small": "Small (2-10 people)",
-                "medium": "Medium (11-100 people)",
-                "large": "Large (100-1000 people)",
-                "enterprise": "Enterprise (1000+ people)"
+                "solo": "Indépendant/Solo",
+                "small": "Petite (2-10 personnes)",
+                "medium": "Moyenne (11-100 personnes)",
+                "large": "Grande (100-1000 personnes)",
+                "enterprise": "Entreprise (1000+ personnes)"
             },
             "actions": {
-                "save": "Save Professional Context"
+                "save": "Enregistrer le contexte professionnel"
             },
             "notifications": {
-                "updated": "Professional information updated successfully",
-                "cleared": "Professional information cleared successfully",
-                "clearFailed": "Failed to clear professional information"
+                "updated": "Informations professionnelles mises à jour avec succès",
+                "cleared": "Informations professionnelles effacées avec succès",
+                "clearFailed": "Impossible d'effacer les informations professionnelles"
             },
             "clearConfirm": {
-                "title": "Clear Professional Context",
-                "message": "Are you sure you want to clear all professional information?"
+                "title": "Effacer le contexte professionnel",
+                "message": "Êtes-vous sûr de vouloir effacer toutes les informations professionnelles ?"
             }
         },
         "team": {
-            "title": "Team & Work Context",
-            "subtitle": "Share information about your team structure and work environment.",
+            "title": "Équipe et contexte professionnel",
+            "subtitle": "Partagez des informations sur la structure de votre équipe et votre environnement de travail.",
             "fields": {
-                "teamSize": "Team Size",
-                "role": "Your Role",
-                "workMode": "Work Mode"
+                "teamSize": "Taille de l'équipe",
+                "role": "Votre rôle",
+                "workMode": "Mode de travail"
             },
             "placeholders": {
-                "teamSize": "Select team size",
-                "role": "Select your role",
-                "workMode": "Select work mode"
+                "teamSize": "Sélectionnez la taille de l'équipe",
+                "role": "Sélectionnez votre rôle",
+                "workMode": "Sélectionnez le mode de travail"
             },
             "options": {
                 "size": {
-                    "solo": "Just Me (Solo)",
-                    "small": "Small (2-5 people)",
-                    "medium": "Medium (6-20 people)",
-                    "large": "Large (20+ people)"
+                    "solo": "Juste moi (Solo)",
+                    "small": "Petite (2-5 personnes)",
+                    "medium": "Moyenne (6-20 personnes)",
+                    "large": "Grande (20+ personnes)"
                 },
                 "role": {
-                    "individual": "Individual Contributor",
-                    "lead": "Team Lead",
-                    "manager": "Manager",
-                    "director": "Director",
-                    "executive": "Executive"
+                    "individual": "Contributeur individuel",
+                    "lead": "Chef d'équipe",
+                    "manager": "Gestionnaire",
+                    "director": "Directeur",
+                    "executive": "Cadre dirigeant"
                 },
                 "mode": {
-                    "office": "Office (On-Site)",
-                    "hybrid": "Hybrid",
-                    "remote": "Remote",
-                    "freelance": "Freelance"
+                    "office": "Bureau (sur site)",
+                    "hybrid": "Hybride",
+                    "remote": "Télétravail",
+                    "freelance": "Indépendant"
                 }
             },
             "actions": {
-                "save": "Save Team Context"
+                "save": "Enregistrer le contexte de l'équipe"
             },
             "notifications": {
-                "updated": "Team context updated successfully",
-                "cleared": "Team information cleared successfully",
-                "clearFailed": "Failed to clear team information"
+                "updated": "Contexte de l'équipe mis à jour avec succès",
+                "cleared": "Informations sur l'équipe effacées avec succès",
+                "clearFailed": "Impossible d'effacer les informations sur l'équipe"
             },
             "clearConfirm": {
-                "title": "Clear Team & Work Context",
-                "message": "Are you sure you want to clear all team and work information?"
+                "title": "Effacer le contexte de l'équipe et du travail",
+                "message": "Êtes-vous sûr de vouloir effacer toutes les informations sur l'équipe et le travail ?"
             }
         },
         "budget": {
-            "title": "Budget & Tool Preferences",
-            "subtitle": "Tell us about your budget for tools and services so we can recommend appropriate solutions.",
-            "fieldLabel": "Budget Preference",
+            "title": "Préférences budgétaires et outils",
+            "subtitle": "Parlez-nous de votre budget pour les outils et services afin que nous puissions recommander des solutions appropriées.",
+            "fieldLabel": "Préférence budgétaire",
             "actions": {
-                "save": "Save Budget Preferences"
+                "save": "Enregistrer les préférences budgétaires"
             },
             "options": {
                 "freeOnly": {
-                    "label": "Free Only",
-                    "description": "I only use free tools and services"
+                    "label": "Gratuit uniquement",
+                    "description": "Je n'utilise que des outils et des services gratuits"
                 },
                 "freeFirst": {
-                    "label": "Prefer Free",
-                    "description": "I prefer free options but will pay if necessary"
+                    "label": "Préférer le gratuit",
+                    "description": "Je préfère les options gratuites mais paierai si nécessaire"
                 },
                 "mixed": {
-                    "label": "Mixed",
-                    "description": "I use a mix of free and premium tools"
+                    "label": "Mixte",
+                    "description": "J'utilise un mélange d'outils gratuits et premium"
                 },
                 "premiumOk": {
                     "label": "Premium OK",
-                    "description": "I'm comfortable using premium tools"
+                    "description": "Je suis à l'aise avec l'utilisation d'outils premium"
                 },
                 "enterprise": {
-                    "label": "Enterprise",
-                    "description": "I have access to enterprise solutions"
+                    "label": "Entreprise",
+                    "description": "J'ai accès à des solutions d'entreprise"
                 }
             },
             "notifications": {
-                "updated": "Budget preferences updated successfully",
-                "cleared": "Budget preferences cleared successfully",
-                "clearFailed": "Failed to clear budget preferences"
+                "updated": "Préférences budgétaires mises à jour avec succès",
+                "cleared": "Préférences budgétaires effacées avec succès",
+                "clearFailed": "Impossible d'effacer les préférences budgétaires"
             },
             "clearConfirm": {
-                "title": "Clear Budget Preferences",
-                "message": "Are you sure you want to clear your budget preferences?"
+                "title": "Effacer les préférences budgétaires",
+                "message": "Êtes-vous sûr de vouloir effacer vos préférences budgétaires ?"
             }
         },
         "tools": {
-            "title": "Tools & Technologies",
-            "subtitle": "Share the tools and programming languages you work with to improve prompt recommendations.",
+            "title": "Outils et technologies",
+            "subtitle": "Partagez les outils et les langages de programmation avec lesquels vous travaillez pour améliorer les recommandations d'invite.",
             "fields": {
-                "preferred": "Preferred Tools (Click to select)",
-                "primaryLanguage": "Primary Programming Language"
+                "preferred": "Outils préférés (Cliquez pour sélectionner)",
+                "primaryLanguage": "Langage de programmation principal"
             },
             "placeholders": {
-                "primaryLanguage": "Select language"
+                "primaryLanguage": "Sélectionner la langue"
             },
             "categories": {
-                "operatingSystems": "Operating Systems",
-                "idesEditors": "IDEs & Editors",
-                "cloudPlatforms": "Cloud Platforms",
-                "aiMlTools": "AI & ML Tools",
-                "designTools": "Design Tools",
-                "projectManagement": "Project Management"
+                "operatingSystems": "Systèmes d'exploitation",
+                "idesEditors": "EDI et éditeurs",
+                "cloudPlatforms": "Plateformes cloud",
+                "aiMlTools": "Outils d'IA et ML",
+                "designTools": "Outils de conception",
+                "projectManagement": "Gestion de projet"
             },
-            "selectedCount": "You've selected {count} tool(s)",
+            "selectedCount": "Vous avez sélectionné {count} outil(s)",
             "actions": {
-                "save": "Save Tools & Languages"
+                "save": "Enregistrer les outils et les langues"
             },
             "notifications": {
-                "updated": "Tools & languages updated successfully",
-                "cleared": "Tools & technologies cleared successfully",
-                "clearFailed": "Failed to clear tools & technologies"
+                "updated": "Outils et langues mis à jour avec succès",
+                "cleared": "Outils et technologies effacés avec succès",
+                "clearFailed": "Impossible d'effacer les outils et technologies"
             },
             "clearConfirm": {
-                "title": "Clear Tools & Technologies",
-                "message": "Are you sure you want to clear all tools and programming languages?"
+                "title": "Effacer les outils et technologies",
+                "message": "Êtes-vous sûr de vouloir effacer tous les outils et langages de programmation ?"
             }
         },
         "uiComplexity": {
-            "title": "Interface Complexity",
-            "subtitle": "Choose how much detail you'd like to see when creating prompts.",
-            "fieldLabel": "Interface Mode",
+            "title": "Complexité de l'interface",
+            "subtitle": "Choisissez le niveau de détail que vous souhaitez voir lors de la création d'invites.",
+            "fieldLabel": "Mode d'interface",
             "options": {
                 "simple": "Simple",
-                "advanced": "Advanced"
+                "advanced": "Avancé"
             },
             "help": {
-                "simple": "Shows only essential features. Hides task classification, cognitive requirements, and advanced technical details.",
-                "advanced": "Shows all features including task classification, cognitive requirements, and personality insights."
+                "simple": "Affiche uniquement les fonctionnalités essentielles. Masque la classification des tâches, les exigences cognitives et les détails techniques avancés.",
+                "advanced": "Affiche toutes les fonctionnalités, y compris la classification des tâches, les exigences cognitives et les aperçus de personnalité."
             },
             "notifications": {
-                "updated": "Interface complexity updated successfully"
+                "updated": "Complexité de l'interface mise à jour avec succès"
             }
         },
         "deleteAccount": {
-            "title": "Delete Account",
-            "subtitle": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
+            "title": "Supprimer le compte",
+            "subtitle": "Une fois votre compte supprimé, toutes ses ressources et données seront supprimées définitivement. Avant de supprimer votre compte, veuillez télécharger toutes les données ou informations que vous souhaitez conserver.",
             "actions": {
-                "open": "Delete Account",
-                "confirm": "Delete Account"
+                "open": "Supprimer le compte",
+                "confirm": "Supprimer le compte"
             },
             "modal": {
-                "title": "Are you sure you want to delete your account?",
-                "description": "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account."
+                "title": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+                "description": "Une fois votre compte supprimé, toutes ses ressources et données seront supprimées définitivement. Veuillez entrer votre mot de passe pour confirmer que vous souhaitez supprimer définitivement votre compte."
             }
         }
     },
@@ -1700,50 +1700,50 @@
         }
     },
     "language": {
-        "title": "Language",
-        "select": "Select Language",
-        "current": "Current: {language}"
+        "title": "Langue",
+        "select": "Sélectionner la langue",
+        "current": "Actuel : {language}"
     },
     "errors": {
-        "generic": "Something went wrong. Please try again.",
-        "notFound": "Page not found",
-        "unauthorized": "You are not authorized to access this page.",
-        "serverError": "Server error. Please try again later."
+        "generic": "Une erreur s'est produite. Veuillez réessayer.",
+        "notFound": "Page non trouvée",
+        "unauthorized": "Vous n'êtes pas autorisé à accéder à cette page.",
+        "serverError": "Erreur du serveur. Veuillez réessayer plus tard."
     },
     "navigation": {
-        "promptBuilder": "Prompt Builder",
-        "promptHistory": "Prompt History",
-        "feedback": "Feedback",
-        "workflows": "Workflows",
+        "promptBuilder": "Générateur d'invites",
+        "promptHistory": "Historique des invites",
+        "feedback": "Retour d'information",
+        "workflows": "Flux de travail",
         "profile": "Profil",
-        "logout": "Log Out"
+        "logout": "Se déconnecter"
     },
     "alert": {
-        "successTitle": "Success",
-        "warningTitle": "Warning",
-        "errorTitle": "Error",
+        "successTitle": "Succès",
+        "warningTitle": "Attention",
+        "errorTitle": "Erreur",
         "confirmTitle": "Confirmer",
         "infoTitle": "Information"
     },
     "audio": {
         "errors": {
-            "accessDenied": "Microphone access denied. Please enable microphone permissions.",
-            "notFound": "No microphone found. Please check your device.",
-            "recordingFailed": "Failed to start recording. Please try again.",
-            "noActiveRecording": "No active recording",
-            "transcriptionFailed": "Failed to transcribe audio. Please try again.",
-            "transcriptionRequestFailed": "Transcription request failed"
+            "accessDenied": "L'accès au microphone a été refusé. Veuillez activer les autorisations du microphone.",
+            "notFound": "Aucun microphone trouvé. Veuillez vérifier votre appareil.",
+            "recordingFailed": "Échec du démarrage de l'enregistrement. Veuillez réessayer.",
+            "noActiveRecording": "Aucun enregistrement actif",
+            "transcriptionFailed": "Échec de la transcription de l'audio. Veuillez réessayer.",
+            "transcriptionRequestFailed": "La demande de transcription a échoué"
         }
     },
     "status": {
-        "unknown": "Unknown",
-        "completed": "Completed",
-        "processing": "Processing",
-        "awaitingQuestions": "Awaiting Questions",
-        "awaitingAnswers": "Awaiting Answers",
-        "failed": "Failed"
+        "unknown": "Inconnu",
+        "completed": "Complété",
+        "processing": "Traitement en cours",
+        "awaitingQuestions": "En attente de questions",
+        "awaitingAnswers": "En attente de réponses",
+        "failed": "Échoué"
     },
     "icons": {
-        "hashIcon": "BettrPrompt hash icon"
+        "hashIcon": "Icône de hachage BettrPrompt"
     }
 }
