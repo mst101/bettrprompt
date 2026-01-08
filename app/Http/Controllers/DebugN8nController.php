@@ -71,7 +71,7 @@ class DebugN8nController extends Controller
     /**
      * Validate and confirm a variant selection
      */
-    public function setVariant(Request $request, $workflowNumber)
+    public function setVariant(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
         try {
@@ -104,7 +104,7 @@ class DebugN8nController extends Controller
     /**
      * Display the workflow page
      */
-    public function show(Request $request, $workflowNumber)
+    public function show(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
         $currentVariant = $this->getVariant($request, $workflowNumber);
@@ -198,7 +198,7 @@ class DebugN8nController extends Controller
     /**
      * Save webhook input data
      */
-    public function saveInput(Request $request, $workflowNumber)
+    public function saveInput(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
         try {
@@ -222,7 +222,7 @@ class DebugN8nController extends Controller
      * Save pass-specific input data for Pass 2+
      * Stored as workflow_X_input_Y.json where Y is passNumber - 1
      */
-    public function savePassInput(Request $request, $workflowNumber, $passNumber)
+    public function savePassInput(Request $request, string $locale, $workflowNumber, $passNumber)
     {
         $workflowNumber = (int) $workflowNumber;
         $passNumber = (int) $passNumber;
@@ -253,8 +253,11 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from the n8n workflow file
      */
-    public function reloadJavaScriptFromWorkflow(Request $request, $workflowNumber)
-    {
+    public function reloadJavaScriptFromWorkflow(
+        Request $request,
+        string $locale,
+        $workflowNumber
+    ) {
         $workflowNumber = (int) $workflowNumber;
 
         return $this->reloadJavaScriptFromWorkflowInternal($request, $workflowNumber, false);
@@ -263,8 +266,11 @@ class DebugN8nController extends Controller
     /**
      * Reload JavaScript from workflow file and save as new version
      */
-    public function reloadJavaScriptFromWorkflowAsNew(Request $request, $workflowNumber)
-    {
+    public function reloadJavaScriptFromWorkflowAsNew(
+        Request $request,
+        string $locale,
+        $workflowNumber
+    ) {
         $workflowNumber = (int) $workflowNumber;
 
         return $this->reloadJavaScriptFromWorkflowInternal($request, $workflowNumber, true);
@@ -331,7 +337,7 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript code (old version)
      */
-    public function saveOldJavaScript(Request $request, $workflowNumber)
+    public function saveOldJavaScript(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 
@@ -341,7 +347,7 @@ class DebugN8nController extends Controller
     /**
      * Save new JavaScript code version
      */
-    public function saveNewJavaScript(Request $request, $workflowNumber)
+    public function saveNewJavaScript(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 
@@ -403,8 +409,11 @@ class DebugN8nController extends Controller
     /**
      * Save JavaScript to the n8n workflow file
      */
-    public function saveJavaScriptToN8nWorkflow(Request $request, $workflowNumber)
-    {
+    public function saveJavaScriptToN8nWorkflow(
+        Request $request,
+        string $locale,
+        $workflowNumber
+    ) {
         $workflowNumber = (int) $workflowNumber;
         try {
             $request->validate([
@@ -465,8 +474,11 @@ class DebugN8nController extends Controller
     /**
      * Upload old workflow version to n8n server
      */
-    public function uploadOldWorkflowToN8n(Request $request, $workflowNumber)
-    {
+    public function uploadOldWorkflowToN8n(
+        Request $request,
+        string $locale,
+        $workflowNumber
+    ) {
         $workflowNumber = (int) $workflowNumber;
 
         return $this->uploadWorkflowToN8nInternal($request, $workflowNumber, false);
@@ -475,8 +487,11 @@ class DebugN8nController extends Controller
     /**
      * Upload new workflow version to n8n server
      */
-    public function uploadNewWorkflowToN8n(Request $request, $workflowNumber)
-    {
+    public function uploadNewWorkflowToN8n(
+        Request $request,
+        string $locale,
+        $workflowNumber
+    ) {
         $workflowNumber = (int) $workflowNumber;
 
         return $this->uploadWorkflowToN8nInternal($request, $workflowNumber, true);
@@ -587,7 +602,7 @@ class DebugN8nController extends Controller
     /**
      * Upload workflow to live production n8n server
      */
-    public function uploadWorkflowToLive($workflowNumber)
+    public function uploadWorkflowToLive(string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
         try {
@@ -660,7 +675,7 @@ class DebugN8nController extends Controller
     /**
      * Prepare prompt using the old JavaScript version
      */
-    public function preparePromptOld(Request $request, $workflowNumber)
+    public function preparePromptOld(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 
@@ -670,7 +685,7 @@ class DebugN8nController extends Controller
     /**
      * Prepare prompt using the new JavaScript version
      */
-    public function preparePromptNew(Request $request, $workflowNumber)
+    public function preparePromptNew(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 
@@ -1300,7 +1315,7 @@ try {
     /**
      * Execute the actual n8n workflow for the old version
      */
-    public function executeOldWorkflow(Request $request, $workflowNumber)
+    public function executeOldWorkflow(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 
@@ -1310,7 +1325,7 @@ try {
     /**
      * Execute the actual n8n workflow for the new version
      */
-    public function executeNewWorkflow(Request $request, $workflowNumber)
+    public function executeNewWorkflow(Request $request, string $locale, $workflowNumber)
     {
         $workflowNumber = (int) $workflowNumber;
 

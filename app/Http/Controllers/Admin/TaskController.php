@@ -46,7 +46,7 @@ class TaskController extends Controller
     /**
      * Display prompt runs for a specific task
      */
-    public function show(int $taskId): Response
+    public function show(string $locale, int $taskId): Response
     {
         // Get all unique tasks ordered by runs count (same as index)
         $tasks = PromptRun::select('task_description', DB::raw('COUNT(*) as runs_count'))
@@ -79,7 +79,7 @@ class TaskController extends Controller
     /**
      * Display details of a specific prompt run
      */
-    public function promptRun(PromptRun $promptRun): Response
+    public function promptRun(string $locale, PromptRun $promptRun): Response
     {
         $promptRun->load(['user', 'visitor', 'parent', 'children']);
 

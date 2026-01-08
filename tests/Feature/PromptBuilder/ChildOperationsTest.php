@@ -28,7 +28,9 @@ test('create child from task description creates child successfully', function (
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-task', $parentRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-task', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'task_description' => 'Updated task description for child run',
     ]);
 
@@ -52,7 +54,9 @@ test('create child from task description validates task description required', f
         'user_id' => $this->user->id,
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-task', $parentRun), []);
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-task', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), []);
 
     $response->assertSessionHasErrors(['task_description']);
 });
@@ -65,7 +69,9 @@ test('user cannot create child of other users prompt run', function () {
         'user_id' => $otherUser->id,
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-task', $otherRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-task', [
+        'parentPromptRun' => $otherRun,
+    ], absolute: false), [
         'task_description' => 'New task description',
     ]);
 
@@ -101,7 +107,9 @@ test('create child from answers creates child successfully', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['New answer 1', 'New answer 2'],
     ]);
 
@@ -122,7 +130,9 @@ test('create child from answers validates clarifying answers required', function
         'framework_questions' => [['question' => 'Question 1']],
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-answers', $parentRun), []);
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), []);
 
     $response->assertSessionHasErrors(['clarifying_answers']);
 });
@@ -153,7 +163,9 @@ test('create child from answers converts empty strings to null', function () {
             ]);
     });
 
-    $response = $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['Answer 1', ''], // Empty string should become null
     ]);
 
@@ -172,7 +184,9 @@ test('user cannot create child from answers of other users prompt run', function
         'framework_questions' => [['question' => 'Question 1']],
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-answers', $otherRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $otherRun,
+    ], absolute: false), [
         'clarifying_answers' => ['Answer'],
     ]);
 
@@ -187,7 +201,9 @@ test('create child from answers rejects parent without framework questions', fun
         'framework_questions' => [], // No questions
     ]);
 
-    $response = $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['Answer'],
     ]);
 
@@ -218,7 +234,9 @@ test('parent child relationship is correctly established', function () {
             ]);
     });
 
-    $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['Answer'],
     ]);
 
@@ -254,7 +272,9 @@ test('child prompt run inherits personality from user', function () {
             ]);
     });
 
-    $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['Answer'],
     ]);
 
@@ -307,7 +327,9 @@ test('child from answers inherits pre-analysis information from parent', functio
             ]);
     });
 
-    $this->post(route('prompt-builder.create-child-from-answers', $parentRun), [
+    $this->post($this->localeRoute('prompt-builder.create-child-from-answers', [
+        'parentPromptRun' => $parentRun,
+    ], absolute: false), [
         'clarifying_answers' => ['New answer'],
     ]);
 

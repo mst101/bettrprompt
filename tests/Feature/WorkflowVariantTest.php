@@ -28,7 +28,7 @@ class WorkflowVariantTest extends TestCase
     public function test_show_workflow_page_without_variant_selector_for_single_variant(): void
     {
         // Workflow 0 only has 'default' variant, so no selector should show
-        $response = $this->actingAs($this->adminUser)->get('/workflow/0');
+        $response = $this->actingAs($this->adminUser)->getLocale('/workflow/0');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -41,7 +41,7 @@ class WorkflowVariantTest extends TestCase
     public function test_show_workflow_page_with_variant_selector_for_workflow_1(): void
     {
         // Workflow 1 has multiple variants, so selector should appear
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1');
+        $response = $this->actingAs($this->adminUser)->getLocale('/workflow/1');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -54,7 +54,7 @@ class WorkflowVariantTest extends TestCase
 
     public function test_show_workflow_page_includes_prepare_prompt_nodes(): void
     {
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1');
+        $response = $this->actingAs($this->adminUser)->getLocale('/workflow/1');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -65,7 +65,9 @@ class WorkflowVariantTest extends TestCase
 
     public function test_set_variant_returns_redirect_url(): void
     {
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/variant', [
+            'variant' => 'two-pass',
+        ]);
 
         $response->assertStatus(200)
             ->assertJson(['success' => true])
@@ -74,8 +76,9 @@ class WorkflowVariantTest extends TestCase
 
     public function test_set_variant_validates_variant_exists(): void
     {
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant',
-            ['variant' => 'invalid-variant']);
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/variant', [
+            'variant' => 'invalid-variant',
+        ]);
 
         $response->assertStatus(400)
             ->assertJson(['success' => false]);
@@ -84,12 +87,14 @@ class WorkflowVariantTest extends TestCase
     public function test_set_variant_persists_across_requests(): void
     {
         // Set variant - API returns success
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/variant', [
+            'variant' => 'two-pass',
+        ]);
         $response->assertStatus(200)
             ->assertJson(['success' => true]);
 
         // Verify it persists by navigating to the variant URL
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1?variant=two-pass');
+        $response = $this->actingAs($this->adminUser)->getLocale('/workflow/1?variant=two-pass');
         $response->assertInertia(fn ($page) => $page
             ->where('currentVariant', 'two-pass')
         );
@@ -98,10 +103,12 @@ class WorkflowVariantTest extends TestCase
     public function test_show_two_pass_variant_includes_two_nodes(): void
     {
         // Set the variant (API confirms it's valid)
-        $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/variant', [
+            'variant' => 'two-pass',
+        ]);
 
         // Get the page with the variant query parameter
-        $response = $this->actingAs($this->adminUser)->get('/workflow/1?variant=two-pass');
+        $response = $this->actingAs($this->adminUser)->getLocale('/workflow/1?variant=two-pass');
 
         $response->assertInertia(fn ($page) => $page
             ->has('preparePromptNodes', 2)
@@ -114,7 +121,7 @@ class WorkflowVariantTest extends TestCase
     {
         $javascriptCode = 'console.log("test");';
 
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/javascript-old', [
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/javascript-old', [
             'code' => $javascriptCode,
             'variant' => 'single-pass',
             'nodeName' => 'Prepare Prompt',
@@ -128,7 +135,7 @@ class WorkflowVariantTest extends TestCase
     {
         $javascriptCode = 'console.log("test node 1");';
 
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/javascript-old', [
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/javascript-old', [
             'code' => $javascriptCode,
             'variant' => 'two-pass',
             'nodeName' => 'Prepare Prompt 1',
@@ -142,7 +149,7 @@ class WorkflowVariantTest extends TestCase
     {
         $javascriptCode = 'console.log("test node 2");';
 
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/javascript-old', [
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/javascript-old', [
             'code' => $javascriptCode,
             'variant' => 'two-pass',
             'nodeName' => 'Prepare Prompt 2',
@@ -155,12 +162,14 @@ class WorkflowVariantTest extends TestCase
     public function test_save_javascript_defaults_to_current_variant(): void
     {
         // Set variant to two-pass
-        $this->actingAs($this->adminUser)->post('/debug/workflow/1/variant', ['variant' => 'two-pass']);
+        $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/variant', [
+            'variant' => 'two-pass',
+        ]);
 
         $javascriptCode = 'console.log("test");';
 
         // Don't specify variant, should use current variant
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/javascript-old', [
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/javascript-old', [
             'code' => $javascriptCode,
             'nodeName' => 'Prepare Prompt 1',
         ]);
@@ -174,7 +183,7 @@ class WorkflowVariantTest extends TestCase
         $javascriptCode = 'console.log("test");';
 
         // Don't specify nodeName, should default to 'Prepare Prompt'
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/1/javascript-old', [
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/1/javascript-old', [
             'code' => $javascriptCode,
             'variant' => 'single-pass',
         ]);
@@ -204,7 +213,7 @@ class WorkflowVariantTest extends TestCase
 
     public function test_reload_javascript_returns_code_without_saving(): void
     {
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/0/reload-javascript-old');
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/0/reload-javascript-old');
 
         $response->assertStatus(200)
             ->assertJson(['success' => true])
@@ -228,7 +237,7 @@ class WorkflowVariantTest extends TestCase
 
     public function test_reload_javascript_new_version_returns_code(): void
     {
-        $response = $this->actingAs($this->adminUser)->post('/debug/workflow/0/reload-javascript-new');
+        $response = $this->actingAs($this->adminUser)->postLocale('/debug/workflow/0/reload-javascript-new');
 
         $response->assertStatus(200)
             ->assertJson(['success' => true])

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 test('home page displays correctly', function () {
     $response = $this->getLocale('/');
 
@@ -82,7 +84,9 @@ test('cookies page displays correctly', function () {
 });
 
 test('dashboard redirects to prompt builder index', function () {
-    $response = $this->getLocale(route('prompt-builder.index', [], false));
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)
+        ->getLocale(route('prompt-builder.index', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page

@@ -27,7 +27,9 @@ test('show page displays prompt run details', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -51,7 +53,9 @@ test('show page displays current question', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -78,7 +82,9 @@ test('show page returns null when all questions answered', function () {
         'current_question_index' => 2,
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -100,7 +106,9 @@ test('show page includes personality tier in response', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -117,7 +125,9 @@ test('show page displays completed prompt run with optimized prompt', function (
         'optimized_prompt' => 'This is your personalised, optimised prompt based on your INTJ personality.',
     ]);
 
-    $response = $this->get(route('prompt-builder.show', $promptRun));
+    $response = $this->get($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -136,7 +146,9 @@ test('answer question saves answer successfully', function () {
         ->withAnswers([]) // Clear any default answers
         ->build();
 
-    $response = $this->post(route('prompt-builder.answer', $promptRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+        'promptRun' => $promptRun,
+    ], absolute: false), [
         'question_index' => 0,
         'answer' => 'This is my detailed answer to the first question',
     ]);
@@ -167,7 +179,9 @@ test('answer question rejects invalid workflow stage', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post(route('prompt-builder.answer', $promptRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+        'promptRun' => $promptRun,
+    ], absolute: false), [
         'question_index' => 0,
         'answer' => 'Answer',
     ]);
@@ -188,7 +202,9 @@ test('user cannot answer other users questions', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post(route('prompt-builder.answer', $otherRun), [
+    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+        'promptRun' => $otherRun,
+    ], absolute: false), [
         'question_index' => 0,
         'answer' => 'My answer',
     ]);
@@ -210,9 +226,13 @@ test('go back to previous question updates index', function () {
         'current_question_index' => 1,
     ]);
 
-    $response = $this->post(route('prompt-builder.go-back', $promptRun));
+    $response = $this->post($this->localeRoute('prompt-builder.go-back', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
-    $response->assertRedirect(route('prompt-builder.show', $promptRun));
+    $response->assertRedirect($this->localeRoute('prompt-builder.show', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $promptRun->refresh();
     expect($promptRun->current_question_index)->toBe(0)
@@ -232,7 +252,9 @@ test('cannot go back from first question', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post(route('prompt-builder.go-back', $promptRun));
+    $response = $this->post($this->localeRoute('prompt-builder.go-back', [
+        'promptRun' => $promptRun,
+    ], absolute: false));
 
     $response->assertRedirect();
     $response->assertSessionHas('error', 'Already at first question.');

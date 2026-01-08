@@ -165,8 +165,12 @@ class PromptBuilderController extends Controller
      * Transitions from workflow 0 to workflow 1 using the pre-analysis answers.
      * Dispatches the analysis job which determines framework and clarifying questions.
      */
-    public function analyse(SubmitPreAnalysisAnswersRequest $request, PromptRun $promptRun)
-    {
+    public function analyse(
+        SubmitPreAnalysisAnswersRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate workflow stage
@@ -215,8 +219,12 @@ class PromptBuilderController extends Controller
      * Allows users to edit pre-analysis answers and re-run the analysis.
      * Used in view-edit mode for tweaking responses before clarifying questions.
      */
-    public function updatePreAnalysisAnswers(UpdatePreAnalysisAnswersRequest $request, PromptRun $promptRun)
-    {
+    public function updatePreAnalysisAnswers(
+        UpdatePreAnalysisAnswersRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate workflow stage - should have pre-analysis questions
@@ -265,8 +273,9 @@ class PromptBuilderController extends Controller
      * Shows the current state of the analysis, including current question to answer.
      * This is a view-only method; changes are made via answerQuestion/skipQuestion/goBackToPreviousQuestion.
      */
-    public function show(Request $request, PromptRun $promptRun)
+    public function show(Request $request, string $locale, PromptRun|string $promptRun)
     {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Load parent/children relationships (minimal data only via PromptRunRelationshipResource)
@@ -333,8 +342,12 @@ class PromptBuilderController extends Controller
      * Records the answer to the current question and advances to the next.
      * Used in one-at-a-time answering mode.
      */
-    public function answerQuestion(AnswerQuestionRequest $request, PromptRun $promptRun)
-    {
+    public function answerQuestion(
+        AnswerQuestionRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -349,8 +362,12 @@ class PromptBuilderController extends Controller
      * Moves backward through questions without losing answers.
      * Allows users to review and edit earlier responses.
      */
-    public function goBackToPreviousQuestion(Request $request, PromptRun $promptRun)
-    {
+    public function goBackToPreviousQuestion(
+        Request $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
@@ -401,8 +418,12 @@ class PromptBuilderController extends Controller
      * Takes clarifying answers and dispatches the prompt generation job.
      * This is the action that creates the final personalised prompt.
      */
-    public function generate(GeneratePromptRequest $request, PromptRun $promptRun)
-    {
+    public function generate(
+        GeneratePromptRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -450,8 +471,12 @@ class PromptBuilderController extends Controller
      * Allows users to manually edit the generated prompt after creation.
      * Only available for completed (2_completed) workflow runs.
      */
-    public function updateOptimizedPrompt(UpdateOptimizedPromptRequest $request, PromptRun $promptRun)
-    {
+    public function updateOptimizedPrompt(
+        UpdateOptimizedPromptRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that the prompt run is completed
@@ -490,8 +515,12 @@ class PromptBuilderController extends Controller
      * Allows users to start a new variant with a different task description.
      * Branches from an existing prompt run, inheriting personality and other context.
      */
-    public function createChild(CreateChildFromTaskRequest $request, PromptRun $parentPromptRun)
-    {
+    public function createChild(
+        CreateChildFromTaskRequest $request,
+        string $locale,
+        PromptRun|string $parentPromptRun
+    ) {
+        $parentPromptRun = $this->resolvePromptRun($parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
         // Check if unregistered visitor has already completed a prompt
@@ -556,8 +585,12 @@ class PromptBuilderController extends Controller
      * Allows users to regenerate with different answers to the clarifying questions.
      * Branches from an existing prompt run, inheriting all pre-analysis and framework data.
      */
-    public function createChildFromAnswers(CreateChildFromAnswersRequest $request, PromptRun $parentPromptRun)
-    {
+    public function createChildFromAnswers(
+        CreateChildFromAnswersRequest $request,
+        string $locale,
+        PromptRun|string $parentPromptRun
+    ) {
+        $parentPromptRun = $this->resolvePromptRun($parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
         // Check if unregistered visitor has already completed a prompt
@@ -643,8 +676,12 @@ class PromptBuilderController extends Controller
      * Allows users to re-analyse their task with a different prompt framework.
      * Keeps pre-analysis data but replaces the selected framework and its questions.
      */
-    public function switchFramework(CreateChildWithFrameworkRequest $request, PromptRun $promptRun)
-    {
+    public function switchFramework(
+        CreateChildWithFrameworkRequest $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         $validated = $request->validated();
@@ -706,8 +743,9 @@ class PromptBuilderController extends Controller
      * Resets the failed workflow stage and re-dispatches the job.
      * Allows recovery from failures in any workflow stage.
      */
-    public function retry(Request $request, PromptRun $promptRun)
+    public function retry(Request $request, string $locale, PromptRun|string $promptRun)
     {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         // Only allow retry for failed runs
@@ -800,8 +838,9 @@ class PromptBuilderController extends Controller
      * Permanently removes a prompt run from the system.
      * Users can only delete their own prompt runs.
      */
-    public function destroy(Request $request, PromptRun $promptRun)
+    public function destroy(Request $request, string $locale, PromptRun|string $promptRun)
     {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         try {
@@ -893,8 +932,12 @@ class PromptBuilderController extends Controller
      * API endpoint for fetching complete prompt run data.
      * Used for on-demand loading of related prompts and full details.
      */
-    public function getFullDetails(Request $request, PromptRun $promptRun)
-    {
+    public function getFullDetails(
+        Request $request,
+        string $locale,
+        PromptRun|string $promptRun
+    ) {
+        $promptRun = $this->resolvePromptRun($promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
         return response()->json([
@@ -914,6 +957,18 @@ class PromptBuilderController extends Controller
         return $request->hasHeader('X-Data-Collection-Test')
             ? 'bettrprompt_data_collection'
             : null;
+    }
+
+    /**
+     * Resolve prompt run when route model binding is unavailable.
+     */
+    private function resolvePromptRun(PromptRun|string $promptRun): PromptRun
+    {
+        if ($promptRun instanceof PromptRun) {
+            return $promptRun;
+        }
+
+        return PromptRun::findOrFail($promptRun);
     }
 
     /**

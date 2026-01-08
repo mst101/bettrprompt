@@ -47,7 +47,7 @@ class UserController extends Controller
     /**
      * Display the specified user
      */
-    public function show(User $user, Request $request): Response
+    public function show(Request $request, string $locale, User $user): Response
     {
         $sortBy = $request->get('sort_by', 'created_at');
         $sortDirection = $request->get('sort_direction', 'desc');

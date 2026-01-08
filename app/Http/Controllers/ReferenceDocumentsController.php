@@ -42,7 +42,7 @@ class ReferenceDocumentsController extends Controller
     /**
      * Get content of a specific document
      */
-    public function show($type, $filename)
+    public function show(string $locale, $type, $filename)
     {
         try {
             $path = $this->getDocumentPath($type, $filename);
@@ -74,7 +74,7 @@ class ReferenceDocumentsController extends Controller
     /**
      * Save document changes and embed into workflows
      */
-    public function update(Request $request, $type, $filename)
+    public function update(Request $request, string $locale, $type, $filename)
     {
         try {
             $request->validate([
