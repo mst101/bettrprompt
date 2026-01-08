@@ -362,6 +362,7 @@
         "hero": {
             "title": "Le moyen simple de résoudre",
             "titleGradient": "les problèmes complexes",
+            "titleSuffix": "",
             "subtitle": "Les excellents résultats avec l'IA commencent par d'excellentes questions. BettrPrompt pose les bonnes questions, puis crée des invites structurées qui fonctionnent vraiment."
         },
         "features": {

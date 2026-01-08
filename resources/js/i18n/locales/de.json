@@ -360,8 +360,9 @@
     "home": {
         "title": "Willkommen bei BettrPrompt",
         "hero": {
-            "title": "Die einfache Art, zu lösen",
+            "title": "Die einfache Art",
             "titleGradient": "Komplexe Probleme",
+            "titleSuffix": "zu lösen",
             "subtitle": "Großartige KI-Ergebnisse beginnen mit großartigen Fragen. BettrPrompt stellt die richtigen - und erstellt dann strukturierte Anfragen, die wirklich funktionieren."
         },
         "features": {

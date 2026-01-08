@@ -362,6 +362,7 @@
         "hero": {
             "title": "The Simple Way to Solve",
             "titleGradient": "Complex Problems",
+            "titleSuffix": "",
             "subtitle": "Great AI results start with great questions. BettrPrompt asks the right ones - then builds structured prompts that actually work."
         },
         "features": {

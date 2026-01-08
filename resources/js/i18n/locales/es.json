@@ -362,6 +362,7 @@
         "hero": {
             "title": "La forma simple de resolver",
             "titleGradient": "problemas complejos",
+            "titleSuffix": "",
             "subtitle": "Los grandes resultados de la IA comienzan con grandes preguntas. BettrPrompt hace las correctas y luego construye prompts estructurados que realmente funcionan."
         },
         "features": {
