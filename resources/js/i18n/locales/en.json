@@ -349,48 +349,6 @@
             }
         }
     },
-    "workflow": {
-        "variantSelector": {
-            "label": "Variant"
-        },
-        "codeEditor": {
-            "placeholder": "Paste or edit content...",
-            "characters": "{count} characters",
-            "notAvailable": "N/A",
-            "expandTitle": "Expand editor",
-            "expand": "Expand",
-            "saveTitle": "Save changes",
-            "save": "Save",
-            "collapsedHint": "Collapsed view - expand to edit."
-        },
-        "documentSidebar": {
-            "coreDocuments": "Core documents",
-            "usedIn": "Used in: {list}",
-            "none": "None",
-            "frameworkTemplates": "Framework templates ({count})",
-            "workflowVersion": "Workflow version"
-        },
-        "outputPanel": {
-            "title": "Output",
-            "header": "{title} - {count} characters",
-            "rawJson": "Raw JSON",
-            "copyTitle": "Copy to clipboard",
-            "copy": "Copy",
-            "wrapDisable": "Disable line wrapping",
-            "wrapEnable": "Enable line wrapping",
-            "wrapOn": "Wrap on",
-            "wrapOff": "Wrap off",
-            "system": "System",
-            "messages": "Messages",
-            "rawLabel": "Raw",
-            "formattedLabel": "Formatted",
-            "switchRaw": "Show raw",
-            "switchFormatted": "Show formatted",
-            "expandTitle": "Expand",
-            "expand": "Expand",
-            "empty": "No output available"
-        }
-    },
     "home": {
         "title": "Welcome to BettrPrompt",
         "hero": {
@@ -1240,6 +1198,10 @@
             "title": "Your Optimized Prompt",
             "copy": "Copy Prompt",
             "tryAgain": "Try Another Task"
+        },
+        "admin": {
+            "promptRun": "Prompt Run",
+            "backToTasks": "Back to Tasks"
         }
     },
     "profile": {
@@ -1548,12 +1510,6 @@
             }
         }
     },
-    "promptBuilder": {
-        "admin": {
-            "promptRun": "Prompt Run",
-            "backToTasks": "Back to Tasks"
-        }
-    },
     "legal": {
         "lastUpdated": "Last updated",
         "privacy": {
@@ -1568,6 +1524,46 @@
         }
     },
     "workflow": {
+        "variantSelector": {
+            "label": "Variant"
+        },
+        "codeEditor": {
+            "placeholder": "Paste or edit content...",
+            "characters": "{count} characters",
+            "notAvailable": "N/A",
+            "expandTitle": "Expand editor",
+            "expand": "Expand",
+            "saveTitle": "Save changes",
+            "save": "Save",
+            "collapsedHint": "Collapsed view - expand to edit."
+        },
+        "documentSidebar": {
+            "coreDocuments": "Core documents",
+            "usedIn": "Used in: {list}",
+            "none": "None",
+            "frameworkTemplates": "Framework templates ({count})",
+            "workflowVersion": "Workflow version"
+        },
+        "outputPanel": {
+            "title": "Output",
+            "header": "{title} - {count} characters",
+            "rawJson": "Raw JSON",
+            "copyTitle": "Copy to clipboard",
+            "copy": "Copy",
+            "wrapDisable": "Disable line wrapping",
+            "wrapEnable": "Enable line wrapping",
+            "wrapOn": "Wrap on",
+            "wrapOff": "Wrap off",
+            "system": "System",
+            "messages": "Messages",
+            "rawLabel": "Raw",
+            "formattedLabel": "Formatted",
+            "switchRaw": "Show raw",
+            "switchFormatted": "Show formatted",
+            "expandTitle": "Expand",
+            "expand": "Expand",
+            "empty": "No output available"
+        },
         "index": {
             "title": "Workflow System",
             "subtitle": "Debug and manage n8n workflows",
