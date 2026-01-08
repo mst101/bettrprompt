@@ -1,5 +1,4 @@
 import { reactive, readonly } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 export type AlertType = 'success' | 'warning' | 'error' | 'info' | 'confirm';
 
@@ -34,8 +33,6 @@ const state = reactive<AlertState>({
     resolveCallback: null,
 });
 
-const { t } = useI18n();
-
 export function useAlert() {
     const showAlert = (options: AlertOptions): Promise<boolean> => {
         return new Promise((resolve) => {
@@ -44,8 +41,8 @@ export function useAlert() {
             state.title =
                 options.title || getDefaultTitle(options.type || 'info');
             state.message = options.message;
-            state.confirmText = options.confirmText || t('common.buttons.ok');
-            state.cancelText = options.cancelText || t('common.buttons.cancel');
+            state.confirmText = options.confirmText || 'OK';
+            state.cancelText = options.cancelText || 'Cancel';
             state.confirmButtonStyle = options.confirmButtonStyle || 'primary';
             state.resolveCallback = resolve;
         });
@@ -58,10 +55,10 @@ export function useAlert() {
     ): Promise<boolean> => {
         return showAlert({
             type: 'confirm',
-            title: title || t('alert.confirmTitle'),
+            title: title || 'Confirm',
             message,
-            confirmText: options?.confirmText || t('common.buttons.confirm'),
-            cancelText: options?.cancelText || t('common.buttons.cancel'),
+            confirmText: options?.confirmText || 'Confirm',
+            cancelText: options?.cancelText || 'Cancel',
             confirmButtonStyle: options?.confirmButtonStyle || 'primary',
         });
     };
@@ -75,20 +72,20 @@ export function useAlert() {
             type,
             title: title || getDefaultTitle(type),
             message,
-            confirmText: t('common.buttons.ok'),
+            confirmText: 'OK',
         });
     };
 
     const success = (message: string, title?: string): Promise<boolean> => {
-        return alert(message, title || t('alert.successTitle'), 'success');
+        return alert(message, title || 'Success', 'success');
     };
 
     const warning = (message: string, title?: string): Promise<boolean> => {
-        return alert(message, title || t('alert.warningTitle'), 'warning');
+        return alert(message, title || 'Warning', 'warning');
     };
 
     const error = (message: string, title?: string): Promise<boolean> => {
-        return alert(message, title || t('alert.errorTitle'), 'error');
+        return alert(message, title || 'Error', 'error');
     };
 
     const closeAlert = (confirmed: boolean) => {
@@ -117,14 +114,14 @@ export function useAlert() {
 function getDefaultTitle(type: AlertType): string {
     switch (type) {
         case 'success':
-            return t('alert.successTitle');
+            return 'Success';
         case 'warning':
-            return t('alert.warningTitle');
+            return 'Warning';
         case 'error':
-            return t('alert.errorTitle');
+            return 'Error';
         case 'confirm':
-            return t('alert.confirmTitle');
+            return 'Confirm';
         default:
-            return t('alert.infoTitle');
+            return 'Information';
     }
 }
