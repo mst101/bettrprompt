@@ -37,7 +37,7 @@ class AnswerQuestionRequest extends BaseFormRequest
     {
         return [
             'answer.required' => 'Please provide an answer to the question.',
-            'answer.max' => 'The answer must not exceed 1000 characters.',
+            'answer.max' => __('messages.form.answer_max'),
         ];
     }
 }

@@ -37,12 +37,12 @@ class RegisterRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Please enter your name.',
-            'email.required' => 'Please enter your email address.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.unique' => 'This email address is already registered.',
-            'password.required' => 'Please enter a password.',
-            'password.confirmed' => 'The password confirmation does not match.',
+            'name.required' => __('messages.form.name_required'),
+            'email.required' => __('messages.form.email_required'),
+            'email.email' => __('messages.form.email_email'),
+            'email.unique' => __('messages.form.email_unique'),
+            'password.required' => __('messages.form.password_required'),
+            'password.confirmed' => __('messages.form.password_confirmed'),
         ];
     }
 }

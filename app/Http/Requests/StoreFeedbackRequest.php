@@ -40,12 +40,12 @@ class StoreFeedbackRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'experience_level.required' => 'Please select your experience level (Question 1)',
-            'usefulness.required' => 'Please rate how useful the app was (Question 2)',
-            'usage_intent.required' => 'Please indicate your likelihood to use the app again (Question 3)',
-            'desired_features.required' => 'Please select at least one feature you would like to see',
-            'desired_features.min' => 'Please select at least one feature you would like to see',
-            'desired_features_other.required_if' => 'Please describe the feature you selected under "Other"',
+            'experience_level.required' => __('messages.form.experience_level_required'),
+            'usefulness.required' => __('messages.form.usefulness_required'),
+            'usage_intent.required' => __('messages.form.usage_intent_required'),
+            'desired_features.required' => __('messages.form.desired_features_required'),
+            'desired_features.min' => __('messages.form.desired_features_required'),
+            'desired_features_other.required_if' => __('messages.form.desired_features_other_required'),
         ];
     }
 }

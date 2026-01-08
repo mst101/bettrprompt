@@ -60,7 +60,7 @@ class FeedbackController extends Controller
         ]);
 
         return redirect()->route('feedback.thank-you')
-            ->with('success', 'Thank you for your feedback!');
+            ->with('success', __('messages.feedback.thank_you'));
     }
 
     public function update(StoreFeedbackRequest $request)
@@ -79,7 +79,7 @@ class FeedbackController extends Controller
         ]);
 
         return redirect()->route('feedback.show')
-            ->with('success', 'Thank you for updating your feedback!');
+            ->with('success', __('messages.feedback.thank_you_update'));
     }
 
     public function thankYou(): Response|RedirectResponse

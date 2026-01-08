@@ -73,7 +73,7 @@ class PrivacyController extends Controller
         $recoveryPhrase = session('privacy_setup.recovery_phrase');
 
         if (! $encryptedDek || ! $recoveryPhrase) {
-            return back()->withErrors(['setup' => 'Setup session expired. Please start again.']);
+            return back()->withErrors(['setup' => __('messages.privacy.session_expired')]);
         }
 
         $dek = decrypt($encryptedDek);
@@ -82,7 +82,7 @@ class PrivacyController extends Controller
         $words = explode(' ', $recoveryPhrase);
         foreach ($request->confirmation_words as $index => $word) {
             if (strtolower(trim($word)) !== $words[$index]) {
-                return back()->withErrors(['confirmation_words' => 'Recovery phrase words do not match.']);
+                return back()->withErrors(['confirmation_words' => __('messages.privacy.recovery_mismatch')]);
             }
         }
 
@@ -105,7 +105,7 @@ class PrivacyController extends Controller
         session()->forget(['privacy_setup.dek', 'privacy_setup.recovery_phrase']);
 
         return redirect()->route('settings.privacy')
-            ->with('success', 'Privacy encryption has been enabled. Your data is now protected.');
+            ->with('success', __('messages.privacy.enabled'));
     }
 
     /**
@@ -131,9 +131,9 @@ class PrivacyController extends Controller
 
             $this->encryptionService->storeDekInSession($dek);
 
-            return back()->with('success', 'Privacy key unlocked.');
+            return back()->with('success', __('messages.privacy.key_unlocked'));
         } catch (\Exception $e) {
-            return back()->withErrors(['password' => 'Incorrect password.']);
+            return back()->withErrors(['password' => __('messages.privacy.incorrect_password')]);
         }
     }
 
@@ -164,7 +164,7 @@ class PrivacyController extends Controller
         }
 
         if (! $this->recoveryPhraseService->validate($request->recovery_phrase)) {
-            return back()->withErrors(['recovery_phrase' => 'Invalid recovery phrase format.']);
+            return back()->withErrors(['recovery_phrase' => __('messages.privacy.invalid_format')]);
         }
 
         try {
@@ -187,9 +187,9 @@ class PrivacyController extends Controller
             $this->encryptionService->storeDekInSession($dek);
 
             return redirect()->route('settings.privacy')
-                ->with('success', 'Account recovered successfully. Your password has been updated.');
+                ->with('success', __('messages.privacy.recovered'));
         } catch (\Exception $e) {
-            return back()->withErrors(['recovery_phrase' => 'Invalid recovery phrase.']);
+            return back()->withErrors(['recovery_phrase' => __('messages.privacy.invalid_phrase')]);
         }
     }
 
@@ -225,9 +225,9 @@ class PrivacyController extends Controller
                 'encrypted_dek' => $newEncryptedDek,
             ]);
 
-            return back()->with('success', 'Privacy key updated with new password.');
+            return back()->with('success', __('messages.privacy.key_updated'));
         } catch (\Exception $e) {
-            return back()->withErrors(['current_password' => 'Failed to update privacy key.']);
+            return back()->withErrors(['current_password' => __('messages.privacy.key_update_failed')]);
         }
     }
 
@@ -244,7 +244,7 @@ class PrivacyController extends Controller
         $user = $request->user();
 
         if (! $user->hasPrivacyEnabled()) {
-            return back()->withErrors(['privacy' => 'Privacy is not enabled.']);
+            return back()->withErrors(['privacy' => __('messages.privacy.not_enabled_disable')]);
         }
 
         // TODO: Queue job to decrypt all user's prompt runs
@@ -260,6 +260,6 @@ class PrivacyController extends Controller
         $this->encryptionService->clearDekFromSession();
 
         return redirect()->route('settings.privacy')
-            ->with('success', 'Privacy encryption has been disabled.');
+            ->with('success', __('messages.privacy.disabled'));
     }
 }

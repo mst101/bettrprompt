@@ -151,7 +151,7 @@ class SubscriptionController extends Controller
         }
 
         return redirect()->route('settings.subscription')
-            ->with('success', 'Your subscription has been cancelled. You will retain Pro access until '.$subscription->ends_at->format('j F Y').'.');
+            ->with('success', __('messages.subscription.cancelled_pro_until', ['date' => $subscription->ends_at->format('j F Y')]));
     }
 
     /**
@@ -171,6 +171,6 @@ class SubscriptionController extends Controller
         }
 
         return redirect()->route('settings.subscription')
-            ->with('success', 'Your subscription has been resumed.');
+            ->with('success', __('messages.subscription.resumed'));
     }
 }

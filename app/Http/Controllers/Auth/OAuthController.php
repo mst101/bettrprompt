@@ -36,7 +36,7 @@ class OAuthController extends Controller
             ]);
 
             return redirect()->route('home', ['locale' => $locale])
-                ->with('error', 'Unable to connect to Google. Please try again later.');
+                ->with('error', __('messages.auth.google_connection_failed'));
         }
     }
 
@@ -59,7 +59,7 @@ class OAuthController extends Controller
                 ]);
 
                 return redirect()->route('login', ['locale' => $locale])
-                    ->with('error', 'Could not retrieve your account information from Google. Please try again.');
+                    ->with('error', __('messages.auth.google_account_info_failed'));
             }
 
             // Validate email format
@@ -69,7 +69,7 @@ class OAuthController extends Controller
                 ]);
 
                 return redirect()->route('login', ['locale' => $locale])
-                    ->with('error', 'Invalid email address received from Google. Please try again.');
+                    ->with('error', __('messages.auth.google_invalid_email'));
             }
 
             // Find or create user with proper error handling
@@ -77,7 +77,7 @@ class OAuthController extends Controller
 
             if (! $user) {
                 return redirect()->route('login', ['locale' => $locale])
-                    ->with('error', 'Failed to create your account. Please try again or contact support.');
+                    ->with('error', __('messages.auth.account_creation_failed'));
             }
 
             // Check if we need to link visitor and copy data
@@ -200,7 +200,7 @@ class OAuthController extends Controller
             ]);
 
             return redirect()->route('login', ['locale' => $locale])
-                ->with('error', 'Authentication session expired. Please try logging in again.');
+                ->with('error', __('messages.auth.session_expired'));
 
         } catch (ClientException $e) {
             Log::error('OAuth provider error', [
@@ -209,7 +209,7 @@ class OAuthController extends Controller
             ]);
 
             return redirect()->route('login', ['locale' => $locale])
-                ->with('error', 'Failed to communicate with Google. Please try again later.');
+                ->with('error', __('messages.auth.google_communication_failed'));
 
         } catch (Exception $e) {
             Log::error('Unexpected error in Google OAuth callback', [
@@ -218,7 +218,7 @@ class OAuthController extends Controller
             ]);
 
             return redirect()->route('login', ['locale' => $locale])
-                ->with('error', 'An unexpected error occurred. Please try again.');
+                ->with('error', __('messages.auth.unexpected_error'));
         }
     }
 

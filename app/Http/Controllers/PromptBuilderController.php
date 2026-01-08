@@ -154,7 +154,7 @@ class PromptBuilderController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Failed to create task. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.task_created_failed'));
         }
     }
 
@@ -175,7 +175,7 @@ class PromptBuilderController extends Controller
 
         // Validate workflow stage
         if ($promptRun->workflow_stage !== '0_completed') {
-            return back()->with('error', 'Invalid workflow stage for submitting pre-analysis answers.');
+            return back()->with('error', __('messages.prompt_builder.invalid_workflow_stage'));
         }
 
         $validated = $request->validated();
@@ -201,7 +201,7 @@ class PromptBuilderController extends Controller
 
             return redirect()
                 ->route('prompt-builder.show', $promptRun)
-                ->with('success', 'Analysing your task...');
+                ->with('success', __('messages.prompt_builder.analysing_task'));
 
         } catch (Exception $e) {
             Log::error('Failed to submit pre-analysis answers', [
@@ -210,7 +210,7 @@ class PromptBuilderController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'Failed to submit answers. Please try again.');
+            return back()->with('error', __('messages.prompt_builder.submit_answers_failed'));
         }
     }
 
@@ -229,7 +229,7 @@ class PromptBuilderController extends Controller
 
         // Validate workflow stage - should have pre-analysis questions
         if (! $promptRun->pre_analysis_questions || empty($promptRun->pre_analysis_questions)) {
-            return back()->with('error', 'This prompt run does not have quick queries to update.');
+            return back()->with('error', __('messages.prompt_builder.no_quick_queries'));
         }
 
         $validated = $request->validated();
@@ -497,7 +497,7 @@ class PromptBuilderController extends Controller
                 'prompt_run_id' => $promptRun->id,
             ]);
 
-            return back()->with('success', 'Prompt updated successfully.');
+            return back()->with('success', __('messages.prompt_builder.prompt_updated'));
         } catch (Exception $e) {
             Log::error('Failed to update optimised prompt (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,
@@ -776,7 +776,7 @@ class PromptBuilderController extends Controller
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'Retrying pre-analysis...');
+                    ->with('success', __('messages.prompt_builder.retrying_pre_analysis'));
 
             } elseif ($failedWorkflow === 1) {
                 // Workflow 1 (analysis) failed - retry analysis
@@ -797,7 +797,7 @@ class PromptBuilderController extends Controller
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'Retrying analysis...');
+                    ->with('success', __('messages.prompt_builder.retrying_analysis'));
 
             } elseif ($failedWorkflow === 2) {
                 // Workflow 2 (generation) failed - retry generation
@@ -817,10 +817,10 @@ class PromptBuilderController extends Controller
 
                 return redirect()
                     ->route('prompt-builder.show', $promptRun)
-                    ->with('success', 'Retrying prompt generation...');
+                    ->with('success', __('messages.prompt_builder.retrying_prompt_generation'));
             }
 
-            return back()->with('error', 'Cannot retry from this stage.');
+            return back()->with('error', __('messages.prompt_builder.cannot_retry_from_stage'));
 
         } catch (Exception $e) {
             Log::error('Failed to retry (PromptBuilder)', [
@@ -854,7 +854,7 @@ class PromptBuilderController extends Controller
 
             return redirect()
                 ->route('prompt-builder.history')
-                ->with('success', 'Prompt run deleted successfully.');
+                ->with('success', __('messages.prompt_builder.deleted_successfully'));
         } catch (Exception $e) {
             Log::error('Failed to delete prompt run (PromptBuilder)', [
                 'prompt_run_id' => $promptRun->id,

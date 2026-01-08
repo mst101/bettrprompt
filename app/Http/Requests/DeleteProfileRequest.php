@@ -32,8 +32,8 @@ class DeleteProfileRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'password.required' => 'Please enter your password to confirm account deletion.',
-            'password.current_password' => 'The provided password is incorrect.',
+            'password.required' => __('messages.form.password_delete_confirmation'),
+            'password.current_password' => __('validation.password'),
         ];
     }
 }

@@ -88,4 +88,129 @@ return [
     'data_deletion_requested' => 'Your data deletion request has been submitted.',
     'data_will_be_deleted' => 'Your data will be permanently deleted in 30 days.',
     'data_deletion_cancelled' => 'Your data deletion request has been cancelled.',
+
+    // Form validation messages
+    'form' => [
+        'answer_max' => 'The answer must not exceed 1000 characters.',
+        'task_description_required' => 'Please describe the task you want to accomplish.',
+        'task_description_min' => 'The task description must be at least 10 characters.',
+        'experience_level_required' => 'Please select your experience level (Question 1).',
+        'usefulness_required' => 'Please rate how useful the app was (Question 2).',
+        'usage_intent_required' => 'Please indicate your likelihood to use the app again (Question 3).',
+        'desired_features_required' => 'Please select at least one feature you would like to see.',
+        'desired_features_other_required' => 'Please describe the feature you selected under "Other".',
+        'password_delete_confirmation' => 'Please enter your password to confirm account deletion.',
+        'name_required' => 'Please enter your name.',
+        'email_required' => 'Please enter your email address.',
+        'email_email' => 'Please enter a valid email address.',
+        'email_unique' => 'This email address is already registered.',
+        'password_required' => 'Please enter a password.',
+        'password_confirmed' => 'The password confirmation does not match.',
+    ],
+
+    // Prompt Builder messages
+    'prompt_builder' => [
+        'task_created_failed' => 'Failed to create task. Please try again.',
+        'invalid_workflow_stage' => 'Invalid workflow stage for submitting pre-analysis answers.',
+        'analysing_task' => 'Analysing your task...',
+        'submit_answers_failed' => 'Failed to submit answers. Please try again.',
+        'no_quick_queries' => 'This prompt run does not have quick queries to update.',
+        'updating_answers' => 'Updating your task with answers...',
+        'update_answers_failed' => 'Failed to update answers. Please try again.',
+        'cannot_go_back' => 'Cannot go back at this stage.',
+        'already_first_question' => 'Already at first question.',
+        'go_back_failed' => 'Failed to go back. Please try again.',
+        'can_only_edit_completed' => 'Can only edit completed prompt runs.',
+        'prompt_updated' => 'Prompt updated successfully.',
+        'update_prompt_failed' => 'Failed to update prompt. Please try again.',
+        'visitor_limit_reached' => 'You\'ve already created an optimised prompt as a visitor. Please create a free account to continue.',
+        'create_prompt_run_failed' => 'An error occurred whilst creating the new prompt run. Please try again.',
+        'no_clarifying_questions' => 'Parent prompt run does not have clarifying questions.',
+        'generating_optimised_prompt' => 'Generating your optimised prompt with edited answers...',
+        'switching_framework' => 'Re-analysing with selected framework...',
+        'switch_framework_failed' => 'An error occurred whilst switching frameworks. Please try again.',
+        'only_failed_runs_can_retry' => 'Only failed runs can be retried.',
+        'retrying_pre_analysis' => 'Retrying pre-analysis...',
+        'retrying_analysis' => 'Retrying analysis...',
+        'retrying_prompt_generation' => 'Retrying prompt generation...',
+        'cannot_retry_from_stage' => 'Cannot retry from this stage.',
+        'retry_failed' => 'An error occurred whilst retrying. Please try again.',
+        'deleted_successfully' => 'Prompt run deleted successfully.',
+        'delete_failed' => 'Failed to delete prompt run. Please try again.',
+    ],
+
+    // Profile messages
+    'profile' => [
+        'update_failed' => 'Failed to update profile. Please try again.',
+        'personality_update_failed' => 'Failed to update personality type. Please try again.',
+        'location_update_failed' => 'Failed to update location. Please try again.',
+        'location_detect_failed' => 'Could not detect location from your IP address. Please set it manually.',
+        'location_detection_failed' => 'Failed to detect location. Please try again.',
+        'location_clear_failed' => 'Failed to clear location. Please try again.',
+        'professional_clear_failed' => 'Failed to clear professional information. Please try again.',
+        'team_clear_failed' => 'Failed to clear team information. Please try again.',
+        'budget_clear_failed' => 'Failed to clear budget preferences. Please try again.',
+        'tools_clear_failed' => 'Failed to clear tools & technologies. Please try again.',
+        'professional_update_failed' => 'Failed to update professional context. Please try again.',
+        'team_update_failed' => 'Failed to update team context. Please try again.',
+        'budget_update_failed' => 'Failed to update budget preferences. Please try again.',
+        'tools_update_failed' => 'Failed to update tool preferences. Please try again.',
+        'delete_account_failed' => 'Failed to delete account. Please contact support.',
+        'unexpected_error' => 'An unexpected error occurred. Please contact support.',
+    ],
+
+    // Feedback messages
+    'feedback' => [
+        'thank_you' => 'Thank you for your feedback!',
+        'thank_you_update' => 'Thank you for updating your feedback!',
+    ],
+
+    // Subscription messages
+    'subscription' => [
+        'invalid_plan' => 'Invalid plan selected.',
+        'cancelled_pro_until' => 'Your subscription has been cancelled. You will retain Pro access until {date}.',
+        'resumed' => 'Your subscription has been resumed.',
+    ],
+
+    // Authentication messages
+    'auth' => [
+        'logged_out' => 'You have been logged out successfully.',
+        'logged_out_session' => 'You have been logged out.',
+        'google_connection_failed' => 'Unable to connect to Google. Please try again later.',
+        'google_account_info_failed' => 'Could not retrieve your account information from Google. Please try again.',
+        'google_invalid_email' => 'Invalid email address received from Google. Please try again.',
+        'account_creation_failed' => 'Failed to create your account. Please try again or contact support.',
+        'session_expired' => 'Authentication session expired. Please try logging in again.',
+        'google_communication_failed' => 'Failed to communicate with Google. Please try again later.',
+        'unexpected_error' => 'An unexpected error occurred. Please try again.',
+    ],
+
+    // Privacy messages
+    'privacy' => [
+        'pro_required' => 'You must be a Pro subscriber to enable privacy encryption.',
+        'session_expired' => 'Setup session expired. Please start again.',
+        'recovery_mismatch' => 'Recovery phrase words do not match.',
+        'enabled' => 'Privacy encryption has been enabled. Your data is now protected.',
+        'not_enabled' => 'Privacy is not enabled for this account.',
+        'key_unlocked' => 'Privacy key unlocked.',
+        'incorrect_password' => 'Incorrect password.',
+        'invalid_format' => 'Invalid recovery phrase format.',
+        'recovered' => 'Account recovered successfully. Your password has been updated.',
+        'invalid_phrase' => 'Invalid recovery phrase.',
+        'key_updated' => 'Privacy key updated with new password.',
+        'key_update_failed' => 'Failed to update privacy key.',
+        'not_enabled_disable' => 'Privacy is not enabled.',
+        'disabled' => 'Privacy encryption has been disabled.',
+    ],
+
+    // Workflow service messages
+    'workflow' => [
+        'invalid_pre_analysis_response' => 'Invalid response from pre-analysis workflow.',
+        'missing_clarification_field' => 'Missing needs_clarification field.',
+        'proceeding_to_analysis' => 'Proceeding directly to analysis.',
+        'analysis_failed' => 'Analysis workflow failed.',
+        'generation_failed' => 'Generation workflow failed.',
+        'n8n_connection_failed' => 'Failed to connect to n8n: {error}',
+        'n8n_request_failed' => 'n8n request failed: {error}',
+    ],
 ];

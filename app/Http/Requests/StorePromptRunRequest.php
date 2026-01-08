@@ -32,8 +32,8 @@ class StorePromptRunRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'task_description.required' => 'Please describe the task you want to accomplish.',
-            'task_description.min' => 'The task description must be at least 10 characters.',
+            'task_description.required' => __('messages.form.task_description_required'),
+            'task_description.min' => __('messages.form.task_description_min'),
         ];
     }
 }
