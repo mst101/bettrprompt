@@ -1212,6 +1212,27 @@
             "backToTasks": "Back to Tasks"
         }
     },
+    "admin": {
+        "dashboard": {
+            "title": "Admin dashboard",
+            "stats": {
+                "users": "Total users",
+                "promptRuns": "Total prompt runs",
+                "uniqueTasks": "Unique tasks",
+                "completedRuns": "Completed runs"
+            },
+            "links": {
+                "users": {
+                    "title": "Manage users",
+                    "subtitle": "View and manage user accounts"
+                },
+                "tasks": {
+                    "title": "Task insights",
+                    "subtitle": "Review common tasks and prompt runs"
+                }
+            }
+        }
+    },
     "profile": {
         "title": "Profile Settings",
         "sections": {

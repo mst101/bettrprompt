@@ -42,8 +42,8 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
-        // Detect and set locale from user preference or session
-        $locale = SetLocale::detectLocale($request);
+        // Prefer explicit route locale, then detect from user/session/browser
+        $locale = $request->route('locale') ?? SetLocale::detectLocale($request);
         app()->setLocale($locale);
 
         return [
@@ -64,8 +64,8 @@ class HandleInertiaRequests extends Middleware
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
             'subscription' => fn () => $request->user()?->getSubscriptionStatus(),
             'privacy' => fn () => $request->user()?->getPrivacyStatus(),
-            'locale' => fn () => app()->getLocale(),
-            'direction' => fn () => SetLocale::getDirection(),
+            'locale' => fn () => $locale,
+            'direction' => fn () => SetLocale::getDirection($locale),
             'supportedLocales' => fn () => config('app.supported_locales'),
         ];
     }

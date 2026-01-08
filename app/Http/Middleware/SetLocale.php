@@ -35,6 +35,12 @@ class SetLocale
      */
     public static function detectLocale(Request $request): string
     {
+        // 0. Prefer explicit route locale
+        $routeLocale = $request->route('locale');
+        if ($routeLocale && in_array($routeLocale, config('app.supported_locales'))) {
+            return $routeLocale;
+        }
+
         // 1. Check authenticated user preference
         $user = $request->user();
         if ($user && $user->language_code) {
