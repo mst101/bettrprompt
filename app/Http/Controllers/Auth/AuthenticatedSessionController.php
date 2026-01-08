@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\SetLocale;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\VisitorMigrationService;
 use Exception;
@@ -32,12 +33,14 @@ class AuthenticatedSessionController extends Controller
             $claimedCount = $migrationService->migrateVisitorToUser($user, $visitorId);
         }
 
+        $locale = SetLocale::detectLocale($request);
+
         // If visitor had completed prompts, redirect to history page
         if ($claimedCount > 0) {
-            return redirect()->intended(route('prompt-builder.history', absolute: false));
+            return redirect()->intended(route('prompt-builder.history', ['locale' => $locale], absolute: false));
         }
 
-        return redirect()->intended(route('prompt-builder.index', absolute: false));
+        return redirect()->intended(route('prompt-builder.index', ['locale' => $locale], absolute: false));
     }
 
     /**

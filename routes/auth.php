@@ -9,17 +9,22 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', function () {
-        return redirect()->route('home', ['modal' => 'register']);
+        $locale = SetLocale::detectLocale(request());
+
+        return redirect()->route('home', ['locale' => $locale, 'modal' => 'register']);
     })->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', function () {
-        return redirect()->route('home', ['modal' => 'login']);
+        $locale = SetLocale::detectLocale(request());
+
+        return redirect()->route('home', ['locale' => $locale, 'modal' => 'login']);
     })->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);

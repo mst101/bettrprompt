@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\SetLocale;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -23,16 +24,18 @@ class OAuthController extends Controller
     /**
      * Redirect to Google's OAuth page
      */
-    public function redirectToGoogle(): RedirectResponse
+    public function redirectToGoogle(Request $request): RedirectResponse
     {
         try {
             return Socialite::driver('google')->redirect();
         } catch (Exception $e) {
+            $locale = SetLocale::detectLocale($request);
+
             Log::error('Failed to redirect to Google OAuth', [
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('home')
+            return redirect()->route('home', ['locale' => $locale])
                 ->with('error', 'Unable to connect to Google. Please try again later.');
         }
     }
@@ -42,6 +45,8 @@ class OAuthController extends Controller
      */
     public function handleGoogleCallback(Request $request): RedirectResponse
     {
+        $locale = SetLocale::detectLocale($request);
+
         try {
             // Get user data from Google
             $googleUser = Socialite::driver('google')->user();
@@ -53,7 +58,7 @@ class OAuthController extends Controller
                     'has_email' => (bool) $googleUser->email,
                 ]);
 
-                return redirect()->route('login')
+                return redirect()->route('login', ['locale' => $locale])
                     ->with('error', 'Could not retrieve your account information from Google. Please try again.');
             }
 
@@ -63,7 +68,7 @@ class OAuthController extends Controller
                     'email' => $googleUser->email,
                 ]);
 
-                return redirect()->route('login')
+                return redirect()->route('login', ['locale' => $locale])
                     ->with('error', 'Invalid email address received from Google. Please try again.');
             }
 
@@ -71,7 +76,7 @@ class OAuthController extends Controller
             $user = $this->findOrCreateUser($googleUser);
 
             if (! $user) {
-                return redirect()->route('login')
+                return redirect()->route('login', ['locale' => $locale])
                     ->with('error', 'Failed to create your account. Please try again or contact support.');
             }
 
@@ -184,17 +189,17 @@ class OAuthController extends Controller
 
             // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
             if ($claimedCount > 0) {
-                return redirect()->intended(route('prompt-builder.history'));
+                return redirect()->intended(route('prompt-builder.history', ['locale' => $locale]));
             }
 
-            return redirect()->intended(route('prompt-builder.index'));
+            return redirect()->intended(route('prompt-builder.index', ['locale' => $locale]));
 
         } catch (InvalidStateException $e) {
             Log::warning('OAuth state validation failed', [
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('login', ['locale' => $locale])
                 ->with('error', 'Authentication session expired. Please try logging in again.');
 
         } catch (ClientException $e) {
@@ -203,7 +208,7 @@ class OAuthController extends Controller
                 'status' => $e->getResponse()?->getStatusCode(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('login', ['locale' => $locale])
                 ->with('error', 'Failed to communicate with Google. Please try again later.');
 
         } catch (Exception $e) {
@@ -212,7 +217,7 @@ class OAuthController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('login')
+            return redirect()->route('login', ['locale' => $locale])
                 ->with('error', 'An unexpected error occurred. Please try again.');
         }
     }

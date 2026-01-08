@@ -1,7 +1,7 @@
 <?php
 
 test('home page displays correctly', function () {
-    $response = $this->get('/');
+    $response = $this->getLocale('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -14,7 +14,7 @@ test('home page displays correctly', function () {
 
 test('home page shows returning visitor flag when cookie exists', function () {
     $response = $this->withCookie('returning_visitor', 'true')
-        ->get('/');
+        ->getLocale('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -24,7 +24,7 @@ test('home page shows returning visitor flag when cookie exists', function () {
 });
 
 test('home page shows first time visitor when no cookie', function () {
-    $response = $this->get('/');
+    $response = $this->getLocale('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -34,7 +34,7 @@ test('home page shows first time visitor when no cookie', function () {
 });
 
 test('home page passes modal query parameter', function () {
-    $response = $this->get('/?modal=login');
+    $response = $this->getLocale('/?modal=login');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -44,7 +44,7 @@ test('home page passes modal query parameter', function () {
 });
 
 test('home page has login and register flags', function () {
-    $response = $this->get('/');
+    $response = $this->getLocale('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -55,7 +55,7 @@ test('home page has login and register flags', function () {
 });
 
 test('terms page displays correctly', function () {
-    $response = $this->get('/terms');
+    $response = $this->getLocale('/terms');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -64,7 +64,7 @@ test('terms page displays correctly', function () {
 });
 
 test('privacy page displays correctly', function () {
-    $response = $this->get('/privacy');
+    $response = $this->getLocale('/privacy');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -73,7 +73,7 @@ test('privacy page displays correctly', function () {
 });
 
 test('cookies page displays correctly', function () {
-    $response = $this->get('/cookies');
+    $response = $this->getLocale('/cookies');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -82,7 +82,7 @@ test('cookies page displays correctly', function () {
 });
 
 test('dashboard redirects to prompt builder index', function () {
-    $response = $this->get(route('prompt-builder.index'));
+    $response = $this->getLocale(route('prompt-builder.index', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -91,7 +91,7 @@ test('dashboard redirects to prompt builder index', function () {
 });
 
 test('static pages are accessible without authentication', function ($path) {
-    $response = $this->get($path);
+    $response = $this->getLocale($path);
 
     $response->assertOk();
     $response->assertStatus(200);

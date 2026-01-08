@@ -5,7 +5,7 @@ use App\Services\EncryptionService;
 use App\Services\RecoveryPhraseService;
 
 test('privacy settings page requires authentication', function () {
-    $response = $this->get('/settings/privacy');
+    $response = $this->getLocale('/settings/privacy');
 
     $response->assertRedirect(route('login'));
 });
@@ -15,7 +15,7 @@ test('privacy settings page is displayed for authenticated users', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/settings/privacy');
+        ->getLocale('/settings/privacy');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -53,7 +53,7 @@ test('begin setup requires pro subscription', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/begin-setup');
+        ->postLocale('/privacy/begin-setup');
 
     $response->assertRedirect();
     $response->assertSessionHasErrors('privacy');
@@ -71,7 +71,7 @@ test('begin setup generates recovery phrase for pro user', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/begin-setup');
+        ->postLocale('/privacy/begin-setup');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -98,7 +98,7 @@ test('confirm setup validates password', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/confirm-setup', [
+        ->postLocale('/privacy/confirm-setup', [
             'confirmation_words' => [0 => 'word1', 3 => 'word4', 7 => 'word8'],
             'password' => 'wrong-password',
         ]);
@@ -118,7 +118,7 @@ test('confirm setup validates recovery phrase words', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/confirm-setup', [
+        ->postLocale('/privacy/confirm-setup', [
             'confirmation_words' => [0 => 'wrong', 3 => 'word4', 7 => 'word8'],
             'password' => 'correct-password',
         ]);
@@ -141,12 +141,12 @@ test('confirm setup enables privacy for user', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/confirm-setup', [
+        ->postLocale('/privacy/confirm-setup', [
             'confirmation_words' => [0 => 'word1', 3 => 'word4', 7 => 'word8'],
             'password' => 'correct-password',
         ]);
 
-    $response->assertRedirect(route('settings.privacy'));
+    $response->assertRedirect($this->localeRoute('settings.privacy'));
 
     $user->refresh();
     expect($user->privacy_enabled)->toBeTrue();
@@ -169,7 +169,7 @@ test('unlock privacy with correct password', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/unlock', [
+        ->postLocale('/privacy/unlock', [
             'password' => 'correct-password',
         ]);
 
@@ -190,7 +190,7 @@ test('unlock privacy with wrong password fails', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/unlock', [
+        ->postLocale('/privacy/unlock', [
             'password' => 'wrong-password',
         ]);
 
@@ -274,7 +274,7 @@ test('disable privacy requires password confirmation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/disable', [
+        ->postLocale('/privacy/disable', [
             'password' => 'wrong-password',
             'confirm' => true,
         ]);
@@ -298,12 +298,12 @@ test('disable privacy clears encryption data', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/disable', [
+        ->postLocale('/privacy/disable', [
             'password' => 'correct-password',
             'confirm' => true,
         ]);
 
-    $response->assertRedirect(route('settings.privacy'));
+    $response->assertRedirect($this->localeRoute('settings.privacy'));
 
     $user->refresh();
     expect($user->privacy_enabled)->toBeFalse();
@@ -334,7 +334,7 @@ test('privacy status is shared with all pages', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/settings/privacy');
+        ->getLocale('/settings/privacy');
 
     $response->assertInertia(fn ($page) => $page
         ->has('privacy')
@@ -358,13 +358,13 @@ test('recover with valid recovery phrase resets password', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/privacy/recover', [
+        ->postLocale('/privacy/recover', [
             'recovery_phrase' => $recoveryPhrase,
             'new_password' => 'new-password',
             'new_password_confirmation' => 'new-password',
         ]);
 
-    $response->assertRedirect(route('settings.privacy'));
+    $response->assertRedirect($this->localeRoute('settings.privacy'));
 
     $user->refresh();
     expect(\Illuminate\Support\Facades\Hash::check('new-password', $user->password))->toBeTrue();

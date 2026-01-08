@@ -18,7 +18,7 @@ beforeEach(function () {
 test('index page displays form for authenticated users', function () {
     $this->actingAs($this->user);
 
-    $response = $this->get(route('prompt-builder.index'));
+    $response = $this->getLocale(route('prompt-builder.index', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -28,7 +28,7 @@ test('index page displays form for authenticated users', function () {
 });
 
 test('index page allows guests to access prompt builder', function () {
-    $response = $this->get(route('prompt-builder.index'));
+    $response = $this->getLocale(route('prompt-builder.index', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page->component('PromptBuilder/Index'));

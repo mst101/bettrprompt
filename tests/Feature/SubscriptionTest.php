@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('pricing page is publicly accessible', function () {
-    $response = $this->get('/pricing');
+    $response = $this->getLocale('/pricing');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -16,7 +16,7 @@ test('pricing page is publicly accessible', function () {
 });
 
 test('checkout requires authentication', function () {
-    $response = $this->post('/subscription/checkout', [
+    $response = $this->postLocale('/subscription/checkout', [
         'plan' => 'monthly',
     ]);
 
@@ -28,7 +28,7 @@ test('checkout validates plan selection', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/subscription/checkout', [
+        ->postLocale('/subscription/checkout', [
             'plan' => 'invalid',
         ]);
 
@@ -36,7 +36,7 @@ test('checkout validates plan selection', function () {
 });
 
 test('subscription settings page requires authentication', function () {
-    $response = $this->get('/settings/subscription');
+    $response = $this->getLocale('/settings/subscription');
 
     $response->assertRedirect(route('login'));
 });
@@ -46,7 +46,7 @@ test('subscription settings page is displayed for authenticated users', function
 
     $response = $this
         ->actingAs($user)
-        ->get('/settings/subscription');
+        ->getLocale('/settings/subscription');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -154,7 +154,7 @@ test('enforce prompt limit middleware allows requests when under limit', functio
 
     $response = $this
         ->actingAs($user)
-        ->get('/prompt-builder');
+        ->getLocale('/prompt-builder');
 
     $response->assertOk();
 });
@@ -167,7 +167,7 @@ test('subscription status is shared with all pages', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/pricing');
+        ->getLocale('/pricing');
 
     $response->assertInertia(fn ($page) => $page
         ->has('subscription')

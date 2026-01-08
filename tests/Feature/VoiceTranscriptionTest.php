@@ -17,7 +17,7 @@ test('transcription is accessible without authentication', function () {
 
     // This will likely fail due to missing API key or other reasons,
     // but the important thing is it's not a 401 Unauthorized
-    $response = $this->postJson('/voice-transcription', [
+    $response = $this->postJsonLocale('/voice-transcription', [
         'audio' => $audioFile,
     ]);
 
@@ -26,7 +26,7 @@ test('transcription is accessible without authentication', function () {
 });
 
 test('transcription validates audio file presence', function () {
-    $response = $this->postJson('/voice-transcription', []);
+    $response = $this->postJsonLocale('/voice-transcription', []);
 
     $response->assertStatus(422);
     $response->assertJson([
@@ -38,7 +38,7 @@ test('transcription validates audio file presence', function () {
 test('transcription validates invalid audio files', function (string $filename, int $size, string $mimeType) {
     $invalidFile = UploadedFile::fake()->create($filename, $size, $mimeType);
 
-    $response = $this->postJson('/voice-transcription', [
+    $response = $this->postJsonLocale('/voice-transcription', [
         'audio' => $invalidFile,
     ]);
 
@@ -53,7 +53,7 @@ test('transcription validates invalid audio files', function (string $filename, 
 ]);
 
 test('transcription requires file not string', function () {
-    $response = $this->postJson('/voice-transcription', [
+    $response = $this->postJsonLocale('/voice-transcription', [
         'audio' => 'not-a-file',
     ]);
 

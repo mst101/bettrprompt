@@ -9,7 +9,7 @@ beforeEach(function () {
 });
 
 test('create feedback page is displayed for authenticated users', function () {
-    $response = $this->get(route('feedback.create'));
+    $response = $this->getLocale(route('feedback.create', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -29,9 +29,9 @@ test('create feedback page redirects to show if feedback exists', function () {
         'desired_features_other' => null,
     ]);
 
-    $response = $this->get(route('feedback.create'));
+    $response = $this->getLocale(route('feedback.create', [], false));
 
-    $response->assertRedirect(route('feedback.show'));
+    $response->assertRedirect($this->localeRoute('feedback.show'));
 });
 
 test('show feedback page displays existing feedback', function () {
@@ -46,7 +46,7 @@ test('show feedback page displays existing feedback', function () {
         'desired_features_other' => 'Custom feature request',
     ]);
 
-    $response = $this->get(route('feedback.show'));
+    $response = $this->getLocale(route('feedback.show', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -61,13 +61,13 @@ test('show feedback page displays existing feedback', function () {
 });
 
 test('show feedback page redirects to create if no feedback exists', function () {
-    $response = $this->get(route('feedback.show'));
+    $response = $this->getLocale(route('feedback.show', [], false));
 
-    $response->assertRedirect(route('feedback.create'));
+    $response->assertRedirect($this->localeRoute('feedback.create'));
 });
 
 test('store feedback creates new feedback record', function () {
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 2, // 1-7 scale (beginner)
         'usefulness' => 4,
         'usage_intent' => 6, // 1-7 scale
@@ -76,7 +76,7 @@ test('store feedback creates new feedback record', function () {
         'desired_features_other' => 'Integration with other tools',
     ]);
 
-    $response->assertRedirect(route('feedback.thank-you'));
+    $response->assertRedirect($this->localeRoute('feedback.thank-you'));
     $response->assertSessionHas('success', 'Thank you for your feedback!');
 
     $this->assertDatabaseHas('feedback', [
@@ -90,14 +90,14 @@ test('store feedback creates new feedback record', function () {
 });
 
 test('store feedback validates required fields', function () {
-    $response = $this->post(route('feedback.store'), []);
+    $response = $this->postLocale(route('feedback.store', [], false), []);
 
     $response->assertSessionHasErrors(['experience_level', 'usefulness', 'usage_intent', 'desired_features']);
     $this->assertDatabaseEmpty('feedback');
 });
 
 test('store feedback validates experience level range', function () {
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 8, // Over max of 7
         'usefulness' => 4,
         'usage_intent' => 6,
@@ -108,7 +108,7 @@ test('store feedback validates experience level range', function () {
 });
 
 test('store feedback validates usefulness range', function () {
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 2,
         'usefulness' => 8, // Max is 7
         'usage_intent' => 6,
@@ -119,7 +119,7 @@ test('store feedback validates usefulness range', function () {
 });
 
 test('store feedback validates recommendation likelihood range', function () {
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 2,
         'usefulness' => 4,
         'usage_intent' => 8, // Max is 7
@@ -130,14 +130,14 @@ test('store feedback validates recommendation likelihood range', function () {
 });
 
 test('store feedback allows optional fields to be null', function () {
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 4,
         'usefulness' => 3,
         'usage_intent' => 5,
         'desired_features' => ['templates'],
     ]);
 
-    $response->assertRedirect(route('feedback.thank-you'));
+    $response->assertRedirect($this->localeRoute('feedback.thank-you'));
     $response->assertSessionHas('success');
 
     $this->assertDatabaseHas('feedback', [
@@ -159,7 +159,7 @@ test('update feedback updates existing feedback record', function () {
         'desired_features_other' => null,
     ]);
 
-    $response = $this->put(route('feedback.update'), [
+    $response = $this->putLocale(route('feedback.update', [], false), [
         'experience_level' => 4,
         'usefulness' => 5,
         'usage_intent' => 6,
@@ -168,7 +168,7 @@ test('update feedback updates existing feedback record', function () {
         'desired_features_other' => 'New feature idea',
     ]);
 
-    $response->assertRedirect(route('feedback.show'));
+    $response->assertRedirect($this->localeRoute('feedback.show'));
     $response->assertSessionHas('success', 'Thank you for updating your feedback!');
 
     $this->assertDatabaseHas('feedback', [
@@ -193,7 +193,7 @@ test('update feedback validates required fields', function () {
         'desired_features_other' => null,
     ]);
 
-    $response = $this->put(route('feedback.update'), []);
+    $response = $this->putLocale(route('feedback.update', [], false), []);
 
     $response->assertSessionHasErrors(['experience_level', 'usefulness', 'usage_intent', 'desired_features']);
 });
@@ -202,18 +202,18 @@ test('feedback routes are accessible to guests', function () {
     auth()->logout();
 
     // Guests can access feedback create page
-    $response = $this->get(route('feedback.create'));
+    $response = $this->getLocale(route('feedback.create', [], false));
     $response->assertOk();
 
     // Guests can access feedback show page (will redirect to create if no feedback)
-    $response = $this->get(route('feedback.show'));
-    $response->assertRedirect(route('feedback.create'));
+    $response = $this->getLocale(route('feedback.show', [], false));
+    $response->assertRedirect($this->localeRoute('feedback.create'));
 });
 
 test('guests can store feedback', function () {
     auth()->logout();
 
-    $response = $this->post(route('feedback.store'), [
+    $response = $this->postLocale(route('feedback.store', [], false), [
         'experience_level' => 3,
         'usefulness' => 4,
         'usage_intent' => 5,
@@ -222,7 +222,7 @@ test('guests can store feedback', function () {
         'desired_features_other' => null,
     ]);
 
-    $response->assertRedirect(route('feedback.thank-you'));
+    $response->assertRedirect($this->localeRoute('feedback.thank-you'));
     $response->assertSessionHas('success', 'Thank you for your feedback!');
 
     $this->assertDatabaseHas('feedback', [
@@ -248,12 +248,12 @@ test('users can only see their own feedback', function () {
     ]);
 
     // Current user should see create page (no feedback exists for them)
-    $response = $this->get(route('feedback.show'));
-    $response->assertRedirect(route('feedback.create'));
+    $response = $this->getLocale(route('feedback.show', [], false));
+    $response->assertRedirect($this->localeRoute('feedback.create'));
 
     // Verify other user's feedback is not accessible
     $this->actingAs($otherUser);
-    $response = $this->get(route('feedback.show'));
+    $response = $this->getLocale(route('feedback.show', [], false));
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page->where('feedback.experienceLevel', 6));
 });

@@ -5,7 +5,7 @@ use App\Models\User;
 test('login screen redirects to home page with login modal open', function () {
     $response = $this->get('/login');
 
-    $response->assertRedirect(route('home', ['modal' => 'login'], absolute: false));
+    $response->assertRedirect($this->localeRoute('home', ['modal' => 'login'], absolute: false));
 });
 
 test('users can authenticate using the login screen', function () {
@@ -17,7 +17,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('prompt-builder.index', absolute: false));
+    $response->assertRedirect($this->localeRoute('prompt-builder.index', absolute: false));
 });
 
 test('users can not authenticate with invalid password', function () {

@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('profile page requires authentication', function () {
-    $response = $this->get('/profile');
+    $response = $this->getLocale('/profile');
 
     $response->assertRedirect(route('login'));
 });
@@ -13,7 +13,7 @@ test('profile page is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/profile');
+        ->getLocale('/profile');
 
     $response->assertOk();
 });
@@ -23,14 +23,14 @@ test('profile information can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile', [
+        ->patchLocale('/profile', [
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -44,14 +44,14 @@ test('email verification status is unchanged when the email address is unchanged
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile', [
+        ->patchLocale('/profile', [
             'name' => 'Test User',
             'email' => $user->email,
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect($this->localeRoute('profile.edit'));
 
     $this->assertNotNull($user->refresh()->email_verified_at);
 });
@@ -61,13 +61,13 @@ test('user can delete their account', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile', [
+        ->deleteLocale('/profile', [
             'password' => 'password',
         ]);
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/');
+        ->assertRedirect($this->localeRoute('home'));
 
     $this->assertGuest();
     $this->assertNull($user->fresh());
@@ -78,14 +78,14 @@ test('correct password must be provided to delete account', function () {
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->delete('/profile', [
+        ->from($this->localeRoute('profile.edit'))
+        ->deleteLocale('/profile', [
             'password' => 'wrong-password',
         ]);
 
     $response
         ->assertSessionHasErrors('password')
-        ->assertRedirect('/profile');
+        ->assertRedirect($this->localeRoute('profile.edit'));
 
     $this->assertNotNull($user->fresh());
 });
@@ -96,7 +96,7 @@ test('user location can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/location', [
+        ->patchLocale('/profile/location', [
             'countryCode' => 'GB',
             'region' => 'England',
             'city' => 'London',
@@ -107,7 +107,7 @@ test('user location can be updated', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
+        ->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -129,7 +129,7 @@ test('user location can be partially updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/location', [
+        ->patchLocale('/profile/location', [
             'city' => 'San Francisco',
             'timezone' => 'America/Los_Angeles',
         ]);
@@ -148,8 +148,8 @@ test('location country code must be 2 characters', function () {
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->patch('/profile/location', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/location', [
             'country_code' => 'USA', // Invalid: 3 characters
         ]);
 
@@ -161,8 +161,8 @@ test('location currency code must be 3 characters', function () {
 
     $response = $this
         ->actingAs($user)
-        ->from('/profile')
-        ->patch('/profile/location', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/location', [
             'currency_code' => 'GB', // Invalid: 2 characters
         ]);
 
@@ -182,9 +182,9 @@ test('user location can be cleared', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile/location');
+        ->deleteLocale('/profile/location');
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -203,14 +203,14 @@ test('user professional context can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/professional', [
+        ->patchLocale('/profile/professional', [
             'jobTitle' => 'Senior Developer',
             'industry' => 'Technology',
             'experienceLevel' => 'senior',
             'companySize' => 'enterprise',
         ]);
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -230,9 +230,9 @@ test('user professional context can be cleared', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile/professional');
+        ->deleteLocale('/profile/professional');
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -248,13 +248,13 @@ test('user team context can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/team', [
+        ->patchLocale('/profile/team', [
             'teamSize' => 'medium',
             'teamRole' => 'lead',
             'workMode' => 'hybrid',
         ]);
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -272,9 +272,9 @@ test('user team context can be cleared', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile/team');
+        ->deleteLocale('/profile/team');
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -289,11 +289,11 @@ test('user budget preferences can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/budget', [
+        ->patchLocale('/profile/budget', [
             'budgetConsciousness' => 'free_first',
         ]);
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -307,9 +307,9 @@ test('user budget preferences can be cleared', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile/budget');
+        ->deleteLocale('/profile/budget');
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -322,12 +322,12 @@ test('user tools preferences can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/profile/tools', [
+        ->patchLocale('/profile/tools', [
             'preferredTools' => ['vscode', 'docker', 'git'],
             'primaryProgrammingLanguage' => 'typescript',
         ]);
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -343,9 +343,9 @@ test('user tools preferences can be cleared', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/profile/tools');
+        ->deleteLocale('/profile/tools');
 
-    $response->assertSessionHasNoErrors()->assertRedirect('/profile');
+    $response->assertSessionHasNoErrors()->assertRedirect($this->localeRoute('profile.edit'));
 
     $user->refresh();
 
@@ -355,8 +355,8 @@ test('user tools preferences can be cleared', function () {
 
 test('unauthenticated user cannot update location', function () {
     $response = $this
-        ->from('/profile')
-        ->patch('/profile/location', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/location', [
             'countryCode' => 'GB',
         ]);
 
@@ -365,8 +365,8 @@ test('unauthenticated user cannot update location', function () {
 
 test('unauthenticated user cannot update professional context', function () {
     $response = $this
-        ->from('/profile')
-        ->patch('/profile/professional', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/professional', [
             'jobTitle' => 'Developer',
         ]);
 
@@ -375,8 +375,8 @@ test('unauthenticated user cannot update professional context', function () {
 
 test('unauthenticated user cannot update team context', function () {
     $response = $this
-        ->from('/profile')
-        ->patch('/profile/team', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/team', [
             'teamSize' => '10-20',
         ]);
 
@@ -385,8 +385,8 @@ test('unauthenticated user cannot update team context', function () {
 
 test('unauthenticated user cannot update budget preferences', function () {
     $response = $this
-        ->from('/profile')
-        ->patch('/profile/budget', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/budget', [
             'budgetConsciousness' => 'cost-focused',
         ]);
 
@@ -395,8 +395,8 @@ test('unauthenticated user cannot update budget preferences', function () {
 
 test('unauthenticated user cannot update tools preferences', function () {
     $response = $this
-        ->from('/profile')
-        ->patch('/profile/tools', [
+        ->from($this->localeRoute('profile.edit'))
+        ->patchLocale('/profile/tools', [
             'primaryProgrammingLanguage' => 'typescript',
         ]);
 
