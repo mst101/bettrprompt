@@ -15,10 +15,8 @@ const usagePercent = computed(() => {
 const isWarning = computed(() => usagePercent.value >= 80);
 const isExhausted = computed(() => subscription.value?.promptsRemaining === 0);
 
-const currentLocale = computed(() => (page.props.locale as string) || 'en');
-
 function goToPricing() {
-    router.visit(route('pricing', { locale: currentLocale.value }));
+    router.visit(localeRoute('pricing'));
 }
 </script>
 

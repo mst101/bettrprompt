@@ -58,7 +58,7 @@ const closeSettings = () => {
                                     of cookies.
                                     <LinkText
                                         class="text-indigo-200! hover:text-indigo-300!"
-                                        :href="route('cookies')"
+                                        :href="localeRoute('cookies')"
                                     >
                                         Read our Cookie Policy
                                     </LinkText>

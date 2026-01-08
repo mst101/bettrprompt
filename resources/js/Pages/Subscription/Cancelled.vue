@@ -4,8 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
 
 defineProps<Props>();
 
@@ -17,17 +16,12 @@ interface Props {
     message: string;
 }
 
-const page = usePage();
-const currentLocale = computed(() => (page.props.locale as string) || 'en');
-
 function goToPricing() {
-    router.visit(route('pricing', { locale: currentLocale.value }));
+    router.visit(localeRoute('pricing'));
 }
 
 function goToPromptBuilder() {
-    router.visit(
-        route('prompt-builder.index', { locale: currentLocale.value }),
-    );
+    router.visit(localeRoute('prompt-builder.index'));
 }
 </script>
 

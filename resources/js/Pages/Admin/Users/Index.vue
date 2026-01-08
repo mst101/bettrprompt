@@ -6,9 +6,9 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { AdminUserResource } from '@/Types/resources/AdminUserResource';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 interface Props {
     users: {
@@ -24,12 +24,10 @@ interface Props {
 
 const props = defineProps<Props>();
 const search = ref(props.filters.search || '');
-const page = usePage();
-const currentLocale = computed(() => (page.props.locale as string) || 'en');
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
-        route('admin.users.index', { locale: currentLocale.value }),
+        localeRoute('admin.users.index'),
         { search: search.value },
         { preserveState: true, replace: true },
     );

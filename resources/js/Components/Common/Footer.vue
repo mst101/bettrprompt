@@ -31,9 +31,15 @@ const closeCookieSettings = () => {
 
                 <!-- Links -->
                 <div class="flex flex-wrap justify-center gap-6">
-                    <LinkText :href="route('terms')">Terms of Use</LinkText>
-                    <LinkText :href="route('privacy')">Privacy Policy</LinkText>
-                    <LinkText :href="route('cookies')">Cookie Policy</LinkText>
+                    <LinkText :href="localeRoute('terms')"
+                        >Terms of Use</LinkText
+                    >
+                    <LinkText :href="localeRoute('privacy')"
+                        >Privacy Policy</LinkText
+                    >
+                    <LinkText :href="localeRoute('cookies')"
+                        >Cookie Policy</LinkText
+                    >
                     <ButtonText
                         id="cookie-settings"
                         type="button"

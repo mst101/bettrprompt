@@ -82,7 +82,7 @@ const analyticsEnabled = computed({
                     <p class="mt-1 text-sm text-indigo-600">
                         Manage your cookie preferences. You can enable or
                         disable different types of cookies below.
-                        <LinkText :href="route('cookies')">
+                        <LinkText :href="localeRoute('cookies')">
                             Learn more about our cookies
                         </LinkText>
                     </p>
