@@ -6,9 +6,9 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { AdminUserResource } from '@/Types/resources/AdminUserResource';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     users: {
@@ -24,10 +24,12 @@ interface Props {
 
 const props = defineProps<Props>();
 const search = ref(props.filters.search || '');
+const page = usePage();
+const currentLocale = computed(() => (page.props.locale as string) || 'en');
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
-        route('admin.users.index'),
+        route('admin.users.index', { locale: currentLocale.value }),
         { search: search.value },
         { preserveState: true, replace: true },
     );
@@ -42,7 +44,7 @@ watch(search, debouncedSearch);
         <HeaderPage title="Users">
             <template #actions>
                 <Link
-                    :href="route('admin.dashboard')"
+                    :href="localeRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Dashboard
@@ -100,7 +102,7 @@ watch(search, debouncedSearch);
                         <Link
                             v-for="user in props.users.data"
                             :key="user.id"
-                            :href="route('admin.users.show', { user })"
+                            :href="localeRoute('admin.users.show', { user })"
                             as="tr"
                             class="cursor-pointer transition hover:bg-indigo-50 dark:hover:bg-indigo-100"
                         >

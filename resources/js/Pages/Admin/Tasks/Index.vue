@@ -5,9 +5,9 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Task {
     task_id: number;
@@ -30,10 +30,12 @@ interface Props {
 const props = defineProps<Props>();
 
 const search = ref(props.filters.search || '');
+const page = usePage();
+const currentLocale = computed(() => (page.props.locale as string) || 'en');
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
-        route('admin.tasks.index'),
+        route('admin.tasks.index', { locale: currentLocale.value }),
         { search: search.value },
         { preserveState: true, replace: true },
     );
@@ -49,7 +51,7 @@ watch(search, debouncedSearch);
         <HeaderPage title="Tasks">
             <template #actions>
                 <Link
-                    :href="route('admin.dashboard')"
+                    :href="localeRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← Back to Dashboard
@@ -101,7 +103,7 @@ watch(search, debouncedSearch);
                                 v-for="task in props.tasks.data"
                                 :key="task.task_description"
                                 :href="
-                                    route('admin.tasks.show', {
+                                    localeRoute('admin.tasks.show', {
                                         taskId: task.task_id,
                                     })
                                 "

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 export interface MetadataItem {
     label?: string;
@@ -16,6 +17,9 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const page = usePage();
+const currentLocale = computed(() => (page.props.locale as string) || 'en');
 </script>
 
 <template>
@@ -94,7 +98,12 @@ defineProps<Props>();
             <!-- Show Profile Button -->
             <Link
                 v-if="userId"
-                :href="route('admin.users.show', { user: userId })"
+                :href="
+                    route('admin.users.show', {
+                        locale: currentLocale,
+                        user: userId,
+                    })
+                "
                 class="inline-flex items-center gap-2 rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
             >
                 <svg

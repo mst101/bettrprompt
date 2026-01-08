@@ -53,7 +53,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     <!-- Logo -->
                     <div class="flex shrink-0 items-center">
                         <Link
-                            :href="route('home')"
+                            :href="localeRoute('home')"
                             class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                             @click="showingNavigationDropdown = false"
                         >
@@ -67,14 +67,16 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     <!-- Navigation Links (Desktop) -->
                     <div class="hidden space-x-1 md:flex">
                         <NavLink
-                            :href="route('workflow.index')"
+                            :href="localeRoute('workflow.index')"
                             :active="route().current('workflow.index')"
                         >
                             Index
                         </NavLink>
                         <NavLink
                             :href="
-                                route('workflow.show', { workflowNumber: 0 })
+                                localeRoute('workflow.show', {
+                                    workflowNumber: 0,
+                                })
                             "
                             :active="$page.url.includes('/workflow/0')"
                         >
@@ -82,7 +84,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </NavLink>
                         <NavLink
                             :href="
-                                route('workflow.show', { workflowNumber: 1 })
+                                localeRoute('workflow.show', {
+                                    workflowNumber: 1,
+                                })
                             "
                             :active="$page.url.includes('/workflow/1')"
                         >
@@ -90,14 +94,16 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </NavLink>
                         <NavLink
                             :href="
-                                route('workflow.show', { workflowNumber: 2 })
+                                localeRoute('workflow.show', {
+                                    workflowNumber: 2,
+                                })
                             "
                             :active="$page.url.includes('/workflow/2')"
                         >
                             Workflow 2
                         </NavLink>
                         <NavLink
-                            :href="route('workflow.docs.index')"
+                            :href="localeRoute('workflow.docs.index')"
                             :active="route().current('workflow.docs.index')"
                         >
                             Docs
@@ -140,7 +146,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         <div class="space-y-1 pt-2 pb-3">
                             <ResponsiveNavLink
                                 ref="firstMobileNavLink"
-                                :href="route('workflow.index')"
+                                :href="localeRoute('workflow.index')"
                                 :active="route().current('workflow.index')"
                                 @click="showingNavigationDropdown = false"
                             >
@@ -149,7 +155,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    route('workflow.show', {
+                                    localeRoute('workflow.show', {
                                         workflowNumber: 0,
                                     })
                                 "
@@ -161,7 +167,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    route('workflow.show', {
+                                    localeRoute('workflow.show', {
                                         workflowNumber: 1,
                                     })
                                 "
@@ -173,7 +179,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    route('workflow.show', {
+                                    localeRoute('workflow.show', {
                                         workflowNumber: 2,
                                     })
                                 "
@@ -184,7 +190,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink
-                                :href="route('workflow.docs.index')"
+                                :href="localeRoute('workflow.docs.index')"
                                 :active="route().current('workflow.docs.index')"
                                 @click="showingNavigationDropdown = false"
                             >
