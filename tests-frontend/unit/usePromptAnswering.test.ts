@@ -6,6 +6,11 @@ vi.mock('@inertiajs/vue3', () => ({
     router: {
         post: vi.fn(),
     },
+    usePage: vi.fn(() => ({
+        props: {
+            locale: 'en-US',
+        },
+    })),
     useForm: vi.fn((data) => {
         const form = { ...data };
         const mockForm = { ...form };

@@ -1,22 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import enUS from '@/i18n/locales/en-US.json';
 import { config } from '@vue/test-utils';
 import { vi } from 'vitest';
+import { createI18n } from 'vue-i18n';
+
+const i18n = createI18n({
+    legacy: false,
+    globalInjection: true,
+    locale: 'en-US',
+    fallbackLocale: 'en-US',
+    messages: {
+        'en-US': enUS,
+    },
+});
 
 // Mock Inertia.js
 vi.mock('@inertiajs/vue3', () => ({
     usePage: vi.fn(() => ({
         props: {
-            value: {
-                auth: {
-                    user: {
-                        id: 1,
-                        name: 'Test User',
-                        email: 'test@example.com',
-                    },
+            auth: {
+                user: {
+                    id: 1,
+                    name: 'Test User',
+                    email: 'test@example.com',
                 },
-                errors: {},
-                flash: {},
             },
+            errors: {},
+            flash: {},
+            locale: 'en-US',
         },
         url: '/',
         component: 'TestComponent',
@@ -126,6 +137,7 @@ globalThis.route = mockRoute;
 config.global.mocks = {
     route: mockRoute,
 };
+config.global.plugins = [i18n];
 
 // Mock browser APIs that happy-dom doesn't support
 globalThis.MediaRecorder = vi.fn(() => ({

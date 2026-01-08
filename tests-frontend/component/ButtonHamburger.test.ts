@@ -1,5 +1,6 @@
 import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import enUS from '@/i18n/locales/en-US.json';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
@@ -32,7 +33,7 @@ describe('ButtonHamburger', () => {
         });
 
         expect(wrapper.find('button').attributes('aria-label')).toBe(
-            'Toggle navigation menu',
+            enUS.components.base.buttonHamburger.ariaLabel,
         );
     });
 

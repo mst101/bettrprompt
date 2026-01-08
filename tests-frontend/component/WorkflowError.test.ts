@@ -1,6 +1,7 @@
 import ButtonDanger from '@/Components/Base/Button/ButtonDanger.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import WorkflowError from '@/Components/Common/WorkflowError.vue';
+import enUS from '@/i18n/locales/en-US.json';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
@@ -22,7 +23,9 @@ describe('WorkflowError', () => {
             props: defaultProps,
         });
 
-        expect(wrapper.find('h3').text()).toBe('Workflow Failed');
+        expect(wrapper.find('h3').text()).toBe(
+            enUS.components.common.workflowError.title,
+        );
     });
 
     it('should render DynamicIcon for error', () => {
@@ -62,7 +65,9 @@ describe('WorkflowError', () => {
 
         const button = wrapper.findComponent(ButtonDanger);
         expect(button.exists()).toBe(true);
-        expect(button.text()).toContain('Retry Workflow');
+        expect(button.text()).toContain(
+            enUS.components.common.workflowError.retry,
+        );
     });
 
     it('should emit retry event when button clicked', async () => {

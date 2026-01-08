@@ -1,4 +1,5 @@
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
+import enUS from '@/i18n/locales/en-US.json';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
@@ -8,7 +9,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '2_completed' },
         });
 
-        expect(wrapper.text()).toBe('Completed');
+        expect(wrapper.text()).toBe(enUS.status.completed);
         expect(wrapper.classes()).toContain('bg-green-100');
         expect(wrapper.classes()).toContain('text-green-900');
     });
@@ -18,7 +19,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '1_processing' },
         });
 
-        expect(wrapper.text()).toContain('Analysing');
+        expect(wrapper.text()).toContain(enUS.status.processing);
         expect(wrapper.classes()).toContain('bg-yellow-400');
         expect(wrapper.classes()).toContain('text-yellow-900');
     });
@@ -28,7 +29,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '2_failed' },
         });
 
-        expect(wrapper.text()).toBe('Failed');
+        expect(wrapper.text()).toBe(enUS.status.failed);
         expect(wrapper.classes()).toContain('bg-red-100');
         expect(wrapper.classes()).toContain('text-red-900');
     });
@@ -38,7 +39,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '1_completed' },
         });
 
-        expect(wrapper.text()).toBe('Awaiting Answers');
+        expect(wrapper.text()).toBe(enUS.status.awaitingAnswers);
         expect(wrapper.classes()).toContain('bg-blue-200');
         expect(wrapper.classes()).toContain('text-blue-800');
     });
@@ -48,7 +49,7 @@ describe('StatusBadge', () => {
             props: { workflowStage: '0_completed' },
         });
 
-        expect(wrapper.text()).toBe('Awaiting Questions');
+        expect(wrapper.text()).toBe(enUS.status.awaitingQuestions);
         expect(wrapper.classes()).toContain('bg-yellow-400');
         expect(wrapper.classes()).toContain('text-yellow-900');
     });
