@@ -70,6 +70,7 @@
         }
     },
     "home": {
+        "title": "Welcome to BettrPrompt",
         "hero": {
             "title": "The Simple Way to Solve",
             "titleGradient": "Complex Problems",
@@ -92,9 +93,14 @@
         "comparison": {
             "title": "But Can't I Just Ask ChatGPT?",
             "subtitle": "You can. ChatGPT might even ask a clarifying question or two. But there's a difference between being helpful quickly and drawing out what you actually need.",
+            "labels": {
+                "you": "You:",
+                "youGet": "You get:"
+            },
             "chatgpt": {
                 "title": "Asking ChatGPT directly",
                 "yourPrompt": "I need to write a best man speech for my friend's wedding",
+                "label": "ChatGPT:",
                 "response": "Generates a speech immediately, or asks one or two quick questions before diving in. It's trying to help you fast.",
                 "result": "A generic speech that sounds like every other best man speech. You spend the next hour tweaking it to sound like you.",
                 "footer": "You get what you asked for"
@@ -102,6 +108,7 @@
             "bettrprompt": {
                 "title": "Using BettrPrompt",
                 "yourPrompt": "I need to write a best man speech for my friend's wedding",
+                "label": "BettrPrompt:",
                 "response": "Selects a framework for memorable personal storytelling. Then asks: \"How did you two meet? What's a story that captures who he really is? What's the couple's sense of humour? Who's in the audience?\"",
                 "result": "A prompt that captures your friendship, fits the audience, and plays to your strengths - so the AI output actually sounds like something you'd say.",
                 "footer": "You get what AI is actually capable of"

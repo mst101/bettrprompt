@@ -19,6 +19,8 @@ defineOptions({
 
 const { t } = useI18n();
 
+const pageTitle = computed(() => t('home.title'));
+
 type UseCaseItem = CarouselItem & AccordionItem;
 
 // Build use cases from i18n translations
@@ -86,7 +88,7 @@ const expandedUseCases = ref<string[]>([]);
 </script>
 
 <template>
-    <Head title="Welcome to BettrPrompt" />
+    <Head :title="pageTitle" />
 
     <div>
         <!-- Hero Section -->
@@ -186,7 +188,7 @@ const expandedUseCases = ref<string[]>([]);
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-gray-500">
-                                    You:
+                                    {{ $t('home.comparison.labels.you') }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-700"
@@ -200,7 +202,7 @@ const expandedUseCases = ref<string[]>([]);
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">
-                                    ChatGPT:
+                                    {{ $t('home.comparison.chatgpt.label') }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
@@ -210,7 +212,7 @@ const expandedUseCases = ref<string[]>([]);
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">
-                                    You get:
+                                    {{ $t('home.comparison.labels.youGet') }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-gray-600"
@@ -251,7 +253,7 @@ const expandedUseCases = ref<string[]>([]);
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-indigo-600">
-                                    You:
+                                    {{ $t('home.comparison.labels.you') }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-800"
@@ -265,7 +267,9 @@ const expandedUseCases = ref<string[]>([]);
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-indigo-600">
-                                    BettrPrompt:
+                                    {{
+                                        $t('home.comparison.bettrprompt.label')
+                                    }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
@@ -279,7 +283,7 @@ const expandedUseCases = ref<string[]>([]);
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-indigo-600">
-                                    You get:
+                                    {{ $t('home.comparison.labels.youGet') }}
                                 </p>
                                 <p
                                     class="mt-1 rounded bg-white p-3 text-indigo-700"
@@ -304,7 +308,7 @@ const expandedUseCases = ref<string[]>([]);
 
                 <!-- The Key Insight -->
                 <div class="mx-auto mt-8 max-w-3xl text-center">
-                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <!-- eslint-disable vue/no-v-html -->
                     <p
                         class="text-lg text-indigo-800"
                         v-html="$t('home.comparison.keyInsight')"
