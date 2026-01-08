@@ -1608,6 +1608,25 @@
                 "subtitle": "Document Management",
                 "description": "View, edit, and manage reference documents"
             }
+        },
+        "passLabel": "Pass {number}",
+        "confirmUploadTitle": "Upload to Live Server?",
+        "confirmUploadMessage": "This will upload the current workflow_0.json file to the LIVE production n8n server at https://n8n.bettrprompt.ai/. This action cannot be undone. Are you sure you want to proceed?",
+        "uploadToLiveButton": "Upload to Live",
+        "uploadSuccessTitle": "Upload Successful",
+        "uploadSuccessMessage": "Workflow successfully uploaded to live production server!",
+        "uploadFailedTitle": "Upload Failed",
+        "uploadFailedMessage": "Failed to upload workflow to live server",
+        "uploadErrorPrefix": "Upload error:",
+        "docs": {
+            "saveSuccessMessage": "✓ {filename} saved successfully and embedded into workflows",
+            "confirmEmbedTitle": "Embed All Documents?",
+            "confirmEmbedMessage": "This will embed all core documents and framework templates into their respective n8n workflow JSON files. This action cannot be undone.",
+            "errors": {
+                "save": "Error saving document: {error}",
+                "embed": "Failed to embed documents",
+                "embedFailed": "Error embedding documents: {error}"
+            }
         }
     },
     "language": {
@@ -1656,26 +1675,5 @@
     },
     "icons": {
         "hashIcon": "BettrPrompt hash icon"
-    },
-    "workflow": {
-        "passLabel": "Pass {number}",
-        "confirmUploadTitle": "Upload to Live Server?",
-        "confirmUploadMessage": "This will upload the current workflow_0.json file to the LIVE production n8n server at https://n8n.bettrprompt.ai/. This action cannot be undone. Are you sure you want to proceed?",
-        "uploadToLiveButton": "Upload to Live",
-        "uploadSuccessTitle": "Upload Successful",
-        "uploadSuccessMessage": "Workflow successfully uploaded to live production server!",
-        "uploadFailedTitle": "Upload Failed",
-        "uploadFailedMessage": "Failed to upload workflow to live server",
-        "uploadErrorPrefix": "Upload error:",
-        "docs": {
-            "saveSuccessMessage": "✓ {filename} saved successfully and embedded into workflows",
-            "confirmEmbedTitle": "Embed All Documents?",
-            "confirmEmbedMessage": "This will embed all core documents and framework templates into their respective n8n workflow JSON files. This action cannot be undone.",
-            "errors": {
-                "save": "Error saving document: {error}",
-                "embed": "Failed to embed documents",
-                "embedFailed": "Error embedding documents: {error}"
-            }
-        }
     }
 }
