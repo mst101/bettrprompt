@@ -1649,6 +1649,7 @@
     "status": {
         "unknown": "Unknown",
         "completed": "Completed",
+        "processing": "Processing",
         "awaitingQuestions": "Awaiting Questions",
         "awaitingAnswers": "Awaiting Answers",
         "failed": "Failed"

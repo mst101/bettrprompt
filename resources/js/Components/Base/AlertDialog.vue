@@ -6,8 +6,44 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { alertState, closeAlert } = useAlert();
+const { t } = useI18n();
+
+// Translate alert title based on type
+const translatedTitle = computed(() => {
+    const titleMap: Record<string, string> = {
+        success: 'alert.successTitle',
+        warning: 'alert.warningTitle',
+        error: 'alert.errorTitle',
+        confirm: 'alert.confirmTitle',
+        info: 'alert.infoTitle',
+    };
+    const key = titleMap[alertState.type];
+    return key ? t(key) : alertState.title;
+});
+
+// Translate cancel button text (only for confirm dialogs)
+const translatedCancelText = computed(() => {
+    if (alertState.cancelText === 'Cancel') {
+        return t('common.buttons.cancel');
+    }
+    return alertState.cancelText;
+});
+
+// Translate confirm button text
+const translatedConfirmText = computed(() => {
+    // Check if it's the default text
+    if (alertState.confirmText === 'OK') {
+        return t('common.buttons.ok');
+    }
+    if (alertState.confirmText === 'Confirm') {
+        return t('alert.confirmButton') || 'Confirm';
+    }
+    // Custom text - keep as-is
+    return alertState.confirmText;
+});
 
 const iconConfig = computed(() => {
     switch (alertState.type) {
@@ -84,7 +120,7 @@ const handleClose = () => {
                 class="mt-4 text-center text-base font-semibold text-indigo-900 sm:text-lg"
                 data-testid="alert-title"
             >
-                {{ alertState.title }}
+                {{ translatedTitle }}
             </h3>
 
             <!-- Message -->
@@ -107,7 +143,7 @@ const handleClose = () => {
                     data-testid="alert-cancel-button"
                     @click="handleCancel"
                 >
-                    {{ alertState.cancelText }}
+                    {{ translatedCancelText }}
                 </ButtonSecondary>
 
                 <!-- Confirm/OK button -->
@@ -118,7 +154,7 @@ const handleClose = () => {
                     data-testid="alert-confirm-button"
                     @click="handleConfirm"
                 >
-                    {{ alertState.confirmText }}
+                    {{ translatedConfirmText }}
                 </ButtonPrimary>
 
                 <ButtonDanger
@@ -128,7 +164,7 @@ const handleClose = () => {
                     data-testid="alert-confirm-button"
                     @click="handleConfirm"
                 >
-                    {{ alertState.confirmText }}
+                    {{ translatedConfirmText }}
                 </ButtonDanger>
             </div>
         </div>

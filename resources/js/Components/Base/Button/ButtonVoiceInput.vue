@@ -23,7 +23,29 @@ const {
 const { t } = useI18n();
 
 const isActive = computed(() => isRecording.value || isProcessing.value);
-const displayError = computed(() => recordingError.value);
+
+// Translate audio recording error messages
+const displayError = computed(() => {
+    if (!recordingError.value) return '';
+
+    // Map hardcoded error strings from useAudioRecording to translation keys
+    const errorMap: Record<string, string> = {
+        'Microphone access denied. Please enable microphone permissions.':
+            'audio.errors.accessDenied',
+        'No microphone found. Please check your device.':
+            'audio.errors.notFound',
+        'Failed to start recording. Please try again.':
+            'audio.errors.recordingFailed',
+        'Failed to transcribe audio. Please try again.':
+            'audio.errors.transcriptionFailed',
+        'Transcription request failed':
+            'audio.errors.transcriptionRequestFailed',
+        'No active recording': 'audio.errors.noActiveRecording',
+    };
+
+    const key = errorMap[recordingError.value];
+    return key ? t(key) : recordingError.value;
+});
 
 const buttonLabel = computed(() => {
     if (isProcessing.value) {
