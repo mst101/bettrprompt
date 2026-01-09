@@ -238,13 +238,6 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 >
                                     {{ $t('navigation.feedback') }}
                                 </NavLink>
-                                <NavLink
-                                    v-if="isAdmin"
-                                    :href="localeRoute('workflow.index')"
-                                    :active="route().current('workflow.*')"
-                                >
-                                    {{ $t('navigation.workflows') }}
-                                </NavLink>
                             </div>
                         </div>
 
@@ -286,6 +279,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                             :href="localeRoute('profile.edit')"
                                         >
                                             {{ $t('common.nav.profile') }}
+                                        </DropdownLink>
+                                        <DropdownLink
+                                            v-if="isAdmin"
+                                            :href="
+                                                localeRoute('workflow.index')
+                                            "
+                                        >
+                                            {{ $t('navigation.workflows') }}
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="localeRoute('logout')"
@@ -382,17 +383,6 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         "
                                     >
                                         {{ $t('navigation.feedback') }}
-                                    </ResponsiveNavLink>
-
-                                    <ResponsiveNavLink
-                                        v-if="isAdmin"
-                                        :href="localeRoute('workflow.index')"
-                                        :active="route().current('workflow.*')"
-                                        @click="
-                                            showingNavigationDropdown = false
-                                        "
-                                    >
-                                        {{ $t('navigation.workflows') }}
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
