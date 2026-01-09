@@ -282,6 +282,20 @@ California's Consumer Privacy Act requires:
 - [ ] Implement access controls (who can view user data)
 - [ ] Document all data flows and third-party processors
 
+### Staff Access Controls (Highly Recommended)
+
+If you are processing sensitive prompt content and personality/profile data, treat staff access as an exceptional event:
+
+- **Default-deny staff access** to user-generated content; grant access only via scoped workflows.
+- **Private mode**: use **user-consented support sessions** (time-limited, scope-limited, revocable) rather than an admin “backdoor”.
+- **Free tier** (if you support content review): allow **break-glass** access only for admins, with strict limits:
+  - required reason + ticket reference
+  - short TTL, read-only by default
+  - immutable audit logs for every access
+  - user notification after access unless prohibited by law
+
+**Law enforcement / legal requests**: define an internal policy requiring legal review and minimal disclosure. If private-mode content is designed to be inaccessible without user consent, disclose that reality in policy and respond with what you can (typically metadata and any plaintext you legitimately retain elsewhere).
+
 ---
 
 ## Terms of Service

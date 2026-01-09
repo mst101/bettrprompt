@@ -8,9 +8,10 @@ This document details the implementation of BettrPrompt's pricing model using St
 
 | Tier | Price | Features |
 |------|-------|----------|
-| **Free** | £0 | 10 prompts/month, data used for system improvement |
-| **Pro Monthly** | £12/month | Unlimited prompts, privacy encryption |
-| **Pro Annual** | £99/year | Unlimited prompts, privacy encryption (18% savings) |
+| **Free** | £0 | 10 prompts/month, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
+| **Unlimited** | £5/month | Unlimited prompts, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
+| **Private Monthly** | £15/month | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions) |
+| **Private Annual** | £150/year | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions, ~17% savings) |
 
 ---
 
@@ -24,16 +25,26 @@ This document details the implementation of BettrPrompt's pricing model using St
 
 ### 1.2 Create Products & Prices in Stripe Dashboard
 
-**Product: BettrPrompt Pro**
+**Product: BettrPrompt Unlimited**
 
 ```
-Product Name: BettrPrompt Pro
-Description: Unlimited prompts with privacy encryption
+Product Name: BettrPrompt Unlimited
+Description: Unlimited prompts with standard privacy protections
 ```
 
 **Prices:**
-- Monthly: £12.00 GBP, recurring monthly
-- Annual: £99.00 GBP, recurring yearly
+- Monthly: £5.00 GBP, recurring monthly
+
+**Product: BettrPrompt Private**
+
+```
+Product Name: BettrPrompt Private
+Description: Unlimited prompts with Private mode (restricted access + no training/improvement use by default)
+```
+
+**Prices:**
+- Monthly: £15.00 GBP, recurring monthly
+- Annual: £150.00 GBP, recurring yearly
 
 Note the Price IDs (e.g., `price_1ABC...`) for configuration.
 
@@ -58,8 +69,9 @@ STRIPE_SECRET=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Price IDs from Stripe Dashboard
-STRIPE_PRICE_MONTHLY=price_monthly_id_here
-STRIPE_PRICE_YEARLY=price_yearly_id_here
+STRIPE_PRICE_UNLIMITED_MONTHLY=price_unlimited_monthly_id_here
+STRIPE_PRICE_PRIVATE_MONTHLY=price_private_monthly_id_here
+STRIPE_PRICE_PRIVATE_YEARLY=price_private_yearly_id_here
 ```
 
 ### 1.6 Create Stripe Config
@@ -74,8 +86,9 @@ return [
     'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
 
     'prices' => [
-        'monthly' => env('STRIPE_PRICE_MONTHLY'),
-        'yearly' => env('STRIPE_PRICE_YEARLY'),
+        'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY'),
+        'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY'),
+        'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY'),
     ],
 
     'free_tier' => [
@@ -203,12 +216,22 @@ class User extends Authenticatable
     ];
 
     /**
-     * Check if user is on Pro tier (either via active subscription or grace period)
+     * Check if user is on any paid tier (either via active subscription or grace period)
      */
-    public function isPro(): bool
+    public function isPaid(): bool
     {
         return $this->subscribed('default') ||
                ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
+    }
+
+    public function isUnlimited(): bool
+    {
+        return $this->isPaid() && $this->subscription_tier === 'unlimited';
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->isPaid() && $this->subscription_tier === 'private';
     }
 
     /**
@@ -216,7 +239,7 @@ class User extends Authenticatable
      */
     public function isFree(): bool
     {
-        return !$this->isPro();
+        return !$this->isPaid();
     }
 
     /**
@@ -224,7 +247,7 @@ class User extends Authenticatable
      */
     public function getPromptsRemaining(): int
     {
-        if ($this->isPro()) {
+        if ($this->isPaid()) {
             return PHP_INT_MAX; // Unlimited
         }
 
@@ -237,7 +260,7 @@ class User extends Authenticatable
      */
     public function canCreatePrompt(): bool
     {
-        return $this->isPro() || $this->getPromptsRemaining() > 0;
+        return $this->isPaid() || $this->getPromptsRemaining() > 0;
     }
 
     /**
@@ -262,8 +285,10 @@ class User extends Authenticatable
     public function getSubscriptionStatus(): array
     {
         return [
-            'tier' => $this->isPro() ? 'pro' : 'free',
-            'isPro' => $this->isPro(),
+            'tier' => $this->isPaid() ? $this->subscription_tier : 'free',
+            'isPaid' => $this->isPaid(),
+            'isUnlimited' => $this->isUnlimited(),
+            'isPrivate' => $this->isPrivate(),
             'promptsUsed' => $this->monthly_prompt_count,
             'promptsRemaining' => $this->getPromptsRemaining(),
             'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),
@@ -295,43 +320,58 @@ class SubscriptionController extends Controller
     /**
      * Display pricing page
      */
-    public function pricing(): Response
-    {
-        return Inertia::render('Pricing', [
-            'plans' => [
-                'monthly' => [
-                    'priceId' => config('stripe.prices.monthly'),
-                    'price' => 12,
-                    'currency' => 'GBP',
-                    'interval' => 'month',
-                    'description' => 'Billed monthly',
-                ],
-                'yearly' => [
-                    'priceId' => config('stripe.prices.yearly'),
-                    'price' => 99,
-                    'currency' => 'GBP',
-                    'interval' => 'year',
-                    'description' => 'Billed annually (save 18%)',
-                    'monthlyEquivalent' => 8.25,
-                ],
-            ],
-            'features' => [
-                'free' => [
-                    '10 prompts per month',
-                    'Personality calibration',
-                    'Basic prompt optimisation',
-                ],
-                'pro' => [
-                    'Unlimited prompts',
-                    'Personality calibration',
-                    'Advanced prompt optimisation',
-                    'Privacy encryption',
-                    'Prompt history',
-                    'Priority support',
-                ],
-            ],
-        ]);
-    }
+	    public function pricing(): Response
+	    {
+	        return Inertia::render('Pricing', [
+	            'plans' => [
+	                'unlimited_monthly' => [
+	                    'priceId' => config('stripe.prices.unlimited_monthly'),
+	                    'price' => 5,
+	                    'currency' => 'GBP',
+	                    'interval' => 'month',
+	                    'description' => 'Unlimited prompts (standard)',
+	                ],
+	                'private_monthly' => [
+	                    'priceId' => config('stripe.prices.private_monthly'),
+	                    'price' => 15,
+	                    'currency' => 'GBP',
+	                    'interval' => 'month',
+	                    'description' => 'Private mode',
+	                ],
+	                'private_yearly' => [
+	                    'priceId' => config('stripe.prices.private_yearly'),
+	                    'price' => 150,
+	                    'currency' => 'GBP',
+	                    'interval' => 'year',
+	                    'description' => 'Private mode (save ~17%)',
+	                    'monthlyEquivalent' => 12.5,
+	                ],
+	            ],
+	            'features' => [
+	                'free' => [
+	                    '10 prompts per month',
+	                    'Personality calibration',
+	                    'Basic prompt optimisation',
+	                    'Encryption at rest',
+	                ],
+	                'unlimited' => [
+	                    'Unlimited prompts',
+	                    'Personality calibration',
+	                    'Advanced prompt optimisation',
+	                    'Encryption at rest',
+	                ],
+	                'private' => [
+	                    'Unlimited prompts',
+	                    'Personality calibration',
+	                    'Advanced prompt optimisation',
+	                    'Private mode (restricted access)',
+	                    'User-consented support sessions',
+	                    'Prompt history',
+	                    'Priority support',
+	                ],
+	            ],
+	        ]);
+	    }
 
     /**
      * Create Stripe Checkout session
@@ -339,7 +379,7 @@ class SubscriptionController extends Controller
     public function checkout(Request $request)
     {
         $request->validate([
-            'plan' => 'required|in:monthly,yearly',
+            'plan' => 'required|in:unlimited_monthly,private_monthly,private_yearly',
         ]);
 
         $user = $request->user();
@@ -371,11 +411,13 @@ class SubscriptionController extends Controller
     {
         $user = $request->user();
 
-        // Update subscription tier
-        $user->update(['subscription_tier' => 'pro']);
+        // Update subscription tier (simple approach: infer from selected plan)
+        $plan = $request->string('plan')->toString();
+        $tier = str_starts_with($plan, 'private_') ? 'private' : 'unlimited';
+        $user->update(['subscription_tier' => $tier]);
 
         return Inertia::render('Subscription/Success', [
-            'message' => 'Welcome to BettrPrompt Pro!',
+            'message' => 'Subscription activated!',
         ]);
     }
 
@@ -484,8 +526,16 @@ class StripeWebhookController extends CashierController
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
         if ($user) {
+            $subscription = $payload['data']['object'];
+            $priceId = $subscription['items']['data'][0]['price']['id'] ?? null;
+            $privatePrices = [
+                config('stripe.prices.private_monthly'),
+                config('stripe.prices.private_yearly'),
+            ];
+            $tier = in_array($priceId, $privatePrices, true) ? 'private' : 'unlimited';
+
             $user->update([
-                'subscription_tier' => 'pro',
+                'subscription_tier' => $tier,
             ]);
         }
 
@@ -747,8 +797,10 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']
 ```typescript
 // resources/js/Types/subscription.ts
 export interface SubscriptionStatus {
-    tier: 'free' | 'pro';
-    isPro: boolean;
+    tier: 'free' | 'unlimited' | 'private';
+    isPaid: boolean;
+    isUnlimited: boolean;
+    isPrivate: boolean;
     promptsUsed: number;
     promptsRemaining: number;
     promptLimit: number;
@@ -785,19 +837,23 @@ import type { PricingPlan } from '@/Types/subscription';
 
 interface Props {
     plans: {
-        monthly: PricingPlan;
-        yearly: PricingPlan;
+        unlimited_monthly: PricingPlan;
+        private_monthly: PricingPlan;
+        private_yearly: PricingPlan;
     };
     features: {
         free: string[];
-        pro: string[];
+        unlimited: string[];
+        private: string[];
     };
 }
 
 const props = defineProps<Props>();
 const page = usePage();
 
-const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
+const selectedPlan = ref<
+    'unlimited_monthly' | 'private_monthly' | 'private_yearly'
+>('private_yearly');
 const isLoading = ref(false);
 
 const isAuthenticated = computed(() => !!page.props.auth?.user);
@@ -837,26 +893,26 @@ function getStarted() {
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 <!-- Free Tier -->
                 <div class="border rounded-2xl p-8 bg-white">
                     <h2 class="text-2xl font-bold mb-2">Free</h2>
                     <div class="text-4xl font-bold mb-6">£0</div>
 
-                    <ul class="space-y-3 mb-8">
+	                    <ul class="space-y-3 mb-8">
                         <li v-for="feature in features.free" :key="feature" class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             {{ feature }}
                         </li>
-                        <li class="flex items-center gap-2 text-gray-400">
+	                        <li class="flex items-center gap-2 text-gray-400">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
-                            Privacy encryption
-                        </li>
-                    </ul>
+	                            Private mode (restricted access)
+	                        </li>
+	                    </ul>
 
                     <button
                         @click="getStarted"
@@ -866,21 +922,52 @@ function getStarted() {
                     </button>
                 </div>
 
-                <!-- Pro Tier -->
+                <!-- Unlimited Tier -->
+                <div class="border rounded-2xl p-8 bg-white">
+                    <h2 class="text-2xl font-bold mb-2">Unlimited</h2>
+                    <div class="text-4xl font-bold mb-6">£5<span class="text-lg font-normal text-gray-500">/month</span></div>
+
+                    <ul class="space-y-3 mb-8">
+                        <li v-for="feature in features.unlimited" :key="feature" class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            {{ feature }}
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Private mode
+                        </li>
+                    </ul>
+
+                    <button
+                        @click="router.post('/subscription/checkout', { plan: 'unlimited_monthly' })"
+                        :disabled="isLoading || subscription?.tier === 'unlimited'"
+                        class="w-full py-3 px-4 border-2 border-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+                    >
+                        <span v-if="subscription?.tier === 'unlimited'">Current Plan</span>
+                        <span v-else-if="isLoading">Processing...</span>
+                        <span v-else>Start Unlimited</span>
+                    </button>
+                </div>
+
+                <!-- Private Tier -->
                 <div class="border-2 border-blue-500 rounded-2xl p-8 bg-white relative">
                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
                         Most Popular
                     </div>
 
-                    <h2 class="text-2xl font-bold mb-2">Pro</h2>
+                    <h2 class="text-2xl font-bold mb-2">Private</h2>
 
                     <!-- Plan Toggle -->
                     <div class="flex gap-2 mb-4">
                         <button
-                            @click="selectedPlan = 'monthly'"
+                            @click="selectedPlan = 'private_monthly'"
                             :class="[
                                 'px-4 py-2 rounded-lg text-sm font-medium transition',
-                                selectedPlan === 'monthly'
+                                selectedPlan === 'private_monthly'
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'text-gray-500 hover:bg-gray-100'
                             ]"
@@ -888,10 +975,10 @@ function getStarted() {
                             Monthly
                         </button>
                         <button
-                            @click="selectedPlan = 'yearly'"
+                            @click="selectedPlan = 'private_yearly'"
                             :class="[
                                 'px-4 py-2 rounded-lg text-sm font-medium transition',
-                                selectedPlan === 'yearly'
+                                selectedPlan === 'private_yearly'
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'text-gray-500 hover:bg-gray-100'
                             ]"
@@ -902,33 +989,33 @@ function getStarted() {
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold">
-                            £{{ selectedPlan === 'yearly' ? '99' : '12' }}
+                            £{{ selectedPlan === 'private_yearly' ? '150' : '15' }}
                             <span class="text-lg font-normal text-gray-500">
-                                /{{ selectedPlan === 'yearly' ? 'year' : 'month' }}
+                                /{{ selectedPlan === 'private_yearly' ? 'year' : 'month' }}
                             </span>
                         </div>
-                        <div v-if="selectedPlan === 'yearly'" class="text-green-600 text-sm mt-1">
-                            £8.25/month • Save 18%
+                        <div v-if="selectedPlan === 'private_yearly'" class="text-green-600 text-sm mt-1">
+                            £12.50/month • Save 17%
                         </div>
                     </div>
 
-                    <ul class="space-y-3 mb-8">
-                        <li v-for="feature in features.pro" :key="feature" class="flex items-center gap-2">
+	                    <ul class="space-y-3 mb-8">
+	                        <li v-for="feature in features.private" :key="feature" class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            {{ feature }}
-                        </li>
-                    </ul>
+	                            {{ feature }}
+	                        </li>
+	                    </ul>
 
                     <button
                         @click="subscribe"
-                        :disabled="isLoading || subscription?.isPro"
+                        :disabled="isLoading || subscription?.tier === 'private'"
                         class="w-full py-3 px-4 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition disabled:opacity-50"
                     >
-                        <span v-if="subscription?.isPro">Current Plan</span>
+                        <span v-if="subscription?.tier === 'private'">Current Plan</span>
                         <span v-else-if="isLoading">Processing...</span>
-                        <span v-else>Start Pro</span>
+                        <span v-else>Start Private</span>
                     </button>
                 </div>
             </div>
@@ -992,9 +1079,15 @@ function resumeSubscription() {
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-2xl font-bold">
-                            {{ subscription.isPro ? 'Pro' : 'Free' }}
+                            {{
+                                subscription.isPrivate
+                                    ? 'Private'
+                                    : subscription.isUnlimited
+                                      ? 'Unlimited'
+                                      : 'Free'
+                            }}
                         </div>
-                        <div v-if="subscription.isPro" class="text-gray-500">
+                        <div v-if="subscription.isPaid" class="text-gray-500">
                             <span v-if="subscription.onGracePeriod" class="text-amber-600">
                                 Cancels on {{ new Date(subscription.subscriptionEndsAt!).toLocaleDateString() }}
                             </span>
@@ -1005,18 +1098,18 @@ function resumeSubscription() {
                         </div>
                     </div>
 
-                    <div v-if="!subscription.isPro">
+                    <div v-if="!subscription.isPaid">
                         <router-link
                             href="/pricing"
                             class="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600"
                         >
-                            Upgrade to Pro
+                            Upgrade
                         </router-link>
                     </div>
                 </div>
 
                 <!-- Usage Bar (Free tier only) -->
-                <div v-if="!subscription.isPro" class="mt-4">
+                <div v-if="!subscription.isPaid" class="mt-4">
                     <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                             class="h-full bg-blue-500 transition-all"
@@ -1030,8 +1123,8 @@ function resumeSubscription() {
                 </div>
             </div>
 
-            <!-- Manage Subscription (Pro only) -->
-            <div v-if="subscription.isPro" class="bg-white rounded-lg border p-6">
+            <!-- Manage Subscription (paid tiers) -->
+            <div v-if="subscription.isPaid" class="bg-white rounded-lg border p-6">
                 <h2 class="text-lg font-semibold mb-4">Manage Subscription</h2>
 
                 <div class="space-y-4">
@@ -1127,7 +1220,7 @@ const page = usePage();
 const subscription = computed(() => page.props.subscription);
 
 const usagePercent = computed(() => {
-    if (!subscription.value || subscription.value.isPro) return 0;
+    if (!subscription.value || subscription.value.isPaid) return 0;
     return (subscription.value.promptsUsed / subscription.value.promptLimit) * 100;
 });
 
@@ -1136,7 +1229,7 @@ const isExhausted = computed(() => subscription.value?.promptsRemaining === 0);
 </script>
 
 <template>
-    <div v-if="subscription && !subscription.isPro" class="flex items-center gap-3">
+    <div v-if="subscription && !subscription.isPaid" class="flex items-center gap-3">
         <div class="flex-1 max-w-24">
             <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                 <div
@@ -1177,7 +1270,9 @@ const emit = defineEmits<{
     close: [];
 }>();
 
-const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
+const selectedPlan = ref<
+    'unlimited_monthly' | 'private_monthly' | 'private_yearly'
+>('private_yearly');
 const isLoading = ref(false);
 
 function subscribe() {
@@ -1194,34 +1289,45 @@ function subscribe() {
             <h2 class="text-xl font-bold mb-2">You've reached your monthly limit</h2>
             <p class="text-gray-600 mb-6">
                 Free accounts are limited to 10 prompts per month.
-                Upgrade to Pro for unlimited access.
+                Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
             </p>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-3 gap-4 mb-6">
                 <button
-                    @click="selectedPlan = 'monthly'"
+                    @click="selectedPlan = 'unlimited_monthly'"
                     :class="[
                         'p-4 border-2 rounded-lg text-left transition',
-                        selectedPlan === 'monthly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                        selectedPlan === 'unlimited_monthly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                     ]"
                 >
-                    <div class="font-semibold">Monthly</div>
-                    <div class="text-2xl font-bold">£12<span class="text-sm font-normal">/mo</span></div>
+                    <div class="font-semibold">Unlimited</div>
+                    <div class="text-2xl font-bold">£5<span class="text-sm font-normal">/mo</span></div>
                 </button>
 
                 <button
-                    @click="selectedPlan = 'yearly'"
+                    @click="selectedPlan = 'private_monthly'"
                     :class="[
                         'p-4 border-2 rounded-lg text-left transition relative',
-                        selectedPlan === 'yearly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                        selectedPlan === 'private_monthly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    ]"
+                >
+                    <div class="font-semibold">Private</div>
+                    <div class="text-2xl font-bold">£15<span class="text-sm font-normal">/mo</span></div>
+                </button>
+
+                <button
+                    @click="selectedPlan = 'private_yearly'"
+                    :class="[
+                        'p-4 border-2 rounded-lg text-left transition relative',
+                        selectedPlan === 'private_yearly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                     ]"
                 >
                     <div class="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
-                        Save 18%
+                        Save 17%
                     </div>
-                    <div class="font-semibold">Annual</div>
-                    <div class="text-2xl font-bold">£99<span class="text-sm font-normal">/yr</span></div>
-                    <div class="text-sm text-gray-500">£8.25/month</div>
+                    <div class="font-semibold">Private (Annual)</div>
+                    <div class="text-2xl font-bold">£150<span class="text-sm font-normal">/yr</span></div>
+                    <div class="text-sm text-gray-500">£12.50/month</div>
                 </button>
             </div>
 
@@ -1316,8 +1422,9 @@ class SubscriptionTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) =>
             $page->component('Pricing')
-                ->has('plans.monthly')
-                ->has('plans.yearly')
+                ->has('plans.unlimited_monthly')
+                ->has('plans.private_monthly')
+                ->has('plans.private_yearly')
         );
     }
 
@@ -1344,16 +1451,17 @@ class SubscriptionTest extends TestCase
         $this->assertEquals(1, $user->monthly_prompt_count);
     }
 
-    public function test_pro_user_has_unlimited_prompts(): void
+    public function test_paid_user_has_unlimited_prompts(): void
     {
         $user = User::factory()->create([
-            'subscription_tier' => 'pro',
+            'subscription_tier' => 'unlimited',
         ]);
 
         // Mock subscription
         $user->newSubscription('default', 'price_xxx')->create('pm_card_visa');
 
-        $this->assertTrue($user->isPro());
+        $this->assertTrue($user->isPaid());
+        $this->assertTrue($user->isUnlimited());
         $this->assertTrue($user->canCreatePrompt());
     }
 }

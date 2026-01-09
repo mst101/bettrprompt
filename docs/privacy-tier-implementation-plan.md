@@ -2,41 +2,45 @@
 
 ## Executive Summary
 
-This plan implements **encryption at rest** for a paid privacy tier, using **envelope encryption** with a recovery phrase option. Users' sensitive prompt data will be encrypted with a key that only they can access.
+This plan makes **encryption at rest the default for everyone** (users and visitors), and then layers a **paid “Private mode”** on top that reduces data access and use for product improvement.
+
+Key idea: **encryption at rest is baseline security, not the premium feature**. The paid tier is about **access control, purpose limitation (no training/improvement), and stronger key separation**.
 
 ### Pricing Structure
 
 | Tier | Price | Prompts | Privacy | Data Usage |
 |------|-------|---------|---------|------------|
-| **Free** | £0 | 10/month | ❌ No | Used for system improvement |
-| **Pro** | £12/month or £99/year | Unlimited | ✅ Yes | Encrypted, inaccessible |
+| **Free** | £0 | 10/month | Standard | May be used to improve the service (with clear disclosure/consent) |
+| **Unlimited** | £5/month | Unlimited | Standard | May be used to improve the service (with clear disclosure/consent) |
+| **Private** | £15/month or £150/year | Unlimited | Private mode | Not used for training/improvement; restricted internal access |
 
-**Annual discount**: ~18% (£99/year = £8.25/month vs £12/month)
+**Annual discount**: ~17% (£150/year = £12.50/month vs £15/month)
 
 ### Two-Tier Data Model
 
 | Tier | Data Storage | Analytics Access | Use Case |
 |------|-------------|------------------|----------|
-| **Free** | Unencrypted | ✅ Full access | Default - enables system improvement via data analysis |
-| **Pro (Paid)** | Encrypted at rest | ❌ Inaccessible | Users needing confidentiality for sensitive prompts |
+| **Free** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Default - enables product improvement while meeting baseline security expectations |
+| **Private (Paid)** | Encrypted at rest + stronger key separation (user-controlled envelope key) | ❌ Disabled by default | Users needing confidentiality for sensitive prompts; “private mode” behaviour |
 
-**Key Point**: Free users' data remains unencrypted and fully accessible for:
+**Key Point**: Free-tier data is still encrypted at rest, but may be accessed/used under strict controls for:
 
 - System improvement and prompt quality analysis
-- ML training data (with appropriate consent in ToS)
+- ML/training only with appropriate consent and vendor controls
 - Usage pattern analysis
 - Debugging and support
 
 ### Key Decisions Made
 
 - ✅ **10 prompts/month free tier** - enough to try the service
-- ✅ **£12/month Pro tier** - premium pricing for unique value
-- ✅ **£99/year annual option** - ~18% discount for commitment
-- ✅ **Encryption at rest** (not zero-retention) - users need prompt history
+- ✅ **£5/month unlimited tier** - pay for usage, not privacy
+- ✅ **£15/month private tier** - premium for confidentiality and reduced data use
+- ✅ **£150/year annual private option** - ~17% discount for commitment
+- ✅ **Encryption at rest for all tiers** - baseline protection for sensitive prompt/personality data
 - ✅ **Cross-device access** required - rules out client-side only storage
 - ✅ **Recovery phrase** option - balance security with usability
 - ✅ **Prompt history** preserved - users iterate on past prompts
-- ✅ **Free tier unencrypted** - enables data analysis for system improvement
+- ✅ **Private tier** - restrict internal access and disallow training/improvement use
 
 ---
 
@@ -77,6 +81,106 @@ The n8n workflows (and ultimately Claude) MUST see the plaintext task descriptio
 
 ---
 
+## What Changes With This Updated Approach
+
+### Baseline (All Users + Visitors): Encrypt At Rest By Default
+
+Encrypt sensitive fields for everyone (including free users and visitors). This reduces breach impact and is easier to justify under “appropriate security” expectations for high-sensitivity data.
+
+This baseline encryption is **platform-managed** (the application can decrypt), so it does not prevent legitimate uses (support, abuse handling, service improvement) where you have a lawful basis and have disclosed it.
+
+### Private Tier: “Private Mode” (Purpose Limitation + Stronger Key Separation)
+
+Private does not merely “turn on encryption”. It enforces:
+
+- **No training/improvement use** of Private-tier prompt content by default
+- **Restricted internal access** (default-deny; audited “break-glass” for support if you choose to offer it)
+- **Stronger key separation** (envelope encryption where the app cannot decrypt Private-tier content without a user-held secret/session-unlock)
+
+Pragmatically: your workflows still process plaintext during generation, but you reduce what is retained and who can access it afterwards.
+
+---
+
+## Support & Investigation Access Model (Serious-Systems Pattern)
+
+We explicitly avoid a universal “admin backdoor” for private-mode content. Instead, we support two controlled paths:
+
+1. **User-consented support session** (Private tier / Private mode)
+2. **Admin break-glass** (Free tier only, audited + restricted)
+
+This keeps baseline security strong while still allowing operational support and legitimate investigations.
+
+### Principle Summary
+
+- **Default-deny access** to user content for staff.
+- **Least privilege + scoped access** (specific user, specific prompt run IDs, time-limited).
+- **Auditable + attributable** (who accessed what, when, why).
+- **User transparency** (clear UI, confirmations, and notifications).
+
+### Private Tier (Private Mode): User-Consented Support Session
+
+Private mode assumes the user’s content cannot be decrypted by staff unless the user explicitly consents.
+
+**User experience**
+- Support creates a **support access request** tied to a ticket/reference (reason required).
+- User sees the request in-app (and optionally via email) and can:
+  - approve or deny
+  - choose scope (specific prompt run(s) / date range)
+  - choose duration (e.g., 15 minutes / 1 hour / 24 hours)
+  - revoke at any time
+- Approval requires a fresh re-auth (password re-entry; 2FA later).
+
+**Technical requirements**
+- **No standing access**: staff cannot decrypt private-mode data without an active, approved support session.
+- On approval, the user explicitly “unlocks” their key for the duration:
+  - backend stores an **ephemeral decrypt capability** in a short-lived store (e.g. Redis) with TTL
+  - capability is scoped to the approved scope (user_id + prompt_run_ids)
+  - capability is revoked immediately on expiry or user revocation
+- Every content view/download is logged to an immutable audit log.
+
+**Constraints/clarifications**
+- AI generation still requires plaintext during processing; private mode focuses on *retention and access after the fact*.
+- Any debugging that would require “server-side viewing” of decrypted content must be behind a consented session and fully audited.
+
+### Free Tier: Admin Break-Glass (Audited + Restricted)
+
+Free-tier data uses platform-managed encryption keys, so the application can decrypt. We still treat access as exceptional.
+
+**Requirements**
+- Break-glass access is limited to:
+  - authenticated free-tier users (not anonymous visitors), unless a separate policy is defined
+  - specific user + specific records (no “browse all users” view)
+  - a short duration (e.g. 15–60 minutes)
+- Break-glass requires:
+  - reason + ticket/reference ID
+  - explicit “break glass” confirmation UX
+  - optional two-person approval for high-sensitivity actions (recommended)
+  - a feature flag / configuration toggle to keep break-glass off by default in early stages
+- Break-glass is **read-only** by default:
+  - no export, bulk download, or API dumping without an additional approval step
+  - redaction defaults for highly sensitive fields where possible
+- User notification:
+  - notify the user after access (in-app + email) unless prohibited by law (handle separately)
+- Immutable audit logs for:
+  - session creation, approvals, and expirations
+  - every record opened/viewed
+  - any export attempt (even if blocked)
+
+**Suggested workflow**
+1. Admin creates a break-glass request (free tier only) with reason + ticket reference.
+2. System requires a second admin approval for “view content” (recommended) and always for export.
+3. Approved break-glass session becomes active for a short TTL.
+4. Every access is logged; session auto-expires; user is notified after the fact.
+
+### Law Enforcement / Legal Requests (Policy Requirement)
+
+Define a strict process:
+- require a valid legal basis/order and internal review
+- produce only what you have and are permitted to disclose
+- for private mode, design assumes you may be **technically unable** to decrypt content without user consent; disclose this reality in policy
+
+---
+
 ## Recommended Solution: Envelope Encryption
 
 ### How It Works
@@ -108,7 +212,7 @@ The n8n workflows (and ultimately Claude) MUST see the plaintext task descriptio
 - **DEK** (Data Encryption Key): Random 256-bit key, generated once per user
 - **Password change**: Only re-wraps DEK, doesn't re-encrypt all data
 - **Forgot password**: Use recovery phrase to unwrap DEK, then set new password
-- **Admin access**: Impossible - you don't have the DEK or password
+- **Admin access**: Restricted by design in Private mode (you should not be able to decrypt without a user-held secret)
 
 ### What Gets Encrypted
 
@@ -121,21 +225,21 @@ The n8n workflows (and ultimately Claude) MUST see the plaintext task descriptio
 | `pre_analysis_context` | ✅ Yes | Extracted context from answers |
 | `workflow_stage` | ❌ No | Needed for queries/filtering |
 | `created_at` | ❌ No | Needed for sorting |
-| `personality_type` | ❌ No | Needed for aggregation (consider encrypting) |
+| `personality_type` | ✅ Yes (recommended) | Sensitive profile attribute; use derived aggregates instead of plaintext storage where possible |
 
 ### Important Constraint
 
 **n8n still processes plaintext during workflow execution.** Encryption protects data "at rest" in the database. During active processing, data is decrypted in memory.
 
-### n8n Execution Data for Privacy Users
+### n8n Execution Data for Private Mode Users
 
-n8n stores full execution history (inputs, outputs, errors) in its database, visible in the Executions tab. For privacy users, we **disable execution saving**:
+n8n stores full execution history (inputs, outputs, errors) in its database, visible in the Executions tab. For Private mode users, we **disable execution saving**:
 
-1. **Pass `privacy_enabled` flag** in webhook payload from Laravel
+1. **Pass `privacy_enabled` flag** in webhook payload from Laravel (internal flag for Private mode)
 2. **Conditional execution saving** in n8n workflow - don't save if privacy user
 3. **Fallback: Global short retention** - `EXECUTIONS_DATA_PRUNE=true`, `EXECUTIONS_DATA_MAX_AGE=1` (1 hour)
 
-This means privacy users lose:
+This means Private mode users lose:
 
 - Execution history visibility
 - Retry from failed execution
@@ -170,7 +274,56 @@ ALTER TABLE users ADD COLUMN prompt_count_reset_at TIMESTAMP DEFAULT CURRENT_TIM
 
 -- Migration: add_encryption_flag_to_prompt_runs
 ALTER TABLE prompt_runs ADD COLUMN is_encrypted BOOLEAN DEFAULT FALSE;
+
+-- Migration: add_support_access_tables (requirements for support + break-glass)
+-- support_access_requests: created by staff/user, must be approved by user for Private mode
+-- support_access_sessions: active grants with strict TTL and scope
+-- data_access_audit_logs: immutable audit trail for any content access
 ```
+
+#### Support Access Table Requirements (Recommended Shape)
+
+These tables are intentionally generic so they can support both:
+- **Private-mode user-consented support sessions** (Private)
+- **Free-tier break-glass sessions** (admin-only)
+
+**`support_access_requests`**
+- `id`
+- `user_id` (the subject)
+- `requested_by_admin_id` (nullable; set when staff initiates)
+- `requested_by_user_id` (nullable; set when user initiates “share with support”)
+- `tier_at_request` (`free`/`pro`)
+- `reason` (required)
+- `ticket_reference` (required)
+- `scope` (JSON: `prompt_run_ids[]`, optional date range, optional “include profile fields”)
+- `duration_minutes` (required)
+- `status` (`pending`, `approved`, `denied`, `revoked`, `expired`, `cancelled`)
+- `approved_at`, `approved_by_user_id` (nullable)
+- `expires_at`, `revoked_at`
+- `created_at`, `updated_at`
+
+**`support_access_sessions`**
+- `id`
+- `support_access_request_id`
+- `mode` (`user_consented` or `break_glass`)
+- `session_token_hash` (one-time token, never store plaintext)
+- `scope` (copy of approved scope, immutable)
+- `starts_at`, `expires_at`, `revoked_at`
+- `created_by_admin_id` (for break-glass) / `created_by_user_id` (for user-consented)
+- `last_used_at`
+- `created_at`, `updated_at`
+
+**`data_access_audit_logs`** (append-only)
+- `id`
+- `actor_type` (`admin`, `system`) and `actor_id`
+- `user_id` (the subject)
+- `action` (`view`, `decrypt`, `export_attempt`, `export`, `create_request`, `approve_request`, `revoke_session`, etc.)
+- `resource_type` + `resource_id` (e.g. `prompt_run` + id)
+- `support_access_request_id` (nullable)
+- `support_access_session_id` (nullable)
+- `ip_address`, `user_agent`
+- `metadata` (JSON; avoid raw content)
+- `created_at`
 
 ### New Files to Create
 
@@ -179,6 +332,8 @@ app/
 ├── Services/
 │   ├── EncryptionService.php        # DEK generation, wrapping/unwrapping
 │   ├── PrivacyKeyService.php        # Session key management
+│   ├── SupportAccessService.php     # User-consented sessions + break-glass lifecycle
+│   └── DataAccessAuditService.php   # Append-only audit logging helpers
 │   └── SubscriptionService.php      # Subscription logic, usage tracking
 ├── Casts/
 │   └── UserEncrypted.php            # Custom Eloquent cast for encrypted fields
@@ -189,6 +344,8 @@ app/
 │   │   └── TrackPromptUsage.php     # Count prompts for free tier
 │   └── Controllers/
 │       ├── SubscriptionController.php
+│       ├── SupportAccessController.php      # User approve/deny/revoke; support request UI
+│       ├── Admin/BreakGlassController.php   # Admin-only break-glass workflow (free tier)
 │       └── WebhookController.php    # Stripe webhooks
 ├── Console/Commands/
 │   ├── MigrateUserToPrivacy.php     # One-time migration for existing users
@@ -202,6 +359,7 @@ resources/js/
 │   └── Settings/
 │       ├── Subscription.vue         # Manage subscription
 │       └── Privacy.vue              # Privacy settings
+│       └── SupportAccess.vue         # Approve/deny/revoke support access
 ├── Components/
 │   ├── SubscriptionBadge.vue        # Show current plan
 │   ├── UpgradePrompt.vue            # Prompt to upgrade
@@ -242,10 +400,10 @@ class EncryptionService
 
 ### User Flows
 
-**1. Enable Privacy Mode (New Subscription)**
+**1. Enable Private Mode (New Subscription)**
 
 ```
-User subscribes to Pro tier
+User subscribes to Private tier
     → Generate DEK
     → Generate recovery phrase
     → Show recovery phrase (user must confirm they saved it)
@@ -333,9 +491,9 @@ class UserEncrypted implements CastsAttributes
 
 - **Location**: UK-based company
 - **Compliance**: EU law (GDPR), UK VAT
-- **Pricing**: £12/month or £99/year
-- **Year 1**: ~500 paying users = £50,000 - £60,000 revenue
-- **Year 2**: ~5,000 paying users = £500,000 - £600,000 revenue
+- **Private pricing**: £15/month or £150/year
+- **Year 1**: ~500 private subscribers = ~£75,000 - £90,000 revenue
+- **Year 2**: ~5,000 private subscribers = ~£750,000 - £900,000 revenue
 
 ### Comprehensive Provider Comparison
 
@@ -367,26 +525,26 @@ class UserEncrypted implements CastsAttributes
 - Strong European presence
 - Less established Laravel ecosystem
 
-### Cost Breakdown (Updated Pricing: £12/month, £99/year)
+### Cost Breakdown (Updated Private Pricing: £15/month, £150/year)
 
 Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 
 **Stripe:**
-- Monthly (£12): £0.38 fee per transaction (3.2%)
-- Annual (£99): £1.69 fee per transaction (1.7%)
-- Year 1: 250×12×£0.38 + 250×£1.69 = **~£1,563**
-- Year 2 (5,000 users): **~£15,630**
+- Monthly (£15): ~£0.43 fee per transaction (2.8%)
+- Annual (£150): ~£2.45 fee per transaction (1.6%)
+- Year 1: 250×12×£0.43 + 250×£2.45 = **~£1,903**
+- Year 2 (5,000 users): **~£19,030**
 
 **Paddle/LemonSqueezy:**
-- Monthly (£12): £1.10 fee per transaction (9.2%)
-- Annual (£99): £5.45 fee per transaction (5.5%)
-- Year 1: 250×12×£1.10 + 250×£5.45 = **~£4,663**
-- Year 2 (5,000 users): **~£46,630**
+- Monthly (£15): £1.25 fee per transaction (8.3%)
+- Annual (£150): £8.00 fee per transaction (5.3%)
+- Year 1: 250×12×£1.25 + 250×£8.00 = **~£5,750**
+- Year 2 (5,000 users): **~£57,500**
 
 **GoCardless (Direct Debit only):**
-- Monthly (£12): £0.32 fee per transaction (2.7%)
-- Annual (£99): £1.19 fee per transaction (1.2%)
-- Year 1: **~£1,258** (if all via DD)
+- Monthly (£15): £0.35 fee per transaction (2.3%)
+- Annual (£150): £1.70 fee per transaction (1.1%)
+- Year 1: **~£1,475** (if all via DD)
 
 ### Recommendation: **Stripe** (Confirmed)
 
@@ -425,9 +583,9 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 1. **Create Stripe UK account** at stripe.com
 2. **Install Laravel Cashier**: `composer require laravel/cashier`
 3. **Configure products in Stripe Dashboard**:
-   - Product: "BettrPrompt Pro"
-   - Price 1: £12/month (recurring)
-   - Price 2: £99/year (recurring)
+   - Product: "BettrPrompt Private"
+   - Price 1: £15/month (recurring)
+   - Price 2: £150/year (recurring)
 4. **Enable Stripe Tax** (optional, £0.50/transaction)
 5. **Register for UK VAT** (if not already, threshold £85k)
 6. **Register for EU OSS** (for EU customers)
@@ -453,34 +611,50 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
                     <li>✓ 10 prompts per month</li>
                     <li>✓ Personality calibration</li>
                     <li>✓ Basic support</li>
-                    <li class="disabled">✗ Privacy encryption</li>
+                    <li>✓ Encryption at rest</li>
+                    <li class="disabled">✗ Private mode</li>
                     <li class="disabled">✗ Unlimited prompts</li>
                 </ul>
                 <button @click="startFree">Get Started</button>
             </div>
 
-            <!-- Pro Tier -->
+            <!-- Unlimited Tier -->
+            <div class="pricing-card">
+                <h2>Unlimited</h2>
+                <div class="price">£5/month</div>
+                <ul class="features">
+                    <li>✓ Unlimited prompts</li>
+                    <li>✓ Personality calibration</li>
+                    <li>✓ Encryption at rest</li>
+                    <li class="disabled">✗ Private mode</li>
+                </ul>
+                <button @click="subscribe('unlimited')">
+                    Start Unlimited
+                </button>
+            </div>
+
+            <!-- Private Tier -->
             <div class="pricing-card featured">
                 <div class="badge">Most Popular</div>
-                <h2>Pro</h2>
+                <h2>Private</h2>
                 <div class="price-toggle">
                     <button :class="{ active: !annual }" @click="annual = false">Monthly</button>
                     <button :class="{ active: annual }" @click="annual = true">Annual</button>
                 </div>
                 <div class="price">
-                    <span v-if="annual">£99/year</span>
-                    <span v-else>£12/month</span>
-                    <span v-if="annual" class="savings">Save 18%</span>
+                    <span v-if="annual">£150/year</span>
+                    <span v-else>£15/month</span>
+                    <span v-if="annual" class="savings">Save 17%</span>
                 </div>
                 <ul class="features">
                     <li>✓ Unlimited prompts</li>
                     <li>✓ Personality calibration</li>
-                    <li>✓ Privacy encryption</li>
+                    <li>✓ Private mode</li>
                     <li>✓ Priority support</li>
                     <li>✓ Prompt history</li>
                 </ul>
-                <button @click="subscribe(annual ? 'yearly' : 'monthly')">
-                    Start Pro
+                <button @click="subscribe(annual ? 'private_yearly' : 'private_monthly')">
+                    Start Private
                 </button>
             </div>
         </div>
@@ -515,12 +689,12 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 
         <!-- Upgrade Prompt (for free users) -->
         <div v-if="isFree" class="upgrade-section">
-            <h3>Upgrade to Pro</h3>
-            <p>Get unlimited prompts and privacy encryption</p>
+            <h3>Upgrade</h3>
+            <p>Choose Unlimited for more usage, or Private for maximum confidentiality</p>
             <button @click="showUpgradeModal = true">Upgrade Now</button>
         </div>
 
-        <!-- Manage Subscription (for Pro users) -->
+        <!-- Manage Subscription (paid tiers) -->
         <div v-else class="manage-section">
             <h3>Manage Subscription</h3>
             <p>Next billing date: {{ nextBillingDate }}</p>
@@ -531,16 +705,16 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
         </div>
 
         <!-- Privacy Status -->
-        <div v-if="isPro" class="privacy-section">
-            <h3>Privacy Encryption</h3>
+        <div v-if="isPrivate" class="privacy-section">
+            <h3>Private Mode</h3>
             <p v-if="privacyEnabled">
-                ✓ Your data is encrypted with your personal key
+                ✓ Private mode is enabled for your account
             </p>
             <p v-else>
-                Enable encryption to protect your prompts
+                Enable Private mode to restrict access and disable training/improvement use
             </p>
             <button v-if="!privacyEnabled" @click="enablePrivacy">
-                Enable Privacy
+                Enable Private mode
             </button>
         </div>
     </div>
@@ -580,19 +754,23 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
             <h2>You've reached your monthly limit</h2>
             <p>
                 Free accounts are limited to 10 prompts per month.
-                Upgrade to Pro for unlimited access.
+                Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
             </p>
 
             <div class="pricing-options">
-                <div class="option" @click="selectPlan('monthly')">
-                    <h3>Monthly</h3>
-                    <div class="price">£12/month</div>
+                <div class="option" @click="selectPlan('unlimited_monthly')">
+                    <h3>Unlimited</h3>
+                    <div class="price">£5/month</div>
                 </div>
-                <div class="option featured" @click="selectPlan('yearly')">
-                    <div class="badge">Save 18%</div>
-                    <h3>Annual</h3>
-                    <div class="price">£99/year</div>
-                    <div class="effective">£8.25/month</div>
+                <div class="option" @click="selectPlan('private_monthly')">
+                    <h3>Private</h3>
+                    <div class="price">£15/month</div>
+                </div>
+                <div class="option featured" @click="selectPlan('private_yearly')">
+                    <div class="badge">Save 17%</div>
+                    <h3>Private (Annual)</h3>
+                    <div class="price">£150/year</div>
+                    <div class="effective">£12.50/month</div>
                 </div>
             </div>
 
@@ -621,14 +799,19 @@ class SubscriptionController extends Controller
     {
         return Inertia::render('Pricing', [
             'plans' => [
-                'monthly' => [
-                    'price_id' => config('stripe.prices.monthly'),
-                    'price' => 1200, // pence
+                'unlimited_monthly' => [
+                    'price_id' => config('stripe.prices.unlimited_monthly'),
+                    'price' => 500, // pence
                     'interval' => 'month',
                 ],
-                'yearly' => [
-                    'price_id' => config('stripe.prices.yearly'),
-                    'price' => 9900, // pence
+                'private_monthly' => [
+                    'price_id' => config('stripe.prices.private_monthly'),
+                    'price' => 1500, // pence
+                    'interval' => 'month',
+                ],
+                'private_yearly' => [
+                    'price_id' => config('stripe.prices.private_yearly'),
+                    'price' => 15000, // pence
                     'interval' => 'year',
                 ],
             ],
@@ -638,7 +821,7 @@ class SubscriptionController extends Controller
     public function subscribe(Request $request)
     {
         $request->validate([
-            'plan' => 'required|in:monthly,yearly',
+            'plan' => 'required|in:unlimited_monthly,private_monthly,private_yearly',
         ]);
 
         $user = $request->user();
@@ -654,7 +837,7 @@ class SubscriptionController extends Controller
     public function success(Request $request)
     {
         return redirect()->route('settings.subscription')
-            ->with('success', 'Welcome to BettrPrompt Pro!');
+            ->with('success', 'Subscription activated!');
     }
 
     public function billingPortal(Request $request)
@@ -692,9 +875,11 @@ class CheckSubscription
         Inertia::share([
             'subscription' => [
                 'tier' => $user->subscription_tier,
-                'isPro' => $user->subscribed('default'),
+                'isPaid' => $user->subscribed('default') || ($user->subscription_ends_at && $user->subscription_ends_at->isFuture()),
+                'isUnlimited' => $user->subscription_tier === 'unlimited',
+                'isPrivate' => $user->subscription_tier === 'private',
                 'promptsUsed' => $user->monthly_prompt_count,
-                'promptsRemaining' => max(0, 10 - $user->monthly_prompt_count),
+                'promptsRemaining' => $user->subscribed('default') ? PHP_INT_MAX : max(0, 10 - $user->monthly_prompt_count),
                 'privacyEnabled' => $user->privacy_enabled,
             ],
         ]);
@@ -917,20 +1102,20 @@ return [
 
 1. Update password change to re-wrap DEK
 2. Create recovery phrase login flow
-3. Update forgot password for privacy users
+3. Update forgot password for Private mode users
 4. **Files**: Auth controllers, Vue components
 
 ### Phase 8: Data Migration & Downgrade Handling (2-3 days)
 
 1. Create migration command for existing users
 2. Background job to encrypt existing prompt_runs
-3. Handle subscription cancellation (decrypt data)
+3. Handle subscription cancellation (exit Private mode; re-encrypt under baseline keys)
 4. Handle edge cases (OAuth-only users)
 5. **Files**: Console commands, jobs
 
 ### Phase 9: n8n Privacy Configuration (1 day)
 
-1. Add privacy_enabled flag to webhook payloads
+1. Add `privacy_enabled` flag to webhook payloads (Private mode)
 2. Update n8n workflows to check flag
 3. Configure n8n execution pruning
 4. Test execution data handling
@@ -966,7 +1151,8 @@ return [
 ### Attack Vectors Mitigated
 
 - ✅ Database breach → data encrypted, no plaintext keys
-- ✅ Admin access → admin cannot decrypt without user password
+- ✅ Admin access (Private mode) → staff cannot decrypt without an approved, user-consented support session
+- ✅ Admin access (Free tier) → break-glass access is time-limited and audited (reduces insider/credential-compromise impact)
 - ✅ Password reset attack → requires recovery phrase
 
 ### Attack Vectors NOT Mitigated
@@ -976,7 +1162,7 @@ return [
 
 ### n8n Data Protection
 
-- ✅ Execution data not saved for privacy users
+- ✅ Execution data not saved for Private mode users
 - ✅ Short retention fallback (1 hour max)
 - ⚠️ n8n processes plaintext in memory during workflow execution (unavoidable)
 
@@ -986,7 +1172,7 @@ return [
 
 Users who sign in via Google OAuth don't have a password. Options:
 
-1. **Require password for privacy tier** - Force OAuth users to set a password
+1. **Require password for Private mode** - Force OAuth users to set a password
 2. **Use Google token as key derivation source** - Complex, ties to Google
 3. **Generate standalone privacy passphrase** - Separate from auth password
 
