@@ -21,7 +21,7 @@ const title = computed(() =>
 <template>
     <button
         type="button"
-        class="mr-2 size-10 shrink-0 cursor-pointer rounded-md fill-current p-2 text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden active:text-indigo-900 sm:mr-4"
+        class="mr-2 size-10 shrink-0 cursor-pointer rounded-md fill-current p-2 text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden active:text-indigo-900 sm:mr-0"
         :title="title"
         @click="themeStore.toggleTheme()"
     >

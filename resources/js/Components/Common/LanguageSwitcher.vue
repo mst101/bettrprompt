@@ -92,7 +92,7 @@ const supportedLanguages = computed(() =>
         <!-- Trigger Button -->
         <button
             type="button"
-            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-indigo-600 transition-colors hover:bg-indigo-50"
+            class="flex items-center gap-2 rounded-lg p-3 text-sm text-indigo-600 transition-colors hover:bg-indigo-50"
             data-testid="language-switcher-button"
             @click="toggleDropdown"
         >
@@ -101,23 +101,23 @@ const supportedLanguages = computed(() =>
                 :class="`fi-${currentLocaleInfo.flag}`"
                 aria-hidden="true"
             />
-            <span class="hidden sm:inline">{{
-                currentLocaleInfo.nativeName
-            }}</span>
-            <svg
-                class="h-4 w-4 transition-transform"
-                :class="{ 'rotate-180': isOpen }"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                />
-            </svg>
+            <!--            <span class="hidden sm:inline">{{-->
+            <!--                currentLocaleInfo.nativeName-->
+            <!--            }}</span>-->
+            <!--            <svg-->
+            <!--                class="h-4 w-4 transition-transform"-->
+            <!--                :class="{ 'rotate-180': isOpen }"-->
+            <!--                fill="none"-->
+            <!--                viewBox="0 0 24 24"-->
+            <!--                stroke="currentColor"-->
+            <!--            >-->
+            <!--                <path-->
+            <!--                    stroke-linecap="round"-->
+            <!--                    stroke-linejoin="round"-->
+            <!--                    stroke-width="2"-->
+            <!--                    d="M19 9l-7 7-7-7"-->
+            <!--                />-->
+            <!--            </svg>-->
         </button>
 
         <!-- Dropdown Menu -->

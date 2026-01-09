@@ -190,7 +190,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <div class="flex flex-1 flex-col">
             <nav class="bg-white shadow-xs shadow-indigo-50">
                 <!-- Primary Navigation Menu -->
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
                     <div class="flex h-18 justify-between">
                         <div class="flex">
                             <!-- Logo -->
@@ -210,7 +210,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             <!-- Navigation Links (Authenticated) -->
                             <div
                                 v-if="isAuthenticated"
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:items-center"
+                                class="hidden space-x-2 md:-my-px md:ms-6 md:flex md:items-center lg:ms-12 lg:space-x-8"
                             >
                                 <NavLink
                                     :href="localeRoute('prompt-builder.index')"
@@ -242,7 +242,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </div>
 
                         <!-- Right Side Navigation -->
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden md:ms-6 md:flex md:items-center">
                             <LanguageSwitcher />
                             <ButtonDarkMode class="ms-2 size-10 shrink-0 p-2" />
 
@@ -308,7 +308,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </div>
 
                         <!-- Hamburger (Mobile) -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <div class="-me-2 flex items-center md:hidden">
                             <LanguageSwitcher />
                             <ButtonDarkMode />
 
@@ -335,7 +335,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     >
                         <div
                             v-show="showingNavigationDropdown"
-                            class="fixed top-16 right-0 left-0 z-40 bg-white shadow-lg sm:hidden"
+                            class="fixed top-16 right-0 left-0 z-40 bg-white shadow-lg md:hidden"
                         >
                             <!-- Authenticated Mobile Nav -->
                             <template v-if="isAuthenticated">
@@ -474,7 +474,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
         <Teleport to="body">
             <div
                 v-show="showingNavigationDropdown"
-                class="fixed inset-0 z-30 sm:hidden"
+                class="fixed inset-0 z-30 md:hidden"
                 @click="showingNavigationDropdown = false"
             ></div>
         </Teleport>
