@@ -497,13 +497,13 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Should see "Showing X to Y of Z results" text (use .last() to get desktop version)
         const resultsText = authenticatedPage
-            .getByText(/Showing [a-z]+ to [a-z]+ of [a-z]+ results/i)
+            .getByText(/Showing \d+ to \d+ of \d+ results/i)
             .last();
         await expect(resultsText).toBeVisible({ timeout: 5000 });
 
         // Should see page indicator (use .last() to get desktop version)
         const pageIndicator = authenticatedPage
-            .getByText(/page [a-z]+ of [a-z]+/i)
+            .getByText(/page \d+ of \d+/i)
             .last();
         await expect(pageIndicator).toBeVisible({ timeout: 5000 });
     });
@@ -601,7 +601,7 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Should see mobile "Page X of Y" text (use .first() for mobile version)
         const pageIndicator = authenticatedPage
-            .getByText(/page [a-z]+ of [a-z]+/i)
+            .getByText(/page \d+ of \d+/i)
             .first();
         await expect(pageIndicator).toBeVisible();
 
