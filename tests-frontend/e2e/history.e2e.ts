@@ -235,7 +235,7 @@ test.describe('Prompt Builder History - With Data', () => {
         expect(dateText).toBeTruthy();
         const trimmedDate = dateText?.trim() || '';
         expect(trimmedDate.length).toBeGreaterThan(0);
-        expect(/\d/.test(trimmedDate)).toBeTruthy();
+        expect(/[a-z]/.test(trimmedDate)).toBeTruthy();
     });
 
     test('should display personality types', async ({ authenticatedPage }) => {
@@ -497,13 +497,13 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Should see "Showing X to Y of Z results" text (use .last() to get desktop version)
         const resultsText = authenticatedPage
-            .getByText(/Showing \d+ to \d+ of \d+ results/i)
+            .getByText(/Showing [a-z]+ to [a-z]+ of [a-z]+ results/i)
             .last();
         await expect(resultsText).toBeVisible({ timeout: 5000 });
 
         // Should see page indicator (use .last() to get desktop version)
         const pageIndicator = authenticatedPage
-            .getByText(/page \d+ of \d+/i)
+            .getByText(/page [a-z]+ of [a-z]+/i)
             .last();
         await expect(pageIndicator).toBeVisible({ timeout: 5000 });
     });
@@ -601,7 +601,7 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Should see mobile "Page X of Y" text (use .first() for mobile version)
         const pageIndicator = authenticatedPage
-            .getByText(/page \d+ of \d+/i)
+            .getByText(/page [a-z]+ of [a-z]+/i)
             .first();
         await expect(pageIndicator).toBeVisible();
 
@@ -670,13 +670,15 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Wait for navigation after clicking
         await Promise.all([
-            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+            authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
                 timeout: 5000,
             }),
             taskCell.click(),
         ]);
 
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Should see the prompt details page (verify by heading)
         const heading = authenticatedPage.getByRole('heading', {
@@ -697,13 +699,15 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Wait for navigation after pressing Enter
         await Promise.all([
-            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+            authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
                 timeout: 5000,
             }),
             firstRow.press('Enter'),
         ]);
 
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
     });
 
     test('should navigate to create new prompt from header button', async ({
@@ -850,10 +854,12 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await taskCell.click();
 
         // Should navigate
-        await authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+        await authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
             timeout: 5000,
         });
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
     });
 
     test('should display header and Create New button on mobile', async ({
@@ -959,7 +965,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Wait for navigation after clicking
         const navPromise = authenticatedPage.waitForURL(
-            /\/prompt-builder\/\d+/,
+            /\/prompt-builder\/[a-z]+/,
             {
                 timeout: 10000,
             },
@@ -967,7 +973,9 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await taskCell.click();
         await navPromise;
 
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Go back and wait for navigation to history page
         const backPromise = authenticatedPage.waitForURL(/\/history/, {

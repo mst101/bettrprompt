@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
 import { loginWithPersonalityType } from '../helpers/auth';
 import { withLocale } from '../helpers/locale';
@@ -21,7 +22,7 @@ export const test = base.extend<PersonalityUserFixture>({
         const originalGoto = page.goto.bind(page);
         const originalWaitForURL = page.waitForURL.bind(page);
 
-        const pageWithLocale = page as typeof page & {
+        const pageWithLocale = page as Page & {
             goto: typeof page.goto;
             waitForURL: typeof page.waitForURL;
         };

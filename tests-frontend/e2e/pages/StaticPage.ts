@@ -11,19 +11,19 @@ export class StaticPage {
     // ===== Page Navigation =====
 
     async gotoTerms(): Promise<void> {
-        await this.page.goto('/terms');
+        await this.page.goto('/en-GB/terms');
     }
 
     async gotoPrivacy(): Promise<void> {
-        await this.page.goto('/privacy');
+        await this.page.goto('/en-GB/privacy');
     }
 
     async gotoCookies(): Promise<void> {
-        await this.page.goto('/cookies');
+        await this.page.goto('/en-GB/cookies');
     }
 
     async goto(path: '/terms' | '/privacy' | '/cookies'): Promise<void> {
-        await this.page.goto(path);
+        await this.page.goto(`/en-GB${path}`);
     }
 
     // ===== Locators =====

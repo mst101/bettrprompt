@@ -78,7 +78,7 @@ export class AuthPage {
     }
 
     async openLoginModalViaUrl(): Promise<void> {
-        await this.page.goto('/?modal=login');
+        await this.page.goto('/en-GB/?modal=login');
     }
 
     async openRegisterModal(): Promise<void> {

@@ -57,11 +57,11 @@ export class PromptBuilderPage {
     // ===== Navigation =====
 
     async goto(): Promise<void> {
-        await this.page.goto('/prompt-builder');
+        await this.page.goto('/en-GB/prompt-builder');
     }
 
     async gotoPromptRun(id: number): Promise<void> {
-        await this.page.goto(`/prompt-builder/${id}`);
+        await this.page.goto(`/en-GB/prompt-builder/${id}`);
     }
 
     // ===== Task Input Methods =====

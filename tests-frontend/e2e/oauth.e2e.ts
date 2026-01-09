@@ -72,7 +72,7 @@ test.describe('Google OAuth Authentication', () => {
         expect(url).not.toContain('/auth/google/callback');
 
         // Should be redirected to home page (with or without modal query param)
-        expect(url).toMatch(/\/(\?.*)?$/);
+        expect(url).toMatch(/\/[a-z]{2}(-[A-Z]{2})?\/?(\?.*)?$/);
     });
 });
 

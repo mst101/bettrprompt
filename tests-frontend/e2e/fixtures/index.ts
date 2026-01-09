@@ -57,7 +57,7 @@ type TestFixtures = AuthenticatedPageFixture & PageObjectsFixture;
  */
 export const test = base.extend<TestFixtures>({
     /**
-     * Base page fixture with n8n test mode enabled
+     * Base page fixture with n8n test mode enabled and locale-aware routing
      * Sets an environment flag that the backend can use to return mock responses
      */
     page: async ({ page }, use) => {

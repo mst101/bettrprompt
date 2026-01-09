@@ -80,7 +80,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
-            /\/prompt-builder\/\d+/,
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
             { timeout: 10000 },
         );
 
@@ -96,7 +96,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         }
 
         // Verify we're on the show page
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Wait for page content to load
         await authenticatedPage.waitForLoadState('domcontentloaded');
@@ -151,7 +153,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
-            /\/prompt-builder\/\d+/,
+            /\/prompt-builder\/[a-z]+/,
             { timeout: 10000 },
         );
 
@@ -192,7 +194,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Click on the Questions tab
         const questionsTab = authenticatedPage.getByTestId(
@@ -398,10 +402,15 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await firstRow.click();
 
             // Should navigate back to the prompt show page
-            await authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
-                timeout: 5000,
-            });
-            expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+            await authenticatedPage.waitForURL(
+                /\/en-GB\/prompt-builder\/[a-z]+/,
+                {
+                    timeout: 5000,
+                },
+            );
+            expect(authenticatedPage.url()).toMatch(
+                /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            );
 
             // Should see the tabs navigation on the show page
             const tabsNav = authenticatedPage.getByRole('navigation', {
@@ -461,7 +470,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await createNewButton.click();
 
         // Should navigate back to index
-        await authenticatedPage.waitForURL('/prompt-builder', {
+        await authenticatedPage.waitForURL('/en-GB/prompt-builder', {
             timeout: 5000,
         });
         expect(authenticatedPage.url()).toContain('/prompt-builder');
@@ -496,7 +505,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         if (hasProgress) {
             // Should see question number
             await expect(progressIndicator).toContainText(
-                /question \d+ of \d+/i,
+                /question [a-z]+ of [a-z]+/i,
             );
 
             // Should see progress bar
@@ -504,7 +513,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
             await expect(progressBar).toBeVisible();
 
             // Should see percentage
-            await expect(progressIndicator).toContainText(/\d+% complete/i);
+            await expect(progressIndicator).toContainText(/[a-z]+% complete/i);
         }
     });
 
@@ -517,7 +526,9 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page with correct structure
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Verify the page has the main prompt container
         const promptContainer = authenticatedPage
@@ -579,7 +590,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
             // Submit and wait for navigation to show page
             const navigationPromise = testPage.waitForURL(
-                /\/prompt-builder\/\d+/,
+                /\/prompt-builder\/[a-z]+/,
                 {
                     timeout: 10000,
                 },
@@ -597,7 +608,9 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             await testPage.waitForTimeout(2000);
 
             // Check if we're on the show page (successful submission and navigation)
-            const isOnShowPage = testPage.url().match(/\/prompt-builder\/\d+/);
+            const isOnShowPage = testPage
+                .url()
+                .match(/\/prompt-builder\/[a-z]+/);
 
             // If we're on the show page, the form submission succeeded
             // The workflow error would appear as a failed/error state in the prompt run
@@ -646,17 +659,21 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const { prompt_run_id: promptRunId } = await response.json();
 
         // Navigate to the show page where error should be displayed
-        await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
+        await authenticatedPage.goto(`/en-GB/prompt-builder/${promptRunId}`);
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Should display an error message (or page loaded successfully - both are valid outcomes)
         authenticatedPage.locator('text=/failed|error/i');
 
         // Either error is displayed, or page loaded successfully (both are valid test outcomes)
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
     });
 
     test('should handle validation errors', async ({ authenticatedPage }) => {
@@ -676,17 +693,21 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const { prompt_run_id: promptRunId } = await response.json();
 
         // Navigate to the show page where error should be displayed
-        await authenticatedPage.goto(`/prompt-builder/${promptRunId}`);
+        await authenticatedPage.goto(`/en-GB/prompt-builder/${promptRunId}`);
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Should display an error message
         authenticatedPage.locator('text=/failed|error/i');
 
         // Page should load successfully
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
     });
 
     test('should allow retry after failure', async ({ authenticatedPage }) => {
@@ -707,11 +728,15 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             await failedResponse.json();
 
         // Navigate to the failed prompt
-        await authenticatedPage.goto(`/prompt-builder/${failedPromptRunId}`);
+        await authenticatedPage.goto(
+            `/en-GB/prompt-builder/${failedPromptRunId}`,
+        );
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
 
         // Should display error
         authenticatedPage.locator('text=/failed|error/i');
@@ -733,10 +758,14 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             await successResponse.json();
 
         // Navigate to the successful prompt
-        await authenticatedPage.goto(`/prompt-builder/${successPromptRunId}`);
+        await authenticatedPage.goto(
+            `/en-GB/prompt-builder/${successPromptRunId}`,
+        );
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Should be on show page with successful workflow
-        expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
+        expect(authenticatedPage.url()).toMatch(
+            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+        );
     });
 });
