@@ -24,19 +24,22 @@ test.describe('Prompt Builder - Basic Flow', () => {
     }) => {
         await page.goto('/prompt-builder');
 
+        // Wait for page to be fully loaded
+        await page.waitForLoadState('domcontentloaded');
+
         // Should stay on prompt optimizer - no auth required
         const url = page.url();
         expect(url).toContain('/prompt-builder');
 
         // Should see the task input form
         const taskInput = page.getByLabel(/task description/i);
-        await expect(taskInput).toBeVisible();
+        await expect(taskInput).toBeVisible({ timeout: 5000 });
 
         // Should see submit button
         const submitButton = page.getByRole('button', {
-            name: /optimise.*prompt/i,
+            name: /analyse task/i,
         });
-        await expect(submitButton).toBeVisible();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
     });
 
     test('should show prompt optimizer history page for authenticated users', async ({
@@ -75,12 +78,12 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         // Submit the form and wait for navigation
         // With mocked n8n responses, this should complete in under 1 second
         const submitButton = authenticatedPage.getByRole('button', {
-            name: /optimise.*prompt/i,
+            name: /analyse|submit|optimis/i,
         });
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
-            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
             { timeout: 10000 },
         );
 
@@ -148,12 +151,12 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await taskInput.fill('Create a project plan for a new web application');
 
         const submitButton = authenticatedPage.getByRole('button', {
-            name: /optimise.*prompt/i,
+            name: /analyse|submit|optimis/i,
         });
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
-            /\/prompt-builder\/[a-z]+/,
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
             { timeout: 10000 },
         );
 
