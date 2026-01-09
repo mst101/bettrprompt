@@ -80,6 +80,8 @@ Route::prefix('{locale}')
         // Visitor preferences (no authentication required)
         Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
             ->name('visitor.personality.update');
+        Route::patch('/visitor/language', [VisitorController::class, 'updateLanguage'])
+            ->name('visitor.language.update');
 
         // Prompt builder routes (public, supports guest visitors)
         Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
@@ -175,6 +177,7 @@ Route::prefix('{locale}')
                 [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
             Route::patch('/profile/ui-complexity',
                 [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
+            Route::patch('/profile/language', [ProfileController::class, 'updateLanguage'])->name('profile.language.update');
             // Location profile routes
             Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
             Route::post('/profile/location/detect',

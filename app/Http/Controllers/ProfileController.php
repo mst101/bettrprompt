@@ -18,11 +18,13 @@ use App\Services\GeolocationService;
 use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -185,6 +187,23 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit')
             ->with('status', 'ui-complexity-updated');
+    }
+
+    /**
+     * Update the user's language preference.
+     */
+    public function updateLanguage(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'language_code' => ['required', 'string', 'max:10', Rule::in(config('app.supported_locales'))],
+        ]);
+
+        $request->user()->update([
+            'language_code' => $validated['language_code'],
+            'language_manually_set' => true,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     /**

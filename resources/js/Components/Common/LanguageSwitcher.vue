@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { locales, setLocale, type LocaleCode, type LocaleInfo } from '@/i18n';
 import { router, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const page = usePage();
@@ -33,6 +34,17 @@ async function switchLocale(locale: LocaleInfo) {
     }
 
     isOpen.value = false;
+
+    // Persist language choice to database
+    const endpoint = page.props.auth?.user
+        ? '/profile/language'
+        : '/visitor/language';
+
+    try {
+        await axios.patch(endpoint, { language_code: locale.code });
+    } catch (error) {
+        console.error('Failed to update language preference:', error);
+    }
 
     // Update client-side i18n
     await setLocale(locale.code);
