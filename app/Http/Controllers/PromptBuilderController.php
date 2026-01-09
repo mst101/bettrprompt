@@ -146,7 +146,10 @@ class PromptBuilderController extends Controller
             // The job will either show questions or proceed directly to main analysis
             ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
-            return redirect()->route('prompt-builder.show', $promptRun);
+            return redirect()->route('prompt-builder.show', [
+                'locale' => $request->route('locale'),
+                'promptRun' => $promptRun,
+            ]);
 
         } catch (Exception $e) {
             Log::error('Failed to create prompt run', [
