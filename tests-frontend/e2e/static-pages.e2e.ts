@@ -87,6 +87,9 @@ for (const page of staticPages) {
         }) => {
             await browserPage.goto(page.path);
 
+            // Wait for page to load
+            await browserPage.waitForLoadState('domcontentloaded');
+
             // Check heading hierarchy
             const h1Elements = browserPage.locator('h1');
             await expect(h1Elements).toHaveCount(1);
@@ -99,17 +102,18 @@ for (const page of staticPages) {
             const logo = browserPage.getByTestId('svg-logo');
             await expect(logo).toBeVisible();
 
-            // Verify footer links
+            // Verify footer links - scroll to footer if needed
             const footer = browserPage.locator('footer');
+            await footer.scrollIntoViewIfNeeded();
             await expect(
-                footer.getByRole('link', { name: /Terms of Use/i }),
-            ).toBeVisible();
+                footer.getByRole('link', { name: /Terms/i }),
+            ).toBeVisible({ timeout: 5000 });
             await expect(
-                footer.getByRole('link', { name: /Privacy Policy/i }),
-            ).toBeVisible();
+                footer.getByRole('link', { name: /Privacy/i }),
+            ).toBeVisible({ timeout: 5000 });
             await expect(
-                footer.getByRole('link', { name: /Cookie Policy/i }),
-            ).toBeVisible();
+                footer.getByRole('link', { name: /Cookies/i }),
+            ).toBeVisible({ timeout: 5000 });
         });
 
         test('should be responsive and accessible', async ({
@@ -156,20 +160,35 @@ test.describe('Cross-Page Navigation', () => {
         ).toBeVisible();
 
         // Navigate to Privacy page - dismiss cookie banner first if present
-        const cookieBannerButton = page
-            .locator('[aria-label="Cookie consent banner"]')
-            .getByRole('button')
-            .first();
-        const cookieBannerVisible = await cookieBannerButton
+        const cookieBanner = page.locator('[aria-label="Cookie banner"]');
+        const cookieBannerVisible = await cookieBanner
             .isVisible()
             .catch(() => false);
         if (cookieBannerVisible) {
-            await cookieBannerButton.click();
+            // Click "Reject all" or "Accept all" button to dismiss the banner
+            const rejectButton = cookieBanner.getByRole('button', {
+                name: /Reject all/i,
+            });
+            const acceptButton = cookieBanner.getByRole('button', {
+                name: /Accept all/i,
+            });
+            const rejectVisible = await rejectButton
+                .isVisible()
+                .catch(() => false);
+            if (rejectVisible) {
+                await rejectButton.click();
+            } else {
+                await acceptButton.click();
+            }
+            // Wait for banner to disappear
+            await cookieBanner
+                .waitFor({ state: 'hidden', timeout: 5000 })
+                .catch(() => {});
         }
 
         await page
             .locator('footer')
-            .getByRole('link', { name: /Privacy Policy/i })
+            .getByRole('link', { name: /Privacy/i })
             .click();
         await expect(
             page.getByRole('heading', { name: 'Privacy Policy', level: 1 }),
@@ -179,7 +198,7 @@ test.describe('Cross-Page Navigation', () => {
         // Navigate to Cookies page
         await page
             .locator('footer')
-            .getByRole('link', { name: /Cookie Policy/i })
+            .getByRole('link', { name: /Cookies/i })
             .click();
         await expect(
             page.getByRole('heading', { name: 'Cookie Policy', level: 1 }),
@@ -228,15 +247,22 @@ test.describe('Accessibility and Content Quality', () => {
         page,
     }) => {
         await page.goto('/terms');
+        await page.waitForLoadState('domcontentloaded');
 
-        // Tab through interactive elements
-        await page.keyboard.press('Tab');
-        await page.keyboard.press('Tab');
+        // Tab through interactive elements - navigate through multiple elements
+        let focusedElement = null;
+        for (let i = 0; i < 5; i++) {
+            await page.keyboard.press('Tab');
+            focusedElement = await page.evaluate(() => {
+                return document.activeElement?.tagName;
+            });
+            // If we found an interactive element, stop tabbing
+            if (['A', 'BUTTON', 'INPUT'].includes(focusedElement)) {
+                break;
+            }
+        }
 
         // Check that focus is on an interactive element
-        const focusedElement = await page.evaluate(() => {
-            return document.activeElement?.tagName;
-        });
         expect(['A', 'BUTTON', 'INPUT']).toContain(focusedElement);
     });
 

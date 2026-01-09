@@ -806,12 +806,17 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await authenticatedPage.setViewportSize({ width: 375, height: 667 });
 
         await authenticatedPage.goto('/history');
+        await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Status badges should be visible on mobile (in the created date cell)
         // Mobile status indicators are rendered inside the date cell
         const dateCell = authenticatedPage
             .locator('[data-testid="table-cell-date"]')
             .first();
+
+        // Scroll into view if needed
+        await dateCell.scrollIntoViewIfNeeded().catch(() => {});
+
         const isVisible = await dateCell.isVisible().catch(() => false);
 
         expect(isVisible).toBe(true);
