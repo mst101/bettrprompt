@@ -149,6 +149,9 @@ test.describe('Accessibility', () => {
     test('should support keyboard navigation', async ({ page }) => {
         await page.goto('/');
 
+        // Wait for page to fully load
+        await page.waitForLoadState('domcontentloaded');
+
         // Try tabbing through the page and verify focus changes
         const initialFocused = await page.evaluate(() => {
             const el = document.activeElement as HTMLElement | null;
