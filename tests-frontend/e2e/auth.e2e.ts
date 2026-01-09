@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test.describe('Authentication', () => {
     test('should show login modal when clicking login button', async ({
@@ -62,7 +62,7 @@ test.describe('Authentication', () => {
         await expect(page.getByLabel(/^confirm password/i)).toBeVisible();
 
         // Also verify other register fields are present
-        await expect(page.getByLabel(/^name/i)).toBeVisible();
+        await expect(page.getByLabel(/name/i)).toBeVisible();
 
         // Verify it's NOT the login modal by checking the submit button text
         const registerSubmitButton = page.getByRole('button', {

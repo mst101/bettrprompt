@@ -42,7 +42,7 @@ return [
         'password_reset_title' => 'Reset Your Password',
         'password_reset_body' => 'You are receiving this email because we received a password reset request for your account.',
         'password_reset_button' => 'Reset Password',
-        'password_reset_footer' => 'This password reset link will expire in {minutes} minutes.',
+        'password_reset_footer' => 'This password reset link will expire in :minutes minutes.',
         'password_reset_footer_no_action' => 'If you did not request a password reset, no further action is required.',
 
         'welcome_subject' => 'Welcome to BettrPrompt',
@@ -251,12 +251,12 @@ return [
         'missing_clarification_field' => 'Missing needs_clarification field.',
         'proceeding_to_analysis' => 'Proceeding directly to analysis.',
         'analysis_failed' => 'Analysis workflow failed.',
-        'analysis_exception' => 'An error occurred while analyzing the task: {error}',
+        'analysis_exception' => 'An error occurred while analyzing the task: :error',
         'generation_failed' => 'Generation workflow failed.',
-        'prompt_generation_exception' => 'An error occurred while generating the prompt: {error}',
-        'n8n_connection_failed' => 'Failed to connect to n8n: {error}',
-        'n8n_request_failed' => 'n8n request failed: {error}',
-        'quick_queries_failed' => 'An error occurred while generating Quick Queries: {error}',
+        'prompt_generation_exception' => 'An error occurred while generating the prompt: :error',
+        'n8n_connection_failed' => 'Failed to connect to n8n: :error',
+        'n8n_request_failed' => 'n8n request failed: :error',
+        'quick_queries_failed' => 'An error occurred while generating Quick Queries: :error',
         'unknown_error' => 'Unknown error',
     ],
 
@@ -267,10 +267,10 @@ return [
 
     // Reference documents
     'reference_documents' => [
-        'not_found' => 'Document not found: {filename}',
-        'saved' => 'Document \'{filename}\' saved successfully and embedded into workflows',
-        'embedded' => 'All {count} documents embedded successfully into workflows',
-        'invalid_type' => 'Invalid document type: {type}',
+        'not_found' => 'Document not found: :filename',
+        'saved' => 'Document \':filename\' saved successfully and embedded into workflows',
+        'embedded' => 'All :count documents embedded successfully into workflows',
+        'invalid_type' => 'Invalid document type: :type',
     ],
 
     // Location messages

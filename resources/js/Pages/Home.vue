@@ -85,7 +85,7 @@ const expandedUseCases = ref<string[]>([]);
     <div>
         <!-- Hero Section -->
         <div
-            class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-16 lg:px-8 lg:py-24"
+            class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-16 lg:px-8 lg:py-24"
         >
             <div class="text-center">
                 <!-- Main Heading -->
@@ -98,6 +98,7 @@ const expandedUseCases = ref<string[]>([]);
                         class="bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
                         >{{ $t('home.hero.titleGradient') }}</span
                     >
+                    {{ $t('home.hero.titleSuffix') }}
                 </h1>
 
                 <!-- Subheading -->

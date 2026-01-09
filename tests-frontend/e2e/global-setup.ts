@@ -60,7 +60,7 @@ async function globalSetup() {
         // Create the test database if it doesn't exist
         // Using psql -tc to suppress unnecessary output
         execSync(
-            './vendor/bin/sail exec -T pgsql psql -U sail -d personality -tc "SELECT 1 FROM pg_database WHERE datname = \'bettrprompt_e2e\'" | grep -q 1 || ./vendor/bin/sail exec -T pgsql psql -U sail -d personality -c "CREATE DATABASE bettrprompt_e2e;"',
+            './vendor/bin/sail exec -T pgsql psql -U sail -d bettrprompt -tc "SELECT 1 FROM pg_database WHERE datname = \'bettrprompt_e2e\'" | grep -q 1 || ./vendor/bin/sail exec -T pgsql psql -U sail -d bettrprompt -c "CREATE DATABASE bettrprompt_e2e;"',
             { stdio: 'inherit', shell: '/bin/bash' },
         );
 

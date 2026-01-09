@@ -8,7 +8,7 @@ test('supported locales are configured correctly', function () {
     $locales = config('app.supported_locales');
 
     expect($locales)->toBeArray();
-    expect($locales)->toContain('en');
+    expect($locales)->toContain('en-US');
     expect($locales)->toContain('en-GB');
     expect($locales)->toContain('de');
     expect($locales)->toContain('fr');
@@ -35,7 +35,7 @@ test('SetLocale middleware detects locale from request', function () {
 test('SetLocale middleware defaults to en when no locale detected', function () {
     $request = Request::create('/test');
 
-    expect(SetLocale::detectLocale($request))->toBe('en');
+    expect(SetLocale::detectLocale($request))->toBe('en-US');
 });
 
 test('SetLocale middleware uses user language preference when authenticated', function () {
@@ -83,7 +83,7 @@ test('locale shared data has correct default values', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('locale', 'en')
+        ->where('locale', 'en-US')
         ->where('direction', 'ltr')
     );
 });

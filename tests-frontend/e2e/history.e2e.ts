@@ -30,7 +30,7 @@ test.describe('Prompt Builder History - Unauthenticated Access', () => {
 });
 
 test.describe('Prompt Builder History - Empty State', () => {
-    test.beforeEach(async ({ authenticatedPage }) => {
+    test.beforeEach(async ({ authenticatedPageWithUniqueUser }) => {
         // Ensure database is clean before test
         // Run the cleanup seeder synchronously to guarantee it completes
         try {
@@ -42,46 +42,46 @@ test.describe('Prompt Builder History - Empty State', () => {
         }
 
         // Navigate to empty history page
-        await authenticatedPage.goto('/history');
+        await authenticatedPageWithUniqueUser.goto('/history');
 
         // Wait for page to fully load before proceeding
-        await authenticatedPage.waitForLoadState('networkidle');
+        await authenticatedPageWithUniqueUser.waitForLoadState('networkidle');
     });
 
     test('should display page heading when authenticated', async ({
-        authenticatedPage,
+        authenticatedPageWithUniqueUser,
     }) => {
         // Already navigated in beforeEach, just verify content
         // Should see the page heading
-        const heading = authenticatedPage.getByRole('heading', {
+        const heading = authenticatedPageWithUniqueUser.getByRole('heading', {
             name: /prompt history/i,
         });
         await expect(heading).toBeVisible({ timeout: 5000 });
     });
 
     test('should show empty state message when no history exists', async ({
-        authenticatedPage,
+        authenticatedPageWithUniqueUser,
     }) => {
         // Page is already navigated to empty state in beforeEach
         // Verify empty state message is visible when no prompts exist
-        const emptyStateContainer = authenticatedPage.locator(
+        const emptyStateContainer = authenticatedPageWithUniqueUser.locator(
             'text=/no prompt history yet\./i',
         );
         await expect(emptyStateContainer).toBeVisible({ timeout: 5000 });
 
         // Verify there's a link to create the first prompt
-        const createLink = authenticatedPage.getByRole('link', {
+        const createLink = authenticatedPageWithUniqueUser.getByRole('link', {
             name: /create your first optimised prompt/i,
         });
         await expect(createLink).toBeVisible({ timeout: 5000 });
     });
 
     test('should show "Create New" button in header', async ({
-        authenticatedPage,
+        authenticatedPageWithUniqueUser,
     }) => {
         // Page already navigated in beforeEach
         // Should see "Create New" button
-        const createButton = authenticatedPage.getByRole('link', {
+        const createButton = authenticatedPageWithUniqueUser.getByRole('link', {
             name: /create new/i,
         });
         await expect(createButton).toBeVisible({ timeout: 5000 });
@@ -91,11 +91,11 @@ test.describe('Prompt Builder History - Empty State', () => {
     });
 
     test('should navigate to prompt optimiser when clicking empty state link', async ({
-        authenticatedPage,
+        authenticatedPageWithUniqueUser,
     }) => {
         // Page already navigated in beforeEach to empty state
         // Try to click the create link if available
-        const createLink = authenticatedPage.getByRole('link', {
+        const createLink = authenticatedPageWithUniqueUser.getByRole('link', {
             name: /create your first optimised prompt|create new/i,
         });
 
@@ -103,25 +103,26 @@ test.describe('Prompt Builder History - Empty State', () => {
 
         if (linkExists) {
             // Wait for navigation before clicking
-            const navigationPromise = authenticatedPage.waitForURL(
-                /\/prompt-builder/,
-                {
+            const navigationPromise =
+                authenticatedPageWithUniqueUser.waitForURL(/\/prompt-builder/, {
                     timeout: 5000,
-                },
-            );
+                });
 
             await createLink.click();
             await navigationPromise;
 
             // Should navigate to prompt builder
-            expect(authenticatedPage.url()).toContain('/prompt-builder');
+            expect(authenticatedPageWithUniqueUser.url()).toContain(
+                '/prompt-builder',
+            );
 
             // Should see the task input form
-            const taskInput = authenticatedPage.getByLabel(/task description/i);
+            const taskInput =
+                authenticatedPageWithUniqueUser.getByLabel(/task description/i);
             await expect(taskInput).toBeVisible({ timeout: 5000 });
         } else {
             // If the empty state link isn't visible, just verify we're on the history page
-            expect(authenticatedPage.url()).toContain('/history');
+            expect(authenticatedPageWithUniqueUser.url()).toContain('/history');
         }
     });
 });
@@ -663,13 +664,16 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Click the first row
         const firstRow = authenticatedPage.locator('tbody tr').first();
+        await expect(firstRow).toBeVisible({ timeout: 5000 });
+        const taskCell = firstRow.locator('[data-testid="table-cell-task"]');
+        await expect(taskCell).toBeVisible({ timeout: 5000 });
 
         // Wait for navigation after clicking
         await Promise.all([
             authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
                 timeout: 5000,
             }),
-            firstRow.click(),
+            taskCell.click(),
         ]);
 
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
@@ -688,6 +692,7 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Focus and press Enter on first row
         const firstRow = authenticatedPage.locator('tbody tr').first();
+        await expect(firstRow).toBeVisible({ timeout: 5000 });
         await firstRow.focus();
 
         // Wait for navigation after pressing Enter
@@ -839,11 +844,15 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         // Rows should still be clickable
         const firstRow = authenticatedPage.locator('tbody tr').first();
         await expect(firstRow).toBeVisible();
+        const taskCell = firstRow.locator('[data-testid="table-cell-task"]');
+        await expect(taskCell).toBeVisible();
 
-        await firstRow.click();
+        await taskCell.click();
 
         // Should navigate
-        await authenticatedPage.waitForURL(/\/prompt-builder\/\d+/);
+        await authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
+            timeout: 5000,
+        });
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);
     });
 
@@ -944,6 +953,9 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Click on a prompt
         const firstRow = authenticatedPage.locator('tbody tr').first();
+        await expect(firstRow).toBeVisible({ timeout: 5000 });
+        const taskCell = firstRow.locator('[data-testid="table-cell-task"]');
+        await expect(taskCell).toBeVisible({ timeout: 5000 });
 
         // Wait for navigation after clicking
         const navPromise = authenticatedPage.waitForURL(
@@ -952,7 +964,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
                 timeout: 10000,
             },
         );
-        await firstRow.click();
+        await taskCell.click();
         await navPromise;
 
         expect(authenticatedPage.url()).toMatch(/\/prompt-builder\/\d+/);

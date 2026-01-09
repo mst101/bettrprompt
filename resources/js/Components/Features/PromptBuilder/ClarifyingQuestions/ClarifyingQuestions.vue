@@ -202,7 +202,9 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
 
     try {
         const response = await axios.post(
-            localeRoute('prompt-builder.answer', props.promptRun.id),
+            localeRoute('prompt-builder.answer', {
+                promptRun: props.promptRun.id,
+            }),
             {
                 question_index: questionIndex,
                 answer: value,
@@ -281,7 +283,9 @@ const submitAllAnswers = async () => {
 
     try {
         await axios.post(
-            localeRoute('prompt-builder.generate', props.promptRun.id),
+            localeRoute('prompt-builder.generate', {
+                promptRun: props.promptRun.id,
+            }),
             {
                 question_answers: payload,
             },

@@ -455,12 +455,17 @@ const handleDelete = async () => {
         return;
     }
 
-    router.delete(localeRoute('prompt-builder.destroy', props.promptRun.id), {
-        onSuccess: () => {
-            // Redirect to history page after successful deletion
-            router.visit(localeRoute('prompt-builder.history'));
+    router.delete(
+        localeRoute('prompt-builder.destroy', {
+            promptRun: props.promptRun.id,
+        }),
+        {
+            onSuccess: () => {
+                // Redirect to history page after successful deletion
+                router.visit(localeRoute('prompt-builder.history'));
+            },
         },
-    });
+    );
 };
 
 /**
@@ -469,7 +474,9 @@ const handleDelete = async () => {
 const retryWorkflow = () => {
     // Use the existing retry endpoint which handles all workflow failures
     router.post(
-        localeRoute('prompt-builder.retry', props.promptRun.id),
+        localeRoute('prompt-builder.retry', {
+            promptRun: props.promptRun.id,
+        }),
         {},
         {
             onSuccess: () => {

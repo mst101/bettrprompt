@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /**
  * End-to-end tests for the Feedback feature
@@ -72,7 +72,7 @@ test.describe('Feedback - Unauthenticated Access', () => {
         // Verify Likert scales are present (there should be 3 of them)
         // The LikertScale component uses buttons, not radio inputs
         const likertButtons = page.getByRole('button', {
-            name: /select option [1-7]/i,
+            name: /select [1-7]/i,
         });
         const buttonCount = await likertButtons.count();
         expect(buttonCount).toBeGreaterThanOrEqual(21); // 3 questions × 7 options = 21 buttons

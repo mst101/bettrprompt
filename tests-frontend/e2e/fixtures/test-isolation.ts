@@ -1,4 +1,5 @@
 import type { Browser, BrowserContext, Page } from '@playwright/test';
+import { withLocale } from '../helpers/locale';
 
 /**
  * Test Isolation Utilities
@@ -68,7 +69,7 @@ export async function resetPageState(
     await clearAllStorage(page);
 
     // Navigate to the URL to start fresh
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale(url), { waitUntil: 'domcontentloaded' });
 }
 
 /**

@@ -30,5 +30,8 @@ test('index page displays form for authenticated users', function () {
 test('index page allows guests to access prompt builder', function () {
     $response = $this->getLocale(route('prompt-builder.index', [], false));
 
-    $response->assertRedirect(route('login'));
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('PromptBuilder/Index')
+    );
 });

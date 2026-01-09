@@ -299,10 +299,9 @@ const submitAnswers = () => {
         submitError.value = null;
 
         router.post(
-            localeRoute(
-                'prompt-builder.pre-analysis-answers',
-                props.promptRun.id,
-            ),
+            localeRoute('prompt-builder.pre-analysis-answers', {
+                promptRun: props.promptRun.id,
+            }),
             { answers: finalAnswers },
             {
                 onSuccess: () => {
@@ -328,7 +327,9 @@ const continueToAnalysis = () => {
     submitError.value = null;
 
     router.post(
-        localeRoute('prompt-builder.pre-analysis-answers', props.promptRun.id),
+        localeRoute('prompt-builder.pre-analysis-answers', {
+            promptRun: props.promptRun.id,
+        }),
         { answers: answers.value },
         {
             onSuccess: () => {

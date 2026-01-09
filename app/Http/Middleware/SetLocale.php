@@ -44,26 +44,49 @@ class SetLocale
         // 1. Check authenticated user preference
         $user = $request->user();
         if ($user && $user->language_code) {
-            $userLocale = $user->language_code;
-            if (in_array($userLocale, config('app.supported_locales'))) {
+            $userLocale = self::normalizeLocale($user->language_code);
+            if ($userLocale && in_array($userLocale, config('app.supported_locales'))) {
                 return $userLocale;
             }
         }
 
         // 2. Check session preference
-        $sessionLocale = session('locale');
+        $sessionLocale = self::normalizeLocale(session('locale'));
         if ($sessionLocale && in_array($sessionLocale, config('app.supported_locales'))) {
             return $sessionLocale;
         }
 
         // 3. Check browser Accept-Language header
-        $browserLocale = $request->getPreferredLanguage(config('app.supported_locales'));
+        $browserLocale = self::normalizeLocale(
+            $request->getPreferredLanguage(config('app.supported_locales'))
+        );
         if ($browserLocale) {
             return $browserLocale;
         }
 
         // 4. Fallback to default
         return config('app.locale', 'en');
+    }
+
+    /**
+     * Normalize locale formats (e.g. en_GB -> en-GB) and casing.
+     */
+    private static function normalizeLocale(?string $locale): ?string
+    {
+        if (! $locale) {
+            return null;
+        }
+
+        $normalized = str_replace('_', '-', $locale);
+        $supported = config('app.supported_locales', []);
+
+        foreach ($supported as $supportedLocale) {
+            if (strtolower($supportedLocale) === strtolower($normalized)) {
+                return $supportedLocale;
+            }
+        }
+
+        return $normalized;
     }
 
     /**

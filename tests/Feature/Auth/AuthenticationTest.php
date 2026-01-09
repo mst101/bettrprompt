@@ -10,7 +10,7 @@ test('login screen redirects to home page with login modal open', function () {
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create([
-        'language_code' => 'en',
+        'language_code' => 'en-US',
     ]);
 
     $response = $this->withHeader('Accept-Language', $this->testLocale)->post('/login', [

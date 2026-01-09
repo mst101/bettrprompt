@@ -81,6 +81,43 @@ Route::prefix('{locale}')
         Route::patch('/visitor/personality', [VisitorController::class, 'updatePersonality'])
             ->name('visitor.personality.update');
 
+        // Prompt builder routes (public, supports guest visitors)
+        Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
+            ->name('prompt-builder.index');
+        Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'preAnalyse'])
+            ->name('prompt-builder.pre-analyse');
+        Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
+            [PromptBuilderController::class, 'analyse'])
+            ->name('prompt-builder.pre-analysis-answers');
+        Route::post('/prompt-builder/{promptRun}/update-pre-analysis-answers',
+            [PromptBuilderController::class, 'updatePreAnalysisAnswers'])
+            ->name('prompt-builder.update-pre-analysis-answers');
+        Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
+            ->name('prompt-builder.show');
+        Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
+            ->name('prompt-builder.full-details');
+        Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
+            ->name('prompt-builder.answer');
+        Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
+            ->name('prompt-builder.go-back');
+        Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
+            ->name('prompt-builder.retry');
+        Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
+            ->name('prompt-builder.generate');
+        Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
+            [PromptBuilderController::class, 'createChild'])
+            ->name('prompt-builder.create-child-from-task');
+        Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
+            [PromptBuilderController::class, 'createChildFromAnswers'])
+            ->name('prompt-builder.create-child-from-answers');
+        Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
+            [PromptBuilderController::class, 'switchFramework'])
+            ->name('prompt-builder.create-child-with-framework');
+        Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
+            ->name('prompt-builder.destroy');
+        Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
+            ->name('prompt-builder.update-prompt');
+
         // Subscription routes (authenticated)
         Route::middleware(['auth'])->group(function () {
             // Checkout
@@ -158,42 +195,6 @@ Route::prefix('{locale}')
             Route::delete('/profile/tools', [ProfileController::class, 'clearTools'])->name('profile.tools.clear');
             // Account deletion
             Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-            // Prompt builder routes
-            Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
-                ->name('prompt-builder.index');
-            Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'preAnalyse'])
-                ->name('prompt-builder.pre-analyse');
-            Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
-                [PromptBuilderController::class, 'analyse'])
-                ->name('prompt-builder.pre-analysis-answers');
-            Route::post('/prompt-builder/{promptRun}/update-pre-analysis-answers', [PromptBuilderController::class, 'updatePreAnalysisAnswers'])
-                ->name('prompt-builder.update-pre-analysis-answers');
-            Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
-                ->name('prompt-builder.show');
-            Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
-                ->name('prompt-builder.full-details');
-            Route::post('/prompt-builder/{promptRun}/answer', [PromptBuilderController::class, 'answerQuestion'])
-                ->name('prompt-builder.answer');
-            Route::post('/prompt-builder/{promptRun}/go-back', [PromptBuilderController::class, 'goBackToPreviousQuestion'])
-                ->name('prompt-builder.go-back');
-            Route::post('/prompt-builder/{promptRun}/retry', [PromptBuilderController::class, 'retry'])
-                ->name('prompt-builder.retry');
-            Route::post('/prompt-builder/{promptRun}/generate', [PromptBuilderController::class, 'generate'])
-                ->name('prompt-builder.generate');
-            Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
-                [PromptBuilderController::class, 'createChild'])
-                ->name('prompt-builder.create-child-from-task');
-            Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
-                [PromptBuilderController::class, 'createChildFromAnswers'])
-                ->name('prompt-builder.create-child-from-answers');
-            Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
-                [PromptBuilderController::class, 'switchFramework'])
-                ->name('prompt-builder.create-child-with-framework');
-            Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
-                ->name('prompt-builder.destroy');
-            Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
-                ->name('prompt-builder.update-prompt');
 
             // Prompt history (requires authentication)
             Route::get('/history', [PromptBuilderController::class, 'history'])

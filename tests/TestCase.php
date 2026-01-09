@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\URL;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected string $testLocale = 'en';
+    protected string $testLocale = 'en-US';
 
     protected function setUp(): void
     {

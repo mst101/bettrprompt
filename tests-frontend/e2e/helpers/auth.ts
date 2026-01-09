@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { withLocale } from './locale';
 
 /**
  * Authentication helper for e2e tests
@@ -61,11 +62,13 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     await acceptCookies(page);
 
     // Check if already logged in to avoid unnecessary login attempts
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     const userMenu = page.getByRole('button', { name: /user menu/i });
     const isAlreadyLoggedIn = await userMenu
-        .isVisible({ timeout: 3000 })
+        .first()
+        .waitFor({ state: 'attached', timeout: 3000 })
+        .then(() => true)
         .catch(() => false);
 
     if (isAlreadyLoggedIn) {
@@ -101,7 +104,7 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     }, TEST_USER.email);
 
     // Navigate away and back to trigger Inertia to reload with auth
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     // Verify we're logged in by checking for the user menu button
     const userMenuAfterLogin = page.getByRole('button', {
@@ -112,7 +115,9 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     let isLoggedIn = false;
     for (let attempt = 0; attempt < 3; attempt++) {
         isLoggedIn = await userMenuAfterLogin
-            .isVisible({ timeout: 2000 })
+            .first()
+            .waitFor({ state: 'attached', timeout: 2000 })
+            .then(() => true)
             .catch(() => false);
 
         if (isLoggedIn) {
@@ -195,11 +200,13 @@ export async function loginWithUniqueName(
     await acceptCookies(page);
 
     // Check if already logged in
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     const userMenu = page.getByRole('button', { name: /user menu/i });
     const isAlreadyLoggedIn = await userMenu
-        .isVisible({ timeout: 3000 })
+        .first()
+        .waitFor({ state: 'attached', timeout: 3000 })
+        .then(() => true)
         .catch(() => false);
 
     if (isAlreadyLoggedIn) {
@@ -246,7 +253,7 @@ export async function loginWithUniqueName(
     );
 
     // Navigate away and back to trigger Inertia to reload with auth
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     // Verify we're logged in
     const userMenuAfterLogin = page.getByRole('button', {
@@ -256,7 +263,9 @@ export async function loginWithUniqueName(
     let isLoggedIn = false;
     for (let attempt = 0; attempt < 3; attempt++) {
         isLoggedIn = await userMenuAfterLogin
-            .isVisible({ timeout: 2000 })
+            .first()
+            .waitFor({ state: 'attached', timeout: 2000 })
+            .then(() => true)
             .catch(() => false);
 
         if (isLoggedIn) {
@@ -289,7 +298,7 @@ export async function loginWithMockOAuth(
     await acceptCookies(page);
 
     // First navigate to home page to establish base URL context
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     // Use the test-only OAuth endpoint via Playwright's API request
     // Manually add X-Test-Auth header since page.request doesn't go through page.route() interceptors
@@ -311,7 +320,7 @@ export async function loginWithMockOAuth(
     }
 
     // Navigate to trigger Inertia to reload with auth
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto(withLocale('/'), { waitUntil: 'domcontentloaded' });
 
     // Verify we're logged in
     const userMenu = page.getByRole('button', { name: /user menu/i });

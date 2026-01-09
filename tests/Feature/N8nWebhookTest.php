@@ -35,7 +35,7 @@ test('webhook rejects missing secret', function () {
     ], false); // No secret
 
     $response->assertStatus(403);
-    $response->assertJson(['error' => 'Unauthorised']);
+    $response->assertJson(['error' => 'Unauthorized']);
 });
 
 test('webhook rejects invalid secret', function () {
@@ -48,7 +48,7 @@ test('webhook rejects invalid secret', function () {
     ], 'invalid-secret');
 
     $response->assertStatus(403);
-    $response->assertJson(['error' => 'Unauthorised']);
+    $response->assertJson(['error' => 'Unauthorized']);
 });
 
 test('webhook validates prompt run id required', function () {

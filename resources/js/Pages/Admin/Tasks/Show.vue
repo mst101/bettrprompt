@@ -32,20 +32,28 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', runId),
+            localeRoute('admin.prompt-runs.show', {
+                promptRun: runId,
+            }),
             '_blank',
         );
         return;
     }
 
     // Normal left click - use Inertia navigation
-    router.visit(localeRoute('admin.prompt-runs.show', runId));
+    router.visit(
+        localeRoute('admin.prompt-runs.show', {
+            promptRun: runId,
+        }),
+    );
 };
 
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
     if (event.button === 1) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', runId),
+            localeRoute('admin.prompt-runs.show', {
+                promptRun: runId,
+            }),
             '_blank',
         );
     }

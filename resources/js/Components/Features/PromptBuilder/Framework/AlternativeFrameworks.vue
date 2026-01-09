@@ -38,10 +38,9 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     switchingFramework.value = frameworkCode;
 
     router.post(
-        localeRoute(
-            'prompt-builder.create-child-with-framework',
-            props.promptRunId,
-        ),
+        localeRoute('prompt-builder.create-child-with-framework', {
+            promptRun: props.promptRunId,
+        }),
         {
             framework_code: frameworkCode,
         },
@@ -54,7 +53,9 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 // This ensures the component mounts with completely fresh props
                 if (newPromptRunId) {
                     router.visit(
-                        localeRoute('prompt-builder.show', newPromptRunId),
+                        localeRoute('prompt-builder.show', {
+                            promptRun: newPromptRunId,
+                        }),
                         {
                             method: 'get',
                             preserveScroll: true,

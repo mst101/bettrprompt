@@ -32,19 +32,24 @@ export function usePromptAnswering(
         if (!answerForm.answer.trim()) return;
 
         isSubmitting.value = true;
-        answerForm.post(localeRoute('prompt-builder.answer', promptRunId), {
-            preserveScroll: true,
-            onSuccess: async () => {
-                // Don't reset the form here - the watcher will set the correct answer
-                // for the next question based on currentQuestionAnswer prop
-                isSubmitting.value = false;
-                await nextTick();
-                onNavigate?.();
+        answerForm.post(
+            localeRoute('prompt-builder.answer', {
+                promptRun: promptRunId,
+            }),
+            {
+                preserveScroll: true,
+                onSuccess: async () => {
+                    // Don't reset the form here - the watcher will set the correct answer
+                    // for the next question based on currentQuestionAnswer prop
+                    isSubmitting.value = false;
+                    await nextTick();
+                    onNavigate?.();
+                },
+                onError: () => {
+                    isSubmitting.value = false;
+                },
             },
-            onError: () => {
-                isSubmitting.value = false;
-            },
-        });
+        );
     };
 
     const handleTranscription = (text: string) => {
@@ -62,7 +67,9 @@ export function usePromptAnswering(
     const goBackToPreviousQuestion = () => {
         isSubmitting.value = true;
         router.post(
-            localeRoute('prompt-builder.go-back', promptRunId),
+            localeRoute('prompt-builder.go-back', {
+                promptRun: promptRunId,
+            }),
             {},
             {
                 preserveScroll: true,

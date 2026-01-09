@@ -261,17 +261,17 @@ test('update optimised prompt allows newlines and formatting', function () {
 });
 
 test('update optimised prompt requires authentication or ownership', function () {
-    // Test unauthenticated access
+    // Test unauthenticated access to unowned prompt
     $promptRun = PromptRun::factory()->create([
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patchLocale(route('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt',
     ]);
 
-    // Unauthenticated access redirects to login
-    $response->assertRedirect(route('login'));
+    // Unauthenticated access to unowned prompt returns Forbidden
+    $response->assertForbidden();
 });

@@ -9,6 +9,7 @@ import {
     createTestPromptRun,
     waitForEchoConnection,
 } from '../helpers/broadcast';
+import { withLocale } from '../helpers/locale';
 import { AuthPage } from '../pages/AuthPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
@@ -60,6 +61,30 @@ export const test = base.extend<TestFixtures>({
      * Sets an environment flag that the backend can use to return mock responses
      */
     page: async ({ page }, use) => {
+        const originalGoto = page.goto.bind(page);
+        const originalWaitForURL = page.waitForURL.bind(page);
+
+        const pageWithLocale = page as Page & {
+            goto: typeof page.goto;
+            waitForURL: typeof page.waitForURL;
+        };
+
+        pageWithLocale.goto = ((url, options) => {
+            if (typeof url === 'string') {
+                return originalGoto(withLocale(url), options);
+            }
+
+            return originalGoto(url, options);
+        }) as typeof page.goto;
+
+        pageWithLocale.waitForURL = ((url, options) => {
+            if (typeof url === 'string') {
+                return originalWaitForURL(withLocale(url), options);
+            }
+
+            return originalWaitForURL(url, options);
+        }) as typeof page.waitForURL;
+
         // Set the test flag that the backend will check
         // The backend's N8nWorkflowClient should check for this
         // and return mock responses instead of calling real n8n
@@ -99,7 +124,9 @@ export const test = base.extend<TestFixtures>({
         // Verify login was successful
         const isLoggedIn = await page
             .getByRole('button', { name: /user menu/i })
-            .isVisible({ timeout: 5000 })
+            .first()
+            .waitFor({ state: 'attached', timeout: 5000 })
+            .then(() => true)
             .catch(() => false);
 
         if (!isLoggedIn) {
@@ -130,7 +157,9 @@ export const test = base.extend<TestFixtures>({
         // Verify login was successful
         const isLoggedIn = await page
             .getByRole('button', { name: /user menu/i })
-            .isVisible({ timeout: 5000 })
+            .first()
+            .waitFor({ state: 'attached', timeout: 5000 })
+            .then(() => true)
             .catch(() => false);
 
         if (!isLoggedIn) {
