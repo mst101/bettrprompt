@@ -670,14 +670,14 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Wait for navigation after clicking
         await Promise.all([
-            authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
+            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
                 timeout: 5000,
             }),
             taskCell.click(),
         ]);
 
         expect(authenticatedPage.url()).toMatch(
-            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
         );
 
         // Should see the prompt details page (verify by heading)
@@ -699,14 +699,14 @@ test.describe('Prompt Builder History - Navigation', () => {
 
         // Wait for navigation after pressing Enter
         await Promise.all([
-            authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
+            authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
                 timeout: 5000,
             }),
             firstRow.press('Enter'),
         ]);
 
         expect(authenticatedPage.url()).toMatch(
-            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
         );
     });
 
@@ -854,11 +854,11 @@ test.describe('Prompt Builder History - Responsive Design', () => {
         await taskCell.click();
 
         // Should navigate
-        await authenticatedPage.waitForURL(/\/prompt-builder\/[a-z]+/, {
+        await authenticatedPage.waitForURL(/\/prompt-builder\/\d+/, {
             timeout: 5000,
         });
         expect(authenticatedPage.url()).toMatch(
-            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
         );
     });
 
@@ -965,7 +965,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
 
         // Wait for navigation after clicking
         const navPromise = authenticatedPage.waitForURL(
-            /\/prompt-builder\/[a-z]+/,
+            /\/prompt-builder\/\d+/,
             {
                 timeout: 10000,
             },
@@ -974,7 +974,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await navPromise;
 
         expect(authenticatedPage.url()).toMatch(
-            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
         );
 
         // Go back and wait for navigation to history page
