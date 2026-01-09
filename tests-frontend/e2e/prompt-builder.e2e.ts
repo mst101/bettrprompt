@@ -100,7 +100,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(
-            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+/,
         );
 
         // Wait for page content to load
