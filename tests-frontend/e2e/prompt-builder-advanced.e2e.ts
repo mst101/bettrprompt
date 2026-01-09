@@ -34,7 +34,7 @@ test.describe('Prompt Builder - Prompt Show Page', () => {
 
         // Verify we navigated to a prompt show page
         const url = promptBuilderPage.page.url();
-        expect(url).toMatch(/\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/);
+        expect(url).toMatch(/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/);
 
         // Verify page heading is visible
         const mainContent = promptBuilderPage.page.getByRole('heading').first();

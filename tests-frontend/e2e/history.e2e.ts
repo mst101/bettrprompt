@@ -677,7 +677,7 @@ test.describe('Prompt Builder History - Navigation', () => {
         ]);
 
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Should see the prompt details page (verify by heading)
@@ -706,7 +706,7 @@ test.describe('Prompt Builder History - Navigation', () => {
         ]);
 
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
     });
 
@@ -858,7 +858,7 @@ test.describe('Prompt Builder History - Responsive Design', () => {
             timeout: 5000,
         });
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
     });
 
@@ -974,7 +974,7 @@ test.describe('Prompt Builder History - Edge Cases', () => {
         await navPromise;
 
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Go back and wait for navigation to history page

@@ -195,7 +195,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Click on the Questions tab
@@ -409,7 +409,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
                 },
             );
             expect(authenticatedPage.url()).toMatch(
-                /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+                /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
             );
 
             // Should see the tabs navigation on the show page
@@ -527,7 +527,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
         // Verify we're on the show page with correct structure
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Verify the page has the main prompt container
@@ -664,7 +664,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Should display an error message (or page loaded successfully - both are valid outcomes)
@@ -672,7 +672,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Either error is displayed, or page loaded successfully (both are valid test outcomes)
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
     });
 
@@ -698,7 +698,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Should display an error message
@@ -706,7 +706,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Page should load successfully
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
     });
 
@@ -735,7 +735,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Verify we're on the show page
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
 
         // Should display error
@@ -765,7 +765,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Should be on show page with successful workflow
         expect(authenticatedPage.url()).toMatch(
-            /\[a-z\]{2}(-[A-Z\]{2})?\/prompt-builder\/[a-z]+/,
+            /[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/,
         );
     });
 });
