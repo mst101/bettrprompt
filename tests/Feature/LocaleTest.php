@@ -12,18 +12,16 @@ test('supported locales are configured correctly', function () {
     expect($locales)->toContain('en-GB');
     expect($locales)->toContain('de');
     expect($locales)->toContain('fr');
-    expect($locales)->toContain('ar');
-    expect($locales)->toContain('he');
+    expect($locales)->toContain('es');
+    expect($locales)->toHaveCount(5);
 });
 
-test('rtl locales are configured correctly', function () {
+test('rtl locales are not configured', function () {
     $rtlLocales = config('app.rtl_locales');
 
     expect($rtlLocales)->toBeArray();
-    expect($rtlLocales)->toContain('ar');
-    expect($rtlLocales)->toContain('he');
-    expect($rtlLocales)->not->toContain('en');
-    expect($rtlLocales)->not->toContain('de');
+    expect($rtlLocales)->not->toContain('ar');
+    expect($rtlLocales)->not->toContain('he');
 });
 
 test('SetLocale middleware detects locale from request', function () {
@@ -50,8 +48,9 @@ test('SetLocale middleware uses user language preference when authenticated', fu
 });
 
 test('SetLocale isRtl returns true for rtl locales', function () {
-    expect(SetLocale::isRtl('ar'))->toBeTrue();
-    expect(SetLocale::isRtl('he'))->toBeTrue();
+    // No RTL locales are currently supported
+    expect(SetLocale::isRtl('ar'))->toBeFalse();
+    expect(SetLocale::isRtl('he'))->toBeFalse();
 });
 
 test('SetLocale isRtl returns false for ltr locales', function () {
@@ -61,8 +60,9 @@ test('SetLocale isRtl returns false for ltr locales', function () {
 });
 
 test('SetLocale getDirection returns correct direction', function () {
-    expect(SetLocale::getDirection('ar'))->toBe('rtl');
-    expect(SetLocale::getDirection('he'))->toBe('rtl');
+    // All currently supported locales are LTR
+    expect(SetLocale::getDirection('ar'))->toBe('ltr');
+    expect(SetLocale::getDirection('he'))->toBe('ltr');
     expect(SetLocale::getDirection('en'))->toBe('ltr');
     expect(SetLocale::getDirection('de'))->toBe('ltr');
 });

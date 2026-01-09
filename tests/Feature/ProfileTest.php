@@ -105,9 +105,10 @@ test('user location can be updated', function () {
             'languageCode' => 'en-GB',
         ]);
 
+    // When language changes, controller redirects to new locale URL
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect($this->localeRoute('profile.edit'));
+        ->assertRedirect('https://app.localhost/en-GB/profile');
 
     $user->refresh();
 
