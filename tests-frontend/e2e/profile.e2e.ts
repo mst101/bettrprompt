@@ -9,9 +9,7 @@ test.describe('Profile - Unauthenticated Access', () => {
 
         // Should be redirected to home or login
         const url = page.url();
-        expect(url).toMatch(
-            /\/[a-z]{2}(-[A-Z]{2})?\/((\?modal=login)|login)?$/,
-        );
+        expect(url).toMatch(/\/[a-z]{2}(-[A-Z]{2})?(\/login)?(\?.*)?$/);
     });
 });
 

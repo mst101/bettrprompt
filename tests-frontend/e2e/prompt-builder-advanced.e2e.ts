@@ -28,13 +28,13 @@ test.describe('Prompt Builder - Prompt Show Page', () => {
         await promptBuilderPage.submitButton.click({ timeout: 10000 });
 
         // Wait for page navigation (URL change indicates submission was received)
-        await promptBuilderPage.page.waitForURL(
-            /\/en-GB\/prompt-builder\/[a-z]+/,
-        );
+        await promptBuilderPage.page.waitForURL(/\/en-GB\/prompt-builder\/\d+/);
 
         // Verify we navigated to a prompt show page
         const url = promptBuilderPage.page.url();
-        expect(url).toMatch(/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/[a-z]+/);
+        expect(url).toMatch(
+            /\/[a-z]{2}(-[A-Z]{2})?\/prompt-builder\/\d+(\?.*)?$/,
+        );
 
         // Verify page heading is visible
         const mainContent = promptBuilderPage.page.getByRole('heading').first();
