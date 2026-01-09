@@ -11,16 +11,26 @@ Key idea: **encryption at rest is baseline security, not the premium feature**. 
 | Tier | Price | Prompts | Privacy | Data Usage |
 |------|-------|---------|---------|------------|
 | **Free** | £0 | 10/month | Standard | May be used to improve the service (with clear disclosure/consent) |
-| **Unlimited** | £5/month | Unlimited | Standard | May be used to improve the service (with clear disclosure/consent) |
-| **Private** | £15/month or £150/year | Unlimited | Private mode | Not used for training/improvement; restricted internal access |
+| **Unlimited** | £12/month or £120/year | Unlimited | Standard | May be used to improve the service (with clear disclosure/consent) |
+| **Private** | £20/month or £200/year | Unlimited | Private mode | Not used for training/improvement; restricted internal access |
 
-**Annual discount**: ~17% (£150/year = £12.50/month vs £15/month)
+**Annual discount**: ~17% (Unlimited: £120/year = £10/month vs £12/month; Private: £200/year = £16.67/month vs £20/month)
 
-### Two-Tier Data Model
+**Suggested localized price points (fixed per currency, not live FX):**
+
+| Tier | GBP | EUR | USD |
+|------|-----|-----|-----|
+| **Unlimited (Monthly)** | £12/month | €13.99/month | $15.99/month |
+| **Unlimited (Annual)** | £120/year | €139/year | $159/year |
+| **Private (Monthly)** | £20/month | €22.99/month | $26.99/month |
+| **Private (Annual)** | £200/year | €229/year | $269/year |
+
+### Three-Tier Data Model
 
 | Tier | Data Storage | Analytics Access | Use Case |
 |------|-------------|------------------|----------|
 | **Free** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Default - enables product improvement while meeting baseline security expectations |
+| **Unlimited** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Pay for usage; still supports product improvement under clear disclosure/consent |
 | **Private (Paid)** | Encrypted at rest + stronger key separation (user-controlled envelope key) | ❌ Disabled by default | Users needing confidentiality for sensitive prompts; “private mode” behaviour |
 
 **Key Point**: Free-tier data is still encrypted at rest, but may be accessed/used under strict controls for:
@@ -33,9 +43,10 @@ Key idea: **encryption at rest is baseline security, not the premium feature**. 
 ### Key Decisions Made
 
 - ✅ **10 prompts/month free tier** - enough to try the service
-- ✅ **£5/month unlimited tier** - pay for usage, not privacy
-- ✅ **£15/month private tier** - premium for confidentiality and reduced data use
-- ✅ **£150/year annual private option** - ~17% discount for commitment
+- ✅ **£12/month unlimited tier** - pay for usage, not privacy
+- ✅ **£120/year annual unlimited option** - ~17% discount for commitment
+- ✅ **£20/month private tier** - premium for confidentiality and reduced data use
+- ✅ **£200/year annual private option** - ~17% discount for commitment
 - ✅ **Encryption at rest for all tiers** - baseline protection for sensitive prompt/personality data
 - ✅ **Cross-device access** required - rules out client-side only storage
 - ✅ **Recovery phrase** option - balance security with usability
@@ -491,9 +502,11 @@ class UserEncrypted implements CastsAttributes
 
 - **Location**: UK-based company
 - **Compliance**: EU law (GDPR), UK VAT
-- **Private pricing**: £15/month or £150/year
-- **Year 1**: ~500 private subscribers = ~£75,000 - £90,000 revenue
-- **Year 2**: ~5,000 private subscribers = ~£750,000 - £900,000 revenue
+- **Pricing**:
+  - Unlimited: £12/month or £120/year
+  - Private: £20/month or £200/year
+- **Year 1**: ~500 private subscribers = ~£100,000 - £120,000 revenue
+- **Year 2**: ~5,000 private subscribers = ~£1,000,000 - £1,200,000 revenue
 
 ### Comprehensive Provider Comparison
 
@@ -525,32 +538,32 @@ class UserEncrypted implements CastsAttributes
 - Strong European presence
 - Less established Laravel ecosystem
 
-### Cost Breakdown (Updated Private Pricing: £15/month, £150/year)
+### Cost Breakdown (Updated Private Pricing: £20/month, £200/year)
 
 Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 
 **Stripe:**
-- Monthly (£15): ~£0.43 fee per transaction (2.8%)
-- Annual (£150): ~£2.45 fee per transaction (1.6%)
-- Year 1: 250×12×£0.43 + 250×£2.45 = **~£1,903**
-- Year 2 (5,000 users): **~£19,030**
+- Monthly (£20): ~£0.50 fee per transaction (2.5%)
+- Annual (£200): ~£3.20 fee per transaction (1.6%)
+- Year 1: 250×12×£0.50 + 250×£3.20 = **~£2,300**
+- Year 2 (5,000 users): **~£23,000**
 
 **Paddle/LemonSqueezy:**
-- Monthly (£15): £1.25 fee per transaction (8.3%)
-- Annual (£150): £8.00 fee per transaction (5.3%)
-- Year 1: 250×12×£1.25 + 250×£8.00 = **~£5,750**
-- Year 2 (5,000 users): **~£57,500**
+- Monthly (£20): £1.50 fee per transaction (7.5%)
+- Annual (£200): £10.50 fee per transaction (5.25%)
+- Year 1: 250×12×£1.50 + 250×£10.50 = **~£7,125**
+- Year 2 (5,000 users): **~£71,250**
 
 **GoCardless (Direct Debit only):**
-- Monthly (£15): £0.35 fee per transaction (2.3%)
-- Annual (£150): £1.70 fee per transaction (1.1%)
-- Year 1: **~£1,475** (if all via DD)
+- Monthly (£20): £0.40 fee per transaction (2.0%)
+- Annual (£200): £2.20 fee per transaction (1.1%)
+- Year 1: **~£1,750** (if all via DD)
 
 ### Recommendation: **Stripe** (Confirmed)
 
 **Why Stripe remains the best choice:**
 
-1. **Cost efficiency**: Saves ~£3,100/year vs Paddle in Year 1, ~£31,000/year in Year 2
+1. **Cost efficiency**: Saves ~£4,800/year vs Paddle in Year 1, ~£48,000/year in Year 2
 
 2. **Laravel Cashier**: First-class integration
    - Subscriptions, trials, invoices out of the box
@@ -583,9 +596,12 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 1. **Create Stripe UK account** at stripe.com
 2. **Install Laravel Cashier**: `composer require laravel/cashier`
 3. **Configure products in Stripe Dashboard**:
+   - Product: "BettrPrompt Unlimited"
+     - Price 1: £12/month (recurring)
+     - Price 2: £120/year (recurring)
    - Product: "BettrPrompt Private"
-   - Price 1: £15/month (recurring)
-   - Price 2: £150/year (recurring)
+     - Price 1: £20/month (recurring)
+     - Price 2: £200/year (recurring)
 4. **Enable Stripe Tax** (optional, £0.50/transaction)
 5. **Register for UK VAT** (if not already, threshold £85k)
 6. **Register for EU OSS** (for EU customers)
@@ -621,14 +637,15 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
             <!-- Unlimited Tier -->
             <div class="pricing-card">
                 <h2>Unlimited</h2>
-                <div class="price">£5/month</div>
+                <div class="price">£12/month</div>
+                <div class="savings">£120/year • Save 17%</div>
                 <ul class="features">
                     <li>✓ Unlimited prompts</li>
                     <li>✓ Personality calibration</li>
                     <li>✓ Encryption at rest</li>
                     <li class="disabled">✗ Private mode</li>
                 </ul>
-                <button @click="subscribe('unlimited')">
+                <button @click="subscribe('unlimited_monthly')">
                     Start Unlimited
                 </button>
             </div>
@@ -642,8 +659,8 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
                     <button :class="{ active: annual }" @click="annual = true">Annual</button>
                 </div>
                 <div class="price">
-                    <span v-if="annual">£150/year</span>
-                    <span v-else>£15/month</span>
+                    <span v-if="annual">£200/year</span>
+                    <span v-else>£20/month</span>
                     <span v-if="annual" class="savings">Save 17%</span>
                 </div>
                 <ul class="features">
@@ -757,22 +774,28 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
                 Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
             </p>
 
-            <div class="pricing-options">
-                <div class="option" @click="selectPlan('unlimited_monthly')">
-                    <h3>Unlimited</h3>
-                    <div class="price">£5/month</div>
-                </div>
-                <div class="option" @click="selectPlan('private_monthly')">
-                    <h3>Private</h3>
-                    <div class="price">£15/month</div>
-                </div>
-                <div class="option featured" @click="selectPlan('private_yearly')">
-                    <div class="badge">Save 17%</div>
-                    <h3>Private (Annual)</h3>
-                    <div class="price">£150/year</div>
-                    <div class="effective">£12.50/month</div>
-                </div>
-            </div>
+	            <div class="pricing-options">
+	                <div class="option" @click="selectPlan('unlimited_monthly')">
+	                    <h3>Unlimited</h3>
+	                    <div class="price">£12/month</div>
+	                </div>
+	                <div class="option" @click="selectPlan('unlimited_yearly')">
+	                    <div class="badge">Save 17%</div>
+	                    <h3>Unlimited (Annual)</h3>
+	                    <div class="price">£120/year</div>
+	                    <div class="effective">£10/month</div>
+	                </div>
+	                <div class="option" @click="selectPlan('private_monthly')">
+	                    <h3>Private</h3>
+	                    <div class="price">£20/month</div>
+	                </div>
+	                <div class="option featured" @click="selectPlan('private_yearly')">
+	                    <div class="badge">Save 17%</div>
+	                    <h3>Private (Annual)</h3>
+	                    <div class="price">£200/year</div>
+	                    <div class="effective">£16.67/month</div>
+	                </div>
+	            </div>
 
             <button @click="subscribe" class="primary">
                 Upgrade Now
@@ -795,37 +818,43 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 // app/Http/Controllers/SubscriptionController.php
 class SubscriptionController extends Controller
 {
-    public function pricing()
-    {
-        return Inertia::render('Pricing', [
-            'plans' => [
-                'unlimited_monthly' => [
-                    'price_id' => config('stripe.prices.unlimited_monthly'),
-                    'price' => 500, // pence
-                    'interval' => 'month',
-                ],
-                'private_monthly' => [
-                    'price_id' => config('stripe.prices.private_monthly'),
-                    'price' => 1500, // pence
-                    'interval' => 'month',
-                ],
-                'private_yearly' => [
-                    'price_id' => config('stripe.prices.private_yearly'),
-                    'price' => 15000, // pence
-                    'interval' => 'year',
-                ],
-            ],
-        ]);
-    }
+	    public function pricing()
+	    {
+	        return Inertia::render('Pricing', [
+	            'plans' => [
+	                'unlimited_monthly' => [
+	                    'price_id' => config('stripe.prices.GBP.unlimited_monthly'),
+	                    'price' => 1200, // pence (£12)
+	                    'interval' => 'month',
+	                ],
+	                'unlimited_yearly' => [
+	                    'price_id' => config('stripe.prices.GBP.unlimited_yearly'),
+	                    'price' => 12000, // pence (£120)
+	                    'interval' => 'year',
+	                ],
+	                'private_monthly' => [
+	                    'price_id' => config('stripe.prices.GBP.private_monthly'),
+	                    'price' => 2000, // pence (£20)
+	                    'interval' => 'month',
+	                ],
+	                'private_yearly' => [
+	                    'price_id' => config('stripe.prices.GBP.private_yearly'),
+	                    'price' => 20000, // pence (£200)
+	                    'interval' => 'year',
+	                ],
+	            ],
+	        ]);
+	    }
 
-    public function subscribe(Request $request)
-    {
-        $request->validate([
-            'plan' => 'required|in:unlimited_monthly,private_monthly,private_yearly',
-        ]);
+	    public function subscribe(Request $request)
+	    {
+	        $request->validate([
+	            'plan' => 'required|in:unlimited_monthly,unlimited_yearly,private_monthly,private_yearly',
+	        ]);
 
-        $user = $request->user();
-        $priceId = config("stripe.prices.{$request->plan}");
+	        $user = $request->user();
+	        $currency = 'GBP';
+	        $priceId = config("stripe.prices.{$currency}.{$request->plan}");
 
         return $user->newSubscription('default', $priceId)
             ->checkout([

@@ -6,12 +6,15 @@ This document details the implementation of BettrPrompt's pricing model using St
 
 ### Pricing Structure
 
-| Tier | Price | Features |
-|------|-------|----------|
-| **Free** | £0 | 10 prompts/month, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
-| **Unlimited** | £5/month | Unlimited prompts, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
-| **Private Monthly** | £15/month | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions) |
-| **Private Annual** | £150/year | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions, ~17% savings) |
+| Tier | GBP | EUR | USD | Features |
+|------|-----|-----|-----|----------|
+| **Free** | £0 | €0 | $0 | 10 prompts/month, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
+| **Unlimited (Monthly)** | £12/month | €13.99/month | $15.99/month | Unlimited prompts, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
+| **Unlimited (Annual)** | £120/year | €139/year | $159/year | Unlimited prompts (save ~17%) |
+| **Private (Monthly)** | £20/month | €22.99/month | $26.99/month | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions) |
+| **Private (Annual)** | £200/year | €229/year | $269/year | Unlimited prompts, Private mode (save ~17%) |
+
+**Currency note:** These are recommended localized price points (not live FX). Keep Stripe prices fixed per currency to avoid fluctuating customer bills.
 
 ---
 
@@ -33,7 +36,12 @@ Description: Unlimited prompts with standard privacy protections
 ```
 
 **Prices:**
-- Monthly: £5.00 GBP, recurring monthly
+- Monthly: £12.00 GBP, recurring monthly
+- Annual: £120.00 GBP, recurring yearly
+- Monthly: €13.99 EUR, recurring monthly
+- Annual: €139.00 EUR, recurring yearly
+- Monthly: $15.99 USD, recurring monthly
+- Annual: $159.00 USD, recurring yearly
 
 **Product: BettrPrompt Private**
 
@@ -43,8 +51,12 @@ Description: Unlimited prompts with Private mode (restricted access + no trainin
 ```
 
 **Prices:**
-- Monthly: £15.00 GBP, recurring monthly
-- Annual: £150.00 GBP, recurring yearly
+- Monthly: £20.00 GBP, recurring monthly
+- Annual: £200.00 GBP, recurring yearly
+- Monthly: €22.99 EUR, recurring monthly
+- Annual: €229.00 EUR, recurring yearly
+- Monthly: $26.99 USD, recurring monthly
+- Annual: $269.00 USD, recurring yearly
 
 Note the Price IDs (e.g., `price_1ABC...`) for configuration.
 
@@ -69,9 +81,21 @@ STRIPE_SECRET=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Price IDs from Stripe Dashboard
-STRIPE_PRICE_UNLIMITED_MONTHLY=price_unlimited_monthly_id_here
-STRIPE_PRICE_PRIVATE_MONTHLY=price_private_monthly_id_here
-STRIPE_PRICE_PRIVATE_YEARLY=price_private_yearly_id_here
+# Recommended: store Price IDs per currency to keep stable localized pricing
+STRIPE_PRICE_UNLIMITED_MONTHLY_GBP=price_unlimited_monthly_gbp_id_here
+STRIPE_PRICE_UNLIMITED_YEARLY_GBP=price_unlimited_yearly_gbp_id_here
+STRIPE_PRICE_PRIVATE_MONTHLY_GBP=price_private_monthly_gbp_id_here
+STRIPE_PRICE_PRIVATE_YEARLY_GBP=price_private_yearly_gbp_id_here
+
+STRIPE_PRICE_UNLIMITED_MONTHLY_EUR=price_unlimited_monthly_eur_id_here
+STRIPE_PRICE_UNLIMITED_YEARLY_EUR=price_unlimited_yearly_eur_id_here
+STRIPE_PRICE_PRIVATE_MONTHLY_EUR=price_private_monthly_eur_id_here
+STRIPE_PRICE_PRIVATE_YEARLY_EUR=price_private_yearly_eur_id_here
+
+STRIPE_PRICE_UNLIMITED_MONTHLY_USD=price_unlimited_monthly_usd_id_here
+STRIPE_PRICE_UNLIMITED_YEARLY_USD=price_unlimited_yearly_usd_id_here
+STRIPE_PRICE_PRIVATE_MONTHLY_USD=price_private_monthly_usd_id_here
+STRIPE_PRICE_PRIVATE_YEARLY_USD=price_private_yearly_usd_id_here
 ```
 
 ### 1.6 Create Stripe Config
@@ -86,9 +110,24 @@ return [
     'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
 
     'prices' => [
-        'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY'),
-        'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY'),
-        'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY'),
+        'GBP' => [
+            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_GBP'),
+            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_GBP'),
+            'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_GBP'),
+            'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_GBP'),
+        ],
+        'EUR' => [
+            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_EUR'),
+            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_EUR'),
+            'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_EUR'),
+            'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_EUR'),
+        ],
+        'USD' => [
+            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_USD'),
+            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_USD'),
+            'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_USD'),
+            'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_USD'),
+        ],
     ],
 
     'free_tier' => [
@@ -325,26 +364,34 @@ class SubscriptionController extends Controller
 	        return Inertia::render('Pricing', [
 	            'plans' => [
 	                'unlimited_monthly' => [
-	                    'priceId' => config('stripe.prices.unlimited_monthly'),
-	                    'price' => 5,
+	                    'priceId' => config('stripe.prices.GBP.unlimited_monthly'),
+	                    'price' => 12,
 	                    'currency' => 'GBP',
 	                    'interval' => 'month',
 	                    'description' => 'Unlimited prompts (standard)',
 	                ],
+	                'unlimited_yearly' => [
+	                    'priceId' => config('stripe.prices.GBP.unlimited_yearly'),
+	                    'price' => 120,
+	                    'currency' => 'GBP',
+	                    'interval' => 'year',
+	                    'description' => 'Unlimited prompts (save ~17%)',
+	                    'monthlyEquivalent' => 10,
+	                ],
 	                'private_monthly' => [
-	                    'priceId' => config('stripe.prices.private_monthly'),
-	                    'price' => 15,
+	                    'priceId' => config('stripe.prices.GBP.private_monthly'),
+	                    'price' => 20,
 	                    'currency' => 'GBP',
 	                    'interval' => 'month',
 	                    'description' => 'Private mode',
 	                ],
 	                'private_yearly' => [
-	                    'priceId' => config('stripe.prices.private_yearly'),
-	                    'price' => 150,
+	                    'priceId' => config('stripe.prices.GBP.private_yearly'),
+	                    'price' => 200,
 	                    'currency' => 'GBP',
 	                    'interval' => 'year',
 	                    'description' => 'Private mode (save ~17%)',
-	                    'monthlyEquivalent' => 12.5,
+	                    'monthlyEquivalent' => 16.67,
 	                ],
 	            ],
 	            'features' => [
@@ -376,14 +423,15 @@ class SubscriptionController extends Controller
     /**
      * Create Stripe Checkout session
      */
-    public function checkout(Request $request)
-    {
-        $request->validate([
-            'plan' => 'required|in:unlimited_monthly,private_monthly,private_yearly',
-        ]);
+	    public function checkout(Request $request)
+	    {
+	        $request->validate([
+	            'plan' => 'required|in:unlimited_monthly,unlimited_yearly,private_monthly,private_yearly',
+	        ]);
 
-        $user = $request->user();
-        $priceId = config("stripe.prices.{$request->plan}");
+	        $user = $request->user();
+	        $currency = 'GBP';
+	        $priceId = config("stripe.prices.{$currency}.{$request->plan}");
 
         if (!$priceId) {
             return back()->withErrors(['plan' => 'Invalid plan selected']);
@@ -525,14 +573,19 @@ class StripeWebhookController extends CashierController
     {
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
-        if ($user) {
-            $subscription = $payload['data']['object'];
-            $priceId = $subscription['items']['data'][0]['price']['id'] ?? null;
-            $privatePrices = [
-                config('stripe.prices.private_monthly'),
-                config('stripe.prices.private_yearly'),
-            ];
-            $tier = in_array($priceId, $privatePrices, true) ? 'private' : 'unlimited';
+	        if ($user) {
+	            $subscription = $payload['data']['object'];
+	            $priceId = $subscription['items']['data'][0]['price']['id'] ?? null;
+	            $prices = config('stripe.prices');
+	            $privatePrices = [
+	                $prices['GBP']['private_monthly'] ?? null,
+	                $prices['GBP']['private_yearly'] ?? null,
+	                $prices['EUR']['private_monthly'] ?? null,
+	                $prices['EUR']['private_yearly'] ?? null,
+	                $prices['USD']['private_monthly'] ?? null,
+	                $prices['USD']['private_yearly'] ?? null,
+	            ];
+	            $tier = in_array($priceId, $privatePrices, true) ? 'private' : 'unlimited';
 
             $user->update([
                 'subscription_tier' => $tier,
@@ -838,6 +891,7 @@ import type { PricingPlan } from '@/Types/subscription';
 interface Props {
     plans: {
         unlimited_monthly: PricingPlan;
+        unlimited_yearly: PricingPlan;
         private_monthly: PricingPlan;
         private_yearly: PricingPlan;
     };
@@ -852,7 +906,7 @@ const props = defineProps<Props>();
 const page = usePage();
 
 const selectedPlan = ref<
-    'unlimited_monthly' | 'private_monthly' | 'private_yearly'
+    'unlimited_monthly' | 'unlimited_yearly' | 'private_monthly' | 'private_yearly'
 >('private_yearly');
 const isLoading = ref(false);
 
@@ -925,7 +979,8 @@ function getStarted() {
                 <!-- Unlimited Tier -->
                 <div class="border rounded-2xl p-8 bg-white">
                     <h2 class="text-2xl font-bold mb-2">Unlimited</h2>
-                    <div class="text-4xl font-bold mb-6">£5<span class="text-lg font-normal text-gray-500">/month</span></div>
+                    <div class="text-4xl font-bold mb-2">£12<span class="text-lg font-normal text-gray-500">/month</span></div>
+                    <div class="text-sm text-gray-500 mb-6">£120/year • Save 17%</div>
 
                     <ul class="space-y-3 mb-8">
                         <li v-for="feature in features.unlimited" :key="feature" class="flex items-center gap-2">
@@ -989,13 +1044,13 @@ function getStarted() {
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold">
-                            £{{ selectedPlan === 'private_yearly' ? '150' : '15' }}
+                            £{{ selectedPlan === 'private_yearly' ? '200' : '20' }}
                             <span class="text-lg font-normal text-gray-500">
                                 /{{ selectedPlan === 'private_yearly' ? 'year' : 'month' }}
                             </span>
                         </div>
                         <div v-if="selectedPlan === 'private_yearly'" class="text-green-600 text-sm mt-1">
-                            £12.50/month • Save 17%
+                            £16.67/month • Save 17%
                         </div>
                     </div>
 
@@ -1292,7 +1347,7 @@ function subscribe() {
                 Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
             </p>
 
-            <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-6">
                 <button
                     @click="selectedPlan = 'unlimited_monthly'"
                     :class="[
@@ -1301,7 +1356,22 @@ function subscribe() {
                     ]"
                 >
                     <div class="font-semibold">Unlimited</div>
-                    <div class="text-2xl font-bold">£5<span class="text-sm font-normal">/mo</span></div>
+                    <div class="text-2xl font-bold">£12<span class="text-sm font-normal">/mo</span></div>
+                </button>
+
+                <button
+                    @click="selectedPlan = 'unlimited_yearly'"
+                    :class="[
+                        'p-4 border-2 rounded-lg text-left transition relative',
+                        selectedPlan === 'unlimited_yearly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    ]"
+                >
+                    <div class="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        Save 17%
+                    </div>
+                    <div class="font-semibold">Unlimited (Annual)</div>
+                    <div class="text-2xl font-bold">£120<span class="text-sm font-normal">/yr</span></div>
+                    <div class="text-sm text-gray-500">£10/month</div>
                 </button>
 
                 <button
@@ -1312,7 +1382,7 @@ function subscribe() {
                     ]"
                 >
                     <div class="font-semibold">Private</div>
-                    <div class="text-2xl font-bold">£15<span class="text-sm font-normal">/mo</span></div>
+                    <div class="text-2xl font-bold">£20<span class="text-sm font-normal">/mo</span></div>
                 </button>
 
                 <button
@@ -1326,8 +1396,8 @@ function subscribe() {
                         Save 17%
                     </div>
                     <div class="font-semibold">Private (Annual)</div>
-                    <div class="text-2xl font-bold">£150<span class="text-sm font-normal">/yr</span></div>
-                    <div class="text-sm text-gray-500">£12.50/month</div>
+                    <div class="text-2xl font-bold">£200<span class="text-sm font-normal">/yr</span></div>
+                    <div class="text-sm text-gray-500">£16.67/month</div>
                 </button>
             </div>
 
