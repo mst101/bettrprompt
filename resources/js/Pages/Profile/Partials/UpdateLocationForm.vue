@@ -8,7 +8,8 @@ import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useLocaleRoute } from '@/Composables/useLocaleRoute';
-import { useForm } from '@inertiajs/vue3';
+import { setLocale, type LocaleCode } from '@/i18n';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -35,9 +36,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const page = usePage();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
 const { localeRoute } = useLocaleRoute();
+const currentLocale = page.props.locale as LocaleCode;
 
 // Common timezones (still using common ones as not in database)
 const timezones = [
@@ -68,6 +71,16 @@ const form = useForm({
 });
 
 watch(
+    () => props.locationData.languageCode,
+    (newLanguageCode) => {
+        // Update form when language changes from LanguageSwitcher
+        if (newLanguageCode && newLanguageCode !== form.languageCode) {
+            form.languageCode = newLanguageCode;
+        }
+    },
+);
+
+watch(
     () => form.recentlySuccessful,
     (value) => {
         if (value) {
@@ -88,17 +101,41 @@ watch(
     },
 );
 
-const submit = () => {
-    form.patch(localeRoute('profile.location.update'), {
-        preserveScroll: true,
-    });
+const submit = async () => {
+    // Check if language is changing
+    const languageChanged =
+        form.languageCode &&
+        form.languageCode !== props.locationData.languageCode;
+    const newLocale = form.languageCode as LocaleCode;
+
+    if (languageChanged) {
+        // Update frontend i18n first
+        await setLocale(newLocale);
+
+        // Then submit the form, which will redirect to the new locale
+        form.patch(localeRoute('profile.location.update'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                // Navigate to new locale's profile page
+                router.visit(`/${newLocale}/profile`, {
+                    preserveState: true,
+                    preserveScroll: true,
+                });
+            },
+        });
+    } else {
+        // No language change, just submit normally
+        form.patch(localeRoute('profile.location.update'), {
+            preserveScroll: true,
+        });
+    }
 };
 
-const detectLocation = () => {
+const detectLocation = async () => {
     const detectForm = useForm({});
     detectForm.post(localeRoute('profile.location.detect'), {
         preserveScroll: true,
-        onSuccess: (page) => {
+        onSuccess: async (page) => {
             success(t('profile.location.notifications.detected'));
             // Update form fields with detected location
             const locationData = page.props
@@ -110,6 +147,21 @@ const detectLocation = () => {
                 form.timezone = locationData.timezone || '';
                 form.currencyCode = locationData.currencyCode || '';
                 form.languageCode = locationData.languageCode || '';
+
+                // If language was detected and changed, update frontend i18n
+                if (
+                    locationData.languageCode &&
+                    locationData.languageCode !== currentLocale
+                ) {
+                    const newLocale = locationData.languageCode as LocaleCode;
+                    await setLocale(newLocale);
+
+                    // Navigate to new locale's profile page
+                    router.visit(`/${newLocale}/profile`, {
+                        preserveState: true,
+                        preserveScroll: true,
+                    });
+                }
             }
         },
         onError: () => {

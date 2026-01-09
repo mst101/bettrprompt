@@ -37,8 +37,8 @@ async function switchLocale(locale: LocaleInfo) {
 
     // Persist language choice to database
     const endpoint = page.props.auth?.user
-        ? '/profile/language'
-        : '/visitor/language';
+        ? `/${currentLocale.value}/profile/language`
+        : `/${currentLocale.value}/visitor/language`;
 
     try {
         await axios.patch(endpoint, { language_code: locale.code });

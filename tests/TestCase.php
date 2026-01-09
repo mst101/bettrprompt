@@ -100,4 +100,20 @@ abstract class TestCase extends BaseTestCase
     {
         return $this->postJson($this->withLocalePrefix($uri), $data, $headers);
     }
+
+    /**
+     * Make a PATCH request with JSON to a locale-prefixed route
+     */
+    protected function patchJsonLocale($uri, $data = [], $headers = [])
+    {
+        return $this->patchJson($this->withLocalePrefix($uri), $data, $headers);
+    }
+
+    /**
+     * Make a DELETE request with JSON to a locale-prefixed route
+     */
+    protected function deleteJsonLocale($uri, $data = [], $headers = [])
+    {
+        return $this->deleteJson($this->withLocalePrefix($uri), $data, $headers);
+    }
 }

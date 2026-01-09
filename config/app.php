@@ -94,17 +94,21 @@ return [
     |
     */
 
+    //    'supported_locales' => [
+    //        // Tier 1: Essential
+    //        'en-US', 'en-GB',
+    //        // Tier 2: High Value
+    //        'de', 'ja', 'ko', 'fr',
+    //        // Tier 3: Nordic
+    //        'sv', 'no', 'da', 'fi', 'nl',
+    //        // Tier 4: Volume
+    //        'es', 'pt', 'it', 'zh',
+    //        // Tier 5: RTL
+    //        'ar', 'he',
+    //    ],
+
     'supported_locales' => [
-        // Tier 1: Essential
-        'en-US', 'en-GB',
-        // Tier 2: High Value
-        'de', 'ja', 'ko', 'fr',
-        // Tier 3: Nordic
-        'sv', 'no', 'da', 'fi', 'nl',
-        // Tier 4: Volume
-        'es', 'pt', 'it', 'zh',
-        // Tier 5: RTL
-        'ar', 'he',
+        'en-US', 'en-GB', 'de', 'fr', 'es',
     ],
 
     /*

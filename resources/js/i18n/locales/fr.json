@@ -617,273 +617,273 @@
     },
     "feedback": {
         "create": {
-            "title": "Feedback",
-            "heading": "Feedback",
+            "title": "Retour d'information",
+            "heading": "Retour d'information",
             "intro": {
-                "title": "We'd love to hear from you!",
-                "description": "Your feedback will help us decide whether to improve this project - or to abandon it! Please be honest."
+                "title": "Nous aimerions beaucoup entendre vos commentaires !",
+                "description": "Vos commentaires nous aideront à décider si nous devons améliorer ce projet ou l'abandonner ! Soyez honnête."
             },
             "errors": {
-                "title": "Please correct the errors below",
+                "title": "Veuillez corriger les erreurs ci-dessous",
                 "labels": {
-                    "experienceLevel": "Experience level:",
-                    "usefulness": "Usefulness:",
-                    "usageIntent": "Usage likelihood:",
-                    "suggestions": "Suggestions:",
-                    "desiredFeatures": "Features:",
-                    "desiredFeaturesOther": "Feature description:"
+                    "experienceLevel": "Niveau d'expérience :",
+                    "usefulness": "Utilité :",
+                    "usageIntent": "Probabilité d'utilisation :",
+                    "suggestions": "Suggestions :",
+                    "desiredFeatures": "Fonctionnalités :",
+                    "desiredFeaturesOther": "Description de la fonctionnalité :"
                 }
             },
             "actions": {
-                "submit": "Submit feedback"
+                "submit": "Soumettre des commentaires"
             }
         },
         "show": {
-            "title": "Your feedback",
-            "heading": "Your feedback",
-            "thankYou": "Thank you for your feedback!",
-            "subtitle": "You can update your responses at any time.",
-            "lastUpdated": "Last updated: {date}",
+            "title": "Vos commentaires",
+            "heading": "Vos commentaires",
+            "thankYou": "Merci pour vos commentaires !",
+            "subtitle": "Vous pouvez mettre à jour vos réponses à tout moment.",
+            "lastUpdated": "Dernière mise à jour : {date}",
             "actions": {
-                "edit": "Edit responses",
-                "update": "Update feedback"
+                "edit": "Modifier les réponses",
+                "update": "Mettre à jour les commentaires"
             }
         },
         "thankYou": {
-            "title": "Thank you for your feedback",
-            "heading": "Thank you!",
+            "title": "Merci pour vos commentaires",
+            "heading": "Merci !",
             "message": {
-                "title": "Thank you for your feedback!",
-                "subtitle": "Your insights are much appreciated."
+                "title": "Merci pour vos commentaires !",
+                "subtitle": "Vos idées sont très appréciées."
             },
             "referral": {
-                "title": "Invite a friend to trial",
-                "descriptionPrefix": "Know someone who could benefit from personalized AI prompts? Share your unique referral link with them. They can trial the service until",
-                "deadline": "January 31, 2026",
-                "linkLabel": "Your referral link"
+                "title": "Inviter un ami pour tester",
+                "descriptionPrefix": "Connaissez-vous quelqu'un qui pourrait bénéficier de prompts d'IA personnalisés ? Partagez votre lien de parrainage unique avec lui. Il peut tester le service jusqu'au",
+                "deadline": "31 janvier 2026",
+                "linkLabel": "Votre lien de parrainage"
             },
             "actions": {
                 "copy": "Copier",
                 "copied": "Copié!"
             },
             "trial": {
-                "title": "Trial deadline",
-                "descriptionPrefix": "Friends who sign up using your link can trial the service until",
-                "descriptionSuffix": "Share via email, WhatsApp, or any other direct messaging platform, but please do not post publicly (as this is still a trial service)."
+                "title": "Date limite de l'essai",
+                "descriptionPrefix": "Les amis qui s'inscrivent en utilisant votre lien peuvent tester le service jusqu'au",
+                "descriptionSuffix": "Partagez par e-mail, WhatsApp ou tout autre plate-forme de messagerie directe, mais veuillez ne pas publier publiquement (car c'est toujours un service d'essai)."
             }
         },
         "questions": {
             "experience": {
-                "label": "1. How experienced are you with AI tools like ChatGPT or Claude?",
+                "label": "1. Quelle est votre expérience avec les outils d'IA comme ChatGPT ou Claude ?",
                 "left": "Novice",
-                "right": "Experienced"
+                "right": "Expérimenté"
             },
             "usefulness": {
-                "label": "2. How useful was the app for improving your prompt?",
-                "left": "Not useful",
-                "right": "Extremely useful"
+                "label": "2. L'application a-t-elle été utile pour améliorer votre invite ?",
+                "left": "Pas utile",
+                "right": "Extrêmement utile"
             },
             "usageIntent": {
-                "label": "3. How likely are you to use this app the next time you need to work with an AI assistant?",
-                "left": "Very unlikely",
-                "right": "Very likely"
+                "label": "3. Quelle est la probabilité que vous utilisiez cette application la prochaine fois que vous devrez travailler avec un assistant IA ?",
+                "left": "Très improbable",
+                "right": "Très probable"
             },
             "suggestions": {
-                "label": "4. What's one thing you'd change or improve about the app?",
-                "placeholder": "Mention any steps you found confusing or features you'd like to see next."
+                "label": "4. Qu'est-ce qu'une chose que vous changeriez ou amélioreriez dans l'application ?",
+                "placeholder": "Mentionnez les étapes que vous avez trouvées déroutantes ou les fonctionnalités que vous aimeriez voir à l'avenir."
             },
             "features": {
-                "label": "5. Which features would you most want to see added next?",
-                "hint": "(Select at least one)",
-                "hintAll": "(Select all that apply)",
-                "note": "If you select \"Other\", please describe the feature you'd like to see."
+                "label": "5. Quelles fonctionnalités aimeriez-vous le plus voir ajoutées à l'avenir ?",
+                "hint": "(Sélectionnez au moins une)",
+                "hintAll": "(Sélectionnez tout ce qui s'applique)",
+                "note": "Si vous sélectionnez « Autre », veuillez décrire la fonctionnalité que vous aimeriez voir."
             }
         },
         "features": {
             "documentUpload": {
-                "label": "Upload documents and/or images",
-                "description": "Upload files and images to provide context for prompt generation, e.g., analyze documents or refine prompts based on visual content."
+                "label": "Télécharger des documents et/ou des images",
+                "description": "Téléchargez des fichiers et des images pour fournir du contexte à la génération d'invite, par exemple, analysez des documents ou affinez les invites en fonction du contenu visuel."
             },
             "templates": {
-                "label": "Prompt templates library",
-                "description": "Pre-built templates for common use cases (content writing, data analysis, code review, etc.)"
+                "label": "Bibliothèque de modèles d'invite",
+                "description": "Modèles pré-construits pour les cas d'utilisation courants (rédaction de contenu, analyse de données, révision de code, etc.)"
             },
             "compare": {
-                "label": "Compare prompt versions side-by-side",
-                "description": "Visual comparison tool showing differences between prompt versions and their effectiveness"
+                "label": "Comparer les versions des invites côte à côte",
+                "description": "Outil de comparaison visuelle montrant les différences entre les versions d'invite et leur efficacité"
             },
             "apiIntegration": {
-                "label": "Integration with ChatGPT/Claude APIs",
-                "description": "Test prompts directly with AI models, see real responses, and iterate within the app"
+                "label": "Intégration avec les API ChatGPT/Claude",
+                "description": "Testez les invites directement avec les modèles d'IA, voyez les réponses réelles et itérez dans l'application"
             },
             "collaboration": {
-                "label": "Team collaboration features",
-                "description": "Share prompts within your organization, add comments, track versions, and manage permissions"
+                "label": "Fonctionnalités de collaboration d'équipe",
+                "description": "Partagez les invites au sein de votre organisation, ajoutez des commentaires, suivez les versions et gérez les autorisations"
             },
             "modelSpecific": {
-                "label": "AI model-specific optimization",
-                "description": "Tailor prompts for specific models (GPT-4, Claude, Gemini) with their unique formatting and preferences"
+                "label": "Optimisation spécifique au modèle d'IA",
+                "description": "Adaptez les invites pour des modèles spécifiques (GPT-4, Claude, Gemini) avec leur formatage et leurs préférences uniques"
             },
             "other": {
-                "label": "Other",
-                "description": "Something else? Let us know what you'd like to see!"
+                "label": "Autre",
+                "description": "Autre chose ? Dites-nous ce que vous aimeriez voir !"
             }
         }
     },
     "subscription": {
-        "pageTitle": "Subscription settings",
-        "heading": "Subscription",
-        "backToProfile": "Back to Profile",
-        "currentPlan": "Current Plan",
-        "manage": "Manage Subscription",
-        "updatePayment": "Update Payment Method",
-        "cancel": "Cancel Subscription",
-        "resume": "Resume Subscription",
+        "pageTitle": "Paramètres d'abonnement",
+        "heading": "Abonnement",
+        "backToProfile": "Retour au profil",
+        "currentPlan": "Plan actuel",
+        "manage": "Gérer l'abonnement",
+        "updatePayment": "Mettre à jour le mode de paiement",
+        "cancel": "Annuler l'abonnement",
+        "resume": "Reprendre l'abonnement",
         "actions": {
-            "upgrade": "Upgrade to Pro"
+            "upgrade": "Passer à Pro"
         },
         "cancelConfirm": {
-            "title": "Cancel Subscription?",
-            "description": "You will retain Pro access until the end of your current billing period. After that, you'll be moved to the Free plan with 10 prompts per month.",
-            "keep": "Keep Subscription",
-            "confirm": "Cancel Subscription",
-            "processing": "Canceling..."
+            "title": "Annuler l'abonnement ?",
+            "description": "Vous conserverez l'accès Pro jusqu'à la fin de votre période de facturation actuelle. Après cela, vous serez transféré au plan gratuit avec 10 invites par mois.",
+            "keep": "Conserver l'abonnement",
+            "confirm": "Annuler l'abonnement",
+            "processing": "Annulation..."
         },
         "status": {
-            "active": "Active subscription",
-            "cancelling": "Cancels on {date}",
-            "promptsRemaining": "{count} of {total} prompts remaining this month",
-            "promptsUsed": "{used}/{total} prompts used"
+            "active": "Abonnement actif",
+            "cancelling": "Annulé le {date}",
+            "promptsRemaining": "{count} sur {total} invites restantes ce mois-ci",
+            "promptsUsed": "{used}/{total} invites utilisées"
         },
         "billing": {
-            "title": "Billing History",
-            "download": "Download"
+            "title": "Historique de facturation",
+            "download": "Télécharger"
         },
         "success": {
-            "title": "Welcome to Pro!",
-            "description": "You now have unlimited prompts and privacy encryption. Start creating powerful, personality-calibrated prompts!",
-            "cta": "Start creating prompts"
+            "title": "Bienvenue à Pro !",
+            "description": "Vous avez désormais des invites illimitées et le chiffrement de la confidentialité. Commencez à créer des invites puissantes et calibrées en fonction de la personnalité !",
+            "cta": "Commencer à créer des invites"
         },
         "cancelled": {
-            "title": "Checkout canceled",
-            "heading": "Checkout canceled",
-            "description": "{message} No worries - you can continue using the free tier or try again whenever you're ready.",
+            "title": "Paiement annulé",
+            "heading": "Paiement annulé",
+            "description": "{message} Pas de problème - vous pouvez continuer à utiliser le plan gratuit ou réessayer quand vous êtes prêt.",
             "actions": {
-                "continueFree": "Continue with Free",
-                "viewPricing": "View Pricing"
+                "continueFree": "Continuer avec le plan gratuit",
+                "viewPricing": "Voir les tarifs"
             }
         }
     },
     "privacy": {
-        "pageTitle": "Privacy settings",
-        "title": "Privacy Encryption",
-        "backToProfile": "Back to Profile",
+        "pageTitle": "Paramètres de confidentialité",
+        "title": "Chiffrement de confidentialité",
+        "backToProfile": "Retour au profil",
         "proRequired": {
-            "title": "Pro Feature",
-            "description": "Privacy encryption is available exclusively for Pro subscribers. Your prompt data and personal information will be encrypted at rest, ensuring only you can access your data."
+            "title": "Fonctionnalité Pro",
+            "description": "Le chiffrement de confidentialité est réservé aux abonnés Pro. Vos données de requête et informations personnelles seront chiffrées au repos, vous assurant que seul vous pouvez accéder à vos données."
         },
         "status": {
-            "title": "Encryption Status",
-            "enabled": "Encryption Enabled",
-            "enabledOn": "Enabled on {date}",
-            "enabledDescription": "Your prompt data is encrypted at rest. Only you can access your data by entering your password.",
-            "notEnabled": "Encryption Not Enabled",
-            "notEnabledDescription": "Your data is stored without end-to-end encryption",
-            "enableDescription": "Enable privacy encryption to protect your prompt data at rest. Once enabled, your data will be encrypted with a key derived from your password."
+            "title": "État du chiffrement",
+            "enabled": "Chiffrement activé",
+            "enabledOn": "Activé le {date}",
+            "enabledDescription": "Vos données de requête sont chiffrées au repos. Seul vous pouvez accéder à vos données en entrant votre mot de passe.",
+            "notEnabled": "Chiffrement non activé",
+            "notEnabledDescription": "Vos données sont stockées sans chiffrement de bout en bout",
+            "enableDescription": "Activez le chiffrement de confidentialité pour protéger vos données de requête au repos. Une fois activé, vos données seront chiffrées avec une clé dérivée de votre mot de passe."
         },
         "actions": {
-            "enable": "Enable Encryption",
-            "disable": "Disable Encryption"
+            "enable": "Activer le chiffrement",
+            "disable": "Désactiver le chiffrement"
         },
         "howItWorks": {
-            "title": "How Privacy Encryption Works",
+            "title": "Comment fonctionne le chiffrement de confidentialité",
             "step1": {
-                "title": "Password-Protected Key",
-                "description": "A unique encryption key is generated and protected by your account password."
+                "title": "Clé protégée par mot de passe",
+                "description": "Une clé de chiffrement unique est générée et protégée par votre mot de passe de compte."
             },
             "step2": {
-                "title": "Recovery Phrase",
-                "description": "You'll receive a 12-word recovery phrase that can restore access if you forget your password."
+                "title": "Phrase de récupération",
+                "description": "Vous recevrez une phrase de récupération de 12 mots qui peut restaurer l'accès si vous oubliez votre mot de passe."
             },
             "step3": {
-                "title": "Encrypted At Rest",
-                "description": "All your prompt data is encrypted before being stored. Without your password, the data is unreadable."
+                "title": "Chiffré au repos",
+                "description": "Toutes vos données de requête sont chiffrées avant d'être stockées. Sans votre mot de passe, les données sont illisibles."
             }
         },
         "setup": {
-            "title": "Enable Privacy Encryption",
+            "title": "Activer le chiffrement de confidentialité",
             "savePhrase": {
-                "title": "Important: Save Your Recovery Phrase",
-                "description": "Write down these 12 words in order. This is the {0} to recover your data if you forget your password. Store it securely and never share it.",
-                "emphasis": "only way"
+                "title": "Important : sauvegardez votre phrase de récupération",
+                "description": "Écrivez ces 12 mots dans l'ordre. C'est le {0} pour récupérer vos données si vous oubliez votre mot de passe. Stockez-le en toute sécurité et ne le partagez jamais.",
+                "emphasis": "seul moyen"
             },
-            "yourPhrase": "Your Recovery Phrase",
-            "copyPhrase": "Copy to Clipboard",
-            "confirmWritten": "I have written down my recovery phrase and stored it securely",
-            "confirmTitle": "Confirm Your Recovery Phrase",
-            "confirmDescription": "Enter the words at the specified positions to confirm you've saved your recovery phrase.",
-            "wordNumber": "Word #{number}",
-            "enterPassword": "Enter your account password"
+            "yourPhrase": "Votre phrase de récupération",
+            "copyPhrase": "Copier dans le presse-papiers",
+            "confirmWritten": "J'ai noté ma phrase de récupération et l'ai stockée en toute sécurité",
+            "confirmTitle": "Confirmez votre phrase de récupération",
+            "confirmDescription": "Entrez les mots aux positions spécifiées pour confirmer que vous avez sauvegardé votre phrase de récupération.",
+            "wordNumber": "Mot #{number}",
+            "enterPassword": "Entrez votre mot de passe de compte"
         },
         "unlock": {
-            "title": "Unlock Your Data",
-            "forgotPassword": "Forgot password? Use recovery phrase",
-            "submit": "Unlock"
+            "title": "Déverrouiller vos données",
+            "forgotPassword": "Mot de passe oublié ? Utilisez la phrase de récupération",
+            "submit": "Déverrouiller"
         },
         "recovery": {
-            "title": "Recover Your Data",
-            "description": "Enter your 12-word recovery phrase to regain access to your encrypted data. You will also need to set a new password.",
-            "phraseLabel": "Recovery Phrase",
-            "newPasswordLabel": "New Password",
-            "confirmPasswordLabel": "Confirm New Password",
-            "submit": "Recover Account"
+            "title": "Récupérer vos données",
+            "description": "Entrez votre phrase de récupération de 12 mots pour retrouver l'accès à vos données chiffrées. Vous devrez également définir un nouveau mot de passe.",
+            "phraseLabel": "Phrase de récupération",
+            "newPasswordLabel": "Nouveau mot de passe",
+            "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+            "submit": "Récupérer le compte"
         },
         "disable": {
-            "title": "Disable Privacy Encryption?",
-            "description": "This will decrypt all your stored data. Your prompts will no longer be encrypted at rest.",
-            "passwordLabel": "Enter your password to confirm",
-            "confirmLabel": "I understand my data will no longer be encrypted",
-            "processing": "Disabling..."
+            "title": "Désactiver le chiffrement de confidentialité ?",
+            "description": "Cela déchiffrera toutes vos données stockées. Vos requêtes ne seront plus chiffrées au repos.",
+            "passwordLabel": "Entrez votre mot de passe pour confirmer",
+            "confirmLabel": "Je comprends que mes données ne seront plus chiffrées",
+            "processing": "Désactivation..."
         }
     },
     "promptBuilder": {
-        "title": "Prompt Builder",
+        "title": "Générateur d'invites",
         "analysis": {
-            "title": "Prompt Analysis"
+            "title": "Analyse d'invite"
         },
         "actions": {
-            "createNew": "CREATE NEW"
+            "createNew": "CRÉER NOUVEAU"
         },
         "errors": {
-            "submitTitle": "Error submitting prompt",
-            "submitFailed": "Failed to submit prompt. Please check your connection and try again.",
-            "retryFailed": "Failed to retry generation. Please try again."
+            "submitTitle": "Erreur lors de la soumission de l'invite",
+            "submitFailed": "Échec de la soumission de l'invite. Veuillez vérifier votre connexion et réessayer.",
+            "retryFailed": "Échec de la réessai de la génération. Veuillez réessayer."
         },
         "messages": {
-            "preAnalysisSkippedTitle": "Excellent! Your task is clear",
-            "preAnalysisSkippedDescription": "Your task description is sufficiently clear for us to proceed directly to the main analysis. We're now selecting the best prompt framework for you."
+            "preAnalysisSkippedTitle": "Excellent ! Votre tâche est claire",
+            "preAnalysisSkippedDescription": "Votre description de tâche est suffisamment claire pour que nous procédions directement à l'analyse principale. Nous sélectionnons maintenant le meilleur framework d'invite pour vous."
         },
         "tabs": {
-            "task": "Your Task",
-            "framework": "Framework",
-            "frameworkMobile": "Selected Framework",
-            "personality": "Personality",
+            "task": "Votre tâche",
+            "framework": "Cadre",
+            "frameworkMobile": "Cadre sélectionné",
+            "personality": "Personnalité",
             "questions": "Questions",
-            "recommendations": "Recommendations",
-            "costs": "Costs",
-            "prompt": "Optimized Prompt"
+            "recommendations": "Recommandations",
+            "costs": "Coûts",
+            "prompt": "Invite optimisée"
         },
         "confirmations": {
             "deletePromptRun": {
-                "title": "Delete Prompt Run",
-                "message": "Are you sure you want to delete this prompt run? This action cannot be undone."
+                "title": "Supprimer l'exécution d'invite",
+                "message": "Êtes-vous sûr de vouloir supprimer cette exécution d'invite ? Cette action ne peut pas être annulée."
             }
         },
         "history": {
-            "title": "Prompt History",
+            "title": "Historique des invites",
             "empty": {
-                "title": "No prompt history yet.",
-                "cta": "Create your first optimized prompt"
+                "title": "Pas encore d'historique d'invite.",
+                "cta": "Créez votre première invite optimisée"
             },
             "table": {
                 "personalityType": "Type de personnalité",
@@ -1520,105 +1520,105 @@
         }
     },
     "legal": {
-        "lastUpdated": "Last updated",
+        "lastUpdated": "Dernière mise à jour",
         "privacy": {
-            "title": "Privacy Policy"
+            "title": "Politique de confidentialité"
         },
         "terms": {
-            "title": "Terms of Use"
+            "title": "Conditions d'utilisation"
         },
         "cookies": {
-            "title": "Cookie Policy",
-            "alwaysActive": "Always Active"
+            "title": "Politique relative aux cookies",
+            "alwaysActive": "Toujours actif"
         }
     },
     "workflow": {
         "variantSelector": {
-            "label": "Variant"
+            "label": "Variante"
         },
         "codeEditor": {
-            "placeholder": "Paste or edit content...",
-            "characters": "{count} characters",
-            "notAvailable": "N/A",
-            "expandTitle": "Expand editor",
-            "expand": "Expand",
-            "saveTitle": "Save changes",
+            "placeholder": "Collez ou modifiez le contenu...",
+            "characters": "{count} caractères",
+            "notAvailable": "S/O",
+            "expandTitle": "Développer l'éditeur",
+            "expand": "Développer",
+            "saveTitle": "Enregistrer les modifications",
             "save": "Enregistrer",
-            "collapsedHint": "Collapsed view - expand to edit."
+            "collapsedHint": "Vue réduite - développez pour éditer."
         },
         "documentSidebar": {
-            "coreDocuments": "Core documents",
-            "usedIn": "Used in: {list}",
-            "none": "None",
-            "frameworkTemplates": "Framework templates ({count})",
-            "workflowVersion": "Workflow version"
+            "coreDocuments": "Documents principaux",
+            "usedIn": "Utilisé dans : {list}",
+            "none": "Aucun",
+            "frameworkTemplates": "Modèles de framework ({count})",
+            "workflowVersion": "Version du workflow"
         },
         "outputPanel": {
-            "title": "Output",
-            "header": "{title} - {count} characters",
-            "rawJson": "Raw JSON",
-            "copyTitle": "Copy to clipboard",
+            "title": "Sortie",
+            "header": "{title} - {count} caractères",
+            "rawJson": "JSON brut",
+            "copyTitle": "Copier dans le presse-papiers",
             "copy": "Copier",
-            "wrapDisable": "Disable line wrapping",
-            "wrapEnable": "Enable line wrapping",
-            "wrapOn": "Wrap on",
-            "wrapOff": "Wrap off",
-            "system": "System",
+            "wrapDisable": "Désactiver l'enroulement des lignes",
+            "wrapEnable": "Activer l'enroulement des lignes",
+            "wrapOn": "Enroulement activé",
+            "wrapOff": "Enroulement désactivé",
+            "system": "Système",
             "messages": "Messages",
-            "rawLabel": "Raw",
-            "formattedLabel": "Formatted",
-            "switchRaw": "Show raw",
-            "switchFormatted": "Show formatted",
-            "expandTitle": "Expand",
-            "expand": "Expand",
-            "empty": "No output available"
+            "rawLabel": "Brut",
+            "formattedLabel": "Formaté",
+            "switchRaw": "Afficher le brut",
+            "switchFormatted": "Afficher le formaté",
+            "expandTitle": "Développer",
+            "expand": "Développer",
+            "empty": "Aucune sortie disponible"
         },
         "index": {
-            "title": "Workflow System",
-            "subtitle": "Debug and manage n8n workflows",
-            "howToUse": "How to Use",
+            "title": "Système de workflow",
+            "subtitle": "Déboguer et gérer les workflows n8n",
+            "howToUse": "Comment utiliser",
             "infoPages": {
-                "title": "Workflow pages:",
-                "description": "Debug individual workflows, inspect input/output, and test JavaScript code"
+                "title": "Pages de workflow :",
+                "description": "Déboguez les workflows individuels, inspectez l'entrée/sortie et testez le code JavaScript"
             },
             "infoDocuments": {
-                "title": "Reference Documents:",
-                "description": "View and edit the markdown documents used in workflows, then embed them into the workflow JSON files"
+                "title": "Documents de référence :",
+                "description": "Afficher et modifier les documents markdown utilisés dans les workflows, puis les intégrer dans les fichiers JSON du workflow"
             },
             "infoFrameworks": {
-                "title": "Framework Templates:",
-                "description": "60+ different prompting frameworks available for use in workflow optimisation"
+                "title": "Modèles de framework :",
+                "description": "60+ frameworks d'invite différents disponibles pour l'optimisation des workflows"
             },
             "workflow0": {
                 "title": "Workflow 0",
-                "subtitle": "Pre-Analysis Workflow",
-                "description": "Gathers clarifying questions based on task classification"
+                "subtitle": "Workflow de pré-analyse",
+                "description": "Recueille les questions de clarification basées sur la classification des tâches"
             },
             "workflow1": {
                 "title": "Workflow 1",
-                "subtitle": "Question Generation Workflow",
-                "description": "Generates task classification and clarifying questions"
+                "subtitle": "Workflow de génération de questions",
+                "description": "Génère la classification des tâches et les questions de clarification"
             },
             "workflow2": {
                 "title": "Workflow 2",
-                "subtitle": "Prompt Optimization Workflow",
-                "description": "Generates optimized prompts using selected frameworks"
+                "subtitle": "Workflow d'optimisation d'invite",
+                "description": "Génère des invites optimisées à l'aide de frameworks sélectionnés"
             },
             "referenceDocs": {
-                "title": "Reference Documents",
-                "subtitle": "Document Management",
-                "description": "View, edit, and manage reference documents"
+                "title": "Documents de référence",
+                "subtitle": "Gestion des documents",
+                "description": "Afficher, modifier et gérer les documents de référence"
             }
         },
-        "passLabel": "Pass {number}",
-        "confirmUploadTitle": "Upload to Live Server?",
-        "confirmUploadMessage": "This will upload the current workflow_0.json file to the LIVE production n8n server at https://n8n.bettrprompt.ai/. This action cannot be undone. Are you sure you want to proceed?",
-        "uploadToLiveButton": "Upload to Live",
-        "uploadSuccessTitle": "Upload Successful",
-        "uploadSuccessMessage": "Workflow successfully uploaded to live production server!",
-        "uploadFailedTitle": "Upload Failed",
-        "uploadFailedMessage": "Failed to upload workflow to live server",
-        "uploadErrorPrefix": "Upload error:",
+        "passLabel": "Passage {number}",
+        "confirmUploadTitle": "Télécharger vers le serveur en direct ?",
+        "confirmUploadMessage": "Cela téléchargera le fichier workflow_0.json actuel vers le serveur n8n de production EN DIRECT à https://n8n.bettrprompt.ai/. Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir continuer ?",
+        "uploadToLiveButton": "Télécharger vers en direct",
+        "uploadSuccessTitle": "Téléchargement réussi",
+        "uploadSuccessMessage": "Workflow téléchargé avec succès vers le serveur de production en direct !",
+        "uploadFailedTitle": "Échec du téléchargement",
+        "uploadFailedMessage": "Échec du téléchargement du workflow vers le serveur en direct",
+        "uploadErrorPrefix": "Erreur de téléchargement :",
         "docs": {
             "saveSuccessMessage": "✓ {filename} enregistré et intégré avec succès aux workflows",
             "confirmEmbedTitle": "Intégrer tous les documents ?",

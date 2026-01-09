@@ -54,8 +54,10 @@ class ProcessPreAnalysis implements ShouldQueue
             // Check if pre-analysis needs clarification questions
             if ($preAnalysis['needs_clarification']) {
                 // Update with questions - user will answer them
+                // Also save the inferred context values - will be merged with answers later
                 $this->promptRun->markWorkflowCompleted(0, [
                     'pre_analysis_questions' => $preAnalysis['questions'] ?? [],
+                    'pre_analysis_context' => $preAnalysis['pre_analysis_context'] ?? null,
                     'pre_analysis_reasoning' => $preAnalysis['reasoning'] ?? null,
                     'pre_analysis_api_usage' => $preAnalysis['api_usage'] ?? null,
                 ]);

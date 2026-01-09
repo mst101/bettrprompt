@@ -68,10 +68,22 @@ class ProfileController extends Controller
             'label' => "$currency->symbol ($currency->id)",
         ])->values();
 
-        $languages = Language::active()->map(fn ($language) => [
-            'value' => $language->id,
-            'label' => $language->name,
-        ])->values();
+        // Use supported locales from config instead of database languages
+        // This ensures all UI languages are always available
+        $supportedLocales = config('app.supported_locales');
+        $languageLabels = [
+            'en-US' => 'English (US)',
+            'en-GB' => 'English (UK)',
+            'fr' => 'Français',
+            'de' => 'Deutsch',
+            'es' => 'Español',
+        ];
+        $languages = collect($supportedLocales)
+            ->map(fn ($locale) => [
+                'value' => $locale,
+                'label' => $languageLabels[$locale] ?? $locale,
+            ])
+            ->values();
 
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
@@ -191,6 +203,7 @@ class ProfileController extends Controller
 
     /**
      * Update the user's language preference.
+     * Also updates any associated visitor record to keep them in sync.
      */
     public function updateLanguage(Request $request): JsonResponse
     {
@@ -198,10 +211,18 @@ class ProfileController extends Controller
             'language_code' => ['required', 'string', 'max:10', Rule::in(config('app.supported_locales'))],
         ]);
 
-        $request->user()->update([
+        $user = $request->user();
+
+        // Update user's language preference
+        $user->update([
             'language_code' => $validated['language_code'],
             'language_manually_set' => true,
         ]);
+
+        // Also update any associated visitor record (from before conversion)
+        // This keeps both tables in sync when a converted user switches languages
+        \App\Models\Visitor::where('user_id', $user->id)
+            ->update(['language_code' => $validated['language_code']]);
 
         return response()->json(['success' => true]);
     }
@@ -254,7 +275,22 @@ class ProfileController extends Controller
     public function updateLocation(UpdateLocationRequest $request): RedirectResponse
     {
         try {
-            $request->user()->updateLocation($request->validated());
+            $user = $request->user();
+            $validated = $request->validated();
+            $oldLanguageCode = $user->language_code;
+            $currentLocale = $request->route('locale');
+
+            // Update location
+            $user->updateLocation($validated);
+
+            // If language was changed, redirect to new locale's profile page
+            if (isset($validated['language_code']) && $validated['language_code'] !== $oldLanguageCode) {
+                $newLocale = $validated['language_code'];
+
+                // Redirect to the new locale's profile page
+                return Redirect::to("/{$newLocale}/profile")
+                    ->with('status', 'location-updated');
+            }
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
@@ -361,12 +397,32 @@ class ProfileController extends Controller
                 return Redirect::back()->with('error', __('messages.profile.location_detect_failed'));
             }
 
-            DatabaseService::retryOnDeadlock(function () use ($request, $locationData) {
-                $request->user()->update($locationData->toArray() + [
+            $user = $request->user();
+            $oldLanguageCode = $user->language_code;
+            $newLanguageCode = null;
+
+            DatabaseService::retryOnDeadlock(function () use ($user, $locationData, &$newLanguageCode) {
+                $updateData = $locationData->toArray() + [
                     'location_manually_set' => false,
-                ]);
-                $request->user()->updateProfileCompletion();
+                ];
+
+                $user->update($updateData);
+
+                // Also update visitor record if language is detected
+                if (isset($updateData['language_code'])) {
+                    $newLanguageCode = $updateData['language_code'];
+                    \App\Models\Visitor::where('user_id', $user->id)
+                        ->update(['language_code' => $updateData['language_code']]);
+                }
+
+                $user->updateProfileCompletion();
             });
+
+            // If language was detected and changed, redirect to new locale's profile page
+            if ($newLanguageCode && $newLanguageCode !== $oldLanguageCode) {
+                return Redirect::to("/{$newLanguageCode}/profile")
+                    ->with('status', 'location-detected-updated');
+            }
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-detected-updated');

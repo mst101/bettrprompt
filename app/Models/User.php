@@ -293,8 +293,20 @@ class User extends Authenticatable
             // Always mark location as manually set when updating
             $updates['location_manually_set'] = true;
 
+            // If language is being updated, also mark language as manually set
+            if (isset($updates['language_code'])) {
+                $updates['language_manually_set'] = true;
+            }
+
             if (! empty($updates)) {
                 $this->update($updates);
+
+                // Also update any associated visitor records to keep them in sync
+                if (isset($updates['language_code'])) {
+                    Visitor::where('user_id', $this->id)
+                        ->update(['language_code' => $updates['language_code']]);
+                }
+
                 $this->updateProfileCompletion();
             }
         });
@@ -398,6 +410,11 @@ class User extends Authenticatable
                 'location_manually_set' => false,
                 'language_manually_set' => false,
             ]);
+
+            // Also clear language in associated visitor records
+            Visitor::where('user_id', $this->id)
+                ->update(['language_code' => null]);
+
             $this->updateProfileCompletion();
         });
     }

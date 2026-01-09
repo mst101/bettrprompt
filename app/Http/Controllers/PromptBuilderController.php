@@ -185,9 +185,11 @@ class PromptBuilderController extends Controller
 
         try {
             // Build structured pre_analysis_context from answers
+            // Merges inferred values (from pre-analysis) with user answers
             $preAnalysisContext = $this->buildPreAnalysisContext(
                 $promptRun->pre_analysis_questions,
-                $validated['answers']
+                $validated['answers'],
+                $promptRun
             );
 
             // Update PromptRun with answers and context, then dispatch workflow_1
@@ -239,9 +241,11 @@ class PromptBuilderController extends Controller
 
         try {
             // Build structured pre_analysis_context from updated answers
+            // Merges inferred values (from pre-analysis) with user answers
             $preAnalysisContext = $this->buildPreAnalysisContext(
                 $promptRun->pre_analysis_questions,
-                $validated['answers']
+                $validated['answers'],
+                $promptRun
             );
 
             // Update the prompt run with new answers and context, then dispatch workflow_1
@@ -1035,15 +1039,21 @@ class PromptBuilderController extends Controller
 
     /**
      * Build structured pre_analysis_context from questions and answers
+     * Merges inferred context with user-provided answers
      */
-    protected function buildPreAnalysisContext(?array $questions, array $answers): array
+    protected function buildPreAnalysisContext(?array $questions, array $answers, ?PromptRun $promptRun = null): array
     {
-        if (! $questions) {
-            return [];
+        // Start with inferred values from pre-analysis (if available)
+        $context = [];
+        if ($promptRun && $promptRun->pre_analysis_context) {
+            $context = is_array($promptRun->pre_analysis_context) ? $promptRun->pre_analysis_context : [];
         }
 
-        $context = [];
+        if (! $questions) {
+            return $context;
+        }
 
+        // Merge in user answers to asked questions
         foreach ($questions as $question) {
             $questionId = $question['id'] ?? null;
             $questionText = $question['question'] ?? null;
