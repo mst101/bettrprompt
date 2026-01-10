@@ -3,7 +3,6 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
-use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
@@ -12,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
-
-// Public API routes
-Route::post('/currency/update', [CurrencyController::class, 'update'])->name('api.currency.update');
 
 Route::post('/n8n/webhook', function (Request $request) {
     try {

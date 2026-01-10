@@ -82,6 +82,8 @@ Route::prefix('{locale}')
             ->name('visitor.personality.update');
         Route::patch('/visitor/language', [VisitorController::class, 'updateLanguage'])
             ->name('visitor.language.update');
+        Route::post('/currency/select', [VisitorController::class, 'updateCurrency'])
+            ->name('currency.select');
 
         // Prompt builder routes (public, supports guest visitors)
         Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])

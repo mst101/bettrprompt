@@ -48,4 +48,44 @@ class VisitorController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    /**
+     * Update currency preference for authenticated users and visitors
+     */
+    public function updateCurrency(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'currency_code' => [
+                'required',
+                'string',
+                'size:3',
+                Rule::in(['GBP', 'EUR', 'USD']),
+            ],
+        ]);
+
+        if ($request->user()) {
+            // Authenticated user: update user record
+            $request->user()->update([
+                'currency_code' => $validated['currency_code'],
+            ]);
+
+            // Also sync visitor record if authenticated user has one
+            $visitorId = $request->cookie('visitor_id');
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                $visitor?->update(['currency_code' => $validated['currency_code']]);
+            }
+        } else {
+            // Visitor: update session and database if visitor exists
+            session(['currency_code' => $validated['currency_code']]);
+
+            $visitorId = $request->cookie('visitor_id');
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                $visitor?->update(['currency_code' => $validated['currency_code']]);
+            }
+        }
+
+        return back();
+    }
 }
