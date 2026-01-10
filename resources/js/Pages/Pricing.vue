@@ -6,14 +6,19 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useLocaleRoute } from '@/Composables/useLocaleRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { PricingFeatures, PricingPlans } from '@/Types';
+import type { PricingPlans } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 interface Props {
     plans: PricingPlans;
-    features: PricingFeatures;
+    featureKeys: {
+        free: string[];
+        pro: string[];
+        private: string[];
+    };
     currency: string;
+    currencySymbol: string;
     availableCurrencies: string[];
 }
 
@@ -24,44 +29,59 @@ defineOptions({
 });
 
 const page = usePage();
-const { localeRoute } = useLocaleRoute();
+const { localeRoute, currentLocale } = useLocaleRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
+// Computed properties to get prices from database
+const proPrice = computed(() => {
+    const key = `pro_${selectedPlan.value}`;
+    return props.plans[key]?.price ?? 0;
+});
+
+const privatePrice = computed(() => {
+    const key = `private_${selectedPlan.value}`;
+    return props.plans[key]?.price ?? 0;
+});
+
+const proMonthlyEquivalent = computed(() => {
+    if (selectedPlan.value === 'yearly') {
+        return (proPrice.value / 12).toFixed(2);
+    }
+    return null;
+});
+
+const privateMonthlyEquivalent = computed(() => {
+    if (selectedPlan.value === 'yearly') {
+        return (privatePrice.value / 12).toFixed(2);
+    }
+    return null;
+});
+
 const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
-const selectedCurrency = ref(props.currency);
 const isLoading = ref(false);
 const isCurrencyUpdating = ref(false);
 
-async function updateCurrency(newCurrency: string) {
-    isCurrencyUpdating.value = true;
-    selectedCurrency.value = newCurrency;
+// Keep selectedCurrency in sync with props.currency (updates after redirect)
+const selectedCurrency = computed(() => props.currency);
 
-    try {
-        const response = await fetch(route('api.currency.update'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': page.props.csrf_token as string,
+function updateCurrency(newCurrency: string) {
+    router.post(
+        route('currency.select', { locale: currentLocale.value }),
+        { currency_code: newCurrency },
+        {
+            onStart: () => {
+                isCurrencyUpdating.value = true;
             },
-            body: JSON.stringify({
-                currency_code: newCurrency,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update currency');
-        }
-
-        // Refresh the page to get updated pricing
-        router.reload();
-    } catch (error) {
-        console.error('Currency update error:', error);
-        // Revert currency selection on error
-        selectedCurrency.value = props.currency;
-    } finally {
-        isCurrencyUpdating.value = false;
-    }
+            onFinish: () => {
+                isCurrencyUpdating.value = false;
+            },
+            onError: () => {
+                // Revert currency selection on error
+                selectedCurrency.value = props.currency;
+            },
+        },
+    );
 }
 
 function subscribe(tier: 'pro' | 'private') {
@@ -171,15 +191,15 @@ function getStarted() {
 
                     <ul class="mb-8 space-y-3">
                         <li
-                            v-for="feature in features.free"
-                            :key="feature"
+                            v-for="featureKey in featureKeys.free"
+                            :key="featureKey"
                             class="flex items-center gap-2 text-indigo-700"
                         >
                             <DynamicIcon
                                 name="check"
                                 class="h-5 w-5 text-green-500"
                             />
-                            {{ feature }}
+                            {{ $t(featureKey) }}
                         </li>
                         <li class="flex items-center gap-2 text-indigo-400">
                             <DynamicIcon
@@ -210,12 +230,7 @@ function getStarted() {
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
-                            {{ $t('pricing.currency')
-                            }}{{
-                                selectedPlan === 'yearly'
-                                    ? $t('pricing.pro.priceYearly')
-                                    : $t('pricing.pro.priceMonthly')
-                            }}
+                            {{ currencySymbol }}{{ proPrice }}
                             <span class="text-lg font-normal text-indigo-500">
                                 /{{
                                     selectedPlan === 'yearly'
@@ -225,12 +240,15 @@ function getStarted() {
                             </span>
                         </div>
                         <div
-                            v-if="selectedPlan === 'yearly'"
+                            v-if="
+                                selectedPlan === 'yearly' &&
+                                proMonthlyEquivalent
+                            "
                             class="mt-1 text-sm text-green-600"
                         >
                             {{
                                 $t('pricing.pro.yearlySavings', {
-                                    amount: `${$t('pricing.currency')}10`,
+                                    amount: `${currencySymbol}${proMonthlyEquivalent}`,
                                     period: $t('pricing.period.month'),
                                     percent: 17,
                                 })
@@ -240,15 +258,15 @@ function getStarted() {
 
                     <ul class="mb-8 space-y-3">
                         <li
-                            v-for="feature in features.pro"
-                            :key="feature"
+                            v-for="featureKey in featureKeys.pro"
+                            :key="featureKey"
                             class="flex items-center gap-2 text-indigo-700"
                         >
                             <DynamicIcon
                                 name="check"
                                 class="h-5 w-5 text-green-500"
                             />
-                            {{ feature }}
+                            {{ $t(featureKey) }}
                         </li>
                         <li class="flex items-center gap-2 text-indigo-400">
                             <DynamicIcon
@@ -295,12 +313,7 @@ function getStarted() {
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
-                            {{ $t('pricing.currency')
-                            }}{{
-                                selectedPlan === 'yearly'
-                                    ? $t('pricing.private.priceYearly')
-                                    : $t('pricing.private.priceMonthly')
-                            }}
+                            {{ currencySymbol }}{{ privatePrice }}
                             <span class="text-lg font-normal text-indigo-500">
                                 /{{
                                     selectedPlan === 'yearly'
@@ -310,12 +323,15 @@ function getStarted() {
                             </span>
                         </div>
                         <div
-                            v-if="selectedPlan === 'yearly'"
+                            v-if="
+                                selectedPlan === 'yearly' &&
+                                privateMonthlyEquivalent
+                            "
                             class="mt-1 text-sm text-green-600"
                         >
                             {{
                                 $t('pricing.private.yearlySavings', {
-                                    amount: `${$t('pricing.currency')}16.67`,
+                                    amount: `${currencySymbol}${privateMonthlyEquivalent}`,
                                     period: $t('pricing.period.month'),
                                     percent: 17,
                                 })
@@ -325,15 +341,15 @@ function getStarted() {
 
                     <ul class="mb-8 space-y-3">
                         <li
-                            v-for="feature in features.private"
-                            :key="feature"
+                            v-for="featureKey in featureKeys.private"
+                            :key="featureKey"
                             class="flex items-center gap-2 text-indigo-700"
                         >
                             <DynamicIcon
                                 name="check"
                                 class="h-5 w-5 text-green-500"
                             />
-                            {{ feature }}
+                            {{ $t(featureKey) }}
                         </li>
                     </ul>
 

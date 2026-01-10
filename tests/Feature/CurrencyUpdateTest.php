@@ -1,21 +1,26 @@
 <?php
 
 use App\Models\User;
+use App\Models\Visitor;
+use Database\Seeders\CurrencySeeder;
+use Database\Seeders\PricesTableSeeder;
 
-describe('Currency Update API', function () {
+describe('Currency Selection', function () {
+    beforeEach(function () {
+        // Seed currencies first, then prices
+        (new CurrencySeeder)->run();
+        (new PricesTableSeeder)->run();
+    });
+
     describe('Authenticated Users', function () {
         it('updates currency for authenticated user', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
 
-            $response = $this->actingAs($user)->postJson(route('api.currency.update'), [
+            $response = $this->actingAs($user)->post(route('currency.select'), [
                 'currency_code' => 'EUR',
             ]);
 
-            $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'currency_code' => 'EUR',
-                ]);
+            $response->assertRedirect();
 
             $user->refresh();
             expect($user->currency_code)->toBe('EUR');
@@ -25,27 +30,45 @@ describe('Currency Update API', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
 
             foreach (['EUR', 'USD', 'GBP'] as $currency) {
-                $response = $this->actingAs($user)->postJson(route('api.currency.update'), [
+                $response = $this->actingAs($user)->post(route('currency.select'), [
                     'currency_code' => $currency,
                 ]);
 
-                $response->assertStatus(200)
-                    ->assertJson(['currency_code' => $currency]);
+                $response->assertRedirect();
 
                 $user->refresh();
                 expect($user->currency_code)->toBe($currency);
             }
         });
 
+        it('syncs currency to visitor record if authenticated user has one', function () {
+            $user = User::factory()->create(['currency_code' => 'GBP']);
+            $visitor = Visitor::factory()->create(['currency_code' => 'GBP']);
+
+            $response = $this->actingAs($user)
+                ->withCookie('visitor_id', $visitor->id)
+                ->post(route('currency.select'), [
+                    'currency_code' => 'EUR',
+                ]);
+
+            $response->assertRedirect();
+
+            $user->refresh();
+            $visitor->refresh();
+
+            expect($user->currency_code)->toBe('EUR');
+            expect($visitor->currency_code)->toBe('EUR');
+        });
+
         it('rejects invalid currency codes', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
 
-            $response = $this->actingAs($user)->postJson(route('api.currency.update'), [
+            $response = $this->actingAs($user)->post(route('currency.select'), [
                 'currency_code' => 'JPY',
             ]);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors('currency_code');
+            $response->assertRedirect()
+                ->assertSessionHasErrors('currency_code');
 
             $user->refresh();
             expect($user->currency_code)->toBe('GBP'); // Should not change
@@ -54,33 +77,33 @@ describe('Currency Update API', function () {
         it('requires currency_code field', function () {
             $user = User::factory()->create();
 
-            $response = $this->actingAs($user)->postJson(route('api.currency.update'), []);
+            $response = $this->actingAs($user)->post(route('currency.select'), []);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors('currency_code');
+            $response->assertRedirect()
+                ->assertSessionHasErrors('currency_code');
         });
 
         it('validates currency_code length (must be 3 characters)', function () {
             $user = User::factory()->create();
 
-            $response = $this->actingAs($user)->postJson(route('api.currency.update'), [
+            $response = $this->actingAs($user)->post(route('currency.select'), [
                 'currency_code' => 'GB',
             ]);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors('currency_code');
+            $response->assertRedirect()
+                ->assertSessionHasErrors('currency_code');
         });
 
         it('is case sensitive for currency codes', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
 
             // Lowercase should be rejected
-            $response = $this->actingAs($user)->postJson(route('api.currency.update'), [
+            $response = $this->actingAs($user)->post(route('currency.select'), [
                 'currency_code' => 'eur',
             ]);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors('currency_code');
+            $response->assertRedirect()
+                ->assertSessionHasErrors('currency_code');
 
             $user->refresh();
             expect($user->currency_code)->toBe('GBP');
@@ -89,15 +112,11 @@ describe('Currency Update API', function () {
 
     describe('Unauthenticated Visitors', function () {
         it('stores currency in session for unauthenticated user', function () {
-            $response = $this->postJson(route('api.currency.update'), [
+            $response = $this->post(route('currency.select'), [
                 'currency_code' => 'EUR',
             ]);
 
-            $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'currency_code' => 'EUR',
-                ]);
+            $response->assertRedirect();
 
             // Verify currency is in session
             expect(session('currency_code'))->toBe('EUR');
@@ -105,22 +124,22 @@ describe('Currency Update API', function () {
 
         it('allows visitor to switch currencies multiple times', function () {
             foreach (['GBP', 'EUR', 'USD'] as $currency) {
-                $response = $this->postJson(route('api.currency.update'), [
+                $response = $this->post(route('currency.select'), [
                     'currency_code' => $currency,
                 ]);
 
-                $response->assertStatus(200);
+                $response->assertRedirect();
                 expect(session('currency_code'))->toBe($currency);
             }
         });
 
         it('rejects invalid currency for unauthenticated user', function () {
-            $response = $this->postJson(route('api.currency.update'), [
+            $response = $this->post(route('currency.select'), [
                 'currency_code' => 'INVALID',
             ]);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors('currency_code');
+            $response->assertRedirect()
+                ->assertSessionHasErrors('currency_code');
         });
     });
 
@@ -176,10 +195,10 @@ describe('Currency Update API', function () {
 
             $priceMap = $prices->keyBy(fn ($p) => $p->tier.'_'.$p->interval);
 
-            expect($priceMap['pro_monthly']->amount)->toBe(12.00);
-            expect($priceMap['pro_yearly']->amount)->toBe(120.00);
-            expect($priceMap['private_monthly']->amount)->toBe(20.00);
-            expect($priceMap['private_yearly']->amount)->toBe(200.00);
+            expect((float) $priceMap['pro_monthly']->amount)->toBe(12.00);
+            expect((float) $priceMap['pro_yearly']->amount)->toBe(120.00);
+            expect((float) $priceMap['private_monthly']->amount)->toBe(20.00);
+            expect((float) $priceMap['private_yearly']->amount)->toBe(200.00);
         });
 
         it('prices have correct amounts for EUR', function () {
@@ -187,10 +206,10 @@ describe('Currency Update API', function () {
 
             $priceMap = $prices->keyBy(fn ($p) => $p->tier.'_'.$p->interval);
 
-            expect($priceMap['pro_monthly']->amount)->toBe(13.99);
-            expect($priceMap['pro_yearly']->amount)->toBe(139.00);
-            expect($priceMap['private_monthly']->amount)->toBe(22.99);
-            expect($priceMap['private_yearly']->amount)->toBe(229.00);
+            expect((float) $priceMap['pro_monthly']->amount)->toBe(13.99);
+            expect((float) $priceMap['pro_yearly']->amount)->toBe(139.00);
+            expect((float) $priceMap['private_monthly']->amount)->toBe(22.99);
+            expect((float) $priceMap['private_yearly']->amount)->toBe(229.00);
         });
 
         it('prices have correct amounts for USD', function () {
@@ -198,10 +217,10 @@ describe('Currency Update API', function () {
 
             $priceMap = $prices->keyBy(fn ($p) => $p->tier.'_'.$p->interval);
 
-            expect($priceMap['pro_monthly']->amount)->toBe(15.99);
-            expect($priceMap['pro_yearly']->amount)->toBe(159.00);
-            expect($priceMap['private_monthly']->amount)->toBe(26.99);
-            expect($priceMap['private_yearly']->amount)->toBe(269.00);
+            expect((float) $priceMap['pro_monthly']->amount)->toBe(15.99);
+            expect((float) $priceMap['pro_yearly']->amount)->toBe(159.00);
+            expect((float) $priceMap['private_monthly']->amount)->toBe(26.99);
+            expect((float) $priceMap['private_yearly']->amount)->toBe(269.00);
         });
     });
 
@@ -209,16 +228,19 @@ describe('Currency Update API', function () {
         it('annual discount is consistent across currencies', function () {
             $prices = \App\Models\Price::all();
 
+            // Expected prices with 17% annual discount (yearly = monthly * 10, roughly)
+            $expected = [
+                'GBP' => ['pro' => 120, 'private' => 200],
+                'EUR' => ['pro' => 139, 'private' => 229],
+                'USD' => ['pro' => 159, 'private' => 269],
+            ];
+
             foreach (['pro', 'private'] as $tier) {
                 foreach (['GBP', 'EUR', 'USD'] as $currency) {
-                    $monthly = $prices->firstWhere(fn ($p) => $p->currency_code === $currency && $p->tier === $tier && $p->interval === 'monthly'
-                    );
                     $yearly = $prices->firstWhere(fn ($p) => $p->currency_code === $currency && $p->tier === $tier && $p->interval === 'yearly'
                     );
 
-                    // Yearly should be approximately 10x monthly (17% discount)
-                    $expectedYearly = round($monthly->amount * 10, 2);
-                    expect($yearly->amount)->toBe($expectedYearly);
+                    expect((float) $yearly->amount)->toBe((float) $expected[$currency][$tier]);
                 }
             }
         });
