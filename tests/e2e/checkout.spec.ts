@@ -7,36 +7,25 @@ test.describe('Pricing and Checkout Flows', () => {
         await page.goto(`${baseUrl}/pricing`);
     });
 
-    test('displays pricing page with all three tiers', async ({ page }) => {
-        // Check page loads
+    test('displays pricing page with correct title', async ({ page }) => {
+        // Check page loads with correct title
         await expect(page).toHaveTitle(/Pricing/i);
 
-        // Check Free tier is visible
-        await expect(page.getByRole('heading', { name: /free/i })).toBeVisible();
-
-        // Check Pro tier is visible
-        await expect(page.getByRole('heading', { name: /pro/i })).toBeVisible();
-
-        // Check Private tier is visible
-        const privateTab = page.getByTestId('private-tier-tab');
-        await expect(privateTab).toBeVisible();
+        // Check main heading is visible
+        await expect(page.getByRole('heading', { name: /simple.*transparent.*pricing/i })).toBeVisible();
     });
 
-    test('allows toggling between pro and private tiers', async ({ page }) => {
-        const proTab = page.getByTestId('pro-tier-tab');
-        const privateTab = page.getByTestId('private-tier-tab');
+    test('displays all three tier cards side by side', async ({ page }) => {
+        // Check all three tier cards are visible
+        await expect(page.getByRole('heading', { name: /^free$/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /^pro$/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /^private$/i })).toBeVisible();
 
-        // Click Private tab
-        await privateTab.click();
-
-        // Verify heading changed to Private
-        await expect(page.getByRole('heading', { name: /private/i })).toBeVisible();
-
-        // Click back to Pro
-        await proTab.click();
-
-        // Verify heading changed back to Pro
-        await expect(page.getByRole('heading', { name: /pro/i })).toBeVisible();
+        // Verify they're in separate cards
+        const proCard = page.getByTestId('pro-tier-tab');
+        const privateCard = page.getByTestId('private-tier-tab');
+        await expect(proCard).toBeVisible();
+        await expect(privateCard).toBeVisible();
     });
 
     test('allows toggling between monthly and yearly billing', async ({ page }) => {
@@ -96,20 +85,19 @@ test.describe('Pricing and Checkout Flows', () => {
         expect(await monthlyText.count()).toBeGreaterThan(0);
     });
 
-    test('switching tiers updates button text', async ({ page }) => {
-        const subscribeButton = page.getByTestId('subscribe-button');
-        const proTab = page.getByTestId('pro-tier-tab');
-        const privateTab = page.getByTestId('private-tier-tab');
+    test('each tier has its own subscribe button', async ({ page }) => {
+        // Get all subscribe buttons
+        const subscribeButtons = page.getByTestId('subscribe-button');
 
-        // Switch to Pro
-        await proTab.click();
-        const proText = await subscribeButton.textContent();
-        expect(proText).toBeTruthy();
+        // Should have 2 subscribe buttons (Pro and Private)
+        expect(await subscribeButtons.count()).toBe(2);
 
-        // Switch to Private
-        await privateTab.click();
-        const privateText = await subscribeButton.textContent();
-        expect(privateText).toBeTruthy();
+        // Verify button text
+        const proCard = page.getByTestId('pro-tier-tab');
+        const privateCard = page.getByTestId('private-tier-tab');
+
+        await expect(proCard.getByTestId('subscribe-button')).toBeVisible();
+        await expect(privateCard.getByTestId('subscribe-button')).toBeVisible();
     });
 
     test('responsive design on mobile', async ({ page }) => {
@@ -123,19 +111,19 @@ test.describe('Pricing and Checkout Flows', () => {
         await expect(page.getByRole('heading', { name: /free/i })).toBeVisible();
     });
 
-    test('keyboard navigation works for tier tabs', async ({ page }) => {
-        const proTab = page.getByTestId('pro-tier-tab');
-        const privateTab = page.getByTestId('private-tier-tab');
+    test('keyboard navigation works for billing toggles', async ({ page }) => {
+        const monthlyToggle = page.getByTestId('monthly-toggle');
+        const annualToggle = page.getByTestId('annual-toggle');
 
-        // Focus Pro tab
-        await proTab.focus();
-        await expect(proTab).toBeFocused();
+        // Focus Monthly toggle
+        await monthlyToggle.focus();
+        await expect(monthlyToggle).toBeFocused();
 
         // Tab to next element
         await page.keyboard.press('Tab');
 
-        // Private tab should be focusable
-        await expect(privateTab).toBeVisible();
+        // Annual toggle should be focusable
+        await expect(annualToggle).toBeVisible();
     });
 
     test('displays currency symbol', async ({ page }) => {
@@ -144,13 +132,10 @@ test.describe('Pricing and Checkout Flows', () => {
         expect(await pounds.count()).toBeGreaterThan(0);
     });
 
-    test('shows all three tier names', async ({ page }) => {
-        await expect(page.locator('text=/free/i')).toBeVisible();
-        
-        const proTab = page.getByTestId('pro-tier-tab');
-        await expect(proTab).toContainText(/pro/i);
-
-        const privateTab = page.getByTestId('private-tier-tab');
-        await expect(privateTab).toContainText(/private/i);
+    test('shows all three tier names as headings', async ({ page }) => {
+        // All three tier names should be visible as headings
+        await expect(page.getByRole('heading', { name: /^free$/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /^pro$/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /^private$/i })).toBeVisible();
     });
 });

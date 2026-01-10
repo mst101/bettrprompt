@@ -549,12 +549,12 @@
         }
     },
     "pricing": {
-        "pageTitle": "Pricing",
-        "title": "Simple, Transparent Pricing",
+        "pageTitle": "Pricing - BettrPrompt",
+        "title": "Simple, transparent pricing",
         "subtitle": "Choose the plan that works for you",
         "tagline": "Start free, upgrade when you need more",
-        "currency": "GBP",
-        "popularBadge": "Most popular",
+        "currency": "£",
+        "popularBadge": "Most Popular",
         "monthly": "Monthly",
         "yearly": "Yearly",
         "save": "Save {percent}%",
@@ -567,11 +567,13 @@
             "year": "year"
         },
         "actions": {
-            "processing": "Processing..."
+            "processing": "Processing...",
+            "subscribe": "Subscribe"
         },
         "free": {
             "name": "Free",
             "price": "0",
+            "priceMonthly": "Free",
             "period": "forever",
             "description": "Perfect for trying out BettrPrompt",
             "cta": "Get Started"
@@ -579,40 +581,83 @@
         "pro": {
             "name": "Pro",
             "priceMonthly": "12",
-            "priceYearly": "99",
+            "priceYearly": "120",
             "period": "per month",
             "periodYearly": "per year",
             "description": "For power users who want the best results",
             "cta": "Start Pro",
-            "yearlySavings": "{amount} / {period} - Save {percent}%"
+            "yearlySavings": "Save {percent}% when billed annually – just {amount}/{period}"
+        },
+        "private": {
+            "name": "Private",
+            "priceMonthly": "20",
+            "priceYearly": "200",
+            "cta": "Start Private",
+            "yearlySavings": "Save {percent}% when billed annually – just {amount}/{period}"
         },
         "features": {
             "title": "All features included",
+            "free": {
+                "limit": "10 prompts per month",
+                "calibration": "Personality calibration",
+                "optimization": "Basic prompt optimisation"
+            },
+            "pro": {
+                "unlimited": "Unlimited prompts",
+                "calibration": "Personality calibration",
+                "optimization": "Advanced prompt optimisation",
+                "history": "Prompt history"
+            },
+            "private": {
+                "unlimited": "Unlimited prompts",
+                "calibration": "Personality calibration",
+                "optimization": "Advanced prompt optimisation",
+                "mode": "Private mode (restricted access)",
+                "support": "Priority support",
+                "history": "Prompt history"
+            },
             "unlimited": "Unlimited prompts",
             "priority": "Priority processing",
-            "privacy": "Privacy encryption",
+            "privacy": "Private mode",
             "support": "Priority support"
         },
         "faq": {
             "title": "Frequently Asked Questions",
             "items": {
                 "limit": {
-                    "question": "What happens when I reach my free limit?",
-                    "answer": "Free accounts are limited to 10 prompts per month. Your limit resets on the first of each month. You can upgrade to Pro at any time for unlimited prompts."
+                    "question": "What happens when I reach my monthly limit?",
+                    "answer": "Free users get 10 prompts per month. Once you've used them, you'll need to upgrade to Pro or Private for more. Your monthly allowance resets on the 1st of each month."
                 },
                 "privacy": {
-                    "question": "What is privacy encryption?",
-                    "answer": "Pro users get their prompt data encrypted at rest. This means your prompts and responses are protected with encryption keys that only you control, ensuring maximum privacy for sensitive tasks."
+                    "question": "What is Private mode?",
+                    "answer": "Private mode ensures your data is not used for training or product improvement. It includes restricted staff access (only with your explicit consent) and enhanced encryption."
                 },
                 "cancel": {
                     "question": "Can I cancel my subscription?",
-                    "answer": "Yes, you can cancel anytime. You'll retain Pro access until the end of your current billing period, then you'll be moved to the Free plan."
+                    "answer": "Yes, you can cancel anytime. You'll retain access until the end of your current billing period. Your data will remain safely encrypted."
                 },
                 "payment": {
                     "question": "What payment methods do you accept?",
-                    "answer": "We accept all major credit and debit cards, as well as Apple Pay and Google Pay through our secure payment provider, Stripe."
+                    "answer": "We accept all major credit and debit cards via Stripe. Your payment information is handled securely."
                 }
             }
+        },
+        "currentPlan": "Current Plan",
+        "upgrade": "Upgrade",
+        "upgradeToPro": "Upgrade to Pro",
+        "upgradeToPrivate": "Upgrade to Private"
+    },
+    "messages": {
+        "subscription": {
+            "invalid_plan": "Invalid plan selected.",
+            "prompt_limit_reached": "You have reached your monthly prompt limit.",
+            "prompt_limit_reached_upgrade": "You have reached your monthly prompt limit. Upgrade to Pro for unlimited prompts.",
+            "welcome_pro": "Welcome to BettrPrompt Pro!",
+            "welcome_private": "Welcome to BettrPrompt Private! Your data is now protected with enhanced privacy.",
+            "checkout_cancelled": "Subscription checkout was cancelled.",
+            "cancelled_pro_until": "Your subscription has been cancelled. You will retain Pro access until {date}.",
+            "resumed": "Your subscription has been resumed.",
+            "current_plan": "Current Plan"
         }
     },
     "feedback": {

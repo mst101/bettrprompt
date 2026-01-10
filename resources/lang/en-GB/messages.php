@@ -197,9 +197,11 @@ return [
         'prompt_limit_reached' => 'You have reached your monthly prompt limit.',
         'prompt_limit_reached_upgrade' => 'You have reached your monthly prompt limit. Upgrade to Pro for unlimited prompts.',
         'welcome_pro' => 'Welcome to BettrPrompt Pro!',
+        'welcome_private' => 'Welcome to BettrPrompt Private! Your data is now protected with enhanced privacy.',
         'checkout_cancelled' => 'Subscription checkout was cancelled.',
         'cancelled_pro_until' => 'Your subscription has been cancelled. You will retain Pro access until {date}.',
         'resumed' => 'Your subscription has been resumed.',
+        'current_plan' => 'Current Plan',
     ],
 
     // Authentication messages

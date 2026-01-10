@@ -198,9 +198,11 @@ return [
         'prompt_limit_reached' => 'Sie haben Ihr monatliches Anfrage-Limit erreicht.',
         'prompt_limit_reached_upgrade' => 'Sie haben Ihr monatliches Anfrage-Limit erreicht. Aktualisieren Sie auf Pro für unbegrenzte Anfragen.',
         'welcome_pro' => 'Willkommen bei BettrPrompt Pro!',
+        'welcome_private' => 'Willkommen bei BettrPrompt Privat! Ihre Daten sind jetzt mit verbesserter Privatsphäre geschützt.',
         'checkout_cancelled' => 'Abonnement-Kasse wurde storniert.',
         'cancelled_pro_until' => 'Ihr Abonnement wurde storniert. Sie haben Pro-Zugang bis {date}.',
         'resumed' => 'Ihr Abonnement wurde wiederaufgenommen.',
+        'current_plan' => 'Aktueller Plan',
     ],
 
     // Authentifizierungsmeldungen

@@ -198,9 +198,11 @@ return [
         'prompt_limit_reached' => 'Vous avez atteint votre limite mensuelle d\'invites.',
         'prompt_limit_reached_upgrade' => 'Vous avez atteint votre limite mensuelle d\'invites. Passez à Pro pour des invites illimitées.',
         'welcome_pro' => 'Bienvenue sur BettrPrompt Pro !',
+        'welcome_private' => 'Bienvenue sur BettrPrompt Privé ! Vos données sont désormais protégées avec une confidentialité renforcée.',
         'checkout_cancelled' => 'La validation de l\'abonnement a été annulée.',
         'cancelled_pro_until' => 'Votre abonnement a été annulé. Vous conserverez l\'accès Pro jusqu\'au {date}.',
         'resumed' => 'Votre abonnement a été repris.',
+        'current_plan' => 'Forfait Actuel',
     ],
 
     // Messages d'authentification
