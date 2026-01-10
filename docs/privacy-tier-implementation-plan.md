@@ -11,17 +11,17 @@ Key idea: **encryption at rest is baseline security, not the premium feature**. 
 | Tier | Price | Prompts | Privacy | Data Usage |
 |------|-------|---------|---------|------------|
 | **Free** | £0 | 10/month | Standard | May be used to improve the service (with clear disclosure/consent) |
-| **Unlimited** | £12/month or £120/year | Unlimited | Standard | May be used to improve the service (with clear disclosure/consent) |
+| **Pro** | £12/month or £120/year | Unlimited | Standard | May be used to improve the service (with clear disclosure/consent) |
 | **Private** | £20/month or £200/year | Unlimited | Private mode | Not used for training/improvement; restricted internal access |
 
-**Annual discount**: ~17% (Unlimited: £120/year = £10/month vs £12/month; Private: £200/year = £16.67/month vs £20/month)
+**Annual discount**: ~17% (Pro: £120/year = £10/month vs £12/month; Private: £200/year = £16.67/month vs £20/month)
 
 **Suggested localized price points (fixed per currency, not live FX):**
 
 | Tier | GBP | EUR | USD |
 |------|-----|-----|-----|
-| **Unlimited (Monthly)** | £12/month | €13.99/month | $15.99/month |
-| **Unlimited (Annual)** | £120/year | €139/year | $159/year |
+| **Pro (Monthly)** | £12/month | €13.99/month | $15.99/month |
+| **Pro (Annual)** | £120/year | €139/year | $159/year |
 | **Private (Monthly)** | £20/month | €22.99/month | $26.99/month |
 | **Private (Annual)** | £200/year | €229/year | $269/year |
 
@@ -30,7 +30,7 @@ Key idea: **encryption at rest is baseline security, not the premium feature**. 
 | Tier | Data Storage | Analytics Access | Use Case |
 |------|-------------|------------------|----------|
 | **Free** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Default - enables product improvement while meeting baseline security expectations |
-| **Unlimited** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Pay for usage; still supports product improvement under clear disclosure/consent |
+| **Pro** | Encrypted at rest (platform-managed keys) | ✅ Allowed (policy + consent) | Pay for usage; still supports product improvement under clear disclosure/consent |
 | **Private (Paid)** | Encrypted at rest + stronger key separation (user-controlled envelope key) | ❌ Disabled by default | Users needing confidentiality for sensitive prompts; “private mode” behaviour |
 
 **Key Point**: Free-tier data is still encrypted at rest, but may be accessed/used under strict controls for:
@@ -43,8 +43,8 @@ Key idea: **encryption at rest is baseline security, not the premium feature**. 
 ### Key Decisions Made
 
 - ✅ **10 prompts/month free tier** - enough to try the service
-- ✅ **£12/month unlimited tier** - pay for usage, not privacy
-- ✅ **£120/year annual unlimited option** - ~17% discount for commitment
+- ✅ **£12/month Pro tier** - pay for usage, not privacy
+- ✅ **£120/year annual Pro option** - ~17% discount for commitment
 - ✅ **£20/month private tier** - premium for confidentiality and reduced data use
 - ✅ **£200/year annual private option** - ~17% discount for commitment
 - ✅ **Encryption at rest for all tiers** - baseline protection for sensitive prompt/personality data
@@ -503,7 +503,7 @@ class UserEncrypted implements CastsAttributes
 - **Location**: UK-based company
 - **Compliance**: EU law (GDPR), UK VAT
 - **Pricing**:
-  - Unlimited: £12/month or £120/year
+  - Pro: £12/month or £120/year
   - Private: £20/month or £200/year
 - **Year 1**: ~500 private subscribers = ~£100,000 - £120,000 revenue
 - **Year 2**: ~5,000 private subscribers = ~£1,000,000 - £1,200,000 revenue
@@ -596,7 +596,7 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
 1. **Create Stripe UK account** at stripe.com
 2. **Install Laravel Cashier**: `composer require laravel/cashier`
 3. **Configure products in Stripe Dashboard**:
-   - Product: "BettrPrompt Unlimited"
+   - Product: "BettrPrompt Pro"
      - Price 1: £12/month (recurring)
      - Price 2: £120/year (recurring)
    - Product: "BettrPrompt Private"
@@ -634,9 +634,9 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
                 <button @click="startFree">Get Started</button>
             </div>
 
-            <!-- Unlimited Tier -->
+            <!-- Pro Tier -->
             <div class="pricing-card">
-                <h2>Unlimited</h2>
+                <h2>Pro</h2>
                 <div class="price">£12/month</div>
                 <div class="savings">£120/year • Save 17%</div>
                 <ul class="features">
@@ -645,8 +645,8 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
                     <li>✓ Encryption at rest</li>
                     <li class="disabled">✗ Private mode</li>
                 </ul>
-                <button @click="subscribe('unlimited_monthly')">
-                    Start Unlimited
+                <button @click="subscribe('pro_monthly')">
+                    Start Pro
                 </button>
             </div>
 
@@ -707,7 +707,7 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
         <!-- Upgrade Prompt (for free users) -->
         <div v-if="isFree" class="upgrade-section">
             <h3>Upgrade</h3>
-            <p>Choose Unlimited for more usage, or Private for maximum confidentiality</p>
+            <p>Choose Pro for more usage, or Private for maximum confidentiality</p>
             <button @click="showUpgradeModal = true">Upgrade Now</button>
         </div>
 
@@ -755,7 +755,7 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
             {{ promptsUsed }}/10 prompts this month
         </span>
         <button v-if="promptsUsed >= 10" @click="showUpgrade">
-            Upgrade for unlimited
+            Upgrade to Pro
         </button>
     </div>
 </template>
@@ -771,17 +771,17 @@ Assuming 50/50 monthly/annual split, 500 paying users Year 1:
             <h2>You've reached your monthly limit</h2>
             <p>
                 Free accounts are limited to 10 prompts per month.
-                Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
+                Upgrade to Pro for more usage, or Private for maximum confidentiality.
             </p>
 
 	            <div class="pricing-options">
-	                <div class="option" @click="selectPlan('unlimited_monthly')">
-	                    <h3>Unlimited</h3>
+	                <div class="option" @click="selectPlan('pro_monthly')">
+	                    <h3>Pro</h3>
 	                    <div class="price">£12/month</div>
 	                </div>
-	                <div class="option" @click="selectPlan('unlimited_yearly')">
+	                <div class="option" @click="selectPlan('pro_yearly')">
 	                    <div class="badge">Save 17%</div>
-	                    <h3>Unlimited (Annual)</h3>
+	                    <h3>Pro (Annual)</h3>
 	                    <div class="price">£120/year</div>
 	                    <div class="effective">£10/month</div>
 	                </div>
@@ -821,19 +821,19 @@ class SubscriptionController extends Controller
 	    public function pricing()
 	    {
 	        return Inertia::render('Pricing', [
-	            'plans' => [
-	                'unlimited_monthly' => [
-	                    'price_id' => config('stripe.prices.GBP.unlimited_monthly'),
-	                    'price' => 1200, // pence (£12)
-	                    'interval' => 'month',
-	                ],
-	                'unlimited_yearly' => [
-	                    'price_id' => config('stripe.prices.GBP.unlimited_yearly'),
-	                    'price' => 12000, // pence (£120)
-	                    'interval' => 'year',
-	                ],
-	                'private_monthly' => [
-	                    'price_id' => config('stripe.prices.GBP.private_monthly'),
+		            'plans' => [
+		                'pro_monthly' => [
+		                    'price_id' => config('stripe.prices.GBP.pro_monthly'),
+		                    'price' => 1200, // pence (£12)
+		                    'interval' => 'month',
+		                ],
+		                'pro_yearly' => [
+		                    'price_id' => config('stripe.prices.GBP.pro_yearly'),
+		                    'price' => 12000, // pence (£120)
+		                    'interval' => 'year',
+		                ],
+		                'private_monthly' => [
+		                    'price_id' => config('stripe.prices.GBP.private_monthly'),
 	                    'price' => 2000, // pence (£20)
 	                    'interval' => 'month',
 	                ],
@@ -848,9 +848,9 @@ class SubscriptionController extends Controller
 
 	    public function subscribe(Request $request)
 	    {
-	        $request->validate([
-	            'plan' => 'required|in:unlimited_monthly,unlimited_yearly,private_monthly,private_yearly',
-	        ]);
+		        $request->validate([
+		            'plan' => 'required|in:pro_monthly,pro_yearly,private_monthly,private_yearly',
+		        ]);
 
 	        $user = $request->user();
 	        $currency = 'GBP';
@@ -902,15 +902,15 @@ class CheckSubscription
 
         // Share subscription status with all Inertia responses
         Inertia::share([
-            'subscription' => [
-                'tier' => $user->subscription_tier,
-                'isPaid' => $user->subscribed('default') || ($user->subscription_ends_at && $user->subscription_ends_at->isFuture()),
-                'isUnlimited' => $user->subscription_tier === 'unlimited',
-                'isPrivate' => $user->subscription_tier === 'private',
-                'promptsUsed' => $user->monthly_prompt_count,
-                'promptsRemaining' => $user->subscribed('default') ? PHP_INT_MAX : max(0, 10 - $user->monthly_prompt_count),
-                'privacyEnabled' => $user->privacy_enabled,
-            ],
+	            'subscription' => [
+	                'tier' => $user->subscription_tier,
+	                'isPaid' => $user->subscribed('default') || ($user->subscription_ends_at && $user->subscription_ends_at->isFuture()),
+	                'isPro' => $user->subscription_tier === 'pro',
+	                'isPrivate' => $user->subscription_tier === 'private',
+	                'promptsUsed' => $user->monthly_prompt_count,
+	                'promptsRemaining' => $user->subscribed('default') ? PHP_INT_MAX : max(0, 10 - $user->monthly_prompt_count),
+	                'privacyEnabled' => $user->privacy_enabled,
+	            ],
         ]);
 
         return $next($request);

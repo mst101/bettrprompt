@@ -9,8 +9,8 @@ This document details the implementation of BettrPrompt's pricing model using St
 | Tier | GBP | EUR | USD | Features |
 |------|-----|-----|-----|----------|
 | **Free** | £0 | €0 | $0 | 10 prompts/month, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
-| **Unlimited (Monthly)** | £12/month | €13.99/month | $15.99/month | Unlimited prompts, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
-| **Unlimited (Annual)** | £120/year | €139/year | $159/year | Unlimited prompts (save ~17%) |
+| **Pro (Monthly)** | £12/month | €13.99/month | $15.99/month | Unlimited prompts, encryption at rest, data may be used to improve the service (with clear disclosure/consent) |
+| **Pro (Annual)** | £120/year | €139/year | $159/year | Unlimited prompts (save ~17%) |
 | **Private (Monthly)** | £20/month | €22.99/month | $26.99/month | Unlimited prompts, Private mode (restricted access + no training/improvement use by default, user-consented support sessions) |
 | **Private (Annual)** | £200/year | €229/year | $269/year | Unlimited prompts, Private mode (save ~17%) |
 
@@ -28,10 +28,10 @@ This document details the implementation of BettrPrompt's pricing model using St
 
 ### 1.2 Create Products & Prices in Stripe Dashboard
 
-**Product: BettrPrompt Unlimited**
+**Product: BettrPrompt Pro**
 
 ```
-Product Name: BettrPrompt Unlimited
+Product Name: BettrPrompt Pro
 Description: Unlimited prompts with standard privacy protections
 ```
 
@@ -82,18 +82,18 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Price IDs from Stripe Dashboard
 # Recommended: store Price IDs per currency to keep stable localized pricing
-STRIPE_PRICE_UNLIMITED_MONTHLY_GBP=price_unlimited_monthly_gbp_id_here
-STRIPE_PRICE_UNLIMITED_YEARLY_GBP=price_unlimited_yearly_gbp_id_here
+STRIPE_PRICE_PRO_MONTHLY_GBP=price_pro_monthly_gbp_id_here
+STRIPE_PRICE_PRO_YEARLY_GBP=price_pro_yearly_gbp_id_here
 STRIPE_PRICE_PRIVATE_MONTHLY_GBP=price_private_monthly_gbp_id_here
 STRIPE_PRICE_PRIVATE_YEARLY_GBP=price_private_yearly_gbp_id_here
 
-STRIPE_PRICE_UNLIMITED_MONTHLY_EUR=price_unlimited_monthly_eur_id_here
-STRIPE_PRICE_UNLIMITED_YEARLY_EUR=price_unlimited_yearly_eur_id_here
+STRIPE_PRICE_PRO_MONTHLY_EUR=price_pro_monthly_eur_id_here
+STRIPE_PRICE_PRO_YEARLY_EUR=price_pro_yearly_eur_id_here
 STRIPE_PRICE_PRIVATE_MONTHLY_EUR=price_private_monthly_eur_id_here
 STRIPE_PRICE_PRIVATE_YEARLY_EUR=price_private_yearly_eur_id_here
 
-STRIPE_PRICE_UNLIMITED_MONTHLY_USD=price_unlimited_monthly_usd_id_here
-STRIPE_PRICE_UNLIMITED_YEARLY_USD=price_unlimited_yearly_usd_id_here
+STRIPE_PRICE_PRO_MONTHLY_USD=price_pro_monthly_usd_id_here
+STRIPE_PRICE_PRO_YEARLY_USD=price_pro_yearly_usd_id_here
 STRIPE_PRICE_PRIVATE_MONTHLY_USD=price_private_monthly_usd_id_here
 STRIPE_PRICE_PRIVATE_YEARLY_USD=price_private_yearly_usd_id_here
 ```
@@ -111,20 +111,20 @@ return [
 
     'prices' => [
         'GBP' => [
-            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_GBP'),
-            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_GBP'),
+            'pro_monthly' => env('STRIPE_PRICE_PRO_MONTHLY_GBP'),
+            'pro_yearly' => env('STRIPE_PRICE_PRO_YEARLY_GBP'),
             'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_GBP'),
             'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_GBP'),
         ],
         'EUR' => [
-            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_EUR'),
-            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_EUR'),
+            'pro_monthly' => env('STRIPE_PRICE_PRO_MONTHLY_EUR'),
+            'pro_yearly' => env('STRIPE_PRICE_PRO_YEARLY_EUR'),
             'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_EUR'),
             'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_EUR'),
         ],
         'USD' => [
-            'unlimited_monthly' => env('STRIPE_PRICE_UNLIMITED_MONTHLY_USD'),
-            'unlimited_yearly' => env('STRIPE_PRICE_UNLIMITED_YEARLY_USD'),
+            'pro_monthly' => env('STRIPE_PRICE_PRO_MONTHLY_USD'),
+            'pro_yearly' => env('STRIPE_PRICE_PRO_YEARLY_USD'),
             'private_monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_USD'),
             'private_yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_USD'),
         ],
@@ -263,9 +263,9 @@ class User extends Authenticatable
                ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
     }
 
-    public function isUnlimited(): bool
+    public function isPro(): bool
     {
-        return $this->isPaid() && $this->subscription_tier === 'unlimited';
+        return $this->isPaid() && $this->subscription_tier === 'pro';
     }
 
     public function isPrivate(): bool
@@ -286,9 +286,9 @@ class User extends Authenticatable
      */
     public function getPromptsRemaining(): int
     {
-        if ($this->isPaid()) {
-            return PHP_INT_MAX; // Unlimited
-        }
+	        if ($this->isPaid()) {
+	            return PHP_INT_MAX; // Unlimited prompts
+	        }
 
         $limit = config('stripe.free_tier.monthly_prompt_limit', 10);
         return max(0, $limit - $this->monthly_prompt_count);
@@ -326,7 +326,7 @@ class User extends Authenticatable
         return [
             'tier' => $this->isPaid() ? $this->subscription_tier : 'free',
             'isPaid' => $this->isPaid(),
-            'isUnlimited' => $this->isUnlimited(),
+            'isPro' => $this->isPro(),
             'isPrivate' => $this->isPrivate(),
             'promptsUsed' => $this->monthly_prompt_count,
             'promptsRemaining' => $this->getPromptsRemaining(),
@@ -363,15 +363,15 @@ class SubscriptionController extends Controller
 	    {
 	        return Inertia::render('Pricing', [
 	            'plans' => [
-	                'unlimited_monthly' => [
-	                    'priceId' => config('stripe.prices.GBP.unlimited_monthly'),
+	                'pro_monthly' => [
+	                    'priceId' => config('stripe.prices.GBP.pro_monthly'),
 	                    'price' => 12,
 	                    'currency' => 'GBP',
 	                    'interval' => 'month',
 	                    'description' => 'Unlimited prompts (standard)',
 	                ],
-	                'unlimited_yearly' => [
-	                    'priceId' => config('stripe.prices.GBP.unlimited_yearly'),
+	                'pro_yearly' => [
+	                    'priceId' => config('stripe.prices.GBP.pro_yearly'),
 	                    'price' => 120,
 	                    'currency' => 'GBP',
 	                    'interval' => 'year',
@@ -401,7 +401,7 @@ class SubscriptionController extends Controller
 	                    'Basic prompt optimisation',
 	                    'Encryption at rest',
 	                ],
-	                'unlimited' => [
+	                'pro' => [
 	                    'Unlimited prompts',
 	                    'Personality calibration',
 	                    'Advanced prompt optimisation',
@@ -426,7 +426,7 @@ class SubscriptionController extends Controller
 	    public function checkout(Request $request)
 	    {
 	        $request->validate([
-	            'plan' => 'required|in:unlimited_monthly,unlimited_yearly,private_monthly,private_yearly',
+	            'plan' => 'required|in:pro_monthly,pro_yearly,private_monthly,private_yearly',
 	        ]);
 
 	        $user = $request->user();
@@ -461,7 +461,7 @@ class SubscriptionController extends Controller
 
         // Update subscription tier (simple approach: infer from selected plan)
         $plan = $request->string('plan')->toString();
-        $tier = str_starts_with($plan, 'private_') ? 'private' : 'unlimited';
+        $tier = str_starts_with($plan, 'private_') ? 'private' : 'pro';
         $user->update(['subscription_tier' => $tier]);
 
         return Inertia::render('Subscription/Success', [
@@ -585,7 +585,7 @@ class StripeWebhookController extends CashierController
 	                $prices['USD']['private_monthly'] ?? null,
 	                $prices['USD']['private_yearly'] ?? null,
 	            ];
-	            $tier = in_array($priceId, $privatePrices, true) ? 'private' : 'unlimited';
+	            $tier = in_array($priceId, $privatePrices, true) ? 'private' : 'pro';
 
             $user->update([
                 'subscription_tier' => $tier,
@@ -850,9 +850,9 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']
 ```typescript
 // resources/js/Types/subscription.ts
 export interface SubscriptionStatus {
-    tier: 'free' | 'unlimited' | 'private';
+    tier: 'free' | 'pro' | 'private';
     isPaid: boolean;
-    isUnlimited: boolean;
+    isPro: boolean;
     isPrivate: boolean;
     promptsUsed: number;
     promptsRemaining: number;
@@ -890,14 +890,14 @@ import type { PricingPlan } from '@/Types/subscription';
 
 interface Props {
     plans: {
-        unlimited_monthly: PricingPlan;
-        unlimited_yearly: PricingPlan;
+        pro_monthly: PricingPlan;
+        pro_yearly: PricingPlan;
         private_monthly: PricingPlan;
         private_yearly: PricingPlan;
     };
     features: {
         free: string[];
-        unlimited: string[];
+        pro: string[];
         private: string[];
     };
 }
@@ -906,7 +906,7 @@ const props = defineProps<Props>();
 const page = usePage();
 
 const selectedPlan = ref<
-    'unlimited_monthly' | 'unlimited_yearly' | 'private_monthly' | 'private_yearly'
+    'pro_monthly' | 'pro_yearly' | 'private_monthly' | 'private_yearly'
 >('private_yearly');
 const isLoading = ref(false);
 
@@ -976,14 +976,14 @@ function getStarted() {
                     </button>
                 </div>
 
-                <!-- Unlimited Tier -->
+                <!-- Pro Tier -->
                 <div class="border rounded-2xl p-8 bg-white">
-                    <h2 class="text-2xl font-bold mb-2">Unlimited</h2>
+                    <h2 class="text-2xl font-bold mb-2">Pro</h2>
                     <div class="text-4xl font-bold mb-2">£12<span class="text-lg font-normal text-gray-500">/month</span></div>
                     <div class="text-sm text-gray-500 mb-6">£120/year • Save 17%</div>
 
                     <ul class="space-y-3 mb-8">
-                        <li v-for="feature in features.unlimited" :key="feature" class="flex items-center gap-2">
+                        <li v-for="feature in features.pro" :key="feature" class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -998,13 +998,13 @@ function getStarted() {
                     </ul>
 
                     <button
-                        @click="router.post('/subscription/checkout', { plan: 'unlimited_monthly' })"
-                        :disabled="isLoading || subscription?.tier === 'unlimited'"
+                        @click="router.post('/subscription/checkout', { plan: 'pro_monthly' })"
+                        :disabled="isLoading || subscription?.tier === 'pro'"
                         class="w-full py-3 px-4 border-2 border-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition disabled:opacity-50"
                     >
-                        <span v-if="subscription?.tier === 'unlimited'">Current Plan</span>
+                        <span v-if="subscription?.tier === 'pro'">Current Plan</span>
                         <span v-else-if="isLoading">Processing...</span>
-                        <span v-else>Start Unlimited</span>
+                        <span v-else>Start Pro</span>
                     </button>
                 </div>
 
@@ -1137,8 +1137,8 @@ function resumeSubscription() {
                             {{
                                 subscription.isPrivate
                                     ? 'Private'
-                                    : subscription.isUnlimited
-                                      ? 'Unlimited'
+                                    : subscription.isPro
+                                      ? 'Pro'
                                       : 'Free'
                             }}
                         </div>
@@ -1326,7 +1326,7 @@ const emit = defineEmits<{
 }>();
 
 const selectedPlan = ref<
-    'unlimited_monthly' | 'private_monthly' | 'private_yearly'
+    'pro_monthly' | 'pro_yearly' | 'private_monthly' | 'private_yearly'
 >('private_yearly');
 const isLoading = ref(false);
 
@@ -1344,32 +1344,32 @@ function subscribe() {
             <h2 class="text-xl font-bold mb-2">You've reached your monthly limit</h2>
             <p class="text-gray-600 mb-6">
                 Free accounts are limited to 10 prompts per month.
-                Upgrade to Unlimited for more usage, or Private for maximum confidentiality.
+                Upgrade to Pro for more usage, or Private for maximum confidentiality.
             </p>
 
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button
-                    @click="selectedPlan = 'unlimited_monthly'"
+                    @click="selectedPlan = 'pro_monthly'"
                     :class="[
                         'p-4 border-2 rounded-lg text-left transition',
-                        selectedPlan === 'unlimited_monthly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                        selectedPlan === 'pro_monthly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                     ]"
                 >
-                    <div class="font-semibold">Unlimited</div>
+                    <div class="font-semibold">Pro</div>
                     <div class="text-2xl font-bold">£12<span class="text-sm font-normal">/mo</span></div>
                 </button>
 
                 <button
-                    @click="selectedPlan = 'unlimited_yearly'"
+                    @click="selectedPlan = 'pro_yearly'"
                     :class="[
                         'p-4 border-2 rounded-lg text-left transition relative',
-                        selectedPlan === 'unlimited_yearly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                        selectedPlan === 'pro_yearly' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                     ]"
                 >
                     <div class="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
                         Save 17%
                     </div>
-                    <div class="font-semibold">Unlimited (Annual)</div>
+                    <div class="font-semibold">Pro (Annual)</div>
                     <div class="text-2xl font-bold">£120<span class="text-sm font-normal">/yr</span></div>
                     <div class="text-sm text-gray-500">£10/month</div>
                 </button>
@@ -1491,12 +1491,13 @@ class SubscriptionTest extends TestCase
         $response = $this->get('/pricing');
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) =>
-            $page->component('Pricing')
-                ->has('plans.unlimited_monthly')
-                ->has('plans.private_monthly')
-                ->has('plans.private_yearly')
-        );
-    }
+	            $page->component('Pricing')
+	                ->has('plans.pro_monthly')
+	                ->has('plans.pro_yearly')
+	                ->has('plans.private_monthly')
+	                ->has('plans.private_yearly')
+	        );
+	    }
 
     public function test_free_user_has_prompt_limit(): void
     {
@@ -1523,17 +1524,17 @@ class SubscriptionTest extends TestCase
 
     public function test_paid_user_has_unlimited_prompts(): void
     {
-        $user = User::factory()->create([
-            'subscription_tier' => 'unlimited',
-        ]);
+	        $user = User::factory()->create([
+	            'subscription_tier' => 'pro',
+	        ]);
 
         // Mock subscription
         $user->newSubscription('default', 'price_xxx')->create('pm_card_visa');
 
-        $this->assertTrue($user->isPaid());
-        $this->assertTrue($user->isUnlimited());
-        $this->assertTrue($user->canCreatePrompt());
-    }
+	        $this->assertTrue($user->isPaid());
+	        $this->assertTrue($user->isPro());
+	        $this->assertTrue($user->canCreatePrompt());
+	    }
 }
 ```
 
