@@ -35,4 +35,9 @@ class Currency extends Model
     {
         return $this->hasMany(Country::class, 'currency_id', 'id');
     }
+
+    public function prices(): HasMany
+    {
+        return $this->hasMany(Price::class, 'currency_code', 'id');
+    }
 }

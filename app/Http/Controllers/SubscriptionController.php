@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Price;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,39 +17,26 @@ class SubscriptionController extends Controller
         $user = $request->user();
         $currencyCode = $user?->currency_code ?? 'GBP';
 
+        // Fetch prices from database
+        $pricesData = Price::where('currency_code', $currencyCode)->get();
+
+        // Build pricing plans from database
+        $plans = [];
+        foreach ($pricesData as $price) {
+            $key = $price->tier.'_'.$price->interval;
+            $plans[$key] = [
+                'priceId' => $price->stripe_price_id,
+                'price' => $price->amount,
+                'currency' => $currencyCode,
+                'interval' => $price->interval === 'monthly' ? 'month' : 'year',
+                'description' => __("pricing.{$price->tier}.price".ucfirst($price->interval)),
+            ];
+        }
+
         return Inertia::render('Pricing', [
-            'plans' => [
-                'pro_monthly' => [
-                    'priceId' => config("stripe.prices.{$currencyCode}.pro.monthly"),
-                    'price' => 12, // GBP; update based on currency if needed
-                    'currency' => $currencyCode,
-                    'interval' => 'month',
-                    'description' => __('pricing.pro.priceMonthly'),
-                ],
-                'pro_yearly' => [
-                    'priceId' => config("stripe.prices.{$currencyCode}.pro.yearly"),
-                    'price' => 120, // GBP; update based on currency if needed
-                    'currency' => $currencyCode,
-                    'interval' => 'year',
-                    'description' => __('pricing.pro.priceYearly'),
-                    'monthlyEquivalent' => 10,
-                ],
-                'private_monthly' => [
-                    'priceId' => config("stripe.prices.{$currencyCode}.private.monthly"),
-                    'price' => 20, // GBP; update based on currency if needed
-                    'currency' => $currencyCode,
-                    'interval' => 'month',
-                    'description' => __('pricing.private.priceMonthly'),
-                ],
-                'private_yearly' => [
-                    'priceId' => config("stripe.prices.{$currencyCode}.private.yearly"),
-                    'price' => 200, // GBP; update based on currency if needed
-                    'currency' => $currencyCode,
-                    'interval' => 'year',
-                    'description' => __('pricing.private.priceYearly'),
-                    'monthlyEquivalent' => 16.67,
-                ],
-            ],
+            'plans' => $plans,
+            'currency' => $currencyCode,
+            'availableCurrencies' => ['GBP', 'EUR', 'USD'],
             'features' => [
                 'free' => [
                     __('pricing.features.free.limit'),

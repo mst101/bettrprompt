@@ -13,9 +13,11 @@ import { computed, ref } from 'vue';
 interface Props {
     plans: PricingPlans;
     features: PricingFeatures;
+    currency: string;
+    availableCurrencies: string[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 defineOptions({
     layout: AppLayout,
@@ -27,7 +29,40 @@ const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
 const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
+const selectedCurrency = ref(props.currency);
 const isLoading = ref(false);
+const isCurrencyUpdating = ref(false);
+
+async function updateCurrency(newCurrency: string) {
+    isCurrencyUpdating.value = true;
+    selectedCurrency.value = newCurrency;
+
+    try {
+        const response = await fetch(route('api.currency.update'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': page.props.csrf_token as string,
+            },
+            body: JSON.stringify({
+                currency_code: newCurrency,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update currency');
+        }
+
+        // Refresh the page to get updated pricing
+        router.reload();
+    } catch (error) {
+        console.error('Currency update error:', error);
+        // Revert currency selection on error
+        selectedCurrency.value = props.currency;
+    } finally {
+        isCurrencyUpdating.value = false;
+    }
+}
 
 function subscribe(tier: 'pro' | 'private') {
     if (!isAuthenticated.value) {
@@ -97,6 +132,27 @@ function getStarted() {
                     @click="selectedPlan = 'yearly'"
                 >
                     {{ $t('pricing.billing.yearly') }}
+                </button>
+            </div>
+
+            <!-- Currency Switcher -->
+            <div class="mb-8 flex justify-center gap-2">
+                <button
+                    v-for="curr in availableCurrencies"
+                    :key="curr"
+                    type="button"
+                    :data-testid="`currency-${curr.toLowerCase()}`"
+                    :disabled="isCurrencyUpdating"
+                    :class="[
+                        'rounded-lg px-4 py-2 text-sm font-medium transition',
+                        selectedCurrency === curr
+                            ? 'bg-green-100 text-green-700'
+                            : 'text-gray-600 hover:bg-gray-50',
+                        isCurrencyUpdating && 'cursor-not-allowed opacity-50',
+                    ]"
+                    @click="updateCurrency(curr)"
+                >
+                    {{ curr }}
                 </button>
             </div>
 

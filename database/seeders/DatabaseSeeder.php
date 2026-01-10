@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             CountrySeeder::class,
             ClaudeModelSeeder::class,
+            PricesTableSeeder::class,
         ]);
 
         // User::factory(10)->create();

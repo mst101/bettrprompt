@@ -225,9 +225,127 @@ When ready:
 
 ---
 
+---
+
+## Multi-Currency Strategy
+
+### Current Implementation: GBP, EUR, USD
+
+**Decision: Limit to 3 currencies** (British Pound, Euro, US Dollar)
+
+### Why Only 3 Currencies?
+
+**1. Market Coverage (75-80% of SaaS Revenue)**
+- **GBP:** UK market (primary target based on domain and British English focus)
+- **EUR:** Eurozone (27 countries, 450M people)
+- **USD:** United States, Canada, and international default
+
+**2. Stripe Subscription Mode Constraint**
+- Stripe's [Adaptive Pricing](https://docs.stripe.com/payments/currencies/localize-prices/adaptive-pricing) **does not work for subscription mode**
+- Each currency requires manual [price configuration](https://docs.stripe.com/payments/checkout/localize-prices/manual-currency-prices)
+- More currencies = exponentially more maintenance
+
+**3. Technical Complexity per Currency**
+
+Each additional currency requires:
+- 4 new Stripe Price IDs (Pro/Private × Monthly/Yearly)
+- 4 new environment variables
+- Updates to 5+ language files (backend PHP + frontend JSON)
+- GeolocationService country mapping updates
+- Separate testing scenarios
+
+**Current:** 3 currencies × 2 tiers × 2 intervals = **12 Stripe Price IDs**
+**With 10 currencies:** 10 × 2 × 2 = **40 Stripe Price IDs to manage**
+
+**4. Operational Benefits of Database-Stored Prices**
+
+Prices are now stored in the `prices` table with relationships to currencies:
+- Single source of truth eliminates synchronization issues
+- Easy to update prices across all locales
+- Supports A/B testing and promotional pricing
+- Audit trail for price changes
+
+### Price Localization Strategy
+
+**Not Simple Conversion:**
+- £12 GBP ≠ $15 USD (direct conversion would be ~$15.12)
+- €13.99 EUR ≠ £12 GBP (accounts for Eurozone purchasing power)
+- Prices are **psychologically optimized per market**, not mathematically converted
+
+**Annual Discount Consistency:**
+- All currencies: ~17% annual discount
+- Pro: 10× monthly price for yearly
+- Private: 10× monthly price for yearly
+
+### Currency Assignment Flow
+
+1. **Initial Detection:** GeolocationService maps user's country to currency
+2. **Stored in Visitor:** Anonymous users get `currency_code` in visitors table
+3. **Transferred to User:** On registration, currency_code copies to users table
+4. **Manual Override:** Users can change currency via:
+   - Profile settings → Location section
+   - Pricing page currency switcher (new feature)
+5. **Priority:** User selection > GeoIP detection > Default (GBP)
+
+### Stripe Currency Fees
+
+When using Stripe's exchange rates:
+- Stripe adds [2-4% currency conversion fee](https://docs.stripe.com/payments/currencies/localize-prices/adaptive-pricing) to customer
+- Fee is paid by customer, not merchant
+- Better to offer local currencies natively to avoid this
+
+### Future Currency Expansion (If Needed)
+
+**Only add if customer demand proves strong:**
+
+**Tier 1 Priority (High-Value English-Speaking Markets):**
+- **CAD** (Canadian Dollar) - Large market, close to US pricing psychology
+- **AUD** (Australian Dollar) - High GDP per capita, tech-savvy
+- **CHF** (Swiss Franc) - Premium market, high purchasing power
+
+**Tier 2 Priority (Medium Value):**
+- **SEK** (Swedish Krona) - Nordic countries, strong SaaS adoption
+- **JPY** (Japanese Yen) - Requires price psychology adjustments (¥1,500 vs £12)
+- **SGD** (Singapore Dollar) - High-value Asian hub
+
+**Avoid (Operational Complexity):**
+- **INR** (Indian Rupee) - Requires purchasing power parity pricing (~$2-3/mo)
+- **BRL** (Brazilian Real) - Currency volatility, frequent price updates needed
+- **CNY** (Chinese Yuan) - Regulatory complexity, requires WeChat Pay integration
+
+### Technical Debt Addressed
+
+**Before (Problems):**
+- Hardcoded prices in 10+ files (controller, language files, JSON translations)
+- No single source of truth
+- Price updates required changes across entire codebase
+- Inconsistencies (en-US showed £ instead of $)
+
+**After (Solutions):**
+- Prices stored in database `prices` table
+- Single query to fetch all pricing for a currency
+- Currency switcher on pricing page persists user preference
+- API endpoint to update currency_code in visitors/users tables
+- Automatic synchronization across all locales
+
+### Monitoring Metrics
+
+Track these to inform currency expansion decisions:
+- Checkout abandonment rate by country
+- Customer requests for specific currencies
+- Conversion rate difference between supported currencies
+- Support tickets about currency confusion
+
+**Threshold for adding currency:** 50+ customer requests or 10% conversion rate drop in specific country
+
+---
+
 ## References
 
 - [ChatGPT Users Statistics (January 2026) – DemandSage](https://www.demandsage.com/chatgpt-statistics/)
 - [Tom's Guide: Claude Pro vs ChatGPT Plus](https://www.tomsguide.com/ai/claude-pro-vs-chatgpt-plus-i-tested-both-subscriptions-to-see-which-ones-actually-worth-usd20)
 - [AI Pricing Comparison 2025 – AIonX](https://aionx.co/ai-comparisons/ai-pricing-comparison/)
 - [TechCrunch: ChatGPT users send 2.5 billion prompts a day](https://techcrunch.com/2025/07/21/chatgpt-users-send-2-5-billion-prompts-a-day/)
+- [Stripe Adaptive Pricing Documentation](https://docs.stripe.com/payments/currencies/localize-prices/adaptive-pricing)
+- [Stripe Manual Currency Prices](https://docs.stripe.com/payments/checkout/localize-prices/manual-currency-prices)
+- [Stripe Multi-Currency Payments Guide](https://stripe.com/resources/more/what-are-multicurrency-payments-how-they-work-and-how-to-use-them)
