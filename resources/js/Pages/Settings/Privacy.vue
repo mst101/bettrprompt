@@ -72,9 +72,9 @@ function formatDate(dateString: string | null): string {
     </HeaderPage>
 
     <ContainerPage spacing>
-        <!-- Pro Required Notice (Free tier) -->
+        <!-- Pro/Private Required Notice (Free tier) -->
         <div
-            v-if="!subscription.isPro"
+            v-if="!subscription.isPaid"
             class="overflow-hidden rounded-lg border border-amber-200 bg-amber-50 shadow-sm"
         >
             <div class="p-6">
@@ -93,7 +93,7 @@ function formatDate(dateString: string | null): string {
             </div>
         </div>
 
-        <!-- Privacy Status (Pro tier) -->
+        <!-- Privacy Status (Pro or Private tier) -->
         <div
             v-else
             class="overflow-hidden rounded-lg border border-indigo-200 bg-white shadow-sm"

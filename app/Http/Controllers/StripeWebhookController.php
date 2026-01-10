@@ -17,8 +17,12 @@ class StripeWebhookController extends CashierController
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
         if ($user) {
+            $subscription = $payload['data']['object'];
+            $priceId = $subscription['items']['data'][0]['price']['id'] ?? null;
+            $tier = $this->determineTierFromPriceId($priceId);
+
             $user->update([
-                'subscription_tier' => 'pro',
+                'subscription_tier' => $tier,
             ]);
         }
 
@@ -82,6 +86,33 @@ class StripeWebhookController extends CashierController
         }
 
         return parent::handleInvoicePaymentFailed($payload);
+    }
+
+    /**
+     * Determine subscription tier from Stripe price ID
+     *
+     * Checks the configured prices to find which tier this price belongs to.
+     * Defaults to 'pro' if not found.
+     */
+    protected function determineTierFromPriceId(?string $priceId): string
+    {
+        if (! $priceId) {
+            return 'pro';
+        }
+
+        $stripeConfig = config('stripe.prices', []);
+
+        foreach ($stripeConfig as $currency => $tiers) {
+            foreach ($tiers as $tier => $intervals) {
+                foreach ($intervals as $interval => $configuredPriceId) {
+                    if ($configuredPriceId === $priceId) {
+                        return $tier; // 'pro' or 'private'
+                    }
+                }
+            }
+        }
+
+        return 'pro'; // Safe default
     }
 
     /**

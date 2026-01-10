@@ -27,9 +27,10 @@ const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
 const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
+const selectedTier = ref<'pro' | 'private'>('private');
 const isLoading = ref(false);
 
-function subscribe() {
+function subscribe(tier: 'pro' | 'private') {
     if (!isAuthenticated.value) {
         // Redirect to home with register modal
         router.visit('/?modal=register');
@@ -39,7 +40,7 @@ function subscribe() {
     isLoading.value = true;
     router.post(
         route('subscription.checkout'),
-        { plan: selectedPlan.value },
+        { tier, interval: selectedPlan.value },
         {
             onFinish: () => {
                 isLoading.value = false;
@@ -69,7 +70,37 @@ function getStarted() {
     </HeaderPage>
 
     <ContainerPage>
-        <div class="mx-auto max-w-4xl">
+        <div class="mx-auto max-w-6xl">
+            <!-- Pricing Tier Selector -->
+            <div class="mb-8 flex justify-center gap-2">
+                <button
+                    type="button"
+                    data-testid="pro-tier-tab"
+                    :class="[
+                        'rounded-lg px-6 py-2 font-medium transition',
+                        selectedTier === 'pro'
+                            ? 'bg-indigo-100 text-indigo-700'
+                            : 'text-indigo-500 hover:bg-indigo-50',
+                    ]"
+                    @click="selectedTier = 'pro'"
+                >
+                    {{ $t('pricing.pro.name') }}
+                </button>
+                <button
+                    type="button"
+                    data-testid="private-tier-tab"
+                    :class="[
+                        'rounded-lg px-6 py-2 font-medium transition',
+                        selectedTier === 'private'
+                            ? 'bg-indigo-100 text-indigo-700'
+                            : 'text-indigo-500 hover:bg-indigo-50',
+                    ]"
+                    @click="selectedTier = 'private'"
+                >
+                    {{ $t('pricing.private.name') }}
+                </button>
+            </div>
+
             <div class="grid gap-8 md:grid-cols-2">
                 <!-- Free Tier -->
                 <div
@@ -113,7 +144,7 @@ function getStarted() {
                     </ButtonSecondary>
                 </div>
 
-                <!-- Pro Tier -->
+                <!-- Pro / Private Tier (Tabs) -->
                 <div
                     class="relative rounded-2xl border-2 border-indigo-500 bg-white p-8 shadow-md"
                 >
@@ -124,10 +155,14 @@ function getStarted() {
                     </div>
 
                     <h2 class="mb-2 text-2xl font-bold text-indigo-900">
-                        {{ $t('pricing.pro.name') }}
+                        {{
+                            selectedTier === 'pro'
+                                ? $t('pricing.pro.name')
+                                : $t('pricing.private.name')
+                        }}
                     </h2>
 
-                    <!-- Plan Toggle -->
+                    <!-- Plan Toggle (Monthly/Yearly) -->
                     <div class="mb-4 flex gap-2">
                         <button
                             type="button"
@@ -161,9 +196,13 @@ function getStarted() {
                         <div class="text-4xl font-bold text-indigo-900">
                             {{ $t('pricing.currency') }}
                             {{
-                                selectedPlan === 'yearly'
-                                    ? $t('pricing.pro.priceYearly')
-                                    : $t('pricing.pro.priceMonthly')
+                                selectedTier === 'pro'
+                                    ? selectedPlan === 'yearly'
+                                        ? $t('pricing.pro.priceYearly')
+                                        : $t('pricing.pro.priceMonthly')
+                                    : selectedPlan === 'yearly'
+                                      ? $t('pricing.private.priceYearly')
+                                      : $t('pricing.private.priceMonthly')
                             }}
                             <span class="text-lg font-normal text-indigo-500">
                                 /{{
@@ -178,18 +217,26 @@ function getStarted() {
                             class="mt-1 text-sm text-green-600"
                         >
                             {{
-                                $t('pricing.pro.yearlySavings', {
-                                    amount: `${$t('pricing.currency')} 8.25`,
-                                    period: $t('pricing.period.month'),
-                                    percent: 18,
-                                })
+                                selectedTier === 'pro'
+                                    ? $t('pricing.pro.yearlySavings', {
+                                          amount: `${$t('pricing.currency')} 10`,
+                                          period: $t('pricing.period.month'),
+                                          percent: 17,
+                                      })
+                                    : $t('pricing.private.yearlySavings', {
+                                          amount: `${$t('pricing.currency')} 16.67`,
+                                          period: $t('pricing.period.month'),
+                                          percent: 17,
+                                      })
                             }}
                         </div>
                     </div>
 
                     <ul class="mb-8 space-y-3">
                         <li
-                            v-for="feature in features.pro"
+                            v-for="feature in selectedTier === 'pro'
+                                ? features.pro
+                                : features.private"
                             :key="feature"
                             class="flex items-center gap-2 text-indigo-700"
                         >
@@ -204,17 +251,35 @@ function getStarted() {
                     <ButtonPrimary
                         class="w-full"
                         data-testid="subscribe-button"
-                        :disabled="isLoading || subscription?.isPro"
+                        :disabled="
+                            isLoading ||
+                            (selectedTier === 'pro' && subscription?.isPro) ||
+                            (selectedTier === 'private' &&
+                                subscription?.isPrivate)
+                        "
                         :loading="isLoading"
-                        @click="subscribe"
+                        @click="subscribe(selectedTier)"
                     >
-                        <span v-if="subscription?.isPro">{{
-                            $t('subscription.currentPlan')
-                        }}</span>
-                        <span v-else-if="isLoading">{{
-                            $t('pricing.actions.processing')
-                        }}</span>
-                        <span v-else>{{ $t('pricing.pro.cta') }}</span>
+                        <span
+                            v-if="
+                                (selectedTier === 'pro' &&
+                                    subscription?.isPro) ||
+                                (selectedTier === 'private' &&
+                                    subscription?.isPrivate)
+                            "
+                        >
+                            {{ $t('subscription.currentPlan') }}
+                        </span>
+                        <span v-else-if="isLoading">
+                            {{ $t('pricing.actions.processing') }}
+                        </span>
+                        <span v-else>
+                            {{
+                                selectedTier === 'pro'
+                                    ? $t('pricing.pro.cta')
+                                    : $t('pricing.private.cta')
+                            }}
+                        </span>
                     </ButtonPrimary>
                 </div>
             </div>

@@ -21,14 +21,45 @@ return [
     | Stripe Price IDs
     |--------------------------------------------------------------------------
     |
-    | These are the Stripe Price IDs for the Pro subscription plan.
+    | Stripe Price IDs for Pro and Private tiers across GBP/EUR/USD.
     | Create these in the Stripe Dashboard under Products > Prices.
+    | Structure: prices[currency][tier][interval]
+    |
+    | Example: prices['GBP']['pro']['monthly']
     |
     */
 
     'prices' => [
-        'monthly' => env('STRIPE_PRICE_MONTHLY'),
-        'yearly' => env('STRIPE_PRICE_YEARLY'),
+        'GBP' => [
+            'pro' => [
+                'monthly' => env('STRIPE_PRICE_PRO_MONTHLY_GBP'),
+                'yearly' => env('STRIPE_PRICE_PRO_YEARLY_GBP'),
+            ],
+            'private' => [
+                'monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_GBP'),
+                'yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_GBP'),
+            ],
+        ],
+        'EUR' => [
+            'pro' => [
+                'monthly' => env('STRIPE_PRICE_PRO_MONTHLY_EUR'),
+                'yearly' => env('STRIPE_PRICE_PRO_YEARLY_EUR'),
+            ],
+            'private' => [
+                'monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_EUR'),
+                'yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_EUR'),
+            ],
+        ],
+        'USD' => [
+            'pro' => [
+                'monthly' => env('STRIPE_PRICE_PRO_MONTHLY_USD'),
+                'yearly' => env('STRIPE_PRICE_PRO_YEARLY_USD'),
+            ],
+            'private' => [
+                'monthly' => env('STRIPE_PRICE_PRIVATE_MONTHLY_USD'),
+                'yearly' => env('STRIPE_PRICE_PRIVATE_YEARLY_USD'),
+            ],
+        ],
     ],
 
     /*

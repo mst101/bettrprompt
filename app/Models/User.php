@@ -478,12 +478,28 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user has any active subscription (Pro or Private)
+     */
+    public function isPaid(): bool
+    {
+        return $this->subscribed('default') ||
+               ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
+    }
+
+    /**
      * Check if user is on Pro tier (either via active subscription or grace period)
      */
     public function isPro(): bool
     {
-        return $this->subscribed('default') ||
-               ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
+        return $this->isPaid() && $this->subscription_tier === 'pro';
+    }
+
+    /**
+     * Check if user is on Private tier (either via active subscription or grace period)
+     */
+    public function isPrivate(): bool
+    {
+        return $this->isPaid() && $this->subscription_tier === 'private';
     }
 
     /**
@@ -491,7 +507,7 @@ class User extends Authenticatable
      */
     public function isFree(): bool
     {
-        return ! $this->isPro();
+        return ! $this->isPaid();
     }
 
     /**
@@ -533,13 +549,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Get Stripe checkout price ID based on tier and currency
+     *
+     * @param  'pro'|'private'  $tier
+     * @param  'monthly'|'yearly'  $interval
+     * @param  string|null  $currency  Default: user's currency_code or 'GBP'
+     */
+    public function getCheckoutPriceId(string $tier, string $interval, ?string $currency = null): ?string
+    {
+        $currency = $currency ?? $this->currency_code ?? 'GBP';
+
+        return config("stripe.prices.{$currency}.{$tier}.{$interval}");
+    }
+
+    /**
      * Get subscription status for frontend
      */
     public function getSubscriptionStatus(): array
     {
         return [
-            'tier' => $this->isPro() ? 'pro' : 'free',
+            'tier' => $this->subscription_tier ?? 'free',
+            'isPaid' => $this->isPaid(),
             'isPro' => $this->isPro(),
+            'isPrivate' => $this->isPrivate(),
+            'isFree' => $this->isFree(),
             'promptsUsed' => $this->monthly_prompt_count ?? 0,
             'promptsRemaining' => $this->getPromptsRemaining(),
             'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),

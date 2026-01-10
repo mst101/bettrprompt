@@ -52,6 +52,17 @@ class Kernel extends ConsoleKernel
             ->onFailure(function () {
                 Log::error('GeoIP database update failed');
             });
+
+        // Reset monthly prompt counts for free tier users on 1st of month at 00:00 UTC
+        $schedule->command('prompts:reset-monthly-counts')
+            ->monthlyOn(1, '00:00')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                Log::info('Monthly prompt counts reset successfully');
+            })
+            ->onFailure(function () {
+                Log::error('Failed to reset monthly prompt counts');
+            });
     }
 
     /**

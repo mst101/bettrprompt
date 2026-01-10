@@ -86,12 +86,14 @@ function formatDate(dateString: string | null): string {
                     <div>
                         <div class="text-2xl font-bold text-indigo-900">
                             {{
-                                subscription.isPro
-                                    ? $t('pricing.pro.name')
-                                    : $t('pricing.free.name')
+                                subscription.isPrivate
+                                    ? $t('pricing.private.name')
+                                    : subscription.isPro
+                                      ? $t('pricing.pro.name')
+                                      : $t('pricing.free.name')
                             }}
                         </div>
-                        <div v-if="subscription.isPro" class="text-indigo-600">
+                        <div v-if="subscription.isPaid" class="text-indigo-600">
                             <span
                                 v-if="subscription.onGracePeriod"
                                 class="text-amber-600"
@@ -118,12 +120,20 @@ function formatDate(dateString: string | null): string {
                         </div>
                     </div>
 
-                    <div v-if="!subscription.isPro">
+                    <div v-if="!subscription.isPaid">
                         <Link
                             :href="localeRoute('pricing')"
                             class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                         >
                             {{ $t('subscription.actions.upgrade') }}
+                        </Link>
+                    </div>
+                    <div v-else-if="subscription.isPro">
+                        <Link
+                            :href="localeRoute('pricing')"
+                            class="inline-flex items-center rounded-lg border border-indigo-600 px-4 py-2 font-medium text-indigo-600 hover:bg-indigo-50"
+                        >
+                            {{ $t('pricing.upgradeToPrivate') }}
                         </Link>
                     </div>
                 </div>
@@ -159,9 +169,9 @@ function formatDate(dateString: string | null): string {
             </div>
         </div>
 
-        <!-- Manage Subscription (Pro only) -->
+        <!-- Manage Subscription (Pro and Private) -->
         <div
-            v-if="subscription.isPro"
+            v-if="subscription.isPaid"
             class="overflow-hidden rounded-lg border border-indigo-200 bg-white shadow-sm"
         >
             <div class="p-6">

@@ -13,37 +13,61 @@ class SubscriptionController extends Controller
      */
     public function pricing(Request $request): Response
     {
+        $user = $request->user();
+        $currencyCode = $user?->currency_code ?? 'GBP';
+
         return Inertia::render('Pricing', [
             'plans' => [
-                'monthly' => [
-                    'priceId' => config('stripe.prices.monthly'),
-                    'price' => 12,
-                    'currency' => 'GBP',
+                'pro_monthly' => [
+                    'priceId' => config("stripe.prices.{$currencyCode}.pro.monthly"),
+                    'price' => 12, // GBP; update based on currency if needed
+                    'currency' => $currencyCode,
                     'interval' => 'month',
-                    'description' => 'Billed monthly',
+                    'description' => __('pricing.pro.priceMonthly'),
                 ],
-                'yearly' => [
-                    'priceId' => config('stripe.prices.yearly'),
-                    'price' => 99,
-                    'currency' => 'GBP',
+                'pro_yearly' => [
+                    'priceId' => config("stripe.prices.{$currencyCode}.pro.yearly"),
+                    'price' => 120, // GBP; update based on currency if needed
+                    'currency' => $currencyCode,
                     'interval' => 'year',
-                    'description' => 'Billed annually (save 18%)',
-                    'monthlyEquivalent' => 8.25,
+                    'description' => __('pricing.pro.priceYearly'),
+                    'monthlyEquivalent' => 10,
+                ],
+                'private_monthly' => [
+                    'priceId' => config("stripe.prices.{$currencyCode}.private.monthly"),
+                    'price' => 20, // GBP; update based on currency if needed
+                    'currency' => $currencyCode,
+                    'interval' => 'month',
+                    'description' => __('pricing.private.priceMonthly'),
+                ],
+                'private_yearly' => [
+                    'priceId' => config("stripe.prices.{$currencyCode}.private.yearly"),
+                    'price' => 200, // GBP; update based on currency if needed
+                    'currency' => $currencyCode,
+                    'interval' => 'year',
+                    'description' => __('pricing.private.priceYearly'),
+                    'monthlyEquivalent' => 16.67,
                 ],
             ],
             'features' => [
                 'free' => [
-                    '10 prompts per month',
-                    'Personality calibration',
-                    'Basic prompt optimisation',
+                    __('pricing.features.free.limit'),
+                    __('pricing.features.free.calibration'),
+                    __('pricing.features.free.optimization'),
                 ],
                 'pro' => [
-                    'Unlimited prompts',
-                    'Personality calibration',
-                    'Advanced prompt optimisation',
-                    'Privacy encryption',
-                    'Prompt history',
-                    'Priority support',
+                    __('pricing.features.pro.unlimited'),
+                    __('pricing.features.pro.calibration'),
+                    __('pricing.features.pro.optimization'),
+                    __('pricing.features.pro.history'),
+                ],
+                'private' => [
+                    __('pricing.features.private.unlimited'),
+                    __('pricing.features.private.calibration'),
+                    __('pricing.features.private.optimization'),
+                    __('pricing.features.private.mode'),
+                    __('pricing.features.private.support'),
+                    __('pricing.features.private.history'),
                 ],
             ],
         ]);
@@ -55,20 +79,24 @@ class SubscriptionController extends Controller
     public function checkout(Request $request)
     {
         $request->validate([
-            'plan' => 'required|in:monthly,yearly',
+            'tier' => 'required|in:pro,private',
+            'interval' => 'required|in:monthly,yearly',
         ]);
 
         $user = $request->user();
-        $priceId = config("stripe.prices.{$request->plan}");
+        $tier = $request->string('tier')->toString();
+        $interval = $request->string('interval')->toString();
+
+        $priceId = $user->getCheckoutPriceId($tier, $interval);
 
         if (! $priceId) {
-            return back()->withErrors(['plan' => 'Invalid plan selected']);
+            return back()->withErrors(['plan' => __('messages.subscription.invalid_plan')]);
         }
 
         return $user
             ->newSubscription('default', $priceId)
             ->checkout([
-                'success_url' => route('subscription.success').'?session_id={CHECKOUT_SESSION_ID}',
+                'success_url' => route('subscription.success', ['tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
                 'cancel_url' => route('subscription.cancelled'),
                 'customer_update' => [
                     'address' => 'auto',
@@ -86,12 +114,20 @@ class SubscriptionController extends Controller
     public function success(Request $request): Response
     {
         $user = $request->user();
+        $tier = $request->string('tier', 'pro')->toString();
 
-        // Update subscription tier
-        $user->update(['subscription_tier' => 'pro']);
+        // Validate tier and update subscription tier
+        if (! in_array($tier, ['pro', 'private'])) {
+            $tier = 'pro';
+        }
+
+        $user->update(['subscription_tier' => $tier]);
 
         return Inertia::render('Subscription/Success', [
-            'message' => __('messages.subscription.welcome_pro'),
+            'message' => $tier === 'private'
+                ? __('messages.subscription.welcome_private')
+                : __('messages.subscription.welcome_pro'),
+            'tier' => $tier,
         ]);
     }
 
