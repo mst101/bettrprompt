@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Validator;
 
 Route::post('/n8n/webhook', function (Request $request) {
     try {
+        // Note: This webhook only handles Workflows 1 (analysis) and 2 (generation).
+        // Workflow 0 (pre-analysis) is handled synchronously by ProcessPreAnalysis job
+        // because it's fast and the user is already waiting for pre-analysis questions.
+        // See ProcessPreAnalysis.php for the synchronous implementation.
+
         // Verify secret
         $secret = $request->header('X-N8N-SECRET');
 
@@ -60,15 +65,16 @@ Route::post('/n8n/webhook', function (Request $request) {
             ], 422);
         }
 
-        // Log incoming webhook
+        // Cache request values
+        $promptRunId = $request->input('prompt_run_id');
+        $workflowStage = $request->input('workflow_stage');
+
         Log::info('Processing N8n webhook', [
-            'prompt_run_id' => $request->input('prompt_run_id'),
-            'workflow_stage' => $request->input('workflow_stage'),
-            'status' => $request->input('status'),
+            'prompt_run_id' => $promptRunId,
+            'workflow_stage' => $workflowStage,
         ]);
 
         // Find prompt run
-        $promptRunId = $request->input('prompt_run_id');
         $promptRun = PromptRun::find($promptRunId);
 
         if (! $promptRun) {
@@ -86,7 +92,8 @@ Route::post('/n8n/webhook', function (Request $request) {
         DB::beginTransaction();
 
         try {
-            $promptRun->update($request->only([
+            // Batch all updates together
+            $updateData = $request->only([
                 'workflow_stage',
                 'selected_framework',
                 'framework_questions',
@@ -94,20 +101,19 @@ Route::post('/n8n/webhook', function (Request $request) {
                 'error_message',
                 'error_context',
                 'retry_count',
-            ]));
+            ]);
 
-            // Track error timestamp for failures
-            if ($request->input('workflow_stage') && str_ends_with($request->input('workflow_stage'), '_failed')) {
-                $promptRun->update(['last_error_at' => now()]);
+            // Add timestamps based on workflow stage
+            if ($workflowStage === '2_completed') {
+                $updateData['completed_at'] = now();
+            } elseif ($workflowStage && str_ends_with($workflowStage, '_failed')) {
+                $updateData['last_error_at'] = now();
             }
 
-            // Mark as completed if finished
-            if ($request->input('workflow_stage') === '2_completed') {
-                $promptRun->update(['completed_at' => now()]);
-            }
+            $promptRun->update($updateData);
 
-            // Broadcast events if needed
-            if ($request->input('workflow_stage') === '1_completed') {
+            // Broadcast events: 1_completed, 2_completed, _failed
+            if ($workflowStage === '1_completed') {
                 try {
                     event(new AnalysisCompleted($promptRun));
                 } catch (\Exception $e) {
@@ -116,9 +122,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                         'error' => $e->getMessage(),
                     ]);
                 }
-            }
-
-            if ($request->input('workflow_stage') === '2_completed') {
+            } elseif ($workflowStage === '2_completed') {
                 try {
                     event(new PromptOptimizationCompleted($promptRun));
                 } catch (\Exception $e) {
@@ -127,10 +131,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                         'error' => $e->getMessage(),
                     ]);
                 }
-            }
-
-            // Broadcast failure event if workflow failed
-            if ($request->input('workflow_stage') && str_ends_with($request->input('workflow_stage'), '_failed')) {
+            } elseif ($workflowStage && str_ends_with($workflowStage, '_failed')) {
                 try {
                     event(new WorkflowFailed($promptRun));
                 } catch (\Exception $e) {
