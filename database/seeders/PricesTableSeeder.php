@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Price;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PricesTableSeeder extends Seeder
 {
@@ -13,33 +13,69 @@ class PricesTableSeeder extends Seeder
     public function run(): void
     {
         // Price data: currency_code, tier, interval, amount (in decimal), stripe_price_id
-        // These will be populated from environment variables when the stripe_price_id is available
-        $prices = [
-            // GBP Prices
-            ['currency_code' => 'GBP', 'tier' => 'pro', 'interval' => 'monthly', 'amount' => 12.00, 'stripe_price_id' => env('STRIPE_PRICE_PRO_MONTHLY_GBP', 'price_gbp_pro_monthly')],
-            ['currency_code' => 'GBP', 'tier' => 'pro', 'interval' => 'yearly', 'amount' => 120.00, 'stripe_price_id' => env('STRIPE_PRICE_PRO_YEARLY_GBP', 'price_gbp_pro_yearly')],
-            ['currency_code' => 'GBP', 'tier' => 'private', 'interval' => 'monthly', 'amount' => 20.00, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_MONTHLY_GBP', 'price_gbp_private_monthly')],
-            ['currency_code' => 'GBP', 'tier' => 'private', 'interval' => 'yearly', 'amount' => 200.00, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_YEARLY_GBP', 'price_gbp_private_yearly')],
+        // Stripe Price IDs are fetched from config/stripe.php which reads from environment
+        // In test environments or when not configured, use placeholder IDs
+        $stripePrices = config('stripe.prices');
 
-            // EUR Prices
-            ['currency_code' => 'EUR', 'tier' => 'pro', 'interval' => 'monthly', 'amount' => 13.99, 'stripe_price_id' => env('STRIPE_PRICE_PRO_MONTHLY_EUR', 'price_eur_pro_monthly')],
-            ['currency_code' => 'EUR', 'tier' => 'pro', 'interval' => 'yearly', 'amount' => 139.00, 'stripe_price_id' => env('STRIPE_PRICE_PRO_YEARLY_EUR', 'price_eur_pro_yearly')],
-            ['currency_code' => 'EUR', 'tier' => 'private', 'interval' => 'monthly', 'amount' => 22.99, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_MONTHLY_EUR', 'price_eur_private_monthly')],
-            ['currency_code' => 'EUR', 'tier' => 'private', 'interval' => 'yearly', 'amount' => 229.00, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_YEARLY_EUR', 'price_eur_private_yearly')],
+        $prices = [];
 
-            // USD Prices
-            ['currency_code' => 'USD', 'tier' => 'pro', 'interval' => 'monthly', 'amount' => 15.99, 'stripe_price_id' => env('STRIPE_PRICE_PRO_MONTHLY_USD', 'price_usd_pro_monthly')],
-            ['currency_code' => 'USD', 'tier' => 'pro', 'interval' => 'yearly', 'amount' => 159.00, 'stripe_price_id' => env('STRIPE_PRICE_PRO_YEARLY_USD', 'price_usd_pro_yearly')],
-            ['currency_code' => 'USD', 'tier' => 'private', 'interval' => 'monthly', 'amount' => 26.99, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_MONTHLY_USD', 'price_usd_private_monthly')],
-            ['currency_code' => 'USD', 'tier' => 'private', 'interval' => 'yearly', 'amount' => 269.00, 'stripe_price_id' => env('STRIPE_PRICE_PRIVATE_YEARLY_USD', 'price_usd_private_yearly')],
-        ];
+        // Build prices from config
+        foreach ($stripePrices as $currency => $tiers) {
+            foreach ($tiers as $tier => $intervals) {
+                foreach ($intervals as $interval => $priceId) {
+                    // Use placeholder if price ID is null (not configured in environment)
+                    if (! $priceId) {
+                        $priceId = "price_{$this->sanitizeForId($currency)}_{$tier}_{$interval}";
+                    }
+
+                    $prices[] = [
+                        'currency_code' => $currency,
+                        'tier' => $tier,
+                        'interval' => $interval,
+                        'amount' => $this->getAmount($currency, $tier, $interval),
+                        'stripe_price_id' => $priceId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
 
         // Delete existing prices to avoid duplicates
-        Price::truncate();
+        DB::table('prices')->truncate();
 
         // Insert prices
-        foreach ($prices as $price) {
-            Price::create($price);
-        }
+        DB::table('prices')->insert($prices);
+    }
+
+    /**
+     * Sanitize currency code for use in price ID
+     */
+    private function sanitizeForId(string $currency): string
+    {
+        return strtolower($currency);
+    }
+
+    /**
+     * Get the amount for a given currency, tier, and interval
+     */
+    private function getAmount(string $currency, string $tier, string $interval): float
+    {
+        $amounts = [
+            'GBP' => [
+                'pro' => ['monthly' => 12.00, 'yearly' => 120.00],
+                'private' => ['monthly' => 20.00, 'yearly' => 200.00],
+            ],
+            'EUR' => [
+                'pro' => ['monthly' => 13.99, 'yearly' => 139.00],
+                'private' => ['monthly' => 22.99, 'yearly' => 229.00],
+            ],
+            'USD' => [
+                'pro' => ['monthly' => 15.99, 'yearly' => 159.00],
+                'private' => ['monthly' => 26.99, 'yearly' => 269.00],
+            ],
+        ];
+
+        return $amounts[$currency][$tier][$interval] ?? 0;
     }
 }

@@ -20,6 +20,10 @@ class SubscriptionController extends Controller
         // Fetch prices from database
         $pricesData = Price::where('currency_code', $currencyCode)->get();
 
+        // Fetch currency symbol from database
+        $currency = \App\Models\Currency::where('id', $currencyCode)->first();
+        $currencySymbol = $currency?->symbol ?? '£';
+
         // Build pricing plans from database
         $plans = [];
         foreach ($pricesData as $price) {
@@ -36,26 +40,27 @@ class SubscriptionController extends Controller
         return Inertia::render('Pricing', [
             'plans' => $plans,
             'currency' => $currencyCode,
+            'currencySymbol' => $currencySymbol,
             'availableCurrencies' => ['GBP', 'EUR', 'USD'],
-            'features' => [
+            'featureKeys' => [
                 'free' => [
-                    __('pricing.features.free.limit'),
-                    __('pricing.features.free.calibration'),
-                    __('pricing.features.free.optimization'),
+                    'pricing.features.free.limit',
+                    'pricing.features.free.calibration',
+                    'pricing.features.free.optimization',
                 ],
                 'pro' => [
-                    __('pricing.features.pro.unlimited'),
-                    __('pricing.features.pro.calibration'),
-                    __('pricing.features.pro.optimization'),
-                    __('pricing.features.pro.history'),
+                    'pricing.features.pro.unlimited',
+                    'pricing.features.pro.calibration',
+                    'pricing.features.pro.optimization',
+                    'pricing.features.pro.history',
                 ],
                 'private' => [
-                    __('pricing.features.private.unlimited'),
-                    __('pricing.features.private.calibration'),
-                    __('pricing.features.private.optimization'),
-                    __('pricing.features.private.mode'),
-                    __('pricing.features.private.support'),
-                    __('pricing.features.private.history'),
+                    'pricing.features.private.unlimited',
+                    'pricing.features.private.calibration',
+                    'pricing.features.private.optimization',
+                    'pricing.features.private.mode',
+                    'pricing.features.private.support',
+                    'pricing.features.private.history',
                 ],
             ],
         ]);
