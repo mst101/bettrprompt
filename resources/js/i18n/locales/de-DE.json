@@ -567,14 +567,16 @@
             "year": "Jahr"
         },
         "actions": {
-            "processing": "Wird verarbeitet..."
+            "processing": "Wird verarbeitet...",
+            "subscribe": "Abonnieren"
         },
         "free": {
             "name": "Kostenlos",
             "price": "0",
             "period": "für immer",
             "description": "Perfekt zum Ausprobieren von BettrPrompt",
-            "cta": "Erste Schritte"
+            "cta": "Erste Schritte",
+            "priceMonthly": "Kostenlos"
         },
         "pro": {
             "name": "Pro",
@@ -591,7 +593,26 @@
             "unlimited": "Unbegrenzte Anfragen",
             "priority": "Prioritätsverarbeitung",
             "privacy": "Datenschutzverschlüsselung",
-            "support": "Prioritätssupport"
+            "support": "Prioritätssupport",
+            "free": {
+                "limit": "10 Prompts pro Monat",
+                "calibration": "Persönlichkeitskalibrierung",
+                "optimization": "Grundlegende Prompt-Optimierung"
+            },
+            "pro": {
+                "unlimited": "Unbegrenzte Prompts",
+                "calibration": "Persönlichkeitskalibrierung",
+                "optimization": "Erweiterte Prompt-Optimierung",
+                "history": "Prompt-Verlauf"
+            },
+            "private": {
+                "unlimited": "Unbegrenzte Prompts",
+                "calibration": "Persönlichkeitskalibrierung",
+                "optimization": "Erweiterte Prompt-Optimierung",
+                "mode": "Privater Modus (eingeschränkter Zugriff)",
+                "support": "Prioritäts-Support",
+                "history": "Prompt-Verlauf"
+            }
         },
         "faq": {
             "title": "Häufig gestellte Fragen",
@@ -613,7 +634,18 @@
                     "answer": "Wir akzeptieren alle großen Kredit- und Debitkarten sowie Apple Pay und Google Pay über unseren sicheren Zahlungsanbieter Stripe."
                 }
             }
-        }
+        },
+        "private": {
+            "name": "Privat",
+            "priceMonthly": "20",
+            "priceYearly": "200",
+            "cta": "Privat starten",
+            "yearlySavings": "Sparen Sie {percent}%, wenn Sie jährlich bezahlen – nur {amount}/{period}"
+        },
+        "currentPlan": "Aktueller Plan",
+        "upgrade": "Upgrade",
+        "upgradeToPro": "Auf Pro upgraden",
+        "upgradeToPrivate": "Auf Privat upgraden"
     },
     "feedback": {
         "create": {
@@ -1217,10 +1249,10 @@
         "dashboard": {
             "title": "Admin-Dashboard",
             "stats": {
-                "users": "Gesamtbenutzer",
-                "promptRuns": "Gesamt-Anfrage-Durchläufe",
+                "users": "Gesamtzahl Benutzer",
+                "promptRuns": "Gesamtzahl Prompt-Läufe",
                 "uniqueTasks": "Eindeutige Aufgaben",
-                "completedRuns": "Abgeschlossene Durchläufe"
+                "completedRuns": "Abgeschlossene Läufe"
             },
             "links": {
                 "users": {
@@ -1228,8 +1260,8 @@
                     "subtitle": "Benutzerkonten anzeigen und verwalten"
                 },
                 "tasks": {
-                    "title": "Aufgabe-Einblicke",
-                    "subtitle": "Überprüfung häufiger Aufgaben und Anfrage-Durchläufe"
+                    "title": "Aufgaben-Einblicke",
+                    "subtitle": "Häufige Aufgaben und Prompt-Läufe überprüfen"
                 }
             }
         }
@@ -1767,5 +1799,18 @@
     },
     "icons": {
         "hashIcon": "BettrPrompt Hash-Symbol"
+    },
+    "messages": {
+        "subscription": {
+            "invalid_plan": "Ungültiger Plan ausgewählt.",
+            "prompt_limit_reached": "Sie haben Ihr monatliches Prompt-Limit erreicht.",
+            "prompt_limit_reached_upgrade": "Sie haben Ihr monatliches Prompt-Limit erreicht. Upgraden Sie auf Pro für unbegrenzte Prompts.",
+            "welcome_pro": "Willkommen bei BettrPrompt Pro!",
+            "welcome_private": "Willkommen bei BettrPrompt Privat! Ihre Daten sind jetzt durch verbesserte Datenschutzmaßnahmen geschützt.",
+            "checkout_cancelled": "Abonnement-Checkout wurde abgebrochen.",
+            "cancelled_pro_until": "Ihr Abonnement wurde gekündigt. Sie behalten Pro-Zugriff bis {date}.",
+            "resumed": "Ihr Abonnement wurde wiederaufgenommen.",
+            "current_plan": "Aktueller Plan"
+        }
     }
 }

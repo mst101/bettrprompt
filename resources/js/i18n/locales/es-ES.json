@@ -567,14 +567,16 @@
             "year": "año"
         },
         "actions": {
-            "processing": "Procesando..."
+            "processing": "Procesando...",
+            "subscribe": "Suscribirse"
         },
         "free": {
             "name": "Gratuito",
             "price": "0",
             "period": "para siempre",
             "description": "Perfecto para probar BettrPrompt",
-            "cta": "Comenzar"
+            "cta": "Comenzar",
+            "priceMonthly": "Gratis"
         },
         "pro": {
             "name": "Pro",
@@ -591,7 +593,26 @@
             "unlimited": "Prompts ilimitados",
             "priority": "Procesamiento prioritario",
             "privacy": "Cifrado de privacidad",
-            "support": "Soporte prioritario"
+            "support": "Soporte prioritario",
+            "free": {
+                "limit": "10 prompts por mes",
+                "calibration": "Calibración de personalidad",
+                "optimization": "Optimización básica de prompts"
+            },
+            "pro": {
+                "unlimited": "Prompts ilimitados",
+                "calibration": "Calibración de personalidad",
+                "optimization": "Optimización avanzada de prompts",
+                "history": "Historial de prompts"
+            },
+            "private": {
+                "unlimited": "Prompts ilimitados",
+                "calibration": "Calibración de personalidad",
+                "optimization": "Optimización avanzada de prompts",
+                "mode": "Modo privado (acceso restringido)",
+                "support": "Soporte prioritario",
+                "history": "Historial de prompts"
+            }
         },
         "faq": {
             "title": "Preguntas frecuentes",
@@ -613,7 +634,18 @@
                     "answer": "Aceptamos todas las tarjetas de crédito y débito principales, así como Apple Pay y Google Pay a través de nuestro proveedor de pago seguro, Stripe."
                 }
             }
-        }
+        },
+        "private": {
+            "name": "Privado",
+            "priceMonthly": "20",
+            "priceYearly": "200",
+            "cta": "Iniciar Privado",
+            "yearlySavings": "Ahorrar {percent}% con facturación anual – solo {amount}/{period}"
+        },
+        "currentPlan": "Plan actual",
+        "upgrade": "Actualizar",
+        "upgradeToPro": "Actualizar a Pro",
+        "upgradeToPrivate": "Actualizar a Privado"
     },
     "feedback": {
         "create": {
@@ -1217,8 +1249,8 @@
         "dashboard": {
             "title": "Panel de administración",
             "stats": {
-                "users": "Total de usuarios",
-                "promptRuns": "Total de ejecuciones de prompts",
+                "users": "Número total de usuarios",
+                "promptRuns": "Número total de ejecuciones de prompts",
                 "uniqueTasks": "Tareas únicas",
                 "completedRuns": "Ejecuciones completadas"
             },
@@ -1767,5 +1799,18 @@
     },
     "icons": {
         "hashIcon": "Icono de hash de BettrPrompt"
+    },
+    "messages": {
+        "subscription": {
+            "invalid_plan": "Plan inválido seleccionado.",
+            "prompt_limit_reached": "Ha alcanzado su límite mensual de prompts.",
+            "prompt_limit_reached_upgrade": "Ha alcanzado su límite mensual de prompts. Actualice a Pro para prompts ilimitados.",
+            "welcome_pro": "¡Bienvenido a BettrPrompt Pro!",
+            "welcome_private": "¡Bienvenido a BettrPrompt Privado! Sus datos están ahora protegidos con privacidad mejorada.",
+            "checkout_cancelled": "El pago de suscripción fue cancelado.",
+            "cancelled_pro_until": "Su suscripción ha sido cancelada. Mantendrá acceso a Pro hasta {date}.",
+            "resumed": "Su suscripción ha sido reanudada.",
+            "current_plan": "Plan actual"
+        }
     }
 }

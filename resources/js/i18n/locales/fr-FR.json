@@ -567,14 +567,16 @@
             "year": "an"
         },
         "actions": {
-            "processing": "Traitement en cours..."
+            "processing": "Traitement en cours...",
+            "subscribe": "S'abonner"
         },
         "free": {
             "name": "Gratuit",
             "price": "0",
             "period": "pour toujours",
             "description": "Parfait pour essayer BettrPrompt",
-            "cta": "Commencer"
+            "cta": "Commencer",
+            "priceMonthly": "Gratuit"
         },
         "pro": {
             "name": "Pro",
@@ -591,7 +593,26 @@
             "unlimited": "Invites illimitées",
             "priority": "Traitement prioritaire",
             "privacy": "Chiffrement de confidentialité",
-            "support": "Support prioritaire"
+            "support": "Support prioritaire",
+            "free": {
+                "limit": "10 prompts par mois",
+                "calibration": "Calibrage de la personnalité",
+                "optimization": "Optimisation de base des invites"
+            },
+            "pro": {
+                "unlimited": "Prompts illimitées",
+                "calibration": "Calibrage de la personnalité",
+                "optimization": "Optimisation avancée des invites",
+                "history": "Historique des prompts"
+            },
+            "private": {
+                "unlimited": "Prompts illimitées",
+                "calibration": "Calibrage de la personnalité",
+                "optimization": "Optimisation avancée des invites",
+                "mode": "Mode privé (accès limité)",
+                "support": "Support prioritaire",
+                "history": "Historique des prompts"
+            }
         },
         "faq": {
             "title": "Questions fréquemment posées",
@@ -613,7 +634,18 @@
                     "answer": "Nous acceptons toutes les cartes de crédit et de débit principales, ainsi qu'Apple Pay et Google Pay via notre fournisseur de paiement sécurisé, Stripe."
                 }
             }
-        }
+        },
+        "private": {
+            "name": "Privé",
+            "priceMonthly": "20",
+            "priceYearly": "200",
+            "cta": "Commencer Privé",
+            "yearlySavings": "Économisez {percent}% avec la facturation annuelle – seulement {amount}/{period}"
+        },
+        "currentPlan": "Plan actuel",
+        "upgrade": "Améliorer",
+        "upgradeToPro": "Passer à Pro",
+        "upgradeToPrivate": "Passer à Privé"
     },
     "feedback": {
         "create": {
@@ -1746,5 +1778,39 @@
     },
     "icons": {
         "hashIcon": "Icône de hachage BettrPrompt"
+    },
+    "messages": {
+        "subscription": {
+            "invalid_plan": "Plan invalide sélectionné.",
+            "prompt_limit_reached": "Vous avez atteint votre limite mensuelle d'invites.",
+            "prompt_limit_reached_upgrade": "Vous avez atteint votre limite mensuelle d'invites. Mettez à niveau vers Pro pour les prompts illimitées.",
+            "welcome_pro": "Bienvenue chez BettrPrompt Pro!",
+            "welcome_private": "Bienvenue chez BettrPrompt Privé! Vos données sont maintenant protégées par une confidentialité améliorée.",
+            "checkout_cancelled": "Le paiement de l'abonnement a été annulé.",
+            "cancelled_pro_until": "Votre abonnement a été annulé. Vous conserverez l'accès Pro jusqu'à {date}.",
+            "resumed": "Votre abonnement a été repris.",
+            "current_plan": "Plan actuel"
+        }
+    },
+    "admin": {
+        "dashboard": {
+            "title": "Tableau de bord administrateur",
+            "stats": {
+                "users": "Nombre total d'utilisateurs",
+                "promptRuns": "Nombre total d'exécutions de prompts",
+                "uniqueTasks": "Tâches uniques",
+                "completedRuns": "Exécutions terminées"
+            },
+            "links": {
+                "users": {
+                    "title": "Gérer les utilisateurs",
+                    "subtitle": "Afficher et gérer les comptes d'utilisateurs"
+                },
+                "tasks": {
+                    "title": "Aperçu des tâches",
+                    "subtitle": "Examiner les tâches courantes et les exécutions de prompts"
+                }
+            }
+        }
     }
 }
