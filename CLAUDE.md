@@ -91,12 +91,40 @@ composer setup    # Install deps, setup .env, migrate, build assets
 - **Mock n8n:** `Http::fake(['n8n.localhost/*' => ...])`
 - Test validation: Submit forms with missing/invalid data
 
+## URL Structure & Country-Based Routing
+
+All user-facing URLs use lowercase 2-letter country codes:
+- `/gb/pricing` - United Kingdom (GBP, English)
+- `/us/pricing` - United States (USD, English)
+- `/mx/pricing` - Mexico (USD fallback, Spanish)
+- `/sg/pricing` - Singapore (SGD, English)
+- `/de/prompt-builder` - Germany (EUR, German)
+
+**How country codes resolve:**
+
+The `SetCountry` middleware resolves `{country}` route parameter to:
+1. **Currency** via `countries.currency_id` database column (fallback: USD)
+2. **Language** via `countries.language_id` → full locale code (fallback: en-US)
+
+**Preference hierarchy** (checked in order):
+1. Authenticated user's `country_code` column (geolocation on signup)
+2. Visitor's `country_code` column via `visitor_id` cookie
+3. Geolocated country from IP (if enabled)
+4. Global fallback: 'gb'
+
+**Language override:** Users can change language within a country via `/profile` settings. This updates their `language_code` column (e.g., 'de-DE', 'fr-FR') while keeping country in URL unchanged.
+
+**Performance:** Redis caches user/visitor preferences (1 hour TTL) and country defaults (indefinite). Expected cache hit rate >95% after warmup.
+
+**Support:** All 247 country codes from database are supported. Unsupported currencies/languages silently fallback to USD and en-US.
+
 ## Architecture Notes
 
 - **Frontend:** Inertia.js pages in `resources/js/Pages/`, SSR enabled
 - **Backend:** Services in `app/Services/`, n8n webhook receiver in `routes/api.php`
 - **n8n Integration:** Secured with `X-N8N-SECRET` header verification
 - **Dev proxy:** Caddy (dev-only) serves `app.localhost` and `n8n.localhost` (production uses Nginx)
+- **Middleware:** `SetCountry` resolves country codes to languages and currencies with Redis caching
 
 ## Common Workflows
 
@@ -107,6 +135,24 @@ composer setup    # Install deps, setup .env, migrate, build assets
 4. Add to `UserResource` (transform camelCase → snake_case)
 5. Update Vue component (use camelCase)
 6. Write tests
+
+**Generating country-aware routes in Vue:**
+```typescript
+import { useCountryRoute } from '@/Composables/useCountryRoute';
+
+export default {
+  setup() {
+    const { countryRoute, currentCountry, currentLocale } = useCountryRoute();
+
+    return {
+      // Generate route with country automatically included
+      pricingUrl: countryRoute('pricing'),
+      // Navigate within current country
+      goHome: () => window.location.href = countryRoute('home'),
+    };
+  }
+}
+```
 
 **n8n integration:**
 1. Create workflow in n8n dashboard (`n8n.localhost`)
