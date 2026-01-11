@@ -7,7 +7,7 @@
 export const COMPANY_INFO = {
     name: 'BettrPrompt Ltd.',
     registeredAddress: '27 East Road, Bromsgrove, Worcs. B60 2NW',
-    contactEmail: 'info@hiddengambia.com',
+    contactEmail: 'hello@bettrprompt.ai',
     hostingProvider: 'DigitalOcean Holdings, Inc.',
 } as const;
 

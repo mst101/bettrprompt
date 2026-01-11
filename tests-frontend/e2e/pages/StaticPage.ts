@@ -23,7 +23,7 @@ export class StaticPage {
     }
 
     async goto(path: '/terms' | '/privacy' | '/cookies'): Promise<void> {
-        await this.page.goto(`/en-GB${path}`);
+        await this.page.goto(`/gb${path}`);
     }
 
     // ===== Locators =====
@@ -49,7 +49,7 @@ export class StaticPage {
     }
 
     get contactEmail(): Locator {
-        return this.page.getByText(/info@hiddengambia\.com/i);
+        return this.page.getByText(/hello@bettrprompt\.ai/i);
     }
 
     getHeadingByName(name: string | RegExp): Locator {

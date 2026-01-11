@@ -2,10 +2,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\HiddenGambia\App\MakeAppCommand;
-use App\Console\Commands\HiddenGambia\Core\ClearSettingsCacheCommand;
-use App\Console\Commands\HiddenGambia\Resources\MakeCommand;
-use App\Console\Commands\HiddenGambia\TypeScript\GenerateDefinitionsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
@@ -17,20 +13,7 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [
-        // Core Commands
-        ClearSettingsCacheCommand::class,
-
-        // TypeScript Commands
-        GenerateDefinitionsCommand::class,
-
-        // Resource Commands
-        MakeCommand::class,
-
-        // App Commands
-        MakeAppCommand::class,
-
-    ];
+    protected $commands = [];
 
     /**
      * Define the application's command schedule.

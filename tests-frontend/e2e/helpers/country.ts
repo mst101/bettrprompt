@@ -63,3 +63,40 @@ export function withCountryCode(
 export function getDefaultCountryUrl(path: string = '/'): string {
     return withCountryCode(path, DEFAULT_COUNTRY);
 }
+
+/**
+ * Get the regex pattern for matching country codes
+ * Replaces legacy locale pattern [a-z]{2} with [a-z]{2}
+ *
+ * Use this constant to replace hardcoded patterns in tests
+ *
+ * @example
+ * // OLD (legacy locale pattern):
+ * /[a-z]{2}\/prompt-builder\/\d+/
+ *
+ * // NEW (country code pattern):
+ * new RegExp(`${COUNTRY_CODE_PATTERN}\\/prompt-builder\\/\\d+`)
+ * // or simply:
+ * /[a-z]{2}\/prompt-builder\/\d+/
+ */
+export const COUNTRY_CODE_PATTERN = '[a-z]{2}';
+
+/**
+ * Helper to build URL patterns for country-code URLs
+ * Simplifies replacing legacy /[a-z]{2}/ patterns with /[a-z]{2}/
+ *
+ * @param pathPattern - The path pattern after the country code (with regex syntax)
+ * @returns RegExp that matches country code + path
+ *
+ * @example
+ * // OLD: /[a-z]{2}\/prompt-builder\/\d+/
+ * // NEW:
+ * getCountryCodeUrlPattern('/prompt-builder/\\d+')
+ * // Result: /[a-z]{2}\/prompt-builder\/\d+/
+ *
+ * // Works with anchors too:
+ * getCountryCodeUrlPattern('/prompt-builder/\\d+(\\?.*)?$')
+ */
+export function getCountryCodeUrlPattern(pathPattern: string): RegExp {
+    return new RegExp(`[a-z]{2}${pathPattern}`);
+}

@@ -1,10 +1,13 @@
 # Framework Selection E2E Testing
 
-This document explains the framework selection e2e tests that analyse which prompt framework is chosen for different personality types.
+This document explains the framework selection e2e tests that analyse which prompt framework is chosen for different
+personality types.
 
 ## Overview
 
-Unlike typical e2e tests that clean up after themselves, these tests **intentionally persist data** to the database for analysis purposes. They create prompt runs for all 16 personality types (with both Assertive and Turbulent subtypes) to determine:
+Unlike typical e2e tests that clean up after themselves, these tests **intentionally persist data** to the database for
+analysis purposes. They create prompt runs for all 16 personality types (with both Assertive and Turbulent subtypes) to
+determine:
 
 1. Which prompt framework is selected for each personality type
 2. Whether framework selection is consistent across runs
@@ -15,7 +18,7 @@ Unlike typical e2e tests that clean up after themselves, these tests **intention
 A dedicated test user is created for these tests:
 
 - **Name:** Test User
-- **Email:** test@hiddengambia.com
+- **Email:** test@bettrprompt.ai
 - **Password:** voodoo90
 
 This user can be seeded using:
@@ -45,6 +48,7 @@ pnpm exec playwright test framework-selection.e2e.ts -g "should select framework
 ```
 
 **Warning:** This will:
+
 - Create 32 prompt runs in the database
 - Take significant time (each test waits up to 60 seconds for AI processing)
 - Make 32 API calls to your n8n workflow
@@ -70,6 +74,7 @@ Help me create a comprehensive marketing strategy for a new SaaS product targeti
 ### Personality Configuration
 
 Each test:
+
 1. Logs in as the test user
 2. Sets personality type (e.g., INTJ-A)
 3. Sets all trait percentages to 50%
@@ -79,7 +84,8 @@ Each test:
 
 ### Trait Percentages
 
-Currently set to 50% for all traits to establish a baseline. You can modify this in the test file to test different trait configurations.
+Currently set to 50% for all traits to establish a baseline. You can modify this in the test file to test different
+trait configurations.
 
 ## Analysing Results
 
@@ -95,16 +101,15 @@ Currently set to 50% for all traits to establish a baseline. You can modify this
 Query the database directly:
 
 ```sql
-SELECT
-    pr.id,
-    pr.personality_type,
-    pr.selected_framework,
-    pr.framework_reasoning,
-    pr.status,
-    pr.created_at
+SELECT pr.id,
+       pr.personality_type,
+       pr.selected_framework,
+       pr.framework_reasoning,
+       pr.status,
+       pr.created_at
 FROM prompt_runs pr
-JOIN users u ON pr.user_id = u.id
-WHERE u.email = 'test@hiddengambia.com'
+         JOIN users u ON pr.user_id = u.id
+WHERE u.email = 'test@bettrprompt.ai'
 ORDER BY pr.created_at DESC;
 ```
 
@@ -124,15 +129,18 @@ To remove test data after analysis:
 
 ```sql
 -- Delete all prompt runs for test user
-DELETE FROM prompt_runs
-WHERE user_id = (SELECT id FROM users WHERE email = 'test@hiddengambia.com');
+DELETE
+FROM prompt_runs
+WHERE user_id = (SELECT id FROM users WHERE email = 'test@bettrprompt.ai');
 ```
 
 Or delete the entire test user:
 
 ```sql
 -- This will cascade delete all related prompt runs
-DELETE FROM users WHERE email = 'test@hiddengambia.com';
+DELETE
+FROM users
+WHERE email = 'test@bettrprompt.ai';
 ```
 
 Then re-seed if needed:
@@ -148,12 +156,11 @@ Then re-seed if needed:
 Compare multiple runs with the same personality type to check consistency:
 
 ```sql
-SELECT
-    personality_type,
-    selected_framework,
-    COUNT(*) as occurrences
+SELECT personality_type,
+       selected_framework,
+       COUNT(*) as occurrences
 FROM prompt_runs
-WHERE user_id = (SELECT id FROM users WHERE email = 'test@hiddengambia.com')
+WHERE user_id = (SELECT id FROM users WHERE email = 'test@bettrprompt.ai')
   AND task_description LIKE '%comprehensive marketing strategy%'
 GROUP BY personality_type, selected_framework
 ORDER BY personality_type, occurrences DESC;
@@ -164,13 +171,14 @@ ORDER BY personality_type, occurrences DESC;
 See which frameworks are most commonly selected:
 
 ```sql
-SELECT
-    selected_framework,
-    COUNT(*) as count,
-    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM prompt_runs
-        WHERE user_id = (SELECT id FROM users WHERE email = 'test@hiddengambia.com')), 2) as percentage
+SELECT selected_framework,
+       COUNT(*)                                                                                                  as count,
+       ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*)
+                                 FROM prompt_runs
+                                 WHERE user_id = (SELECT id FROM users WHERE email = 'test@bettrprompt.ai')),
+             2)                                                                                                  as percentage
 FROM prompt_runs
-WHERE user_id = (SELECT id FROM users WHERE email = 'test@hiddengambia.com')
+WHERE user_id = (SELECT id FROM users WHERE email = 'test@bettrprompt.ai')
   AND selected_framework IS NOT NULL
 GROUP BY selected_framework
 ORDER BY count DESC;
@@ -182,12 +190,11 @@ Analyse if certain personality traits correlate with framework selection:
 
 ```sql
 -- Group by base personality type (without A/T suffix)
-SELECT
-    SUBSTRING(personality_type, 1, 4) as base_type,
-    selected_framework,
-    COUNT(*) as count
+SELECT SUBSTRING(personality_type, 1, 4) as base_type,
+       selected_framework,
+       COUNT(*)                          as count
 FROM prompt_runs
-WHERE user_id = (SELECT id FROM users WHERE email = 'test@hiddengambia.com')
+WHERE user_id = (SELECT id FROM users WHERE email = 'test@bettrprompt.ai')
   AND selected_framework IS NOT NULL
 GROUP BY base_type, selected_framework
 ORDER BY base_type, count DESC;
