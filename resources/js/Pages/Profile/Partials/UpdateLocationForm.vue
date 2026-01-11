@@ -117,8 +117,9 @@ const submit = async () => {
             preserveScroll: true,
             onSuccess: () => {
                 // Navigate to new country's profile page
+                // Note: Do NOT use preserveState: true here, as it would preserve the old page props
+                // and prevent the updated locale from being reflected in the UI
                 router.visit(`/${currentCountry.value}/profile`, {
-                    preserveState: true,
                     preserveScroll: true,
                 });
             },
