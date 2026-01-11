@@ -63,8 +63,8 @@ class PricesTableSeeder extends Seeder
     {
         $amounts = [
             'GBP' => [
-                'pro' => ['monthly' => 12.00, 'yearly' => 120.00],
-                'private' => ['monthly' => 20.00, 'yearly' => 200.00],
+                'pro' => ['monthly' => 11.99, 'yearly' => 119.00],
+                'private' => ['monthly' => 19.99, 'yearly' => 199.00],
             ],
             'EUR' => [
                 'pro' => ['monthly' => 13.99, 'yearly' => 139.00],

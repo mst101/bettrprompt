@@ -355,6 +355,7 @@ function getStarted() {
 
                     <ButtonPrimary
                         class="w-full"
+                        data-testid="subscribe-button"
                         :disabled="isLoading || subscription?.isPrivate"
                         :loading="isLoading"
                         @click="subscribe('private')"
