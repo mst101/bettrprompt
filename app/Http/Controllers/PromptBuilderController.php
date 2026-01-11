@@ -147,7 +147,7 @@ class PromptBuilderController extends Controller
             ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
             return redirect()->route('prompt-builder.show', [
-                'locale' => $request->route('locale'),
+                'country' => $request->route('country'),
                 'promptRun' => $promptRun,
             ]);
 

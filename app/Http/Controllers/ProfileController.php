@@ -277,21 +277,13 @@ class ProfileController extends Controller
         try {
             $user = $request->user();
             $validated = $request->validated();
-            $oldLanguageCode = $user->language_code;
-            $currentLocale = $request->route('locale');
+            $currentCountry = $request->route('country');
 
             // Update location
             $user->updateLocation($validated);
 
-            // If language was changed, redirect to new locale's profile page
-            if (isset($validated['language_code']) && $validated['language_code'] !== $oldLanguageCode) {
-                $newLocale = $validated['language_code'];
-
-                // Redirect to the new locale's profile page
-                return Redirect::to("/{$newLocale}/profile")
-                    ->with('status', 'location-updated');
-            }
-
+            // Redirect to profile page (language preference is stored in user profile,
+            // country code in URL stays the same)
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
         } catch (Exception $e) {
