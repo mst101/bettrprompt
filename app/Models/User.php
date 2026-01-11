@@ -483,7 +483,8 @@ class User extends Authenticatable
     public function isPaid(): bool
     {
         return $this->subscribed('default') ||
-               ($this->subscription_ends_at && $this->subscription_ends_at->isFuture());
+               ($this->subscription_ends_at && $this->subscription_ends_at->isFuture()) ||
+               in_array($this->subscription_tier, ['pro', 'private']);
     }
 
     /**
@@ -515,7 +516,7 @@ class User extends Authenticatable
      */
     public function getPromptsRemaining(): int
     {
-        if ($this->isPro()) {
+        if ($this->isPro() || $this->isPrivate()) {
             return PHP_INT_MAX; // Unlimited
         }
 
@@ -529,7 +530,7 @@ class User extends Authenticatable
      */
     public function canCreatePrompt(): bool
     {
-        return $this->isPro() || $this->getPromptsRemaining() > 0;
+        return $this->isPaid() || $this->getPromptsRemaining() > 0;
     }
 
     /**

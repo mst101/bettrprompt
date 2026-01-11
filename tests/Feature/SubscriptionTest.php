@@ -114,14 +114,16 @@ describe('Subscription Feature Tests', function () {
     describe('Price ID Lookup', function () {
         it('returns correct price ID for user currency', function () {
             $user = User::factory()->create(['currency_code' => 'EUR']);
-            config(['stripe.prices' => [
-                'EUR' => [
-                    'pro' => [
-                        'monthly' => 'price_eur_pro_monthly',
-                        'yearly' => 'price_eur_pro_yearly',
+            config([
+                'stripe.prices' => [
+                    'EUR' => [
+                        'pro' => [
+                            'monthly' => 'price_eur_pro_monthly',
+                            'yearly' => 'price_eur_pro_yearly',
+                        ],
                     ],
                 ],
-            ]]);
+            ]);
 
             $priceId = $user->getCheckoutPriceId('pro', 'monthly');
             expect($priceId)->toBe('price_eur_pro_monthly');
@@ -129,11 +131,13 @@ describe('Subscription Feature Tests', function () {
 
         it('defaults to GBP if user has no currency', function () {
             $user = User::factory()->create(['currency_code' => null]);
-            config(['stripe.prices' => [
-                'GBP' => [
-                    'pro' => ['monthly' => 'price_gbp_pro_monthly'],
+            config([
+                'stripe.prices' => [
+                    'GBP' => [
+                        'pro' => ['monthly' => 'price_gbp_pro_monthly'],
+                    ],
                 ],
-            ]]);
+            ]);
 
             $priceId = $user->getCheckoutPriceId('pro', 'monthly');
             expect($priceId)->toBe('price_gbp_pro_monthly');
@@ -141,14 +145,16 @@ describe('Subscription Feature Tests', function () {
 
         it('returns different prices for different intervals', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
-            config(['stripe.prices' => [
-                'GBP' => [
-                    'pro' => [
-                        'monthly' => 'price_gbp_pro_monthly',
-                        'yearly' => 'price_gbp_pro_yearly',
+            config([
+                'stripe.prices' => [
+                    'GBP' => [
+                        'pro' => [
+                            'monthly' => 'price_gbp_pro_monthly',
+                            'yearly' => 'price_gbp_pro_yearly',
+                        ],
                     ],
                 ],
-            ]]);
+            ]);
 
             $monthlyId = $user->getCheckoutPriceId('pro', 'monthly');
             $yearlyId = $user->getCheckoutPriceId('pro', 'yearly');
@@ -202,12 +208,14 @@ describe('Subscription Feature Tests', function () {
 
     describe('Stripe Tier Determination', function () {
         it('determines pro tier from price id', function () {
-            config(['stripe.prices' => [
-                'GBP' => [
-                    'pro' => ['monthly' => 'price_pro_monthly'],
-                    'private' => ['monthly' => 'price_private_monthly'],
+            config([
+                'stripe.prices' => [
+                    'GBP' => [
+                        'pro' => ['monthly' => 'price_pro_monthly'],
+                        'private' => ['monthly' => 'price_private_monthly'],
+                    ],
                 ],
-            ]]);
+            ]);
 
             $controller = new \App\Http\Controllers\StripeWebhookController;
             $method = new \ReflectionMethod($controller, 'determineTierFromPriceId');
@@ -218,12 +226,14 @@ describe('Subscription Feature Tests', function () {
         });
 
         it('determines private tier from price id', function () {
-            config(['stripe.prices' => [
-                'GBP' => [
-                    'pro' => ['monthly' => 'price_pro_monthly'],
-                    'private' => ['monthly' => 'price_private_monthly'],
+            config([
+                'stripe.prices' => [
+                    'GBP' => [
+                        'pro' => ['monthly' => 'price_pro_monthly'],
+                        'private' => ['monthly' => 'price_private_monthly'],
+                    ],
                 ],
-            ]]);
+            ]);
 
             $controller = new \App\Http\Controllers\StripeWebhookController;
             $method = new \ReflectionMethod($controller, 'determineTierFromPriceId');
@@ -234,9 +244,11 @@ describe('Subscription Feature Tests', function () {
         });
 
         it('defaults to pro if price not found', function () {
-            config(['stripe.prices' => [
-                'GBP' => ['pro' => ['monthly' => 'price_pro_monthly']],
-            ]]);
+            config([
+                'stripe.prices' => [
+                    'GBP' => ['pro' => ['monthly' => 'price_pro_monthly']],
+                ],
+            ]);
 
             $controller = new \App\Http\Controllers\StripeWebhookController;
             $method = new \ReflectionMethod($controller, 'determineTierFromPriceId');
