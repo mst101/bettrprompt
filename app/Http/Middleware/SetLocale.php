@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Visitor;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,32 @@ class SetLocale
         }
 
         return $next($request);
+    }
+
+    /**
+     * Detect the preferred country from the request
+     */
+    public static function detectCountry(Request $request): string
+    {
+        // 1. Check authenticated user preference
+        $user = $request->user();
+        if ($user && $user->country_code) {
+            return $user->country_code;
+        }
+
+        // 2. Check visitor preference (via cookie, NOT session)
+        if ($visitorId = $request->cookie('visitor_id')) {
+            $visitor = Visitor::find($visitorId);
+            if ($visitor && $visitor->country_code) {
+                return $visitor->country_code;
+            }
+        }
+
+        // 3. Geolocate IP to country code
+        // TODO: Implement geolocation detection in Phase 7
+
+        // 4. Fallback to default
+        return config('app.fallback_country', 'gb');
     }
 
     /**

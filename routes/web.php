@@ -13,17 +13,17 @@ use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Root redirect to detected locale
+// Root redirect to detected country
 Route::get('/', function () {
-    $locale = SetLocale::detectLocale(request());
+    $country = SetLocale::detectCountry(request());
 
-    return redirect("/{$locale}");
+    return redirect("/{$country}");
 });
 
-// Locale-prefixed routes (all user-facing pages)
-Route::prefix('{locale}')
-    ->middleware(['locale'])
-    ->where(['locale' => implode('|', config('app.supported_locales'))])
+// Country-prefixed routes (all user-facing pages)
+Route::prefix('{country}')
+    ->middleware(['locale']) // TODO: Rename to 'country' middleware in Phase 3
+    ->where(['country' => '[a-z]{2}'])
     ->group(function () {
         Route::get('/', function () {
             return Inertia::render('Home', [

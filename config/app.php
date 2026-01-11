@@ -86,30 +86,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Supported Locales
+    | Supported Countries
     |--------------------------------------------------------------------------
     |
-    | List of all supported locales for internationalisation.
-    | Organised by tier: Essential, High Value, Nordic, Volume, RTL
+    | List of all supported country codes for internationalisation.
+    | Country codes are lowercase 2-letter ISO codes (gb, us, mx, etc.).
+    | All 247 country codes from the countries table are supported.
     |
     */
 
-    //    'supported_locales' => [
-    //        // Tier 1: Essential
-    //        'en-US', 'en-GB',
-    //        // Tier 2: High Value
-    //        'de', 'ja', 'ko', 'fr',
-    //        // Tier 3: Nordic
-    //        'sv', 'no', 'da', 'fi', 'nl',
-    //        // Tier 4: Volume
-    //        'es', 'pt', 'it', 'zh',
-    //        // Tier 5: RTL
-    //        'ar', 'he',
-    //    ],
+    'supported_countries' => fn () => \App\Models\Country::pluck('id')->all(),
 
-    'supported_locales' => [
-        'en-US', 'en-GB', 'de', 'fr', 'es',
-    ],
+    /*
+    |--------------------------------------------------------------------------
+    | Fallback Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Default currency and locale when a country has no mapping
+    | or when translations/pricing are unavailable.
+    |
+    */
+
+    'fallback_currency' => env('APP_FALLBACK_CURRENCY', 'USD'),
+    'fallback_country' => env('APP_FALLBACK_COUNTRY', 'gb'),
 
     /*
     |--------------------------------------------------------------------------
