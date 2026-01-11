@@ -92,10 +92,11 @@ return [
     | List of all supported country codes for internationalisation.
     | Country codes are lowercase 2-letter ISO codes (gb, us, mx, etc.).
     | All 247 country codes from the countries table are supported.
+    | This is populated dynamically via a service provider after database boot.
     |
     */
 
-    'supported_countries' => ['gb', 'us', 'de', 'fr', 'es', 'mx', 'sg', 'au', 'ca', 'jp', 'kr', 'cn', 'in', 'br', 'ar', 'it', 'nl', 'se', 'no', 'dk', 'fi', 'pt', 'he', 'ar', 'zh'],
+    'supported_countries' => [],
 
     /*
     |--------------------------------------------------------------------------
