@@ -47,7 +47,10 @@ class SetCountry
                 "user.{$user->id}.language",
                 3600, // 1 hour
                 function () use ($user, $countryCode) {
-                    return $user->language_code ?? $this->getCountryDefaultLanguage($countryCode);
+                    // Refresh user from database to get latest language_code
+                    $freshUser = $user->fresh();
+
+                    return $freshUser->language_code ?? $this->getCountryDefaultLanguage($countryCode);
                 }
             );
         }
@@ -58,6 +61,7 @@ class SetCountry
                 "visitor.{$visitorId}.language",
                 3600, // 1 hour
                 function () use ($visitorId, $countryCode) {
+                    // Always fetch fresh visitor from database to get latest language_code
                     $visitor = Visitor::find($visitorId);
 
                     return $visitor?->language_code ?? $this->getCountryDefaultLanguage($countryCode);
