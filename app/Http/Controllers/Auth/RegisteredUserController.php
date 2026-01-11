@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Services\GeolocationService;
@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $locale = SetLocale::detectLocale($request);
+        $country = SetCountry::detectCountry($request);
         $validated = $request->validated();
 
         $user = User::create([
@@ -89,9 +89,9 @@ class RegisteredUserController extends Controller
 
         // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
         if ($claimedCount > 0) {
-            return redirect(route('prompt-builder.history', ['locale' => $locale], absolute: false));
+            return redirect(route('prompt-builder.history', ['country' => $country], absolute: false));
         }
 
-        return redirect(route('prompt-builder.index', ['locale' => $locale], absolute: false));
+        return redirect(route('prompt-builder.index', ['country' => $country], absolute: false));
     }
 }

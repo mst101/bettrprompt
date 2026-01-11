@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -14,10 +14,10 @@ class EmailVerificationNotificationController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $locale = SetLocale::detectLocale($request);
+        $country = SetCountry::detectCountry($request);
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', ['locale' => $locale], absolute: false));
+            return redirect()->intended(route('dashboard', ['country' => $country], absolute: false));
         }
 
         $request->user()->sendEmailVerificationNotification();

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,10 +16,10 @@ class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|Response
     {
-        $locale = SetLocale::detectLocale($request);
+        $country = SetCountry::detectCountry($request);
 
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', ['locale' => $locale], absolute: false))
+                    ? redirect()->intended(route('dashboard', ['country' => $country], absolute: false))
                     : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
     }
 }

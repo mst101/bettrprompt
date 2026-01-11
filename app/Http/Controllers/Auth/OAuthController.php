@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -29,13 +29,13 @@ class OAuthController extends Controller
         try {
             return Socialite::driver('google')->redirect();
         } catch (Exception $e) {
-            $locale = SetLocale::detectLocale($request);
+            $country = SetCountry::detectCountry($request);
 
             Log::error('Failed to redirect to Google OAuth', [
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('home', ['locale' => $locale])
+            return redirect()->route('home', ['country' => $country])
                 ->with('error', __('messages.auth.google_connection_failed'));
         }
     }
@@ -45,7 +45,7 @@ class OAuthController extends Controller
      */
     public function handleGoogleCallback(Request $request): RedirectResponse
     {
-        $locale = SetLocale::detectLocale($request);
+        $country = SetCountry::detectCountry($request);
 
         try {
             // Get user data from Google
@@ -58,7 +58,7 @@ class OAuthController extends Controller
                     'has_email' => (bool) $googleUser->email,
                 ]);
 
-                return redirect()->route('login', ['locale' => $locale])
+                return redirect()->route('login', ['country' => $country])
                     ->with('error', __('messages.auth.google_account_info_failed'));
             }
 
@@ -68,7 +68,7 @@ class OAuthController extends Controller
                     'email' => $googleUser->email,
                 ]);
 
-                return redirect()->route('login', ['locale' => $locale])
+                return redirect()->route('login', ['country' => $country])
                     ->with('error', __('messages.auth.google_invalid_email'));
             }
 
@@ -76,7 +76,7 @@ class OAuthController extends Controller
             $user = $this->findOrCreateUser($googleUser);
 
             if (! $user) {
-                return redirect()->route('login', ['locale' => $locale])
+                return redirect()->route('login', ['country' => $country])
                     ->with('error', __('messages.auth.account_creation_failed'));
             }
 
@@ -189,17 +189,17 @@ class OAuthController extends Controller
 
             // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
             if ($claimedCount > 0) {
-                return redirect()->intended(route('prompt-builder.history', ['locale' => $locale]));
+                return redirect()->intended(route('prompt-builder.history', ['country' => $country]));
             }
 
-            return redirect()->intended(route('prompt-builder.index', ['locale' => $locale]));
+            return redirect()->intended(route('prompt-builder.index', ['country' => $country]));
 
         } catch (InvalidStateException $e) {
             Log::warning('OAuth state validation failed', [
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('login', ['locale' => $locale])
+            return redirect()->route('login', ['country' => $country])
                 ->with('error', __('messages.auth.session_expired'));
 
         } catch (ClientException $e) {
@@ -208,7 +208,7 @@ class OAuthController extends Controller
                 'status' => $e->getResponse()?->getStatusCode(),
             ]);
 
-            return redirect()->route('login', ['locale' => $locale])
+            return redirect()->route('login', ['country' => $country])
                 ->with('error', __('messages.auth.google_communication_failed'));
 
         } catch (Exception $e) {
@@ -217,7 +217,7 @@ class OAuthController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('login', ['locale' => $locale])
+            return redirect()->route('login', ['country' => $country])
                 ->with('error', __('messages.auth.unexpected_error'));
         }
     }
