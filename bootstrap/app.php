@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 
         $middleware->web(append: [
+            // SetCountry must run before HandleInertiaRequests so locale is set when Inertia props are generated
+            \App\Http\Middleware\SetCountry::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\TrackVisitor::class,

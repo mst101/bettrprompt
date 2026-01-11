@@ -21,8 +21,8 @@ Route::get('/', function () {
 });
 
 // Country-prefixed routes (all user-facing pages)
+// Note: SetCountry middleware runs globally in bootstrap/app.php before HandleInertiaRequests
 Route::prefix('{country}')
-    ->middleware(['country'])
     ->where(['country' => '[a-z]{2}'])
     ->group(function () {
         Route::get('/', function () {
