@@ -419,9 +419,16 @@ class ProfileController extends Controller
                 $user->updateProfileCompletion();
             });
 
-            // If language was detected and changed, redirect to new locale's profile page
+            // If language was detected and changed, redirect to the detected country's profile page
+            // Use the detected country code from the geolocation, or current country if not changed
             if ($newLanguageCode && $newLanguageCode !== $oldLanguageCode) {
-                return Redirect::to("/{$newLanguageCode}/profile")
+                // Get the detected country code if it was updated
+                $detectedCountry = $currentCountry;
+                if (isset($validated['country_code'])) {
+                    $detectedCountry = $validated['country_code'];
+                }
+
+                return Redirect::to("/{$detectedCountry}/profile")
                     ->with('status', 'location-detected-updated');
             }
 

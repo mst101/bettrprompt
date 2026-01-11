@@ -149,17 +149,34 @@ const detectLocation = async () => {
                 form.currencyCode = locationData.currencyCode || '';
                 form.languageCode = locationData.languageCode || '';
 
-                // If language was detected and changed, update frontend i18n
+                // If country was detected and changed, navigate to the new country's profile page
                 if (
+                    locationData.countryCode &&
+                    locationData.countryCode !== currentCountry.value
+                ) {
+                    // If language also changed, update frontend i18n first
+                    if (
+                        locationData.languageCode &&
+                        locationData.languageCode !== currentLocale
+                    ) {
+                        const newLocale =
+                            locationData.languageCode as LocaleCode;
+                        await setLocale(newLocale);
+                    }
+                    // Navigate to the new country's profile page
+                    router.visit(`/${locationData.countryCode}/profile`, {
+                        preserveScroll: true,
+                    });
+                } else if (
+                    // If only language changed (same country), update frontend i18n and refresh
                     locationData.languageCode &&
                     locationData.languageCode !== currentLocale
                 ) {
                     const newLocale = locationData.languageCode as LocaleCode;
                     await setLocale(newLocale);
 
-                    // Navigate to new locale's profile page
-                    router.visit(`/${newLocale}/profile`, {
-                        preserveState: true,
+                    // Refresh page to get updated locale in Inertia props
+                    router.visit(`/${currentCountry.value}/profile`, {
                         preserveScroll: true,
                     });
                 }
