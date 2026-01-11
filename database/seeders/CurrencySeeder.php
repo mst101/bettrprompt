@@ -31,6 +31,7 @@ class CurrencySeeder extends Seeder
                 'space_between_amount_and_symbol' => (bool) $row[5],
                 'rounding_coefficient' => (int) $row[6],
                 'decimal_digits' => (int) $row[7],
+                'active' => (bool) $row[8],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

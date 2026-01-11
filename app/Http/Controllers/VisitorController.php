@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateVisitorPersonalityRequest;
+use App\Models\Currency;
 use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -58,12 +59,14 @@ class VisitorController extends Controller
      */
     public function updateCurrency(Request $request): RedirectResponse
     {
+        $activeCurrencies = Currency::where('active', true)->pluck('id')->all();
+
         $validated = $request->validate([
             'currency_code' => [
                 'required',
                 'string',
                 'size:3',
-                Rule::in(['GBP', 'EUR', 'USD']),
+                Rule::in($activeCurrencies),
             ],
         ]);
 
