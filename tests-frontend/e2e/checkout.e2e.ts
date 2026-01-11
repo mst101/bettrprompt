@@ -3,6 +3,13 @@ import { expect, test } from './fixtures';
 test.describe('Pricing and Checkout Flows', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/pricing');
+        // Wait for page to fully load before tests run
+        await page.waitForLoadState('networkidle');
+        // Ensure pricing cards are visible before proceeding
+        await page.getByRole('heading', { name: /^pro$/i }).waitFor({
+            state: 'visible',
+            timeout: 5000,
+        });
     });
 
     test('displays pricing page with correct title', async ({ page }) => {
