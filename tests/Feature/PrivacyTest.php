@@ -34,7 +34,9 @@ test('free user cannot enable privacy', function () {
 });
 
 test('pro user can enable privacy', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'subscription_tier' => 'pro',
+    ]);
     $user->update(['stripe_id' => 'cus_test']);
     $user->subscriptions()->create([
         'type' => 'default',
@@ -60,7 +62,9 @@ test('begin setup requires pro subscription', function () {
 });
 
 test('begin setup generates recovery phrase for pro user', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+        'subscription_tier' => 'pro',
+    ]);
     $user->update(['stripe_id' => 'cus_test']);
     $user->subscriptions()->create([
         'type' => 'default',
