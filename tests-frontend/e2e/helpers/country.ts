@@ -51,3 +51,15 @@ export function withCountryCode(
     const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
     return `/${country}${normalized}${suffix}`;
 }
+
+/**
+ * Get the default country home page URL
+ * Useful for navigation after login in e2e tests
+ *
+ * @example
+ * await page.goto(getDefaultCountryUrl())  // => /gb/
+ * await page.goto(getDefaultCountryUrl('/history'))  // => /gb/history
+ */
+export function getDefaultCountryUrl(path: string = '/'): string {
+    return withCountryCode(path, DEFAULT_COUNTRY);
+}
