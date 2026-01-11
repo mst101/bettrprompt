@@ -3,21 +3,21 @@ import { createI18n } from 'vue-i18n';
 export type LocaleCode =
     | 'en-US'
     | 'en-GB'
-    | 'de'
-    | 'ja'
-    | 'ko'
-    | 'fr'
-    | 'sv'
-    | 'no'
-    | 'da'
-    | 'fi'
-    | 'nl'
-    | 'es'
-    | 'pt'
-    | 'it'
-    | 'zh'
-    | 'ar'
-    | 'he';
+    | 'de-DE'
+    | 'ja-JP'
+    | 'ko-KR'
+    | 'fr-FR'
+    | 'sv-SE'
+    | 'no-NO'
+    | 'da-DK'
+    | 'fi-FI'
+    | 'nl-NL'
+    | 'es-ES'
+    | 'pt-BR'
+    | 'it-IT'
+    | 'zh-CN'
+    | 'ar-SA'
+    | 'he-IL';
 
 export interface LocaleInfo {
     code: LocaleCode;
@@ -45,28 +45,28 @@ export const locales: LocaleInfo[] = [
     },
     // Tier 2: High Value
     {
-        code: 'de',
+        code: 'de-DE',
         name: 'German',
         nativeName: 'Deutsch',
         flag: 'de',
         direction: 'ltr',
     },
     {
-        code: 'ja',
+        code: 'ja-JP',
         name: 'Japanese',
         nativeName: '日本語',
         flag: 'jp',
         direction: 'ltr',
     },
     {
-        code: 'ko',
+        code: 'ko-KR',
         name: 'Korean',
         nativeName: '한국어',
         flag: 'kr',
         direction: 'ltr',
     },
     {
-        code: 'fr',
+        code: 'fr-FR',
         name: 'French',
         nativeName: 'Français',
         flag: 'fr',
@@ -74,35 +74,35 @@ export const locales: LocaleInfo[] = [
     },
     // Tier 3: Nordic
     {
-        code: 'sv',
+        code: 'sv-SE',
         name: 'Swedish',
         nativeName: 'Svenska',
         flag: 'se',
         direction: 'ltr',
     },
     {
-        code: 'no',
+        code: 'no-NO',
         name: 'Norwegian',
         nativeName: 'Norsk',
         flag: 'no',
         direction: 'ltr',
     },
     {
-        code: 'da',
+        code: 'da-DK',
         name: 'Danish',
         nativeName: 'Dansk',
         flag: 'dk',
         direction: 'ltr',
     },
     {
-        code: 'fi',
+        code: 'fi-FI',
         name: 'Finnish',
         nativeName: 'Suomi',
         flag: 'fi',
         direction: 'ltr',
     },
     {
-        code: 'nl',
+        code: 'nl-NL',
         name: 'Dutch',
         nativeName: 'Nederlands',
         flag: 'nl',
@@ -110,28 +110,28 @@ export const locales: LocaleInfo[] = [
     },
     // Tier 4: Volume
     {
-        code: 'es',
+        code: 'es-ES',
         name: 'Spanish',
         nativeName: 'Español',
         flag: 'es',
         direction: 'ltr',
     },
     {
-        code: 'pt',
+        code: 'pt-BR',
         name: 'Portuguese',
         nativeName: 'Português',
         flag: 'br',
         direction: 'ltr',
     },
     {
-        code: 'it',
+        code: 'it-IT',
         name: 'Italian',
         nativeName: 'Italiano',
         flag: 'it',
         direction: 'ltr',
     },
     {
-        code: 'zh',
+        code: 'zh-CN',
         name: 'Chinese',
         nativeName: '中文',
         flag: 'cn',
@@ -139,14 +139,14 @@ export const locales: LocaleInfo[] = [
     },
     // Tier 5: RTL
     {
-        code: 'ar',
+        code: 'ar-SA',
         name: 'Arabic',
         nativeName: 'العربية',
         flag: 'sa',
         direction: 'rtl',
     },
     {
-        code: 'he',
+        code: 'he-IL',
         name: 'Hebrew',
         nativeName: 'עברית',
         flag: 'il',
