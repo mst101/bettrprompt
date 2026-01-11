@@ -13,9 +13,21 @@ abstract class TestCase extends BaseTestCase
 {
     protected string $testCountry = 'gb';
 
+    /**
+     * Enable seeding only active languages, currencies, and countries.
+     * Reduces seeding from ~447 rows to ~52 rows, speeding up Feature tests by ~70%.
+     * Set to false to seed all reference data (useful for specific tests that need all countries).
+     */
+    protected bool $seedActiveOnly = true;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Set environment variable for seeders to check
+        if ($this->seedActiveOnly) {
+            putenv('SEED_ACTIVE_ONLY=true');
+        }
 
         // Clear cache before seeding
         Cache::flush();
@@ -27,12 +39,26 @@ abstract class TestCase extends BaseTestCase
             CountrySeeder::class,
         ]);
 
+        // Reset environment variable
+        if ($this->seedActiveOnly) {
+            putenv('SEED_ACTIVE_ONLY=false');
+        }
+
         // Cache is cleared above, so supportedCountries() helper will repopulate on first call
 
         URL::defaults(['country' => $this->testCountry]);
         $this->defaultHeaders = array_merge($this->defaultHeaders, [
             'Accept-Language' => 'en-GB',
         ]);
+    }
+
+    /**
+     * Override this in a test class to seed all countries/languages/currencies.
+     * Useful for tests that specifically need non-active countries.
+     */
+    protected function seedFullData(): void
+    {
+        $this->seedActiveOnly = false;
     }
 
     /**
