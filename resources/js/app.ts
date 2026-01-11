@@ -8,7 +8,7 @@ import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useNotification } from './Composables/ui/useNotification';
-import { createCountryRoutePlugin } from './Plugins/localeRoutePlugin';
+import { createCountryRoutePlugin } from './Plugins/countryRoutePlugin';
 import { getCookie, getCsrfToken } from './Utils/cookies';
 import { i18n, initializeI18n, setLocale, type LocaleCode } from './i18n';
 
