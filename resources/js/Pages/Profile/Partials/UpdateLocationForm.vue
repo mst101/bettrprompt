@@ -39,7 +39,7 @@ const props = defineProps<Props>();
 const page = usePage();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
-const { countryRoute } = useCountryRoute();
+const { countryRoute, currentCountry } = useCountryRoute();
 const currentLocale = page.props.locale as LocaleCode;
 
 // Common timezones (still using common ones as not in database)
@@ -116,8 +116,8 @@ const submit = async () => {
         form.patch(countryRoute('profile.location.update'), {
             preserveScroll: true,
             onSuccess: () => {
-                // Navigate to new locale's profile page
-                router.visit(`/${newLocale}/profile`, {
+                // Navigate to new country's profile page
+                router.visit(`/${currentCountry.value}/profile`, {
                     preserveState: true,
                     preserveScroll: true,
                 });
