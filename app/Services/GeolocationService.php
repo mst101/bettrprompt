@@ -19,64 +19,64 @@ class GeolocationService
     private const CACHE_TTL = 30 * 24 * 60 * 60;
 
     /**
-     * Country to currency mapping
+     * Country to currency mapping (lowercase country codes)
      */
     private const COUNTRY_CURRENCY_MAP = [
-        'US' => 'USD',
-        'GB' => 'GBP',
-        'CA' => 'CAD',
-        'AU' => 'AUD',
-        'NZ' => 'NZD',
-        'EU' => 'EUR',
-        'DE' => 'EUR',
-        'FR' => 'EUR',
-        'IT' => 'EUR',
-        'ES' => 'EUR',
-        'NL' => 'EUR',
-        'BE' => 'EUR',
-        'AT' => 'EUR',
-        'CH' => 'CHF',
-        'SE' => 'SEK',
-        'NO' => 'NOK',
-        'DK' => 'DKK',
-        'JP' => 'JPY',
-        'CN' => 'CNY',
-        'IN' => 'INR',
-        'BR' => 'BRL',
-        'MX' => 'MXN',
-        'ZA' => 'ZAR',
-        'SG' => 'SGD',
-        'HK' => 'HKD',
+        'us' => 'USD',
+        'gb' => 'GBP',
+        'ca' => 'CAD',
+        'au' => 'AUD',
+        'nz' => 'NZD',
+        'eu' => 'EUR',
+        'de' => 'EUR',
+        'fr' => 'EUR',
+        'it' => 'EUR',
+        'es' => 'EUR',
+        'nl' => 'EUR',
+        'be' => 'EUR',
+        'at' => 'EUR',
+        'ch' => 'CHF',
+        'se' => 'SEK',
+        'no' => 'NOK',
+        'dk' => 'DKK',
+        'jp' => 'JPY',
+        'cn' => 'CNY',
+        'in' => 'INR',
+        'br' => 'BRL',
+        'mx' => 'MXN',
+        'za' => 'ZAR',
+        'sg' => 'SGD',
+        'hk' => 'HKD',
     ];
 
     /**
-     * Country to language code mapping (BCP 47 locale format)
+     * Country to language code mapping (BCP 47 locale format, lowercase country codes)
      */
     private const COUNTRY_LANGUAGE_MAP = [
-        'US' => 'en-US',
-        'GB' => 'en-GB',
-        'CA' => 'en-CA',
-        'AU' => 'en-AU',
-        'NZ' => 'en-NZ',
-        'DE' => 'de-DE',
-        'FR' => 'fr-FR',
-        'IT' => 'it-IT',
-        'ES' => 'es-ES',
-        'NL' => 'nl-NL',
-        'BE' => 'nl-BE',
-        'AT' => 'de-AT',
-        'CH' => 'de-CH',
-        'SE' => 'sv-SE',
-        'NO' => 'nb-NO',
-        'DK' => 'da-DK',
-        'JP' => 'ja-JP',
-        'CN' => 'zh-CN',
-        'IN' => 'en-IN',
-        'BR' => 'pt-BR',
-        'MX' => 'es-MX',
-        'ZA' => 'en-ZA',
-        'SG' => 'en-SG',
-        'HK' => 'zh-HK',
+        'us' => 'en-US',
+        'gb' => 'en-GB',
+        'ca' => 'en-CA',
+        'au' => 'en-AU',
+        'nz' => 'en-NZ',
+        'de' => 'de-DE',
+        'fr' => 'fr-FR',
+        'it' => 'it-IT',
+        'es' => 'es-ES',
+        'nl' => 'nl-NL',
+        'be' => 'nl-BE',
+        'at' => 'de-AT',
+        'ch' => 'de-CH',
+        'se' => 'sv-SE',
+        'no' => 'nb-NO',
+        'dk' => 'da-DK',
+        'jp' => 'ja-JP',
+        'cn' => 'zh-CN',
+        'in' => 'en-IN',
+        'br' => 'pt-BR',
+        'mx' => 'es-MX',
+        'za' => 'en-ZA',
+        'sg' => 'en-SG',
+        'hk' => 'zh-HK',
     ];
 
     /**
@@ -116,7 +116,8 @@ class GeolocationService
             $record = $reader->city($ip);
 
             $timezone = $record->location->timeZone;
-            $countryCode = $record->country->isoCode;
+            // MaxMind returns uppercase country codes (GB, US), convert to lowercase
+            $countryCode = strtolower($record->country->isoCode);
 
             $locationData = new LocationData(
                 countryCode: $countryCode,
@@ -205,9 +206,9 @@ class GeolocationService
             return null;
         }
 
-        // Special case for Eurozone
+        // Special case for Eurozone (lowercase country codes)
         $euCountries = [
-            'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'IE', 'PT', 'GR', 'CY', 'MT', 'SK', 'SI', 'LV', 'LT', 'EE',
+            'de', 'fr', 'it', 'es', 'nl', 'be', 'at', 'ie', 'pt', 'gr', 'cy', 'mt', 'sk', 'si', 'lv', 'lt', 'ee',
         ];
         if (in_array($countryCode, $euCountries)) {
             return 'EUR';
@@ -247,7 +248,7 @@ class GeolocationService
     private function getDefaultLocationForDevelopment(): LocationData
     {
         return new LocationData(
-            countryCode: 'GB',
+            countryCode: 'gb',
             countryName: 'United Kingdom',
             region: 'England',
             city: 'London',
