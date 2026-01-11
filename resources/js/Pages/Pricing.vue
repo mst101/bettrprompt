@@ -29,7 +29,7 @@ defineOptions({
 });
 
 const page = usePage();
-const { countryRoute } = useCountryRoute();
+const { currentCountry, countryRoute } = useCountryRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
