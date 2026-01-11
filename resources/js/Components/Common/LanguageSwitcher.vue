@@ -4,24 +4,31 @@ import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-const page = usePage();
+const page = usePage<{
+    auth?: { user?: { id: number } };
+    country?: string;
+    locale?: string;
+}>();
 const isOpen = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);
 
-const currentLocale = computed(() => (page.props.locale as LocaleCode) || 'en');
+const currentCountry = computed(() => (page.props.country as string) || 'gb');
+const currentLocale = computed(
+    () => (page.props.locale as LocaleCode) || 'en-GB',
+);
 const currentLocaleInfo = computed(
     () => locales.find((l) => l.code === currentLocale.value) || locales[0],
 );
 
-// Get current path without locale prefix
+// Get current path without country prefix
 const currentPath = computed(() => {
     const url = page.url;
-    const locale = currentLocale.value;
-    // Remove locale prefix if present
-    if (url.startsWith(`/${locale}/`)) {
-        return url.slice(locale.length + 1);
+    const country = currentCountry.value;
+    // Remove country prefix if present
+    if (url.startsWith(`/${country}/`)) {
+        return url.slice(country.length + 1);
     }
-    if (url === `/${locale}`) {
+    if (url === `/${country}`) {
         return '/';
     }
     return url;
@@ -35,10 +42,10 @@ async function switchLocale(locale: LocaleInfo) {
 
     isOpen.value = false;
 
-    // Persist language choice to database
+    // Persist language choice to database using country-based route
     const endpoint = page.props.auth?.user
-        ? `/${currentLocale.value}/profile/language`
-        : `/${currentLocale.value}/visitor/language`;
+        ? `/${currentCountry.value}/profile/language`
+        : `/${currentCountry.value}/visitor/language`;
 
     try {
         await axios.patch(endpoint, { language_code: locale.code });
@@ -49,8 +56,8 @@ async function switchLocale(locale: LocaleInfo) {
     // Update client-side i18n
     await setLocale(locale.code);
 
-    // Navigate to the same path with new locale
-    const newPath = `/${locale.code}${currentPath.value}`;
+    // Navigate to the same path with same country (language change stays on same country URL)
+    const newPath = `/${currentCountry.value}${currentPath.value}`;
     router.visit(newPath, {
         preserveState: true,
         preserveScroll: true,
@@ -82,7 +89,7 @@ onUnmounted(() => {
 // Show only currently supported languages
 const supportedLanguages = computed(() =>
     locales.filter((l) =>
-        ['en-US', 'en-GB', 'de', 'fr', 'es'].includes(l.code),
+        ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES'].includes(l.code),
     ),
 );
 </script>
@@ -143,7 +150,7 @@ const supportedLanguages = computed(() =>
                                 ? 'bg-indigo-100 text-indigo-900'
                                 : 'text-indigo-600 hover:bg-indigo-50'
                         "
-                        :data-testid="`locale-option-${locale.code}`"
+                        :data-testid="`language-option-${locale.code}`"
                         @click="switchLocale(locale)"
                     >
                         <span
