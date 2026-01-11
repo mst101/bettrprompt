@@ -17,6 +17,7 @@ import Footer from '@/Components/Common/Footer.vue';
 import LanguageSwitcher from '@/Components/Common/LanguageSwitcher.vue';
 import NotificationCenter from '@/Components/Common/NotificationCenter.vue';
 import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
@@ -39,11 +40,11 @@ interface User {
 const page = usePage<{
     auth?: { user?: User };
     visitorHasCompletedPrompts?: boolean;
+    country?: string;
     locale?: string;
 }>();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
-const currentLocale = computed(() => (page.props.locale as string) || 'en');
 
 // Initialize session timeout tracking for authenticated users
 // This prevents 419 CSRF errors by logging users out before session expires
@@ -51,13 +52,8 @@ if (isAuthenticated.value) {
     useSessionTimeout();
 }
 
-// Helper function to generate locale-aware routes
-const localeRoute = (name: string, parameters?: Record<string, any>) => {
-    return route(name, {
-        locale: currentLocale.value,
-        ...(parameters || {}),
-    });
-};
+// Use country-aware route generation
+const { countryRoute } = useCountryRoute();
 
 // Determine logo destination based on admin status and current route
 const logoDestination = computed(() => {
@@ -65,16 +61,16 @@ const logoDestination = computed(() => {
 
     // If admin user and on admin pages, go to main site
     if (isAdmin.value && currentRoute.startsWith('admin.')) {
-        return localeRoute('home');
+        return countryRoute('home');
     }
 
     // If admin user and on main site, go to admin dashboard
     if (isAdmin.value) {
-        return localeRoute('admin.dashboard');
+        return countryRoute('admin.dashboard');
     }
 
     // Non-admin users always go to home/main site
-    return localeRoute('home');
+    return countryRoute('home');
 });
 
 const showingNavigationDropdown = ref(false);
@@ -213,7 +209,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 class="hidden space-x-2 md:-my-px md:ms-6 md:flex md:items-center lg:ms-12 lg:space-x-8"
                             >
                                 <NavLink
-                                    :href="localeRoute('prompt-builder.index')"
+                                    :href="countryRoute('prompt-builder.index')"
                                     :active="
                                         route().current('prompt-builder.index')
                                     "
@@ -222,7 +218,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                 </NavLink>
                                 <NavLink
                                     :href="
-                                        localeRoute('prompt-builder.history')
+                                        countryRoute('prompt-builder.history')
                                     "
                                     :active="
                                         route().current(
@@ -233,7 +229,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     {{ $t('navigation.promptHistory') }}
                                 </NavLink>
                                 <NavLink
-                                    :href="localeRoute('feedback.create')"
+                                    :href="countryRoute('feedback.create')"
                                     :active="route().current('feedback.*')"
                                 >
                                     {{ $t('navigation.feedback') }}
@@ -276,20 +272,20 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                                     <template #content>
                                         <DropdownLink
-                                            :href="localeRoute('profile.edit')"
+                                            :href="countryRoute('profile.edit')"
                                         >
                                             {{ $t('common.nav.profile') }}
                                         </DropdownLink>
                                         <DropdownLink
                                             v-if="isAdmin"
                                             :href="
-                                                localeRoute('workflow.index')
+                                                countryRoute('workflow.index')
                                             "
                                         >
                                             {{ $t('navigation.workflows') }}
                                         </DropdownLink>
                                         <DropdownLink
-                                            :href="localeRoute('logout')"
+                                            :href="countryRoute('logout')"
                                             method="post"
                                             as="button"
                                         >
@@ -343,7 +339,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     <ResponsiveNavLink
                                         ref="firstMobileNavLink"
                                         :href="
-                                            localeRoute('prompt-builder.index')
+                                            countryRoute('prompt-builder.index')
                                         "
                                         :active="
                                             route().current(
@@ -359,7 +355,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                                     <ResponsiveNavLink
                                         :href="
-                                            localeRoute(
+                                            countryRoute(
                                                 'prompt-builder.history',
                                             )
                                         "
@@ -376,7 +372,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="localeRoute('feedback.create')"
+                                        :href="countryRoute('feedback.create')"
                                         :active="route().current('feedback.*')"
                                         @click="
                                             showingNavigationDropdown = false
@@ -386,7 +382,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="localeRoute('profile.edit')"
+                                        :href="countryRoute('profile.edit')"
                                         @click="
                                             showingNavigationDropdown = false
                                         "
@@ -395,7 +391,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     </ResponsiveNavLink>
 
                                     <ResponsiveNavLink
-                                        :href="localeRoute('logout')"
+                                        :href="countryRoute('logout')"
                                         method="post"
                                         as="button"
                                         @click="

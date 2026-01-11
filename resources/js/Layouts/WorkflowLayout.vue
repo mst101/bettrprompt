@@ -4,6 +4,7 @@ import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
 import NavLink from '@/Components/Base/NavLink.vue';
 import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, watch } from 'vue';
@@ -15,6 +16,8 @@ interface Props {
 withDefaults(defineProps<Props>(), {
     title: 'Workflow',
 });
+
+const { countryRoute } = useCountryRoute();
 
 const showingNavigationDropdown = ref(false);
 const firstMobileNavLink = ref<InstanceType<typeof ResponsiveNavLink> | null>(
@@ -53,7 +56,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     <!-- Logo -->
                     <div class="flex shrink-0 items-center">
                         <Link
-                            :href="localeRoute('home')"
+                            :href="countryRoute('home')"
                             class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                             @click="showingNavigationDropdown = false"
                         >
@@ -67,14 +70,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     <!-- Navigation Links (Desktop) -->
                     <div class="hidden space-x-1 md:flex">
                         <NavLink
-                            :href="localeRoute('workflow.index')"
+                            :href="countryRoute('workflow.index')"
                             :active="route().current('workflow.index')"
                         >
                             Index
                         </NavLink>
                         <NavLink
                             :href="
-                                localeRoute('workflow.show', {
+                                countryRoute('workflow.show', {
                                     workflowNumber: 0,
                                 })
                             "
@@ -84,7 +87,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </NavLink>
                         <NavLink
                             :href="
-                                localeRoute('workflow.show', {
+                                countryRoute('workflow.show', {
                                     workflowNumber: 1,
                                 })
                             "
@@ -94,7 +97,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </NavLink>
                         <NavLink
                             :href="
-                                localeRoute('workflow.show', {
+                                countryRoute('workflow.show', {
                                     workflowNumber: 2,
                                 })
                             "
@@ -103,7 +106,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             Workflow 2
                         </NavLink>
                         <NavLink
-                            :href="localeRoute('workflow.docs.index')"
+                            :href="countryRoute('workflow.docs.index')"
                             :active="route().current('workflow.docs.index')"
                         >
                             Docs
@@ -146,7 +149,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         <div class="space-y-1 pt-2 pb-3">
                             <ResponsiveNavLink
                                 ref="firstMobileNavLink"
-                                :href="localeRoute('workflow.index')"
+                                :href="countryRoute('workflow.index')"
                                 :active="route().current('workflow.index')"
                                 @click="showingNavigationDropdown = false"
                             >
@@ -155,7 +158,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    localeRoute('workflow.show', {
+                                    countryRoute('workflow.show', {
                                         workflowNumber: 0,
                                     })
                                 "
@@ -167,7 +170,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    localeRoute('workflow.show', {
+                                    countryRoute('workflow.show', {
                                         workflowNumber: 1,
                                     })
                                 "
@@ -179,7 +182,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <ResponsiveNavLink
                                 :href="
-                                    localeRoute('workflow.show', {
+                                    countryRoute('workflow.show', {
                                         workflowNumber: 2,
                                     })
                                 "
@@ -190,7 +193,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink
-                                :href="localeRoute('workflow.docs.index')"
+                                :href="countryRoute('workflow.docs.index')"
                                 :active="route().current('workflow.docs.index')"
                                 @click="showingNavigationDropdown = false"
                             >
