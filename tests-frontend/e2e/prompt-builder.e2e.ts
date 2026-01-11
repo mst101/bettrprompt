@@ -482,7 +482,7 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await createNewButton.click();
 
         // Should navigate back to index
-        await authenticatedPage.waitForURL('/en-GB/prompt-builder', {
+        await authenticatedPage.waitForURL('/gb/prompt-builder', {
             timeout: 5000,
         });
         expect(authenticatedPage.url()).toContain('/prompt-builder');
@@ -661,7 +661,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const { prompt_run_id: promptRunId } = await response.json();
 
         // Navigate to the show page where error should be displayed
-        await authenticatedPage.goto(`/en-GB/prompt-builder/${promptRunId}`);
+        await authenticatedPage.goto(`/gb/prompt-builder/${promptRunId}`);
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
@@ -695,7 +695,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const { prompt_run_id: promptRunId } = await response.json();
 
         // Navigate to the show page where error should be displayed
-        await authenticatedPage.goto(`/en-GB/prompt-builder/${promptRunId}`);
+        await authenticatedPage.goto(`/gb/prompt-builder/${promptRunId}`);
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
@@ -730,9 +730,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             await failedResponse.json();
 
         // Navigate to the failed prompt
-        await authenticatedPage.goto(
-            `/en-GB/prompt-builder/${failedPromptRunId}`,
-        );
+        await authenticatedPage.goto(`/gb/prompt-builder/${failedPromptRunId}`);
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Verify we're on the show page
@@ -761,7 +759,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
 
         // Navigate to the successful prompt
         await authenticatedPage.goto(
-            `/en-GB/prompt-builder/${successPromptRunId}`,
+            `/gb/prompt-builder/${successPromptRunId}`,
         );
         await authenticatedPage.waitForLoadState('domcontentloaded');
 

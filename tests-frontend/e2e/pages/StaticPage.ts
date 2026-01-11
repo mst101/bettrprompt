@@ -11,15 +11,15 @@ export class StaticPage {
     // ===== Page Navigation =====
 
     async gotoTerms(): Promise<void> {
-        await this.page.goto('/en-GB/terms');
+        await this.page.goto('/gb/terms');
     }
 
     async gotoPrivacy(): Promise<void> {
-        await this.page.goto('/en-GB/privacy');
+        await this.page.goto('/gb/privacy');
     }
 
     async gotoCookies(): Promise<void> {
-        await this.page.goto('/en-GB/cookies');
+        await this.page.goto('/gb/cookies');
     }
 
     async goto(path: '/terms' | '/privacy' | '/cookies'): Promise<void> {

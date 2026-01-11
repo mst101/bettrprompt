@@ -11,7 +11,7 @@ export class PromptBuilderAdvancedPage {
     // ===== Navigation =====
 
     async gotoPromptRun(id: number): Promise<void> {
-        await this.page.goto(`/en-GB/prompt-builder/${id}`);
+        await this.page.goto(`/gb/prompt-builder/${id}`);
     }
 
     async gotoCreateChildFromTask(parentId: number): Promise<void> {

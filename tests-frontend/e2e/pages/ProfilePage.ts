@@ -17,7 +17,7 @@ export class ProfilePage {
      * Those routes only accept PATCH/POST/DELETE for form submissions.
      */
     async goto(): Promise<void> {
-        await this.page.goto('/en-GB/profile');
+        await this.page.goto('/gb/profile');
     }
 
     // ===== Form Field Helpers =====

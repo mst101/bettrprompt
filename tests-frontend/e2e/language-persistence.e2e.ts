@@ -16,7 +16,7 @@ test.describe('Language Persistence - Authenticated User', () => {
         authenticatedPage,
     }) => {
         // Start at English locale
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Open language switcher
@@ -60,7 +60,7 @@ test.describe('Language Persistence - Authenticated User', () => {
     test('should send correct payload to API', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Intercept requests to verify payload
@@ -87,7 +87,7 @@ test.describe('Language Persistence - Authenticated User', () => {
     test('should handle language change to all supported languages', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         const supportedLanguages = [
@@ -121,7 +121,7 @@ test.describe('Language Persistence - Authenticated User', () => {
     test('should gracefully handle API errors', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Set up error response
@@ -158,7 +158,7 @@ test.describe('Language Persistence - Visitor', () => {
         const page = await context.newPage();
 
         // Start at English locale
-        await page.goto('http://app.localhost/en-GB/prompt-builder');
+        await page.goto('http://app.localhost/gb/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Open language switcher
@@ -200,7 +200,7 @@ test.describe('Language Persistence - Visitor', () => {
     }) => {
         const page = await context.newPage();
 
-        await page.goto('http://app.localhost/en-GB/prompt-builder');
+        await page.goto('http://app.localhost/gb/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         // Track which endpoints are called
@@ -235,7 +235,7 @@ test.describe('Language Persistence - Visitor', () => {
         const page = await context.newPage();
 
         // Change language to German as visitor
-        await page.goto('http://app.localhost/en-GB/prompt-builder');
+        await page.goto('http://app.localhost/gb/prompt-builder');
         await page.waitForLoadState('networkidle');
 
         await page.getByTestId('language-switcher-button').first().click();
@@ -260,7 +260,7 @@ test.describe('Language Persistence - Switching Between Users', () => {
         authenticatedPage,
     }) => {
         // First, as authenticated user
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         await authenticatedPage
@@ -296,7 +296,7 @@ test.describe('Language Switcher - UI Behavior', () => {
     test('should close dropdown after language selection', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Open dropdown
@@ -329,7 +329,7 @@ test.describe('Language Switcher - UI Behavior', () => {
     test('should show current language as selected in dropdown', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Open dropdown
@@ -346,7 +346,7 @@ test.describe('Language Switcher - UI Behavior', () => {
     test('should close dropdown when clicking outside', async ({
         authenticatedPage,
     }) => {
-        await authenticatedPage.goto('/en-GB/prompt-builder');
+        await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
         // Open dropdown
