@@ -419,6 +419,11 @@ class ProfileController extends Controller
                 $user->updateProfileCompletion();
             });
 
+            // Invalidate language cache if language was detected and changed
+            if ($newLanguageCode && $newLanguageCode !== $oldLanguageCode) {
+                Cache::forget("user.{$user->id}.language");
+            }
+
             // If language was detected and changed, redirect to the detected country's profile page
             // Use the detected country code from the geolocation, or current country if not changed
             if ($newLanguageCode && $newLanguageCode !== $oldLanguageCode) {
