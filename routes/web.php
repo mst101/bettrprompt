@@ -9,20 +9,20 @@ use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Root redirect to detected country
 Route::get('/', function () {
-    $country = SetLocale::detectCountry(request());
+    $country = SetCountry::detectCountry(request());
 
     return redirect("/{$country}");
 });
 
 // Country-prefixed routes (all user-facing pages)
 Route::prefix('{country}')
-    ->middleware(['locale']) // TODO: Rename to 'country' middleware in Phase 3
+    ->middleware(['country'])
     ->where(['country' => '[a-z]{2}'])
     ->group(function () {
         Route::get('/', function () {

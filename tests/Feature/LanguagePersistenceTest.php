@@ -102,7 +102,7 @@ class LanguagePersistenceTest extends TestCase
     public function test_unauthenticated_user_cannot_update_profile_language(): void
     {
         $response = $this->patchJsonCountry('/profile/language', [
-            'language_code' => 'fr',
+            'language_code' => 'fr-FR',
         ]);
 
         // JSON requests return 401 Unauthorized for unauthenticated users
@@ -115,7 +115,7 @@ class LanguagePersistenceTest extends TestCase
     public function test_visitor_language_update_without_cookie_succeeds_silently(): void
     {
         $response = $this->patchJsonCountry('/visitor/language', [
-            'language_code' => 'es',
+            'language_code' => 'es-ES',
         ]);
 
         $response->assertStatus(200)
@@ -182,7 +182,7 @@ class LanguagePersistenceTest extends TestCase
 
         $this->actingAs($user)
             ->patchJsonCountry('/profile/language', [
-                'language_code' => 'fr',
+                'language_code' => 'fr-FR',
             ]);
 
         $user->refresh();

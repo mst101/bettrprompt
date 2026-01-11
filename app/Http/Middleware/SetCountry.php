@@ -87,10 +87,10 @@ class SetCountry
                     return config('app.fallback_locale', 'en-US');
                 }
 
-                // Check if language file exists
-                $languageFile = lang_path("{$country->language->id}.json");
-                if (! file_exists($languageFile)) {
-                    Log::info("Language file {$country->language->id}.json not found, using fallback");
+                // Check if language directory exists
+                $languageDir = lang_path($country->language->id);
+                if (! is_dir($languageDir)) {
+                    Log::info("Language directory {$country->language->id}/ not found, using fallback");
 
                     return config('app.fallback_locale', 'en-US');
                 }
@@ -151,7 +151,7 @@ class SetCountry
                 }
 
                 // Check if pricing exists for this currency
-                $hasPricing = \App\Models\Price::where('currency_id', $country->currency_id)->exists();
+                $hasPricing = \App\Models\Price::where('currency_code', $country->currency_id)->exists();
 
                 if (! $hasPricing) {
                     Log::info("No pricing for currency {$country->currency_id}, using fallback");
@@ -189,5 +189,23 @@ class SetCountry
 
         // 4. Fallback to default
         return config('app.fallback_country', 'gb');
+    }
+
+    /**
+     * Check if a locale uses RTL text direction
+     */
+    public static function isRtl(?string $locale = null): bool
+    {
+        $locale = $locale ?? app()->getLocale();
+
+        return in_array($locale, config('app.rtl_locales', []));
+    }
+
+    /**
+     * Get the text direction for a locale
+     */
+    public static function getDirection(?string $locale = null): string
+    {
+        return self::isRtl($locale) ? 'rtl' : 'ltr';
     }
 }

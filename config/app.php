@@ -95,7 +95,19 @@ return [
     |
     */
 
-    'supported_countries' => fn () => \App\Models\Country::pluck('id')->all(),
+    'supported_countries' => ['gb', 'us', 'de', 'fr', 'es', 'mx', 'sg', 'au', 'ca', 'jp', 'kr', 'cn', 'in', 'br', 'ar', 'it', 'nl', 'se', 'no', 'dk', 'fi', 'pt', 'he', 'ar', 'zh'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supported Locales
+    |--------------------------------------------------------------------------
+    |
+    | List of language codes (full locale identifiers) we have translations for.
+    | These are the languages available in lang/ directory.
+    |
+    */
+
+    'supported_locales' => ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES'],
 
     /*
     |--------------------------------------------------------------------------

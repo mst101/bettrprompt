@@ -74,9 +74,9 @@ class ProfileController extends Controller
         $languageLabels = [
             'en-US' => 'English (US)',
             'en-GB' => 'English (UK)',
-            'fr' => 'Français',
-            'de' => 'Deutsch',
-            'es' => 'Español',
+            'de-DE' => 'Deutsch',
+            'fr-FR' => 'Français',
+            'es-ES' => 'Español',
         ];
         $languages = collect($supportedLocales)
             ->map(fn ($locale) => [

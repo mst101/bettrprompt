@@ -2,7 +2,11 @@
 
 namespace Tests;
 
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\CurrencySeeder;
+use Database\Seeders\LanguageSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 abstract class TestCase extends BaseTestCase
@@ -12,6 +16,16 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Clear cache before seeding
+        Cache::flush();
+
+        // Seed languages, currencies, and countries for tests that need them (in order of dependencies)
+        $this->seed([
+            LanguageSeeder::class,
+            CurrencySeeder::class,
+            CountrySeeder::class,
+        ]);
 
         URL::defaults(['country' => $this->testCountry]);
         $this->defaultHeaders = array_merge($this->defaultHeaders, [
