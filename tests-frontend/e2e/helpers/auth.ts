@@ -104,7 +104,9 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     }, TEST_USER.email);
 
     // Navigate away and back to trigger Inertia to reload with auth
-    await page.goto(getDefaultCountryUrl(), { waitUntil: 'domcontentloaded' });
+    await page.goto(getDefaultCountryUrl(), { waitUntil: 'networkidle' });
+    // Give Vue time to hydrate after page load
+    await page.waitForTimeout(500);
 
     // Verify we're logged in by checking for the user menu button
     const userMenuAfterLogin = page.getByRole('button', {
@@ -116,7 +118,7 @@ export async function loginAsTestUser(page: Page): Promise<void> {
     for (let attempt = 0; attempt < 3; attempt++) {
         isLoggedIn = await userMenuAfterLogin
             .first()
-            .waitFor({ state: 'attached', timeout: 2000 })
+            .waitFor({ state: 'visible', timeout: 3000 })
             .then(() => true)
             .catch(() => false);
 
@@ -126,7 +128,8 @@ export async function loginAsTestUser(page: Page): Promise<void> {
 
         // If not visible, reload and check again
         if (attempt < 2) {
-            await page.reload({ waitUntil: 'domcontentloaded' });
+            await page.reload({ waitUntil: 'networkidle' });
+            await page.waitForTimeout(300);
         }
     }
 
@@ -253,7 +256,8 @@ export async function loginWithUniqueName(
     );
 
     // Navigate away and back to trigger Inertia to reload with auth
-    await page.goto(getDefaultCountryUrl(), { waitUntil: 'domcontentloaded' });
+    await page.goto(getDefaultCountryUrl(), { waitUntil: 'networkidle' });
+    await page.waitForTimeout(500);
 
     // Verify we're logged in
     const userMenuAfterLogin = page.getByRole('button', {
@@ -264,7 +268,7 @@ export async function loginWithUniqueName(
     for (let attempt = 0; attempt < 3; attempt++) {
         isLoggedIn = await userMenuAfterLogin
             .first()
-            .waitFor({ state: 'attached', timeout: 2000 })
+            .waitFor({ state: 'visible', timeout: 3000 })
             .then(() => true)
             .catch(() => false);
 
@@ -273,7 +277,8 @@ export async function loginWithUniqueName(
         }
 
         if (attempt < 2) {
-            await page.reload({ waitUntil: 'domcontentloaded' });
+            await page.reload({ waitUntil: 'networkidle' });
+            await page.waitForTimeout(300);
         }
     }
 
