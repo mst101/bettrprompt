@@ -3,7 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import LinkText from '@/Components/Base/LinkText.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import type { PromptRunResource } from '@/Types';
 import { truncateText } from '@/Utils/formatting/formatters';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const hasRelations =
     (props.parent && props.parent.id) ||
@@ -49,7 +49,7 @@ const hasRelations =
                 <LinkText
                     class="text-indigo-800 hover:text-indigo-700"
                     :href="
-                        localeRoute('prompt-builder.show', {
+                        countryRoute('prompt-builder.show', {
                             promptRun: parent.id,
                         })
                     "
@@ -113,7 +113,7 @@ const hasRelations =
                     <LinkText
                         class="text-indigo-800 hover:text-indigo-700"
                         :href="
-                            localeRoute('prompt-builder.show', {
+                            countryRoute('prompt-builder.show', {
                                 promptRun: child.id,
                             })
                         "

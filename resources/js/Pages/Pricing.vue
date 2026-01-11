@@ -4,7 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PricingPlans } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
@@ -29,7 +29,7 @@ defineOptions({
 });
 
 const page = usePage();
-const { localeRoute, currentLocale } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(() => page.props.subscription);
 
@@ -67,7 +67,7 @@ const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
     router.post(
-        route('currency.select', { locale: currentLocale.value }),
+        route('currency.select', { country: currentCountry.value }),
         { currency_code: newCurrency },
         {
             onStart: () => {
@@ -107,7 +107,7 @@ function getStarted() {
     if (!isAuthenticated.value) {
         router.visit('/?modal=register');
     } else {
-        router.visit(localeRoute('prompt-builder.index'));
+        router.visit(countryRoute('prompt-builder.index'));
     }
 }
 </script>

@@ -4,7 +4,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { router } from '@inertiajs/vue3';
 import { marked } from 'marked';
 import { computed, ref, watchEffect } from 'vue';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const copied = ref(false);
 const isEditing = ref(false);
@@ -94,7 +94,7 @@ const cancelEditing = () => {
 
 const saveEdits = () => {
     router.patch(
-        localeRoute('prompt-builder.update-prompt', {
+        countryRoute('prompt-builder.update-prompt', {
             promptRun: props.promptRunId,
         }),
         {

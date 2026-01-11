@@ -3,7 +3,7 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -17,13 +17,13 @@ defineOptions({
     layout: AppLayout,
 });
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const form = useForm({
     password: '',
 });
 
 function unlock() {
-    form.post(localeRoute('privacy.unlock'), {
+    form.post(countryRoute('privacy.unlock'), {
         onSuccess: () => {
             // Redirect will happen automatically via intended URL
         },
@@ -96,7 +96,7 @@ function unlock() {
 
                 <div class="mt-6 text-center">
                     <Link
-                        :href="localeRoute('privacy.recovery')"
+                        :href="countryRoute('privacy.recovery')"
                         class="text-sm text-indigo-600 hover:underline"
                     >
                         {{ $t('privacy.unlock.forgotPassword') }}

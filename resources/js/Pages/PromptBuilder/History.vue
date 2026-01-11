@@ -9,7 +9,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { useAlert } from '@/Composables/ui/useAlert';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Paginated, PromptRunResource } from '@/Types';
 import { getFullPersonalityType } from '@/Utils/data/personalityTypes';
@@ -43,7 +43,7 @@ const sortBy = (column: string) => {
     }
 
     router.get(
-        localeRoute('prompt-builder.history'),
+        countryRoute('prompt-builder.history'),
         {
             sort_by: column,
             sort_direction: newDirection,
@@ -89,7 +89,7 @@ const changePerPage = () => {
     perPageStorage.value = perPage;
 
     router.get(
-        localeRoute('prompt-builder.history'),
+        countryRoute('prompt-builder.history'),
         {
             sort_by: props.filters.sort_by,
             sort_direction: props.filters.sort_direction,
@@ -106,7 +106,7 @@ const sortDirection = computed(() => {
     return props.filters.sort_direction;
 });
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 // Focus management for pagination buttons
 const handlePaginationClick = (direction: 'prev' | 'next') => {
@@ -118,7 +118,7 @@ onMounted(() => {
     const storedPerPage = perPageStorage.value;
     if (storedPerPage !== props.filters.per_page) {
         router.get(
-            localeRoute('prompt-builder.history'),
+            countryRoute('prompt-builder.history'),
             {
                 sort_by: props.filters.sort_by,
                 sort_direction: props.filters.sort_direction,
@@ -173,7 +173,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
     }
 
     router.delete(
-        localeRoute('prompt-builder.destroy', {
+        countryRoute('prompt-builder.destroy', {
             promptRun: promptRunId,
         }),
         {
@@ -192,7 +192,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
     <HeaderPage :title="$t('promptBuilder.history.title')">
         <template #actions>
             <LinkButton
-                :href="localeRoute('prompt-builder.index')"
+                :href="countryRoute('prompt-builder.index')"
                 variant="primary"
                 icon="plus"
                 icon-position="left"
@@ -210,7 +210,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
             >
                 <p>{{ $t('promptBuilder.history.empty.title') }}</p>
                 <a
-                    :href="localeRoute('prompt-builder.index')"
+                    :href="countryRoute('prompt-builder.index')"
                     class="mt-2 text-indigo-700 hover:text-indigo-800"
                 >
                     {{ $t('promptBuilder.history.empty.cta') }}
@@ -320,14 +320,14 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 tabindex="0"
                                 @click="
                                     router.visit(
-                                        localeRoute('prompt-builder.show', {
+                                        countryRoute('prompt-builder.show', {
                                             promptRun: promptRun.id,
                                         }),
                                     )
                                 "
                                 @keydown.enter="
                                     router.visit(
-                                        localeRoute('prompt-builder.show', {
+                                        countryRoute('prompt-builder.show', {
                                             promptRun: promptRun.id,
                                         }),
                                     )

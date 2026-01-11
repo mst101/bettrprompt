@@ -3,7 +3,7 @@ import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -15,7 +15,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const form = useForm({
     uiComplexity: props.uiComplexity,
@@ -46,7 +46,7 @@ watch(
 watch(
     () => form.uiComplexity,
     () => {
-        form.patch(localeRoute('profile.ui-complexity.update'), {
+        form.patch(countryRoute('profile.ui-complexity.update'), {
             preserveScroll: true,
         });
     },

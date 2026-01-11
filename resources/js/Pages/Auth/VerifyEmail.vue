@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -13,11 +13,11 @@ defineOptions({
     layout: AppLayout,
 });
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const form = useForm({});
 
 const submit = () => {
-    form.post(localeRoute('verification.send'));
+    form.post(countryRoute('verification.send'));
 };
 
 const verificationLinkSent = computed(
@@ -54,7 +54,7 @@ const verificationLinkSent = computed(
             </ButtonPrimary>
 
             <Link
-                :href="localeRoute('logout')"
+                :href="countryRoute('logout')"
                 method="post"
                 as="button"
                 class="rounded-md text-sm text-indigo-600 underline hover:text-indigo-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden"

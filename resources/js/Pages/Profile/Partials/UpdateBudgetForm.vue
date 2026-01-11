@@ -6,7 +6,7 @@ import InputLabel from '@/Components/Base/InputLabel.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -20,7 +20,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const budgetOptions = computed(() => [
     {
@@ -76,7 +76,7 @@ watch(
 );
 
 const submit = () => {
-    form.patch(localeRoute('profile.budget.update'), {
+    form.patch(countryRoute('profile.budget.update'), {
         preserveScroll: true,
     });
 };
@@ -99,7 +99,7 @@ const clearBudget = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(localeRoute('profile.budget.clear'), {
+        clearForm.delete(countryRoute('profile.budget.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.budget.notifications.cleared'));

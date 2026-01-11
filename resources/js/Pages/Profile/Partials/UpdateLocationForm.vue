@@ -7,7 +7,7 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { setLocale, type LocaleCode } from '@/i18n';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import { watch } from 'vue';
@@ -39,7 +39,7 @@ const props = defineProps<Props>();
 const page = usePage();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const currentLocale = page.props.locale as LocaleCode;
 
 // Common timezones (still using common ones as not in database)
@@ -113,7 +113,7 @@ const submit = async () => {
         await setLocale(newLocale);
 
         // Then submit the form, which will redirect to the new locale
-        form.patch(localeRoute('profile.location.update'), {
+        form.patch(countryRoute('profile.location.update'), {
             preserveScroll: true,
             onSuccess: () => {
                 // Navigate to new locale's profile page
@@ -125,7 +125,7 @@ const submit = async () => {
         });
     } else {
         // No language change, just submit normally
-        form.patch(localeRoute('profile.location.update'), {
+        form.patch(countryRoute('profile.location.update'), {
             preserveScroll: true,
         });
     }
@@ -133,7 +133,7 @@ const submit = async () => {
 
 const detectLocation = async () => {
     const detectForm = useForm({});
-    detectForm.post(localeRoute('profile.location.detect'), {
+    detectForm.post(countryRoute('profile.location.detect'), {
         preserveScroll: true,
         onSuccess: async (page) => {
             success(t('profile.location.notifications.detected'));
@@ -184,7 +184,7 @@ const clearLocation = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(localeRoute('profile.location.clear'), {
+        clearForm.delete(countryRoute('profile.location.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.location.notifications.cleared'));

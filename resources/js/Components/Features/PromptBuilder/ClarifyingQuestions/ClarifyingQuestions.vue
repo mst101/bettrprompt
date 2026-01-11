@@ -6,7 +6,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/Forms/QuestionAnsweringForm.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import type { PromptRunResource } from '@/Types';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
@@ -32,7 +32,7 @@ const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const showVisitorLimitModal = ref(false);
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const allQuestions = computed<ClarifyingQuestion[]>(() => {
     const raw =
@@ -202,7 +202,7 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
 
     try {
         const response = await axios.post(
-            localeRoute('prompt-builder.answer', {
+            countryRoute('prompt-builder.answer', {
                 promptRun: props.promptRun.id,
             }),
             {
@@ -283,7 +283,7 @@ const submitAllAnswers = async () => {
 
     try {
         await axios.post(
-            localeRoute('prompt-builder.generate', {
+            countryRoute('prompt-builder.generate', {
                 promptRun: props.promptRun.id,
             }),
             {
@@ -323,7 +323,7 @@ const submitEditedAnswers = () => {
     const payload = answers.value.map((value) => normalizeAnswer(value));
 
     router.post(
-        localeRoute('prompt-builder.create-child-from-answers', {
+        countryRoute('prompt-builder.create-child-from-answers', {
             parentPromptRun: props.promptRun.id,
         }),
         { clarifying_answers: payload },

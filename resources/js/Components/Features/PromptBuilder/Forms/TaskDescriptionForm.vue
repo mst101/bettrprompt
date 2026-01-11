@@ -5,7 +5,7 @@ import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActi
 import LinkText from '@/Components/Base/LinkText.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { usePersonalityPromptPreference } from '@/Composables/features/usePersonalityPromptPreference';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import type { InertiaForm } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -22,7 +22,7 @@ const emit = defineEmits<{
     (e: 'clear'): void;
     (e: 'update:taskDescription', value: string): void;
 }>();
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const { isDismissed } = usePersonalityPromptPreference();
@@ -63,7 +63,7 @@ defineExpose({ focus });
                         tag="span"
                     >
                         <template #link>
-                            <LinkText :href="localeRoute('profile.edit')">
+                            <LinkText :href="countryRoute('profile.edit')">
                                 {{
                                     $t(
                                         'promptBuilder.components.taskDescriptionForm.profileHintLink',

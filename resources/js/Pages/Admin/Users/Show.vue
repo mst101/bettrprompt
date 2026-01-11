@@ -9,7 +9,7 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/data/useLocalStorage';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PromptRunResource } from '@/Types';
 import { truncateText } from '@/Utils/formatting/formatters';
@@ -54,7 +54,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const { t } = useI18n({ useScope: 'global' });
 
 const sortBy = (column: string) => {
@@ -67,7 +67,7 @@ const sortBy = (column: string) => {
     }
 
     router.get(
-        localeRoute('admin.users.show', { id: props.user.id }),
+        countryRoute('admin.users.show', { id: props.user.id }),
         {
             sort_by: column,
             sort_direction: newDirection,
@@ -113,7 +113,7 @@ const changePerPage = () => {
     perPageStorage.value = perPage;
 
     router.get(
-        localeRoute('admin.users.show', { id: props.user.id }),
+        countryRoute('admin.users.show', { id: props.user.id }),
         {
             sort_by: props.filters.sort_by,
             sort_direction: props.filters.sort_direction,
@@ -140,7 +140,7 @@ onMounted(() => {
     const storedPerPage = perPageStorage.value;
     if (storedPerPage !== props.filters.per_page) {
         router.get(
-            localeRoute('admin.users.show', { id: props.user.id }),
+            countryRoute('admin.users.show', { id: props.user.id }),
             {
                 sort_by: props.filters.sort_by,
                 sort_direction: props.filters.sort_direction,
@@ -185,20 +185,20 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', { id: runId }),
+            countryRoute('admin.prompt-runs.show', { id: runId }),
             '_blank',
         );
         return;
     }
 
     // Normal left click - use Inertia navigation
-    router.visit(localeRoute('admin.prompt-runs.show', { id: runId }));
+    router.visit(countryRoute('admin.prompt-runs.show', { id: runId }));
 };
 
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
     if (event.button === 1) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', { id: runId }),
+            countryRoute('admin.prompt-runs.show', { id: runId }),
             '_blank',
         );
     }
@@ -250,7 +250,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
         <HeaderPage :title="$t('admin.users.detailsTitle')">
             <template #actions>
                 <Link
-                    :href="localeRoute('admin.users.index')"
+                    :href="countryRoute('admin.users.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     {{ $t('admin.users.backToUsers') }}
@@ -365,7 +365,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     "
                                     @keydown.enter="
                                         $inertia.visit(
-                                            localeRoute(
+                                            countryRoute(
                                                 'admin.prompt-runs.show',
                                                 { id: run.id },
                                             ),

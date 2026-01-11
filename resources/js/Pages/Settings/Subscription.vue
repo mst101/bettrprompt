@@ -5,7 +5,7 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Invoice, SubscriptionStatus } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -22,18 +22,18 @@ defineOptions({
     layout: AppLayout,
 });
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const showCancelModal = ref(false);
 const isCancelling = ref(false);
 
 function openBillingPortal() {
-    router.visit(localeRoute('billing.portal'));
+    router.visit(countryRoute('billing.portal'));
 }
 
 function cancelSubscription() {
     isCancelling.value = true;
     router.post(
-        localeRoute('subscription.cancel'),
+        countryRoute('subscription.cancel'),
         {},
         {
             onFinish: () => {
@@ -45,7 +45,7 @@ function cancelSubscription() {
 }
 
 function resumeSubscription() {
-    router.post(localeRoute('subscription.resume'));
+    router.post(countryRoute('subscription.resume'));
 }
 
 function formatDate(dateString: string | null): string {
@@ -64,7 +64,7 @@ function formatDate(dateString: string | null): string {
     <HeaderPage :title="$t('subscription.heading')">
         <template #actions>
             <Link
-                :href="localeRoute('profile.edit')"
+                :href="countryRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
                 {{ $t('subscription.backToProfile') }}
@@ -122,7 +122,7 @@ function formatDate(dateString: string | null): string {
 
                     <div v-if="!subscription.isPaid">
                         <Link
-                            :href="localeRoute('pricing')"
+                            :href="countryRoute('pricing')"
                             class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                         >
                             {{ $t('subscription.actions.upgrade') }}
@@ -130,7 +130,7 @@ function formatDate(dateString: string | null): string {
                     </div>
                     <div v-else-if="subscription.isPro">
                         <Link
-                            :href="localeRoute('pricing')"
+                            :href="countryRoute('pricing')"
                             class="inline-flex items-center rounded-lg border border-indigo-600 px-4 py-2 font-medium text-indigo-600 hover:bg-indigo-50"
                         >
                             {{ $t('pricing.upgradeToPrivate') }}

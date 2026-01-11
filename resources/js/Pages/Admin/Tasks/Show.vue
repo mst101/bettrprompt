@@ -3,7 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { PromptRunResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const { getWorkflowStageColor } = useWorkflowStageColor();
 
@@ -32,7 +32,7 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', {
+            countryRoute('admin.prompt-runs.show', {
                 promptRun: runId,
             }),
             '_blank',
@@ -42,7 +42,7 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
 
     // Normal left click - use Inertia navigation
     router.visit(
-        localeRoute('admin.prompt-runs.show', {
+        countryRoute('admin.prompt-runs.show', {
             promptRun: runId,
         }),
     );
@@ -51,7 +51,7 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
     if (event.button === 1) {
         globalThis.window.open(
-            localeRoute('admin.prompt-runs.show', {
+            countryRoute('admin.prompt-runs.show', {
                 promptRun: runId,
             }),
             '_blank',
@@ -73,7 +73,7 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
         <HeaderPage :title="$t('admin.tasks.promptRunsTitle')">
             <template #actions>
                 <Link
-                    :href="localeRoute('admin.tasks.index')"
+                    :href="countryRoute('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     {{ $t('admin.tasks.backToTasks') }}

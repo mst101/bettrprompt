@@ -6,7 +6,7 @@ import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -23,7 +23,7 @@ interface Props {
 const props = defineProps<Props>();
 const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const experienceLevelOptions = computed(() => [
     { value: 'entry', label: t('profile.professional.options.entry') },
@@ -72,7 +72,7 @@ watch(
 );
 
 const submit = () => {
-    form.patch(localeRoute('profile.professional.update'), {
+    form.patch(countryRoute('profile.professional.update'), {
         preserveScroll: true,
     });
 };
@@ -100,7 +100,7 @@ const clearProfessional = async () => {
 
     if (confirmed) {
         const clearForm = useForm({});
-        clearForm.delete(localeRoute('profile.professional.clear'), {
+        clearForm.delete(countryRoute('profile.professional.clear'), {
             preserveScroll: true,
             onSuccess: () => {
                 success(t('profile.professional.notifications.cleared'));

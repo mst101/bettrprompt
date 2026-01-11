@@ -8,7 +8,7 @@ import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import LikertScale from '@/Components/Base/LikertScale.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -28,7 +28,7 @@ const form = useForm({
 });
 
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const hasErrors = computed(() => Object.keys(form.errors).length > 0);
 
@@ -71,7 +71,7 @@ const featureOptions = computed(() => [
 ]);
 
 const submit = () => {
-    form.post(localeRoute('feedback.store'), {
+    form.post(countryRoute('feedback.store'), {
         onSuccess: () => {
             // Redirect will be handled by controller
         },
@@ -326,7 +326,7 @@ const submit = () => {
                         :disabled="form.processing"
                         @click="
                             $inertia.visit(
-                                localeRoute('prompt-builder.history'),
+                                countryRoute('prompt-builder.history'),
                             )
                         "
                     >

@@ -7,7 +7,7 @@ import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/Forms/Per
 import TaskDescriptionForm from '@/Components/Features/PromptBuilder/Forms/TaskDescriptionForm.vue';
 import { usePersonalityPromptPreference } from '@/Composables/features/usePersonalityPromptPreference';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import {
@@ -43,7 +43,7 @@ const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile
     if (user.value) {
@@ -72,7 +72,7 @@ const submissionError = ref<string | null>(null);
 
 const submit = () => {
     submissionError.value = null;
-    form.post(localeRoute('prompt-builder.pre-analyse'), {
+    form.post(countryRoute('prompt-builder.pre-analyse'), {
         onError: () => {
             submissionError.value = t('promptBuilder.errors.submitFailed');
         },

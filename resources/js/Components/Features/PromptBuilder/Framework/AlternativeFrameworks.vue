@@ -2,7 +2,7 @@
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -23,7 +23,7 @@ const props = defineProps<Props>();
 const switchingFramework = ref<string | null>(null);
 const { confirm } = useAlert();
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 const handleSwitchFramework = async (frameworkCode: string) => {
     const confirmed = await confirm(
@@ -38,7 +38,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     switchingFramework.value = frameworkCode;
 
     router.post(
-        localeRoute('prompt-builder.create-child-with-framework', {
+        countryRoute('prompt-builder.create-child-with-framework', {
             promptRun: props.promptRunId,
         }),
         {
@@ -53,7 +53,7 @@ const handleSwitchFramework = async (frameworkCode: string) => {
                 // This ensures the component mounts with completely fresh props
                 if (newPromptRunId) {
                     router.visit(
-                        localeRoute('prompt-builder.show', {
+                        countryRoute('prompt-builder.show', {
                             promptRun: newPromptRunId,
                         }),
                         {

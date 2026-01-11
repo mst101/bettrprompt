@@ -3,7 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -18,7 +18,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 </script>
 
 <template>
@@ -115,7 +115,7 @@ const { localeRoute } = useLocaleRoute();
             <!-- Quick Links -->
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Users Link -->
-                <Link :href="localeRoute('admin.users.index')">
+                <Link :href="countryRoute('admin.users.index')">
                     <Card
                         class="transition-shadow duration-200 hover:shadow-lg"
                     >
@@ -147,7 +147,7 @@ const { localeRoute } = useLocaleRoute();
                 </Link>
 
                 <!-- Tasks Link -->
-                <Link :href="localeRoute('admin.tasks.index')">
+                <Link :href="countryRoute('admin.tasks.index')">
                     <Card
                         class="transition-shadow duration-200 hover:shadow-lg"
                     >

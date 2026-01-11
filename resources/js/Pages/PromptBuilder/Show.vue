@@ -25,7 +25,7 @@ import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/Tas
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { useAlert } from '@/Composables/ui/useAlert';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource, User } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
@@ -45,7 +45,7 @@ const isGuest = computed(() => !user.value);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
 const { t } = useI18n({ useScope: 'global' });
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 // Show banner for guests who just completed their prompt
 // We show it if the guest has an optimized prompt available
@@ -456,13 +456,13 @@ const handleDelete = async () => {
     }
 
     router.delete(
-        localeRoute('prompt-builder.destroy', {
+        countryRoute('prompt-builder.destroy', {
             promptRun: props.promptRun.id,
         }),
         {
             onSuccess: () => {
                 // Redirect to history page after successful deletion
-                router.visit(localeRoute('prompt-builder.history'));
+                router.visit(countryRoute('prompt-builder.history'));
             },
         },
     );
@@ -474,7 +474,7 @@ const handleDelete = async () => {
 const retryWorkflow = () => {
     // Use the existing retry endpoint which handles all workflow failures
     router.post(
-        localeRoute('prompt-builder.retry', {
+        countryRoute('prompt-builder.retry', {
             promptRun: props.promptRun.id,
         }),
         {},
@@ -512,7 +512,7 @@ onUnmounted(() => {
                     {{ $t('common.buttons.delete') }}
                 </ButtonSecondary>
                 <LinkButton
-                    :href="localeRoute('prompt-builder.index')"
+                    :href="countryRoute('prompt-builder.index')"
                     variant="primary"
                     icon="plus"
                     icon-position="left"

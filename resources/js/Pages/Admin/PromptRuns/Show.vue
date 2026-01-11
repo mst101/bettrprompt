@@ -18,7 +18,7 @@ import PreAnalysisQuestions from '@/Components/Features/PromptBuilder/YourTask/P
 import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/Types';
 import { Head, Link } from '@inertiajs/vue3';
@@ -32,7 +32,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const { t } = useI18n({ useScope: 'global' });
 
 const pageTitle = computed(
@@ -137,7 +137,7 @@ const hasRelatedRuns = computed(
         <HeaderPage :title="pageTitle">
             <template #actions>
                 <Link
-                    :href="localeRoute('admin.tasks.index')"
+                    :href="countryRoute('admin.tasks.index')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     ← {{ $t('promptBuilder.admin.backToTasks') }}

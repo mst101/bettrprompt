@@ -1,4 +1,4 @@
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 
@@ -21,7 +21,7 @@ export function usePromptAnswering(
     promptRunId: number,
     onNavigate?: () => void,
 ) {
-    const { localeRoute } = useLocaleRoute();
+    const { countryRoute } = useCountryRoute();
     const isSubmitting = ref(false);
 
     const answerForm = useForm({
@@ -33,7 +33,7 @@ export function usePromptAnswering(
 
         isSubmitting.value = true;
         answerForm.post(
-            localeRoute('prompt-builder.answer', {
+            countryRoute('prompt-builder.answer', {
                 promptRun: promptRunId,
             }),
             {
@@ -67,7 +67,7 @@ export function usePromptAnswering(
     const goBackToPreviousQuestion = () => {
         isSubmitting.value = true;
         router.post(
-            localeRoute('prompt-builder.go-back', {
+            countryRoute('prompt-builder.go-back', {
                 promptRun: promptRunId,
             }),
             {},

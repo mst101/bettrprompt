@@ -6,7 +6,7 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PrivacyStatus, SubscriptionStatus } from '@/Types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
@@ -23,7 +23,7 @@ defineOptions({
     layout: AppLayout,
 });
 
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 const showDisableModal = ref(false);
 const isDisabling = ref(false);
 
@@ -33,12 +33,12 @@ const disableForm = useForm({
 });
 
 function beginSetup() {
-    router.post(localeRoute('privacy.begin-setup'));
+    router.post(countryRoute('privacy.begin-setup'));
 }
 
 function disablePrivacy() {
     isDisabling.value = true;
-    disableForm.post(localeRoute('privacy.disable'), {
+    disableForm.post(countryRoute('privacy.disable'), {
         onFinish: () => {
             isDisabling.value = false;
             showDisableModal.value = false;
@@ -63,7 +63,7 @@ function formatDate(dateString: string | null): string {
     <HeaderPage :title="$t('privacy.title')">
         <template #actions>
             <Link
-                :href="localeRoute('profile.edit')"
+                :href="countryRoute('profile.edit')"
                 class="text-sm text-indigo-600 hover:underline"
             >
                 {{ $t('privacy.backToProfile') }}
@@ -85,7 +85,7 @@ function formatDate(dateString: string | null): string {
                     {{ $t('privacy.proRequired.description') }}
                 </p>
                 <Link
-                    :href="localeRoute('pricing')"
+                    :href="countryRoute('pricing')"
                     class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
                 >
                     {{ $t('subscription.actions.upgrade') }}

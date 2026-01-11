@@ -7,7 +7,7 @@ import ExpandableModal from '@/Components/Features/Workflow/ExpandableModal.vue'
 import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
-import { useLocaleRoute } from '@/Composables/useLocaleRoute';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
@@ -46,7 +46,7 @@ const expandedView = ref<'editor' | 'preview' | null>(null);
 
 const { t } = useI18n({ useScope: 'global' });
 const { confirm, success, error } = useAlert();
-const { localeRoute } = useLocaleRoute();
+const { countryRoute } = useCountryRoute();
 
 // Rendered markdown preview
 const renderedContent = computed(() => {
@@ -75,7 +75,7 @@ watch(
 async function loadDocumentContent(doc: Document) {
     try {
         const response = await fetch(
-            localeRoute('workflow.docs.show', {
+            countryRoute('workflow.docs.show', {
                 type: doc.type,
                 filename: doc.filename,
             }),
@@ -141,7 +141,7 @@ async function saveDocument() {
         const csrfToken = getCsrfToken();
 
         const response = await fetch(
-            localeRoute('workflow.docs.update', {
+            countryRoute('workflow.docs.update', {
                 type: selectedDocument.value.type,
                 filename: selectedDocument.value.filename,
             }),
@@ -213,7 +213,7 @@ async function handleEmbedAll() {
     try {
         const csrfToken = getCsrfToken();
 
-        const response = await fetch(localeRoute('workflow.docs.embed-all'), {
+        const response = await fetch(countryRoute('workflow.docs.embed-all'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
