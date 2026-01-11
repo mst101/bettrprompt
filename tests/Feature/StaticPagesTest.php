@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('home page displays correctly', function () {
-    $response = $this->getLocale('/');
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -16,7 +16,7 @@ test('home page displays correctly', function () {
 
 test('home page shows returning visitor flag when cookie exists', function () {
     $response = $this->withCookie('returning_visitor', 'true')
-        ->getLocale('/');
+        ->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -26,7 +26,7 @@ test('home page shows returning visitor flag when cookie exists', function () {
 });
 
 test('home page shows first time visitor when no cookie', function () {
-    $response = $this->getLocale('/');
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -36,7 +36,7 @@ test('home page shows first time visitor when no cookie', function () {
 });
 
 test('home page passes modal query parameter', function () {
-    $response = $this->getLocale('/?modal=login');
+    $response = $this->getCountry('/?modal=login');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -46,7 +46,7 @@ test('home page passes modal query parameter', function () {
 });
 
 test('home page has login and register flags', function () {
-    $response = $this->getLocale('/');
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -57,7 +57,7 @@ test('home page has login and register flags', function () {
 });
 
 test('terms page displays correctly', function () {
-    $response = $this->getLocale('/terms');
+    $response = $this->getCountry('/terms');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -66,7 +66,7 @@ test('terms page displays correctly', function () {
 });
 
 test('privacy page displays correctly', function () {
-    $response = $this->getLocale('/privacy');
+    $response = $this->getCountry('/privacy');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -75,7 +75,7 @@ test('privacy page displays correctly', function () {
 });
 
 test('cookies page displays correctly', function () {
-    $response = $this->getLocale('/cookies');
+    $response = $this->getCountry('/cookies');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -86,7 +86,7 @@ test('cookies page displays correctly', function () {
 test('dashboard redirects to prompt builder index', function () {
     $user = User::factory()->create();
     $response = $this->actingAs($user)
-        ->getLocale(route('prompt-builder.index', [], false));
+        ->getCountry(route('prompt-builder.index', [], false));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -95,7 +95,7 @@ test('dashboard redirects to prompt builder index', function () {
 });
 
 test('static pages are accessible without authentication', function ($path) {
-    $response = $this->getLocale($path);
+    $response = $this->getCountry($path);
 
     $response->assertOk();
     $response->assertStatus(200);

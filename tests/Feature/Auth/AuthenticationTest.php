@@ -5,7 +5,7 @@ use App\Models\User;
 test('login screen redirects to home page with login modal open', function () {
     $response = $this->get('/login');
 
-    $response->assertRedirect($this->localeRoute('home', ['modal' => 'login'], absolute: false));
+    $response->assertRedirect($this->countryRoute('home', ['modal' => 'login'], absolute: false));
 });
 
 test('users can authenticate using the login screen', function () {

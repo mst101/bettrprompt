@@ -27,7 +27,7 @@ test('show page displays prompt run details', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get($this->localeRoute('prompt-builder.show', [
+    $response = $this->get($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -53,7 +53,7 @@ test('show page displays current question', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->get($this->localeRoute('prompt-builder.show', [
+    $response = $this->get($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -82,7 +82,7 @@ test('show page returns null when all questions answered', function () {
         'current_question_index' => 2,
     ]);
 
-    $response = $this->get($this->localeRoute('prompt-builder.show', [
+    $response = $this->get($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -106,7 +106,7 @@ test('show page includes personality tier in response', function () {
         'workflow_stage' => '1_completed',
     ]);
 
-    $response = $this->get($this->localeRoute('prompt-builder.show', [
+    $response = $this->get($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -125,7 +125,7 @@ test('show page displays completed prompt run with optimized prompt', function (
         'optimized_prompt' => 'This is your personalised, optimised prompt based on your INTJ personality.',
     ]);
 
-    $response = $this->get($this->localeRoute('prompt-builder.show', [
+    $response = $this->get($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -146,7 +146,7 @@ test('answer question saves answer successfully', function () {
         ->withAnswers([]) // Clear any default answers
         ->build();
 
-    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+    $response = $this->post($this->countryRoute('prompt-builder.answer', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'question_index' => 0,
@@ -179,7 +179,7 @@ test('answer question rejects invalid workflow stage', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+    $response = $this->post($this->countryRoute('prompt-builder.answer', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'question_index' => 0,
@@ -202,7 +202,7 @@ test('user cannot answer other users questions', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.answer', [
+    $response = $this->post($this->countryRoute('prompt-builder.answer', [
         'promptRun' => $otherRun,
     ], absolute: false), [
         'question_index' => 0,
@@ -226,11 +226,11 @@ test('go back to previous question updates index', function () {
         'current_question_index' => 1,
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.go-back', [
+    $response = $this->post($this->countryRoute('prompt-builder.go-back', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
-    $response->assertRedirect($this->localeRoute('prompt-builder.show', [
+    $response->assertRedirect($this->countryRoute('prompt-builder.show', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -252,7 +252,7 @@ test('cannot go back from first question', function () {
         'current_question_index' => 0,
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.go-back', [
+    $response = $this->post($this->countryRoute('prompt-builder.go-back', [
         'promptRun' => $promptRun,
     ], absolute: false));
 

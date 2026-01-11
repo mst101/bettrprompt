@@ -1,105 +1,87 @@
 <?php
 
-use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SetCountry;
+use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-test('supported locales are configured correctly', function () {
-    $locales = config('app.supported_locales');
+test('supported countries are configured correctly', function () {
+    $countries = config('app.supported_countries');
 
-    expect($locales)->toBeArray();
-    expect($locales)->toContain('en-US');
-    expect($locales)->toContain('en-GB');
-    expect($locales)->toContain('de');
-    expect($locales)->toContain('fr');
-    expect($locales)->toContain('es');
-    expect($locales)->toHaveCount(5);
+    expect($countries)->toBeArray();
+    expect($countries)->not->toBeEmpty();
+    // Verify we have entries for major countries
+    expect($countries)->toContain('gb');
+    expect($countries)->toContain('us');
 });
 
-test('rtl locales are not configured', function () {
-    $rtlLocales = config('app.rtl_locales');
+test('SetCountry middleware detects country from request', function () {
+    $request = Request::create('/gb/test');
+    $request->route(null, ['country' => 'gb']);
 
-    expect($rtlLocales)->toBeArray();
-    expect($rtlLocales)->not->toContain('ar');
-    expect($rtlLocales)->not->toContain('he');
+    expect(SetCountry::detectCountry($request))->toBeString();
+    expect(SetCountry::detectCountry($request))->toHaveLength(2);
 });
 
-test('SetLocale middleware detects locale from request', function () {
-    $request = Request::create('/de/test');
-
-    expect(SetLocale::detectLocale($request))->toBeIn(config('app.supported_locales'));
-});
-
-test('SetLocale middleware defaults to en when no locale detected', function () {
+test('SetCountry middleware defaults to gb when no country detected', function () {
     $request = Request::create('/test');
 
-    expect(SetLocale::detectLocale($request))->toBe('en-US');
+    expect(SetCountry::detectCountry($request))->toBe('gb');
 });
 
-test('SetLocale middleware uses user language preference when authenticated', function () {
+test('SetCountry middleware uses user country preference when authenticated', function () {
     $user = User::factory()->create([
-        'language_code' => 'de',
+        'country_code' => 'us',
     ]);
 
     $request = Request::create('/test');
     $request->setUserResolver(fn () => $user);
 
-    expect(SetLocale::detectLocale($request))->toBe('de');
+    expect(SetCountry::detectCountry($request))->toBe('us');
 });
 
-test('SetLocale isRtl returns true for rtl locales', function () {
-    // No RTL locales are currently supported
-    expect(SetLocale::isRtl('ar'))->toBeFalse();
-    expect(SetLocale::isRtl('he'))->toBeFalse();
+test('SetCountry middleware resolves country code to full language code', function () {
+    $response = $this->getCountry('/');
+
+    $response->assertOk();
+    // Should resolve 'gb' to 'en-GB' language
+    expect(app()->getLocale())->toBe('en-GB');
 });
 
-test('SetLocale isRtl returns false for ltr locales', function () {
-    expect(SetLocale::isRtl('en'))->toBeFalse();
-    expect(SetLocale::isRtl('de'))->toBeFalse();
-    expect(SetLocale::isRtl('fr'))->toBeFalse();
-});
-
-test('SetLocale getDirection returns correct direction', function () {
-    // All currently supported locales are LTR
-    expect(SetLocale::getDirection('ar'))->toBe('ltr');
-    expect(SetLocale::getDirection('he'))->toBe('ltr');
-    expect(SetLocale::getDirection('en'))->toBe('ltr');
-    expect(SetLocale::getDirection('de'))->toBe('ltr');
-});
-
-test('locale is shared with inertia pages', function () {
-    $response = $this->getLocale('/');
+test('country and locale are shared with inertia pages', function () {
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
+        ->has('country')
         ->has('locale')
-        ->has('direction')
-        ->has('supportedLocales')
+        ->has('currency')
+        ->has('supportedCountries')
     );
 });
 
-test('locale shared data has correct default values', function () {
-    $response = $this->getLocale('/');
+test('country shared data has correct values', function () {
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('locale', 'en-US')
-        ->where('direction', 'ltr')
+        ->where('country', 'gb')
+        ->where('locale', 'en-GB')
     );
 });
 
-test('supported locales shared data contains expected locales', function () {
-    $response = $this->getLocale('/');
+test('supported countries shared data contains expected countries', function () {
+    $response = $this->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('supportedLocales', config('app.supported_locales'))
+        ->where('supportedCountries', config('app.supported_countries'))
     );
 });
 
 test('middleware alias is registered', function () {
-    // Check that the 'locale' middleware alias is registered
+    // Check that the 'country' middleware alias is registered
     $aliases = app('router')->getMiddleware();
 
-    expect($aliases)->toHaveKey('locale');
+    expect($aliases)->toHaveKey('country');
 });

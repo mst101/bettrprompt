@@ -18,7 +18,7 @@ beforeEach(function () {
 });
 
 test('user can update personality type', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
             'mind' => 62,
@@ -29,7 +29,7 @@ test('user can update personality type', function () {
         ],
     ]);
 
-    $response->assertRedirect($this->localeRoute('profile.edit'));
+    $response->assertRedirect($this->countryRoute('profile.edit'));
     $response->assertSessionHas('status', 'personality-updated');
 
     $this->user->refresh();
@@ -39,7 +39,7 @@ test('user can update personality type', function () {
 });
 
 test('personality update validates personality type format', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INVALID', // Invalid format
         'traitPercentages' => [
             'mind' => 50,
@@ -58,7 +58,7 @@ test('personality update validates personality type format', function () {
 });
 
 test('personality update validates personality type max length', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INTJ-ABCDEF', // Too long (max 6)
     ]);
 
@@ -66,7 +66,7 @@ test('personality update validates personality type max length', function () {
 });
 
 test('personality update validates trait percentages min', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INTJ-A',
         'traitPercentages' => [
             'mind' => 49, // Below minimum (50)
@@ -81,7 +81,7 @@ test('personality update validates trait percentages min', function () {
 });
 
 test('personality update validates trait percentages max', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INTJ-A',
         'traitPercentages' => [
             'mind' => 150, // Above maximum (100)
@@ -96,7 +96,7 @@ test('personality update validates trait percentages max', function () {
 });
 
 test('personality update validates trait percentages are integers', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INTJ-A',
         'traitPercentages' => [
             'mind' => 'not_a_number',
@@ -111,17 +111,17 @@ test('personality update validates trait percentages are integers', function () 
 });
 
 test('personality update allows null values', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => null,
         'traitPercentages' => null,
     ]);
 
-    $response->assertRedirect($this->localeRoute('profile.edit'));
+    $response->assertRedirect($this->countryRoute('profile.edit'));
     $response->assertSessionHas('status', 'personality-updated');
 });
 
 test('personality update allows partial trait updates', function () {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'INTJ-A',
         'traitPercentages' => [
             'mind' => 80,
@@ -129,14 +129,14 @@ test('personality update allows partial trait updates', function () {
         ],
     ]);
 
-    $response->assertRedirect($this->localeRoute('profile.edit'));
+    $response->assertRedirect($this->countryRoute('profile.edit'));
     $response->assertSessionHas('status', 'personality-updated');
 });
 
 test('personality update requires authentication', function () {
     auth()->logout();
 
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
             'mind' => 62,
@@ -151,7 +151,7 @@ test('personality update requires authentication', function () {
 });
 
 test('personality update accepts valid MBTI type', function (string $type) {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => $type,
         'traitPercentages' => [
             'mind' => 50,
@@ -162,7 +162,7 @@ test('personality update accepts valid MBTI type', function (string $type) {
         ],
     ]);
 
-    $response->assertRedirect($this->localeRoute('profile.edit'));
+    $response->assertRedirect($this->countryRoute('profile.edit'));
     $response->assertSessionHas('status', 'personality-updated');
 
     $this->user->refresh();
@@ -187,7 +187,7 @@ test('personality update accepts valid MBTI type', function (string $type) {
 ]);
 
 test('personality update rejects invalid MBTI type', function (string $type) {
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => $type,
         'traitPercentages' => [
             'mind' => 50,
@@ -215,7 +215,7 @@ test('personality update rejects invalid MBTI type', function (string $type) {
 
 test('personality type is stored with prompt runs', function () {
     // Update personality type
-    $this->patchLocale(route('profile.personality.update', [], false), [
+    $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
             'mind' => 62,
@@ -239,7 +239,7 @@ test('updating personality does not affect other user data', function () {
     $originalEmail = $this->user->email;
     $originalCreatedAt = $this->user->created_at;
 
-    $response = $this->patchLocale(route('profile.personality.update', [], false), [
+    $response = $this->patchCountry(route('profile.personality.update', [], false), [
         'personalityType' => 'ENFP-T',
         'traitPercentages' => [
             'mind' => 62,
@@ -250,7 +250,7 @@ test('updating personality does not affect other user data', function () {
         ],
     ]);
 
-    $response->assertRedirect($this->localeRoute('profile.edit'));
+    $response->assertRedirect($this->countryRoute('profile.edit'));
 
     $this->user->refresh();
 

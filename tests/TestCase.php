@@ -7,44 +7,43 @@ use Illuminate\Support\Facades\URL;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected string $testLocale = 'en-US';
+    protected string $testCountry = 'gb';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        URL::defaults(['locale' => $this->testLocale]);
+        URL::defaults(['country' => $this->testCountry]);
         $this->defaultHeaders = array_merge($this->defaultHeaders, [
-            'Accept-Language' => $this->testLocale,
+            'Accept-Language' => 'en-GB',
         ]);
-        $this->withSession(['locale' => $this->testLocale]);
     }
 
     /**
-     * Generate a route URL with locale parameter automatically injected for locale-prefixed routes
+     * Generate a route URL with country parameter automatically injected for country-prefixed routes
      */
-    protected function localeRoute($name, $parameters = [], $absolute = true)
+    protected function countryRoute($name, $parameters = [], $absolute = true)
     {
         // Ensure parameters is an array
         if (! is_array($parameters)) {
             $parameters = [];
         }
 
-        // Add locale if not already present
-        if (! isset($parameters['locale'])) {
-            $parameters['locale'] = $this->testLocale;
+        // Add country if not already present
+        if (! isset($parameters['country'])) {
+            $parameters['country'] = $this->testCountry;
         }
 
         return route($name, $parameters, $absolute);
     }
 
     /**
-     * Ensure a URI includes the locale prefix without duplicating it.
+     * Ensure a URI includes the country prefix without duplicating it.
      */
-    protected function withLocalePrefix(string $uri): string
+    protected function withCountryPrefix(string $uri): string
     {
         $normalized = str_starts_with($uri, '/') ? $uri : "/{$uri}";
-        $prefix = "/{$this->testLocale}";
+        $prefix = "/{$this->testCountry}";
 
         if ($normalized === $prefix || str_starts_with($normalized, "{$prefix}/")) {
             return $normalized;
@@ -54,66 +53,66 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Make a GET request to a locale-prefixed route
+     * Make a GET request to a country-prefixed route
      */
-    protected function getLocale($uri, $headers = [])
+    protected function getCountry($uri, $headers = [])
     {
-        return $this->get($this->withLocalePrefix($uri), $headers);
+        return $this->get($this->withCountryPrefix($uri), $headers);
     }
 
     /**
-     * Make a POST request to a locale-prefixed route
+     * Make a POST request to a country-prefixed route
      */
-    protected function postLocale($uri, $data = [], $headers = [])
+    protected function postCountry($uri, $data = [], $headers = [])
     {
-        return $this->post($this->withLocalePrefix($uri), $data, $headers);
+        return $this->post($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a PATCH request to a locale-prefixed route
+     * Make a PATCH request to a country-prefixed route
      */
-    protected function patchLocale($uri, $data = [], $headers = [])
+    protected function patchCountry($uri, $data = [], $headers = [])
     {
-        return $this->patch($this->withLocalePrefix($uri), $data, $headers);
+        return $this->patch($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a DELETE request to a locale-prefixed route
+     * Make a DELETE request to a country-prefixed route
      */
-    protected function deleteLocale($uri, $data = [], $headers = [])
+    protected function deleteCountry($uri, $data = [], $headers = [])
     {
-        return $this->delete($this->withLocalePrefix($uri), $data, $headers);
+        return $this->delete($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a PUT request to a locale-prefixed route
+     * Make a PUT request to a country-prefixed route
      */
-    protected function putLocale($uri, $data = [], $headers = [])
+    protected function putCountry($uri, $data = [], $headers = [])
     {
-        return $this->put($this->withLocalePrefix($uri), $data, $headers);
+        return $this->put($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a POST request with JSON to a locale-prefixed route
+     * Make a POST request with JSON to a country-prefixed route
      */
-    protected function postJsonLocale($uri, $data = [], $headers = [])
+    protected function postJsonCountry($uri, $data = [], $headers = [])
     {
-        return $this->postJson($this->withLocalePrefix($uri), $data, $headers);
+        return $this->postJson($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a PATCH request with JSON to a locale-prefixed route
+     * Make a PATCH request with JSON to a country-prefixed route
      */
-    protected function patchJsonLocale($uri, $data = [], $headers = [])
+    protected function patchJsonCountry($uri, $data = [], $headers = [])
     {
-        return $this->patchJson($this->withLocalePrefix($uri), $data, $headers);
+        return $this->patchJson($this->withCountryPrefix($uri), $data, $headers);
     }
 
     /**
-     * Make a DELETE request with JSON to a locale-prefixed route
+     * Make a DELETE request with JSON to a country-prefixed route
      */
-    protected function deleteJsonLocale($uri, $data = [], $headers = [])
+    protected function deleteJsonCountry($uri, $data = [], $headers = [])
     {
-        return $this->deleteJson($this->withLocalePrefix($uri), $data, $headers);
+        return $this->deleteJson($this->withCountryPrefix($uri), $data, $headers);
     }
 }

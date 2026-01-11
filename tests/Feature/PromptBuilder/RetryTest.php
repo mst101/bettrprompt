@@ -34,7 +34,7 @@ test('retry handles service failure', function () {
         ],
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.retry', [
+    $response = $this->post($this->countryRoute('prompt-builder.retry', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -61,7 +61,7 @@ test('retry resets failed prompt run to processing state', function () {
         ],
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.retry', [
+    $response = $this->post($this->countryRoute('prompt-builder.retry', [
         'promptRun' => $promptRun,
     ], absolute: false));
 
@@ -78,7 +78,7 @@ test('user cannot retry other users prompt runs', function () {
         'workflow_stage' => '0_failed',
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.retry', [
+    $response = $this->post($this->countryRoute('prompt-builder.retry', [
         'promptRun' => $otherRun,
     ], absolute: false));
 
@@ -91,7 +91,7 @@ test('cannot retry non-failed prompt runs', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.retry', [
+    $response = $this->post($this->countryRoute('prompt-builder.retry', [
         'promptRun' => $promptRun,
     ], absolute: false));
 

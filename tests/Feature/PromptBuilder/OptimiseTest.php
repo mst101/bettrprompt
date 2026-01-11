@@ -50,7 +50,7 @@ test('generate optimised prompt successfully', function () {
         'personality_tier' => 'full',
     ]);
 
-    $response = $this->post($this->localeRoute('prompt-builder.generate', [
+    $response = $this->post($this->countryRoute('prompt-builder.generate', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'question_answers' => ['Answer 1', 'Answer 2'],
@@ -74,7 +74,7 @@ test('update optimised prompt successfully', function () {
         'optimized_prompt' => 'Original prompt',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt text',
@@ -95,7 +95,7 @@ test('update optimised prompt validates required field', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), []);
 
@@ -110,7 +110,7 @@ test('update optimised prompt validates string type', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => ['not', 'a', 'string'],
@@ -127,7 +127,7 @@ test('update optimised prompt validates max length', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => str_repeat('a', 50001), // Exceeds max
@@ -145,7 +145,7 @@ test('update optimised prompt only allows completed workflow stage', function ()
         'optimized_prompt' => null,
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Trying to update',
@@ -164,7 +164,7 @@ test('update optimised prompt rejects failed prompt runs', function () {
         'optimized_prompt' => 'Original prompt',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt',
@@ -185,7 +185,7 @@ test('user cannot update other users prompt runs', function () {
         'optimized_prompt' => 'Original prompt',
     ]);
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $otherRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt',
@@ -205,7 +205,7 @@ test('update optimised prompt preserves other fields', function () {
         'selected_framework' => ['code' => 'SMART'],
     ]);
 
-    $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt',
@@ -226,7 +226,7 @@ test('update optimised prompt supports unicode characters', function () {
 
     $unicodePrompt = 'Unicode test: 你好世界 🌍 Ñoño Über';
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => $unicodePrompt,
@@ -248,7 +248,7 @@ test('update optimised prompt allows newlines and formatting', function () {
 
     $formattedPrompt = "Line 1\n\nLine 2\n\n- Bullet 1\n- Bullet 2";
 
-    $response = $this->patch($this->localeRoute('prompt-builder.update-prompt', [
+    $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => $formattedPrompt,
@@ -266,7 +266,7 @@ test('update optimised prompt requires authentication or ownership', function ()
         'workflow_stage' => '2_completed',
     ]);
 
-    $response = $this->patchLocale(route('prompt-builder.update-prompt', [
+    $response = $this->patchCountry(route('prompt-builder.update-prompt', [
         'promptRun' => $promptRun,
     ], absolute: false), [
         'optimized_prompt' => 'Updated prompt',
