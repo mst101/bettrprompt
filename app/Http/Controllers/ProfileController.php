@@ -286,6 +286,11 @@ class ProfileController extends Controller
             // Update location
             $user->updateLocation($validated);
 
+            // Invalidate language cache if language was updated
+            if (isset($validated['language_code'])) {
+                Cache::forget("user.{$user->id}.language");
+            }
+
             // Redirect to profile page (language preference is stored in user profile,
             // country code in URL stays the same)
             return Redirect::route('profile.edit')
