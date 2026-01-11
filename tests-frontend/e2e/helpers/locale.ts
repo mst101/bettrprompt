@@ -1,4 +1,4 @@
-export const DEFAULT_LOCALE = 'en-GB';
+export const DEFAULT_LOCALE = 'gb';
 
 const localePattern = /^\/[a-z]{2}(?:-[A-Z]{2})?(?:\/|$)/;
 

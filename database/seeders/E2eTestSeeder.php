@@ -31,6 +31,16 @@ class E2eTestSeeder extends Seeder
             DB::connection($connection)->getDatabaseName()
         ));
 
+        // Seed reference data (countries, currencies, languages, prices)
+        // Required for SetCountry middleware to validate country codes
+        $this->call([
+            LanguageSeeder::class,
+            CurrencySeeder::class,
+            CountrySeeder::class,
+            ClaudeModelSeeder::class,
+            PricesTableSeeder::class,
+        ]);
+
         DB::connection($connection)->transaction(function () use ($connection) {
             // Create or update test user
             $testUser = User::on($connection)->updateOrCreate(

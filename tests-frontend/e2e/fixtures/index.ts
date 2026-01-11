@@ -9,7 +9,7 @@ import {
     createTestPromptRun,
     waitForEchoConnection,
 } from '../helpers/broadcast';
-import { withLocale } from '../helpers/locale';
+import { withCountryCode } from '../helpers/country';
 import { AuthPage } from '../pages/AuthPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { PromptBuilderAdvancedPage } from '../pages/PromptBuilderAdvancedPage';
@@ -57,29 +57,30 @@ type TestFixtures = AuthenticatedPageFixture & PageObjectsFixture;
  */
 export const test = base.extend<TestFixtures>({
     /**
-     * Base page fixture with n8n test mode enabled and locale-aware routing
+     * Base page fixture with n8n test mode enabled and country-code routing
+     * Automatically injects country codes into URLs (e.g. /pricing => /gb/pricing)
      * Sets an environment flag that the backend can use to return mock responses
      */
     page: async ({ page }, use) => {
         const originalGoto = page.goto.bind(page);
         const originalWaitForURL = page.waitForURL.bind(page);
 
-        const pageWithLocale = page as Page & {
+        const pageWithCountry = page as Page & {
             goto: typeof page.goto;
             waitForURL: typeof page.waitForURL;
         };
 
-        pageWithLocale.goto = ((url, options) => {
+        pageWithCountry.goto = ((url, options) => {
             if (typeof url === 'string') {
-                return originalGoto(withLocale(url), options);
+                return originalGoto(withCountryCode(url), options);
             }
 
             return originalGoto(url, options);
         }) as typeof page.goto;
 
-        pageWithLocale.waitForURL = ((url, options) => {
+        pageWithCountry.waitForURL = ((url, options) => {
             if (typeof url === 'string') {
-                return originalWaitForURL(withLocale(url), options);
+                return originalWaitForURL(withCountryCode(url), options);
             }
 
             return originalWaitForURL(url, options);
@@ -90,6 +91,7 @@ export const test = base.extend<TestFixtures>({
         // and return mock responses instead of calling real n8n
         await page.addInitScript(() => {
             // This runs in the browser context and sets a test flag
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (window as any).__E2E_TEST__ = true;
         });
 

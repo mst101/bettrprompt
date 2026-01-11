@@ -1,10 +1,8 @@
-import { test, expect } from '@playwright/test';
-
-const baseUrl = process.env.APP_URL || 'http://app.localhost:8000';
+import { expect, test } from './fixtures';
 
 test.describe('Pricing and Checkout Flows', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto(`${baseUrl}/pricing`);
+        await page.goto('/pricing');
     });
 
     test('displays pricing page with correct title', async ({ page }) => {
@@ -12,14 +10,24 @@ test.describe('Pricing and Checkout Flows', () => {
         await expect(page).toHaveTitle(/Pricing/i);
 
         // Check main heading is visible
-        await expect(page.getByRole('heading', { name: /simple.*transparent.*pricing/i })).toBeVisible();
+        await expect(
+            page.getByRole('heading', {
+                name: /simple.*transparent.*pricing/i,
+            }),
+        ).toBeVisible();
     });
 
     test('displays all three tier cards side by side', async ({ page }) => {
         // Check all three tier cards are visible
-        await expect(page.getByRole('heading', { name: /^free$/i })).toBeVisible();
-        await expect(page.getByRole('heading', { name: /^pro$/i })).toBeVisible();
-        await expect(page.getByRole('heading', { name: /^private$/i })).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^free$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^pro$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^private$/i }),
+        ).toBeVisible();
 
         // Verify they're in separate cards
         const proCard = page.getByTestId('pro-tier-tab');
@@ -28,7 +36,9 @@ test.describe('Pricing and Checkout Flows', () => {
         await expect(privateCard).toBeVisible();
     });
 
-    test('allows toggling between monthly and yearly billing', async ({ page }) => {
+    test('allows toggling between monthly and yearly billing', async ({
+        page,
+    }) => {
         const monthlyToggle = page.getByTestId('monthly-toggle');
         const annualToggle = page.getByTestId('annual-toggle');
 
@@ -48,7 +58,9 @@ test.describe('Pricing and Checkout Flows', () => {
 
     test('faq section is visible and contains content', async ({ page }) => {
         // Scroll to FAQ
-        const faqTitle = page.getByRole('heading', { name: /frequently asked questions/i });
+        const faqTitle = page.getByRole('heading', {
+            name: /frequently asked questions/i,
+        });
         await faqTitle.scrollIntoViewIfNeeded();
         await expect(faqTitle).toBeVisible();
 
@@ -57,7 +69,9 @@ test.describe('Pricing and Checkout Flows', () => {
         expect(await faqItems.count()).toBeGreaterThan(0);
     });
 
-    test('displays savings information for annual billing', async ({ page }) => {
+    test('displays savings information for annual billing', async ({
+        page,
+    }) => {
         const annualToggle = page.getByTestId('annual-toggle');
         await annualToggle.click();
 
@@ -68,7 +82,9 @@ test.describe('Pricing and Checkout Flows', () => {
 
     test('shows features for free tier', async ({ page }) => {
         // Free tier features should be visible
-        const freeSection = page.locator('[class*="rounded-2xl border border-indigo-200"]').first();
+        const freeSection = page
+            .locator('[class*="rounded-2xl border border-indigo-200"]')
+            .first();
         await expect(freeSection).toBeVisible();
 
         // Should contain "10 prompts" or similar
@@ -76,7 +92,9 @@ test.describe('Pricing and Checkout Flows', () => {
         expect(await promptLimit.count()).toBeGreaterThan(0);
     });
 
-    test('displays monthly equivalent text for annual plans', async ({ page }) => {
+    test('displays monthly equivalent text for annual plans', async ({
+        page,
+    }) => {
         const annualToggle = page.getByTestId('annual-toggle');
         await annualToggle.click();
 
@@ -105,10 +123,14 @@ test.describe('Pricing and Checkout Flows', () => {
         await page.setViewportSize({ width: 375, height: 667 });
 
         // Check page still displays
-        await expect(page.getByRole('heading', { name: /pricing/i })).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /pricing/i }),
+        ).toBeVisible();
 
         // Check main sections are visible
-        await expect(page.getByRole('heading', { name: /free/i })).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /free/i }),
+        ).toBeVisible();
     });
 
     test('keyboard navigation works for billing toggles', async ({ page }) => {
@@ -134,9 +156,15 @@ test.describe('Pricing and Checkout Flows', () => {
 
     test('shows all three tier names as headings', async ({ page }) => {
         // All three tier names should be visible as headings
-        await expect(page.getByRole('heading', { name: /^free$/i })).toBeVisible();
-        await expect(page.getByRole('heading', { name: /^pro$/i })).toBeVisible();
-        await expect(page.getByRole('heading', { name: /^private$/i })).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^free$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^pro$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^private$/i }),
+        ).toBeVisible();
     });
 
     test('displays currency switcher buttons', async ({ page }) => {
@@ -195,9 +223,12 @@ test.describe('Pricing and Checkout Flows', () => {
         await expect(eurButton).toBeEnabled();
     });
 
-    test('displays different prices for different currencies', async ({ page }) => {
-        // Get prices for GBP (default)
-        const gbpPriceText = await page.locator('text=/£12|£20/').first().textContent();
+    test('displays different prices for different currencies', async ({
+        page,
+    }) => {
+        // Verify GBP prices are displayed (default)
+        const gbpPrices = page.locator('text=/£12|£20/');
+        expect(await gbpPrices.count()).toBeGreaterThan(0);
 
         // Switch to EUR
         const eurButton = page.getByTestId('currency-eur');
@@ -208,7 +239,9 @@ test.describe('Pricing and Checkout Flows', () => {
 
         // After reload, prices should be shown in EUR
         // (This might show GBP again if currency preference isn't persisted in session)
-        const priceElements = page.locator('text=/12|13.99|15.99|20|22.99|26.99/');
+        const priceElements = page.locator(
+            'text=/12|13.99|15.99|20|22.99|26.99/',
+        );
         expect(await priceElements.count()).toBeGreaterThan(0);
     });
 });

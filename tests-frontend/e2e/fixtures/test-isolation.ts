@@ -1,5 +1,5 @@
 import type { Browser, BrowserContext, Page } from '@playwright/test';
-import { withLocale } from '../helpers/locale';
+import { withCountryCode } from '../helpers/country';
 
 /**
  * Test Isolation Utilities
@@ -69,7 +69,7 @@ export async function resetPageState(
     await clearAllStorage(page);
 
     // Navigate to the URL to start fresh
-    await page.goto(withLocale(url), { waitUntil: 'domcontentloaded' });
+    await page.goto(withCountryCode(url), { waitUntil: 'domcontentloaded' });
 }
 
 /**
@@ -120,6 +120,7 @@ export class TestIsolationContext {
  * Create a new isolated browser context (separate session)
  * Useful for testing multi-user scenarios or session conflicts
  */
+
 export async function createIsolatedContext(
     browser: Browser,
     contextOptions?: any,

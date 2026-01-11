@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
 import { loginWithPersonalityType } from '../helpers/auth';
-import { withLocale } from '../helpers/locale';
+import { withCountryCode } from '../helpers/country';
 
 export type PersonalityUserFixture = {
     personalityUser: (personalityCode: string) => Promise<void>;
@@ -22,22 +22,22 @@ export const test = base.extend<PersonalityUserFixture>({
         const originalGoto = page.goto.bind(page);
         const originalWaitForURL = page.waitForURL.bind(page);
 
-        const pageWithLocale = page as Page & {
+        const pageWithCountry = page as Page & {
             goto: typeof page.goto;
             waitForURL: typeof page.waitForURL;
         };
 
-        pageWithLocale.goto = ((url, options) => {
+        pageWithCountry.goto = ((url, options) => {
             if (typeof url === 'string') {
-                return originalGoto(withLocale(url), options);
+                return originalGoto(withCountryCode(url), options);
             }
 
             return originalGoto(url, options);
         }) as typeof page.goto;
 
-        pageWithLocale.waitForURL = ((url, options) => {
+        pageWithCountry.waitForURL = ((url, options) => {
             if (typeof url === 'string') {
-                return originalWaitForURL(withLocale(url), options);
+                return originalWaitForURL(withCountryCode(url), options);
             }
 
             return originalWaitForURL(url, options);
