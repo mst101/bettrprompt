@@ -73,12 +73,9 @@ class VisitorController extends Controller
                 'currency_code' => $validated['currency_code'],
             ]);
 
-            // Also sync visitor record if authenticated user has one
-            $visitorId = $request->cookie('visitor_id');
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                $visitor?->update(['currency_code' => $validated['currency_code']]);
-            }
+            // Also sync all visitor records linked to this user
+            Visitor::where('user_id', $request->user()->id)
+                ->update(['currency_code' => $validated['currency_code']]);
         } else {
             // Visitor: update session and database if visitor exists
             session(['currency_code' => $validated['currency_code']]);
