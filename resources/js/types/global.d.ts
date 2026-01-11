@@ -1,9 +1,9 @@
 declare global {
     /**
-     * Global localeRoute helper function
+     * Global countryRoute helper function
      * Automatically injects the current locale into route parameters
      */
-    function localeRoute(
+    function countryRoute(
         name: string,
         parameters?: Record<string, any>,
     ): string;
@@ -15,7 +15,7 @@ declare module 'vue' {
          * Generate a route URL with locale parameter automatically injected
          * Available as a global helper on all Vue components
          */
-        localeRoute(name: string, parameters?: Record<string, any>): string;
+        countryRoute(name: string, parameters?: Record<string, any>): string;
     }
 }
 

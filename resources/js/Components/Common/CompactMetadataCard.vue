@@ -94,7 +94,7 @@ defineProps<Props>();
             <!-- Show Profile Button -->
             <Link
                 v-if="userId"
-                :href="localeRoute('admin.users.show', { user: userId })"
+                :href="countryRoute('admin.users.show', { user: userId })"
                 class="inline-flex items-center gap-2 rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
             >
                 <svg

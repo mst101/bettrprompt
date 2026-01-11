@@ -27,7 +27,7 @@ const search = ref(props.filters.search || '');
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
-        localeRoute('admin.users.index'),
+        countryRoute('admin.users.index'),
         { search: search.value },
         { preserveState: true, replace: true },
     );
@@ -42,7 +42,7 @@ watch(search, debouncedSearch);
         <HeaderPage :title="$t('admin.users.title')">
             <template #actions>
                 <Link
-                    :href="localeRoute('admin.dashboard')"
+                    :href="countryRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     {{ $t('admin.users.backToDashboard') }}
@@ -100,7 +100,7 @@ watch(search, debouncedSearch);
                         <Link
                             v-for="user in props.users.data"
                             :key="user.id"
-                            :href="localeRoute('admin.users.show', { user })"
+                            :href="countryRoute('admin.users.show', { user })"
                             as="tr"
                             class="cursor-pointer transition hover:bg-indigo-50 dark:hover:bg-indigo-100"
                         >

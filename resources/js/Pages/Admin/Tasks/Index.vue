@@ -33,7 +33,7 @@ const search = ref(props.filters.search || '');
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
-        localeRoute('admin.tasks.index'),
+        countryRoute('admin.tasks.index'),
         { search: search.value },
         { preserveState: true, replace: true },
     );
@@ -49,7 +49,7 @@ watch(search, debouncedSearch);
         <HeaderPage :title="$t('admin.tasks.title')">
             <template #actions>
                 <Link
-                    :href="localeRoute('admin.dashboard')"
+                    :href="countryRoute('admin.dashboard')"
                     class="text-sm text-indigo-600 hover:text-indigo-900"
                 >
                     {{ $t('admin.tasks.backToDashboard') }}
@@ -101,7 +101,7 @@ watch(search, debouncedSearch);
                                 v-for="task in props.tasks.data"
                                 :key="task.task_description"
                                 :href="
-                                    localeRoute('admin.tasks.show', {
+                                    countryRoute('admin.tasks.show', {
                                         taskId: task.task_id,
                                     })
                                 "

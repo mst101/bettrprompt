@@ -34,13 +34,13 @@ const closeCookieSettings = () => {
 
                 <!-- Links -->
                 <div class="flex flex-wrap justify-center gap-6">
-                    <LinkText :href="localeRoute('terms')">{{
+                    <LinkText :href="countryRoute('terms')">{{
                         $t('components.common.footer.terms')
                     }}</LinkText>
-                    <LinkText :href="localeRoute('privacy')">{{
+                    <LinkText :href="countryRoute('privacy')">{{
                         $t('components.common.footer.privacy')
                     }}</LinkText>
-                    <LinkText :href="localeRoute('cookies')">{{
+                    <LinkText :href="countryRoute('cookies')">{{
                         $t('components.common.footer.cookies')
                     }}</LinkText>
                     <ButtonText

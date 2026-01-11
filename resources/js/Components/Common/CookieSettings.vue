@@ -81,7 +81,7 @@ const analyticsEnabled = computed({
                     </h2>
                     <p class="mt-1 text-sm text-indigo-600">
                         {{ $t('components.common.cookieSettings.description') }}
-                        <LinkText :href="localeRoute('cookies')">
+                        <LinkText :href="countryRoute('cookies')">
                             {{
                                 $t('components.common.cookieSettings.learnMore')
                             }}

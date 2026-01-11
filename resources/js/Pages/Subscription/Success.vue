@@ -16,7 +16,7 @@ interface Props {
 }
 
 function goToPromptBuilder() {
-    router.visit(localeRoute('prompt-builder.index'));
+    router.visit(countryRoute('prompt-builder.index'));
 }
 </script>
 

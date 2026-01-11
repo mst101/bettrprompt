@@ -61,7 +61,7 @@ const closeSettings = () => {
                                     }}
                                     <LinkText
                                         class="text-indigo-200! hover:text-indigo-300!"
-                                        :href="localeRoute('cookies')"
+                                        :href="countryRoute('cookies')"
                                     >
                                         {{
                                             $t(

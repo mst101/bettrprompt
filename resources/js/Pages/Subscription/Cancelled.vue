@@ -17,11 +17,11 @@ interface Props {
 }
 
 function goToPricing() {
-    router.visit(localeRoute('pricing'));
+    router.visit(countryRoute('pricing'));
 }
 
 function goToPromptBuilder() {
-    router.visit(localeRoute('prompt-builder.index'));
+    router.visit(countryRoute('prompt-builder.index'));
 }
 </script>
 

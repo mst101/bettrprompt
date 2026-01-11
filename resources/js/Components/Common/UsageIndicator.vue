@@ -16,7 +16,7 @@ const isWarning = computed(() => usagePercent.value >= 80);
 const isExhausted = computed(() => subscription.value?.promptsRemaining === 0);
 
 function goToPricing() {
-    router.visit(localeRoute('pricing'));
+    router.visit(countryRoute('pricing'));
 }
 </script>
 
