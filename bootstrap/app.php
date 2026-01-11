@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'prompt.track' => \App\Http\Middleware\TrackPromptUsage::class,
             'privacy.unlock' => \App\Http\Middleware\RequirePrivacyUnlock::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
+            'country' => \App\Http\Middleware\SetCountry::class,
         ]);
 
         // Trust all proxies for local development (Caddy reverse proxy)

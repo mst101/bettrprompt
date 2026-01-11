@@ -42,9 +42,13 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
-        // Prefer explicit route locale, then detect from user/session/browser
-        $locale = $request->route('locale') ?? SetLocale::detectLocale($request);
-        app()->setLocale($locale);
+        // Get country from route or detect
+        $country = $request->route('country') ?? \App\Http\Middleware\SetCountry::detectCountry($request);
+        $locale = app()->getLocale(); // Already set by SetCountry middleware
+
+        // Resolve currency
+        $setCountryMiddleware = new \App\Http\Middleware\SetCountry;
+        $currency = $setCountryMiddleware->resolveCurrencyCode($country, $request);
 
         return [
             ...parent::share($request),
@@ -64,9 +68,12 @@ class HandleInertiaRequests extends Middleware
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
             'subscription' => fn () => $request->user()?->getSubscriptionStatus(),
             'privacy' => fn () => $request->user()?->getPrivacyStatus(),
+            'country' => fn () => $country,
             'locale' => fn () => $locale,
+            'currency' => fn () => $currency,
             'direction' => fn () => SetLocale::getDirection($locale),
             'supportedLocales' => fn () => config('app.supported_locales'),
+            'supportedCountries' => fn () => config('app.supported_countries', []),
         ];
     }
 }
