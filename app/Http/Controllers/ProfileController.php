@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
@@ -223,6 +224,9 @@ class ProfileController extends Controller
         // This keeps both tables in sync when a converted user switches languages
         \App\Models\Visitor::where('user_id', $user->id)
             ->update(['language_code' => $validated['language_code']]);
+
+        // Invalidate language cache so middleware fetches fresh value on next request
+        Cache::forget("user.{$user->id}.language");
 
         return response()->json(['success' => true]);
     }

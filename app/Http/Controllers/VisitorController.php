@@ -7,6 +7,7 @@ use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class VisitorController extends Controller
@@ -44,6 +45,9 @@ class VisitorController extends Controller
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             $visitor?->update(['language_code' => $validated['language_code']]);
+
+            // Invalidate language cache so middleware fetches fresh value on next request
+            Cache::forget("visitor.{$visitorId}.language");
         }
 
         return response()->json(['success' => true]);
