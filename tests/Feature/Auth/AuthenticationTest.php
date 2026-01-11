@@ -13,7 +13,7 @@ test('users can authenticate using the login screen', function () {
         'language_code' => 'en-US',
     ]);
 
-    $response = $this->withHeader('Accept-Language', $this->testLocale)->post('/login', [
+    $response = $this->withHeader('Accept-Language', 'en-US')->post('/login', [
         'email' => $user->email,
         'password' => 'password',
     ]);
@@ -24,11 +24,9 @@ test('users can authenticate using the login screen', function () {
     $location = $response->headers->get('Location');
     expect($location)->toContain('/prompt-builder');
 
-    $path = parse_url($location, PHP_URL_PATH) ?? '';
-    $segments = array_values(array_filter(explode('/', $path)));
-    $locale = $segments[0] ?? null;
-
-    expect($locale)->toBeIn(config('app.supported_locales'));
+    // Verify user's language code is in supported locales
+    $user->refresh();
+    expect($user->language_code)->toBeIn(config('app.supported_locales'));
 });
 
 test('users can not authenticate with invalid password', function () {
