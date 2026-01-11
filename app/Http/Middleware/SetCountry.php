@@ -194,8 +194,8 @@ class SetCountry
             $geolocationService = new GeolocationService;
             $locationData = $geolocationService->lookupIp($request->ip());
 
-            if ($locationData && $locationData->country_code) {
-                $countryCode = $locationData->country_code;
+            if ($locationData && $locationData->countryCode) {
+                $countryCode = $locationData->countryCode;
 
                 // Verify country exists in database
                 if (Country::where('id', $countryCode)->exists()) {
