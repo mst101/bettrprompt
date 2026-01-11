@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Country;
 use App\Models\Visitor;
+use App\Services\GeolocationService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -189,7 +190,24 @@ class SetCountry
         }
 
         // 3. Geolocate IP to country code
-        // TODO: Implement geolocation detection
+        try {
+            $geolocationService = new GeolocationService;
+            $locationData = $geolocationService->lookupIp($request->ip());
+
+            if ($locationData && $locationData->country_code) {
+                $countryCode = $locationData->country_code;
+
+                // Verify country exists in database
+                if (Country::where('id', $countryCode)->exists()) {
+                    return $countryCode;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug('Geolocation detection failed', [
+                'ip' => $request->ip(),
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         // 4. Fallback to default
         return config('app.fallback_country', 'gb');
