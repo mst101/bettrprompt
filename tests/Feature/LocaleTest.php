@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 test('supported countries are configured correctly', function () {
-    $countries = config('app.supported_countries');
+    $countries = supportedCountries();
 
     expect($countries)->toBeArray();
     expect($countries)->not->toBeEmpty();
@@ -78,7 +78,7 @@ test('supported countries shared data contains expected countries', function () 
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('supportedCountries', config('app.supported_countries'))
+        ->where('supportedCountries', supportedCountries())
     );
 });
 

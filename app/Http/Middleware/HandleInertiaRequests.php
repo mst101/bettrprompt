@@ -73,7 +73,7 @@ class HandleInertiaRequests extends Middleware
             'currency' => fn () => $currency,
             'direction' => fn () => SetCountry::getDirection($locale),
             'supportedLocales' => fn () => config('app.supported_locales'),
-            'supportedCountries' => fn () => config('app.supported_countries', []),
+            'supportedCountries' => fn () => supportedCountries(),
         ];
     }
 }

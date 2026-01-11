@@ -18,3 +18,17 @@ function inertiaPaginated($paginator, $resource): array
         ],
     ];
 }
+
+/**
+ * Get all supported country codes from the database with caching.
+ * Supports all 247 countries in the countries table.
+ *
+ * @return array<string> List of lowercase ISO country codes (e.g., 'gb', 'us', 'mx')
+ */
+function supportedCountries(): array
+{
+    return \Illuminate\Support\Facades\Cache::rememberForever(
+        'app.supported_countries_list',
+        fn () => \App\Models\Country::pluck('id')->all()
+    );
+}

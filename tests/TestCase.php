@@ -27,12 +27,7 @@ abstract class TestCase extends BaseTestCase
             CountrySeeder::class,
         ]);
 
-        // Repopulate supported_countries config after seeding
-        $supportedCountries = Cache::rememberForever(
-            'app.supported_countries_list',
-            fn () => \App\Models\Country::pluck('id')->all()
-        );
-        config(['app.supported_countries' => $supportedCountries]);
+        // Cache is cleared above, so supportedCountries() helper will repopulate on first call
 
         URL::defaults(['country' => $this->testCountry]);
         $this->defaultHeaders = array_merge($this->defaultHeaders, [
