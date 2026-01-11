@@ -21,8 +21,10 @@ class CurrencySeeder extends Seeder
         // Skip header row
         fgetcsv($handle);
 
+        $records = [];
+
         while ($row = fgetcsv($handle)) {
-            DB::table('currencies')->insertOrIgnore([
+            $records[] = [
                 'id' => $row[0],
                 'symbol' => $row[1],
                 'thousands_separator' => $row[2],
@@ -34,9 +36,25 @@ class CurrencySeeder extends Seeder
                 'active' => (bool) $row[8],
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ];
         }
 
         fclose($handle);
+
+        DB::table('currencies')->upsert(
+            $records,
+            ['id'],
+            [
+                'symbol',
+                'thousands_separator',
+                'decimal_separator',
+                'symbol_on_left',
+                'space_between_amount_and_symbol',
+                'rounding_coefficient',
+                'decimal_digits',
+                'active',
+                'updated_at',
+            ]
+        );
     }
 }

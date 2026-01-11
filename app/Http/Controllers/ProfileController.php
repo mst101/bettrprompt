@@ -64,7 +64,7 @@ class ProfileController extends Controller
             'label' => $country->name,
         ])->values();
 
-        $currencies = Currency::where('active', true)->map(fn ($currency) => [
+        $currencies = Currency::where('active', true)->get()->map(fn ($currency) => [
             'value' => $currency->id,
             'label' => "$currency->symbol ($currency->id)",
         ])->values();
