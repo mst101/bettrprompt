@@ -158,7 +158,7 @@ test('create prompt run allows guests as visitors', function () {
     // Verify the redirect includes the newly created prompt run ID
     $promptRun = PromptRun::where('visitor_id', $visitor->id)->first();
     $response->assertRedirect(route('prompt-builder.show', [
-        'locale' => $this->testLocale,
+        'country' => $this->testCountry,
         'promptRun' => $promptRun,
     ]));
 
