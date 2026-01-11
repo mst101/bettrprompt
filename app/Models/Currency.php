@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,6 +23,7 @@ class Currency extends Model
         'space_between_amount_and_symbol',
         'rounding_coefficient',
         'decimal_digits',
+        'active',
     ];
 
     protected $casts = [
@@ -29,6 +31,7 @@ class Currency extends Model
         'space_between_amount_and_symbol' => 'boolean',
         'rounding_coefficient' => 'integer',
         'decimal_digits' => 'integer',
+        'active' => 'boolean',
     ];
 
     public function countries(): HasMany
@@ -39,5 +42,13 @@ class Currency extends Model
     public function prices(): HasMany
     {
         return $this->hasMany(Price::class, 'currency_code', 'id');
+    }
+
+    /**
+     * Get all active currencies.
+     */
+    public static function active(): Collection
+    {
+        return static::where('active', true)->get();
     }
 }

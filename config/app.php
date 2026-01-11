@@ -92,6 +92,12 @@ return [
     | List of language codes (full locale identifiers) we have translations for.
     | These are the languages available in lang/ directory.
     |
+    | IMPORTANT: These MUST match the languages marked as active=1 in the
+    | languages table and languages.csv seeder. This ensures UI language
+    | switchers and country mappings are consistent with database records.
+    |
+    | See: database/seeders/csv/languages.csv
+    |
     */
 
     'supported_locales' => ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES'],

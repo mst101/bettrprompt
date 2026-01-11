@@ -20,8 +20,10 @@ class SubscriptionController extends Controller
         // Fetch prices from database
         $pricesData = Price::where('currency_code', $currencyCode)->get();
 
-        // Fetch currency symbol from database
-        $currency = \App\Models\Currency::where('id', $currencyCode)->first();
+        // Fetch currency symbol from database (only active currencies)
+        $currency = \App\Models\Currency::where('id', $currencyCode)
+            ->where('active', true)
+            ->first();
         $currencySymbol = $currency?->symbol ?? '£';
 
         // Build pricing plans from database
