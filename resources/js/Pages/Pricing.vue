@@ -29,7 +29,7 @@ defineOptions({
 });
 
 const page = usePage();
-const { currentCountry, countryRoute } = useCountryRoute();
+const { countryRoute } = useCountryRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(
     () => page.props.subscription as SubscriptionStatus | undefined,
@@ -79,7 +79,7 @@ const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
     router.post(
-        route('currency.select', { country: currentCountry.value }),
+        countryRoute('currency.select'),
         { currency_code: newCurrency },
         {
             onStart: () => {
@@ -103,7 +103,7 @@ function subscribe(tier: 'pro' | 'private') {
 
     isLoading.value = true;
     router.post(
-        route('subscription.checkout'),
+        countryRoute('subscription.checkout'),
         { tier, interval: selectedPlan.value },
         {
             onFinish: () => {
