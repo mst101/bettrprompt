@@ -82,6 +82,10 @@ Route::prefix('{country}')
             ->name('visitor.personality.update');
         Route::patch('/visitor/language', [VisitorController::class, 'updateLanguage'])
             ->name('visitor.language.update');
+        Route::patch('/visitor/location', [VisitorController::class, 'updateLocation'])
+            ->name('visitor.location.update');
+        Route::delete('/visitor/location', [VisitorController::class, 'clearLocation'])
+            ->name('visitor.location.clear');
         Route::post('/currency/select', [VisitorController::class, 'updateCurrency'])
             ->name('currency.select');
 
@@ -180,6 +184,8 @@ Route::prefix('{country}')
             Route::patch('/profile/ui-complexity',
                 [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
             Route::patch('/profile/language', [ProfileController::class, 'updateLanguage'])->name('profile.language.update');
+            Route::patch('/profile/location-prompt', [ProfileController::class, 'updateLocationPromptPreference'])
+                ->name('profile.location.prompt');
             // Location profile routes
             Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
             Route::post('/profile/location/detect',

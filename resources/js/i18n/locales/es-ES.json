@@ -895,6 +895,25 @@
             "preAnalysisSkippedTitle": "¡Excelente! Tu tarea es clara",
             "preAnalysisSkippedDescription": "Tu descripción de tarea es lo suficientemente clara para que procedamos directamente al análisis principal. Ahora estamos seleccionando el mejor marco de prompts para ti."
         },
+        "locationPrompt": {
+            "title": "Confirmar tu ubicación e idioma",
+            "description": "Usamos estos datos para mejorar el contexto de tus prompts, incluyendo ortografía, fechas y moneda.",
+            "detectedNote": "Los datos de arriba se han detectado automáticamente o se guardaron en una sesión anterior. Confírmalos o edítalos si es necesario.",
+            "dismiss": "No volver a preguntar",
+            "reason": {
+                "mismatch": "Estás viendo el sitio para {currentCountry}, pero tu ubicación guardada es {savedCountry}. Elige qué ubicación debemos usar.",
+                "missing": "Aún no tenemos datos de ubicación. Añadirlos nos ayuda a adaptar mejor tus prompts."
+            },
+            "clearConfirm": {
+                "title": "¿Borrar los datos de ubicación?",
+                "message": "Borrar esta información puede hacer que tus prompts estén menos optimizados."
+            },
+            "actions": {
+                "continue": "Continuar sin cambios",
+                "save": "Guardar y continuar",
+                "clear": "Borrar ubicación"
+            }
+        },
         "tabs": {
             "task": "Tu tarea",
             "framework": "Marco",

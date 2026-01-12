@@ -895,6 +895,25 @@
             "preAnalysisSkippedTitle": "Excellent ! Votre tâche est claire",
             "preAnalysisSkippedDescription": "Votre description de tâche est suffisamment claire pour que nous procédions directement à l'analyse principale. Nous sélectionnons maintenant le meilleur framework d'invite pour vous."
         },
+        "locationPrompt": {
+            "title": "Confirmer votre localisation et votre langue",
+            "description": "Nous utilisons ces informations pour améliorer le contexte de vos prompts, y compris l’orthographe, les dates et la devise.",
+            "detectedNote": "Les informations ci-dessus ont été détectées automatiquement ou enregistrées lors d’une session précédente. Veuillez les confirmer ou les modifier si nécessaire.",
+            "dismiss": "Ne plus demander",
+            "reason": {
+                "mismatch": "Vous consultez le site pour {currentCountry}, mais votre localisation enregistrée est {savedCountry}. Choisissez la localisation à utiliser.",
+                "missing": "Nous n’avons pas encore de localisation. L’ajouter nous aide à mieux adapter vos prompts."
+            },
+            "clearConfirm": {
+                "title": "Effacer les informations de localisation ?",
+                "message": "Effacer ces informations peut rendre vos prompts moins optimisés."
+            },
+            "actions": {
+                "continue": "Continuer sans modifications",
+                "save": "Enregistrer et continuer",
+                "clear": "Effacer la localisation"
+            }
+        },
         "tabs": {
             "task": "Votre tâche",
             "framework": "Cadre",

@@ -908,6 +908,25 @@
             "preAnalysisSkippedTitle": "Excellent! Your task is clear",
             "preAnalysisSkippedDescription": "Your task description is sufficiently clear for us to proceed directly to the main analysis. We're now selecting the best prompt framework for you."
         },
+        "locationPrompt": {
+            "title": "Confirm your location and language",
+            "description": "We use these details to improve the context in your prompts, including spelling, dates, and currency.",
+            "detectedNote": "The details above were auto-detected or saved from a previous session. Please confirm or edit them if needed.",
+            "dismiss": "Don't ask again",
+            "reason": {
+                "mismatch": "You're viewing the site for {currentCountry}, but your saved location is {savedCountry}. Choose which location we should use.",
+                "missing": "We don't have any location details yet. Adding them helps us tailor your prompts."
+            },
+            "clearConfirm": {
+                "title": "Clear location details?",
+                "message": "Clearing this information may make your prompts less optimized."
+            },
+            "actions": {
+                "continue": "Continue without changes",
+                "save": "Save and continue",
+                "clear": "Clear location"
+            }
+        },
         "tabs": {
             "task": "Your Task",
             "framework": "Framework",

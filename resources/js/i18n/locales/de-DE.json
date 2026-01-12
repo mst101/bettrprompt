@@ -895,6 +895,25 @@
             "preAnalysisSkippedTitle": "Ausgezeichnet! Ihre Aufgabe ist klar",
             "preAnalysisSkippedDescription": "Ihre Aufgabenbeschreibung ist ausreichend klar, um direkt zur Hauptanalyse überzugehen. Wir wählen nun das beste Anfrage-Rahmenwerk für Sie aus."
         },
+        "locationPrompt": {
+            "title": "Standort und Sprache bestätigen",
+            "description": "Wir verwenden diese Angaben, um den Kontext Ihrer Prompts zu verbessern, einschließlich Rechtschreibung, Datumsformaten und Währung.",
+            "detectedNote": "Die Angaben oben wurden automatisch erkannt oder aus einer früheren Sitzung übernommen. Bitte bestätigen oder bearbeiten Sie sie bei Bedarf.",
+            "dismiss": "Nicht mehr fragen",
+            "reason": {
+                "mismatch": "Sie sehen die Seite für {currentCountry}, aber Ihr gespeicherter Standort ist {savedCountry}. Bitte wählen Sie, welchen Standort wir verwenden sollen.",
+                "missing": "Wir haben noch keine Standortangaben. Diese helfen uns, Ihre Prompts besser anzupassen."
+            },
+            "clearConfirm": {
+                "title": "Standortangaben löschen?",
+                "message": "Wenn Sie diese Informationen löschen, könnten Ihre Prompts weniger optimiert sein."
+            },
+            "actions": {
+                "continue": "Ohne Änderungen fortfahren",
+                "save": "Speichern und fortfahren",
+                "clear": "Standort löschen"
+            }
+        },
         "tabs": {
             "task": "Ihre Aufgabe",
             "framework": "Rahmenwerk",
