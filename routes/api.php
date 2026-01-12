@@ -3,6 +3,7 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
+use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Models\PromptRun;
 use App\Models\Visitor;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+
+// Analytics events ingestion (non-blocking, all users including guests)
+Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
+    ->middleware('throttle:100,1') // Generous limit for event batches
+    ->name('analytics.events.store');
 
 Route::post('/n8n/webhook', function (Request $request) {
     try {
