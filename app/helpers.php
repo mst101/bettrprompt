@@ -32,19 +32,3 @@ function supportedCountries(): array
         fn () => \App\Models\Country::pluck('id')->all()
     );
 }
-
-/**
- * Generate a country-prefixed route URL.
- * Automatically injects the current country code from the route parameter.
- *
- * @param  string  $name  Route name
- * @param  array<string, mixed>  $parameters  Additional route parameters
- * @param  bool  $absolute  Whether to generate absolute URL
- * @return string Route URL
- */
-function countryRoute(string $name, array $parameters = [], bool $absolute = true): string
-{
-    $country = \Illuminate\Support\Facades\Route::current()?->parameter('country') ?? 'gb';
-
-    return route($name, ['country' => $country, ...$parameters], $absolute);
-}

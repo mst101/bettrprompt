@@ -103,6 +103,7 @@ class SubscriptionController extends Controller
         $user = $request->user();
         $tier = $request->string('tier')->toString();
         $interval = $request->string('interval')->toString();
+        $country = $request->route('country');
 
         $priceId = $user->getCheckoutPriceId($tier, $interval);
 
@@ -113,8 +114,8 @@ class SubscriptionController extends Controller
         return $user
             ->newSubscription('default', $priceId)
             ->checkout([
-                'success_url' => countryRoute('subscription.success', ['tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
-                'cancel_url' => countryRoute('subscription.cancelled'),
+                'success_url' => route('subscription.success', ['country' => $country, 'tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
+                'cancel_url' => route('subscription.cancelled', ['country' => $country]),
                 'customer_update' => [
                     'address' => 'auto',
                 ],
