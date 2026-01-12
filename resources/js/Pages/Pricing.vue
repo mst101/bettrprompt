@@ -92,7 +92,7 @@ function updateCurrency(newCurrency: string) {
     );
 }
 
-function subscribe(tier: 'pro' | 'private') {
+async function subscribe(tier: 'pro' | 'private') {
     if (!isAuthenticated.value) {
         // Open register modal for unauthenticated users
         if (openRegisterModal) {
@@ -102,15 +102,35 @@ function subscribe(tier: 'pro' | 'private') {
     }
 
     isLoading.value = true;
-    router.post(
-        countryRoute('subscription.checkout'),
-        { tier, interval: selectedPlan.value },
-        {
-            onFinish: () => {
-                isLoading.value = false;
+    try {
+        const response = await fetch(countryRoute('subscription.checkout'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token':
+                    document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute('content') || '',
             },
-        },
-    );
+            body: JSON.stringify({
+                tier,
+                interval: selectedPlan.value,
+            }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Checkout failed');
+        }
+
+        const data = await response.json();
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+    } catch (error) {
+        console.error('Checkout error:', error);
+        isLoading.value = false;
+        alert('Failed to create checkout session. Please try again.');
+    }
 }
 
 function getStarted() {

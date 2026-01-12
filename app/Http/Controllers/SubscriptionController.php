@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Price;
 use App\Models\Visitor;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -93,7 +94,7 @@ class SubscriptionController extends Controller
     /**
      * Create Stripe Checkout session
      */
-    public function checkout(Request $request)
+    public function checkout(Request $request): JsonResponse
     {
         $request->validate([
             'tier' => 'required|in:pro,private',
@@ -108,10 +109,10 @@ class SubscriptionController extends Controller
         $priceId = $user->getCheckoutPriceId($tier, $interval);
 
         if (! $priceId) {
-            return back()->withErrors(['plan' => __('messages.subscription.invalid_plan')]);
+            return response()->json(['error' => __('messages.subscription.invalid_plan')], 422);
         }
 
-        return $user
+        $checkout = $user
             ->newSubscription('default', $priceId)
             ->checkout([
                 'success_url' => route('subscription.success', ['country' => $country, 'tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
@@ -124,6 +125,8 @@ class SubscriptionController extends Controller
                 ],
                 'allow_promotion_codes' => true,
             ]);
+
+        return response()->json(['url' => $checkout->url]);
     }
 
     /**
