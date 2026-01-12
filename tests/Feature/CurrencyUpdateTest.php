@@ -195,10 +195,10 @@ describe('Currency Selection', function () {
 
             $priceMap = $prices->keyBy(fn ($p) => $p->tier.'_'.$p->interval);
 
-            expect((float) $priceMap['pro_monthly']->amount)->toBe(12.00);
-            expect((float) $priceMap['pro_yearly']->amount)->toBe(120.00);
-            expect((float) $priceMap['private_monthly']->amount)->toBe(20.00);
-            expect((float) $priceMap['private_yearly']->amount)->toBe(200.00);
+            expect((float) $priceMap['pro_monthly']->amount)->toBe(11.99);
+            expect((float) $priceMap['pro_yearly']->amount)->toBe(119.00);
+            expect((float) $priceMap['private_monthly']->amount)->toBe(19.99);
+            expect((float) $priceMap['private_yearly']->amount)->toBe(199.00);
         });
 
         it('prices have correct amounts for EUR', function () {
@@ -230,14 +230,15 @@ describe('Currency Selection', function () {
 
             // Expected prices with 17% annual discount (yearly = monthly * 10, roughly)
             $expected = [
-                'GBP' => ['pro' => 120, 'private' => 200],
+                'GBP' => ['pro' => 119, 'private' => 199],
                 'EUR' => ['pro' => 139, 'private' => 229],
                 'USD' => ['pro' => 159, 'private' => 269],
             ];
 
             foreach (['pro', 'private'] as $tier) {
                 foreach (['GBP', 'EUR', 'USD'] as $currency) {
-                    $yearly = $prices->firstWhere(fn ($p) => $p->currency_code === $currency && $p->tier === $tier && $p->interval === 'yearly'
+                    $yearly = $prices->firstWhere(fn ($p
+                    ) => $p->currency_code === $currency && $p->tier === $tier && $p->interval === 'yearly'
                     );
 
                     expect((float) $yearly->amount)->toBe((float) $expected[$currency][$tier]);
