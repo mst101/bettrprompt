@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AnalyticsEvent extends Model
 {
@@ -76,6 +77,14 @@ class AnalyticsEvent extends Model
     public function promptRun(): BelongsTo
     {
         return $this->belongsTo(PromptRun::class);
+    }
+
+    /**
+     * Get experiment attributions for this event
+     */
+    public function eventExperiments(): HasMany
+    {
+        return $this->hasMany(AnalyticsEventExperiment::class, 'event_id', 'event_id');
     }
 
     /**

@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\AnalyticsSession;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
+class SessionProcessorService
+{
+    /**
+     * Session timeout: if more than 30 minutes without activity, it's a new session
+     * Note: We use analytics_session_id from header, so timeout isn't strictly needed,
+     * but we use it to close abandoned sessions
+     */
+    private const SESSION_TIMEOUT_MINUTES = 30;
+
+    /**
+     * Process events to build or update analytics_sessions
+     *
+     * A session encompasses:
+     * - All events with the same session_id
+     * - From the same visitor_id
+     * - With timing information
+     * - Entry/exit page tracking
+     * - Bounce detection (single page visit)
+     */
+    public function processSessionEvents(array $events): void
+    {
+        // Group events by session_id and visitor_id
+        $sessionGroups = collect($events)->groupBy(function ($event) {
+            return $event['session_id'] ?? 'no_session';
+        });
+
+        foreach ($sessionGroups as $sessionId => $sessionEvents) {
+            if ($sessionId === 'no_session') {
+                continue; // Skip events without session ID
+            }
+
+            $this->processSession($sessionId, $sessionEvents->all());
+        }
+    }
+
+    /**
+     * Process a single session's worth of events
+     */
+    private function processSession(string $sessionId, array $events): void
+    {
+        if (empty($events)) {
+            return;
+        }
+
+        // Sort events by timestamp
+        usort($events, function ($a, $b) {
+            $timeA = strtotime($a['occurred_at']);
+            $timeB = strtotime($b['occurred_at']);
+
+            return $timeA <=> $timeB;
+        });
+
+        $firstEvent = reset($events);
+        $lastEvent = end($events);
+
+        $visitorId = $firstEvent['visitor_id'];
+        $userId = $firstEvent['user_id'] ?? null;
+        $startedAt = Carbon::parse($firstEvent['occurred_at']);
+        $endedAt = Carbon::parse($lastEvent['occurred_at']);
+        $duration = $endedAt->diffInSeconds($startedAt);
+
+        // Find entry and exit pages
+        $entryPage = null;
+        $exitPage = null;
+        $pageCount = 0;
+
+        foreach ($events as $event) {
+            if ($event['name'] === 'page_view') {
+                if ($entryPage === null) {
+                    $entryPage = $event['properties']['path'] ?? null;
+                }
+                $exitPage = $event['properties']['path'] ?? null;
+                $pageCount++;
+            }
+        }
+
+        // Detect bounce: single page view
+        $isBounce = $pageCount <= 1;
+
+        // Check for conversions in this session
+        $conversions = collect($events)->filter(fn ($e) => $e['type'] === 'conversion');
+        $hasConverted = $conversions->isNotEmpty();
+        $conversionType = $this->determineConversionType($conversions);
+
+        // Count prompts
+        $promptsStarted = collect($events)->filter(fn ($e) => $e['name'] === 'prompt_started')->count();
+        $promptsCompleted = collect($events)
+            ->filter(fn ($e) => $e['name'] === 'prompt_completed')
+            ->count();
+
+        // Find or create session
+        $session = AnalyticsSession::firstOrNew(
+            ['id' => $sessionId],
+        );
+
+        $session->fill([
+            'visitor_id' => $visitorId,
+            'user_id' => $userId,
+            'started_at' => $startedAt,
+            'ended_at' => $endedAt,
+            'duration_seconds' => $duration,
+            'entry_page' => $entryPage,
+            'exit_page' => $exitPage,
+            'page_count' => $pageCount,
+            'event_count' => count($events),
+            'is_bounce' => $isBounce,
+            'converted' => $hasConverted,
+            'conversion_type' => $conversionType,
+            'prompts_started' => $promptsStarted,
+            'prompts_completed' => $promptsCompleted,
+            // Attribution captured at session start
+            'utm_source' => $firstEvent['properties']['utm_source'] ?? null,
+            'utm_medium' => $firstEvent['properties']['utm_medium'] ?? null,
+            'utm_campaign' => $firstEvent['properties']['utm_campaign'] ?? null,
+            'referrer' => $firstEvent['referrer'] ?? null,
+            'device_type' => $firstEvent['device_type'] ?? null,
+            'country_code' => $firstEvent['country_code'] ?? null,
+        ]);
+
+        try {
+            $session->save();
+
+            Log::info('Session processed', [
+                'session_id' => $sessionId,
+                'visitor_id' => $visitorId,
+                'page_count' => $pageCount,
+                'converted' => $hasConverted,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to process session', [
+                'session_id' => $sessionId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Determine conversion type from conversion events
+     */
+    private function determineConversionType($conversions): ?string
+    {
+        // Priority: subscription > registration > other
+        foreach ($conversions as $event) {
+            if (str_contains($event['name'], 'subscription')) {
+                return 'subscribed_'.($event['properties']['tier'] ?? 'unknown');
+            }
+        }
+
+        foreach ($conversions as $event) {
+            if (str_contains($event['name'], 'registration')) {
+                return 'registered';
+            }
+        }
+
+        return $conversions->first()?->name ?? null;
+    }
+}
