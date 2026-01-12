@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
-use Stripe\Stripe;
 
 class SubscriptionController extends Controller
 {
@@ -100,9 +99,6 @@ class SubscriptionController extends Controller
             'tier' => 'required|in:pro,private',
             'interval' => 'required|in:monthly,yearly',
         ]);
-
-        // Set Stripe API key
-        Stripe::setApiKey(config('stripe.secret'));
 
         $user = $request->user();
         $tier = $request->string('tier')->toString();

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Stripe\Stripe;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Initialize Stripe with API key from config
+        if (config('stripe.secret')) {
+            Stripe::setApiKey(config('stripe.secret'));
+        }
+
         Vite::prefetch(concurrency: 3);
 
         Route::model('promptRun', PromptRun::class);
