@@ -1,4 +1,8 @@
-# A/B Testing System Implementation Plan
+# A/B Testing System Implementation Plan (Superseded)
+
+> **Status:** Superseded by `docs/unified-analytics-experimentation-architecture.md`.
+>
+> This document is retained for historical context and test idea inventory, but should not be implemented directly.
 
 ## Executive Summary
 

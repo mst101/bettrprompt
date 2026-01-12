@@ -1,4 +1,8 @@
-# Customer Data Platform (CDP) Implementation Plan
+# Customer Data Platform (CDP) Implementation Plan (Superseded)
+
+> **Status:** Superseded by `docs/unified-analytics-experimentation-architecture.md`.
+>
+> This document is retained for historical context, but should not be implemented directly.
 
 ## Executive Summary
 

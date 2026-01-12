@@ -24,11 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\UseE2eDatabase::class);
 
         $middleware->web(append: [
+            // TrackVisitor must run first to establish visitor_id in request context
             // SetCountry must run before HandleInertiaRequests so locale is set when Inertia props are generated
+            // Both must run BEFORE HandleInertiaRequests so visitor context and locale are available
+            \App\Http\Middleware\TrackVisitor::class,
             \App\Http\Middleware\SetCountry::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\TrackVisitor::class,
             \App\Http\Middleware\ShareSubscriptionStatus::class,
         ]);
 

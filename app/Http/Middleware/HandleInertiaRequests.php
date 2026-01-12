@@ -32,14 +32,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Get visitor context from request (set by TrackVisitor middleware)
+        $visitorId = $request->cookie('visitor_id');
+        $visitor = $visitorId ? Visitor::find($visitorId) : null;
+
         // Check if visitor has completed prompts (for banner display)
         $visitorHasCompletedPrompts = false;
-        if (! $request->user()) {
-            $visitorId = $request->cookie('visitor_id');
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                $visitorHasCompletedPrompts = $visitor?->hasCompletedPrompts() ?? false;
-            }
+        if (! $request->user() && $visitor) {
+            $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts() ?? false;
         }
 
         // Get country from route or detect
@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user() ? UserResource::make($request->user())->resolve() : null,
             ],
+            'visitor' => fn () => $visitorId ? ['id' => $visitorId] : null,
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

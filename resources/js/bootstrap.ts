@@ -1,7 +1,21 @@
 import axios from 'axios';
+import { analyticsSessionService } from './services/analyticsSession';
+
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+/**
+ * Add analytics session ID to all requests
+ * The session ID is optional and only added if analytics consent is granted
+ */
+window.axios.interceptors.request.use((config) => {
+    const sessionId = analyticsSessionService.getCurrentSessionId();
+    if (sessionId) {
+        config.headers['X-Analytics-Session-Id'] = sessionId;
+    }
+    return config;
+});
 
 /**
  * Laravel Echo for real-time broadcasting with comprehensive error handling

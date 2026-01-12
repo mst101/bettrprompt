@@ -42,12 +42,6 @@ export const COOKIE_CATEGORIES = {
                     'Identifies returning visitors to show personalised welcome messages',
                 duration: '1 year',
             },
-            {
-                name: 'voice_input_preference',
-                purpose:
-                    'Remembers your voice input method preference (Browser vs Whisper API)',
-                duration: '1 year',
-            },
         ],
     },
     analytics: {
