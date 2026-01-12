@@ -177,6 +177,98 @@ describe('Subscription Feature Tests', function () {
         });
     });
 
+    describe('Checkout', function () {
+        it('requires authentication', function () {
+            $response = $this->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'monthly',
+            ]);
+
+            $response->assertUnauthorized();
+        });
+
+        it('returns checkout URL for authenticated user', function () {
+            $user = User::factory()->create(['currency_code' => 'GBP']);
+
+            $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'monthly',
+            ])->assertSuccessful()
+                ->assertJsonStructure(['url']);
+        });
+
+        it('validates required parameters', function () {
+            $user = User::factory()->create();
+
+            $this->actingAs($user)->postJson(route('subscription.checkout'), [])
+                ->assertUnprocessable()
+                ->assertJsonValidationErrors(['tier', 'interval']);
+        });
+
+        it('validates tier parameter', function () {
+            $user = User::factory()->create();
+
+            $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'invalid',
+                'interval' => 'monthly',
+            ])->assertUnprocessable()
+                ->assertJsonValidationErrors(['tier']);
+        });
+
+        it('validates interval parameter', function () {
+            $user = User::factory()->create();
+
+            $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'invalid',
+            ])->assertUnprocessable()
+                ->assertJsonValidationErrors(['interval']);
+        });
+
+        it('returns error if price not found', function () {
+            $user = User::factory()->create(['currency_code' => 'ZZZ']);
+
+            $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'monthly',
+            ])->assertUnprocessable();
+        });
+
+        it('works for both pro and private tiers', function () {
+            $user = User::factory()->create(['currency_code' => 'GBP']);
+
+            $proResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'monthly',
+            ]);
+
+            $privateResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'private',
+                'interval' => 'monthly',
+            ]);
+
+            $proResponse->assertSuccessful()->assertJsonStructure(['url']);
+            $privateResponse->assertSuccessful()->assertJsonStructure(['url']);
+        });
+
+        it('works for both monthly and yearly intervals', function () {
+            $user = User::factory()->create(['currency_code' => 'GBP']);
+
+            $monthlyResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'monthly',
+            ]);
+
+            $yearlyResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'pro',
+                'interval' => 'yearly',
+            ]);
+
+            $monthlyResponse->assertSuccessful()->assertJsonStructure(['url']);
+            $yearlyResponse->assertSuccessful()->assertJsonStructure(['url']);
+        });
+    });
+
     describe('Subscription Success', function () {
         it('sets subscription tier to pro after checkout', function () {
             $user = User::factory()->create(['subscription_tier' => 'free']);

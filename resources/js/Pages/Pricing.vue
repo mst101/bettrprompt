@@ -7,6 +7,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PricingPlans, SubscriptionStatus } from '@/Types';
+import { getCsrfToken } from '@/Utils/cookies';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, inject, ref } from 'vue';
 
@@ -103,14 +104,17 @@ async function subscribe(tier: 'pro' | 'private') {
 
     isLoading.value = true;
     try {
+        const csrfToken = getCsrfToken();
+
+        if (!csrfToken) {
+            throw new Error('CSRF token not found');
+        }
+
         const response = await fetch(countryRoute('subscription.checkout'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token':
-                    document
-                        .querySelector('meta[name="csrf-token"]')
-                        ?.getAttribute('content') || '',
+                'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify({
                 tier,
