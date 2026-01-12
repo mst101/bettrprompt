@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\DTOs\LocationData;
+use App\Models\Country;
 use App\Models\User;
 use App\Models\Visitor;
 use App\Services\GeolocationService;
@@ -106,10 +108,26 @@ class TrackVisitor
 
         // Create visitor in a separate transaction that commits immediately
         // This ensures the visitor persists even if the main request fails
-        $visitor = DB::transaction(function () use ($request, $referredByUserId) {
-            // Perform geolocation lookup if enabled
+        $routeCountryCode = $request->route('country');
+        $routeCountry = $routeCountryCode
+            ? Country::with(['language', 'currency'])->find($routeCountryCode)
+            : null;
+
+        $visitor = DB::transaction(function () use ($request, $referredByUserId, $routeCountry) {
             $locationData = null;
-            if (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
+
+            if ($routeCountry) {
+                $languageCode = SetCountry::normalizeLocaleToSupported($routeCountry->language?->id)
+                    ?? config('app.fallback_locale', 'en-US');
+
+                $locationData = [
+                    'country_code' => $routeCountry->id,
+                    'country_name' => $routeCountry->name,
+                    'currency_code' => $routeCountry->currency_id,
+                    'language_code' => $languageCode,
+                    'location_detected_at' => now(),
+                ];
+            } elseif (config('geoip.enabled') && config('geoip.features.lookup_on_visitor_creation')) {
                 try {
                     $geolocationService = new GeolocationService;
                     $locationData = $geolocationService->lookupIp($request->ip());
@@ -138,9 +156,12 @@ class TrackVisitor
                 'referred_by_user_id' => $referredByUserId,
             ];
 
-            // Add location data if geolocation succeeded
+            // Add location data if available
             if ($locationData !== null) {
-                $visitorData = array_merge($visitorData, $locationData->toArray());
+                $visitorData = array_merge(
+                    $visitorData,
+                    $locationData instanceof LocationData ? $locationData->toArray() : $locationData
+                );
             }
 
             return Visitor::create($visitorData);

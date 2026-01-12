@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\SetCountry;
+use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateVisitorPersonalityRequest;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
@@ -99,5 +102,95 @@ class VisitorController extends Controller
         }
 
         return back();
+    }
+
+    /**
+     * Update visitor's location preference.
+     */
+    public function updateLocation(UpdateLocationRequest $request): JsonResponse
+    {
+        $visitorId = $request->cookie('visitor_id');
+        if (! $visitorId) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $visitor = Visitor::find($visitorId);
+        if (! $visitor) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $validated = $request->validated();
+        $fields = [
+            'country_code',
+            'region',
+            'city',
+            'timezone',
+            'currency_code',
+            'language_code',
+        ];
+        $updates = [];
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $validated)) {
+                if ($field === 'language_code') {
+                    $updates[$field] = $validated[$field]
+                        ? (SetCountry::normalizeLocaleToSupported($validated[$field]) ?? $validated[$field])
+                        : null;
+                } else {
+                    $updates[$field] = $validated[$field];
+                }
+            }
+        }
+
+        if (array_key_exists('country_code', $updates)) {
+            $country = Country::find($updates['country_code']);
+            $updates['country_name'] = $country?->name;
+        }
+
+        if (! empty($updates)) {
+            $visitor->update($updates);
+        }
+
+        if (array_key_exists('language_code', $updates)) {
+            Cache::forget("visitor.{$visitorId}.language");
+        }
+        if (array_key_exists('currency_code', $updates)) {
+            Cache::forget("visitor.{$visitorId}.currency");
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Clear visitor location data.
+     */
+    public function clearLocation(Request $request): JsonResponse
+    {
+        $visitorId = $request->cookie('visitor_id');
+        if (! $visitorId) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $visitor = Visitor::find($visitorId);
+        if (! $visitor) {
+            return response()->json(['success' => false], 404);
+        }
+
+        $visitor->update([
+            'country_code' => null,
+            'country_name' => null,
+            'region' => null,
+            'city' => null,
+            'timezone' => null,
+            'currency_code' => null,
+            'latitude' => null,
+            'longitude' => null,
+            'language_code' => null,
+            'location_detected_at' => null,
+        ]);
+
+        Cache::forget("visitor.{$visitorId}.language");
+        Cache::forget("visitor.{$visitorId}.currency");
+
+        return response()->json(['success' => true]);
     }
 }
