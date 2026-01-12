@@ -2,8 +2,9 @@
  * Subscription status for the current user
  */
 export interface SubscriptionStatus {
-    tier: 'free' | 'pro';
+    tier: 'free' | 'pro' | 'private';
     isPro: boolean;
+    isPrivate: boolean;
     promptsUsed: number;
     promptsRemaining: number;
     promptLimit: number;
@@ -26,10 +27,7 @@ export interface PricingPlan {
 /**
  * Available pricing plans
  */
-export interface PricingPlans {
-    monthly: PricingPlan;
-    yearly: PricingPlan;
-}
+export type PricingPlans = Record<string, PricingPlan>;
 
 /**
  * Feature list for pricing tiers

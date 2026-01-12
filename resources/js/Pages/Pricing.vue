@@ -6,9 +6,10 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { PricingPlans } from '@/Types';
+import type { PricingPlans, SubscriptionStatus } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { route } from 'ziggy-js';
 
 interface Props {
     plans: PricingPlans;
@@ -31,7 +32,9 @@ defineOptions({
 const page = usePage();
 const { currentCountry, countryRoute } = useCountryRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
-const subscription = computed(() => page.props.subscription);
+const subscription = computed(
+    () => page.props.subscription as SubscriptionStatus | undefined,
+);
 
 // Computed properties to get prices from database
 const proPrice = computed(() => {
@@ -75,10 +78,6 @@ function updateCurrency(newCurrency: string) {
             },
             onFinish: () => {
                 isCurrencyUpdating.value = false;
-            },
-            onError: () => {
-                // Revert currency selection on error
-                selectedCurrency.value = props.currency;
             },
         },
     );
