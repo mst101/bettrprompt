@@ -38,12 +38,16 @@ const subscription = computed(
 // Computed properties to get prices from database
 const proPrice = computed(() => {
     const key = `pro_${selectedPlan.value}`;
-    return props.plans[key]?.price ?? 0;
+    const price = props.plans[key]?.price ?? 0;
+    // Remove decimals for yearly prices
+    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
 });
 
 const privatePrice = computed(() => {
     const key = `private_${selectedPlan.value}`;
-    return props.plans[key]?.price ?? 0;
+    const price = props.plans[key]?.price ?? 0;
+    // Remove decimals for yearly prices
+    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
 });
 
 const proMonthlyEquivalent = computed(() => {
