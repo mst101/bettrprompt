@@ -42,30 +42,60 @@ class SetCountry
      */
     protected function resolveLanguageCode(string $countryCode, Request $request): string
     {
+        $routeCountry = $request->route('country');
+
         // 1. Check authenticated user preference (with Redis cache)
         if ($user = $request->user()) {
+            $userCountry = $user->country_code;
+            $cacheKey = $routeCountry
+                ? "user.{$user->id}.language.{$routeCountry}.{$userCountry}"
+                : "user.{$user->id}.language";
+
             return Cache::remember(
-                "user.{$user->id}.language",
+                $cacheKey,
                 3600, // 1 hour
-                function () use ($user, $countryCode) {
+                function () use ($user, $countryCode, $routeCountry, $userCountry) {
                     // Refresh user from database to get latest language_code
                     $freshUser = $user->fresh();
+                    $userCountry = $freshUser?->country_code ?? $userCountry;
 
-                    return $freshUser->language_code ?? $this->getCountryDefaultLanguage($countryCode);
+                    if ($routeCountry) {
+                        if (! $userCountry || strtolower($userCountry) !== strtolower($routeCountry)) {
+                            return $this->getCountryDefaultLanguage($countryCode);
+                        }
+                    }
+
+                    $normalized = self::normalizeLocaleToSupported($freshUser?->language_code);
+
+                    return $normalized ?? $this->getCountryDefaultLanguage($countryCode);
                 }
             );
         }
 
         // 2. Check visitor preference (with Redis cache)
         if ($visitorId = $request->cookie('visitor_id')) {
+            $visitorCountry = Visitor::where('id', $visitorId)->value('country_code');
+            $cacheKey = $routeCountry
+                ? "visitor.{$visitorId}.language.{$routeCountry}.{$visitorCountry}"
+                : "visitor.{$visitorId}.language";
+
             return Cache::remember(
-                "visitor.{$visitorId}.language",
+                $cacheKey,
                 3600, // 1 hour
-                function () use ($visitorId, $countryCode) {
+                function () use ($visitorId, $countryCode, $routeCountry, $visitorCountry) {
                     // Always fetch fresh visitor from database to get latest language_code
                     $visitor = Visitor::find($visitorId);
+                    $visitorCountry = $visitor?->country_code ?? $visitorCountry;
 
-                    return $visitor?->language_code ?? $this->getCountryDefaultLanguage($countryCode);
+                    if ($routeCountry) {
+                        if (! $visitorCountry || strtolower($visitorCountry) !== strtolower($routeCountry)) {
+                            return $this->getCountryDefaultLanguage($countryCode);
+                        }
+                    }
+
+                    $normalized = self::normalizeLocaleToSupported($visitor?->language_code);
+
+                    return $normalized ?? $this->getCountryDefaultLanguage($countryCode);
                 }
             );
         }
@@ -92,15 +122,22 @@ class SetCountry
                     return config('app.fallback_locale', 'en-US');
                 }
 
-                // Check if language directory exists
-                $languageDir = lang_path($country->language->id);
-                if (! is_dir($languageDir)) {
-                    Log::info("Language directory {$country->language->id}/ not found, using fallback");
+                $normalized = self::normalizeLocaleToSupported($country->language->id);
+                if (! $normalized) {
+                    Log::info("Country {$countryCode} language {$country->language->id} not supported, using fallback");
 
                     return config('app.fallback_locale', 'en-US');
                 }
 
-                return $country->language->id;
+                // Check if language directory exists
+                $languageDir = lang_path($normalized);
+                if (! is_dir($languageDir)) {
+                    Log::info("Language directory {$normalized}/ not found, using fallback");
+
+                    return config('app.fallback_locale', 'en-US');
+                }
+
+                return $normalized;
             }
         );
     }
@@ -111,12 +148,26 @@ class SetCountry
      */
     public function resolveCurrencyCode(string $countryCode, Request $request): string
     {
+        $routeCountry = $request->route('country');
+
         // 1. Check authenticated user preference (with Redis cache)
         if ($user = $request->user()) {
+            $userCountry = $user->country_code;
+            $cacheKey = $routeCountry
+                ? "user.{$user->id}.currency.{$routeCountry}.{$userCountry}"
+                : "user.{$user->id}.currency";
+
             return Cache::remember(
-                "user.{$user->id}.currency",
+                $cacheKey,
                 3600, // 1 hour
-                function () use ($user, $countryCode) {
+                function () use ($user, $countryCode, $routeCountry, $userCountry) {
+                    $userCountry = $user->country_code ?? $userCountry;
+                    if ($routeCountry) {
+                        if (! $userCountry || strtolower($userCountry) !== strtolower($routeCountry)) {
+                            return $this->getCountryDefaultCurrency($countryCode);
+                        }
+                    }
+
                     return $user->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
                 }
             );
@@ -124,11 +175,22 @@ class SetCountry
 
         // 2. Check visitor preference (with Redis cache)
         if ($visitorId = $request->cookie('visitor_id')) {
+            $visitorCountry = Visitor::where('id', $visitorId)->value('country_code');
+            $cacheKey = $routeCountry
+                ? "visitor.{$visitorId}.currency.{$routeCountry}.{$visitorCountry}"
+                : "visitor.{$visitorId}.currency";
+
             return Cache::remember(
-                "visitor.{$visitorId}.currency",
+                $cacheKey,
                 3600, // 1 hour
-                function () use ($visitorId, $countryCode) {
+                function () use ($visitorId, $countryCode, $routeCountry, $visitorCountry) {
                     $visitor = Visitor::find($visitorId);
+                    $visitorCountry = $visitor?->country_code ?? $visitorCountry;
+                    if ($routeCountry) {
+                        if (! $visitorCountry || strtolower($visitorCountry) !== strtolower($routeCountry)) {
+                            return $this->getCountryDefaultCurrency($countryCode);
+                        }
+                    }
 
                     return $visitor?->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
                 }
@@ -211,6 +273,34 @@ class SetCountry
 
         // 4. Fallback to default
         return config('app.fallback_country', 'gb');
+    }
+
+    /**
+     * Normalize a locale to a supported one (e.g. de -> de-DE, es-MX -> es-ES).
+     */
+    public static function normalizeLocaleToSupported(?string $locale): ?string
+    {
+        if (! $locale) {
+            return null;
+        }
+
+        $normalized = str_replace('_', '-', $locale);
+        $supported = config('app.supported_locales', []);
+
+        foreach ($supported as $supportedLocale) {
+            if (strtolower($supportedLocale) === strtolower($normalized)) {
+                return $supportedLocale;
+            }
+        }
+
+        $language = strtolower(explode('-', $normalized)[0]);
+        foreach ($supported as $supportedLocale) {
+            if (strtolower(explode('-', $supportedLocale)[0]) === $language) {
+                return $supportedLocale;
+            }
+        }
+
+        return null;
     }
 
     /**

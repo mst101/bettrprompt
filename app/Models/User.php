@@ -45,6 +45,7 @@ class User extends Authenticatable
         'location_detected_at',
         'location_manually_set',
         'language_manually_set',
+        'location_prompt_dismissed',
         // Professional context
         'job_title',
         'industry',
@@ -101,6 +102,7 @@ class User extends Authenticatable
             'location_detected_at' => 'datetime',
             'location_manually_set' => 'boolean',
             'language_manually_set' => 'boolean',
+            'location_prompt_dismissed' => 'boolean',
             'latitude' => 'float',
             'longitude' => 'float',
             // Tool preferences
@@ -280,21 +282,34 @@ class User extends Authenticatable
     public function updateLocation(array $locationData): void
     {
         DatabaseService::retryOnDeadlock(function () use ($locationData) {
-            // Build update array with only provided keys, supporting partial updates
-            $updates = array_filter([
-                'country_code' => $locationData['country_code'] ?? null,
-                'region' => $locationData['region'] ?? null,
-                'city' => $locationData['city'] ?? null,
-                'timezone' => $locationData['timezone'] ?? null,
-                'currency_code' => $locationData['currency_code'] ?? null,
-                'language_code' => $locationData['language_code'] ?? null,
-            ], fn ($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+            // Build update array with only provided keys, supporting clears
+            $fields = [
+                'country_code',
+                'region',
+                'city',
+                'timezone',
+                'currency_code',
+                'language_code',
+            ];
+            $updates = [];
+            foreach ($fields as $field) {
+                if (array_key_exists($field, $locationData)) {
+                    $updates[$field] = $locationData[$field];
+                }
+            }
+
+            if (array_key_exists('country_code', $locationData)) {
+                $country = $locationData['country_code']
+                    ? Country::find($locationData['country_code'])
+                    : null;
+                $updates['country_name'] = $country?->name;
+            }
 
             // Always mark location as manually set when updating
             $updates['location_manually_set'] = true;
 
             // If language is being updated, also mark language as manually set
-            if (isset($updates['language_code'])) {
+            if (array_key_exists('language_code', $updates)) {
                 $updates['language_manually_set'] = true;
             }
 
@@ -302,7 +317,7 @@ class User extends Authenticatable
                 $this->update($updates);
 
                 // Also update any associated visitor records to keep them in sync
-                if (isset($updates['language_code'])) {
+                if (array_key_exists('language_code', $updates)) {
                     Visitor::where('user_id', $this->id)
                         ->update(['language_code' => $updates['language_code']]);
                 }
