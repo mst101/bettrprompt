@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() ? UserResource::make($request->user())->resolve() : null,
             ],
             'visitor' => fn () => $visitorId ? ['id' => $visitorId] : null,
+            'experiments' => fn () => $request->input('experiment_assignments', []),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
