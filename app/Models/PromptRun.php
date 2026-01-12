@@ -103,6 +103,26 @@ class PromptRun extends Model
         return $this->hasMany(PromptRun::class, 'parent_id');
     }
 
+    public function frameworkSelections(): HasMany
+    {
+        return $this->hasMany(FrameworkSelection::class);
+    }
+
+    public function questionAnalytics(): HasMany
+    {
+        return $this->hasMany(QuestionAnalytic::class);
+    }
+
+    public function workflowAnalytics(): HasMany
+    {
+        return $this->hasMany(WorkflowAnalytic::class);
+    }
+
+    public function promptQualityMetric()
+    {
+        return $this->hasOne(PromptQualityMetric::class);
+    }
+
     /**
      * Get user context for workflow optimisation
      * Falls back to visitor context if no authenticated user

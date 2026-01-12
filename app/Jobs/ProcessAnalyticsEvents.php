@@ -3,8 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\AnalyticsEvent;
+use App\Models\PromptRun;
 use App\Services\ConversionAttributionService;
+use App\Services\FrameworkSelectionService;
+use App\Services\PromptQualityService;
+use App\Services\QuestionAnalyticsService;
 use App\Services\SessionProcessorService;
+use App\Services\WorkflowAnalyticsService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,6 +46,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
     public function handle(
         ConversionAttributionService $attributionService,
         SessionProcessorService $sessionService,
+        FrameworkSelectionService $frameworkService,
+        QuestionAnalyticsService $questionService,
+        WorkflowAnalyticsService $workflowService,
+        PromptQualityService $qualityService,
     ): void {
         try {
             Log::info('Processing analytics events', [
@@ -71,6 +80,15 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Process session data
             $this->processSessions($eventsToInsert, $sessionService);
+
+            // Process domain-specific analytics
+            $this->processDomainAnalytics(
+                $eventsToInsert,
+                $frameworkService,
+                $questionService,
+                $workflowService,
+                $qualityService,
+            );
 
             Log::info('Analytics events processed successfully', [
                 'inserted_count' => count($eventsToInsert),
@@ -192,6 +210,221 @@ class ProcessAnalyticsEvents implements ShouldQueue
             str_contains($name, 'session') => 'system',
             default => 'engagement',
         };
+    }
+
+    /**
+     * Process domain-specific analytics from events
+     *
+     * Maps generic events to domain-specific analytics services
+     */
+    private function processDomainAnalytics(
+        array $enrichedEvents,
+        FrameworkSelectionService $frameworkService,
+        QuestionAnalyticsService $questionService,
+        WorkflowAnalyticsService $workflowService,
+        PromptQualityService $qualityService,
+    ): void {
+        if (empty($enrichedEvents) || ! $this->visitorId) {
+            return;
+        }
+
+        // Group events by prompt_run_id for efficient processing
+        $eventsByPromptRun = collect($enrichedEvents)->groupBy('prompt_run_id');
+
+        foreach ($eventsByPromptRun as $promptRunId => $events) {
+            if (! $promptRunId) {
+                continue;
+            }
+
+            $promptRun = PromptRun::find($promptRunId);
+            if (! $promptRun) {
+                continue;
+            }
+
+            foreach ($events as $event) {
+                $this->processDomainEvent(
+                    $event,
+                    $promptRun,
+                    $frameworkService,
+                    $questionService,
+                    $workflowService,
+                    $qualityService,
+                );
+            }
+        }
+    }
+
+    /**
+     * Process a single domain event
+     */
+    private function processDomainEvent(
+        array $event,
+        PromptRun $promptRun,
+        FrameworkSelectionService $frameworkService,
+        QuestionAnalyticsService $questionService,
+        WorkflowAnalyticsService $workflowService,
+        PromptQualityService $qualityService,
+    ): void {
+        try {
+            $eventName = $event['name'] ?? '';
+            $properties = $event['properties'] ?? [];
+
+            // Framework selection events
+            if ($eventName === 'framework_recommended') {
+                $frameworkService->recordSelection(
+                    promptRun: $promptRun,
+                    visitorId: $this->visitorId,
+                    userId: $this->userId,
+                    recommendedFramework: $properties['framework'] ?? 'unknown',
+                    chosenFramework: $properties['framework'] ?? 'unknown',
+                    recommendationScores: $properties['scores'] ?? [],
+                    taskCategory: $properties['task_category'] ?? null,
+                    personalityType: $properties['personality_type'] ?? null,
+                );
+            } elseif ($eventName === 'framework_selected') {
+                // User chose a different framework than recommended
+                $selection = $promptRun->frameworkSelections()
+                    ->latest()
+                    ->first();
+
+                if ($selection && $selection->recommended_framework !== $properties['framework']) {
+                    $selection->update(['chosen_framework' => $properties['framework']]);
+                }
+            }
+
+            // Question presentation events
+            elseif ($eventName === 'question_presented') {
+                $questionService->recordPresentation(
+                    promptRun: $promptRun,
+                    visitorId: $this->visitorId,
+                    userId: $this->userId,
+                    questionId: $properties['question_id'] ?? 'unknown',
+                    questionCategory: $properties['question_category'] ?? 'unknown',
+                    personalityVariant: $properties['personality_variant'] ?? null,
+                    displayOrder: $properties['display_order'] ?? 0,
+                    wasRequired: $properties['was_required'] ?? false,
+                );
+            }
+
+            // Question response events
+            elseif ($eventName === 'question_answered') {
+                // Find the latest question analytic for this question
+                $analytic = $promptRun->questionAnalytics()
+                    ->where('question_id', $properties['question_id'] ?? 'unknown')
+                    ->latest()
+                    ->first();
+
+                if ($analytic) {
+                    $questionService->recordResponse(
+                        analytic: $analytic,
+                        responseLength: strlen($properties['response'] ?? ''),
+                        timeToAnswerMs: $properties['time_to_answer_ms'] ?? null,
+                    );
+                }
+            }
+
+            // Question skip events
+            elseif ($eventName === 'question_skipped') {
+                $analytic = $promptRun->questionAnalytics()
+                    ->where('question_id', $properties['question_id'] ?? 'unknown')
+                    ->latest()
+                    ->first();
+
+                if ($analytic) {
+                    $questionService->recordSkip(
+                        analytic: $analytic,
+                        timeBeforeSkipMs: $properties['time_before_skip_ms'] ?? null,
+                    );
+                }
+            }
+
+            // Workflow events
+            elseif ($eventName === 'workflow_started') {
+                $workflowService->recordStart(
+                    promptRun: $promptRun,
+                    workflowStage: $properties['workflow_stage'] ?? 0,
+                    workflowVersion: $properties['workflow_version'] ?? null,
+                );
+            } elseif ($eventName === 'workflow_completed') {
+                $analytic = $promptRun->workflowAnalytics()
+                    ->where('workflow_stage', $properties['workflow_stage'] ?? 0)
+                    ->where('status', 'processing')
+                    ->latest()
+                    ->first();
+
+                if ($analytic) {
+                    $workflowService->recordCompletion(
+                        analytic: $analytic,
+                        inputTokens: $properties['input_tokens'] ?? null,
+                        outputTokens: $properties['output_tokens'] ?? null,
+                        estimatedCostUsd: $properties['estimated_cost_usd'] ?? null,
+                        modelUsed: $properties['model_used'] ?? null,
+                    );
+                }
+            } elseif ($eventName === 'workflow_failed') {
+                $analytic = $promptRun->workflowAnalytics()
+                    ->where('workflow_stage', $properties['workflow_stage'] ?? 0)
+                    ->where('status', 'processing')
+                    ->latest()
+                    ->first();
+
+                if ($analytic) {
+                    $workflowService->recordFailure(
+                        analytic: $analytic,
+                        errorCode: $properties['error_code'] ?? 'UNKNOWN',
+                        errorMessage: $properties['error_message'] ?? 'Unknown error',
+                        inputTokens: $properties['input_tokens'] ?? null,
+                        outputTokens: $properties['output_tokens'] ?? null,
+                    );
+                }
+            } elseif ($eventName === 'workflow_timeout') {
+                $analytic = $promptRun->workflowAnalytics()
+                    ->where('workflow_stage', $properties['workflow_stage'] ?? 0)
+                    ->where('status', 'processing')
+                    ->latest()
+                    ->first();
+
+                if ($analytic) {
+                    $workflowService->recordTimeout(analytic: $analytic);
+                }
+            }
+
+            // Prompt quality events
+            elseif ($eventName === 'prompt_rated') {
+                $qualityService->recordMetrics(
+                    promptRun: $promptRun,
+                    userRating: $properties['rating'] ?? null,
+                    taskCategory: $properties['task_category'] ?? null,
+                    frameworkUsed: $properties['framework_used'] ?? null,
+                    personalityType: $properties['personality_type'] ?? null,
+                );
+            } elseif ($eventName === 'prompt_copied') {
+                $qualityService->recordMetrics(
+                    promptRun: $promptRun,
+                    wasCopied: true,
+                    copyCount: ($properties['copy_count'] ?? 1),
+                );
+            } elseif ($eventName === 'prompt_edited') {
+                $qualityService->recordMetrics(
+                    promptRun: $promptRun,
+                    wasEdited: true,
+                    editPercentage: $properties['edit_percentage'] ?? null,
+                    promptLength: $properties['original_length'] ?? null,
+                );
+            } elseif ($eventName === 'prompt_completed') {
+                $qualityService->recordMetrics(
+                    promptRun: $promptRun,
+                    timeToCompleteMs: $properties['time_to_complete_ms'] ?? null,
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to process domain event', [
+                'event_name' => $event['name'] ?? 'unknown',
+                'prompt_run_id' => $promptRun->id,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't rethrow - continue processing other events
+        }
     }
 
     /**
