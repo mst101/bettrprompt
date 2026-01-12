@@ -3,6 +3,7 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
+use App\Http\Controllers\Admin\DomainAnalyticsController;
 use App\Http\Controllers\Admin\ExperimentResultsController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\MailgunWebhookController;
@@ -232,6 +233,18 @@ Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60
 // Stripe webhooks (handled by Laravel Cashier)
 Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])
     ->name('cashier.webhook');
+
+// Domain analytics API (admin only)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('admin/domain-analytics')->group(function () {
+        Route::get('/frameworks', [DomainAnalyticsController::class, 'getFrameworkAnalytics'])
+            ->name('admin.domain-analytics.frameworks');
+        Route::get('/questions', [DomainAnalyticsController::class, 'getQuestionAnalytics'])
+            ->name('admin.domain-analytics.questions');
+        Route::get('/workflows', [DomainAnalyticsController::class, 'getWorkflowAnalytics'])
+            ->name('admin.domain-analytics.workflows');
+    });
+});
 
 // Test-only endpoints for E2E testing
 if (config('app.env') === 'e2e') {

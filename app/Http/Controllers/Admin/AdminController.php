@@ -26,4 +26,12 @@ class AdminController extends Controller
             'stats' => $stats,
         ]);
     }
+
+    /**
+     * Display domain analytics dashboard
+     */
+    public function domainAnalytics(): Response
+    {
+        return Inertia::render('Admin/DomainAnalytics/Index');
+    }
 }

@@ -236,6 +236,9 @@ Route::prefix('{country}')
             Route::post('/experiments/{experiment}/pause', [ExperimentsController::class, 'pause'])->name('experiments.pause');
             Route::post('/experiments/{experiment}/resume', [ExperimentsController::class, 'resume'])->name('experiments.resume');
             Route::post('/experiments/{experiment}/complete', [ExperimentsController::class, 'complete'])->name('experiments.complete');
+
+            // Domain Analytics
+            Route::get('/domain-analytics', [\App\Http\Controllers\Admin\AdminController::class, 'domainAnalytics'])->name('domain-analytics.index');
         });
 
         // Workflow management system (admin only)
