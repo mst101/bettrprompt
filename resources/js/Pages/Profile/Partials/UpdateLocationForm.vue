@@ -33,6 +33,13 @@ interface Props {
     countries: SelectOption[];
     currencies: SelectOption[];
     languages: SelectOption[];
+    countryDefaults: Record<
+        string,
+        {
+            currencyCode: string;
+            languageCode: string;
+        }
+    >;
 }
 
 const props = defineProps<Props>();
@@ -69,6 +76,41 @@ const form = useForm({
     currencyCode: props.locationData.currencyCode || '',
     languageCode: props.locationData.languageCode || '',
 });
+
+const getBrowserTimezone = (): string | null => {
+    try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+    } catch {
+        return null;
+    }
+};
+
+watch(
+    () => form.countryCode,
+    (newCountry, oldCountry) => {
+        if (!newCountry || newCountry === oldCountry) {
+            return;
+        }
+
+        form.region = '';
+        form.city = '';
+
+        const defaults = props.countryDefaults[newCountry];
+        if (defaults?.currencyCode) {
+            form.currencyCode = defaults.currencyCode;
+        }
+        if (defaults?.languageCode) {
+            form.languageCode = defaults.languageCode;
+        }
+
+        if (!form.timezone) {
+            const browserTimezone = getBrowserTimezone();
+            if (browserTimezone) {
+                form.timezone = browserTimezone;
+            }
+        }
+    },
+);
 
 watch(
     () => props.locationData.languageCode,
@@ -107,6 +149,7 @@ const submit = async () => {
         form.languageCode &&
         form.languageCode !== props.locationData.languageCode;
     const newLocale = form.languageCode as LocaleCode;
+    const targetCountry = form.countryCode || currentCountry.value;
 
     if (languageChanged) {
         // Update frontend i18n first
@@ -119,7 +162,7 @@ const submit = async () => {
                 // Navigate to new country's profile page
                 // Note: Do NOT use preserveState: true here, as it would preserve the old page props
                 // and prevent the updated locale from being reflected in the UI
-                router.visit(`/${currentCountry.value}/profile`, {
+                router.visit(`/${targetCountry}/profile`, {
                     preserveScroll: true,
                 });
             },
@@ -128,6 +171,13 @@ const submit = async () => {
         // No language change, just submit normally
         form.patch(countryRoute('profile.location.update'), {
             preserveScroll: true,
+            onSuccess: () => {
+                if (targetCountry !== currentCountry.value) {
+                    router.visit(`/${targetCountry}/profile`, {
+                        preserveScroll: true,
+                    });
+                }
+            },
         });
     }
 };

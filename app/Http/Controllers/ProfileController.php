@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\SetCountry;
 use App\Http\Requests\DeleteProfileRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdateBudgetRequest;
@@ -57,14 +58,40 @@ class ProfileController extends Controller
         ];
 
         $user = $request->user();
+        $routeCountry = $request->route('country');
+        $useRouteDefaults = $routeCountry
+            && (! $user->country_code || strtolower($routeCountry) !== strtolower($user->country_code));
+        $routeCountryModel = $routeCountry
+            ? Country::with(['language', 'currency'])->find($routeCountry)
+            : null;
+        $resolvedCurrencyCode = $useRouteDefaults && $routeCountry
+            ? (new SetCountry)->resolveCurrencyCode($routeCountry, $request)
+            : $user->currency_code;
+        $resolvedLanguageCode = $useRouteDefaults
+            ? app()->getLocale()
+            : $user->language_code;
+        $resolvedCountryCode = $useRouteDefaults && $routeCountry
+            ? $routeCountry
+            : $user->country_code;
+        $resolvedCountryName = $useRouteDefaults
+            ? ($routeCountryModel?->name ?? $user->country_name)
+            : $user->country_name;
+        $resolvedRegion = $useRouteDefaults ? null : $user->region;
+        $resolvedCity = $useRouteDefaults ? null : $user->city;
+        $resolvedTimezone = $useRouteDefaults ? null : $user->timezone;
 
         // Get reference data for forms
-        $countries = Country::sortedByName()->map(fn ($country) => [
+        $countriesCollection = Country::with(['language', 'currency'])
+            ->orderBy('name', 'asc')
+            ->get();
+        $countries = $countriesCollection->map(fn ($country) => [
             'value' => $country->id,
             'label' => $country->name,
         ])->values();
 
-        $currencies = Currency::where('active', true)->get()->map(fn ($currency) => [
+        $activeCurrencies = Currency::where('active', true)->get();
+        $activeCurrencyIds = $activeCurrencies->pluck('id')->all();
+        $currencies = $activeCurrencies->map(fn ($currency) => [
             'value' => $currency->id,
             'label' => "$currency->symbol ($currency->id)",
         ])->values();
@@ -85,6 +112,27 @@ class ProfileController extends Controller
                 'label' => $languageLabels[$locale] ?? $locale,
             ])
             ->values();
+        $countryDefaults = $countriesCollection->mapWithKeys(function ($country) use (
+            $activeCurrencyIds
+        ) {
+            $languageCode = $country->language?->id;
+            $normalizedLanguage = $languageCode
+                ? SetCountry::normalizeLocaleToSupported($languageCode)
+                : null;
+
+            $currencyCode = $country->currency_id;
+            $normalizedCurrency = $currencyCode && in_array($currencyCode, $activeCurrencyIds, true)
+                ? $currencyCode
+                : config('app.fallback_currency', 'USD');
+
+            return [
+                $country->id => [
+                    'currencyCode' => $normalizedCurrency,
+                    'languageCode' => $normalizedLanguage
+                        ?? config('app.fallback_locale', 'en-US'),
+                ],
+            ];
+        });
 
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
@@ -94,13 +142,13 @@ class ProfileController extends Controller
             // Profile data
             'profileCompletion' => $user->profile_completion_percentage,
             'locationData' => [
-                'countryCode' => $user->country_code,
-                'countryName' => $user->country_name,
-                'region' => $user->region,
-                'city' => $user->city,
-                'timezone' => $user->timezone,
-                'currencyCode' => $user->currency_code,
-                'languageCode' => $user->language_code,
+                'countryCode' => $resolvedCountryCode,
+                'countryName' => $resolvedCountryName,
+                'region' => $resolvedRegion,
+                'city' => $resolvedCity,
+                'timezone' => $resolvedTimezone,
+                'currencyCode' => $resolvedCurrencyCode,
+                'languageCode' => $resolvedLanguageCode,
                 'detectedAt' => $user->location_detected_at,
                 'manuallySet' => $user->location_manually_set,
             ],
@@ -108,6 +156,7 @@ class ProfileController extends Controller
             'countries' => $countries,
             'currencies' => $currencies,
             'languages' => $languages,
+            'countryDefaults' => $countryDefaults,
             'professionalData' => [
                 'jobTitle' => $user->job_title,
                 'industry' => $user->industry,
@@ -276,7 +325,7 @@ class ProfileController extends Controller
     /**
      * Update user location information.
      */
-    public function updateLocation(UpdateLocationRequest $request): RedirectResponse
+    public function updateLocation(UpdateLocationRequest $request): RedirectResponse|JsonResponse
     {
         try {
             $user = $request->user();
@@ -287,12 +336,19 @@ class ProfileController extends Controller
             $user->updateLocation($validated);
 
             // Invalidate language cache if language was updated
-            if (isset($validated['language_code'])) {
+            if (array_key_exists('language_code', $validated)) {
                 Cache::forget("user.{$user->id}.language");
+            }
+            if (array_key_exists('currency_code', $validated)) {
+                Cache::forget("user.{$user->id}.currency");
             }
 
             // Redirect to profile page (language preference is stored in user profile,
             // country code in URL stays the same)
+            if ($request->wantsJson()) {
+                return response()->json(['success' => true]);
+            }
+
             return Redirect::route('profile.edit')
                 ->with('status', 'location-updated');
         } catch (Exception $e) {
@@ -401,6 +457,8 @@ class ProfileController extends Controller
             $user = $request->user();
             $oldLanguageCode = $user->language_code;
             $newLanguageCode = null;
+            $currentCountry = $request->route('country');
+            $detectedCountry = $locationData->countryCode ?? $currentCountry;
 
             DatabaseService::retryOnDeadlock(function () use ($user, $locationData, &$newLanguageCode) {
                 $updateData = $locationData->toArray() + [
@@ -427,12 +485,11 @@ class ProfileController extends Controller
             // If language was detected and changed, redirect to the detected country's profile page
             // Use the detected country code from the geolocation, or current country if not changed
             if ($newLanguageCode && $newLanguageCode !== $oldLanguageCode) {
-                // Get the detected country code if it was updated
-                $detectedCountry = $currentCountry;
-                if (isset($validated['country_code'])) {
-                    $detectedCountry = $validated['country_code'];
-                }
+                return Redirect::to("/{$detectedCountry}/profile")
+                    ->with('status', 'location-detected-updated');
+            }
 
+            if ($detectedCountry && $detectedCountry !== $currentCountry) {
                 return Redirect::to("/{$detectedCountry}/profile")
                     ->with('status', 'location-detected-updated');
             }
@@ -452,10 +509,17 @@ class ProfileController extends Controller
     /**
      * Clear user location data.
      */
-    public function clearLocation(Request $request): RedirectResponse
+    public function clearLocation(Request $request): RedirectResponse|JsonResponse
     {
         try {
             $request->user()->clearLocation();
+
+            Cache::forget("user.{$request->user()->id}.language");
+            Cache::forget("user.{$request->user()->id}.currency");
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => true]);
+            }
 
             return Redirect::route('profile.edit')
                 ->with('status', 'location-cleared');
@@ -467,6 +531,26 @@ class ProfileController extends Controller
 
             return Redirect::back()->with('error', __('messages.profile.location_clear_failed'));
         }
+    }
+
+    /**
+     * Update the user's location prompt preference.
+     */
+    public function updateLocationPromptPreference(Request $request): RedirectResponse|JsonResponse
+    {
+        $validated = $request->validate([
+            'dismissed' => ['required', 'boolean'],
+        ]);
+
+        $request->user()->update([
+            'location_prompt_dismissed' => $validated['dismissed'],
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return Redirect::back();
     }
 
     public function clearProfessional(Request $request): RedirectResponse

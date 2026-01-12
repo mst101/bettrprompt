@@ -54,6 +54,13 @@ interface SelectOption {
     label: string;
 }
 
+interface CountryDefaults {
+    [countryCode: string]: {
+        currencyCode: string;
+        languageCode: string;
+    };
+}
+
 defineProps<{
     mustVerifyEmail?: boolean;
     status?: string;
@@ -64,6 +71,7 @@ defineProps<{
     countries: SelectOption[];
     currencies: SelectOption[];
     languages: SelectOption[];
+    countryDefaults: CountryDefaults;
     professionalData: ProfessionalData;
     teamData: TeamData;
     budgetData: BudgetData;
@@ -108,6 +116,7 @@ defineOptions({
             :countries="countries"
             :currencies="currencies"
             :languages="languages"
+            :country-defaults="countryDefaults"
         />
 
         <!-- Professional Context -->
