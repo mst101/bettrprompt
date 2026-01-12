@@ -8,7 +8,7 @@ import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PricingPlans, SubscriptionStatus } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 
 interface Props {
     plans: PricingPlans;
@@ -33,6 +33,12 @@ const { currentCountry, countryRoute } = useCountryRoute();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 const subscription = computed(
     () => page.props.subscription as SubscriptionStatus | undefined,
+);
+
+// Inject modal controls from AppLayout
+const openRegisterModal = inject<(() => void) | undefined>(
+    'openRegisterModal',
+    undefined,
 );
 
 // Computed properties to get prices from database
@@ -88,8 +94,10 @@ function updateCurrency(newCurrency: string) {
 
 function subscribe(tier: 'pro' | 'private') {
     if (!isAuthenticated.value) {
-        // Redirect to home with register modal
-        router.visit('/?modal=register');
+        // Open register modal for unauthenticated users
+        if (openRegisterModal) {
+            openRegisterModal();
+        }
         return;
     }
 
@@ -106,11 +114,9 @@ function subscribe(tier: 'pro' | 'private') {
 }
 
 function getStarted() {
-    if (!isAuthenticated.value) {
-        router.visit('/?modal=register');
-    } else {
-        router.visit(countryRoute('prompt-builder.index'));
-    }
+    // Navigate to prompt-builder for both authenticated and unauthenticated users
+    // Unauthenticated users can use the free tier immediately
+    router.visit(countryRoute('prompt-builder.index'));
 }
 </script>
 
