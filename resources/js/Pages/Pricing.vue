@@ -9,7 +9,6 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PricingPlans, SubscriptionStatus } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import { route } from 'ziggy-js';
 
 interface Props {
     plans: PricingPlans;

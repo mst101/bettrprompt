@@ -87,13 +87,14 @@ class VisitorController extends Controller
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
             }
         } else {
-            // Visitor: update session and database if visitor exists
-            session(['currency_code' => $validated['currency_code']]);
-
+            // Visitor: update database if visitor exists
             $visitorId = $request->cookie('visitor_id');
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
+
+                // Invalidate currency cache so page fetch fresh value on next request
+                Cache::forget("visitor.{$visitorId}.currency");
             }
         }
 

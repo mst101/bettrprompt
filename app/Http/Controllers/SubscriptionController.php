@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Price;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,7 +17,27 @@ class SubscriptionController extends Controller
     public function pricing(Request $request): Response
     {
         $user = $request->user();
-        $currencyCode = $user?->currency_code ?? 'GBP';
+
+        if ($user) {
+            // Authenticated user: use their currency preference
+            $currencyCode = $user->currency_code ?? 'GBP';
+        } else {
+            // Visitor: check database with caching
+            $visitorId = $request->cookie('visitor_id');
+            if ($visitorId) {
+                $currencyCode = Cache::remember(
+                    "visitor.{$visitorId}.currency",
+                    3600, // 1 hour
+                    function () use ($visitorId) {
+                        $visitor = Visitor::find($visitorId);
+
+                        return $visitor?->currency_code ?? 'GBP';
+                    }
+                );
+            } else {
+                $currencyCode = 'GBP';
+            }
+        }
 
         // Fetch prices from database
         $pricesData = Price::where('currency_code', $currencyCode)->get();
