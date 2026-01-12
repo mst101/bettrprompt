@@ -18,6 +18,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Initialize Stripe with API key EARLY (in register, not boot)
+        // This ensures Cashier can use it when it initializes
+        $stripeSecret = env('STRIPE_SECRET');
+        $stripePublic = env('STRIPE_PUBLIC');
+
+        if ($stripeSecret) {
+            Stripe::setApiKey($stripeSecret);
+        }
+
         $this->app->singleton(N8nWorkflowClient::class, function () {
             return new N8nWorkflowClient;
         });
@@ -28,11 +37,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Initialize Stripe with API key from config
-        if (config('stripe.secret')) {
-            Stripe::setApiKey(config('stripe.secret'));
-        }
-
         Vite::prefetch(concurrency: 3);
 
         Route::model('promptRun', PromptRun::class);

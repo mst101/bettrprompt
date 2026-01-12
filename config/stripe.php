@@ -12,8 +12,8 @@ return [
     |
     */
 
-    'key' => env('STRIPE_PUBLIC_KEY'),
-    'secret' => env('STRIPE_SECRET_KEY'),
+    'key' => env('STRIPE_PUBLIC'),
+    'secret' => env('STRIPE_SECRET'),
     'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
 
     /*
