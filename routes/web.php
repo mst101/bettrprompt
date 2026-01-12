@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ExperimentsController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MockN8nController;
@@ -228,6 +229,13 @@ Route::prefix('{country}')
             // Prompt Runs
             Route::get('/prompt-runs/{promptRun}',
                 [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
+
+            // Experiments
+            Route::resource('experiments', ExperimentsController);
+            Route::post('/experiments/{experiment}/launch', [ExperimentsController::class, 'launch'])->name('experiments.launch');
+            Route::post('/experiments/{experiment}/pause', [ExperimentsController::class, 'pause'])->name('experiments.pause');
+            Route::post('/experiments/{experiment}/resume', [ExperimentsController::class, 'resume'])->name('experiments.resume');
+            Route::post('/experiments/{experiment}/complete', [ExperimentsController::class, 'complete'])->name('experiments.complete');
         });
 
         // Workflow management system (admin only)

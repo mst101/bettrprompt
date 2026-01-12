@@ -3,6 +3,7 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
+use App\Http\Controllers\Admin\ExperimentResultsController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Models\PromptRun;
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Validator;
 Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
     ->middleware('throttle:100,1') // Generous limit for event batches
     ->name('analytics.events.store');
+
+// Experiment results (admin only)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/experiments/{experiment}/results', [ExperimentResultsController::class, 'show'])
+        ->name('admin.experiments.results');
+});
 
 Route::post('/n8n/webhook', function (Request $request) {
     try {
