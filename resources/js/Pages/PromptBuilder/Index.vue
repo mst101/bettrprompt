@@ -3,6 +3,7 @@ import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
+import LocationPromptModal from '@/Components/Features/PromptBuilder/Forms/LocationPromptModal.vue';
 import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/Forms/PersonalityTypePrompt.vue';
 import TaskDescriptionForm from '@/Components/Features/PromptBuilder/Forms/TaskDescriptionForm.vue';
 import { usePersonalityPromptPreference } from '@/Composables/features/usePersonalityPromptPreference';
@@ -10,6 +11,7 @@ import { useTextAppend } from '@/Composables/features/useTextAppend';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import {
     computed,
     inject,
@@ -26,12 +28,35 @@ interface Props {
     visitorTraitPercentages?: Record<string, number> | null;
     personalityTypes: Record<string, string>;
     visitorHasCompletedPrompts?: boolean;
+    locationData: LocationData;
+    countries: SelectOption[];
+    currencies: SelectOption[];
+    languages: SelectOption[];
+    locationPromptDismissed?: boolean;
+}
+
+interface LocationData {
+    countryCode: string | null;
+    countryName: string | null;
+    region: string | null;
+    city: string | null;
+    timezone: string | null;
+    currencyCode: string | null;
+    languageCode: string | null;
+    detectedAt: string | null;
+    manuallySet: boolean;
+}
+
+interface SelectOption {
+    value: string;
+    label: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     visitorPersonalityType: null,
     visitorTraitPercentages: null,
     visitorHasCompletedPrompts: false,
+    locationPromptDismissed: false,
 });
 
 defineOptions({
@@ -43,7 +68,11 @@ const user = computed(() => page.props.auth?.user);
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
 const { t } = useI18n({ useScope: 'global' });
-const { countryRoute } = useCountryRoute();
+const { countryRoute, currentCountry } = useCountryRoute();
+const locationData = computed(() => props.locationData);
+const countries = computed(() => props.countries);
+const currencies = computed(() => props.currencies);
+const languages = computed(() => props.languages);
 const hasPersonalityType = computed(() => {
     // Authenticated users check their user profile
     if (user.value) {
@@ -103,6 +132,126 @@ const handleFocusTaskDescription = async () => {
 
 const { isDismissed } = usePersonalityPromptPreference();
 
+const showLocationPrompt = ref(false);
+const hasShownLocationPrompt = ref(false);
+const localPromptDismissed = ref(false);
+
+const missingLocationData = computed(() => {
+    const data = locationData.value;
+    return (
+        !data.countryCode ||
+        !data.languageCode ||
+        !data.currencyCode ||
+        !data.timezone
+    );
+});
+
+const isCountryMismatch = computed(() => {
+    const locationCountry = locationData.value.countryCode;
+    if (!locationCountry) {
+        return false;
+    }
+
+    return locationCountry.toLowerCase() !== currentCountry.value.toLowerCase();
+});
+
+const isLocationPromptDismissed = computed(() => {
+    return user.value
+        ? !!props.locationPromptDismissed
+        : localPromptDismissed.value;
+});
+
+const shouldPromptForLocation = computed(() => {
+    if (hasShownLocationPrompt.value || isLocationPromptDismissed.value) {
+        return false;
+    }
+
+    return missingLocationData.value || isCountryMismatch.value;
+});
+
+const persistLocationPromptDismissal = async (dismissed: boolean) => {
+    if (!dismissed) {
+        return;
+    }
+
+    if (user.value) {
+        try {
+            await axios.patch(
+                countryRoute('profile.location.prompt'),
+                { dismissed: true },
+                { headers: { Accept: 'application/json' } },
+            );
+        } catch (error) {
+            console.error('Failed to store location prompt preference', error);
+        }
+
+        return;
+    }
+
+    localPromptDismissed.value = true;
+    localStorage.setItem('location_prompt_dismissed', 'true');
+};
+
+const handleLocationContinue = async ({
+    dontAskAgain,
+}: {
+    dontAskAgain: boolean;
+}) => {
+    await persistLocationPromptDismissal(dontAskAgain);
+    showLocationPrompt.value = false;
+    hasShownLocationPrompt.value = true;
+    submit();
+};
+
+const getCountryLabel = (code: string | null) => {
+    if (!code) {
+        return '';
+    }
+    const match = props.countries.find(
+        (country) => country.value.toLowerCase() === code.toLowerCase(),
+    );
+    return match?.label || code.toUpperCase();
+};
+
+const locationPromptReason = computed(() => {
+    if (isCountryMismatch.value) {
+        return t('promptBuilder.locationPrompt.reason.mismatch', {
+            currentCountry: getCountryLabel(currentCountry.value),
+            savedCountry: getCountryLabel(locationData.value.countryCode),
+        });
+    }
+    if (missingLocationData.value) {
+        return t('promptBuilder.locationPrompt.reason.missing');
+    }
+    return '';
+});
+
+const handleLocationUpdated = async ({
+    dontAskAgain,
+    countryCode,
+}: {
+    dontAskAgain: boolean;
+    countryCode: string;
+}) => {
+    await persistLocationPromptDismissal(dontAskAgain);
+    showLocationPrompt.value = false;
+    hasShownLocationPrompt.value = true;
+    const nextCountry = countryCode?.toLowerCase();
+
+    if (nextCountry && nextCountry !== currentCountry.value.toLowerCase()) {
+        router.visit(`/${nextCountry}/prompt-builder`, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                submit();
+            },
+        });
+        return;
+    }
+
+    submit();
+};
+
 const focusAppropriateElement = async () => {
     await nextTick();
     // Use requestAnimationFrame to wait for all rendering to complete
@@ -127,6 +276,11 @@ const focusAppropriateElement = async () => {
 // Focus appropriate element on mount
 onMounted(() => {
     focusAppropriateElement();
+
+    if (!user.value) {
+        localPromptDismissed.value =
+            localStorage.getItem('location_prompt_dismissed') === 'true';
+    }
 });
 
 // Also focus on Inertia navigation finish (for login redirects)
@@ -157,6 +311,16 @@ watch(
         }
     },
 );
+
+const handleSubmit = () => {
+    submissionError.value = null;
+    if (shouldPromptForLocation.value) {
+        showLocationPrompt.value = true;
+        return;
+    }
+
+    submit();
+};
 </script>
 
 <template>
@@ -202,7 +366,7 @@ watch(
                 ref="taskDescriptionFormRef"
                 :has-personality-type="hasPersonalityType"
                 :form="form"
-                @submit="submit"
+                @submit="handleSubmit"
                 @transcription="handleTranscription"
                 @clear="clearTaskDescription"
                 @update:task-description="
@@ -210,5 +374,18 @@ watch(
                 "
             />
         </Card>
+
+        <LocationPromptModal
+            :show="showLocationPrompt"
+            :location-data="locationData"
+            :countries="countries"
+            :currencies="currencies"
+            :languages="languages"
+            :reason-text="locationPromptReason"
+            :is-authenticated="!!user"
+            @close="showLocationPrompt = false"
+            @continue="handleLocationContinue"
+            @updated="handleLocationUpdated"
+        />
     </ContainerPage>
 </template>

@@ -18,6 +18,8 @@ use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
 use App\Models\ClaudeModel;
+use App\Models\Country;
+use App\Models\Currency;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
@@ -36,6 +38,7 @@ class PromptBuilderController extends Controller
     public function index(Request $request)
     {
         $personalityData = $this->getPersonalityData($request);
+        $locationData = $this->getLocationData($request);
 
         $personalityTypes = [
             'INTJ' => __('messages.personality_types.intj'),
@@ -56,10 +59,42 @@ class PromptBuilderController extends Controller
             'ESFP' => __('messages.personality_types.esfp'),
         ];
 
+        $countries = Country::sortedByName()->map(fn ($country) => [
+            'value' => $country->id,
+            'label' => $country->name,
+        ])->values();
+
+        $currencies = Currency::where('active', true)->get()->map(fn ($currency) => [
+            'value' => $currency->id,
+            'label' => "$currency->symbol ($currency->id)",
+        ])->values();
+
+        $supportedLocales = config('app.supported_locales');
+        $languageLabels = [
+            'en-US' => 'English (US)',
+            'en-GB' => 'English (UK)',
+            'de-DE' => 'Deutsch',
+            'fr-FR' => 'Français',
+            'es-ES' => 'Español',
+        ];
+        $languages = collect($supportedLocales)
+            ->map(fn ($locale) => [
+                'value' => $locale,
+                'label' => $languageLabels[$locale] ?? $locale,
+            ])
+            ->values();
+
         return Inertia::render('PromptBuilder/Index', [
             'visitorPersonalityType' => $personalityData['personality_type'],
             'visitorTraitPercentages' => $personalityData['trait_percentages'],
             'personalityTypes' => $personalityTypes,
+            'locationData' => $locationData,
+            'countries' => $countries,
+            'currencies' => $currencies,
+            'languages' => $languages,
+            'locationPromptDismissed' => auth()->check()
+                ? (bool) auth()->user()->location_prompt_dismissed
+                : false,
         ]);
     }
 
@@ -83,7 +118,11 @@ class PromptBuilderController extends Controller
         // For logged-in users: Check if they have location data, if not look it up from IP
         if ($userId) {
             $user = auth()->user();
-            if (! $user->hasLocationData() && config('geoip.enabled')) {
+            if (
+                ! $user->hasLocationData()
+                && config('geoip.enabled')
+                && ! $user->location_prompt_dismissed
+            ) {
                 try {
                     $geolocationService = new GeolocationService;
                     $locationData = $geolocationService->lookupIp($request->ip());
@@ -1034,6 +1073,58 @@ class PromptBuilderController extends Controller
         return [
             'personality_type' => null,
             'trait_percentages' => null,
+        ];
+    }
+
+    /**
+     * Get location data for current user or visitor.
+     */
+    protected function getLocationData(Request $request): array
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+
+            return [
+                'countryCode' => $user->country_code,
+                'countryName' => $user->country_name,
+                'region' => $user->region,
+                'city' => $user->city,
+                'timezone' => $user->timezone,
+                'currencyCode' => $user->currency_code,
+                'languageCode' => $user->language_code,
+                'detectedAt' => $user->location_detected_at,
+                'manuallySet' => $user->location_manually_set,
+            ];
+        }
+
+        $visitorId = $this->getVisitorId($request);
+        if ($visitorId) {
+            $visitor = Visitor::find($visitorId);
+            if ($visitor) {
+                return [
+                    'countryCode' => $visitor->country_code,
+                    'countryName' => $visitor->country_name,
+                    'region' => $visitor->region,
+                    'city' => $visitor->city,
+                    'timezone' => $visitor->timezone,
+                    'currencyCode' => $visitor->currency_code,
+                    'languageCode' => $visitor->language_code,
+                    'detectedAt' => $visitor->location_detected_at,
+                    'manuallySet' => false,
+                ];
+            }
+        }
+
+        return [
+            'countryCode' => null,
+            'countryName' => null,
+            'region' => null,
+            'city' => null,
+            'timezone' => null,
+            'currencyCode' => null,
+            'languageCode' => null,
+            'detectedAt' => null,
+            'manuallySet' => false,
         ];
     }
 
