@@ -113,8 +113,8 @@ class SubscriptionController extends Controller
         return $user
             ->newSubscription('default', $priceId)
             ->checkout([
-                'success_url' => route('subscription.success', ['tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
-                'cancel_url' => route('subscription.cancelled'),
+                'success_url' => countryRoute('subscription.success', ['tier' => $tier, 'session_id' => '{CHECKOUT_SESSION_ID}']),
+                'cancel_url' => countryRoute('subscription.cancelled'),
                 'customer_update' => [
                     'address' => 'auto',
                 ],
