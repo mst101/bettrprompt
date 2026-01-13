@@ -60,7 +60,8 @@ Route::prefix('{country}')
 
         // Google OAuth routes
         Route::get('/auth/google', [OAuthController::class, 'redirectToGoogle'])->name('auth.google');
-        Route::get('/auth/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+        Route::get('/auth/google/callback',
+            [OAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
         // Feedback routes (no authentication required)
         Route::get('/feedback/create', [FeedbackController::class, 'create'])
@@ -124,7 +125,8 @@ Route::prefix('{country}')
             ->name('prompt-builder.create-child-with-framework');
         Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
             ->name('prompt-builder.destroy');
-        Route::patch('/prompt-builder/{promptRun}/update-prompt', [PromptBuilderController::class, 'updateOptimizedPrompt'])
+        Route::patch('/prompt-builder/{promptRun}/update-prompt',
+            [PromptBuilderController::class, 'updateOptimizedPrompt'])
             ->name('prompt-builder.update-prompt');
 
         // Subscription routes (authenticated)
@@ -184,18 +186,22 @@ Route::prefix('{country}')
                 [ProfileController::class, 'updatePersonality'])->name('profile.personality.update');
             Route::patch('/profile/ui-complexity',
                 [ProfileController::class, 'updateUiComplexity'])->name('profile.ui-complexity.update');
-            Route::patch('/profile/language', [ProfileController::class, 'updateLanguage'])->name('profile.language.update');
+            Route::patch('/profile/language',
+                [ProfileController::class, 'updateLanguage'])->name('profile.language.update');
             Route::patch('/profile/location-prompt', [ProfileController::class, 'updateLocationPromptPreference'])
                 ->name('profile.location.prompt');
             // Location profile routes
-            Route::patch('/profile/location', [ProfileController::class, 'updateLocation'])->name('profile.location.update');
+            Route::patch('/profile/location',
+                [ProfileController::class, 'updateLocation'])->name('profile.location.update');
             Route::post('/profile/location/detect',
                 [ProfileController::class, 'detectLocation'])->name('profile.location.detect');
-            Route::delete('/profile/location', [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
+            Route::delete('/profile/location',
+                [ProfileController::class, 'clearLocation'])->name('profile.location.clear');
             // Professional profile routes
             Route::patch('/profile/professional',
                 [ProfileController::class, 'updateProfessional'])->name('profile.professional.update');
-            Route::delete('/profile/professional', [ProfileController::class, 'clearProfessional'])->name('profile.professional.clear');
+            Route::delete('/profile/professional',
+                [ProfileController::class, 'clearProfessional'])->name('profile.professional.clear');
             // Team profile routes
             Route::patch('/profile/team', [ProfileController::class, 'updateTeam'])->name('profile.team.update');
             Route::delete('/profile/team', [ProfileController::class, 'clearTeam'])->name('profile.team.clear');
@@ -219,26 +225,34 @@ Route::prefix('{country}')
 
             // Users
             Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-            Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+            Route::get('/users/{user}',
+                [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
 
             // Tasks
             Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
             Route::get('/tasks/{taskId}',
-                [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId', '[0-9]+');
+                [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId',
+                    '[0-9]+');
 
             // Prompt Runs
             Route::get('/prompt-runs/{promptRun}',
                 [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
 
             // Experiments
-            Route::resource('experiments', ExperimentsController);
-            Route::post('/experiments/{experiment}/launch', [ExperimentsController::class, 'launch'])->name('experiments.launch');
-            Route::post('/experiments/{experiment}/pause', [ExperimentsController::class, 'pause'])->name('experiments.pause');
-            Route::post('/experiments/{experiment}/resume', [ExperimentsController::class, 'resume'])->name('experiments.resume');
-            Route::post('/experiments/{experiment}/complete', [ExperimentsController::class, 'complete'])->name('experiments.complete');
+            Route::resource('experiments', ExperimentsController::class);
+            Route::post('/experiments/{experiment}/launch',
+                [ExperimentsController::class, 'launch'])->name('experiments.launch');
+            Route::post('/experiments/{experiment}/pause',
+                [ExperimentsController::class, 'pause'])->name('experiments.pause');
+            Route::post('/experiments/{experiment}/resume',
+                [ExperimentsController::class, 'resume'])->name('experiments.resume');
+            Route::post('/experiments/{experiment}/complete',
+                [ExperimentsController::class, 'complete'])->name('experiments.complete');
 
             // Domain Analytics
-            Route::get('/domain-analytics', [\App\Http\Controllers\Admin\AdminController::class, 'domainAnalytics'])->name('domain-analytics.index');
+            Route::get('/domain-analytics', [
+                \App\Http\Controllers\Admin\AdminController::class, 'domainAnalytics',
+            ])->name('domain-analytics.index');
         });
 
         // Workflow management system (admin only)

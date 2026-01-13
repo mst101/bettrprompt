@@ -24,7 +24,7 @@ const { countryRoute } = useCountryRoute();
 const { getWorkflowStageColor } = useWorkflowStageColor();
 
 const handleRowClick = (event: MouseEvent, runId: number): void => {
-    // Allow default behavior for right-click and middle-click
+    // Allow default behaviour for right-click and middle-click
     if (event.button === 2 || event.button === 1) {
         return;
     }
@@ -147,9 +147,9 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 >
                                     <Link
                                         :href="
-                                            route(
+                                            countryRoute(
                                                 'admin.prompt-runs.show',
-                                                run.id,
+                                                { promptRun: run.id },
                                             )
                                         "
                                         class="block"
