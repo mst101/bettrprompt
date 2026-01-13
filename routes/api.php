@@ -7,8 +7,10 @@ use App\Http\Controllers\Admin\DomainAnalyticsController;
 use App\Http\Controllers\Admin\ExperimentResultsController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\MailgunWebhookController;
+use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Models\Visitor;
+use App\Services\AlertService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -148,8 +150,25 @@ Route::post('/n8n/webhook', function (Request $request) {
             } elseif ($workflowStage && str_ends_with($workflowStage, '_failed')) {
                 try {
                     event(new WorkflowFailed($promptRun));
+
+                    // Trigger workflow failure alert
+                    $alertService = app(AlertService::class);
+                    $stage = intval(substr($workflowStage, 0, 1)); // Extract stage number
+                    $alertHistory = $alertService->triggerWorkflowAlert(
+                        workflowStage: $stage,
+                        status: 'failed',
+                        errorCode: $request->input('error_message') ?? 'WORKFLOW_FAILED',
+                        errorMessage: $request->input('error_message'),
+                    );
+
+                    // Dispatch email notifications
+                    if ($alertHistory) {
+                        foreach ($alertHistory->notifications->where('type', 'email') as $notification) {
+                            SendAlertEmail::dispatch($notification);
+                        }
+                    }
                 } catch (\Exception $e) {
-                    Log::error('Failed to broadcast WorkflowFailed event', [
+                    Log::error('Failed to process workflow failure', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
                     ]);
