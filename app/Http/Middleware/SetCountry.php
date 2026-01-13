@@ -223,16 +223,25 @@ class SetCountry
     {
         // 1. Check authenticated user preference
         if ($user = $request->user()) {
-            if ($user->country_code && Country::where('id', $user->country_code)->exists()) {
-                return $user->country_code;
+            if ($user->country_code) {
+                $countryCode = strtolower($user->country_code);
+
+                if (Country::where('id', $countryCode)->exists()) {
+                    return $countryCode;
+                }
             }
         }
 
         // 2. Check visitor preference (via cookie, NOT session)
         if ($visitorId = $request->cookie('visitor_id')) {
             $visitor = Visitor::find($visitorId);
+
             if ($visitor && $visitor->country_code) {
-                return $visitor->country_code;
+                $countryCode = strtolower($visitor->country_code);
+
+                if (Country::where('id', $countryCode)->exists()) {
+                    return $countryCode;
+                }
             }
         }
 
@@ -242,7 +251,7 @@ class SetCountry
             $locationData = $geolocationService->lookupIp($request->ip());
 
             if ($locationData && $locationData->countryCode) {
-                $countryCode = $locationData->countryCode;
+                $countryCode = strtolower($locationData->countryCode);
 
                 // Verify country exists in database
                 if (Country::where('id', $countryCode)->exists()) {
@@ -257,7 +266,7 @@ class SetCountry
         }
 
         // 4. Fallback to default
-        return config('app.fallback_country', 'gb');
+        return strtolower(config('app.fallback_country', 'gb'));
     }
 
     /**

@@ -15,6 +15,16 @@ test('home page displays correctly', function () {
     );
 });
 
+test('root redirect uses lowercase country code', function () {
+    $user = User::factory()->create([
+        'country_code' => 'GB',
+    ]);
+
+    $response = $this->actingAs($user)->get('/');
+
+    $response->assertRedirect('/gb');
+});
+
 test('home page shows returning visitor flag when visitor has previous visits', function () {
     // Create a returning visitor: first visit 2 hours ago, last visit now
     $visitor = Visitor::factory()->create([

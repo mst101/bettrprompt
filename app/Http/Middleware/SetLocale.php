@@ -39,14 +39,14 @@ class SetLocale
         // 1. Check authenticated user preference
         $user = $request->user();
         if ($user && $user->country_code) {
-            return $user->country_code;
+            return strtolower($user->country_code);
         }
 
         // 2. Check visitor preference (via cookie, NOT session)
         if ($visitorId = $request->cookie('visitor_id')) {
             $visitor = Visitor::find($visitorId);
             if ($visitor && $visitor->country_code) {
-                return $visitor->country_code;
+                return strtolower($visitor->country_code);
             }
         }
 
@@ -54,7 +54,7 @@ class SetLocale
         // TODO: Implement geolocation detection in Phase 7
 
         // 4. Fallback to default
-        return config('app.fallback_country', 'gb');
+        return strtolower(config('app.fallback_country', 'gb'));
     }
 
     /**
