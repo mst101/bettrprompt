@@ -9,7 +9,11 @@ const page = usePage();
 const { t } = useI18n({ useScope: 'global' });
 
 const buttonText = computed(() => {
-    return page.props.auth?.user
+    // Show "Try it now" for authenticated users or returning visitors
+    const isAuthenticated = !!page.props.auth?.user;
+    const isReturningVisitor = !!(page.props as any).isReturningVisitor;
+
+    return isAuthenticated || isReturningVisitor
         ? t('components.common.heroCta.tryNow')
         : t('components.common.heroCta.getStartedFree');
 });
