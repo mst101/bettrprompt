@@ -160,16 +160,18 @@ class SetCountry
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($visitorId, $countryCode, $routeCountry) {
+                function () use ($visitorId, $countryCode) {
                     $visitor = Visitor::find($visitorId);
-                    $visitorCountry = $visitor?->country_code;
-                    if ($routeCountry) {
-                        if (! $visitorCountry || strtolower($visitorCountry) !== strtolower($routeCountry)) {
-                            return $this->getCountryDefaultCurrency($countryCode);
-                        }
+
+                    // For visitors: use their currency preference if set
+                    // Visitors don't have a "home country" like users do,
+                    // so always respect their currency choice
+                    if ($visitor && $visitor->currency_code) {
+                        return $visitor->currency_code;
                     }
 
-                    return $visitor?->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
+                    // Fall back to country default currency
+                    return $this->getCountryDefaultCurrency($countryCode);
                 }
             );
         }
