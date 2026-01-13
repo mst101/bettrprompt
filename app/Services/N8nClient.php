@@ -61,7 +61,7 @@ class N8nClient
      */
     protected function isCircuitOpen(): bool
     {
-        $failureCount = Cache::get('n8n_circuit_breaker_failures', 0);
+        $failureCount = (int) Cache::get('n8n_circuit_breaker_failures', 0);
         $circuitOpenUntil = Cache::get('n8n_circuit_breaker_open_until');
 
         // If circuit is open, check if cooldown period has passed
@@ -84,7 +84,7 @@ class N8nClient
      */
     protected function recordFailure(): void
     {
-        $failures = Cache::get('n8n_circuit_breaker_failures', 0);
+        $failures = (int) Cache::get('n8n_circuit_breaker_failures', 0);
         Cache::put('n8n_circuit_breaker_failures', $failures + 1, now()->addSeconds($this->circuitBreakerTimeout * 2));
     }
 

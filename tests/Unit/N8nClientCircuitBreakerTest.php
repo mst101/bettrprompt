@@ -57,7 +57,7 @@ test('circuit breaker remains closed under threshold', function () {
 
     // Circuit should still be closed, allowing next request
     // (though it will fail due to 500 response)
-    $failureCount = Cache::get('n8n_circuit_breaker_failures', 0);
+    $failureCount = (int) Cache::get('n8n_circuit_breaker_failures', 0);
     expect($failureCount)->toBe(4)
         ->and(Cache::has('n8n_circuit_breaker_open_until'))->toBeFalse();
 });
@@ -86,7 +86,7 @@ test('circuit breaker closes after cooldown period and failure expiry', function
     }
 
     // Verify 5 failures recorded (circuit not yet "opened" until next call)
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(5);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(5);
 
     // Manually clear cache to simulate expiry (time travel doesn't affect cache in tests)
     Cache::forget('n8n_circuit_breaker_failures');
@@ -122,12 +122,12 @@ test('circuit breaker resets failure count on success', function () {
     }
 
     // Verify failures recorded
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(3);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(3);
 
     // Now make a successful call
     $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
     expect($result['success'])->toBeTrue()
-        ->and(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0)
+        ->and((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0)
         ->and(Cache::has('n8n_circuit_breaker_open_until'))->toBeFalse();
 
     // Failure count should be reset to 0
@@ -186,6 +186,9 @@ test('circuit breaker prevents requests when open', function () {
 test('circuit breaker failure count expires after double cooldown period', function () {
     $client = new N8nClient;
 
+    // Use array cache for this test since file cache doesn't respect time travel
+    Config::set('cache.default', 'array');
+
     // Simulate 3 failures
     Http::fake([
         '*' => Http::response([], 500),
@@ -196,13 +199,13 @@ test('circuit breaker failure count expires after double cooldown period', funct
     }
 
     // Verify failures recorded
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(3);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(3);
 
     // Travel beyond double the cooldown period (10 minutes)
     $this->travel(11)->minutes();
 
     // Failure count should have expired
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0);
 });
 
 test('circuit breaker opens immediately on reaching threshold', function () {
