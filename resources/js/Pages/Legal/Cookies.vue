@@ -119,21 +119,34 @@ defineOptions({
                     </p>
                     <div class="mt-4 space-y-3">
                         <div
-                            v-for="cookie in COOKIE_CATEGORIES.functional
-                                .cookies"
-                            :key="cookie.name"
-                            class="rounded-sm border border-indigo-100 bg-white p-3 dark:bg-indigo-50"
+                            v-if="
+                                COOKIE_CATEGORIES.functional.cookies.length ===
+                                0
+                            "
+                            class="rounded-sm border border-indigo-100 bg-white p-3 text-xs text-indigo-700 dark:bg-indigo-50"
                         >
-                            <div class="text-sm font-medium text-indigo-900">
-                                {{ cookie.name }}
-                            </div>
-                            <div class="mt-1 text-xs text-indigo-700">
-                                {{ cookie.purpose }}
-                            </div>
-                            <div class="mt-1 text-xs text-indigo-700">
-                                Duration: {{ cookie.duration }}
-                            </div>
+                            We do not currently set any functional cookies.
                         </div>
+                        <template v-else>
+                            <div
+                                v-for="cookie in COOKIE_CATEGORIES.functional
+                                    .cookies"
+                                :key="cookie.name"
+                                class="rounded-sm border border-indigo-100 bg-white p-3 dark:bg-indigo-50"
+                            >
+                                <div
+                                    class="text-sm font-medium text-indigo-900"
+                                >
+                                    {{ cookie.name }}
+                                </div>
+                                <div class="mt-1 text-xs text-indigo-700">
+                                    {{ cookie.purpose }}
+                                </div>
+                                <div class="mt-1 text-xs text-indigo-700">
+                                    Duration: {{ cookie.duration }}
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
@@ -179,9 +192,11 @@ defineOptions({
                         privacy policy
                     </li>
                     <li>
-                        <strong>Analytics Services:</strong> We may use
-                        analytics services that set cookies to help us
-                        understand how visitors use our Service
+                        <strong>FullStory:</strong> In production, we use
+                        FullStory to understand how visitors interact with the
+                        Service and to improve usability. FullStory may set
+                        cookies such as <code>_fs_uid</code> and
+                        <code>_fs_lq</code>.
                     </li>
                 </ul>
                 <p>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Visitor;
 
 test('home page displays correctly', function () {
     $response = $this->getCountry('/');
@@ -14,9 +15,12 @@ test('home page displays correctly', function () {
     );
 });
 
-test('home page shows returning visitor flag when cookie exists', function () {
-    $response = $this->withCookie('returning_visitor', 'true')
-        ->getCountry('/');
+test('home page shows returning visitor flag when visitor has previous visits', function () {
+    $visitor = Visitor::factory()->firstVisit()->create([
+        'visit_count' => 1,
+    ]);
+
+    $response = $this->withCookie('visitor_id', (string) $visitor->id)->getCountry('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page

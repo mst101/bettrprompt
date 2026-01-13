@@ -430,7 +430,7 @@ Assessing the visitor_id cookie
 I've been thinking about the visitor_id cookie and whether it should be classified as functional or
 essential. It appears that the tracking code using setupVisitorTracking relies on reading
 document.cookie, but httpOnly cookies can’t be accessed this way, which is a problem. In terms of cookie
-consent, I noticed that applyPreferences removes the returning_visitor cookie but not visitor_id. I
+consent, I noticed that applyPreferences removes some cookies but not visitor_id. I
 propose treating visitor_id as essential for the core product but not attempting access via JavaScript.
 Instead, I'm considering sharing it through props to ensure it's handled properly. We need to think
 about the visitor_id_backup in localStorage as well, since that may require consent due to its

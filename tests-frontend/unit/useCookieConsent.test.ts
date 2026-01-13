@@ -185,34 +185,6 @@ describe('useCookieConsent', () => {
         expect(cookiePreferences.value).toBeNull();
     });
 
-    it('should remove returning_visitor cookie when functional cookies disabled', () => {
-        // Set returning_visitor cookie
-        document.cookie = 'returning_visitor=true;path=/';
-
-        const { rejectAll } = useCookieConsent();
-
-        rejectAll();
-
-        // Check that returning_visitor cookie is removed
-        const hasReturningVisitor =
-            document.cookie.includes('returning_visitor');
-        expect(hasReturningVisitor).toBe(false);
-    });
-
-    it('should keep returning_visitor cookie when functional cookies enabled', () => {
-        // Set returning_visitor cookie
-        document.cookie = 'returning_visitor=true;path=/';
-
-        const { acceptAll } = useCookieConsent();
-
-        acceptAll();
-
-        // Check that returning_visitor cookie is still present
-        const hasReturningVisitor =
-            document.cookie.includes('returning_visitor');
-        expect(hasReturningVisitor).toBe(true);
-    });
-
     it('should handle encoded cookie values correctly', () => {
         const preferences: CookiePreferences = {
             essential: true,

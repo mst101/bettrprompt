@@ -105,16 +105,14 @@ export function useCookieConsent() {
      * Apply cookie preferences (remove cookies for disabled categories)
      */
     const applyPreferences = (preferences: CookiePreferences): void => {
-        // If functional cookies are disabled, remove returning_visitor cookie
-        if (!preferences.functional) {
-            document.cookie =
-                'returning_visitor=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
-        }
-
         // If analytics cookies are disabled, remove analytics cookies
         if (!preferences.analytics) {
-            // Remove any analytics cookies here when implemented
-            // Example: document.cookie = '_ga=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
+            // Best-effort cleanup for known analytics cookies.
+            // Note: some third-party tools may use additional cookies.
+            document.cookie =
+                '_fs_uid=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
+            document.cookie =
+                '_fs_lq=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
         }
     };
 

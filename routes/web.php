@@ -27,10 +27,18 @@ Route::prefix('{country}')
     ->where(['country' => '[a-z]{2}'])
     ->group(function () {
         Route::get('/', function () {
+            $visitorId = request()->cookie('visitor_id');
+            $isReturningVisitor = false;
+
+            if ($visitorId) {
+                $visitor = \App\Models\Visitor::find($visitorId);
+                $isReturningVisitor = $visitor?->isReturning() ?? false;
+            }
+
             return Inertia::render('Home', [
                 'canLogin' => Route::has('login'),
                 'canRegister' => Route::has('register'),
-                'isReturningVisitor' => request()->cookie('returning_visitor') !== null,
+                'isReturningVisitor' => $isReturningVisitor,
                 'modal' => request()->query('modal'),
             ]);
         })->name('home');

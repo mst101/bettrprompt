@@ -2,34 +2,7 @@
 
 ## Overview
 
-This document outlines the migration from the current `returning_visitor` boolean cookie to a comprehensive `visitor_id` UUID-based tracking system with localStorage backup. This enables attribution tracking, guest prompt runs, and seamless Fullstory integration.
-
----
-
-## Current State
-
-### Existing Cookie: `returning_visitor`
-- **Type**: Boolean (true/false)
-- **Purpose**: Show different CTA messaging ("Welcome back!" vs "Get Started")
-- **Set by**: `TrackVisitor` middleware
-- **Expiry**: 1 year (525,600 minutes)
-- **Limitations**: No unique identity, no attribution tracking, no analytics value
-
-### Current Middleware
-**File**: `app/Http/Middleware/TrackVisitor.php`
-```php
-public function handle(Request $request, Closure $next): Response
-{
-    $response = $next($request);
-
-    if (! $request->hasCookie('returning_visitor')) {
-        $cookie = cookie('returning_visitor', true, 525600);
-        $response->withCookie($cookie);
-    }
-
-    return $response;
-}
-```
+This document outlines the `visitor_id` UUID-based tracking system used for attribution tracking, guest prompt runs, and seamless Fullstory integration.
 
 ---
 
@@ -552,6 +525,10 @@ FS.event('Visitor Converted', {
 **Visitor Records**:
 - Keep indefinitely if linked to user (`user_id` not null)
 - Delete after 2 years if never converted (`converted_at` is null)
+
+For an implementation-ready, tiered retention and archiving plan (including SEO-safe bot noise reduction and retention for other high-growth analytics tables), see:
+
+- `docs/data-retention-and-table-growth-plan.md`
 
 **Cleanup Command**:
 ```php

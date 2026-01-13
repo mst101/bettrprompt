@@ -11,16 +11,28 @@ export const COOKIE_CATEGORIES = {
         required: true,
         cookies: [
             {
-                name: 'Laravel Session Cookie',
+                name: 'bettrprompt-session',
                 purpose:
-                    'Maintains your session state and authentication across pages',
+                    'Maintains your session state (including authentication) across requests',
                 duration: '2 hours (extends with activity)',
+            },
+            {
+                name: 'remember_web_*',
+                purpose:
+                    'Keeps you signed in across browser restarts when you choose “Remember me”',
+                duration: 'Varies (only set if you enable “Remember me”)',
             },
             {
                 name: 'XSRF-TOKEN',
                 purpose:
                     'Provides security against cross-site request forgery attacks',
                 duration: '2 hours',
+            },
+            {
+                name: 'visitor_id',
+                purpose:
+                    'Identifies your browser so we can associate guest actions (like prompt runs) and preferences with a single visitor record',
+                duration: '2 years',
             },
             {
                 name: 'cookie_consent',
@@ -35,14 +47,7 @@ export const COOKIE_CATEGORIES = {
         description:
             'These cookies enable enhanced functionality and personalisation, such as remembering your preferences and settings.',
         required: false,
-        cookies: [
-            {
-                name: 'returning_visitor',
-                purpose:
-                    'Identifies returning visitors to show personalised welcome messages',
-                duration: '1 year',
-            },
-        ],
+        cookies: [],
     },
     analytics: {
         id: 'analytics',
@@ -52,10 +57,10 @@ export const COOKIE_CATEGORIES = {
         required: false,
         cookies: [
             {
-                name: 'Analytics Cookies',
+                name: 'FullStory (_fs_uid, _fs_lq)',
                 purpose:
-                    'Track page visits, user interactions, and performance metrics to improve the service',
-                duration: 'Up to 2 years',
+                    'Helps us understand how visitors use the site so we can improve reliability and usability',
+                duration: 'Varies',
             },
         ],
     },
