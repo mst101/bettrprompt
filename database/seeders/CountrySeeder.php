@@ -25,13 +25,13 @@ class CountrySeeder extends Seeder
         $handle = fopen($csvFile, 'r');
 
         // Skip header row
-        fgetcsv($handle);
+        fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
         $activeLanguages = ['en-GB', 'en-US', 'de-DE', 'fr-FR', 'es-ES'];
         $activeCurrencies = ['GBP', 'EUR', 'USD'];
 
-        while ($row = fgetcsv($handle)) {
+        while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
             $languageId = $row[3];
             $currencyId = $row[2];
 

@@ -104,7 +104,9 @@ class N8nClient
     protected function backoffDelay(int $attempt): void
     {
         // Skip sleep in testing environment to speed up tests
-        if (app()->environment('testing')) {
+        // Check getenv() since phpunit.xml sets APP_ENV as environment variable
+        // before app()->environment() is available
+        if (getenv('APP_ENV') === 'testing' || app()->environment('testing')) {
             return;
         }
 
@@ -274,7 +276,6 @@ class N8nClient
         while ($attempt < $this->maxRetries) {
             try {
                 $response = Http::timeout($this->timeout)
-                    ->retry(1) // Laravel's built-in retry (attempt once, no delay)
                     ->withBasicAuth($this->username, $this->password)
                     ->post(rtrim($this->baseUrl, '/').'/'.ltrim($path, '/'), $payload);
 

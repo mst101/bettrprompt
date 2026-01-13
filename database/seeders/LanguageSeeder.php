@@ -23,11 +23,11 @@ class LanguageSeeder extends Seeder
         $handle = fopen($csvFile, 'r');
 
         // Skip header row
-        fgetcsv($handle);
+        fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
 
-        while ($row = fgetcsv($handle)) {
+        while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
             $isActive = (bool) $row[2];
 
             // Skip inactive languages if activeOnly mode is enabled

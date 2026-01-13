@@ -23,12 +23,12 @@ class CurrencySeeder extends Seeder
         $handle = fopen($csvFile, 'r');
 
         // Skip header row
-        fgetcsv($handle);
+        fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
         $records = [];
 
-        while ($row = fgetcsv($handle)) {
+        while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
             $isActive = (bool) $row[8];
 
             // Skip inactive currencies if activeOnly mode is enabled
