@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AdminLayout from '@/Layouts/AdminLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { Head } from '@inertiajs/vue3';
 import { RefreshCw } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -24,7 +25,9 @@ const onDataLoaded = () => {
 </script>
 
 <template>
-    <AdminLayout :title="t('admin.domain_analytics.title')">
+    <Head :title="t('admin.domain_analytics.title')" />
+
+    <AppLayout>
         <div class="space-y-8">
             <!-- Header -->
             <div class="flex items-center justify-between">
@@ -85,5 +88,5 @@ const onDataLoaded = () => {
                 />
             </div>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>
