@@ -60,7 +60,7 @@ export class PromptBuilderPage {
 
     get continueWithoutChangesButton(): Locator {
         return this.page.getByRole('button', {
-            name: /continue without changes/i,
+            name: /continue/i,
         });
     }
 
@@ -95,8 +95,10 @@ export class PromptBuilderPage {
         const isVisible = await modal.isVisible().catch(() => false);
 
         if (isVisible) {
-            // Click "Continue without changes" to dismiss the modal
-            await this.continueWithoutChangesButton.click();
+            // Wait for the continue button to be available and click it
+            const continueBtn = this.continueWithoutChangesButton;
+            await continueBtn.waitFor({ state: 'visible', timeout: 5000 });
+            await continueBtn.click({ timeout: 5000 });
             // Wait for the modal to disappear
             await modal.waitFor({ state: 'hidden', timeout: 5000 });
         }
