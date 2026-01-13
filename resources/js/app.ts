@@ -9,55 +9,11 @@ import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useNotification } from './Composables/ui/useNotification';
 import { createCountryRoutePlugin } from './Plugins/countryRoutePlugin';
-import { getCookie, getCsrfToken } from './Utils/cookies';
+import { getCookie } from './Utils/cookies';
 import { i18n, initializeI18n, setLocale, type LocaleCode } from './i18n';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();
-
-// Visitor tracking with localStorage backup
-function setupVisitorTracking() {
-    const visitorId = getCookie('visitor_id');
-
-    if (visitorId) {
-        // Cookie exists → backup to localStorage
-        localStorage.setItem('visitor_id_backup', visitorId);
-    } else {
-        // Cookie deleted → check localStorage
-        const backupId = localStorage.getItem('visitor_id_backup');
-
-        if (backupId) {
-            // Send to server to recreate cookie
-            const csrfToken = getCsrfToken();
-
-            if (csrfToken) {
-                fetch('/api/restore-visitor', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({ visitor_id: backupId }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.restored) {
-                            console.log('Visitor cookie restored from backup');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error(
-                            'Failed to restore visitor cookie:',
-                            error,
-                        );
-                    });
-            }
-        }
-    }
-}
-
-// Run visitor tracking setup
-setupVisitorTracking();
 
 type AuthUser = {
     id: number;

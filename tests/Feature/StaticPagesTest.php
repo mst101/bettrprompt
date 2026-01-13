@@ -16,8 +16,10 @@ test('home page displays correctly', function () {
 });
 
 test('home page shows returning visitor flag when visitor has previous visits', function () {
-    $visitor = Visitor::factory()->firstVisit()->create([
-        'visit_count' => 1,
+    // Create a returning visitor: first visit 2 hours ago, last visit now
+    $visitor = Visitor::factory()->create([
+        'first_visit_at' => now()->subHours(2),
+        'last_visit_at' => now(),
     ]);
 
     $response = $this->withCookie('visitor_id', (string) $visitor->id)->getCountry('/');

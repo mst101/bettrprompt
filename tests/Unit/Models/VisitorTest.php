@@ -48,26 +48,41 @@ describe('Visitor conversion status', function () {
 });
 
 describe('Visitor return status', function () {
-    test('isReturning returns true when visit_count is greater than 1', function () {
-        $visitor = Visitor::factory()->create(['visit_count' => 2]);
+    test('isReturning returns true when visitor has visited more than 1 hour apart', function () {
+        $firstVisit = now()->subHours(2);
+        $visitor = Visitor::factory()->create([
+            'first_visit_at' => $firstVisit,
+            'last_visit_at' => now(),
+        ]);
 
         expect($visitor->isReturning())->toBeTrue();
     });
 
-    test('isReturning returns false when visit_count is 1', function () {
-        $visitor = Visitor::factory()->create(['visit_count' => 1]);
+    test('isReturning returns false when first and last visit are within 1 hour', function () {
+        $firstVisit = now()->subMinutes(30);
+        $visitor = Visitor::factory()->create([
+            'first_visit_at' => $firstVisit,
+            'last_visit_at' => now(),
+        ]);
 
         expect($visitor->isReturning())->toBeFalse();
     });
 
-    test('isReturning returns false when visit_count is 0', function () {
-        $visitor = Visitor::factory()->create(['visit_count' => 0]);
+    test('isReturning returns false when first_visit_at is null', function () {
+        $visitor = Visitor::factory()->create([
+            'first_visit_at' => null,
+            'last_visit_at' => now(),
+        ]);
 
         expect($visitor->isReturning())->toBeFalse();
     });
 
-    test('isReturning returns true for high visit counts', function () {
-        $visitor = Visitor::factory()->create(['visit_count' => 50]);
+    test('isReturning returns true when first and last visit are days apart', function () {
+        $firstVisit = now()->subDays(7);
+        $visitor = Visitor::factory()->create([
+            'first_visit_at' => $firstVisit,
+            'last_visit_at' => now(),
+        ]);
 
         expect($visitor->isReturning())->toBeTrue();
     });

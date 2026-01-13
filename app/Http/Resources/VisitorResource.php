@@ -24,7 +24,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     readonly ipAddress: string | null;
  *     readonly firstVisitAt: string;
  *     readonly lastVisitAt: string;
- *     readonly visitCount: number;
  *     readonly convertedAt: string | null;
  *     readonly createdAt: string;
  *     readonly updatedAt: string;
@@ -58,7 +57,6 @@ class VisitorResource extends JsonResource
             'ipAddress' => $this->ip_address,
             'firstVisitAt' => $this->first_visit_at?->format('Y-m-d H:i:s'),
             'lastVisitAt' => $this->last_visit_at?->format('Y-m-d H:i:s'),
-            'visitCount' => $this->visit_count,
             'convertedAt' => $this->converted_at?->format('Y-m-d H:i:s'),
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),

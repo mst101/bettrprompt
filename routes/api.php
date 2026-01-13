@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
-use App\Models\Visitor;
 use App\Services\AlertService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -212,36 +211,6 @@ Route::post('/n8n/webhook', function (Request $request) {
         ], 500);
     }
 })->middleware('throttle:60,1');
-
-Route::post('/restore-visitor', function (Request $request) {
-    $validator = Validator::make($request->all(), [
-        'visitor_id' => ['required', 'uuid', 'exists:visitors,id'],
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['restored' => false], 400);
-    }
-
-    $visitor = Visitor::find($request->input('visitor_id'));
-
-    if ($visitor) {
-        $cookie = cookie(
-            'visitor_id',
-            $visitor->id,
-            1051200, // 2 years in minutes
-            '/',
-            null,
-            true, // secure
-            true, // httpOnly
-            false,
-            'lax' // sameSite
-        );
-
-        return response()->json(['restored' => true])->withCookie($cookie);
-    }
-
-    return response()->json(['restored' => false], 404);
-})->middleware('throttle:10,1');
 
 // Mailgun webhooks
 Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60,1'])->group(function () {

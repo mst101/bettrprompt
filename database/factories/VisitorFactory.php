@@ -31,7 +31,6 @@ class VisitorFactory extends Factory
             'ip_address' => fake()->ipv4(),
             'first_visit_at' => $firstVisit = now()->subDays(fake()->numberBetween(0, 30)),
             'last_visit_at' => fake()->dateTimeBetween($firstVisit, 'now'),
-            'visit_count' => fake()->numberBetween(1, 50),
         ];
     }
 
@@ -43,7 +42,6 @@ class VisitorFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'first_visit_at' => now(),
             'last_visit_at' => now(),
-            'visit_count' => 1,
         ]);
     }
 

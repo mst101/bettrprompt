@@ -27,6 +27,11 @@ class TrackVisitor
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Skip visitor tracking for known bots/crawlers
+        if ($this->isKnownBot($request)) {
+            return $next($request);
+        }
+
         $visitorId = $request->cookie('visitor_id');
         $isNewVisitor = false;
 
@@ -152,7 +157,6 @@ class TrackVisitor
                 'ip_address' => $request->ip(),
                 'first_visit_at' => now(),
                 'last_visit_at' => now(),
-                'visit_count' => 1,
                 'referred_by_user_id' => $referredByUserId,
             ];
 
@@ -171,7 +175,7 @@ class TrackVisitor
     }
 
     /**
-     * Update an existing visitor's last visit time and count.
+     * Update an existing visitor's last visit time.
      */
     protected function updateVisitor(string $visitorId): void
     {
@@ -179,7 +183,34 @@ class TrackVisitor
 
         $visitor?->update([
             'last_visit_at' => now(),
-            'visit_count' => $visitor->visit_count + 1,
         ]);
+    }
+
+    /**
+     * Determine if the request is from a known bot/crawler.
+     * Uses a conservative allowlist of well-known search engines only.
+     */
+    protected function isKnownBot(Request $request): bool
+    {
+        $userAgent = strtolower($request->userAgent() ?? '');
+
+        // Only well-known search engine crawlers
+        $knownBots = [
+            'googlebot',
+            'bingbot',
+            'duckduckbot',
+            'baiduspider',
+            'yandexbot',
+            'slurp',       // Yahoo
+            'applebot',    // Apple/Siri
+        ];
+
+        foreach ($knownBots as $bot) {
+            if (str_contains($userAgent, $bot)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

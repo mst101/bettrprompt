@@ -30,7 +30,6 @@ class Visitor extends Model
         'ip_address',
         'first_visit_at',
         'last_visit_at',
-        'visit_count',
         'converted_at',
         'personality_type',
         'trait_percentages',
@@ -60,7 +59,6 @@ class Visitor extends Model
             'first_visit_at' => 'datetime',
             'last_visit_at' => 'datetime',
             'converted_at' => 'datetime',
-            'visit_count' => 'integer',
             'trait_percentages' => 'array',
             'ui_complexity' => 'string',
             // Location
@@ -96,10 +94,17 @@ class Visitor extends Model
 
     /**
      * Determine if this is a returning visitor.
+     * A visitor is considered returning if they have visited more than once
+     * (i.e. first_visit_at differs significantly from last_visit_at).
      */
     public function isReturning(): bool
     {
-        return $this->visit_count > 1;
+        if ($this->first_visit_at && $this->last_visit_at) {
+            // Consider returning if more than 1 hour has passed between first and last visit
+            return $this->first_visit_at->diffInHours($this->last_visit_at) >= 1;
+        }
+
+        return false;
     }
 
     /**
