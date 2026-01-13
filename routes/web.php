@@ -30,11 +30,6 @@ Route::prefix('{country}')
             $visitorId = request()->cookie('visitor_id');
             $isReturningVisitor = false;
 
-            \Log::debug('HeroCTA Debug - Home route', [
-                'visitor_id' => $visitorId,
-                'has_cookie' => ! empty($visitorId),
-            ]);
-
             if ($visitorId) {
                 $visitor = \App\Models\Visitor::find($visitorId);
 
@@ -42,40 +37,15 @@ Route::prefix('{country}')
                 // - Created more than 1 hour ago, OR
                 // - Has been updated since creation (last_visit_at > created_at by significant amount)
                 if ($visitor) {
-                    $isReturning = $visitor->isReturning();
-                    $createdMinutesAgo = $visitor->created_at->diffInMinutes(now());
-
-                    \Log::debug('Visitor found in database', [
-                        'visitor_id' => $visitorId,
-                        'first_visit_at' => $visitor->first_visit_at,
-                        'last_visit_at' => $visitor->last_visit_at,
-                        'created_at' => $visitor->created_at,
-                        'hours_between_visits' => $visitor->first_visit_at?->diffInHours($visitor->last_visit_at),
-                        'is_returning_from_method' => $isReturning,
-                        'created_minutes_ago' => $createdMinutesAgo,
-                    ]);
-
-                    $isReturningVisitor = $isReturning;
+                    $isReturningVisitor = $visitor->isReturning();
 
                     // Fallback: if visitor exists and was created more than 5 minutes ago,
                     // they're likely returning (even if they cleared cookies and came back quickly)
-                    if (! $isReturningVisitor && $createdMinutesAgo > 5) {
-                        \Log::debug('Applying fallback returning visitor check', [
-                            'visitor_id' => $visitorId,
-                            'created_minutes_ago' => $createdMinutesAgo,
-                        ]);
+                    if (! $isReturningVisitor && $visitor->created_at->diffInMinutes(now()) > 5) {
                         $isReturningVisitor = true;
                     }
-                } else {
-                    \Log::warning('Visitor cookie present but not found in database', [
-                        'visitor_id' => $visitorId,
-                    ]);
                 }
             }
-
-            \Log::debug('Rendering Home page', [
-                'is_returning_visitor' => $isReturningVisitor,
-            ]);
 
             return Inertia::render('Home', [
                 'canLogin' => Route::has('login'),
