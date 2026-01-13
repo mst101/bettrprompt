@@ -5,6 +5,7 @@ namespace Tests;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\CurrencySeeder;
 use Database\Seeders\LanguageSeeder;
+use Database\Seeders\PricesTableSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
@@ -32,11 +33,12 @@ abstract class TestCase extends BaseTestCase
         // Clear cache before seeding
         Cache::flush();
 
-        // Seed languages, currencies, and countries for tests that need them (in order of dependencies)
+        // Seed languages, currencies, countries, and pricing for tests (in order of dependencies)
         $this->seed([
             LanguageSeeder::class,
             CurrencySeeder::class,
             CountrySeeder::class,
+            PricesTableSeeder::class,
         ]);
 
         // Reset environment variable
