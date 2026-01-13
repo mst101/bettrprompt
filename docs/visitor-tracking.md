@@ -11,7 +11,7 @@ This document outlines the `visitor_id` UUID-based tracking system used for attr
 ### New Cookie: `visitor_id`
 - **Type**: UUID (e.g., `550e8400-e29b-41d4-a916-446655440000`)
 - **Purpose**: Unique visitor identity for attribution, analytics, and guest sessions
-- **Storage**: HTTP-only cookie (primary) + localStorage (backup)
+- **Storage**: HTTP-only, secure cookie (server-side only)
 - **Expiry**: 2 years (1,051,200 minutes)
 - **Benefits**: Attribution tracking, guest prompt runs, Fullstory integration, marketing analytics
 
@@ -41,7 +41,6 @@ Schema::create('visitors', function (Blueprint $table) {
     // Visit tracking
     $table->timestamp('first_visit_at');
     $table->timestamp('last_visit_at');
-    $table->integer('visit_count')->default(1);
     $table->timestamp('converted_at')->nullable(); // When user_id was set
 
     $table->timestamps();
@@ -94,16 +93,12 @@ Schema::table('prompt_runs', function (Blueprint $table) {
        'ip_address' => $request->ip(),
        'first_visit_at' => now(),
        'last_visit_at' => now(),
-       'visit_count' => 1,
    ]);
    ```
 4. Set cookie: `visitor_id` = UUID (HTTP-only, 2-year expiry)
-5. Response includes JavaScript to backup to localStorage
 
 **Frontend** (`resources/js/app.ts`):
-1. Read `visitor_id` from cookie
-2. Store in `localStorage.setItem('visitor_id_backup', uuid)`
-3. Send to Fullstory:
+1. Send to Fullstory:
    ```javascript
    FS.identify(visitorId, { isGuest: true });
    ```
@@ -114,7 +109,6 @@ visitors:
   - id: 550e8400-e29b-41d4-a916-446655440000
   - user_id: null
   - utm_source: 'google'
-  - visit_count: 1
   - converted_at: null
 
 prompt_runs: (empty)
@@ -277,9 +271,9 @@ $cookie = cookie(
 return $response->withCookie($cookie);
 ```
 
-### Backup Storage: localStorage
+### localStorage (Deprecated)
 
-**Purpose**: Restore visitor_id if user clears cookies
+**Note**: localStorage backups have been removed from this system. See data-retention-and-table-growth-plan.md Part A for details.
 
 **Advantages**:
 - Persists longer (no expiry)
@@ -434,40 +428,19 @@ FS.event('Visitor Converted', {
   - [ ] Set `converted_at` timestamp
   - [ ] Claim all guest `PromptRun` records
   - [ ] Update `user_id` on guest prompt runs
-- [ ] Add restore-visitor API endpoint
 
-### Phase 4: Frontend (localStorage Backup)
-
-- [ ] Create utility: `resources/js/utils/cookies.ts`
-  ```typescript
-  export function getCookie(name: string): string | null {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) {
-          return parts.pop()?.split(';').shift() || null;
-      }
-      return null;
-  }
-  ```
-- [ ] Update `resources/js/app.ts`:
-  - [ ] Read `visitor_id` from cookie on mount
-  - [ ] Backup to `localStorage.setItem('visitor_id_backup', visitorId)`
-  - [ ] Check localStorage if cookie missing
-  - [ ] Call restore API if localStorage has backup
-- [ ] Add TypeScript types for Visitor
-
-### Phase 5: Fullstory Integration
+### Phase 4: Fullstory Integration
 
 - [ ] Update Fullstory identification in `app.ts`:
   - [ ] Identify anonymous visitors with `visitor_id`
   - [ ] Include `visitorId` in authenticated user properties
-  - [ ] Add visitor metadata (UTM params, visit count)
+  - [ ] Add visitor metadata (UTM params, timestamps)
 - [ ] Add event tracking:
   - [ ] `Guest Prompt Created` event
   - [ ] `Visitor Converted` event on registration
 - [ ] Test Fullstory session continuity across anonymous → registered
 
-### Phase 6: Analytics & Reporting
+### Phase 5: Analytics & Reporting
 
 - [ ] Create database query helpers:
   - [ ] Conversion rate (visitors with `converted_at` / total visitors)
