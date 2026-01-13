@@ -301,10 +301,23 @@ class SetCountry
     /**
      * Clear all cache keys matching a pattern for a specific prefix.
      * Useful for clearing all route-specific caches (e.g., currency.*)
+     * Note: Only works with Redis. Other drivers will skip pattern matching.
      */
     public static function clearCachePattern(string $pattern): void
     {
         try {
+            // Only Redis supports pattern-based key deletion
+            if (config('cache.default') !== 'redis') {
+                // For non-Redis drivers (array, file, etc), we can't efficiently clear patterns
+                // In tests, cache is flushed before each test anyway
+                Log::debug('Cache pattern clearing skipped for non-Redis driver', [
+                    'driver' => config('cache.default'),
+                    'pattern' => $pattern,
+                ]);
+
+                return;
+            }
+
             $fullPattern = config('cache.prefix').':'.$pattern;
             $keys = Cache::getRedis()->keys($fullPattern);
 
