@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\FrameworkDailyStat;
+use App\Models\Funnel;
+use App\Models\FunnelDailyStats;
+use App\Models\FunnelProgress;
 use App\Models\QuestionDailyStat;
 use App\Models\WorkflowDailyStat;
 use Carbon\Carbon;
@@ -150,6 +153,85 @@ class DomainAnalyticsController
             'totalInputTokens' => $totalInputTokens,
             'totalOutputTokens' => $totalOutputTokens,
             'costPerExecution' => $totalExecutions > 0 ? ($totalCost / $totalExecutions) : 0,
+        ]);
+    }
+
+    /**
+     * Get funnel analytics for a date
+     */
+    public function getFunnelAnalytics(Request $request): JsonResponse
+    {
+        $funnelSlug = $request->query('funnel', 'registration');
+        $date = $request->query('date', now()->toDateString());
+        $dateObj = Carbon::parse($date);
+
+        $funnel = Funnel::where('slug', $funnelSlug)->with('stages')->first();
+
+        if (! $funnel) {
+            return response()->json([
+                'error' => 'Funnel not found',
+            ], 404);
+        }
+
+        // Get daily stats for this funnel on this date
+        $stats = FunnelDailyStats::where('funnel_id', $funnel->id)
+            ->where('date', $dateObj->toDateString())
+            ->orderBy('stage')
+            ->get();
+
+        // Format stages with data
+        $stagesData = [];
+        foreach ($funnel->stages as $stage) {
+            $stageStat = $stats->firstWhere('stage', $stage->order);
+
+            $stagesData[] = [
+                'stage' => $stage->order,
+                'stageName' => $stage->name,
+                'starts' => $stageStat?->starts ?? 0,
+                'conversions' => $stageStat?->conversions ?? 0,
+                'conversionRate' => $stageStat?->conversion_rate ?? 0,
+            ];
+        }
+
+        // Calculate overall funnel stats
+        $firstStageStat = $stats->firstWhere('stage', 1);
+        $lastStageStat = $stats->where('stage', '>', 1)->last();
+
+        $totalEntered = $firstStageStat?->starts ?? 0;
+        $totalConverted = $lastStageStat?->conversions ?? 0;
+        $overallConversionRate = $totalEntered > 0 ? ($totalConverted / $totalEntered) * 100 : 0;
+
+        // Get current state distribution
+        $progressData = FunnelProgress::where('funnel_id', $funnel->id)
+            ->select('stage', \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'))
+            ->groupBy('stage')
+            ->get();
+
+        $stateDistribution = [];
+        foreach ($funnel->stages as $stage) {
+            $count = $progressData->firstWhere('stage', $stage->order)?->count ?? 0;
+            $stateDistribution[] = [
+                'stage' => $stage->order,
+                'stageName' => $stage->name,
+                'count' => $count,
+            ];
+        }
+
+        return response()->json([
+            'funnel' => [
+                'id' => $funnel->id,
+                'slug' => $funnel->slug,
+                'name' => $funnel->name,
+                'description' => $funnel->description,
+            ],
+            'stages' => $stagesData,
+            'stats' => [
+                'date' => $dateObj->toDateString(),
+                'totalEntered' => $totalEntered,
+                'totalConverted' => $totalConverted,
+                'overallConversionRate' => $overallConversionRate,
+            ],
+            'stateDistribution' => $stateDistribution,
         ]);
     }
 
