@@ -66,6 +66,7 @@
         "dompurify": "^3.3.1",
         "flag-icons": "^7.5.0",
         "laravel-echo": "^2.2.7",
+        "lucide-vue-next": "^0.562.0",
         "marked": "^17.0.1",
         "pinia": "^3.0.4",
         "pusher-js": "^8.4.0",
