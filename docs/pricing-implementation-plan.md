@@ -838,7 +838,7 @@ Route::middleware(['auth', 'prompt.limit', 'prompt.track'])->group(function () {
 use App\Http\Controllers\StripeWebhookController;
 
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
-    ->name('cashier.webhook');
+    ->name('stripe.webhook');
 ```
 
 ---

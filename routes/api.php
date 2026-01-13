@@ -24,7 +24,7 @@ Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
 // Experiment results (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/experiments/{experiment}/results', [ExperimentResultsController::class, 'show'])
-        ->name('admin.experiments.results');
+        ->name('api.admin.experiments.results');
 });
 
 Route::post('/n8n/webhook', function (Request $request) {
@@ -220,35 +220,35 @@ Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60
 
 // Stripe webhooks (handled by Laravel Cashier)
 Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])
-    ->name('cashier.webhook');
+    ->name('stripe.webhook');
 
 // Domain analytics API (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('admin/domain-analytics')->group(function () {
         Route::get('/frameworks', [DomainAnalyticsController::class, 'getFrameworkAnalytics'])
-            ->name('admin.domain-analytics.frameworks');
+            ->name('api.admin.domain-analytics.frameworks');
         Route::get('/questions', [DomainAnalyticsController::class, 'getQuestionAnalytics'])
-            ->name('admin.domain-analytics.questions');
+            ->name('api.admin.domain-analytics.questions');
         Route::get('/workflows', [DomainAnalyticsController::class, 'getWorkflowAnalytics'])
-            ->name('admin.domain-analytics.workflows');
+            ->name('api.admin.domain-analytics.workflows');
         Route::get('/funnels', [DomainAnalyticsController::class, 'getFunnelAnalytics'])
-            ->name('admin.domain-analytics.funnels');
+            ->name('api.admin.domain-analytics.funnels');
     });
 
     // Alert notifications API
     Route::prefix('admin/alert-notifications')->group(function () {
         Route::get('/pending', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getPending'])
-            ->name('admin.alert-notifications.pending');
+            ->name('api.admin.alert-notifications.pending');
         Route::post('/{notificationId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledge'])
-            ->name('admin.alert-notifications.acknowledge');
+            ->name('api.admin.alert-notifications.acknowledge');
     });
 
     // Alerts API
     Route::prefix('admin/alerts')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getAlerts'])
-            ->name('admin.alerts.index');
+            ->name('api.admin.alerts.index');
         Route::post('/{alertId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledgeAlert'])
-            ->name('admin.alerts.acknowledge');
+            ->name('api.admin.alerts.acknowledge');
     });
 });
 
