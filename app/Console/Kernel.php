@@ -36,6 +36,18 @@ class Kernel extends ConsoleKernel
                 Log::error('GeoIP database update failed');
             });
 
+        // Aggregate funnel statistics daily at 1:00 AM UTC
+        $schedule->command('analytics:aggregate-funnel-stats')
+            ->daily()
+            ->at('01:00')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                Log::info('Funnel statistics aggregated successfully');
+            })
+            ->onFailure(function () {
+                Log::error('Failed to aggregate funnel statistics');
+            });
+
         // Reset monthly prompt counts for free tier users on 1st of month at 00:00 UTC
         $schedule->command('prompts:reset-monthly-counts')
             ->monthlyOn(1, '00:00')
