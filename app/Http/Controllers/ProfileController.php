@@ -274,7 +274,7 @@ class ProfileController extends Controller
         \App\Models\Visitor::where('user_id', $user->id)
             ->update(['language_code' => $validated['language_code']]);
 
-        // Invalidate language cache so middleware fetches fresh value on next request
+        // Invalidate language cache - language is global so only need simple key
         Cache::forget("user.{$user->id}.language");
 
         return response()->json(['success' => true]);
@@ -335,12 +335,13 @@ class ProfileController extends Controller
             // Update location
             $user->updateLocation($validated);
 
-            // Invalidate language cache if language was updated
+            // Invalidate language cache if language was updated (language is global)
             if (array_key_exists('language_code', $validated)) {
                 Cache::forget("user.{$user->id}.language");
             }
+            // Invalidate currency caches if currency was updated (currency is route-specific)
             if (array_key_exists('currency_code', $validated)) {
-                Cache::forget("user.{$user->id}.currency");
+                SetCountry::clearCachePattern("user.{$user->id}.currency.*");
             }
 
             // Redirect to profile page (language preference is stored in user profile,
@@ -514,8 +515,10 @@ class ProfileController extends Controller
         try {
             $request->user()->clearLocation();
 
+            // Invalidate language cache (language is global)
             Cache::forget("user.{$request->user()->id}.language");
-            Cache::forget("user.{$request->user()->id}.currency");
+            // Invalidate currency caches (currency is route-specific)
+            SetCountry::clearCachePattern("user.{$request->user()->id}.currency.*");
 
             if ($request->wantsJson()) {
                 return response()->json(['success' => true]);

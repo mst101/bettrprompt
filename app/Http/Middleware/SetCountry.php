@@ -46,25 +46,16 @@ class SetCountry
 
         // 1. Check authenticated user preference (with Redis cache)
         if ($user = $request->user()) {
-            $userCountry = $user->country_code;
-            $cacheKey = $routeCountry
-                ? "user.{$user->id}.language.{$routeCountry}.{$userCountry}"
-                : "user.{$user->id}.language";
+            $cacheKey = "user.{$user->id}.language";
 
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($user, $countryCode, $routeCountry, $userCountry) {
+                function () use ($user, $countryCode) {
                     // Refresh user from database to get latest language_code
                     $freshUser = $user->fresh();
-                    $userCountry = $freshUser?->country_code ?? $userCountry;
 
-                    if ($routeCountry) {
-                        if (! $userCountry || strtolower($userCountry) !== strtolower($routeCountry)) {
-                            return $this->getCountryDefaultLanguage($countryCode);
-                        }
-                    }
-
+                    // Language preference is global - use it if set
                     $normalized = self::normalizeLocaleToSupported($freshUser?->language_code);
 
                     return $normalized ?? $this->getCountryDefaultLanguage($countryCode);
@@ -74,25 +65,16 @@ class SetCountry
 
         // 2. Check visitor preference (with Redis cache)
         if ($visitorId = $request->cookie('visitor_id')) {
-            $visitorCountry = Visitor::where('id', $visitorId)->value('country_code');
-            $cacheKey = $routeCountry
-                ? "visitor.{$visitorId}.language.{$routeCountry}.{$visitorCountry}"
-                : "visitor.{$visitorId}.language";
+            $cacheKey = "visitor.{$visitorId}.language";
 
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($visitorId, $countryCode, $routeCountry, $visitorCountry) {
+                function () use ($visitorId, $countryCode) {
                     // Always fetch fresh visitor from database to get latest language_code
                     $visitor = Visitor::find($visitorId);
-                    $visitorCountry = $visitor?->country_code ?? $visitorCountry;
 
-                    if ($routeCountry) {
-                        if (! $visitorCountry || strtolower($visitorCountry) !== strtolower($routeCountry)) {
-                            return $this->getCountryDefaultLanguage($countryCode);
-                        }
-                    }
-
+                    // Language preference is global - use it if set
                     $normalized = self::normalizeLocaleToSupported($visitor?->language_code);
 
                     return $normalized ?? $this->getCountryDefaultLanguage($countryCode);
@@ -153,9 +135,7 @@ class SetCountry
         // 1. Check authenticated user preference (with Redis cache)
         if ($user = $request->user()) {
             $userCountry = $user->country_code;
-            $cacheKey = $routeCountry
-                ? "user.{$user->id}.currency.{$routeCountry}.{$userCountry}"
-                : "user.{$user->id}.currency";
+            $cacheKey = "user.{$user->id}.currency.{$routeCountry}";
 
             return Cache::remember(
                 $cacheKey,
@@ -175,17 +155,14 @@ class SetCountry
 
         // 2. Check visitor preference (with Redis cache)
         if ($visitorId = $request->cookie('visitor_id')) {
-            $visitorCountry = Visitor::where('id', $visitorId)->value('country_code');
-            $cacheKey = $routeCountry
-                ? "visitor.{$visitorId}.currency.{$routeCountry}.{$visitorCountry}"
-                : "visitor.{$visitorId}.currency";
+            $cacheKey = "visitor.{$visitorId}.currency.{$routeCountry}";
 
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($visitorId, $countryCode, $routeCountry, $visitorCountry) {
+                function () use ($visitorId, $countryCode, $routeCountry) {
                     $visitor = Visitor::find($visitorId);
-                    $visitorCountry = $visitor?->country_code ?? $visitorCountry;
+                    $visitorCountry = $visitor?->country_code;
                     if ($routeCountry) {
                         if (! $visitorCountry || strtolower($visitorCountry) !== strtolower($routeCountry)) {
                             return $this->getCountryDefaultCurrency($countryCode);
@@ -319,5 +296,27 @@ class SetCountry
     public static function getDirection(?string $locale = null): string
     {
         return self::isRtl($locale) ? 'rtl' : 'ltr';
+    }
+
+    /**
+     * Clear all cache keys matching a pattern for a specific prefix.
+     * Useful for clearing all route-specific caches (e.g., currency.*)
+     */
+    public static function clearCachePattern(string $pattern): void
+    {
+        try {
+            $fullPattern = config('cache.prefix').':'.$pattern;
+            $keys = Cache::getRedis()->keys($fullPattern);
+
+            foreach ($keys as $key) {
+                $cacheKey = str_replace(config('cache.prefix').':', '', $key);
+                Cache::forget($cacheKey);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to clear cache pattern', [
+                'pattern' => $pattern,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

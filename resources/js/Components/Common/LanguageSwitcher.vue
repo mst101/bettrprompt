@@ -59,7 +59,7 @@ async function switchLocale(locale: LocaleInfo) {
     // Navigate to the same path with same country (language change stays on same country URL)
     const newPath = `/${currentCountry.value}${currentPath.value}`;
     router.visit(newPath, {
-        preserveState: true,
+        preserveState: false,
         preserveScroll: true,
     });
 }

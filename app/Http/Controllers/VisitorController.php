@@ -50,7 +50,7 @@ class VisitorController extends Controller
             $visitor = Visitor::find($visitorId);
             $visitor?->update(['language_code' => $validated['language_code']]);
 
-            // Invalidate language cache so middleware fetches fresh value on next request
+            // Invalidate language cache - language is global so only need simple key
             Cache::forget("visitor.{$visitorId}.language");
         }
 
@@ -89,6 +89,9 @@ class VisitorController extends Controller
                 $visitor = Visitor::find($visitorId);
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
             }
+
+            // Invalidate currency caches (route-specific)
+            SetCountry::clearCachePattern("user.{$request->user()->id}.currency.*");
         } else {
             // Visitor: update database if visitor exists
             $visitorId = $request->cookie('visitor_id');
@@ -96,8 +99,8 @@ class VisitorController extends Controller
                 $visitor = Visitor::find($visitorId);
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
 
-                // Invalidate currency cache so page fetch fresh value on next request
-                Cache::forget("visitor.{$visitorId}.currency");
+                // Invalidate currency cache (route-specific)
+                SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
             }
         }
 
@@ -154,7 +157,7 @@ class VisitorController extends Controller
             Cache::forget("visitor.{$visitorId}.language");
         }
         if (array_key_exists('currency_code', $updates)) {
-            Cache::forget("visitor.{$visitorId}.currency");
+            SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
         }
 
         return response()->json(['success' => true]);
@@ -188,8 +191,10 @@ class VisitorController extends Controller
             'location_detected_at' => null,
         ]);
 
+        // Invalidate language cache (language is global)
         Cache::forget("visitor.{$visitorId}.language");
-        Cache::forget("visitor.{$visitorId}.currency");
+        // Invalidate currency caches (currency is route-specific)
+        SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
 
         return response()->json(['success' => true]);
     }
