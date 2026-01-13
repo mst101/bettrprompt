@@ -24,6 +24,9 @@ test.describe('Prompt Builder - Prompt Show Page', () => {
             timeout: 5000,
         });
 
+        // Dismiss location/language confirmation modal if it appears
+        await promptBuilderPage.dismissLocationLanguageModal();
+
         // Click submit button with reasonable timeout
         await promptBuilderPage.submitButton.click({ timeout: 10000 });
 

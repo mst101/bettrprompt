@@ -54,6 +54,16 @@ export class PromptBuilderPage {
         return this.page.getByRole('button', { name: /copy|clipboard/i });
     }
 
+    get locationLanguageModal(): Locator {
+        return this.page.locator('[role="dialog"]');
+    }
+
+    get continueWithoutChangesButton(): Locator {
+        return this.page.getByRole('button', {
+            name: /continue without changes/i,
+        });
+    }
+
     // ===== Navigation =====
 
     async goto(): Promise<void> {
@@ -77,6 +87,19 @@ export class PromptBuilderPage {
     async enterAndSubmitTask(description: string): Promise<void> {
         await this.enterTaskDescription(description);
         await this.submitTask();
+    }
+
+    async dismissLocationLanguageModal(): Promise<void> {
+        // Check if the location/language confirmation modal is visible
+        const modal = this.locationLanguageModal;
+        const isVisible = await modal.isVisible().catch(() => false);
+
+        if (isVisible) {
+            // Click "Continue without changes" to dismiss the modal
+            await this.continueWithoutChangesButton.click();
+            // Wait for the modal to disappear
+            await modal.waitFor({ state: 'hidden', timeout: 5000 });
+        }
     }
 
     // ===== Framework Selection =====
