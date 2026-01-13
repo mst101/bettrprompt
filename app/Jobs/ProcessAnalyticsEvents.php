@@ -6,6 +6,7 @@ use App\Models\AnalyticsEvent;
 use App\Models\PromptRun;
 use App\Services\ConversionAttributionService;
 use App\Services\FrameworkSelectionService;
+use App\Services\FunnelProcessingService;
 use App\Services\PromptQualityService;
 use App\Services\QuestionAnalyticsService;
 use App\Services\SessionProcessorService;
@@ -50,6 +51,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
         QuestionAnalyticsService $questionService,
         WorkflowAnalyticsService $workflowService,
         PromptQualityService $qualityService,
+        FunnelProcessingService $funnelService,
     ): void {
         try {
             Log::info('Processing analytics events', [
@@ -80,6 +82,9 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Process session data
             $this->processSessions($eventsToInsert, $sessionService);
+
+            // Process funnel progression
+            $this->processFunnels($eventsToInsert, $funnelService);
 
             // Process domain-specific analytics
             $this->processDomainAnalytics(
@@ -424,6 +429,38 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'error' => $e->getMessage(),
             ]);
             // Don't rethrow - continue processing other events
+        }
+    }
+
+    /**
+     * Process funnel progression from enriched events
+     */
+    private function processFunnels(
+        array $enrichedEvents,
+        FunnelProcessingService $funnelService,
+    ): void {
+        if (empty($enrichedEvents) || ! $this->visitorId) {
+            return;
+        }
+
+        foreach ($enrichedEvents as $event) {
+            try {
+                // Build event data for funnel service (includes tier for subscription events)
+                $eventData = $event['properties'] ?? [];
+
+                $funnelService->processEvent(
+                    visitorId: $this->visitorId,
+                    eventName: $event['name'],
+                    eventData: $eventData,
+                );
+            } catch (\Exception $e) {
+                Log::error('Failed to process funnel event', [
+                    'event_name' => $event['name'] ?? 'unknown',
+                    'visitor_id' => $this->visitorId,
+                    'error' => $e->getMessage(),
+                ]);
+                // Don't rethrow - continue processing other events
+            }
         }
     }
 
