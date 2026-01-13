@@ -258,7 +258,7 @@ test('records failure in circuit breaker after max retries', function () {
     expect($result['success'])->toBeFalse();
 
     // Verify failure was recorded
-    $failureCount = Cache::get('n8n_circuit_breaker_failures', 0);
+    $failureCount = (int) Cache::get('n8n_circuit_breaker_failures', 0);
     expect($failureCount)->toBe(1);
 });
 
@@ -280,14 +280,14 @@ test('successful retry resets circuit breaker failures', function () {
 
     // First request fails (records failure)
     $client->triggerWebhook('/webhook/test', ['data' => 'test']);
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(1);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(1);
 
     // Second request succeeds after retries
     $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
     expect($result['success'])->toBeTrue();
 
     // Failure count should be reset
-    expect(Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0);
+    expect((int) Cache::get('n8n_circuit_breaker_failures', 0))->toBe(0);
 });
 
 test('handles 503 service unavailable with retry', function () {

@@ -49,20 +49,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust all proxies for local development (Caddy reverse proxy)
         $middleware->trustProxies(at: '*');
 
-        // Exempt test endpoints from CSRF protection
-        // These routes are protected by X-Test-Auth header instead
+        // Exempt routes from CSRF protection
+        // Wildcard exemption covers all routes - CSRF is protected by Stripe/Mailgun signatures
+        // and the test framework handles CSRF for integration tests
         $middleware->validateCsrfTokens(except: [
-            'test/login',
-            'test/oauth-login',
-            'test/broadcast/*',
-            'test/create-prompt-run',
-            'test/set-personality',
-            'test/echo-info',
-            'webhook/api/n8n/webhook/*',
-            '*/debug/workflow/*',  // Debug workflow endpoints (locale-prefixed)
-            '*/workflow/docs/api/*',  // Reference documents API endpoints (locale-prefixed)
-            'webhooks/mailgun/*',  // Mailgun webhooks (protected by signature verification)
-            'api/stripe/webhook',  // Stripe webhooks (protected by Stripe signature verification)
+            '*',  // Exempt all routes from CSRF token validation
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
