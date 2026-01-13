@@ -2,7 +2,6 @@
 
 use App\Models\PromptRun;
 use App\Models\User;
-use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -18,23 +17,8 @@ beforeEach(function () {
 });
 
 test('generate optimised prompt successfully', function () {
+    Queue::fake();
     $this->actingAs($this->user);
-
-    // Mock N8nWorkflowClient to return successful generation
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'Your optimised prompt here',
-                    'framework_used' => ['code' => 'SMART'],
-                    'personality_adjustments_summary' => [],
-                    'model_recommendations' => [],
-                    'iteration_suggestions' => [],
-                ],
-            ]);
-    });
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
@@ -59,10 +43,13 @@ test('generate optimised prompt successfully', function () {
     $response->assertOk();
     $response->assertJson(['success' => true]);
 
+    // Verify workflow_stage was set to processing
     $promptRun->refresh();
-    expect($promptRun->optimized_prompt)->toBe('Your optimised prompt here')
-        ->and($promptRun->workflow_stage)->toBe('2_completed')
-        ->and($promptRun->isCompleted())->toBeTrue();
+    expect($promptRun->workflow_stage)->toBe('2_processing')
+        ->and($promptRun->clarifying_answers)->toBe(['Answer 1', 'Answer 2']);
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPromptGeneration::class);
 });
 
 test('update optimised prompt successfully', function () {

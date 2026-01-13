@@ -2,7 +2,6 @@
 
 use App\Models\PromptRun;
 use App\Models\User;
-use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
     $this->user = User::factory()->create([
@@ -79,6 +78,7 @@ test('user cannot create child of other users prompt run', function () {
 });
 
 test('create child from answers creates child successfully', function () {
+    Queue::fake();
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -94,19 +94,6 @@ test('create child from answers creates child successfully', function () {
         'workflow_stage' => '2_completed',
     ]);
 
-    // Mock N8nWorkflowClient
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'New optimised prompt',
-                    'framework_used' => ['code' => 'SMART'],
-                ],
-            ]);
-    });
-
     $response = $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [
         'parentPromptRun' => $parentRun,
     ], absolute: false), [
@@ -120,6 +107,9 @@ test('create child from answers creates child successfully', function () {
     expect($childRun)->not->toBeNull()
         ->and($childRun->clarifying_answers)->toBe(['New answer 1', 'New answer 2'])
         ->and($childRun->parent_id)->toBe($parentRun->id);
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPromptGeneration::class);
 });
 
 test('create child from answers validates clarifying answers required', function () {
@@ -138,6 +128,7 @@ test('create child from answers validates clarifying answers required', function
 });
 
 test('create child from answers converts empty strings to null', function () {
+    Queue::fake();
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -151,18 +142,6 @@ test('create child from answers converts empty strings to null', function () {
         'personality_tier' => 'full',
     ]);
 
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'Prompt',
-                    'framework_used' => ['code' => 'SMART'],
-                ],
-            ]);
-    });
-
     $response = $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [
         'parentPromptRun' => $parentRun,
     ], absolute: false), [
@@ -173,6 +152,9 @@ test('create child from answers converts empty strings to null', function () {
 
     $childRun = PromptRun::where('parent_id', $parentRun->id)->first();
     expect($childRun->clarifying_answers)->toBe(['Answer 1', null]);
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPromptGeneration::class);
 });
 
 test('user cannot create child from answers of other users prompt run', function () {
@@ -212,6 +194,7 @@ test('create child from answers rejects parent without framework questions', fun
 });
 
 test('parent child relationship is correctly established', function () {
+    Queue::fake();
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -221,18 +204,6 @@ test('parent child relationship is correctly established', function () {
         'framework_questions' => [['question' => 'Q1']],
         'personality_tier' => 'full',
     ]);
-
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'Prompt',
-                    'framework_used' => ['code' => 'SMART'],
-                ],
-            ]);
-    });
 
     $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [
         'parentPromptRun' => $parentRun,
@@ -246,9 +217,13 @@ test('parent child relationship is correctly established', function () {
     expect($childRun->parent_id)->toBe($parentRun->id)
         ->and($childRun->parent->id)->toBe($parentRun->id)
         ->and($parentRun->children)->toHaveCount(1);
+
+    // Verify job was dispatched
+    Queue::assertPushed(\App\Jobs\ProcessPromptGeneration::class);
 });
 
 test('child prompt run inherits personality from user', function () {
+    Queue::fake();
     $this->actingAs($this->user);
 
     $parentRun = PromptRun::factory()->create([
@@ -259,18 +234,6 @@ test('child prompt run inherits personality from user', function () {
         'framework_questions' => [['question' => 'Q1']],
         'personality_tier' => 'full',
     ]);
-
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'Prompt',
-                    'framework_used' => ['code' => 'SMART'],
-                ],
-            ]);
-    });
 
     $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [
         'parentPromptRun' => $parentRun,
@@ -286,6 +249,7 @@ test('child prompt run inherits personality from user', function () {
 });
 
 test('child from answers inherits pre-analysis information from parent', function () {
+    Queue::fake();
     $this->actingAs($this->user);
 
     $preAnalysisQuestions = [
@@ -314,18 +278,6 @@ test('child from answers inherits pre-analysis information from parent', functio
         'pre_analysis_context' => $preAnalysisContext,
         'pre_analysis_reasoning' => 'User needs structured guidance',
     ]);
-
-    $this->mock(N8nWorkflowClient::class, function ($mock) {
-        $mock->shouldReceive('executeGeneration')
-            ->once()
-            ->andReturn([
-                'success' => true,
-                'data' => [
-                    'optimised_prompt' => 'Prompt',
-                    'framework_used' => ['code' => 'SMART'],
-                ],
-            ]);
-    });
 
     $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [
         'parentPromptRun' => $parentRun,
