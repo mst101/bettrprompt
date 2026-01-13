@@ -139,15 +139,22 @@ class SetCountry
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($user, $countryCode) {
-                    // For authenticated users: use their currency preference if set
-                    // Users can set a currency preference globally, independent of their home country
-                    if ($user->currency_code) {
-                        return $user->currency_code;
+                function () use ($user, $countryCode, $routeCountry) {
+                    $userCountry = $user->country_code;
+
+                    // Currency is region-specific based on user's home country
+                    if ($routeCountry && $userCountry) {
+                        if (strtolower($userCountry) === strtolower($routeCountry)) {
+                            // User visiting their home country - use their preference if set
+                            return $user->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
+                        } else {
+                            // User visiting a different country - use that country's default
+                            return $this->getCountryDefaultCurrency($countryCode);
+                        }
                     }
 
-                    // Fall back to country default currency
-                    return $this->getCountryDefaultCurrency($countryCode);
+                    // User has no home country set - use their preference if set, else country default
+                    return $user->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
                 }
             );
         }
