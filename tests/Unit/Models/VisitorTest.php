@@ -68,10 +68,11 @@ describe('Visitor return status', function () {
         expect($visitor->isReturning())->toBeFalse();
     });
 
-    test('isReturning returns false when first_visit_at is null', function () {
+    test('isReturning returns false when first and last visit are the same', function () {
+        $sameTime = now();
         $visitor = Visitor::factory()->create([
-            'first_visit_at' => null,
-            'last_visit_at' => now(),
+            'first_visit_at' => $sameTime,
+            'last_visit_at' => $sameTime,
         ]);
 
         expect($visitor->isReturning())->toBeFalse();
