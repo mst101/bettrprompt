@@ -163,9 +163,9 @@ test('language cache is invalidated when updated', function () {
     // Make a request to populate cache
     $this->actingAs($user)->get('/gb/pricing');
 
-    // Cache key should exist for this user
+    // Cache key should exist for this user after first request
     expect(\Illuminate\Support\Facades\Cache::has("user.{$user->id}.language"))
-        ->toBeFalse(); // Not cached yet on first request
+        ->toBeTrue(); // Cache::remember() creates entry on first request
 
     // Update language
     $this->actingAs($user)
