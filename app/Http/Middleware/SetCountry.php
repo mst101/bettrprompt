@@ -134,21 +134,20 @@ class SetCountry
 
         // 1. Check authenticated user preference (with Redis cache)
         if ($user = $request->user()) {
-            $userCountry = $user->country_code;
             $cacheKey = "user.{$user->id}.currency.{$routeCountry}";
 
             return Cache::remember(
                 $cacheKey,
                 3600, // 1 hour
-                function () use ($user, $countryCode, $routeCountry, $userCountry) {
-                    $userCountry = $user->country_code ?? $userCountry;
-                    if ($routeCountry) {
-                        if (! $userCountry || strtolower($userCountry) !== strtolower($routeCountry)) {
-                            return $this->getCountryDefaultCurrency($countryCode);
-                        }
+                function () use ($user, $countryCode) {
+                    // For authenticated users: use their currency preference if set
+                    // Users can set a currency preference globally, independent of their home country
+                    if ($user->currency_code) {
+                        return $user->currency_code;
                     }
 
-                    return $user->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
+                    // Fall back to country default currency
+                    return $this->getCountryDefaultCurrency($countryCode);
                 }
             );
         }
