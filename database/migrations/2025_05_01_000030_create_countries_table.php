@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('countries', function (Blueprint $table) {
-            $table->string('id')->primary(); // ISO code, e.g., 'GB', 'US', 'FR'
+            $table->string('id')->primary(); // ISO code in lowercase, e.g., 'gb', 'us', 'fr'
             $table->string('continent_id')->nullable(); // e.g., 'E' for Europe, 'A' for Asia
             $table->string('currency_id'); // Foreign key to currencies table
             $table->string('language_id'); // Foreign key to languages table

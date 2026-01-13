@@ -73,6 +73,29 @@ return new class extends Migration
             $table->unsignedTinyInteger('profile_completion_percentage')->default(0);
             $table->timestamp('profile_last_updated_at')->nullable();
 
+            // Stripe billing
+            $table->string('stripe_id')->nullable()->index();
+            $table->string('pm_type')->nullable();
+            $table->string('pm_last_four', 4)->nullable();
+            $table->timestamp('trial_ends_at')->nullable();
+
+            // Subscription tracking
+            $table->string('subscription_tier', 20)->default('free');
+            $table->timestamp('subscription_ends_at')->nullable();
+
+            // Usage tracking for free tier
+            $table->unsignedInteger('monthly_prompt_count')->default(0);
+            $table->timestamp('prompt_count_reset_at')->nullable();
+
+            // Privacy encryption fields
+            $table->boolean('privacy_enabled')->default(false);
+            $table->text('encrypted_dek')->nullable();
+            $table->text('recovery_dek')->nullable();
+            $table->timestamp('dek_created_at')->nullable();
+
+            // Location prompts
+            $table->boolean('location_prompt_dismissed')->default(false);
+
             $table->rememberToken();
             $table->timestamps();
 
@@ -115,6 +138,8 @@ return new class extends Migration
                 $table->dropIndex(['team_role']);
                 $table->dropIndex(['budget_consciousness']);
                 $table->dropIndex(['referred_by_user_id']);
+                $table->dropIndex(['stripe_id']);
+                $table->dropIndex(['subscription_tier']);
             });
         }
 

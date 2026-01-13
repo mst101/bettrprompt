@@ -52,7 +52,7 @@ return new class extends Migration
                 'ESTP-A', 'ESTP-T', 'ESFP-A', 'ESFP-T',
             ])->nullable(); // 32 personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable();
-            $table->enum('ui_complexity', ['simple', 'advanced'])->default('simple');
+            $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
 
             // Geolocation data
             $table->string('country_code', 2)->nullable();

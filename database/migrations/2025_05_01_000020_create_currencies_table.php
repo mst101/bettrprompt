@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('space_between_amount_and_symbol')->default(false);
             $table->integer('rounding_coefficient')->default(0);
             $table->integer('decimal_digits')->default(2);
+            $table->boolean('active')->default(false);
             $table->timestamps();
         });
     }

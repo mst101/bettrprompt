@@ -43,6 +43,9 @@ return new class extends Migration
                 '2_processing', '2_completed', '2_failed',
             ])->default('0_processing');
             $table->text('error_message')->nullable();
+            $table->json('error_context')->nullable();
+            $table->integer('retry_count')->default(0);
+            $table->timestamp('last_error_at')->nullable();
 
             // 4. Pre-Analysis / Workflow 0
             $table->json('pre_analysis_questions')->nullable();
@@ -76,7 +79,10 @@ return new class extends Migration
             $table->json('iteration_suggestions')->nullable(); // string[] of suggestions for improving the prompt
             $table->json('generation_api_usage')->nullable(); // {model, input_tokens, output_tokens} from workflow 2
 
-            // 8. Timestamps
+            // 8. Encryption and privacy
+            $table->boolean('is_encrypted')->default(false);
+
+            // 9. Timestamps
             $table->timestamps();
             $table->timestamp('completed_at')->nullable();
         });
