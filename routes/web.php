@@ -253,6 +253,11 @@ Route::prefix('{country}')
             Route::get('/domain-analytics', [
                 \App\Http\Controllers\Admin\AdminController::class, 'domainAnalytics',
             ])->name('domain-analytics.index');
+
+            // Alerts
+            Route::get('/alerts', function () {
+                return inertia('Admin/Alerts');
+            })->name('alerts.index');
         });
 
         // Workflow management system (admin only)

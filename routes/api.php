@@ -262,6 +262,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
             ->name('admin.domain-analytics.questions');
         Route::get('/workflows', [DomainAnalyticsController::class, 'getWorkflowAnalytics'])
             ->name('admin.domain-analytics.workflows');
+        Route::get('/funnels', [DomainAnalyticsController::class, 'getFunnelAnalytics'])
+            ->name('admin.domain-analytics.funnels');
+    });
+
+    // Alert notifications API
+    Route::prefix('admin/alert-notifications')->group(function () {
+        Route::get('/pending', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getPending'])
+            ->name('admin.alert-notifications.pending');
+        Route::post('/{notificationId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledge'])
+            ->name('admin.alert-notifications.acknowledge');
+    });
+
+    // Alerts API
+    Route::prefix('admin/alerts')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getAlerts'])
+            ->name('admin.alerts.index');
+        Route::post('/{alertId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledgeAlert'])
+            ->name('admin.alerts.acknowledge');
     });
 });
 
