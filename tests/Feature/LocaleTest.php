@@ -120,12 +120,13 @@ test('language preference applies to all country URLs without re-setting', funct
         ->patch('/gb/profile/language', ['language_code' => 'de-DE'])
         ->assertOk();
 
-    // Visit multiple country URLs
-    foreach (['us', 'mx', 'de'] as $country) {
+    // Visit multiple country URLs (only countries in active seeding list)
+    foreach (['us', 'de', 'gb'] as $country) {
         $response = $this->actingAs($user)->get("/{$country}/pricing");
-        $response->assertInertia(fn ($page) => $page
-            ->where('locale', 'de-DE')
-        );
+        $response->assertStatus(200)
+            ->assertInertia(fn ($page) => $page
+                ->where('locale', 'de-DE')
+            );
     }
 });
 
