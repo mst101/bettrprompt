@@ -14,10 +14,9 @@ class CountrySeeder extends Seeder
      * Run the database seeds.
      *
      * When SEED_ACTIVE_ONLY environment variable is set to 'true',
-     * only seeds countries that have BOTH:
-     * - An active language (en-GB, en-US, de-DE, fr-FR, es-ES)
-     * - An active currency (GBP, EUR, USD)
-     * This optimises test seeding from 247 countries to ~44.
+     * only seeds a whitelist of 8 test countries:
+     * gb, us, de, fr, es, it, be, mx
+     * This optimises test seeding from 247 countries to 8.
      */
     public function run(): void
     {
@@ -28,24 +27,21 @@ class CountrySeeder extends Seeder
         fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
-        $activeLanguages = ['en-GB', 'en-US', 'de-DE', 'fr-FR', 'es-ES'];
-        $activeCurrencies = ['GBP', 'EUR', 'USD'];
+        $whitelistedCountries = ['gb', 'us', 'de', 'fr', 'es', 'it', 'be', 'mx'];
 
         while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
-            $languageId = $row[3];
-            $currencyId = $row[2];
+            $countryId = $row[0];
 
-            // Skip countries without active language/currency if activeOnly mode is enabled
-            if ($activeOnly &&
-                (! in_array($languageId, $activeLanguages) || ! in_array($currencyId, $activeCurrencies))) {
+            // Skip countries not in whitelist if activeOnly mode is enabled
+            if ($activeOnly && ! in_array(strtolower($countryId), $whitelistedCountries)) {
                 continue;
             }
 
             DB::table('countries')->insertOrIgnore([
-                'id' => $row[0],
+                'id' => $countryId,
                 'continent_id' => $row[1] ?: null,
-                'currency_id' => $currencyId,
-                'language_id' => $languageId,
+                'currency_id' => $row[2],
+                'language_id' => $row[3],
                 'first_day_of_week' => $row[4],
                 'uses_miles' => (bool) $row[5],
                 'name' => $row[6],

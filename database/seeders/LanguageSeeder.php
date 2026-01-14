@@ -14,8 +14,9 @@ class LanguageSeeder extends Seeder
      * Run the database seeds.
      *
      * When SEED_ACTIVE_ONLY environment variable is set to 'true',
-     * only seeds languages marked as active=1 in the CSV.
-     * This optimises test seeding from 45 languages to 5.
+     * only seeds languages needed for whitelisted test countries:
+     * en-GB, en-US, de-DE, fr-FR, es-ES, it-IT, es-MX
+     * This optimises test seeding from 45 languages to 7.
      */
     public function run(): void
     {
@@ -26,19 +27,20 @@ class LanguageSeeder extends Seeder
         fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
+        $whitelistedLanguages = ['en-GB', 'en-US', 'de-DE', 'fr-FR', 'es-ES', 'it-IT', 'es-MX'];
 
         while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
-            $isActive = (bool) $row[2];
+            $languageId = $row[0];
 
-            // Skip inactive languages if activeOnly mode is enabled
-            if ($activeOnly && ! $isActive) {
+            // Skip languages not in whitelist if activeOnly mode is enabled
+            if ($activeOnly && ! in_array($languageId, $whitelistedLanguages)) {
                 continue;
             }
 
             DB::table('languages')->insertOrIgnore([
-                'id' => $row[0],
+                'id' => $languageId,
                 'name' => $row[1],
-                'active' => $isActive,
+                'active' => (bool) $row[2],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

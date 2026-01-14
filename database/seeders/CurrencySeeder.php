@@ -14,8 +14,9 @@ class CurrencySeeder extends Seeder
      * Run the database seeds.
      *
      * When SEED_ACTIVE_ONLY environment variable is set to 'true',
-     * only seeds currencies marked as active=1 in the CSV.
-     * This optimises test seeding from 155 currencies to 3 (GBP, EUR, USD).
+     * only seeds currencies needed for whitelisted test countries:
+     * GBP, USD, EUR, MXN
+     * This optimises test seeding from 155 currencies to 4.
      */
     public function run(): void
     {
@@ -26,18 +27,20 @@ class CurrencySeeder extends Seeder
         fgetcsv($handle, null, ',', '"', '\\');
 
         $activeOnly = getenv('SEED_ACTIVE_ONLY') === 'true';
+        $whitelistedCurrencies = ['GBP', 'USD', 'EUR', 'MXN'];
         $records = [];
 
         while ($row = fgetcsv($handle, null, ',', '"', '\\')) {
+            $currencyId = $row[0];
             $isActive = (bool) $row[8];
 
-            // Skip inactive currencies if activeOnly mode is enabled
-            if ($activeOnly && ! $isActive) {
+            // Skip currencies not in whitelist if activeOnly mode is enabled
+            if ($activeOnly && ! in_array($currencyId, $whitelistedCurrencies)) {
                 continue;
             }
 
             $records[] = [
-                'id' => $row[0],
+                'id' => $currencyId,
                 'symbol' => $row[1],
                 'thousands_separator' => $row[2],
                 'decimal_separator' => $row[3],
