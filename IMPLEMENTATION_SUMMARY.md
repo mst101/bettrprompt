@@ -50,7 +50,7 @@ Converting BettrPrompt URLs from full locale codes (e.g., `/en-GB/pricing`) to l
 
 **Files Modified:**
 - `app/Http/Middleware/SetCountry.php` - New middleware (175 lines)
-- `app/Http/Middleware/SetLocale.php` - Added `detectCountry()` method
+- `app/Http/Middleware/SetCountry.php` - Added `detectCountry()` method
 - `app/Http/Middleware/HandleInertiaRequests.php` - Updated shared props
 - `bootstrap/app.php` - Registered new middleware
 
@@ -59,7 +59,7 @@ Converting BettrPrompt URLs from full locale codes (e.g., `/en-GB/pricing`) to l
 **Work Done:**
 - Changed route parameter from `{locale}` to `{country}` in `routes/web.php`
 - Updated route validation from locale list to country code pattern `[a-z]{2}`
-- Updated `SetLocale::detectCountry()` for root redirect
+- Updated `SetCountry::detectCountry()` for root redirect
 - Updated controllers to use `{country}` parameter instead of `{locale}`:
   - `ProfileController::updateLocation()` - Simplified to use country from route
   - `PromptBuilderController::preAnalyse()` - Updated redirect to pass `country` param
@@ -170,6 +170,6 @@ Converting BettrPrompt URLs from full locale codes (e.g., `/en-GB/pricing`) to l
 ## Notes
 
 - Old `useLocaleRoute.ts` composable kept for backward compatibility
-- `SetLocale` middleware kept for backward compatibility
+- `SetCountry` middleware provides the canonical country/locale resolution
 - Zero breaking changes to existing API endpoints
 - Database-driven approach ensures scalability to future country additions

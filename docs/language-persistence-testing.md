@@ -43,7 +43,7 @@ Component updates frontend i18n
     ↓
 User navigates to /new-locale/prompt-builder
     ↓
-SetLocale middleware sets application locale
+SetCountry middleware sets application locale
     ↓
 PromptBuilderController triggers n8n workflow
     ↓
@@ -143,7 +143,7 @@ n8n Claude nodes generate response in specified language
 **Expected Result:**
 - URL should remain at `/es/...`
 - Language switcher should show Spanish as selected
-- (Note: The URL-based routing takes precedence, so if you manually change the URL to `/en-GB/`, the SetLocale middleware will detect this. The language_code in the database becomes the fallback preference for future sessions.)
+- (Note: The URL-based routing takes precedence, so if you manually change the URL to `/en-GB/`, the SetCountry middleware will detect this. The language_code in the database becomes the fallback preference for future sessions.)
 
 ## Debugging
 

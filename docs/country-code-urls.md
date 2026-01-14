@@ -13,7 +13,7 @@ fallback to USD currency and en-US language for unsupported combinations.
 - **Route parameter:** `{country}` (not "locale")
 - **Config:** `supported_countries` (all 247 country codes from database)
 - **Frontend composable:** `useCountryRoute()`
-- **Middleware:** `SetCountry` (or keep as SetLocale but update logic)
+- **Middleware:** `SetCountry` (validates `{country}`, resolves locale/currency, caches preferences)
 - **User/Visitor columns:** `country_code` (e.g., 'mx', 'sg', 'gb')
 
 **Resolution flow:**
@@ -51,8 +51,7 @@ Display: Pricing in USD (fallback), content in Spanish
 
 **Remove session fallback:**
 
-- Current `SetLocale` middleware uses `session('locale')` as fallback layer
-- **Remove this** - visitor system with cookies is more reliable
+- `SetCountry` no longer relies on `session('locale')`; cookies and persisted preferences are the single source of truth
 - Preference hierarchy: User DB → Visitor DB → Country default → Global fallback
 
 **Cache invalidation:**
@@ -69,20 +68,13 @@ Display: Pricing in USD (fallback), content in Spanish
 - **languages** table: `id` (locale: 'en-GB', 'en-US', 'de-DE'), `active` (boolean)
 - Existing mapping: GB→en-GB, US→en-US, AU→en-GB, etc.
 
-### Current URL System
+### URL System
 
-- Routes use `{locale}` parameter with full locale codes: `/en-GB/pricing`, `/en-US/pricing`
-- Supported locales: `['en-US', 'en-GB', 'de', 'fr', 'es']` (mixed casing)
-- `SetLocale` middleware validates and sets locale
-- Frontend uses `useLocaleRoute()` composable
-
-### Target URL System
-
-- Routes use `{country}` parameter with lowercase country codes: `/gb/pricing`, `/mx/pricing`
-- Supported countries: All 247 country codes from countries table
-- `SetCountry` middleware validates country, resolves to language and currency
-- Frontend uses `useCountryRoute()` composable
-- Silent fallback to USD and en-US for unsupported currencies/languages
+- Routes use the `{country}` parameter with lowercase ISO codes (e.g., `/gb/pricing`, `/mx/pricing`)
+- Supported countries: all 247 entries from the `countries` table
+- `SetCountry` middleware validates the code, resolves locale and currency (with Redis-backed caching), and sets `app()->setLocale()`
+- Frontend uses the `useCountryRoute()` composable for link generation
+- Silent fallback to USD pricing and `en-US` language when a country lacks pricing or translations
 
 ## Implementation Steps
 
@@ -159,212 +151,24 @@ Display: Pricing in USD (fallback), content in Spanish
 
 ### Phase 3: Middleware Updates
 
-#### 3.1 Rename and Update SetLocale Middleware
+#### 3.1 Implement SetCountry Middleware
 
-**File:** `app/Http/Middleware/SetLocale.php` → Consider renaming to `SetCountry.php`
+**File:** `app/Http/Middleware/SetCountry.php`
 
-**Changes:**
+**Responsibilities:**
 
-1. Add use statements:
+1. Validate the `{country}` route segment against the `countries` table and abort with a 404 for invalid codes.
+2. Resolve the preferred language by checking the authenticated user's `language_code`, falling back to the visitor record, and finally the country default; every tier is cached via Redis.
+3. Resolve the preferred currency using the same preference order, with a fallback to the country default and USD as a final fallback for unsupported pricing.
+4. Set the resolved locale using `app()->setLocale()` and make the resolved currency available to shared props or downstream services.
 
-```php
-use Illuminate\Support\Facades\Cache;
-use App\Models\Country;
-use App\Models\Visitor;
-```
+Key helpers include `resolveLanguageCode()`, `resolveCurrencyCode()`, `getCountryDefaultLanguage()`, `getCountryDefaultCurrency()`, and the static `detectCountry()` helper that centralizes the user → visitor → geolocation → fallback flow.
 
-2. Update `handle()` method with Redis caching:
+#### 3.2 Caching & Detection Helpers
 
-```php
-public function handle(Request $request, Closure $next): Response
-{
-    $countryCode = $request->route('country');
-
-    // Validate country code exists in database
-    if ($countryCode && !Country::where('id', $countryCode)->exists()) {
-        abort(404);
-    }
-
-    // Resolve country code to full language locale (with caching)
-    if ($countryCode) {
-        $languageCode = $this->resolveLanguageCode($countryCode, $request);
-        app()->setLocale($languageCode);
-    }
-
-    return $next($request);
-}
-
-protected function resolveLanguageCode(string $countryCode, Request $request): string
-{
-    // 1. Check authenticated user preference (with Redis cache)
-    if ($user = $request->user()) {
-        return Cache::remember(
-            "user.{$user->id}.language",
-            3600, // 1 hour
-            function () use ($user, $countryCode) {
-                return $user->language_code ?? $this->getCountryDefaultLanguage($countryCode);
-            }
-        );
-    }
-
-    // 2. Check visitor preference (with Redis cache)
-    if ($visitorId = $request->cookie('visitor_id')) {
-        return Cache::remember(
-            "visitor.{$visitorId}.language",
-            3600, // 1 hour
-            function () use ($visitorId, $countryCode) {
-                $visitor = Visitor::find($visitorId);
-                return $visitor?->language_code ?? $this->getCountryDefaultLanguage($countryCode);
-            }
-        );
-    }
-
-    // 3. Fallback to country default
-    return $this->getCountryDefaultLanguage($countryCode);
-}
-
-protected function getCountryDefaultLanguage(string $countryCode): string
-{
-    // Cache country defaults indefinitely (rarely change)
-    return Cache::rememberForever(
-        "country.{$countryCode}.language",
-        function () use ($countryCode) {
-            $country = Country::with('language')->find($countryCode);
-
-            if (!$country || !$country->language) {
-                Log::info("Country {$countryCode} has no language mapping, using fallback");
-                return config('app.fallback_locale', 'en-US');
-            }
-
-            // Check if language file exists
-            $languageFile = lang_path("{$country->language->id}.json");
-            if (!file_exists($languageFile)) {
-                Log::info("Language file {$country->language->id}.json not found, using fallback");
-                return config('app.fallback_locale', 'en-US');
-            }
-
-            return $country->language->id;
-        }
-    );
-}
-```
-
-3. Update `detectCountry()` method (rename from `detectLocale()`):
-
-```php
-public static function detectCountry(Request $request): string
-{
-    // Returns country code (gb, mx, sg)
-
-    // 1. Check authenticated user preference
-    if ($user = $request->user()) {
-        if ($user->country_code && Country::where('id', $user->country_code)->exists()) {
-            return $user->country_code;
-        }
-    }
-
-    // 2. Check visitor preference (via cookie, NOT session)
-    if ($visitorId = $request->cookie('visitor_id')) {
-        $visitor = Visitor::find($visitorId);
-        if ($visitor && $visitor->country_code) {
-            return $visitor->country_code;
-        }
-    }
-
-    // 3. Geolocate IP to country code
-    // Use GeolocationService, returns lowercase country code
-    // TODO: Implement geolocation detection
-
-    // 4. Fallback
-    return 'gb'; // Or 'us' depending on primary market
-}
-```
-
-4. **Remove session fallback** - no longer using `session('locale')` or `session('country')`
-
-5. Remove or simplify `normalizeLocale()` (no longer needed for country codes)
-
-#### 3.2 Add Currency Resolution Method
-
-**File:** `app/Http/Middleware/SetLocale.php` (or new helper)
-
-**Add method with Redis caching:**
-
-```php
-protected function resolveCurrencyCode(string $countryCode, Request $request): string
-{
-    // 1. Check authenticated user preference (with Redis cache)
-    if ($user = $request->user()) {
-        return Cache::remember(
-            "user.{$user->id}.currency",
-            3600, // 1 hour
-            function () use ($user, $countryCode) {
-                return $user->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
-            }
-        );
-    }
-
-    // 2. Check visitor preference (with Redis cache)
-    if ($visitorId = $request->cookie('visitor_id')) {
-        return Cache::remember(
-            "visitor.{$visitorId}.currency",
-            3600, // 1 hour
-            function () use ($visitorId, $countryCode) {
-                $visitor = Visitor::find($visitorId);
-                return $visitor?->currency_code ?? $this->getCountryDefaultCurrency($countryCode);
-            }
-        );
-    }
-
-    // 3. Fallback to country default
-    return $this->getCountryDefaultCurrency($countryCode);
-}
-
-protected function getCountryDefaultCurrency(string $countryCode): string
-{
-    // Cache country defaults indefinitely (rarely change)
-    return Cache::rememberForever(
-        "country.{$countryCode}.currency",
-        function () use ($countryCode) {
-            $country = Country::with('currency')->find($countryCode);
-
-            if (!$country || !$country->currency) {
-                return config('app.fallback_currency', 'USD');
-            }
-
-            // Check if pricing exists for this currency
-            $hasPricing = \App\Models\Price::where('currency_id', $country->currency_id)->exists();
-
-            if (!$hasPricing) {
-                Log::info("No pricing for currency {$country->currency_id}, using fallback");
-                return config('app.fallback_currency', 'USD');
-            }
-
-            return $country->currency_id;
-        }
-    );
-}
-```
-
-#### 3.3 Update Shared Inertia Props
-
-**File:** `app/Http/Middleware/HandleInertiaRequests.php`
-
-**Changes:**
-
-```php
-// Change from 'locale' to 'country'
-'country' => fn () => $request->route('country') ?? 'gb',
-
-// Add resolved language code for translations
-'locale' => fn () => app()->getLocale(), // Returns 'en-GB', 'es-MX', etc.
-
-// Add resolved currency code
-'currency' => fn () => $this->resolveCurrencyCode($request->route('country') ?? 'gb'),
-
-// All supported countries (for country switcher UI)
-'supportedCountries' => config('app.supported_countries'),
-```
+- Preference caches use keys like `user.{id}.language` / `.currency` and expire after 1 hour; country defaults are cached forever and can be invalidated with `country.{code}.{type}` keys when the admin updates the mapping.
+- `detectCountry(Request $request)` encapsulates the lookup order and safely returns lowercase country codes; it's used whenever a country redirect is required (e.g., root redirect, `countryRoute()` fallback).
+- `clearCachePattern()` remains available to flush Redis keys in production deployments or tests.
 
 ### Phase 4: Route Updates
 
@@ -747,7 +551,7 @@ Users can override language preference in settings whilst staying on same countr
 
 ### Must Modify - Middleware
 
-5. `app/Http/Middleware/SetLocale.php` - Rename to SetCountry.php, add resolution logic
+5. `app/Http/Middleware/SetCountry.php` - Handle `{country}` validation plus language/currency resolution and caching
 6. `app/Http/Middleware/HandleInertiaRequests.php` - Update shared props (country, locale, currency)
 7. Middleware alias registration - Change 'locale' to 'country'
 
@@ -849,7 +653,7 @@ Since internationalisation hasn't gone live yet and you opted to **break old URL
 If critical issues arise post-deployment:
 
 1. **Revert routes:** Change `{country}` back to `{locale}` in `routes/web.php`
-2. **Revert middleware:** Restore old `SetLocale` middleware logic
+2. **Revert middleware:** Restore the pre-deployment `SetCountry` middleware behavior (or revert to the previous routing guard)
 3. **Revert config:** Change `supported_countries` back to `supported_locales`
 4. **Revert frontend:** Restore `useLocaleRoute.ts` composable
 5. **Database changes:** Can stay - new columns/lowercase IDs won't break anything

@@ -81,7 +81,7 @@ review will be used for initial translations.
 **Backend:**
 
 - `routes/web.php` - Add locale prefix group
-- `app/Http/Middleware/SetLocale.php` - New middleware
+- `app/Http/Middleware/SetCountry.php` - New middleware
 - `config/app.php` - Supported locales config
 
 ---
@@ -262,40 +262,26 @@ Install `tailwindcss-rtl` for directional utilities:
 'rtl_locales' => ['ar', 'he'],
 ```
 
-**SetLocale Middleware:**
+**SetCountry Middleware:**
 
-```php
-class SetLocale
-{
-    public function handle(Request $request, Closure $next)
-    {
-        $locale = $request->route('locale');
-
-        if (!in_array($locale, config('app.supported_locales'))) {
-            abort(404);
-        }
-
-        app()->setLocale($locale);
-
-        return $next($request);
-    }
-}
-```
+`SetCountry` validates the `{country}` route segment, resolves language and currency using cached user/visitor preferences, and populates shared context via `app()->setLocale()` plus helper metadata (currency, country). It replaces the previous locale-only middleware and now supports the full user → visitor → geolocation fallback chain.
 
 **routes/web.php:**
 
-```php
-Route::redirect('/', '/' . app()->getLocale());
+The country-prefixed routes are registered as:
 
-Route::prefix('{locale}')
-    ->middleware(['web', 'locale'])
-    ->where(['locale' => implode('|', config('app.supported_locales'))])
+```php
+Route::prefix('{country}')
+    ->middleware(['web', 'country'])
+    ->where(['country' => '[a-z]{2}'])
     ->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('home');
         Route::get('/prompt-builder', [PromptBuilderController::class, 'index']);
-        // ... all other routes
+        // ...
     });
 ```
+
+`SetCountry` middleware is bound to the `country` alias, ensuring the request has a valid country before hitting the controllers.
 
 ### 2. Vue Frontend Setup
 
@@ -711,7 +697,7 @@ Translate title and description per page per locale.
 ### Phase 0: Infrastructure (3-4 days)
 
 1. Install vue-i18n and configure
-2. Create SetLocale middleware
+2. Create SetCountry middleware
 3. Update routes with locale prefix
 4. Create language switcher component (with 18 languages)
 5. Add RTL CSS logical properties where needed
@@ -809,7 +795,7 @@ Deploy in tiers to manage risk:
 | `resources/js/i18n/en-GB.json`                 | Create | British English variants          |
 | `resources/js/i18n/{locale}.json`              | Create | 16 additional locale files        |
 | `resources/lang/{locale}/*.php`                | Create | Backend translations (18 locales) |
-| `app/Http/Middleware/SetLocale.php`            | Create | Locale middleware                 |
+| `app/Http/Middleware/SetCountry.php`           | Create | Country middleware (validates prefix, sets locale/currency) |
 | `routes/web.php`                               | Modify | Add locale prefix                 |
 | `config/app.php`                               | Modify | Add supported_locales (18)        |
 | `resources/js/Components/LanguageSwitcher.vue` | Create | Language selector UI              |

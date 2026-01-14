@@ -42,7 +42,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'prompt.limit' => \App\Http\Middleware\EnforcePromptLimit::class,
             'prompt.track' => \App\Http\Middleware\TrackPromptUsage::class,
             'privacy.unlock' => \App\Http\Middleware\RequirePrivacyUnlock::class,
-            'locale' => \App\Http\Middleware\SetLocale::class,
             'country' => \App\Http\Middleware\SetCountry::class,
         ]);
 
