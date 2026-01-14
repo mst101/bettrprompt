@@ -166,7 +166,7 @@ class SubscriptionController extends Controller
     public function billingPortal(Request $request)
     {
         return $request->user()->redirectToBillingPortal(
-            route('settings.subscription')
+            route('settings.subscription', ['country' => $request->route('country')])
         );
     }
 
@@ -187,7 +187,7 @@ class SubscriptionController extends Controller
             ]);
         }
 
-        return redirect()->route('settings.subscription')
+        return redirect()->route('settings.subscription', ['country' => $request->route('country')])
             ->with('success', __('messages.subscription.cancelled_pro_until', ['date' => $subscription->ends_at->format('j F Y')]));
     }
 
@@ -207,7 +207,7 @@ class SubscriptionController extends Controller
             ]);
         }
 
-        return redirect()->route('settings.subscription')
+        return redirect()->route('settings.subscription', ['country' => $request->route('country')])
             ->with('success', __('messages.subscription.resumed'));
     }
 }

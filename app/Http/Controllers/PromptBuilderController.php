@@ -612,7 +612,10 @@ class PromptBuilderController extends Controller
             // The job will either show questions or proceed directly to main analysis
             ProcessPreAnalysis::dispatch($childPromptRun, $this->getJobDatabase($request));
 
-            return redirect()->route('prompt-builder.show', $childPromptRun);
+            return redirect()->route('prompt-builder.show', [
+                'country' => $request->route('country'),
+                'promptRun' => $childPromptRun,
+            ]);
         } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
@@ -897,7 +900,7 @@ class PromptBuilderController extends Controller
             ]);
 
             return redirect()
-                ->route('prompt-builder.history')
+                ->route('prompt-builder.history', ['country' => $request->route('country')])
                 ->with('success', __('messages.prompt_builder.deleted_successfully'));
         } catch (Exception $e) {
             Log::error('Failed to delete prompt run (PromptBuilder)', [
