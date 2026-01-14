@@ -1,0 +1,1238 @@
+// BettrPrompt Complete Database Schema
+// Import this file into https://dbdiagram.io to visualize the complete database
+
+// ============================================
+// User & Authentication
+// ============================================
+
+Table users {
+  id bigint [pk, increment]
+  google_id string [unique, null]
+  name string [not null]
+  email string [unique, not null]
+  password string [null]
+  is_admin boolean [default: false]
+  email_verified_at timestamp [null]
+  remember_token string [null]
+  referral_code string(10) [unique, null]
+  referred_by_user_id bigint [null, ref: > users.id]
+
+  // Profile
+  avatar string [null]
+  personality_type string [null]
+  trait_percentages json [null]
+  ui_complexity string [default: "advanced", note: "simple or advanced"]
+  profile_completion_percentage smallint [default: 0]
+  profile_last_updated_at timestamp [null]
+
+  // Location
+  country_code string(2) [null]
+  country_name string [null]
+  region string [null]
+  city string [null]
+  timezone string [null]
+  latitude decimal [null]
+  longitude decimal [null]
+  location_detected_at timestamp [null]
+  location_manually_set boolean [default: false]
+  location_prompt_dismissed boolean [default: false]
+
+  // Localization
+  currency_code string(3) [null]
+  language_code string(5) [null]
+  language_manually_set boolean [default: false]
+
+  // Professional
+  job_title string [null]
+  industry string [null]
+  experience_level string [null, note: "entry, mid, senior, expert"]
+  company_size string [null, note: "solo, small, medium, large, enterprise"]
+  team_size string [null, note: "solo, small, medium, large"]
+  team_role string [null, note: "individual, lead, manager, director, executive"]
+  budget_consciousness string [null]
+  work_mode string [null, note: "office, hybrid, remote, freelance"]
+  preferred_tools json [null]
+  primary_programming_language string [null]
+
+  // Billing
+  stripe_id string [null, indexed]
+  pm_type string [null]
+  pm_last_four string(4) [null]
+  trial_ends_at timestamp [null]
+  subscription_tier string(20) [default: "free"]
+  subscription_ends_at timestamp [null]
+  monthly_prompt_count int [default: 0]
+  prompt_count_reset_at timestamp [null]
+
+  // Privacy & Encryption
+  privacy_enabled boolean [default: false]
+  encrypted_dek text [null]
+  recovery_dek text [null]
+  dek_created_at timestamp [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    referred_by_user_id
+    country_code
+    timezone
+    industry
+    experience_level
+    team_role
+    budget_consciousness
+    stripe_id
+  }
+}
+
+Table password_reset_tokens {
+  email string [pk]
+  token string [not null]
+  created_at timestamp [null]
+}
+
+Table sessions {
+  id string [pk]
+  user_id bigint [null, indexed, ref: > users.id]
+  ip_address string(45) [null]
+  user_agent text [null]
+  payload longtext [not null]
+  last_activity int [indexed]
+}
+
+// ============================================
+// Visitors & Attribution
+// ============================================
+
+Table visitors {
+  id uuid [pk, note: "UUID primary key"]
+  user_id bigint [null, indexed, ref: > users.id]
+  referred_by_user_id uuid [null, indexed]
+
+  // UTM & Referrer
+  utm_source string [null]
+  utm_medium string [null]
+  utm_campaign string [null]
+  utm_term string [null]
+  utm_content string [null]
+  referrer string [null]
+  landing_page string [null]
+
+  // Device & Browser
+  user_agent string [null]
+  ip_address ipaddr [null]
+
+  // Personality
+  personality_type string [null]
+  trait_percentages json [null]
+  ui_complexity string [default: "advanced"]
+
+  // Location
+  country_code string(2) [null]
+  country_name string [null]
+  region string [null]
+  city string [null]
+  timezone string [null]
+  latitude decimal [null]
+  longitude decimal [null]
+  currency_code string(3) [null]
+  language_code string(5) [null]
+  location_detected_at timestamp [null]
+
+  // Timing
+  first_visit_at timestamp [not null]
+  last_visit_at timestamp [not null]
+  converted_at timestamp [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, first_visit_at)
+    converted_at
+    country_code
+    timezone
+    last_visit_at
+    (user_id, converted_at)
+    (utm_source, last_visit_at)
+  }
+}
+
+Table visitors_archive {
+  id uuid [pk]
+  user_id bigint [null, indexed]
+  referred_by_user_id uuid [null]
+
+  utm_source string [null]
+  utm_medium string [null]
+  utm_campaign string [null]
+  utm_term string [null]
+  utm_content string [null]
+  referrer text [null]
+  landing_page text [null]
+  user_agent text [null]
+  ip_address string [null]
+
+  personality_type string [null]
+  trait_percentages json [null]
+  ui_complexity string [null]
+  ui_step_number int [null]
+
+  country_code string(2) [null]
+  country_name string [null]
+  region string [null]
+  city string [null]
+  timezone string [null]
+  currency_code string(3) [null]
+  latitude decimal [null]
+  longitude decimal [null]
+  language_code string [null]
+  location_detected_at timestamp [null]
+
+  first_visit_at timestamp [null]
+  last_visit_at timestamp [null]
+  converted_at timestamp [null]
+
+  created_at timestamp
+  updated_at timestamp
+  archived_at timestamp [default: "current_timestamp"]
+  archive_tier string [note: "tier_1 or tier_2"]
+  archive_reason text [null]
+
+  indexes {
+    archived_at
+    user_id
+    archive_tier
+  }
+}
+
+// ============================================
+// Prompt Workflows
+// ============================================
+
+Table prompt_runs {
+  id bigint [pk, increment]
+  visitor_id uuid [null, ref: > visitors.id]
+  user_id bigint [null, ref: > users.id]
+  parent_id bigint [null, ref: > prompt_runs.id]
+
+  // Task & Personality
+  task_description text [not null]
+  personality_type string [null]
+  trait_percentages json [null]
+
+  // Workflow Status
+  workflow_stage string [not null, default: "0_processing", note: "0_processing, 0_completed, 0_failed, 1_processing, 1_completed, 1_failed, 2_processing, 2_completed, 2_failed"]
+  error_message text [null]
+  error_context json [null]
+  retry_count int [default: 0]
+  last_error_at timestamp [null]
+
+  // Stage 0: Pre-analysis
+  pre_analysis_questions json [null]
+  pre_analysis_answers json [null]
+  pre_analysis_context json [null]
+  pre_analysis_reasoning text [null]
+  pre_analysis_skipped boolean [default: false]
+  pre_analysis_api_usage json [null]
+
+  // Stage 1: Analysis
+  task_classification json [null]
+  cognitive_requirements json [null]
+  selected_framework json [null]
+  alternative_frameworks json [null]
+  personality_tier string [null, note: "full, partial, none"]
+  task_trait_alignment json [null]
+  personality_adjustments_preview json [null]
+  question_rationale text [null]
+  analysis_api_usage json [null]
+
+  // Clarifying Questions
+  framework_questions json [null]
+  clarifying_answers json [null]
+  current_question_index int [default: 0]
+
+  // Stage 2: Generation
+  optimized_prompt text [null]
+  framework_used json [null]
+  personality_adjustments_summary json [null]
+  model_recommendations json [null]
+  iteration_suggestions json [null]
+  generation_api_usage json [null]
+
+  // Encryption
+  is_encrypted boolean [default: false]
+
+  created_at timestamp
+  updated_at timestamp
+  completed_at timestamp [null]
+}
+
+// ============================================
+// Analytics Sessions & Events
+// ============================================
+
+Table analytics_sessions {
+  id uuid [pk]
+  visitor_id uuid [indexed, ref: > visitors.id]
+  user_id bigint [null, ref: > users.id]
+
+  // Timing
+  started_at timestamp [indexed]
+  ended_at timestamp [null]
+  duration_seconds int [null]
+
+  // Pages & Events
+  entry_page string(255) [null]
+  exit_page string(255) [null]
+  page_count smallint [default: 0]
+  event_count smallint [default: 0]
+
+  // Attribution
+  utm_source string(100) [null]
+  utm_medium string(100) [null]
+  utm_campaign string(100) [null]
+  referrer string(500) [null]
+
+  // Device & Location
+  device_type string(20) [null]
+  browser string(50) [null]
+  os string(50) [null]
+  country_code string(2) [null]
+
+  // Behavior
+  is_bounce boolean [default: true]
+  converted boolean [default: false]
+  conversion_type string(50) [null]
+  prompts_started smallint [default: 0]
+  prompts_completed smallint [default: 0]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (visitor_id, started_at)
+    (converted, started_at)
+    started_at
+    ended_at
+  }
+}
+
+Table analytics_events {
+  event_id uuid [pk]
+  name string(100) [indexed]
+  type string(50) [indexed, note: "conversion, engagement, exposure"]
+  properties json [null]
+
+  visitor_id uuid [null, indexed, ref: > visitors.id]
+  user_id bigint [null, ref: > users.id]
+  session_id uuid [null, indexed]
+  source string [default: "client", note: "client or server"]
+
+  page_path string(255) [null]
+  referrer string(500) [null]
+  device_type string(20) [null]
+  browser string(50) [null]
+  os string(50) [null]
+  country_code string(2) [null]
+
+  prompt_run_id bigint [null, ref: > prompt_runs.id]
+
+  occurred_at timestamp [indexed]
+  received_at timestamp [default: "current_timestamp"]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (visitor_id, occurred_at)
+    (name, occurred_at)
+    (type, occurred_at)
+    (session_id, occurred_at)
+  }
+}
+
+// ============================================
+// Experiments
+// ============================================
+
+Table experiments {
+  id bigint [pk, increment]
+  slug string(100) [unique, indexed]
+  name string(200) [not null]
+  description text [null]
+  hypothesis text [null]
+
+  status string [default: "draft", indexed, note: "draft, running, paused, completed, archived"]
+  started_at timestamp [null]
+  ended_at timestamp [null]
+  minimum_runtime_hours int [default: 168]
+
+  goal_event string(100) [not null]
+  goal_type string(50) [default: "conversion"]
+  targeting_rules json [null]
+  traffic_percentage smallint [default: 100]
+
+  minimum_sample_size int [null]
+  minimum_detectable_effect decimal [null]
+
+  winner_variant_id bigint [null]
+  winner_declared_at timestamp [null]
+
+  is_personality_research boolean [default: false]
+  personality_hypothesis string(500) [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (status, started_at)
+    ended_at
+    status
+  }
+}
+
+Table experiment_variants {
+  id bigint [pk, increment]
+  experiment_id bigint [not null, ref: > experiments.id]
+  slug string(100) [not null]
+  name string(200) [not null]
+  description text [null]
+
+  is_control boolean [default: false]
+  weight smallint [default: 50]
+  config json [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (experiment_id, is_control)
+  }
+
+  Unique {
+    (experiment_id, slug)
+  }
+}
+
+Table experiment_assignments {
+  id bigint [pk, increment]
+  experiment_id bigint [not null, ref: > experiments.id]
+  variant_id bigint [not null, ref: > experiment_variants.id]
+  visitor_id uuid [indexed]
+  user_id bigint [null, indexed, ref: > users.id]
+
+  assigned_at timestamp [not null]
+  segment_snapshot json [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (visitor_id, assigned_at)
+  }
+
+  Unique {
+    (experiment_id, visitor_id)
+  }
+}
+
+Table experiment_exposures {
+  id bigint [pk, increment]
+  experiment_id bigint [not null, ref: > experiments.id]
+  variant_id bigint [not null, ref: > experiment_variants.id]
+  assignment_id bigint [not null, ref: > experiment_assignments.id]
+
+  visitor_id uuid [indexed]
+  user_id bigint [null, ref: > users.id]
+  session_id uuid [null]
+
+  page_path string(255) [null]
+  component string(100) [null]
+
+  occurred_at timestamp [indexed]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (experiment_id, visitor_id, occurred_at)
+    (visitor_id, occurred_at)
+  }
+}
+
+Table analytics_event_experiments {
+  id bigint [pk, increment]
+  event_id uuid [not null]
+  experiment_id bigint [not null, ref: > experiments.id]
+  variant_id bigint [not null, ref: > experiment_variants.id]
+  exposure_id bigint [null, ref: > experiment_exposures.id]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (experiment_id, variant_id)
+  }
+
+  Unique {
+    (event_id, experiment_id)
+  }
+}
+
+Table experiment_conversions {
+  id bigint [pk, increment]
+  experiment_id bigint [not null, ref: > experiments.id]
+  variant_id bigint [not null, ref: > experiment_variants.id]
+
+  exposures int [default: 0]
+  conversions int [default: 0]
+  unique_visitors_exposed int [default: 0]
+  unique_visitors_converted int [default: 0]
+  total_revenue decimal [default: 0]
+
+  conversion_rate decimal [null]
+  revenue_per_visitor decimal [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  Unique {
+    (experiment_id, variant_id)
+  }
+}
+
+Table experiment_exclusion_groups {
+  id bigint [pk, increment]
+  name string(100) [not null]
+  description text [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table experiment_exclusion_group_members {
+  exclusion_group_id bigint [not null, ref: > experiment_exclusion_groups.id]
+  experiment_id bigint [not null, ref: > experiments.id]
+
+  Unique {
+    (exclusion_group_id, experiment_id)
+  }
+}
+
+// ============================================
+// Domain Analytics
+// ============================================
+
+Table framework_selections {
+  id bigint [pk, increment]
+  prompt_run_id bigint [not null, ref: > prompt_runs.id]
+  visitor_id uuid [indexed, ref: > visitors.id]
+  user_id bigint [null, ref: > users.id]
+
+  recommended_framework string(50) [indexed]
+  chosen_framework string(50) [indexed, ref: > frameworks.code]
+  accepted_recommendation boolean [indexed]
+
+  task_category string(50) [null, ref: > task_categories.code]
+  personality_type string(10) [null]
+
+  recommendation_scores json [null]
+
+  prompt_rating smallint [null]
+  prompt_copied boolean [null]
+  prompt_edited boolean [null]
+  edit_percentage decimal [null]
+
+  selected_at timestamp [indexed]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (recommended_framework, chosen_framework)
+    (personality_type, task_category)
+  }
+}
+
+Table question_analytics {
+  id bigint [pk, increment]
+  prompt_run_id bigint [not null, ref: > prompt_runs.id]
+  visitor_id uuid [indexed, ref: > visitors.id]
+  user_id bigint [null, ref: > users.id]
+
+  question_id string(10) [indexed, ref: > questions.id]
+  question_category string(20)
+  personality_variant string(50) [null]
+
+  display_order smallint
+  was_required boolean
+  response_status string [indexed, note: "answered, skipped, not_shown"]
+  response_length smallint [null]
+  time_to_answer_ms int [null]
+
+  prompt_rating smallint [null]
+  prompt_copied boolean [null]
+
+  presented_at timestamp [indexed]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (question_id, response_status)
+    (question_category, response_status)
+  }
+}
+
+Table workflow_analytics {
+  id bigint [pk, increment]
+  prompt_run_id bigint [not null, ref: > prompt_runs.id]
+
+  workflow_stage smallint [indexed, note: "0, 1, or 2"]
+  workflow_version string(20) [null]
+
+  started_at timestamp
+  completed_at timestamp [null]
+  duration_ms int [null]
+
+  status string [indexed, note: "processing, completed, failed, timeout"]
+  error_code string(50) [null]
+  error_message text [null]
+
+  input_tokens int [null]
+  output_tokens int [null]
+  estimated_cost_usd decimal [null]
+
+  model_used string(50) [null]
+  attempt_number smallint [default: 1]
+  was_retry boolean [default: false]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (workflow_stage, status)
+    (status, started_at)
+  }
+}
+
+Table prompt_quality_metrics {
+  id bigint [pk, increment]
+  prompt_run_id bigint [unique, not null, ref: > prompt_runs.id]
+
+  user_rating smallint [null]
+  was_copied boolean [default: false]
+  copy_count smallint [default: 0]
+  was_edited boolean [default: false]
+  edit_percentage decimal [null]
+
+  prompt_length smallint [null]
+  questions_answered smallint [default: 0]
+  questions_skipped smallint [default: 0]
+  time_to_complete_ms int [null]
+
+  task_category string(50) [null]
+  framework_used string(50) [null]
+  personality_type string(10) [null]
+
+  engagement_score decimal [null]
+  quality_score decimal [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    user_rating
+    (task_category, framework_used)
+    personality_type
+  }
+}
+
+Table framework_daily_stats {
+  id bigint [pk, increment]
+  date date [indexed]
+  framework string(50)
+
+  times_recommended int [default: 0]
+  times_chosen int [default: 0]
+  times_accepted int [default: 0]
+  acceptance_rate decimal [null]
+  avg_rating decimal [null]
+
+  prompts_copied int [default: 0]
+  prompts_edited int [default: 0]
+  copy_rate decimal [null]
+
+  by_personality_type json [null]
+  by_task_category json [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (framework, date)
+  }
+
+  Unique {
+    (date, framework)
+  }
+}
+
+Table question_daily_stats {
+  id bigint [pk, increment]
+  date date [indexed]
+  question_id string(10)
+
+  times_shown int [default: 0]
+  times_answered int [default: 0]
+  times_skipped int [default: 0]
+  answer_rate decimal [null]
+  skip_rate decimal [null]
+
+  avg_response_length decimal [null]
+  avg_time_to_answer_ms decimal [null]
+
+  avg_prompt_rating_when_answered decimal [null]
+  avg_prompt_rating_when_skipped decimal [null]
+
+  copy_rate_when_answered decimal [null]
+  copy_rate_when_skipped decimal [null]
+
+  by_personality_variant json [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (question_id, date)
+  }
+
+  Unique {
+    (date, question_id)
+  }
+}
+
+Table workflow_daily_stats {
+  id bigint [pk, increment]
+  date date [indexed]
+  workflow_stage smallint [note: "0, 1, or 2"]
+
+  total_executions int [default: 0]
+  successful_executions int [default: 0]
+  failed_executions int [default: 0]
+  success_rate decimal [null]
+
+  avg_duration_ms int [null]
+  min_duration_ms int [null]
+  max_duration_ms int [null]
+
+  total_input_tokens int [default: 0]
+  total_output_tokens int [default: 0]
+  total_cost_usd decimal [default: 0]
+  avg_cost_per_execution decimal [null]
+
+  retries int [default: 0]
+  retry_rate decimal [null]
+
+  top_errors json [null]
+
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (workflow_stage, date)
+  }
+
+  Unique {
+    (date, workflow_stage)
+  }
+}
+
+Table feedback {
+  id bigint [pk, increment]
+  user_id bigint [not null, ref: > users.id]
+
+  personality_type string(10) [null]
+  experience_level smallint [note: "1-7 scale"]
+  usefulness smallint [note: "1-7 scale"]
+  usage_intent smallint [note: "1-7 scale"]
+  suggestions text [null]
+
+  desired_features json
+  desired_features_other text [null]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ============================================
+// Localization
+// ============================================
+
+Table languages {
+  id string [pk, note: "e.g., en-GB, en-US, fr-FR"]
+  name string [not null]
+  active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    active
+  }
+}
+
+Table currencies {
+  id string [pk, note: "e.g., EUR, USD, GBP"]
+  symbol string [not null, note: "€, $, £"]
+  thousands_separator string
+  decimal_separator string
+  symbol_on_left boolean [default: true]
+  space_between_amount_and_symbol boolean [default: false]
+  rounding_coefficient int [default: 0]
+  decimal_digits int [default: 2]
+  active boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table countries {
+  id string [pk, note: "ISO code lowercase, e.g., gb, us, fr"]
+  continent_id string(1) [null, note: "E=Europe, A=Asia, etc."]
+  currency_id string [not null, ref: > currencies.id]
+  language_id string [not null, ref: > languages.id]
+  first_day_of_week string [default: "mon", note: "mon, sun, sat"]
+  uses_miles boolean [default: false]
+  name string [not null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    continent_id
+    currency_id
+    language_id
+  }
+}
+
+// ============================================
+// Prompt Frameworks
+// ============================================
+
+Table frameworks {
+  code string [pk, note: "e.g., CHAIN_OF_THOUGHT, CO_STAR"]
+  name string [not null]
+  category string [not null, note: "e.g., Analytical & Problem-Solving"]
+  description text [not null]
+  complexity string [not null, note: "low, medium, or high"]
+  components json [not null, note: "Array of framework components"]
+  best_for text [null]
+  not_for text [null]
+  is_active boolean [default: true]
+  display_order int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    category
+    complexity
+    is_active
+  }
+}
+
+Table task_categories {
+  code string [pk, note: "e.g., DECISION, ANALYSIS"]
+  name string [not null]
+  description text [not null]
+  triggers json [not null, note: "Array of keyword triggers"]
+  is_active boolean [default: true]
+  display_order int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    is_active
+  }
+}
+
+Table cognitive_requirements {
+  code string [pk, note: "e.g., EMPATHY, VISION"]
+  name string [not null]
+  description text [not null]
+  aligned_traits json [not null, note: "Array of aligned personality traits"]
+  opposed_traits json [not null, note: "Array of opposed personality traits"]
+  is_active boolean [default: true]
+  display_order int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    is_active
+  }
+}
+
+Table framework_cognitive_requirements {
+  id bigint [pk, increment]
+  framework_code string [not null, ref: > frameworks.code]
+  cognitive_requirement_code string [not null, ref: > cognitive_requirements.code]
+  support_level string [not null, note: "primary or secondary"]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    framework_code
+    cognitive_requirement_code
+  }
+
+  Unique {
+    (framework_code, cognitive_requirement_code)
+  }
+}
+
+Table task_category_cognitive_requirements {
+  id bigint [pk, increment]
+  task_category_code string [not null, ref: > task_categories.code]
+  cognitive_requirement_code string [not null, ref: > cognitive_requirements.code]
+  requirement_level string [not null, note: "primary or secondary"]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    task_category_code
+    cognitive_requirement_code
+  }
+
+  Unique {
+    (task_category_code, cognitive_requirement_code)
+  }
+}
+
+Table framework_task_categories {
+  id bigint [pk, increment]
+  framework_code string [not null, ref: > frameworks.code]
+  task_category_code string [not null, ref: > task_categories.code]
+  suitability string [not null, note: "primary or secondary"]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    framework_code
+    task_category_code
+  }
+
+  Unique {
+    (framework_code, task_category_code)
+  }
+}
+
+Table claude_models {
+  id string [pk, note: "API ID like claude-opus-4-20250514"]
+  name string [not null]
+  tier string [not null, note: "haiku, sonnet, or opus"]
+  version int
+  input_cost_per_mtok decimal
+  output_cost_per_mtok decimal
+  release_date date [null]
+  active boolean [default: true]
+  positioning text [null]
+  context_window_input int [null]
+  context_window_output int [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    tier
+    active
+    release_date
+  }
+}
+
+// ============================================
+// Question Bank
+// ============================================
+
+Table questions {
+  id string(10) [pk, note: "U1, D1, S1, COS3, etc."]
+  question_text text [not null]
+  purpose text [not null]
+  cognitive_requirements json [null, note: "JSONB array"]
+  priority string(10) [not null, note: "high, medium, low"]
+  category string(30) [not null, note: "universal, decision, strategy, etc."]
+  framework string(30) [null, note: "co_star, react, self_refine, etc."]
+  is_universal boolean [default: false]
+  is_conditional boolean [default: false]
+  condition_text text [null]
+  display_order int [default: 0]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    category
+    framework
+    priority
+    is_active
+    is_universal
+    is_conditional
+    (category, framework)
+  }
+}
+
+Table question_variants {
+  id bigint [pk, increment]
+  question_id string(10) [not null, ref: > questions.id]
+  personality_pattern string(50) [not null]
+  phrasing text [not null]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    question_id
+    personality_pattern
+    is_active
+  }
+
+  Unique {
+    (question_id, personality_pattern)
+  }
+}
+
+// ============================================
+// Email & Communication
+// ============================================
+
+Table email_events {
+  id bigint [pk, increment]
+  event_type string [indexed, note: "delivered, opened, clicked, bounced, complained, unsubscribed"]
+  message_id string [indexed]
+  recipient string [indexed]
+  user_id bigint [null, ref: > users.id]
+  payload json
+  event_timestamp timestamp [null, indexed]
+  processed_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  Unique {
+    (message_id, event_type, event_timestamp)
+  }
+}
+
+Table inbound_emails {
+  id bigint [pk, increment]
+  message_id string [unique, indexed]
+  from string [indexed]
+  to string
+  subject string [null]
+  body_plain text [null]
+  body_html text [null]
+  stripped_text text [null]
+  stripped_signature text [null]
+  headers json [null]
+  attachments json [null]
+  user_id bigint [null, ref: > users.id]
+  received_at timestamp [null, indexed]
+  processed_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ============================================
+// Billing & Subscriptions
+// ============================================
+
+Table subscriptions {
+  id bigint [pk, increment]
+  user_id bigint [not null, ref: > users.id]
+  type string [not null]
+  stripe_id string [unique, not null]
+  stripe_status string [not null]
+  stripe_price string [null]
+  quantity int [null]
+  trial_ends_at timestamp [null]
+  ends_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, stripe_status)
+  }
+}
+
+Table subscription_items {
+  id bigint [pk, increment]
+  subscription_id bigint [not null, ref: > subscriptions.id]
+  stripe_id string [unique]
+  stripe_product string
+  stripe_price string
+  quantity int [null]
+  meter_event_name string [null]
+  meter_id string [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (subscription_id, stripe_price)
+  }
+}
+
+Table prices {
+  id bigint [pk, increment]
+  currency_code string [not null, ref: > currencies.id]
+  tier string [note: "pro, private"]
+  interval string [note: "monthly, yearly"]
+  stripe_price_id string
+  amount decimal
+  created_at timestamp
+  updated_at timestamp
+
+  Unique {
+    (currency_code, tier, interval)
+  }
+}
+
+// ============================================
+// Funnel Analytics
+// ============================================
+
+Table funnels {
+  id bigint [pk, increment]
+  slug string [unique]
+  name string [not null]
+  description text [null]
+  is_active boolean [default: true]
+  attribution_window_days int [default: 30]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table funnel_stages {
+  id bigint [pk, increment]
+  funnel_id bigint [not null, ref: > funnels.id]
+  order int [not null]
+  name string [not null]
+  event_name string [not null]
+  event_conditions json [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    funnel_id
+  }
+
+  Unique {
+    (funnel_id, order)
+  }
+}
+
+Table funnel_progress {
+  id bigint [pk, increment]
+  funnel_id bigint [not null, ref: > funnels.id]
+  visitor_id uuid
+  stage int [default: 1]
+  stage_timestamps json [null]
+  conversion_date timestamp [null]
+  is_converted boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (funnel_id, visitor_id)
+    (funnel_id, is_converted)
+    conversion_date
+    updated_at
+    is_converted
+  }
+}
+
+Table funnel_daily_stats {
+  id bigint [pk, increment]
+  funnel_id bigint [not null, ref: > funnels.id]
+  date date
+  stage int
+  starts int [default: 0]
+  conversions int [default: 0]
+  conversion_rate decimal [default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (funnel_id, date)
+  }
+
+  Unique {
+    (funnel_id, date, stage)
+  }
+}
+
+// ============================================
+// Alerts & Monitoring
+// ============================================
+
+Table alert_rules {
+  id bigint [pk, increment]
+  slug string [unique]
+  name string [not null]
+  alert_type string [not null, note: "workflow_failure, etc."]
+  conditions json [null]
+  email_enabled boolean [default: true]
+  email_recipients string [null, note: "comma-separated"]
+  in_app_enabled boolean [default: true]
+  debounce_minutes int [default: 15]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    alert_type
+    is_active
+  }
+}
+
+Table alert_history {
+  id bigint [pk, increment]
+  alert_rule_id bigint [not null, ref: > alert_rules.id]
+  triggered_count int [default: 1]
+  error_code string [null]
+  error_message text [null]
+  last_triggered_at timestamp
+  acknowledged_at timestamp [null]
+  acknowledged_by bigint [null, ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (alert_rule_id, error_code)
+    last_triggered_at
+  }
+}
+
+Table alert_notifications {
+  id bigint [pk, increment]
+  alert_history_id bigint [not null, ref: > alert_history.id]
+  user_id bigint [null, ref: > users.id]
+  type string [note: "email, in_app"]
+  status string [default: "pending", note: "pending, sent, failed"]
+  sent_at timestamp [null]
+  error_message text [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (alert_history_id, type)
+    (user_id, status)
+  }
+}
+
+// ============================================
+// Infrastructure
+// ============================================
+
+Table failed_jobs {
+  id bigint [pk, increment]
+  uuid string [unique]
+  connection text
+  queue text
+  payload longtext
+  exception longtext
+  failed_at timestamp [default: "current_timestamp"]
+}
