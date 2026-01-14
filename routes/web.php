@@ -283,7 +283,7 @@ Route::prefix('{country}')
         // Workflow management system (admin only)
         Route::middleware(['auth', 'admin'])->group(function () {
             // Workflow index page
-            Route::get('/workflow', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
+            Route::get('/admin/workflows', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
                 ->name('workflow.index');
 
             // Reference documents management
@@ -313,79 +313,79 @@ Route::prefix('{country}')
                 ->where('workflowNumber', '[0-9]+');
 
             // Set variant preference for workflow
-            Route::post('/debug/workflow/{workflowNumber}/variant',
+            Route::post('/admin/workflows/{workflowNumber}/variant',
                 [\App\Http\Controllers\DebugN8nController::class, 'setVariant'])
                 ->name('workflow.set-variant')
                 ->where('workflowNumber', '[0-9]+');
 
             // Debug API endpoints
-            Route::post('/debug/workflow/{workflowNumber}/input',
+            Route::post('/admin/workflows/{workflowNumber}/input',
                 [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
                 ->name('workflow.save-input')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/pass-input/{passNumber}',
+            Route::post('/admin/workflows/{workflowNumber}/pass-input/{passNumber}',
                 [\App\Http\Controllers\DebugN8nController::class, 'savePassInput'])
                 ->name('workflow.save-pass-input')
                 ->where('workflowNumber', '[0-9]+')
                 ->where('passNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/javascript-old',
+            Route::post('/admin/workflows/{workflowNumber}/javascript-old',
                 [\App\Http\Controllers\DebugN8nController::class, 'saveOldJavaScript'])
                 ->name('workflow.save-javascript-old')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/javascript-new',
+            Route::post('/admin/workflows/{workflowNumber}/javascript-new',
                 [\App\Http\Controllers\DebugN8nController::class, 'saveNewJavaScript'])
                 ->name('workflow.save-javascript-new')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/reload-javascript-old',
+            Route::post('/admin/workflows/{workflowNumber}/reload-javascript-old',
                 [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
                 ->name('workflow.reload-javascript-old')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/reload-javascript-new',
+            Route::post('/admin/workflows/{workflowNumber}/reload-javascript-new',
                 [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
                 ->name('workflow.reload-javascript-new')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-old',
+            Route::post('/admin/workflows/{workflowNumber}/prepare-prompt-old',
                 [\App\Http\Controllers\DebugN8nController::class, 'preparePromptOld'])
                 ->name('workflow.prepare-prompt-old')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/prepare-prompt-new',
+            Route::post('/admin/workflows/{workflowNumber}/prepare-prompt-new',
                 [\App\Http\Controllers\DebugN8nController::class, 'preparePromptNew'])
                 ->name('workflow.prepare-prompt-new')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/save-to-n8n',
+            Route::post('/admin/workflows/{workflowNumber}/save-to-n8n',
                 [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
                 ->name('workflow.save-to-n8n')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-old',
+            Route::post('/admin/workflows/{workflowNumber}/upload-to-n8n-old',
                 [\App\Http\Controllers\DebugN8nController::class, 'uploadOldWorkflowToN8n'])
                 ->name('workflow.upload-to-n8n-old')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/upload-to-n8n-new',
+            Route::post('/admin/workflows/{workflowNumber}/upload-to-n8n-new',
                 [\App\Http\Controllers\DebugN8nController::class, 'uploadNewWorkflowToN8n'])
                 ->name('workflow.upload-to-n8n-new')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/execute-workflow-old',
+            Route::post('/admin/workflows/{workflowNumber}/execute-workflow-old',
                 [\App\Http\Controllers\DebugN8nController::class, 'executeOldWorkflow'])
                 ->name('workflow.execute-workflow-old')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/execute-workflow-new',
+            Route::post('/admin/workflows/{workflowNumber}/execute-workflow-new',
                 [\App\Http\Controllers\DebugN8nController::class, 'executeNewWorkflow'])
                 ->name('workflow.execute-workflow-new')
                 ->where('workflowNumber', '[0-9]+');
 
-            Route::post('/debug/workflow/{workflowNumber}/upload-to-live',
+            Route::post('/admin/workflows/{workflowNumber}/upload-to-live',
                 [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToLive'])
                 ->name('workflow.upload-to-live')
                 ->where('workflowNumber', '[0-9]+');

@@ -48,7 +48,7 @@ test('show workflow page includes prepare prompt nodes', function () use (&$admi
 });
 
 test('set variant returns redirect url', function () use (&$adminUser) {
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/variant', [
         'variant' => 'two-pass',
     ]);
 
@@ -58,7 +58,7 @@ test('set variant returns redirect url', function () use (&$adminUser) {
 });
 
 test('set variant validates variant exists', function () use (&$adminUser) {
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/variant', [
         'variant' => 'invalid-variant',
     ]);
 
@@ -68,7 +68,7 @@ test('set variant validates variant exists', function () use (&$adminUser) {
 
 test('set variant persists across requests', function () use (&$adminUser) {
     // Set variant - API returns success
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/variant', [
         'variant' => 'two-pass',
     ]);
     $response->assertStatus(200)
@@ -83,7 +83,7 @@ test('set variant persists across requests', function () use (&$adminUser) {
 
 test('show two pass variant includes two nodes', function () use (&$adminUser) {
     // Set the variant (API confirms it's valid)
-    $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+    $this->actingAs($adminUser)->postCountry('/admin/workflows/1/variant', [
         'variant' => 'two-pass',
     ]);
 
@@ -100,7 +100,7 @@ test('show two pass variant includes two nodes', function () use (&$adminUser) {
 test('save javascript with variant and node name', function () use (&$adminUser) {
     $javascriptCode = 'console.log("test");';
 
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/javascript-old', [
         'code' => $javascriptCode,
         'variant' => 'single-pass',
         'nodeName' => 'Prepare Prompt',
@@ -113,7 +113,7 @@ test('save javascript with variant and node name', function () use (&$adminUser)
 test('save javascript two pass variant node 1', function () use (&$adminUser) {
     $javascriptCode = 'console.log("test node 1");';
 
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/javascript-old', [
         'code' => $javascriptCode,
         'variant' => 'two-pass',
         'nodeName' => 'Prepare Prompt 1',
@@ -126,7 +126,7 @@ test('save javascript two pass variant node 1', function () use (&$adminUser) {
 test('save javascript two pass variant node 2', function () use (&$adminUser) {
     $javascriptCode = 'console.log("test node 2");';
 
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/javascript-old', [
         'code' => $javascriptCode,
         'variant' => 'two-pass',
         'nodeName' => 'Prepare Prompt 2',
@@ -138,14 +138,14 @@ test('save javascript two pass variant node 2', function () use (&$adminUser) {
 
 test('save javascript defaults to current variant', function () use (&$adminUser) {
     // Set variant to two-pass
-    $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+    $this->actingAs($adminUser)->postCountry('/admin/workflows/1/variant', [
         'variant' => 'two-pass',
     ]);
 
     $javascriptCode = 'console.log("test");';
 
     // Don't specify variant, should use current variant
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/javascript-old', [
         'code' => $javascriptCode,
         'nodeName' => 'Prepare Prompt 1',
     ]);
@@ -158,7 +158,7 @@ test('save javascript defaults to prepare prompt node name', function () use (&$
     $javascriptCode = 'console.log("test");';
 
     // Don't specify nodeName, should default to 'Prepare Prompt'
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/1/javascript-old', [
         'code' => $javascriptCode,
         'variant' => 'single-pass',
     ]);
@@ -187,7 +187,7 @@ test('migration command detects legacy data', function () {
 });
 
 test('reload javascript returns code without saving', function () use (&$adminUser) {
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/0/reload-javascript-old');
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/0/reload-javascript-old');
 
     $response->assertStatus(200)
         ->assertJson(['success' => true])
@@ -210,7 +210,7 @@ test('reload javascript returns code without saving', function () use (&$adminUs
 });
 
 test('reload javascript new version returns code', function () use (&$adminUser) {
-    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/0/reload-javascript-new');
+    $response = $this->actingAs($adminUser)->postCountry('/admin/workflows/0/reload-javascript-new');
 
     $response->assertStatus(200)
         ->assertJson(['success' => true])
