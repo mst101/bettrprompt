@@ -1,16 +1,28 @@
 <?php
 
+use App\Events\PreAnalysisCompleted;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ExperimentsController;
+use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\QuestionVariantController;
+use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\DebugN8nController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MockN8nController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
+use App\Http\Controllers\ReferenceDocumentsController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TestBroadcastController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
 use App\Http\Middleware\SetCountry;
+use App\Models\PromptRun;
+use App\Models\User;
+use App\Models\Visitor;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,7 +30,7 @@ use Inertia\Inertia;
 Route::get('/', function () {
     $country = SetCountry::detectCountry(request());
 
-    return redirect("/{$country}");
+    return redirect("/$country");
 });
 
 // Country-prefixed routes (all user-facing pages)
@@ -31,7 +43,7 @@ Route::prefix('{country}')
             $isReturningVisitor = false;
 
             if ($visitorId) {
-                $visitor = \App\Models\Visitor::find($visitorId);
+                $visitor = Visitor::find($visitorId);
 
                 // Determine if returning visitor:
                 // - Created more than 1 hour ago, OR
@@ -241,22 +253,22 @@ Route::prefix('{country}')
 
         // Admin routes (requires authentication and admin role)
         Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('dashboard');
+            Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
             // Users
-            Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
             Route::get('/users/{user}',
-                [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+                [UserController::class, 'show'])->name('users.show');
 
             // Tasks
-            Route::get('/tasks', [\App\Http\Controllers\Admin\TaskController::class, 'index'])->name('tasks.index');
+            Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
             Route::get('/tasks/{taskId}',
-                [\App\Http\Controllers\Admin\TaskController::class, 'show'])->name('tasks.show')->where('taskId',
+                [TaskController::class, 'show'])->name('tasks.show')->where('taskId',
                     '[0-9]+');
 
             // Prompt Runs
             Route::get('/prompt-runs/{promptRun}',
-                [\App\Http\Controllers\Admin\TaskController::class, 'promptRun'])->name('prompt-runs.show');
+                [TaskController::class, 'promptRun'])->name('prompt-runs.show');
 
             // Experiments
             Route::resource('experiments', ExperimentsController::class);
@@ -271,7 +283,7 @@ Route::prefix('{country}')
 
             // Domain Analytics
             Route::get('/domain-analytics', [
-                \App\Http\Controllers\Admin\AdminController::class, 'domainAnalytics',
+                AdminController::class, 'domainAnalytics',
             ])->name('domain-analytics.index');
 
             // Alerts
@@ -281,130 +293,134 @@ Route::prefix('{country}')
 
             // Question Bank Management
             Route::prefix('questions')->name('questions.')->group(function () {
-                Route::get('/', [\App\Http\Controllers\Admin\QuestionController::class, 'index'])->name('index');
-                Route::get('/create', [\App\Http\Controllers\Admin\QuestionController::class, 'create'])->name('create');
-                Route::post('/', [\App\Http\Controllers\Admin\QuestionController::class, 'store'])->name('store');
-                Route::get('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'edit'])->name('edit');
-                Route::put('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'update'])->name('update');
-                Route::delete('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'destroy'])->name('destroy');
+                Route::get('/', [QuestionController::class, 'index'])->name('index');
+                Route::get('/create', [QuestionController::class, 'create'])->name('create');
+                Route::post('/', [QuestionController::class, 'store'])->name('store');
+                Route::get('/{question}/edit', [QuestionController::class, 'edit'])->name('edit');
+                Route::put('/{question}', [QuestionController::class, 'update'])->name('update');
+                Route::delete('/{question}', [QuestionController::class, 'destroy'])->name('destroy');
 
                 // Variant management
-                Route::post('/{question}/variants', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'store'])->name('variants.store');
-                Route::put('/{question}/variants/{variant}', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'update'])->name('variants.update');
-                Route::delete('/{question}/variants/{variant}', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'destroy'])->name('variants.destroy');
+                Route::post('/{question}/variants',
+                    [QuestionVariantController::class, 'store'])->name('variants.store');
+                Route::put('/{question}/variants/{variant}',
+                    [QuestionVariantController::class, 'update'])->name('variants.update');
+                Route::delete('/{question}/variants/{variant}',
+                    [QuestionVariantController::class, 'destroy'])->name('variants.destroy');
 
                 // Markdown regeneration
-                Route::post('/regenerate-markdown', [\App\Http\Controllers\Admin\QuestionController::class, 'regenerateMarkdown'])->name('regenerate-markdown');
+                Route::post('/regenerate-markdown',
+                    [QuestionController::class, 'regenerateMarkdown'])->name('regenerate-markdown');
             });
         });
 
         // Workflow management system (admin only)
         Route::middleware(['auth', 'admin'])->prefix('admin/workflows')->name('workflows.')->group(function () {
             // Workflow index page
-            Route::get('/', [\App\Http\Controllers\ReferenceDocumentsController::class, 'workflowIndex'])
+            Route::get('/', [ReferenceDocumentsController::class, 'workflowIndex'])
                 ->name('index');
 
             // Reference documents management
-            Route::get('/docs', [\App\Http\Controllers\ReferenceDocumentsController::class, 'index'])
+            Route::get('/docs', [ReferenceDocumentsController::class, 'index'])
                 ->name('docs.index');
 
-            Route::get('/docs/api/list', [\App\Http\Controllers\ReferenceDocumentsController::class, 'list'])
+            Route::get('/docs/api/list', [ReferenceDocumentsController::class, 'list'])
                 ->name('docs.list');
 
             Route::get('/docs/api/{type}/{filename}',
-                [\App\Http\Controllers\ReferenceDocumentsController::class, 'show'])
+                [ReferenceDocumentsController::class, 'show'])
                 ->name('docs.show')
                 ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
 
             Route::post('/docs/api/{type}/{filename}',
-                [\App\Http\Controllers\ReferenceDocumentsController::class, 'update'])
+                [ReferenceDocumentsController::class, 'update'])
                 ->name('docs.update')
                 ->where(['type' => 'core|framework', 'filename' => '[^/]+']);
 
             Route::post('/docs/api/embed-all',
-                [\App\Http\Controllers\ReferenceDocumentsController::class, 'embedAll'])
+                [ReferenceDocumentsController::class, 'embedAll'])
                 ->name('docs.embed-all');
 
             // Debug n8n workflow
-            Route::get('/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
+            Route::get('/{workflowNumber}', [DebugN8nController::class, 'show'])
                 ->name('show')
                 ->where('workflowNumber', '[0-9]+');
 
             // Set variant preference for workflow
             Route::post('/{workflowNumber}/variant',
-                [\App\Http\Controllers\DebugN8nController::class, 'setVariant'])
+                [DebugN8nController::class, 'setVariant'])
                 ->name('set-variant')
                 ->where('workflowNumber', '[0-9]+');
 
             // Debug API endpoints
             Route::post('/{workflowNumber}/input',
-                [\App\Http\Controllers\DebugN8nController::class, 'saveInput'])
+                [DebugN8nController::class, 'saveInput'])
                 ->name('save-input')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/pass-input/{passNumber}',
-                [\App\Http\Controllers\DebugN8nController::class, 'savePassInput'])
+                [DebugN8nController::class, 'savePassInput'])
                 ->name('save-pass-input')
                 ->where('workflowNumber', '[0-9]+')
                 ->where('passNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/javascript-old',
-                [\App\Http\Controllers\DebugN8nController::class, 'saveOldJavaScript'])
+                [DebugN8nController::class, 'saveOldJavaScript'])
                 ->name('save-javascript-old')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/javascript-new',
-                [\App\Http\Controllers\DebugN8nController::class, 'saveNewJavaScript'])
+                [DebugN8nController::class, 'saveNewJavaScript'])
                 ->name('save-javascript-new')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/reload-javascript-old',
-                [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
+                [DebugN8nController::class, 'reloadJavaScriptFromWorkflow'])
                 ->name('reload-javascript-old')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/reload-javascript-new',
-                [\App\Http\Controllers\DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
+                [DebugN8nController::class, 'reloadJavaScriptFromWorkflowAsNew'])
                 ->name('reload-javascript-new')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/prepare-prompt-old',
-                [\App\Http\Controllers\DebugN8nController::class, 'preparePromptOld'])
+                [DebugN8nController::class, 'preparePromptOld'])
                 ->name('prepare-prompt-old')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/prepare-prompt-new',
-                [\App\Http\Controllers\DebugN8nController::class, 'preparePromptNew'])
+                [DebugN8nController::class, 'preparePromptNew'])
                 ->name('prepare-prompt-new')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/save-to-n8n',
-                [\App\Http\Controllers\DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
+                [DebugN8nController::class, 'saveJavaScriptToN8nWorkflow'])
                 ->name('save-to-n8n')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/upload-to-n8n-old',
-                [\App\Http\Controllers\DebugN8nController::class, 'uploadOldWorkflowToN8n'])
+                [DebugN8nController::class, 'uploadOldWorkflowToN8n'])
                 ->name('upload-to-n8n-old')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/upload-to-n8n-new',
-                [\App\Http\Controllers\DebugN8nController::class, 'uploadNewWorkflowToN8n'])
+                [DebugN8nController::class, 'uploadNewWorkflowToN8n'])
                 ->name('upload-to-n8n-new')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/execute-workflow-old',
-                [\App\Http\Controllers\DebugN8nController::class, 'executeOldWorkflow'])
+                [DebugN8nController::class, 'executeOldWorkflow'])
                 ->name('execute-workflow-old')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/execute-workflow-new',
-                [\App\Http\Controllers\DebugN8nController::class, 'executeNewWorkflow'])
+                [DebugN8nController::class, 'executeNewWorkflow'])
                 ->name('execute-workflow-new')
                 ->where('workflowNumber', '[0-9]+');
 
             Route::post('/{workflowNumber}/upload-to-live',
-                [\App\Http\Controllers\DebugN8nController::class, 'uploadWorkflowToLive'])
+                [DebugN8nController::class, 'uploadWorkflowToLive'])
                 ->name('upload-to-live')
                 ->where('workflowNumber', '[0-9]+');
         });
@@ -419,10 +435,10 @@ Route::post('/test/login', function (Illuminate\Http\Request $request) {
         abort(403, 'Unauthorized');
     }
 
-    $user = \App\Models\User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
     if (! $user) {
-        $user = \App\Models\User::create([
+        $user = User::create([
             'email' => $request->email,
             'name' => $request->input('name', 'Test User'),
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
@@ -443,12 +459,12 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
     $name = $request->input('name', 'OAuth Test User');
     $googleId = $request->input('google_id', 'test-google-id-'.uniqid());
 
-    $user = \App\Models\User::where('google_id', $googleId)
+    $user = User::where('google_id', $googleId)
         ->orWhere('email', $email)
         ->first();
 
     if (! $user) {
-        $user = \App\Models\User::create([
+        $user = User::create([
             'name' => $name,
             'email' => $email,
             'google_id' => $googleId,
@@ -468,25 +484,25 @@ Route::post('/test/oauth-login', function (Illuminate\Http\Request $request) {
 
 // E2E Test-Only Broadcast Routes
 Route::post('/test/broadcast/analysis-completed/{promptRunId}',
-    [\App\Http\Controllers\TestBroadcastController::class, 'triggerAnalysisCompleted'])
+    [TestBroadcastController::class, 'triggerAnalysisCompleted'])
     ->name('test.broadcast.analysis-completed');
 Route::post('/test/broadcast/prompt-optimization-completed/{promptRunId}',
-    [\App\Http\Controllers\TestBroadcastController::class, 'triggerPromptOptimizationCompleted'])
+    [TestBroadcastController::class, 'triggerPromptOptimizationCompleted'])
     ->name('test.broadcast.prompt-optimization-completed');
-Route::get('/test/echo-info', [\App\Http\Controllers\TestBroadcastController::class, 'echoInfo'])
+Route::get('/test/echo-info', [TestBroadcastController::class, 'echoInfo'])
     ->name('test.echo-info');
-Route::post('/test/create-prompt-run', [\App\Http\Controllers\TestBroadcastController::class, 'createTestPromptRun'])
+Route::post('/test/create-prompt-run', [TestBroadcastController::class, 'createTestPromptRun'])
     ->name('test.create-prompt-run');
-Route::post('/test/set-personality', [\App\Http\Controllers\TestBroadcastController::class, 'setPersonalityType'])
+Route::post('/test/set-personality', [TestBroadcastController::class, 'setPersonalityType'])
     ->name('test.set-personality');
 
 Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
-    $promptRun = \App\Models\PromptRun::find($promptRunId);
+    $promptRun = PromptRun::find($promptRunId);
     if ($promptRun) {
         \Illuminate\Support\Facades\Log::info('Test endpoint: Broadcasting PreAnalysisCompleted event', [
             'prompt_run_id' => $promptRun->id,
         ]);
-        event(new \App\Events\PreAnalysisCompleted($promptRun));
+        event(new PreAnalysisCompleted($promptRun));
 
         return response()->json(['success' => true, 'message' => 'Event broadcasted']);
     }
