@@ -203,9 +203,9 @@ G8,What's the stretch version versus minimum acceptable?,Ambition calibration,lo
 G_COND_1,How will individual contributions be tracked?,Contribution tracking,high,GOAL_SETTING,,0,1,team goal,99
 G_COND_2,What accountability structures help you?,Accountability,high,GOAL_SETTING,,0,1,personal goal,99
 G_COND_3,How does this connect to revenue or growth?,Business connection,high,GOAL_SETTING,,0,1,business goal,99
-FS1,Is precise tone and audience targeting critical?,CO-STAR indicator,high,FRAMEWORK_SELECTION,,0,0,,1
-FS2,Does this require looking things up or using tools?,ReAct indicator,high,FRAMEWORK_SELECTION,,0,0,,2
-FS3,Is first-draft quality insufficient—does this need iteration?,Self-Refine indicator,high,FRAMEWORK_SELECTION,,0,0,,3
-FS4,Would stepping back to principles help before tackling specifics?,Step-Back indicator,high,FRAMEWORK_SELECTION,,0,0,,4
-FS5,"Can the response be broken into parallel, independent points?",Skeleton-of-Thought indicator,high,FRAMEWORK_SELECTION,,0,0,,5
-FS6,Is the optimal prompt structure unclear?,Meta Prompting indicator,high,FRAMEWORK_SELECTION,,0,0,,6
+FS1,Is precise tone and audience targeting critical?,CO-STAR indicator,high,,,0,0,,1
+FS2,Does this require looking things up or using tools?,ReAct indicator,high,,,0,0,,2
+FS3,Is first-draft quality insufficient—does this need iteration?,Self-Refine indicator,high,,,0,0,,3
+FS4,Would stepping back to principles help before tackling specifics?,Step-Back indicator,high,,,0,0,,4
+FS5,"Can the response be broken into parallel, independent points?",Skeleton-of-Thought indicator,high,,,0,0,,5
+FS6,Is the optimal prompt structure unclear?,Meta Prompting indicator,high,,,0,0,,6
