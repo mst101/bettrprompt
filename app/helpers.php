@@ -20,6 +20,29 @@ function inertiaPaginated($paginator, $resource): array
 }
 
 /**
+ * Generate a route URL with country parameter automatically injected for country-prefixed routes.
+ * Mirrors the frontend's useCountryRoute() composable.
+ *
+ * @param  string  $name  The route name
+ * @param  mixed  $parameters  Route parameters (array or model)
+ * @param  bool  $absolute  Whether to return absolute URL
+ * @return string The generated route URL
+ */
+function countryRoute(string $name, mixed $parameters = [], bool $absolute = true): string
+{
+    if (! is_array($parameters)) {
+        $parameters = [];
+    }
+
+    // Add country if not already present
+    if (! isset($parameters['country'])) {
+        $parameters['country'] = request()->route('country');
+    }
+
+    return route($name, $parameters, $absolute);
+}
+
+/**
  * Get all supported country codes from the database with caching.
  * Supports all 247 countries in the countries table.
  *

@@ -104,7 +104,7 @@ class PrivacyController extends Controller
         // Clear setup session
         session()->forget(['privacy_setup.dek', 'privacy_setup.recovery_phrase']);
 
-        return redirect()->route('settings.privacy', ['country' => request()->route('country')])
+        return redirect(countryRoute('settings.privacy'))
             ->with('success', __('messages.privacy.enabled'));
     }
 
@@ -186,7 +186,7 @@ class PrivacyController extends Controller
             // Store DEK in session
             $this->encryptionService->storeDekInSession($dek);
 
-            return redirect()->route('settings.privacy', ['country' => request()->route('country')])
+            return redirect(countryRoute('settings.privacy'))
                 ->with('success', __('messages.privacy.recovered'));
         } catch (\Exception $e) {
             return back()->withErrors(['recovery_phrase' => __('messages.privacy.invalid_phrase')]);
@@ -207,7 +207,7 @@ class PrivacyController extends Controller
 
         if (! $user->hasPrivacyEnabled()) {
             // No privacy enabled, just update password normally
-            return redirect()->route('profile.edit', ['country' => request()->route('country')]);
+            return redirect(countryRoute('profile.edit'));
         }
 
         try {
@@ -259,7 +259,7 @@ class PrivacyController extends Controller
         // Clear DEK from session
         $this->encryptionService->clearDekFromSession();
 
-        return redirect()->route('settings.privacy', ['country' => request()->route('country')])
+        return redirect(countryRoute('settings.privacy'))
             ->with('success', __('messages.privacy.disabled'));
     }
 }

@@ -17,7 +17,7 @@ class EmailVerificationNotificationController extends Controller
         $country = SetCountry::detectCountry($request);
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', ['country' => $country], absolute: false));
+            return redirect()->intended(countryRoute('dashboard', [], false));
         }
 
         $request->user()->sendEmailVerificationNotification();

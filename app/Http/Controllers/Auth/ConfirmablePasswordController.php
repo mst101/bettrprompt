@@ -39,6 +39,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(route('prompt-builder.index', ['country' => $country], absolute: false));
+        return redirect()->intended(countryRoute('prompt-builder.index', [], false));
     }
 }

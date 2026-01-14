@@ -37,10 +37,10 @@ class AuthenticatedSessionController extends Controller
 
         // If visitor had completed prompts, redirect to history page
         if ($claimedCount > 0) {
-            return redirect()->intended(route('prompt-builder.history', ['country' => $country], absolute: false));
+            return redirect()->intended(countryRoute('prompt-builder.history', [], false));
         }
 
-        return redirect()->intended(route('prompt-builder.index', ['country' => $country], absolute: false));
+        return redirect()->intended(countryRoute('prompt-builder.index', [], false));
     }
 
     /**

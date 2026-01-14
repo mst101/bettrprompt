@@ -89,9 +89,9 @@ class RegisteredUserController extends Controller
 
         // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
         if ($claimedCount > 0) {
-            return redirect(route('prompt-builder.history', ['country' => $country], absolute: false));
+            return redirect(countryRoute('prompt-builder.history', [], false));
         }
 
-        return redirect(route('prompt-builder.index', ['country' => $country], absolute: false));
+        return redirect(countryRoute('prompt-builder.index', [], false));
     }
 }

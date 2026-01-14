@@ -18,13 +18,13 @@ class VerifyEmailController extends Controller
         $country = SetCountry::detectCountry($request);
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('prompt-builder.index', ['country' => $country], absolute: false).'?verified=1');
+            return redirect()->intended(countryRoute('prompt-builder.index', [], false).'?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('prompt-builder.index', ['country' => $country], absolute: false).'?verified=1');
+        return redirect()->intended(countryRoute('prompt-builder.index', [], false).'?verified=1');
     }
 }

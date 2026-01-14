@@ -19,7 +19,7 @@ class EmailVerificationPromptController extends Controller
         $country = SetCountry::detectCountry($request);
 
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', ['country' => $country], absolute: false))
+                    ? redirect()->intended(countryRoute('dashboard', [], false))
                     : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
     }
 }
