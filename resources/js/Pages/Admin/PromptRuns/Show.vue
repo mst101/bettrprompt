@@ -32,6 +32,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
+defineOptions({
+    layout: AppLayout,
+});
+
 const { countryRoute } = useCountryRoute();
 const { t } = useI18n({ useScope: 'global' });
 
@@ -133,145 +137,139 @@ const hasRelatedRuns = computed(
 <template>
     <Head :title="`Admin - ${pageTitle}`" />
 
-    <AppLayout>
-        <HeaderPage :title="pageTitle">
-            <template #actions>
-                <Link
-                    :href="countryRoute('admin.tasks.index')"
-                    class="text-sm text-indigo-600 hover:text-indigo-900"
-                >
-                    ← {{ $t('promptBuilder.admin.backToTasks') }}
-                </Link>
-            </template>
-        </HeaderPage>
+    <HeaderPage :title="pageTitle">
+        <template #actions>
+            <Link
+                :href="countryRoute('admin.tasks.index')"
+                class="text-sm text-indigo-600 hover:text-indigo-900"
+            >
+                ← {{ $t('promptBuilder.admin.backToTasks') }}
+            </Link>
+        </template>
+    </HeaderPage>
 
-        <ContainerPage v-if="props.promptRun" spacing>
-            <!-- Prompt Run Metadata -->
-            <PromptRunMetadata
-                :workflow-stage="promptRun.workflowStage"
-                :user="promptRun.user ?? null"
-                :personality-type="promptRun.personalityType"
-                :created-at="promptRun.createdAt"
-            />
+    <ContainerPage v-if="props.promptRun" spacing>
+        <!-- Prompt Run Metadata -->
+        <PromptRunMetadata
+            :workflow-stage="promptRun.workflowStage"
+            :user="promptRun.user ?? null"
+            :personality-type="promptRun.personalityType"
+            :created-at="promptRun.createdAt"
+        />
 
-            <!-- Tabbed Content -->
-            <div class="max-w-4xl shadow-xs sm:rounded-lg">
-                <Tabs v-model="activeTab" class="mb-2" :tabs="tabs" />
+        <!-- Tabbed Content -->
+        <div class="max-w-4xl shadow-xs sm:rounded-lg">
+            <Tabs v-model="activeTab" class="mb-2" :tabs="tabs" />
 
-                <!-- Your Task Tab -->
-                <div v-if="activeTab === 'task'" class="space-y-4">
-                    <!-- Workflow error display for any failed stage -->
-                    <WorkflowError
-                        v-if="hasWorkflowFailed && promptRun.errorMessage"
-                        :error-message="promptRun.errorMessage"
-                    />
+            <!-- Your Task Tab -->
+            <div v-if="activeTab === 'task'" class="space-y-4">
+                <!-- Workflow error display for any failed stage -->
+                <WorkflowError
+                    v-if="hasWorkflowFailed && promptRun.errorMessage"
+                    :error-message="promptRun.errorMessage"
+                />
 
-                    <TaskInformation
-                        :prompt-run="promptRun"
-                        :visitor-has-completed-prompts="false"
-                    />
+                <TaskInformation
+                    :prompt-run="promptRun"
+                    :visitor-has-completed-prompts="false"
+                />
 
-                    <PreAnalysisQuestions :prompt-run="promptRun" />
+                <PreAnalysisQuestions :prompt-run="promptRun" />
 
-                    <RelatedPromptRuns
-                        v-if="hasRelatedRuns"
-                        :parent="promptRun.parent"
-                        :children="promptRun.children"
-                    />
+                <RelatedPromptRuns
+                    v-if="hasRelatedRuns"
+                    :parent="promptRun.parent"
+                    :children="promptRun.children"
+                />
 
-                    <TaskClassification
-                        v-if="promptRun.taskClassification"
-                        :classification="promptRun.taskClassification as any"
-                    />
+                <TaskClassification
+                    v-if="promptRun.taskClassification"
+                    :classification="promptRun.taskClassification as any"
+                />
 
-                    <CognitiveRequirements
-                        v-if="promptRun.cognitiveRequirements"
-                        :requirements="promptRun.cognitiveRequirements as any"
-                    />
-                </div>
-
-                <!-- Framework Tab -->
-                <div v-if="activeTab === 'framework'" class="space-y-4">
-                    <SelectedFramework
-                        v-if="promptRun.selectedFramework"
-                        :framework="promptRun.selectedFramework as any"
-                        :show-proceed-button="false"
-                    />
-
-                    <AlternativeFrameworks
-                        v-if="promptRun.alternativeFrameworks"
-                        :frameworks="promptRun.alternativeFrameworks as any"
-                        :prompt-run-id="promptRun.id"
-                    />
-                </div>
-
-                <!-- Personality Tab -->
-                <div v-if="activeTab === 'personality'" class="space-y-4">
-                    <TaskTraitAlignment
-                        v-if="promptRun.taskTraitAlignment"
-                        :alignment="promptRun.taskTraitAlignment as any"
-                    />
-
-                    <PersonalityAdjustments
-                        v-if="promptRun.personalityTier"
-                        :tier="promptRun.personalityTier as any"
-                        :adjustments="
-                            promptRun.personalityAdjustmentsPreview || []
-                        "
-                    />
-
-                    <PersonalityAdjustmentsSummary
-                        v-if="promptRun.personalityAdjustmentsSummary"
-                        :adjustments="
-                            promptRun.personalityAdjustmentsSummary as any
-                        "
-                    />
-                </div>
-
-                <!-- Questions Tab -->
-                <div v-if="activeTab === 'questions'" class="space-y-4">
-                    <ClarifyingQuestions
-                        :prompt-run="promptRun"
-                        ui-complexity="simple"
-                        :visitor-has-completed-prompts="false"
-                    />
-                </div>
-
-                <!-- Recommendations Tab -->
-                <div v-if="activeTab === 'recommendations'" class="space-y-4">
-                    <Recommendations
-                        :model-recommendations="
-                            promptRun.modelRecommendations as any
-                        "
-                        :iteration-suggestions="
-                            promptRun.iterationSuggestions as any
-                        "
-                    />
-                </div>
-
-                <!-- Costs Tab -->
-                <div v-if="activeTab === 'costs'" class="space-y-4">
-                    <ApiUsage
-                        :pre-analysis-usage="
-                            promptRun.preAnalysisApiUsage as any
-                        "
-                        :analysis-usage="promptRun.analysisApiUsage as any"
-                        :generation-usage="promptRun.generationApiUsage as any"
-                        :claude-models="claudeModels || []"
-                    />
-                </div>
-
-                <!-- Optimised Prompt Tab -->
-                <div
-                    v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
-                    class="space-y-4"
-                >
-                    <OptimisedPrompt
-                        :optimized-prompt="promptRun.optimizedPrompt"
-                        :prompt-run-id="promptRun.id"
-                    />
-                </div>
+                <CognitiveRequirements
+                    v-if="promptRun.cognitiveRequirements"
+                    :requirements="promptRun.cognitiveRequirements as any"
+                />
             </div>
-        </ContainerPage>
-    </AppLayout>
+
+            <!-- Framework Tab -->
+            <div v-if="activeTab === 'framework'" class="space-y-4">
+                <SelectedFramework
+                    v-if="promptRun.selectedFramework"
+                    :framework="promptRun.selectedFramework as any"
+                    :show-proceed-button="false"
+                />
+
+                <AlternativeFrameworks
+                    v-if="promptRun.alternativeFrameworks"
+                    :frameworks="promptRun.alternativeFrameworks as any"
+                    :prompt-run-id="promptRun.id"
+                />
+            </div>
+
+            <!-- Personality Tab -->
+            <div v-if="activeTab === 'personality'" class="space-y-4">
+                <TaskTraitAlignment
+                    v-if="promptRun.taskTraitAlignment"
+                    :alignment="promptRun.taskTraitAlignment as any"
+                />
+
+                <PersonalityAdjustments
+                    v-if="promptRun.personalityTier"
+                    :tier="promptRun.personalityTier as any"
+                    :adjustments="promptRun.personalityAdjustmentsPreview || []"
+                />
+
+                <PersonalityAdjustmentsSummary
+                    v-if="promptRun.personalityAdjustmentsSummary"
+                    :adjustments="
+                        promptRun.personalityAdjustmentsSummary as any
+                    "
+                />
+            </div>
+
+            <!-- Questions Tab -->
+            <div v-if="activeTab === 'questions'" class="space-y-4">
+                <ClarifyingQuestions
+                    :prompt-run="promptRun"
+                    ui-complexity="simple"
+                    :visitor-has-completed-prompts="false"
+                />
+            </div>
+
+            <!-- Recommendations Tab -->
+            <div v-if="activeTab === 'recommendations'" class="space-y-4">
+                <Recommendations
+                    :model-recommendations="
+                        promptRun.modelRecommendations as any
+                    "
+                    :iteration-suggestions="
+                        promptRun.iterationSuggestions as any
+                    "
+                />
+            </div>
+
+            <!-- Costs Tab -->
+            <div v-if="activeTab === 'costs'" class="space-y-4">
+                <ApiUsage
+                    :pre-analysis-usage="promptRun.preAnalysisApiUsage as any"
+                    :analysis-usage="promptRun.analysisApiUsage as any"
+                    :generation-usage="promptRun.generationApiUsage as any"
+                    :claude-models="claudeModels || []"
+                />
+            </div>
+
+            <!-- Optimised Prompt Tab -->
+            <div
+                v-if="activeTab === 'prompt' && promptRun.optimizedPrompt"
+                class="space-y-4"
+            >
+                <OptimisedPrompt
+                    :optimized-prompt="promptRun.optimizedPrompt"
+                    :prompt-run-id="promptRun.id"
+                />
+            </div>
+        </div>
+    </ContainerPage>
 </template>
