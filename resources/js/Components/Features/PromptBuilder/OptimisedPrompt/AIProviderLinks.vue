@@ -117,7 +117,7 @@ const handleProviderClick = async (provider: AIProvider) => {
             </p>
         </div>
         <div
-            class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:grid-rows-2 sm:gap-3"
+            class="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 sm:grid-rows-2 sm:justify-items-stretch sm:gap-3"
         >
             <Button
                 v-for="provider in providers"
@@ -130,7 +130,7 @@ const handleProviderClick = async (provider: AIProvider) => {
                         provider: provider.name,
                     })
                 "
-                class="group relative flex w-full items-center justify-center px-3 py-2"
+                class="group relative flex w-full items-center justify-center px-3 py-2 sm:w-full"
                 :class="
                     prompt.length > 0
                         ? 'bg-indigo-50! hover:bg-indigo-100! dark:bg-indigo-100! dark:hover:bg-indigo-200!'
