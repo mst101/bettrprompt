@@ -81,7 +81,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     workflowNumber: 0,
                                 })
                             "
-                            :active="$page.url.includes('/workflow/0')"
+                            :active="$page.url.includes('/admin/workflows/0')"
                         >
                             Workflow 0
                         </NavLink>
@@ -91,7 +91,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     workflowNumber: 1,
                                 })
                             "
-                            :active="$page.url.includes('/workflow/1')"
+                            :active="$page.url.includes('/admin/workflows/1')"
                         >
                             Workflow 1
                         </NavLink>
@@ -101,7 +101,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                     workflowNumber: 2,
                                 })
                             "
-                            :active="$page.url.includes('/workflow/2')"
+                            :active="$page.url.includes('/admin/workflows/2')"
                         >
                             Workflow 2
                         </NavLink>
@@ -162,7 +162,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         workflowNumber: 0,
                                     })
                                 "
-                                :active="$page.url.includes('/workflow/0')"
+                                :active="
+                                    $page.url.includes('/admin/workflows/0')
+                                "
                                 @click="showingNavigationDropdown = false"
                             >
                                 Workflow 0
@@ -174,7 +176,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         workflowNumber: 1,
                                     })
                                 "
-                                :active="$page.url.includes('/workflow/1')"
+                                :active="
+                                    $page.url.includes('/admin/workflows/1')
+                                "
                                 @click="showingNavigationDropdown = false"
                             >
                                 Workflow 1
@@ -186,7 +190,9 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         workflowNumber: 2,
                                     })
                                 "
-                                :active="$page.url.includes('/workflow/2')"
+                                :active="
+                                    $page.url.includes('/admin/workflows/2')
+                                "
                                 @click="showingNavigationDropdown = false"
                             >
                                 Workflow 2

@@ -308,7 +308,7 @@ Route::prefix('{country}')
                 ->name('workflow.docs.embed-all');
 
             // Debug n8n workflow
-            Route::get('/workflow/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
+            Route::get('/admin/workflows/{workflowNumber}', [\App\Http\Controllers\DebugN8nController::class, 'show'])
                 ->name('workflow.show')
                 ->where('workflowNumber', '[0-9]+');
 

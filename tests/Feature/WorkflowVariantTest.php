@@ -14,7 +14,7 @@ beforeEach(function () use (&$adminUser) {
 
 test('show workflow page without variant selector for single variant', function () use (&$adminUser) {
     // Workflow 0 only has 'default' variant, so no selector should show
-    $response = $this->actingAs($adminUser)->getCountry('/workflow/0');
+    $response = $this->actingAs($adminUser)->getCountry('/admin/workflows/0');
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
@@ -26,7 +26,7 @@ test('show workflow page without variant selector for single variant', function 
 
 test('show workflow page with variant selector for workflow 1', function () use (&$adminUser) {
     // Workflow 1 has multiple variants, so selector should appear
-    $response = $this->actingAs($adminUser)->getCountry('/workflow/1');
+    $response = $this->actingAs($adminUser)->getCountry('/admin/workflows/1');
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
@@ -38,7 +38,7 @@ test('show workflow page with variant selector for workflow 1', function () use 
 });
 
 test('show workflow page includes prepare prompt nodes', function () use (&$adminUser) {
-    $response = $this->actingAs($adminUser)->getCountry('/workflow/1');
+    $response = $this->actingAs($adminUser)->getCountry('/admin/workflows/1');
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
@@ -75,7 +75,7 @@ test('set variant persists across requests', function () use (&$adminUser) {
         ->assertJson(['success' => true]);
 
     // Verify it persists by navigating to the variant URL
-    $response = $this->actingAs($adminUser)->getCountry('/workflow/1?variant=two-pass');
+    $response = $this->actingAs($adminUser)->getCountry('/admin/workflows/1?variant=two-pass');
     $response->assertInertia(fn ($page) => $page
         ->where('currentVariant', 'two-pass')
     );
@@ -88,7 +88,7 @@ test('show two pass variant includes two nodes', function () use (&$adminUser) {
     ]);
 
     // Get the page with the variant query parameter
-    $response = $this->actingAs($adminUser)->getCountry('/workflow/1?variant=two-pass');
+    $response = $this->actingAs($adminUser)->getCountry('/admin/workflows/1?variant=two-pass');
 
     $response->assertInertia(fn ($page) => $page
         ->has('preparePromptNodes', 2)
