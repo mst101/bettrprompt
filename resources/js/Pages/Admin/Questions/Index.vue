@@ -56,23 +56,36 @@ const page = usePage();
 const { countryRoute } = useCountryRoute();
 const { success, error } = useNotification();
 
-const selectedCategory = ref(props.filters.category);
-const selectedFramework = ref(props.filters.framework);
-const searchQuery = ref(props.filters.search);
+const selectedCategory = ref(props.filters.category ?? '');
+const selectedFramework = ref(props.filters.framework ?? '');
+const searchQuery = ref(props.filters.search ?? '');
 const isRegenerating = ref(false);
 
 const filteredQuestionCount = computed(() => props.questions.meta.total);
 
+const buildFilterParams = () => {
+    const params: Record<string, string> = {};
+
+    if (selectedCategory.value?.trim()) {
+        params.category = selectedCategory.value.trim();
+    }
+
+    if (selectedFramework.value?.trim()) {
+        params.framework = selectedFramework.value.trim();
+    }
+
+    if (searchQuery.value?.trim()) {
+        params.search = searchQuery.value.trim();
+    }
+
+    return params;
+};
+
 const applyFilters = () => {
-    router.get(
-        countryRoute('admin.questions.index'),
-        {
-            category: selectedCategory.value,
-            framework: selectedFramework.value,
-            search: searchQuery.value,
-        },
-        { preserveScroll: true },
-    );
+    router.get(countryRoute('admin.questions.index'), buildFilterParams(), {
+        preserveScroll: true,
+        preserveState: true,
+    });
 };
 
 const clearFilters = () => {
@@ -166,10 +179,14 @@ const regenerateMarkdown = async () => {
             <div class="space-y-4">
                 <h3 class="font-semibold text-indigo-900">Filters</h3>
 
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <form
+                    class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                    @submit.prevent="applyFilters"
+                >
                     <FormInput
                         id="search"
                         v-model="searchQuery"
+                        label=""
                         placeholder="Search question text..."
                         data-testid="search-input"
                     />
@@ -203,14 +220,18 @@ const regenerateMarkdown = async () => {
                     </FormSelect>
 
                     <div class="flex items-end gap-2">
-                        <ButtonPrimary class="flex-1" @click="applyFilters">
+                        <ButtonPrimary class="flex-1" type="submit">
                             Apply Filters
                         </ButtonPrimary>
-                        <ButtonSecondary class="flex-1" @click="clearFilters">
+                        <ButtonSecondary
+                            class="flex-1"
+                            type="button"
+                            @click="clearFilters"
+                        >
                             Clear
                         </ButtonSecondary>
                     </div>
-                </div>
+                </form>
             </div>
         </Card>
 
