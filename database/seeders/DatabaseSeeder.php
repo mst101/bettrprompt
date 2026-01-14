@@ -22,13 +22,14 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             ClaudeModelSeeder::class,
             PricesTableSeeder::class,
-            QuestionSeeder::class,
-            QuestionVariantSeeder::class,
-            QuestionCognitiveRequirementSeeder::class,
-            // Framework system - main tables
+            // Framework system - main tables (seed before questions)
             FrameworkSeeder::class,
             TaskCategorySeeder::class,
             CognitiveRequirementSeeder::class,
+            // Questions - now the reference data exists
+            QuestionSeeder::class,
+            QuestionVariantSeeder::class,
+            QuestionCognitiveRequirementSeeder::class,
             // Framework system - relationships
             FrameworkCognitiveRequirementSeeder::class,
             TaskCategoryCognitiveRequirementSeeder::class,
