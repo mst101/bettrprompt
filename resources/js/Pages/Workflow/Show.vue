@@ -172,7 +172,7 @@ const makeRequest = async (url: string, method: string, body?: unknown) => {
 const reloadJavaScriptFromWorkflowAsOld = async () => {
     try {
         const response = await makeRequest(
-            workflowRoute('workflow.reload-javascript-old', {
+            workflowRoute('workflows.reload-javascript-old', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -208,7 +208,7 @@ const reloadJavaScriptFromWorkflowAsOld = async () => {
 const reloadJavaScriptFromWorkflowAsNew = async () => {
     try {
         const response = await makeRequest(
-            workflowRoute('workflow.reload-javascript-new', {
+            workflowRoute('workflows.reload-javascript-new', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -261,7 +261,7 @@ const executeWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.execute-workflow-old', {
+            workflowRoute('workflows.execute-workflow-old', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -308,7 +308,7 @@ const executeWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.execute-workflow-new', {
+            workflowRoute('workflows.execute-workflow-new', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -344,7 +344,7 @@ const uploadWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
         await saveOldJavaScriptToFile();
 
         const response = await makeRequest(
-            workflowRoute('workflow.upload-to-n8n-old', {
+            workflowRoute('workflows.upload-to-n8n-old', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -380,7 +380,7 @@ const uploadWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
         await saveNewJavaScriptToFile();
 
         const response = await makeRequest(
-            workflowRoute('workflow.upload-to-n8n-new', {
+            workflowRoute('workflows.upload-to-n8n-new', {
                 variant: props.currentVariant,
             }),
             'POST',
@@ -428,7 +428,7 @@ const uploadWorkflowToLive = async () => {
 
     try {
         const response = await makeRequest(
-            workflowRoute('workflow.upload-to-live'),
+            workflowRoute('workflows.upload-to-live'),
             'POST',
         );
 
@@ -537,7 +537,7 @@ const saveInputData = async () => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.save-input'),
+            workflowRoute('workflows.save-input'),
             'POST',
             Array.isArray(inputData) ? inputData : [inputData],
         );
@@ -564,7 +564,7 @@ const saveOldJavaScriptToFile = async () => {
         const nodeName = currentNode.value?.name || 'Prepare Prompt';
 
         const response = await makeRequest(
-            workflowRoute('workflow.save-javascript-old'),
+            workflowRoute('workflows.save-javascript-old'),
             'POST',
             { code, variant: props.currentVariant, nodeName },
         );
@@ -596,7 +596,7 @@ const saveNewJavaScriptToFile = async () => {
         const nodeName = currentNode.value?.name || 'Prepare Prompt';
 
         const response = await makeRequest(
-            workflowRoute('workflow.save-javascript-new'),
+            workflowRoute('workflows.save-javascript-new'),
             'POST',
             { code, variant: props.currentVariant, nodeName },
         );
@@ -670,7 +670,7 @@ const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.prepare-prompt-old'),
+            workflowRoute('workflows.prepare-prompt-old'),
             'POST',
             { input: inputData, variant: props.currentVariant, nodeName },
         );
@@ -759,7 +759,7 @@ const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.prepare-prompt-new'),
+            workflowRoute('workflows.prepare-prompt-new'),
             'POST',
             { input: inputData, variant: props.currentVariant, nodeName },
         );
@@ -815,7 +815,7 @@ const savePassInputData = async (nodeName: string, passNumber: number) => {
         }
 
         const response = await makeRequest(
-            workflowRoute('workflow.save-pass-input', { passNumber }),
+            workflowRoute('workflows.save-pass-input', { passNumber }),
             'POST',
             Array.isArray(inputData) ? inputData : [inputData],
         );

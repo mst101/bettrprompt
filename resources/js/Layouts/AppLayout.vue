@@ -283,7 +283,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                                         <DropdownLink
                                             v-if="isAdmin"
                                             :href="
-                                                countryRoute('workflow.index')
+                                                countryRoute('workflows.index')
                                             "
                                         >
                                             {{ $t('navigation.workflows') }}

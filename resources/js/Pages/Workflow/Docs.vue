@@ -75,7 +75,7 @@ watch(
 async function loadDocumentContent(doc: Document) {
     try {
         const response = await fetch(
-            countryRoute('workflow.docs.show', {
+            countryRoute('workflows.docs.show', {
                 type: doc.type,
                 filename: doc.filename,
             }),
@@ -141,7 +141,7 @@ async function saveDocument() {
         const csrfToken = getCsrfToken();
 
         const response = await fetch(
-            countryRoute('workflow.docs.update', {
+            countryRoute('workflows.docs.update', {
                 type: selectedDocument.value.type,
                 filename: selectedDocument.value.filename,
             }),
@@ -213,7 +213,7 @@ async function handleEmbedAll() {
     try {
         const csrfToken = getCsrfToken();
 
-        const response = await fetch(countryRoute('workflow.docs.embed-all'), {
+        const response = await fetch(countryRoute('workflows.docs.embed-all'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

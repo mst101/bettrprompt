@@ -89,7 +89,7 @@ class DebugN8nController extends Controller
             // Return success with redirect URL so client can navigate to variant
             return response()->json([
                 'success' => true,
-                'redirectUrl' => route('workflow.show', ['workflowNumber' => $workflowNumber, 'variant' => $variant]),
+                'redirectUrl' => route('workflows.show', ['workflowNumber' => $workflowNumber, 'variant' => $variant]),
             ]);
         } catch (Exception $e) {
             return response()->json([

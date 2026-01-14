@@ -39,28 +39,28 @@ const infoItems = computed(() => [
 
         <div class="grid gap-6 md:grid-cols-2">
             <WorkflowCard
-                :href="countryRoute('workflow.show', { workflowNumber: 0 })"
+                :href="countryRoute('workflows.show', { workflowNumber: 0 })"
                 :title="t('workflow.index.workflow0.title')"
                 :subtitle="t('workflow.index.workflow0.subtitle')"
                 :description="t('workflow.index.workflow0.description')"
             />
 
             <WorkflowCard
-                :href="countryRoute('workflow.show', { workflowNumber: 1 })"
+                :href="countryRoute('workflows.show', { workflowNumber: 1 })"
                 :title="t('workflow.index.workflow1.title')"
                 :subtitle="t('workflow.index.workflow1.subtitle')"
                 :description="t('workflow.index.workflow1.description')"
             />
 
             <WorkflowCard
-                :href="countryRoute('workflow.show', { workflowNumber: 2 })"
+                :href="countryRoute('workflows.show', { workflowNumber: 2 })"
                 :title="t('workflow.index.workflow2.title')"
                 :subtitle="t('workflow.index.workflow2.subtitle')"
                 :description="t('workflow.index.workflow2.description')"
             />
 
             <WorkflowCard
-                :href="countryRoute('workflow.docs.index')"
+                :href="countryRoute('workflows.docs.index')"
                 :title="t('workflow.index.referenceDocs.title')"
                 :subtitle="t('workflow.index.referenceDocs.subtitle')"
                 :description="t('workflow.index.referenceDocs.description')"
