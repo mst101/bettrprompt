@@ -63,6 +63,22 @@ const isRegenerating = ref(false);
 
 const filteredQuestionCount = computed(() => props.questions.meta.total);
 
+const categoryOptions = computed(() => [
+    { value: '', label: 'All Categories' },
+    ...props.categories.map((category) => ({
+        value: category,
+        label: category,
+    })),
+]);
+
+const frameworkOptions = computed(() => [
+    { value: '', label: 'All Frameworks' },
+    ...props.frameworks.map((framework) => ({
+        value: framework,
+        label: framework,
+    })),
+]);
+
 const buildFilterParams = () => {
     const params: Record<string, string> = {};
 
@@ -196,28 +212,16 @@ const regenerateMarkdown = async () => {
                         v-model="selectedCategory"
                         label="Category"
                         data-testid="category-filter"
-                    >
-                        <option value="">All Categories</option>
-                        <option
-                            v-for="cat in categories"
-                            :key="cat"
-                            :value="cat"
-                        >
-                            {{ cat }}
-                        </option>
-                    </FormSelect>
+                        :options="categoryOptions"
+                    />
 
                     <FormSelect
                         id="framework-filter"
                         v-model="selectedFramework"
                         label="Framework"
                         data-testid="framework-filter"
-                    >
-                        <option value="">All Frameworks</option>
-                        <option v-for="fw in frameworks" :key="fw" :value="fw">
-                            {{ fw }}
-                        </option>
-                    </FormSelect>
+                        :options="frameworkOptions"
+                    />
 
                     <div class="flex items-end gap-2">
                         <ButtonPrimary class="flex-1" type="submit">
