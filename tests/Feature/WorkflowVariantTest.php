@@ -1,256 +1,228 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
 use App\Services\WorkflowVariantService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class WorkflowVariantTest extends TestCase
-{
-    use RefreshDatabase, WithFaker;
+$adminUser = null;
 
-    private WorkflowVariantService $variantService;
+beforeEach(function () use (&$adminUser) {
+    $variantService = app(WorkflowVariantService::class);
 
-    private User $adminUser;
+    // Create an admin user for testing
+    $adminUser = User::factory()->create(['is_admin' => true]);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->variantService = app(WorkflowVariantService::class);
+test('show workflow page without variant selector for single variant', function () use (&$adminUser) {
+    // Workflow 0 only has 'default' variant, so no selector should show
+    $response = $this->actingAs($adminUser)->getCountry('/workflow/0');
 
-        // Create an admin user for testing
-        $this->adminUser = User::factory()->create(['is_admin' => true]);
-    }
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('Workflow/Show')
+        ->has('currentVariant')
+        ->has('availableVariants')
+    );
+});
 
-    public function test_show_workflow_page_without_variant_selector_for_single_variant(): void
-    {
-        // Workflow 0 only has 'default' variant, so no selector should show
-        $response = $this->actingAs($this->adminUser)->getCountry('/workflow/0');
+test('show workflow page with variant selector for workflow 1', function () use (&$adminUser) {
+    // Workflow 1 has multiple variants, so selector should appear
+    $response = $this->actingAs($adminUser)->getCountry('/workflow/1');
 
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Workflow/Show')
-            ->has('currentVariant')
-            ->has('availableVariants')
-        );
-    }
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('Workflow/Show')
+        ->has('currentVariant')
+        ->where('currentVariant', 'single-pass')
+        ->has('availableVariants', 2)
+    );
+});
 
-    public function test_show_workflow_page_with_variant_selector_for_workflow_1(): void
-    {
-        // Workflow 1 has multiple variants, so selector should appear
-        $response = $this->actingAs($this->adminUser)->getCountry('/workflow/1');
+test('show workflow page includes prepare prompt nodes', function () use (&$adminUser) {
+    $response = $this->actingAs($adminUser)->getCountry('/workflow/1');
 
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Workflow/Show')
-            ->has('currentVariant')
-            ->where('currentVariant', 'single-pass')
-            ->has('availableVariants', 2)
-        );
-    }
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->has('preparePromptNodes')
+        ->where('preparePromptNodes.0.name', 'Prepare Prompt')
+    );
+});
 
-    public function test_show_workflow_page_includes_prepare_prompt_nodes(): void
-    {
-        $response = $this->actingAs($this->adminUser)->getCountry('/workflow/1');
+test('set variant returns redirect url', function () use (&$adminUser) {
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+        'variant' => 'two-pass',
+    ]);
 
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->has('preparePromptNodes')
-            ->where('preparePromptNodes.0.name', 'Prepare Prompt')
-        );
-    }
+    $response->assertStatus(200)
+        ->assertJson(['success' => true])
+        ->assertJsonStructure(['redirectUrl']);
+});
 
-    public function test_set_variant_returns_redirect_url(): void
-    {
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/variant', [
-            'variant' => 'two-pass',
-        ]);
+test('set variant validates variant exists', function () use (&$adminUser) {
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+        'variant' => 'invalid-variant',
+    ]);
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true])
-            ->assertJsonStructure(['redirectUrl']);
-    }
+    $response->assertStatus(400)
+        ->assertJson(['success' => false]);
+});
 
-    public function test_set_variant_validates_variant_exists(): void
-    {
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/variant', [
-            'variant' => 'invalid-variant',
-        ]);
+test('set variant persists across requests', function () use (&$adminUser) {
+    // Set variant - API returns success
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+        'variant' => 'two-pass',
+    ]);
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
 
-        $response->assertStatus(400)
-            ->assertJson(['success' => false]);
-    }
+    // Verify it persists by navigating to the variant URL
+    $response = $this->actingAs($adminUser)->getCountry('/workflow/1?variant=two-pass');
+    $response->assertInertia(fn ($page) => $page
+        ->where('currentVariant', 'two-pass')
+    );
+});
 
-    public function test_set_variant_persists_across_requests(): void
-    {
-        // Set variant - API returns success
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/variant', [
-            'variant' => 'two-pass',
-        ]);
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
+test('show two pass variant includes two nodes', function () use (&$adminUser) {
+    // Set the variant (API confirms it's valid)
+    $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+        'variant' => 'two-pass',
+    ]);
 
-        // Verify it persists by navigating to the variant URL
-        $response = $this->actingAs($this->adminUser)->getCountry('/workflow/1?variant=two-pass');
-        $response->assertInertia(fn ($page) => $page
-            ->where('currentVariant', 'two-pass')
-        );
-    }
+    // Get the page with the variant query parameter
+    $response = $this->actingAs($adminUser)->getCountry('/workflow/1?variant=two-pass');
 
-    public function test_show_two_pass_variant_includes_two_nodes(): void
-    {
-        // Set the variant (API confirms it's valid)
-        $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/variant', [
-            'variant' => 'two-pass',
-        ]);
+    $response->assertInertia(fn ($page) => $page
+        ->has('preparePromptNodes', 2)
+        ->where('preparePromptNodes.0.name', 'Prepare Prompt 1')
+        ->where('preparePromptNodes.1.name', 'Prepare Prompt 2')
+    );
+});
 
-        // Get the page with the variant query parameter
-        $response = $this->actingAs($this->adminUser)->getCountry('/workflow/1?variant=two-pass');
+test('save javascript with variant and node name', function () use (&$adminUser) {
+    $javascriptCode = 'console.log("test");';
 
-        $response->assertInertia(fn ($page) => $page
-            ->has('preparePromptNodes', 2)
-            ->where('preparePromptNodes.0.name', 'Prepare Prompt 1')
-            ->where('preparePromptNodes.1.name', 'Prepare Prompt 2')
-        );
-    }
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+        'code' => $javascriptCode,
+        'variant' => 'single-pass',
+        'nodeName' => 'Prepare Prompt',
+    ]);
 
-    public function test_save_javascript_with_variant_and_node_name(): void
-    {
-        $javascriptCode = 'console.log("test");';
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
+});
 
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/javascript-old', [
-            'code' => $javascriptCode,
-            'variant' => 'single-pass',
-            'nodeName' => 'Prepare Prompt',
-        ]);
+test('save javascript two pass variant node 1', function () use (&$adminUser) {
+    $javascriptCode = 'console.log("test node 1");';
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
-    }
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+        'code' => $javascriptCode,
+        'variant' => 'two-pass',
+        'nodeName' => 'Prepare Prompt 1',
+    ]);
 
-    public function test_save_javascript_two_pass_variant_node_1(): void
-    {
-        $javascriptCode = 'console.log("test node 1");';
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
+});
 
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/javascript-old', [
-            'code' => $javascriptCode,
-            'variant' => 'two-pass',
-            'nodeName' => 'Prepare Prompt 1',
-        ]);
+test('save javascript two pass variant node 2', function () use (&$adminUser) {
+    $javascriptCode = 'console.log("test node 2");';
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
-    }
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+        'code' => $javascriptCode,
+        'variant' => 'two-pass',
+        'nodeName' => 'Prepare Prompt 2',
+    ]);
 
-    public function test_save_javascript_two_pass_variant_node_2(): void
-    {
-        $javascriptCode = 'console.log("test node 2");';
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
+});
 
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/javascript-old', [
-            'code' => $javascriptCode,
-            'variant' => 'two-pass',
-            'nodeName' => 'Prepare Prompt 2',
-        ]);
+test('save javascript defaults to current variant', function () use (&$adminUser) {
+    // Set variant to two-pass
+    $this->actingAs($adminUser)->postCountry('/debug/workflow/1/variant', [
+        'variant' => 'two-pass',
+    ]);
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
-    }
+    $javascriptCode = 'console.log("test");';
 
-    public function test_save_javascript_defaults_to_current_variant(): void
-    {
-        // Set variant to two-pass
-        $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/variant', [
-            'variant' => 'two-pass',
-        ]);
+    // Don't specify variant, should use current variant
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+        'code' => $javascriptCode,
+        'nodeName' => 'Prepare Prompt 1',
+    ]);
 
-        $javascriptCode = 'console.log("test");';
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
+});
 
-        // Don't specify variant, should use current variant
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/javascript-old', [
-            'code' => $javascriptCode,
-            'nodeName' => 'Prepare Prompt 1',
-        ]);
+test('save javascript defaults to prepare prompt node name', function () use (&$adminUser) {
+    $javascriptCode = 'console.log("test");';
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
-    }
+    // Don't specify nodeName, should default to 'Prepare Prompt'
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/1/javascript-old', [
+        'code' => $javascriptCode,
+        'variant' => 'single-pass',
+    ]);
 
-    public function test_save_javascript_defaults_to_prepare_prompt_node_name(): void
-    {
-        $javascriptCode = 'console.log("test");';
+    $response->assertStatus(200)
+        ->assertJson(['success' => true]);
+});
 
-        // Don't specify nodeName, should default to 'Prepare Prompt'
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/1/javascript-old', [
-            'code' => $javascriptCode,
-            'variant' => 'single-pass',
-        ]);
+test('load variant storage path multiple variants', function () {
+    $variantService = app(WorkflowVariantService::class);
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
-    }
+    $singlePassPath = $variantService->getVariantStoragePath('single-pass', 'prepare_prompt/old');
+    $twoPassPath = $variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
 
-    public function test_load_variant_storage_path_multiple_variants(): void
-    {
-        $singlePassPath = $this->variantService->getVariantStoragePath('single-pass', 'prepare_prompt/old');
-        $twoPassPath = $this->variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
+    // They should be different paths
+    expect($singlePassPath)->not->toBe($twoPassPath);
 
-        // They should be different paths
-        $this->assertNotEquals($singlePassPath, $twoPassPath);
+    // Each should contain its variant name
+    expect($singlePassPath)->toContain('single-pass');
+    expect($twoPassPath)->toContain('two-pass');
+});
 
-        // Each should contain its variant name
-        $this->assertStringContainsString('single-pass', $singlePassPath);
-        $this->assertStringContainsString('two-pass', $twoPassPath);
-    }
+test('migration command detects legacy data', function () {
+    // This would require setting up legacy data, skipping for now
+    expect(true)->toBeTrue();
+});
 
-    public function test_migration_command_detects_legacy_data(): void
-    {
-        // This would require setting up legacy data, skipping for now
-        $this->assertTrue(true);
-    }
+test('reload javascript returns code without saving', function () use (&$adminUser) {
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/0/reload-javascript-old');
 
-    public function test_reload_javascript_returns_code_without_saving(): void
-    {
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/0/reload-javascript-old');
-
-        $response->assertStatus(200)
-            ->assertJson(['success' => true])
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'reloadedNodes' => [
-                    [
-                        'nodeName',
-                        'javascript',
-                        'codeLength',
-                    ],
+    $response->assertStatus(200)
+        ->assertJson(['success' => true])
+        ->assertJsonStructure([
+            'success',
+            'message',
+            'reloadedNodes' => [
+                [
+                    'nodeName',
+                    'javascript',
+                    'codeLength',
                 ],
-            ]);
+            ],
+        ]);
 
-        // Verify that the response includes JavaScript code
-        $data = $response->json();
-        $this->assertNotEmpty($data['reloadedNodes']);
-        $this->assertNotEmpty($data['reloadedNodes'][0]['javascript']);
-    }
+    // Verify that the response includes JavaScript code
+    $data = $response->json();
+    expect($data['reloadedNodes'])->not->toBeEmpty()
+        ->and($data['reloadedNodes'][0]['javascript'])->not->toBeEmpty();
+});
 
-    public function test_reload_javascript_new_version_returns_code(): void
-    {
-        $response = $this->actingAs($this->adminUser)->postCountry('/debug/workflow/0/reload-javascript-new');
+test('reload javascript new version returns code', function () use (&$adminUser) {
+    $response = $this->actingAs($adminUser)->postCountry('/debug/workflow/0/reload-javascript-new');
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true])
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'reloadedNodes' => [
-                    [
-                        'nodeName',
-                        'javascript',
-                        'codeLength',
-                    ],
+    $response->assertStatus(200)
+        ->assertJson(['success' => true])
+        ->assertJsonStructure([
+            'success',
+            'message',
+            'reloadedNodes' => [
+                [
+                    'nodeName',
+                    'javascript',
+                    'codeLength',
                 ],
-            ]);
-    }
-}
+            ],
+        ]);
+});

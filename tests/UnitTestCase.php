@@ -30,7 +30,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Generate a route URL with country parameter automatically injected for country-prefixed routes
      */
-    protected function countryRoute($name, $parameters = [], $absolute = true)
+    public function countryRoute($name, $parameters = [], $absolute = true)
     {
         // Ensure parameters is an array
         if (! is_array($parameters)) {
@@ -48,7 +48,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Ensure a URI includes the country prefix without duplicating it.
      */
-    protected function withCountryPrefix(string $uri): string
+    public function withCountryPrefix(string $uri): string
     {
         $normalized = str_starts_with($uri, '/') ? $uri : "/{$uri}";
         $prefix = "/{$this->testCountry}";
@@ -63,7 +63,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a GET request to a country-prefixed route
      */
-    protected function getCountry($uri, $headers = [])
+    public function getCountry($uri, $headers = [])
     {
         return $this->get($this->withCountryPrefix($uri), $headers);
     }
@@ -71,7 +71,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a POST request to a country-prefixed route
      */
-    protected function postCountry($uri, $data = [], $headers = [])
+    public function postCountry($uri, $data = [], $headers = [])
     {
         return $this->post($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -79,7 +79,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a PATCH request to a country-prefixed route
      */
-    protected function patchCountry($uri, $data = [], $headers = [])
+    public function patchCountry($uri, $data = [], $headers = [])
     {
         return $this->patch($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -87,7 +87,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a DELETE request to a country-prefixed route
      */
-    protected function deleteCountry($uri, $data = [], $headers = [])
+    public function deleteCountry($uri, $data = [], $headers = [])
     {
         return $this->delete($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -95,7 +95,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a PUT request to a country-prefixed route
      */
-    protected function putCountry($uri, $data = [], $headers = [])
+    public function putCountry($uri, $data = [], $headers = [])
     {
         return $this->put($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -103,7 +103,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a POST request with JSON to a country-prefixed route
      */
-    protected function postJsonCountry($uri, $data = [], $headers = [])
+    public function postJsonCountry($uri, $data = [], $headers = [])
     {
         return $this->postJson($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -111,7 +111,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a PATCH request with JSON to a country-prefixed route
      */
-    protected function patchJsonCountry($uri, $data = [], $headers = [])
+    public function patchJsonCountry($uri, $data = [], $headers = [])
     {
         return $this->patchJson($this->withCountryPrefix($uri), $data, $headers);
     }
@@ -119,7 +119,7 @@ abstract class UnitTestCase extends BaseTestCase
     /**
      * Make a DELETE request with JSON to a country-prefixed route
      */
-    protected function deleteJsonCountry($uri, $data = [], $headers = [])
+    public function deleteJsonCountry($uri, $data = [], $headers = [])
     {
         return $this->deleteJson($this->withCountryPrefix($uri), $data, $headers);
     }

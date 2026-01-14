@@ -91,7 +91,7 @@ class GeolocationService
 
                 return null;
             }
-            Log::debug("Performing geolocation lookup for private IP in development: $ip");
+            //            Log::debug("Performing geolocation lookup for private IP in development: $ip");
 
             // Return a default location for development with private IPs
             return $this->getDefaultLocationForDevelopment();
