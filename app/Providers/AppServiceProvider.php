@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\PromptRun;
+use App\Models\Question;
 use App\Services\N8nWorkflowClient;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
         Route::model('promptRun', PromptRun::class);
         Route::model('parentPromptRun', PromptRun::class);
+        Route::model('question', Question::class);
 
         // Force HTTPS URLs when behind reverse proxy (Caddy)
         if ($this->app->environment('local')) {
