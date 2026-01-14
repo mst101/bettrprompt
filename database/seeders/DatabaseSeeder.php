@@ -24,6 +24,14 @@ class DatabaseSeeder extends Seeder
             PricesTableSeeder::class,
             QuestionSeeder::class,
             QuestionVariantSeeder::class,
+            // Framework system - main tables
+            FrameworkSeeder::class,
+            TaskCategorySeeder::class,
+            CognitiveRequirementSeeder::class,
+            // Framework system - relationships
+            FrameworkCognitiveRequirementSeeder::class,
+            TaskCategoryCognitiveRequirementSeeder::class,
+            FrameworkTaskCategorySeeder::class,
         ]);
 
         // User::factory(10)->create();

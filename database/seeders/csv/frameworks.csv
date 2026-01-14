@@ -1,0 +1,74 @@
+code,name,category,description,complexity,components,best_for,not_for,is_active,display_order
+CRISPE,CRISPE,Structured Clarity,Clarity - Relevance - Iteration - Specificity - Parameters - Examples,medium,"[""Clarity"",""Relevance"",""Iteration"",""Specificity"",""Parameters"",""Examples""]",Technical docs and strategic planning,Unstructured brainstorming,1,1
+RELIC,RELIC,Structured Clarity,Role - Emphasis - Limitation - Information - Challenge,medium,"[""Role"",""Emphasis"",""Limitation"",""Information"",""Challenge""]",Content creation and strategic planning,Technical code generation,1,2
+RTF,RTF,Structured Clarity,Request - Task - Format,low,"[""Request"",""Task"",""Format""]",Data retrieval and simple requests,Complex reasoning tasks,1,3
+CO_STAR,CO-STAR,Structured Clarity,Context - Objective - Style - Tone - Audience - Response,medium,"[""Context"",""Objective"",""Style"",""Tone"",""Audience"",""Response""]",Content creation and marketing copy,Raw data analysis,1,4
+ICIO,ICIO,Structured Clarity,Instruction - Context - Input - Output,low,"[""Instruction"",""Context"",""Input"",""Output""]",Data processing and structured tasks,Exploratory brainstorming,1,5
+CRAFT,CRAFT,Structured Clarity,Context - Request - Action - Frame - Template - Examples - Develop,high,"[""Context"",""Request"",""Action"",""Frame"",""Template"",""Examples"",""Develop""]",Repeatable prompts with structured outputs,Ad-hoc one-off tasks,1,6
+RACEF,RACEF,Iterative Refinement,Rephrase - Append - Contextualize - Examples - Follow-Up,medium,"[""Rephrase"",""Append"",""Contextualize"",""Examples"",""Follow-Up""]",Brainstorming and iterative problem-solving,Single-pass high-quality outputs,1,7
+CHAIN_OF_DESTINY,Chain of Destiny,Iterative Refinement,Baseline with feedback loops for quality prioritization,high,"[""Baseline"",""Feedback Loops""]",Projects prioritising quality,Time-constrained quick tasks,1,8
+SELF_REFINE,Self-Refine,Iterative Refinement,Generate - Critique - Refine in iterative cycles,high,"[""Generate"",""Critique"",""Refine""]",Writing improvement and code refinement,Simple one-shot tasks,1,9
+REFLEXION,Reflexion,Iterative Refinement,Act - Evaluate - Reflect - Learn - Act cycle,high,"[""Act"",""Evaluate"",""Reflect"",""Learn""]",Complex problem-solving and code generation,Simple straightforward tasks,1,10
+RICE,RICE,Decision-Making & Prioritisation,Reach - Impact - Confidence - Effort,low,"[""Reach"",""Impact"",""Confidence"",""Effort""]",Feature prioritisation and project selection,Personal preference decisions,1,11
+SMART,SMART,Decision-Making & Prioritisation,Specific - Measurable - Achievable - Relevant - Time-bound,low,"[""Specific"",""Measurable"",""Achievable"",""Relevant"",""Time-bound""]",Goal-setting and objective definition,Vague exploration,1,12
+COAST,COAST,Decision-Making & Prioritisation,Challenge - Objective - Actions - Strategy - Tactics,medium,"[""Challenge"",""Objective"",""Actions"",""Strategy"",""Tactics""]",Project management and planning,Tactical quick decisions,1,13
+PROS_AND_CONS,Pros and Cons,Decision-Making & Prioritisation,Benefits versus Drawbacks analysis,low,"[""Benefits"",""Drawbacks""]",Decision-making frameworks,Complex multi-factor analysis,1,14
+CHAIN_OF_THOUGHT,Chain of Thought,Analytical & Problem-Solving,Intro - Breakdown - Logical Progression - Conclusion,high,"[""Intro"",""Breakdown"",""Logical Progression"",""Conclusion""]",Complex reasoning and analysis,Simple factual retrieval,1,15
+TREE_OF_THOUGHT,Tree of Thought,Analytical & Problem-Solving,Nodes - Edges - Outcomes exploration,high,"[""Nodes"",""Edges"",""Outcomes""]",Complex problem-solving and scenario planning,Linear single-path thinking,1,16
+FOCUS,FOCUS,Analytical & Problem-Solving,Focus areas - Prioritisation - Resources,medium,"[""Focus areas"",""Prioritisation"",""Resources""]",Goal-setting and prioritisation,Exploratory ideation,1,17
+SIX_THINKING_HATS,Six Thinking Hats,Analytical & Problem-Solving,White (facts) - Red (emotions) - Black (risks) - Yellow (benefits) - Green (creativity) - Blue (process),medium,"[""White"",""Red"",""Black"",""Yellow"",""Green"",""Blue""]",Multi-perspective analysis,Single-perspective tasks,1,18
+STEP_BACK,Step-Back,Analytical & Problem-Solving,Abstraction - Grounding - Reasoning,medium,"[""Abstraction"",""Grounding"",""Reasoning""]",STEM and knowledge-intensive problems,Immediate practical implementation,1,19
+REACT,ReAct,Analytical & Problem-Solving,Thought - Action - Observation loop,high,"[""Thought"",""Action"",""Observation""]",Tool-using and agentic workflows,Static one-shot tasks,1,20
+SKELETON_OF_THOUGHT,Skeleton of Thought,Analytical & Problem-Solving,Skeleton - Parallel Expansion - Assembly,medium,"[""Skeleton"",""Parallel Expansion"",""Assembly""]",Structured explanations and listicles,Sequential reasoning tasks,1,21
+BAB,Before-After-Bridge,Storytelling & Narrative,Before - After - Bridge transition,low,"[""Before"",""After"",""Bridge""]",Marketing and persuasion,Technical specifications,1,22
+CAR,CAR,Storytelling & Narrative,Context - Action - Result,low,"[""Context"",""Action"",""Result""]",Case studies and interviews,Abstract conceptual content,1,23
+PAR,Problem-Action-Result,Storytelling & Narrative,Problem - Action - Result,low,"[""Problem"",""Action"",""Result""]",Success stories,Failure analysis,1,24
+STAR,STAR,Storytelling & Narrative,Situation - Task - Action - Result,low,"[""Situation"",""Task"",""Action"",""Result""]",Interviews and case studies,Hypothetical scenarios,1,25
+CHALLENGE_SOLUTION_BENEFIT,Challenge-Solution-Benefit,Storytelling & Narrative,Challenge - Solution - Benefit structure,low,"[""Challenge"",""Solution"",""Benefit""]",Marketing and product development,Internal technical documentation,1,26
+BLOG,BLOG,Content Creation,Background - Logic - Outline - Goal,low,"[""Background"",""Logic"",""Outline"",""Goal""]",Blog posts and articles,Technical code documentation,1,27
+APE,Audience-Purpose-Execution,Content Creation,Audience - Purpose - Execution,low,"[""Audience"",""Purpose"",""Execution""]",Content marketing,Raw data parsing,1,28
+TAG,Topic-Audience-Goal,Content Creation,Topic - Audience - Goal,low,"[""Topic"",""Audience"",""Goal""]",Content marketing,Academic research writing,1,29
+4S_METHOD,4S Method,Content Creation,Structure - Style - Substance - Speed,low,"[""Structure"",""Style"",""Substance"",""Speed""]",Digital marketing,Lengthy academic papers,1,30
+HAMBURGER,Hamburger Model,Content Creation,Intro - Body - Conclusion,low,"[""Intro"",""Body"",""Conclusion""]",Blogs and articles,Nonlinear explorations,1,31
+SCAMPER,SCAMPER,Creative & Innovation,Substitute - Combine - Adapt - Modify - Put to another use - Eliminate - Reverse,medium,"[""Substitute"",""Combine"",""Adapt"",""Modify"",""Put to another use"",""Eliminate"",""Reverse""]",Innovation and product development,Incremental improvements,1,32
+HMW,How Might We,Creative & Innovation,How might we questions for ideation,low,"[""How Might We Questions""]",Design thinking and brainstorming,Convergent decision-making,1,33
+IMAGINE,Imagine,Creative & Innovation,Future scenario visioning,low,"[""Visioning"",""Scenarios""]",Strategic planning,Current state analysis,1,34
+WHAT_IF,What If,Creative & Innovation,Hypothetical scenario exploration,low,"[""Hypothetical Scenarios""]",Creative problem-solving,Risk mitigation planning,1,35
+SPARK,SPARK,Creative & Innovation,Situation - Problem - Aspiration - Result - Kismet,medium,"[""Situation"",""Problem"",""Aspiration"",""Result"",""Kismet""]",Product development and marketing,Analytical decision-making,1,36
+BLOOMS_TAXONOMY,Bloom's Taxonomy,Educational & Learning,Remember - Understand - Apply - Analyze - Evaluate - Create,medium,"[""Remember"",""Understand"",""Apply"",""Analyze"",""Evaluate"",""Create""]",Educational content,Entertainment content,1,37
+ELI5,Explain Like I'm 5,Educational & Learning,Simplifying complex concepts for accessibility,low,"[""Simplification""]",Simplifying complex concepts,Technical deep dives,1,38
+HELP_ME_UNDERSTAND,Help Me Understand,Educational & Learning,Comprehension-focused explanation,low,"[""Comprehension Focus""]",Customer support and education,Technical reference documentation,1,39
+TQA,Thematic-Question-Answer,Educational & Learning,Thematic - Question - Answer structure,low,"[""Thematic"",""Question"",""Answer""]",E-learning and instruction,Interactive storytelling,1,40
+SOCRATIC_METHOD,Socratic Method,Educational & Learning,Progressive questioning for critical analysis,medium,"[""Progressive Questioning""]",Education and critical analysis,Straightforward instruction,1,41
+RACE,RACE,Communication & Engagement,Reach - Act - Convert - Engage,medium,"[""Reach"",""Act"",""Convert"",""Engage""]",Marketing campaigns,Internal communication,1,42
+ERA,ERA,Communication & Engagement,Engage - React - Act,low,"[""Engage"",""React"",""Act""]",Marketing and engagement,Formal technical documentation,1,43
+CARE,CARE,Communication & Engagement,Compassion - Awareness - Response - Engagement,medium,"[""Compassion"",""Awareness"",""Response"",""Engagement""]",Customer service,Analytical problem-solving,1,44
+3CS,3Cs Model,Strategic Analysis,Company - Customer - Competitor,medium,"[""Company"",""Customer"",""Competitor""]",Market analysis,Personal decision-making,1,45
+GOPA,GOPA,Strategic Analysis,Goals - Obstacles - Plans - Actions,low,"[""Goals"",""Obstacles"",""Plans"",""Actions""]",Goal setting and problem-solving,Random brainstorming,1,46
+RISE,RISE,Feedback & Improvement,Reflect - Inquire - Suggest - Elevate,medium,"[""Reflect"",""Inquire"",""Suggest"",""Elevate""]",Performance management,Quick feedback,1,47
+ROSES,ROSES,Feedback & Improvement,Recognize - Observe - Strategize - Execute - Study,medium,"[""Recognize"",""Observe"",""Strategize"",""Execute"",""Study""]",Complex projects,Simple tasks,1,48
+PEE,Point-Evidence-Explanation,Feedback & Improvement,Point - Evidence - Explanation,low,"[""Point"",""Evidence"",""Explanation""]",Academic writing and critiques,Conversational feedback,1,49
+RASCEF,RASCEF,Advanced Structured,Role - Action - Steps - Context - Examples - Format,medium,"[""Role"",""Action"",""Steps"",""Context"",""Examples"",""Format""]",Technical documentation,Creative writing,1,50
+RHODES,RHODES,Advanced Structured,Role - Objective - Details - Examples - Sense Check,medium,"[""Role"",""Objective"",""Details"",""Examples"",""Sense Check""]",Creative content and marketing,Code generation,1,51
+RISEN,RISEN,Advanced Structured,Role - Input - Steps - Expectation - Novelty,medium,"[""Role"",""Input"",""Steps"",""Expectation"",""Novelty""]",Research and innovation,Routine task execution,1,52
+GRADE,GRADE,Advanced Structured,Goal - Request - Action - Details - Example,medium,"[""Goal"",""Request"",""Action"",""Details"",""Example""]",Project management,Exploratory research,1,53
+TRACI,TRACI,Advanced Structured,Task - Role - Audience - Create - Intent,medium,"[""Task"",""Role"",""Audience"",""Create"",""Intent""]",Marketing and education,Unaided individual work,1,54
+RODES,RODES,Advanced Structured,Role - Objective - Details - Examples - Sense Check,medium,"[""Role"",""Objective"",""Details"",""Examples"",""Sense Check""]",Educational content,Exploratory brainstorming,1,55
+CIDI,CIDI,Advanced Structured,Context - Instructions - Details - Input,medium,"[""Context"",""Instructions"",""Details"",""Input""]",Project management,Ambiguous open-ended tasks,1,56
+TRACE,TRACE,Argumentation,Topic - Reason - Audience - Counterargument - Evidence,medium,"[""Topic"",""Reason"",""Audience"",""Counterargument"",""Evidence""]",Debate and persuasive writing,Simple statements,1,57
+SPAR,SPAR,Argumentation,Situation - Problem - Action - Result,low,"[""Situation"",""Problem"",""Action"",""Result""]",Case studies and examples,Hypothetical future scenarios,1,58
+PROMPT,PROMPT,Argumentation,Precision - Relevance - Objectivity - Method - Provenance - Timeliness,medium,"[""Precision"",""Relevance"",""Objectivity"",""Method"",""Provenance"",""Timeliness""]",Research and journalism,Entertainment content,1,59
+SPEAR,SPEAR,Specialised,Start - Provide - Explain - Ask - Rinse & Repeat,low,"[""Start"",""Provide"",""Explain"",""Ask""]",Everyday tasks and general purposes,Formal structured output,1,60
+FEW_SHOT,Few-Shot,Specialised,Task - Demonstrations - Query,low,"[""Task"",""Demonstrations"",""Query""]",Classification and creative content,Novel unique tasks,1,61
+ZERO_SHOT,Zero-Shot,Specialised,Direct instruction without examples,low,"[""Direct Instruction""]",Translation and factual queries,Tasks needing examples,1,62
+ORID,ORID,Specialised,Objective - Reflective - Interpretive - Decisional,medium,"[""Objective"",""Reflective"",""Interpretive"",""Decisional""]",Group discussions and coaching,Individual solitary work,1,63
+PAUSE,PAUSE,Specialised,Prepare - Assess - Uncover - Synthesize - Execute,medium,"[""Prepare"",""Assess"",""Uncover"",""Synthesize"",""Execute""]",Management decisions,Quick tactical decisions,1,64
+ELICITATION,Elicitation,Specialised,Structured information extraction,medium,"[""Extraction"",""Structuring""]",Research and interviews,Synthesis and summarization,1,65
+META_PROMPTING,Meta Prompting,Specialised,Prompt - Evaluate - Refine Prompt - Execute,high,"[""Prompt"",""Evaluate"",""Refine Prompt"",""Execute""]",Prompt optimisation and complex tasks,Simple straightforward tasks,1,66
+ATOMIC_PROMPTING,Atomic Prompting,Visual & Dialogue,Detailed visual specifications,medium,"[""Visual Specs"",""Constraints"",""Style""]",Image generation (Midjourney and DALL-E),Text-only outputs,1,67
+FIVE_WS_AND_ONE_H,Five Ws and One H,Visual & Dialogue,Who - What - When - Where - Why - How,low,"[""Who"",""What"",""When"",""Where"",""Why"",""How""]",Journalism and research,Hypothesis generation,1,68
+MODERATE,MODERATE,Iterative Refinement,Moderate and balance perspectives,medium,"[""Moderation"",""Balance""]",Conflict resolution and perspective balancing,Advocacy and one-sided arguments,1,69
+REFLEXION,REFLEXION,Iterative Refinement,Act - Evaluate - Reflect - Learn cycle,high,"[""Act"",""Evaluate"",""Reflect"",""Learn""]",Complex problem-solving,Simple immediate decisions,1,70
+BLOOMS_TAXONOMY,BLOOMS_TAXONOMY,Educational & Learning,Remember - Understand - Apply - Analyze - Evaluate - Create,medium,"[""Remember"",""Understand"",""Apply"",""Analyze"",""Evaluate"",""Create""]",Educational content design,Entertainment,1,71
+GOPA,GOPA,Strategic Analysis,Goals - Obstacles - Plans - Actions,low,"[""Goals"",""Obstacles"",""Plans"",""Actions""]",Goal-setting and planning,Exploration-only tasks,1,72
+WHAT_IF,WHAT_IF,Creative & Innovation,Hypothetical scenario exploration,low,"[""Hypothetical"",""Scenarios""]",Creative scenarios,Risk minimization,1,73

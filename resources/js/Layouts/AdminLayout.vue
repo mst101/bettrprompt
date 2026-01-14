@@ -70,12 +70,6 @@ watch(showingNavigationDropdown, async (isOpen) => {
                     <!-- Navigation Links (Desktop) -->
                     <div class="hidden space-x-1 md:flex">
                         <NavLink
-                            :href="countryRoute('workflows.index')"
-                            :active="route().current('workflows.index')"
-                        >
-                            Index
-                        </NavLink>
-                        <NavLink
                             :href="
                                 countryRoute('workflows.show', {
                                     workflowNumber: 0,
@@ -104,6 +98,12 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             :active="$page.url.includes('/admin/workflows/2')"
                         >
                             Workflow 2
+                        </NavLink>
+                        <NavLink
+                            :href="countryRoute('admin.questions.index')"
+                            :active="route().current('admin.questions.index')"
+                        >
+                            Questions
                         </NavLink>
                         <NavLink
                             :href="countryRoute('workflows.docs.index')"

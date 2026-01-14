@@ -8,7 +8,7 @@ import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { usePage } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps<Props>();
 
 defineOptions({
-    layout: WorkflowLayout,
+    layout: AdminLayout,
 });
 
 interface Document {

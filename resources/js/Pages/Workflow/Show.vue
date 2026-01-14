@@ -11,7 +11,7 @@ import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import VariantSelector from '@/Components/Features/Workflow/VariantSelector.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { getCsrfToken } from '@/Utils/cookies';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
@@ -69,7 +69,7 @@ const { confirm, success, error: showError } = useAlert();
 const { countryRoute } = useCountryRoute();
 
 defineOptions({
-    layout: WorkflowLayout,
+    layout: AdminLayout,
 });
 
 const workflowRoute = (

@@ -240,7 +240,7 @@ const regenerateMarkdown = async () => {
         </Card>
 
         <!-- Questions List -->
-        <Card>
+        <Card class="max-w-full">
             <div class="mb-4 flex items-center justify-between">
                 <div>
                     <h3 class="text-lg font-semibold text-indigo-900">

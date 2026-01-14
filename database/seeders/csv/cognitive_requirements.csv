@@ -1,0 +1,17 @@
+code,name,description,aligned_traits,opposed_traits,is_active,display_order
+EMPATHY,Empathy,Understanding feelings and relationships,"[""High F"",""High E""]","[""High T""]",1,1
+VISION,Vision,Future thinking and pattern recognition,"[""High N"",""High P""]","[""High S""]",1,2
+DETAIL,Detail,Step-by-step specificity and concrete actions,"[""High S"",""High J""]","[""High N"",""High P""]",1,3
+DECISIVE,Decisive,Clear conclusions and confident guidance,"[""High J"",""High A""]","[""High P"",""High T-identity""]",1,4
+EXPLORE,Explore,Option generation and avoiding premature closure,"[""High P"",""High N""]","[""High J""]",1,5
+OBJECTIVE,Objective,Logic and evidence-based analysis,"[""High T"",""High S""]","[""High F""]",1,6
+RISK,Risk,Identifying problems and downsides,"[""High T-identity"",""High T""]","[""High A""]",1,7
+CREATIVE,Creative,Novel ideas and unconventional thinking,"[""High N"",""High P""]","[""High S"",""High J""]",1,8
+STRUCTURE,Structure,Clear organisation and logical flow,"[""High J"",""High T""]","[""High P""]",1,9
+WARM,Warm,Warmth and rapport-building,"[""High F"",""High E""]","[""High T""]",1,10
+ITERATIVE,Iterative,Self-improvement and refinement,"[""High P"",""High T-identity""]","[""High J"",""High A""]",1,11
+ABSTRACTION,Abstraction,Higher-level principle identification,"[""High N"",""High T""]","[""High S""]",1,12
+AGENTIC,Agentic,Interleaved thinking and acting with tool interaction,"[""High T"",""High P""]","[""High N (ungrounded)"",""High J (premature)""]",1,13
+SYNTHESIS,Synthesis,Integrating disparate information into coherent whole,"[""High N"",""High T""]","[""High S"",""High P""]",1,14
+PERSUASION,Persuasion,Building compelling arguments and convincing others,"[""High E"",""High F"",""High J""]","[""High I"",""High T""]",1,15
+PEDAGOGY,Pedagogy,Making complex things understandable and scaffolding learning,"[""High F"",""High S"",""High J""]","[""High N"",""High P""]",1,16

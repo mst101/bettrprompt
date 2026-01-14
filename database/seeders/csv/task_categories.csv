@@ -1,0 +1,15 @@
+code,name,description,triggers,is_active,display_order
+DECISION,Decision Making,Choose between options and prioritise,"[""decide"",""choose"",""which"",""compare"",""pros and cons""]",1,1
+STRATEGY,Strategy & Planning,Business strategy and long-term planning,"[""strategy"",""plan"",""roadmap"",""long-term"",""growth""]",1,2
+PLANNING,Project Planning,Breaking down goals into actionable steps and project execution,"[""plan"",""organize"",""coordinate"",""schedule"",""timeline"",""project plan""]",1,3
+ANALYSIS,Analysis,Understand data and examine situations for root cause,"[""analyse"",""understand why"",""explain"",""examine"",""diagnose""]",1,4
+CREATION_CONTENT,Content Creation,Writing and communications including marketing and emails,"[""write"",""draft"",""blog"",""email"",""copy"",""article""]",1,5
+CREATION_TECHNICAL,Technical Creation,Code development and technical documentation,"[""code"",""build"",""develop"",""API"",""script"",""documentation""]",1,6
+IDEATION,Ideation,Brainstorming and innovation for generating new ideas,"[""ideas"",""brainstorm"",""creative"",""possibilities"",""suggestions""]",1,7
+PROBLEM_SOLVING,Problem Solving,Fixing issues and troubleshooting,"[""solve"",""fix"",""problem"",""issue"",""challenge"",""overcome""]",1,8
+OPTIMIZATION,Optimization,Making existing systems better and more efficient,"[""optimize"",""improve"",""enhance"",""streamline"",""reduce costs"",""increase efficiency""]",1,9
+LEARNING,Learning,Understanding concepts and education,"[""learn"",""understand"",""explain to me"",""teach me"",""what is""]",1,10
+PERSUASION,Persuasion,Convincing and selling ideas through persuasive communication,"[""convince"",""persuade"",""pitch"",""sell"",""proposal"",""negotiate""]",1,11
+FEEDBACK,Feedback,Reviewing and providing critique to improve work,"[""review"",""feedback"",""improve"",""critique"",""refine""]",1,12
+RESEARCH,Research,Gathering information and investigation,"[""research"",""find out"",""investigate"",""gather information""]",1,13
+GOAL_SETTING,Goal Setting,Defining objectives and KPIs,"[""goal"",""objective"",""target"",""KPI"",""milestone""]",1,14

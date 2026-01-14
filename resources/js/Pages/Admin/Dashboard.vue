@@ -4,7 +4,7 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import AppLayout from '@/Layouts/AppLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 const props = defineProps<Props>();
 
 defineOptions({
-    layout: AppLayout,
+    layout: AdminLayout,
 });
 
 const { countryRoute } = useCountryRoute();

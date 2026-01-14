@@ -47,6 +47,21 @@ class FrameworkSelection extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function framework(): BelongsTo
+    {
+        return $this->belongsTo(Framework::class, 'chosen_framework', 'code');
+    }
+
+    public function recommendedFrameworkModel(): BelongsTo
+    {
+        return $this->belongsTo(Framework::class, 'recommended_framework', 'code');
+    }
+
+    public function taskCategoryModel(): BelongsTo
+    {
+        return $this->belongsTo(TaskCategory::class, 'task_category', 'code');
+    }
+
     /**
      * Scope: filter by recommended framework
      */

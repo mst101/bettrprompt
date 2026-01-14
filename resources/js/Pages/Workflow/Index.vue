@@ -3,7 +3,7 @@ import InfoSection from '@/Components/Features/Workflow/InfoSection.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import WorkflowCard from '@/Components/Features/Workflow/WorkflowCard.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import WorkflowLayout from '@/Layouts/WorkflowLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -11,7 +11,7 @@ const { t } = useI18n({ useScope: 'global' });
 const { countryRoute } = useCountryRoute();
 
 defineOptions({
-    layout: WorkflowLayout,
+    layout: AdminLayout,
 });
 
 const infoItems = computed(() => [
