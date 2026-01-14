@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAnalyticsEventsRequest;
 use App\Jobs\ProcessAnalyticsEvents;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 
 class AnalyticsEventController extends Controller
 {
@@ -18,7 +21,7 @@ class AnalyticsEventController extends Controller
         $validated = $request->validated();
 
         // Get context from request
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = $this->resolveVisitorId($request->cookie('visitor_id'));
         $userId = $request->user()?->id;
         $sessionId = $request->header('X-Analytics-Session-Id');
         $pagePath = $request->header('Referer');
@@ -62,5 +65,39 @@ class AnalyticsEventController extends Controller
         }
 
         return 'desktop';
+    }
+
+    /**
+     * Normalize the visitor ID cookie so we never pass a pipe-delimited value to the job.
+     */
+    private function resolveVisitorId(?string $cookieValue): ?string
+    {
+        if (! $cookieValue) {
+            return null;
+        }
+
+        try {
+            $decrypted = Crypt::decryptString($cookieValue);
+        } catch (DecryptException) {
+            $decrypted = $cookieValue;
+        }
+
+        return $this->extractUuidFromCookieValue($decrypted);
+    }
+
+    /**
+     * Prefer the UUID segment if the cookie includes any metadata.
+     */
+    private function extractUuidFromCookieValue(string $value): string
+    {
+        $segments = array_filter(explode('|', $value));
+
+        foreach (array_reverse($segments) as $segment) {
+            if (Str::isUuid($segment)) {
+                return $segment;
+            }
+        }
+
+        return $value;
     }
 }
