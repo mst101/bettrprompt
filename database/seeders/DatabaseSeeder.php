@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             ClaudeModelSeeder::class,
             PricesTableSeeder::class,
+            QuestionSeeder::class,
+            QuestionVariantSeeder::class,
         ]);
 
         // User::factory(10)->create();

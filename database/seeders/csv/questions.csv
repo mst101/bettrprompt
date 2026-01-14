@@ -1,0 +1,211 @@
+id,question_text,purpose,cognitive_requirements,priority,category,framework,is_universal,is_conditional,condition_text,display_order
+U1,"What is the scope or boundary of this task? What's explicitly out of scope?","Define limits","[""STRUCTURE"",""DETAIL""]",high,universal,,1,0,,1
+U2,"How will you measure success? What does a good outcome look like?","Success criteria","[""DECISIVE"",""OBJECTIVE""]",high,universal,,1,0,,2
+U3,"Who is the intended audience for this output?","Audience clarity","[""EMPATHY"",""PERSUASION""]",high,universal,,1,0,,3
+U4,"What constraints exist (time, budget, length, format, resources)?","Limitation awareness","[""DETAIL"",""OBJECTIVE""]",high,universal,,1,0,,4
+U5,"What background context is essential to understand?","Context gathering","[""SYNTHESIS"",""DETAIL""]",high,universal,,1,0,,5
+U6,"What have you already tried or considered?","Avoid redundancy","[""EXPLORE"",""ITERATIVE""]",high,universal,,1,0,,6
+COS1,"Who is the specific audience for this content? What's their role and knowledge level?","Audience definition","[""EMPATHY"",""PEDAGOGY""]",high,co_star,co_star,0,0,,1
+COS2,"What's the primary objective—what should the reader do, think, or feel after reading?","Objective clarity","[""DECISIVE"",""PERSUASION""]",high,co_star,co_star,0,0,,2
+COS3,"What writing style fits best—formal, conversational, technical, storytelling?","Style determination","[""STRUCTURE"",""CREATIVE""]",high,co_star,co_star,0,0,,3
+COS4,"What tone should come through—professional, friendly, urgent, empathetic, authoritative?","Tone setting","[""WARM"",""EMPATHY""]",high,co_star,co_star,0,0,,4
+COS5,"What format works best for this content—paragraphs, bullet points, sections with headers?","Response format","[""STRUCTURE""]",medium,co_star,co_star,0,0,,5
+COS6,"What background context does the AI need to understand the situation?","Context gathering","[""SYNTHESIS""]",medium,co_star,co_star,0,0,,6
+COS7,"Are there any words, phrases, or topics to avoid?","Boundaries","[""RISK""]",medium,co_star,co_star,0,0,,7
+COS8,"Is there existing content or examples to match in style?","Style reference","[""CREATIVE"",""ITERATIVE""]",low,co_star,co_star,0,0,,8
+REA1,"What tools, resources, or information sources are available?","Tool inventory","[""AGENTIC"",""DETAIL""]",high,react,react,0,0,,1
+REA2,"What's the end goal—what specific outcome are you trying to achieve?","Goal clarity","[""DECISIVE"",""OBJECTIVE""]",high,react,react,0,0,,2
+REA3,"How will you know when the task is complete? What signals success?","Termination criteria","[""DECISIVE"",""OBJECTIVE""]",high,react,react,0,0,,3
+REA4,"What constraints or rules must be followed during the process?","Guardrails","[""RISK"",""DETAIL""]",medium,react,react,0,0,,4
+REA5,"If initial approaches fail, what alternatives should be considered?","Fallback planning","[""EXPLORE"",""ITERATIVE""]",medium,react,react,0,0,,5
+REA6,"Are there any actions or sources that should be avoided?","Boundaries","[""RISK""]",low,react,react,0,0,,6
+REA_COND_1,"What sources are considered authoritative?","Identify authoritative sources","[""OBJECTIVE"",""RISK""]",medium,react,react,0,1,"research task",99
+REA_COND_2,"What error handling is needed?","Error handling requirements","[""RISK"",""OBJECTIVE""]",medium,react,react,0,1,"technical task",99
+REA_COND_3,"What are the dependencies between steps?","Dependencies","[""STRUCTURE"",""DETAIL""]",medium,react,react,0,1,"multi-step task",99
+SRF1,"What are the specific quality criteria for this output?","Quality standards","[""ITERATIVE"",""OBJECTIVE""]",high,self_refine,self_refine,0,0,,1
+SRF2,"What aspects are most important to get right?","Priority focus","[""DECISIVE"",""OBJECTIVE""]",high,self_refine,self_refine,0,0,,2
+SRF3,"How many refinement iterations are acceptable?","Iteration bounds","[""ITERATIVE""]",medium,self_refine,self_refine,0,0,,3
+SRF4,"What's the minimum acceptable quality threshold?","Quality floor","[""OBJECTIVE"",""DECISIVE""]",medium,self_refine,self_refine,0,0,,4
+SRF5,"Are there examples of excellent outputs to aspire to?","Quality reference","[""ITERATIVE"",""CREATIVE""]",medium,self_refine,self_refine,0,0,,5
+SRF6,"What common mistakes or pitfalls should be watched for?","Error awareness","[""RISK"",""ITERATIVE""]",low,self_refine,self_refine,0,0,,6
+STB1,"What domain or field does this question belong to?","Domain identification","[""ABSTRACTION"",""SYNTHESIS""]",high,step_back,step_back,0,0,,1
+STB2,"What general principles or theories might apply?","Principle prompting","[""ABSTRACTION"",""VISION""]",high,step_back,step_back,0,0,,2
+STB3,"What's the specific question you need answered?","Question clarity","[""DETAIL"",""OBJECTIVE""]",high,step_back,step_back,0,0,,3
+STB4,"What level of detail is needed in the answer?","Depth calibration","[""DETAIL""]",medium,step_back,step_back,0,0,,4
+STB5,"Are there related concepts you already understand?","Build on existing","[""SYNTHESIS"",""PEDAGOGY""]",low,step_back,step_back,0,0,,5
+STB_COND_1,"What formulas or laws might be relevant?","Formulas and laws","[""OBJECTIVE"",""DETAIL""]",medium,step_back,step_back,0,1,"STEM task",99
+STB_COND_2,"What categories of information would help?","Information categories","[""SYNTHESIS"",""DETAIL""]",medium,step_back,step_back,0,1,"knowledge task",99
+STB_COND_3,"What logical principles apply?","Logical principles","[""ABSTRACTION"",""OBJECTIVE""]",medium,step_back,step_back,0,1,"reasoning task",99
+SOT1,"What's the main topic or question to address?","Topic focus","[""STRUCTURE"",""DETAIL""]",high,skeleton_of_thought,skeleton_of_thought,0,0,,1
+SOT2,"How many main points should the response cover?","Scope sizing","[""STRUCTURE"",""DETAIL""]",high,skeleton_of_thought,skeleton_of_thought,0,0,,2
+SOT3,"Is there a preferred logical order for the points?","Structure guidance","[""STRUCTURE"",""OBJECTIVE""]",medium,skeleton_of_thought,skeleton_of_thought,0,0,,3
+SOT4,"How detailed should each point be?","Depth calibration","[""DETAIL""]",medium,skeleton_of_thought,skeleton_of_thought,0,0,,4
+SOT5,"Does coherence between points matter, or can they be independent?","Framework fit check","[""STRUCTURE"",""PARALLEL""]",medium,skeleton_of_thought,skeleton_of_thought,0,0,,5
+MET1,"What task will the generated prompt be used for?","Target task","[""DETAIL"",""OBJECTIVE""]",high,meta_prompting,meta_prompting,0,0,,1
+MET2,"What model will execute the prompt (if known)?","Model targeting","[""DETAIL""]",high,meta_prompting,meta_prompting,0,0,,2
+MET3,"What output format and quality is expected?","Output requirements","[""STRUCTURE"",""OBJECTIVE""]",high,meta_prompting,meta_prompting,0,0,,3
+MET4,"What's the user profile for the generated prompt (if known)?","Personality targeting","[""EMPATHY"",""PEDAGOGY""]",medium,meta_prompting,meta_prompting,0,0,,4
+MET5,"Are there existing prompts to improve, or starting from scratch?","Starting point","[""ITERATIVE""]",medium,meta_prompting,meta_prompting,0,0,,5
+MET6,"What constraints must the prompt respect?","Boundaries","[""RISK"",""DETAIL""]",medium,meta_prompting,meta_prompting,0,0,,6
+MET7,"What has been tried that didn't work well?","Failure learning","[""ITERATIVE"",""RISK""]",low,meta_prompting,meta_prompting,0,0,,7
+D1,"What options are you currently considering?","Map the decision space","[""EXPLORE"",""DETAIL""]",high,decision,,0,0,,1
+D2,"What criteria matter most in making this decision?","Identify decision factors","[""OBJECTIVE"",""DECISIVE""]",high,decision,,0,0,,2
+D3,"What's the cost or impact of choosing wrong?","Understand stakes","[""RISK"",""OBJECTIVE""]",medium,decision,,0,0,,3
+D4,"Is this decision reversible, or are you locked in once you choose?","Assess commitment level","[""RISK""]",medium,decision,,0,0,,4
+D5,"What information would make this decision obvious?","Identify knowledge gaps","[""SYNTHESIS"",""OBJECTIVE""]",medium,decision,,0,0,,5
+D6,"What's your timeline for making this decision?","Urgency assessment","[""DETAIL""]",medium,decision,,0,0,,6
+D7,"Who else is affected by or involved in this decision?","Stakeholder mapping","[""EMPATHY"",""SYNTHESIS""]",medium,decision,,0,0,,7
+D8,"Have you made similar decisions before? What worked or didn't?","Learn from history","[""ITERATIVE"",""SYNTHESIS""]",low,decision,,0,0,,8
+D9,"What's your gut telling you, and why might you be hesitating?","Surface intuition","[""EMPATHY"",""RISK""]",low,decision,,0,0,,9
+D10,"If you had to decide right now, what would you choose?","Force prioritisation","[""DECISIVE""]",low,decision,,0,0,,10
+D_COND_1,"Can we narrow to the top 3-4 contenders?","Narrow options","[""DECISIVE"",""OBJECTIVE""]",high,decision,,0,1,"many options revealed",99
+D_COND_2,"If you could only optimise for one factor, which would it be?","Single factor optimisation","[""DECISIVE"",""OBJECTIVE""]",high,decision,,0,1,"vague criteria",99
+D_COND_3,"What's your risk tolerance here?","Risk tolerance","[""RISK"",""DECISIVE""]",high,decision,,0,1,"high stakes",99
+S1,"What's the time horizon for this strategy?","Temporal scope","[""VISION"",""DETAIL""]",high,strategy,,0,0,,1
+S2,"What resources are available (budget, team, tools)?","Resource constraints","[""DETAIL"",""OBJECTIVE""]",high,strategy,,0,0,,2
+S3,"What does success look like at the end of this period?","Goal definition","[""VISION"",""DECISIVE""]",high,strategy,,0,0,,3
+S4,"Who are the key stakeholders who need to buy in?","Stakeholder mapping","[""EMPATHY"",""PERSUASION""]",high,strategy,,0,0,,4
+S5,"What's been tried before, and what were the results?","Historical context","[""ITERATIVE"",""SYNTHESIS""]",medium,strategy,,0,0,,5
+S6,"What are the biggest obstacles or risks you foresee?","Risk identification","[""RISK"",""VISION""]",medium,strategy,,0,0,,6
+S7,"Who are your main competitors or alternatives?","Competitive context","[""OBJECTIVE"",""SYNTHESIS""]",medium,strategy,,0,0,,7
+S8,"What's your unique advantage or differentiation?","Positioning","[""VISION"",""CREATIVE""]",medium,strategy,,0,0,,8
+S9,"What's the current state you're starting from?","Baseline assessment","[""DETAIL"",""OBJECTIVE""]",medium,strategy,,0,0,,9
+S10,"What dependencies or external factors could affect this?","External awareness","[""RISK"",""SYNTHESIS""]",low,strategy,,0,0,,10
+S11,"What would cause this strategy to fail?","Failure mode analysis","[""RISK"",""OBJECTIVE""]",low,strategy,,0,0,,11
+S12,"What's your appetite for risk versus proven approaches?","Risk tolerance","[""RISK"",""DECISIVE""]",low,strategy,,0,0,,12
+S_COND_1,"What stage is your company (idea, MVP, growth)?","Company stage","[""DETAIL"",""OBJECTIVE""]",high,strategy,,0,1,"startup context",99
+S_COND_2,"What channels have you used before?","Channel history","[""SYNTHESIS"",""DETAIL""]",high,strategy,,0,1,"marketing strategy",99
+S_COND_3,"Who is your target customer persona?","Customer persona","[""EMPATHY"",""DETAIL""]",high,strategy,,0,1,"product strategy",99
+A1,"What data or information do you have access to?","Data inventory","[""DETAIL"",""OBJECTIVE""]",high,analysis,,0,0,,1
+A2,"What's the specific question you're trying to answer?","Focus the analysis","[""OBJECTIVE"",""DETAIL""]",high,analysis,,0,0,,2
+A3,"What's the hypothesis you're testing, if any?","Frame the inquiry","[""OBJECTIVE"",""VISION""]",medium,analysis,,0,0,,3
+A4,"What level of depth is needed (surface scan vs. deep dive)?","Scope calibration","[""DETAIL""]",medium,analysis,,0,0,,4
+A5,"Are there specific angles or perspectives you want explored?","Direction setting","[""EXPLORE"",""SYNTHESIS""]",medium,analysis,,0,0,,5
+A6,"Who needs to act on this analysis?","Audience/action","[""EMPATHY"",""PERSUASION""]",medium,analysis,,0,0,,6
+A7,"What would change your mind or surprise you?","Challenge assumptions","[""EXPLORE"",""OBJECTIVE""]",low,analysis,,0,0,,7
+A8,"What's the deadline or urgency for this analysis?","Time constraints","[""DETAIL""]",medium,analysis,,0,0,,8
+A9,"What format should the analysis take?","Output format","[""STRUCTURE""]",low,analysis,,0,0,,9
+A10,"Are there any known biases or blind spots to watch for?","Quality control","[""OBJECTIVE"",""RISK""]",low,analysis,,0,0,,10
+A_COND_1,"What's the data format and size?","Data specifics","[""DETAIL"",""OBJECTIVE""]",high,analysis,,0,1,"data analysis",99
+A_COND_2,"What geography or segment?","Geographic scope","[""DETAIL"",""OBJECTIVE""]",high,analysis,,0,1,"market analysis",99
+A_COND_3,"When did the issue first appear?","Timeline","[""DETAIL"",""SYNTHESIS""]",high,analysis,,0,1,"root cause analysis",99
+C1,"Who is the target audience for this content?","Audience definition","[""EMPATHY"",""PEDAGOGY""]",high,creation_content,,0,0,,1
+C2,"What's the primary goal or call to action?","Purpose clarity","[""PERSUASION"",""DECISIVE""]",high,creation_content,,0,0,,2
+C3,"What tone is appropriate (formal, casual, technical, friendly)?","Voice/style","[""WARM"",""STRUCTURE""]",high,creation_content,,0,0,,3
+C4,"What's the target length or word count?","Scope","[""DETAIL""]",medium,creation_content,,0,0,,4
+C5,"Are there examples of style or content you want to emulate?","Style reference","[""CREATIVE"",""ITERATIVE""]",medium,creation_content,,0,0,,5
+C6,"What key messages or points must be included?","Required content","[""DETAIL"",""STRUCTURE""]",medium,creation_content,,0,0,,6
+C7,"What should definitely be avoided?","Boundaries","[""RISK""]",medium,creation_content,,0,0,,7
+C8,"Where will this content be published or used?","Channel context","[""DETAIL"",""SYNTHESIS""]",medium,creation_content,,0,0,,8
+C9,"What's the deadline?","Urgency","[""DETAIL""]",low,creation_content,,0,0,,9
+C10,"Is this part of a larger campaign or standalone?","Context","[""SYNTHESIS"",""VISION""]",low,creation_content,,0,0,,10
+C11,"What do you want the reader to feel or do after reading?","Emotional goal","[""EMPATHY"",""PERSUASION""]",low,creation_content,,0,0,,11
+C_COND_1,"What's the SEO keyword or topic focus?","SEO focus","[""DETAIL"",""OBJECTIVE""]",high,creation_content,,0,1,"blog post",99
+C_COND_2,"What's the relationship with the recipient?","Relationship context","[""EMPATHY"",""DETAIL""]",high,creation_content,,0,1,"email",99
+C_COND_3,"What's the unique selling proposition?","USP","[""PERSUASION"",""DETAIL""]",high,creation_content,,0,1,"marketing copy",99
+T1,"What technology stack or language is required?","Technical constraints","[""DETAIL"",""OBJECTIVE""]",high,creation_technical,,0,0,,1
+T2,"What's the skill level of people who'll use this?","User context","[""PEDAGOGY"",""EMPATHY""]",high,creation_technical,,0,0,,2
+T3,"Are there existing conventions, style guides, or patterns to follow?","Standards","[""STRUCTURE"",""DETAIL""]",medium,creation_technical,,0,0,,3
+T4,"What error handling or edge cases matter?","Robustness","[""RISK"",""OBJECTIVE""]",medium,creation_technical,,0,0,,4
+T5,"Is this for production or prototype/proof of concept?","Quality level","[""DETAIL"",""DECISIVE""]",medium,creation_technical,,0,0,,5
+T6,"What's the expected input and output?","Interface definition","[""DETAIL"",""STRUCTURE""]",medium,creation_technical,,0,0,,6
+T7,"Are there performance requirements?","Non-functional needs","[""OBJECTIVE"",""DETAIL""]",low,creation_technical,,0,0,,7
+T8,"What documentation level is needed?","Documentation scope","[""PEDAGOGY"",""STRUCTURE""]",low,creation_technical,,0,0,,8
+T9,"How will this be tested or validated?","Quality assurance","[""OBJECTIVE"",""RISK""]",low,creation_technical,,0,0,,9
+T10,"What's the deployment environment?","Infrastructure context","[""DETAIL"",""OBJECTIVE""]",low,creation_technical,,0,0,,10
+T_COND_1,"What authentication method?","Authentication","[""RISK"",""OBJECTIVE""]",high,creation_technical,,0,1,"API",99
+T_COND_2,"What's the reader's existing knowledge?","Knowledge level","[""PEDAGOGY"",""DETAIL""]",high,creation_technical,,0,1,"documentation",99
+T_COND_3,"What's the existing codebase context?","Codebase context","[""DETAIL"",""OBJECTIVE""]",high,creation_technical,,0,1,"code",99
+I1,"What problem or opportunity are you generating ideas for?","Focus area","[""CREATIVE"",""DETAIL""]",high,ideation,,0,0,,1
+I2,"What constraints should ideas respect?","Boundaries","[""DETAIL"",""RISK""]",high,ideation,,0,0,,2
+I3,"How wild can ideas be — incremental improvements or moonshots?","Creativity scope","[""CREATIVE"",""EXPLORE""]",medium,ideation,,0,0,,3
+I4,"What's already been considered or tried?","Avoid repetition","[""EXPLORE"",""SYNTHESIS""]",medium,ideation,,0,0,,4
+I5,"What definitely won't work or isn't feasible?","Eliminate dead ends","[""RISK"",""OBJECTIVE""]",medium,ideation,,0,0,,5
+I6,"What resources would be available to implement ideas?","Feasibility context","[""DETAIL"",""OBJECTIVE""]",medium,ideation,,0,0,,6
+I7,"Who are the users or beneficiaries of these ideas?","User focus","[""EMPATHY"",""VISION""]",medium,ideation,,0,0,,7
+I8,"What inspires you or what examples do you admire?","Inspiration sources","[""CREATIVE"",""VISION""]",low,ideation,,0,0,,8
+I9,"What's the timeline for implementing ideas?","Urgency","[""DETAIL""]",low,ideation,,0,0,,9
+I10,"How will ideas be evaluated or prioritised?","Selection criteria","[""DECISIVE"",""OBJECTIVE""]",low,ideation,,0,0,,10
+I_COND_1,"What's the core user pain point?","Pain point","[""EMPATHY"",""DETAIL""]",high,ideation,,0,1,"product ideation",99
+I_COND_2,"What's the current process?","Current process","[""DETAIL"",""OBJECTIVE""]",high,ideation,,0,1,"process improvement",99
+I_COND_3,"What mood or feeling are you going for?","Mood/feeling","[""CREATIVE"",""WARM""]",high,ideation,,0,1,"creative project",99
+P1,"What exactly is the problem? Can you describe the symptoms?","Problem definition","[""DETAIL"",""OBJECTIVE""]",high,problem_solving,,0,0,,1
+P2,"When did this problem start or when was it first noticed?","Timeline","[""DETAIL"",""SYNTHESIS""]",high,problem_solving,,0,0,,2
+P3,"What have you already tried?","Avoid redundancy","[""ITERATIVE"",""EXPLORE""]",high,problem_solving,,0,0,,3
+P4,"What happens if this isn't solved?","Stakes/urgency","[""RISK"",""VISION""]",medium,problem_solving,,0,0,,4
+P5,"Are there symptoms versus root causes to distinguish?","Depth of problem","[""OBJECTIVE"",""ABSTRACTION""]",medium,problem_solving,,0,0,,5
+P6,"Who has relevant expertise or has seen this before?","Resource identification","[""SYNTHESIS"",""EMPATHY""]",medium,problem_solving,,0,0,,6
+P7,"What changed right before the problem appeared?","Cause hunting","[""DETAIL"",""SYNTHESIS""]",medium,problem_solving,,0,0,,7
+P8,"Is this a recurring problem or first occurrence?","Pattern","[""ITERATIVE"",""SYNTHESIS""]",medium,problem_solving,,0,0,,8
+P9,"What would a solution need to achieve?","Success criteria","[""DECISIVE"",""OBJECTIVE""]",medium,problem_solving,,0,0,,9
+P10,"What constraints affect possible solutions?","Solution boundaries","[""DETAIL"",""RISK""]",medium,problem_solving,,0,0,,10
+P11,"What's your hypothesis about the cause?","Current thinking","[""OBJECTIVE"",""ABSTRACTION""]",low,problem_solving,,0,0,,11
+P12,"What quick wins might provide relief while solving the deeper issue?","Pragmatic relief","[""DECISIVE"",""EXPLORE""]",low,problem_solving,,0,0,,12
+P_COND_1,"What error messages or logs are available?","Error information","[""DETAIL"",""OBJECTIVE""]",high,problem_solving,,0,1,"technical problem",99
+P_COND_2,"Who are the key parties involved?","Key parties","[""EMPATHY"",""SYNTHESIS""]",high,problem_solving,,0,1,"people problem",99
+P_COND_3,"Where does the process break down?","Process breakdown","[""DETAIL"",""OBJECTIVE""]",high,problem_solving,,0,1,"process problem",99
+L1,"What's your current understanding level of this topic?","Baseline assessment","[""PEDAGOGY"",""DETAIL""]",high,learning,,0,0,,1
+L2,"What specifically is confusing or unclear?","Focus area","[""PEDAGOGY"",""DETAIL""]",high,learning,,0,0,,2
+L3,"What do you need to do with this knowledge?","Application context","[""DETAIL"",""VISION""]",medium,learning,,0,0,,3
+L4,"Do you learn better from examples, explanations, or analogies?","Learning style","[""PEDAGOGY"",""EMPATHY""]",medium,learning,,0,0,,4
+L5,"How deep do you need to go (overview vs. expert level)?","Depth calibration","[""PEDAGOGY"",""DETAIL""]",medium,learning,,0,0,,5
+L6,"What related concepts do you already understand?","Build on existing","[""PEDAGOGY"",""SYNTHESIS""]",low,learning,,0,0,,6
+L7,"Is there a specific format that works well for you?","Output preference","[""STRUCTURE"",""PEDAGOGY""]",low,learning,,0,0,,7
+L8,"What's the urgency — immediate application or general knowledge?","Timeline","[""DETAIL""]",low,learning,,0,0,,8
+L_COND_1,"What's your technical background?","Technical background","[""PEDAGOGY"",""DETAIL""]",high,learning,,0,1,"technical topic",99
+L_COND_2,"Would a real-world analogy help?","Analogies","[""PEDAGOGY"",""CREATIVE""]",high,learning,,0,1,"abstract concept",99
+L_COND_3,"Have you attempted this before?","Prior attempts","[""PEDAGOGY"",""DETAIL""]",high,learning,,0,1,"skill-based",99
+PE1,"Who specifically needs to be convinced?","Target audience","[""EMPATHY"",""PERSUASION""]",high,persuasion,,0,0,,1
+PE2,"What are their current beliefs or position?","Starting point","[""PERSUASION"",""SYNTHESIS""]",high,persuasion,,0,0,,2
+PE3,"What objections or concerns might they raise?","Anticipate resistance","[""RISK"",""PERSUASION""]",high,persuasion,,0,0,,3
+PE4,"What evidence or arguments do they find compelling?","Persuasion style","[""PERSUASION"",""OBJECTIVE""]",medium,persuasion,,0,0,,4
+PE5,"What's their motivation — what do they care about?","Values alignment","[""EMPATHY"",""PERSUASION""]",medium,persuasion,,0,0,,5
+PE6,"What do you want them to do after being persuaded?","Call to action","[""DECISIVE"",""PERSUASION""]",medium,persuasion,,0,0,,6
+PE7,"What's your relationship with this audience?","Trust level","[""WARM"",""EMPATHY""]",medium,persuasion,,0,0,,7
+PE8,"What's at stake for them?","Their perspective","[""EMPATHY"",""RISK""]",low,persuasion,,0,0,,8
+PE9,"Have you tried to persuade them before? What happened?","History","[""ITERATIVE"",""SYNTHESIS""]",low,persuasion,,0,0,,9
+PE10,"What's the format for this persuasion (written, verbal, presentation)?","Medium","[""STRUCTURE"",""PERSUASION""]",low,persuasion,,0,0,,10
+PE_COND_1,"What's the ask (funding, approval, buy-in)?","The ask","[""DETAIL"",""PERSUASION""]",high,persuasion,,0,1,"pitch/proposal",99
+PE_COND_2,"What's your BATNA (best alternative)?","BATNA","[""OBJECTIVE"",""DECISIVE""]",high,persuasion,,0,1,"negotiation",99
+PE_COND_3,"Where are they in the buyer journey?","Buyer stage","[""EMPATHY"",""DETAIL""]",high,persuasion,,0,1,"sales",99
+F1,"What aspects do you most want feedback on?","Focus area","[""OBJECTIVE"",""ITERATIVE""]",high,feedback,,0,0,,1
+F2,"What's working well that should be preserved?","Identify strengths","[""OBJECTIVE"",""EMPATHY""]",high,feedback,,0,0,,2
+F3,"What's the purpose of this work?","Context for evaluation","[""SYNTHESIS"",""OBJECTIVE""]",medium,feedback,,0,0,,3
+F4,"How candid can the feedback be?","Calibrate directness","[""WARM"",""EMPATHY""]",medium,feedback,,0,0,,4
+F5,"What will you do with the feedback?","Action orientation","[""ITERATIVE"",""DECISIVE""]",medium,feedback,,0,0,,5
+F6,"Who is the intended audience for this work?","Evaluation criteria","[""EMPATHY"",""OBJECTIVE""]",medium,feedback,,0,0,,6
+F7,"What's the timeline for revisions?","Urgency","[""DETAIL""]",low,feedback,,0,0,,7
+F8,"Are there specific criteria or standards to evaluate against?","Benchmarks","[""OBJECTIVE"",""STRUCTURE""]",low,feedback,,0,0,,8
+F_COND_1,"What style guide or standards apply?","Style standards","[""STRUCTURE"",""DETAIL""]",high,feedback,,0,1,"writing",99
+F_COND_2,"What's the brand or aesthetic context?","Brand context","[""CREATIVE"",""DETAIL""]",high,feedback,,0,1,"design",99
+F_COND_3,"What's the testing/review process?","Testing process","[""OBJECTIVE"",""DETAIL""]",high,feedback,,0,1,"code",99
+R1,"What do you already know about this topic?","Starting point","[""SYNTHESIS"",""DETAIL""]",high,research,,0,0,,1
+R2,"What specific questions need to be answered?","Research focus","[""DETAIL"",""OBJECTIVE""]",high,research,,0,0,,2
+R3,"What sources are acceptable or preferred?","Source criteria","[""OBJECTIVE"",""RISK""]",medium,research,,0,0,,3
+R4,"What time period is relevant?","Temporal scope","[""DETAIL""]",medium,research,,0,0,,4
+R5,"How rigorous does this need to be (quick scan vs. thorough)?","Depth","[""DETAIL"",""OBJECTIVE""]",medium,research,,0,0,,5
+R6,"What format should findings take?","Output format","[""STRUCTURE""]",medium,research,,0,0,,6
+R7,"Who will use this research?","Audience","[""EMPATHY"",""PERSUASION""]",medium,research,,0,0,,7
+R8,"What would be surprising or change your approach?","Challenge assumptions","[""EXPLORE"",""OBJECTIVE""]",low,research,,0,0,,8
+R9,"What's the deadline?","Urgency","[""DETAIL""]",low,research,,0,0,,9
+R10,"Are there competing perspectives to consider?","Balance","[""EXPLORE"",""SYNTHESIS""]",low,research,,0,0,,10
+R_COND_1,"What geography or segment?","Geographic scope","[""DETAIL"",""OBJECTIVE""]",high,research,,0,1,"market research",99
+R_COND_2,"What's the citation style needed?","Citation style","[""STRUCTURE"",""DETAIL""]",high,research,,0,1,"academic research",99
+R_COND_3,"Who are the key competitors to include?","Competitors","[""DETAIL"",""OBJECTIVE""]",high,research,,0,1,"competitive research",99
+G1,"What's the overarching vision this goal supports?","Strategic context","[""VISION"",""SYNTHESIS""]",high,goal_setting,,0,0,,1
+G2,"What time frame applies to this goal?","Temporal scope","[""DETAIL"",""VISION""]",high,goal_setting,,0,0,,2
+G3,"How will progress be measured?","Metrics definition","[""OBJECTIVE"",""DETAIL""]",high,goal_setting,,0,0,,3
+G4,"What resources are available?","Feasibility","[""DETAIL"",""OBJECTIVE""]",medium,goal_setting,,0,0,,4
+G5,"What obstacles are anticipated?","Risk awareness","[""RISK"",""VISION""]",medium,goal_setting,,0,0,,5
+G6,"Who else needs to be aligned on this goal?","Stakeholders","[""EMPATHY"",""PERSUASION""]",medium,goal_setting,,0,0,,6
+G7,"What happens if the goal isn't achieved?","Stakes","[""RISK"",""VISION""]",low,goal_setting,,0,0,,7
+G8,"What's the stretch version versus minimum acceptable?","Ambition calibration","[""DECISIVE"",""RISK""]",low,goal_setting,,0,0,,8
+G_COND_1,"How will individual contributions be tracked?","Contribution tracking","[""DETAIL"",""OBJECTIVE""]",high,goal_setting,,0,1,"team goal",99
+G_COND_2,"What accountability structures help you?","Accountability","[""DETAIL"",""EMPATHY""]",high,goal_setting,,0,1,"personal goal",99
+G_COND_3,"How does this connect to revenue or growth?","Business connection","[""OBJECTIVE"",""VISION""]",high,goal_setting,,0,1,"business goal",99
+FS1,"Is precise tone and audience targeting critical?","CO-STAR indicator","[]",high,framework_selection,,0,0,,1
+FS2,"Does this require looking things up or using tools?","ReAct indicator","[]",high,framework_selection,,0,0,,2
+FS3,"Is first-draft quality insufficient—does this need iteration?","Self-Refine indicator","[]",high,framework_selection,,0,0,,3
+FS4,"Would stepping back to principles help before tackling specifics?","Step-Back indicator","[]",high,framework_selection,,0,0,,4
+FS5,"Can the response be broken into parallel, independent points?","Skeleton-of-Thought indicator","[]",high,framework_selection,,0,0,,5
+FS6,"Is the optimal prompt structure unclear?","Meta Prompting indicator","[]",high,framework_selection,,0,0,,6

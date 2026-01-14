@@ -278,6 +278,24 @@ Route::prefix('{country}')
             Route::get('/alerts', function () {
                 return inertia('Admin/Alerts');
             })->name('alerts.index');
+
+            // Question Bank Management
+            Route::prefix('questions')->name('questions.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\QuestionController::class, 'index'])->name('index');
+                Route::get('/create', [\App\Http\Controllers\Admin\QuestionController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Admin\QuestionController::class, 'store'])->name('store');
+                Route::get('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'edit'])->name('edit');
+                Route::put('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'update'])->name('update');
+                Route::delete('/{question}', [\App\Http\Controllers\Admin\QuestionController::class, 'destroy'])->name('destroy');
+
+                // Variant management
+                Route::post('/{question}/variants', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'store'])->name('variants.store');
+                Route::put('/{question}/variants/{variant}', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'update'])->name('variants.update');
+                Route::delete('/{question}/variants/{variant}', [\App\Http\Controllers\Admin\QuestionVariantController::class, 'destroy'])->name('variants.destroy');
+
+                // Markdown regeneration
+                Route::post('/regenerate-markdown', [\App\Http\Controllers\Admin\QuestionController::class, 'regenerateMarkdown'])->name('regenerate-markdown');
+            });
         });
 
         // Workflow management system (admin only)
