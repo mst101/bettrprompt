@@ -202,7 +202,7 @@ const regenerateMarkdown = async () => {
                     <FormInput
                         id="search"
                         v-model="searchQuery"
-                        label=""
+                        label="Search questions"
                         placeholder="Search question text..."
                         data-testid="search-input"
                     />
