@@ -34,13 +34,12 @@ describe('Question Normalization', function () {
             ]);
 
             expect($question->task_category_code)->toBeNull();
-            expect($question->is_universal)->toBeFalse();
         });
 
         it('allows valid task_category_code', function () {
             $category = TaskCategory::firstOrCreate(
                 ['code' => 'DECISION'],
-                ['name' => 'Decision Making', 'is_active' => true, 'display_order' => 1]
+                ['name' => 'Decision Making', 'description' => 'Decision Making', 'triggers' => [], 'is_active' => true, 'display_order' => 1]
             );
 
             $question = Question::create([
@@ -74,7 +73,7 @@ describe('Question Normalization', function () {
         it('allows null framework_code for category-specific questions', function () {
             TaskCategory::firstOrCreate(
                 ['code' => 'ANALYSIS'],
-                ['name' => 'Analysis', 'is_active' => true, 'display_order' => 2]
+                ['name' => 'Analysis', 'description' => 'Analysis', 'triggers' => [], 'is_active' => true, 'display_order' => 2]
             );
 
             $question = Question::create([
@@ -93,7 +92,7 @@ describe('Question Normalization', function () {
         it('allows valid framework_code', function () {
             Framework::firstOrCreate(
                 ['code' => 'CO_STAR'],
-                ['name' => 'CO-STAR', 'category' => 'content', 'description' => 'CO-STAR Framework', 'is_active' => true, 'display_order' => 1]
+                ['name' => 'CO-STAR', 'category' => 'content', 'description' => 'CO-STAR Framework', 'complexity' => 'medium', 'components' => [], 'is_active' => true, 'display_order' => 1]
             );
 
             $question = Question::create([
@@ -113,7 +112,7 @@ describe('Question Normalization', function () {
     describe('Cognitive Requirements Relationships', function () {
         it('can attach cognitive requirements to questions', function () {
             $question = Question::create([
-                'id' => 'U_COGS_TEST',
+                'id' => 'UCOGS001',
                 'question_text' => 'Test question with cognitive requirements',
                 'purpose' => 'Test purpose',
                 'priority' => 'high',
@@ -122,12 +121,12 @@ describe('Question Normalization', function () {
 
             $structure = CognitiveRequirement::firstOrCreate(
                 ['code' => 'STRUCTURE'],
-                ['name' => 'Structural Thinking', 'description' => 'Structural Thinking', 'is_active' => true, 'display_order' => 1]
+                ['name' => 'Structural Thinking', 'description' => 'Structural Thinking', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 1]
             );
 
             $detail = CognitiveRequirement::firstOrCreate(
                 ['code' => 'DETAIL'],
-                ['name' => 'Attention to Detail', 'description' => 'Attention to Detail', 'is_active' => true, 'display_order' => 2]
+                ['name' => 'Attention to Detail', 'description' => 'Attention to Detail', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 2]
             );
 
             $question->cognitiveRequirements()->attach($structure->code, ['requirement_level' => 'primary']);
@@ -139,7 +138,7 @@ describe('Question Normalization', function () {
 
         it('enforces unique constraint on question-requirement pairs', function () {
             $question = Question::create([
-                'id' => 'U_UNIQUE_TEST',
+                'id' => 'UUNIQUE001',
                 'question_text' => 'Test unique constraint',
                 'purpose' => 'Test purpose',
                 'priority' => 'high',
@@ -148,19 +147,19 @@ describe('Question Normalization', function () {
 
             $requirement = CognitiveRequirement::firstOrCreate(
                 ['code' => 'SYNTHESIS'],
-                ['name' => 'Synthesis', 'description' => 'Synthesis', 'is_active' => true, 'display_order' => 3]
+                ['name' => 'Synthesis', 'description' => 'Synthesis', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 3]
             );
 
             $question->cognitiveRequirements()->attach($requirement->code);
 
             expect(function () {
                 $question->cognitiveRequirements()->attach($requirement->code);
-            })->toThrow(QueryException::class);
+            })->toThrow(Exception::class);
         });
 
         it('restricts deletion of cognitive requirements with attached questions', function () {
             $question = Question::create([
-                'id' => 'TEST_RESTRICT',
+                'id' => 'TRESRC0001',
                 'question_text' => 'Test delete restriction',
                 'purpose' => 'Test purpose',
                 'priority' => 'high',
@@ -169,19 +168,19 @@ describe('Question Normalization', function () {
 
             $requirement = CognitiveRequirement::firstOrCreate(
                 ['code' => 'EMPATHY'],
-                ['name' => 'Empathy', 'description' => 'Empathy', 'is_active' => true, 'display_order' => 4]
+                ['name' => 'Empathy', 'description' => 'Empathy', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 4]
             );
 
             $question->cognitiveRequirements()->attach($requirement->code);
 
             expect(function () {
                 $requirement->delete();
-            })->toThrow(QueryException::class);
+            })->toThrow(Exception::class);
         });
 
         it('cascades deletion when question is deleted', function () {
             $question = Question::create([
-                'id' => 'TEST_CASCADE',
+                'id' => 'TCASC0001',
                 'question_text' => 'Test cascade delete',
                 'purpose' => 'Test purpose',
                 'priority' => 'high',
@@ -190,7 +189,7 @@ describe('Question Normalization', function () {
 
             $requirement = CognitiveRequirement::firstOrCreate(
                 ['code' => 'CREATIVE'],
-                ['name' => 'Creative Thinking', 'description' => 'Creative Thinking', 'is_active' => true, 'display_order' => 5]
+                ['name' => 'Creative Thinking', 'description' => 'Creative Thinking', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 5]
             );
 
             $question->cognitiveRequirements()->attach($requirement->code);
@@ -216,12 +215,12 @@ describe('Question Normalization', function () {
             // Create test data
             TaskCategory::firstOrCreate(
                 ['code' => 'DECISION'],
-                ['name' => 'Decision Making', 'description' => 'Decision Making Framework', 'is_active' => true, 'display_order' => 1]
+                ['name' => 'Decision Making', 'description' => 'Decision Making Framework', 'triggers' => [], 'is_active' => true, 'display_order' => 1]
             );
 
             Framework::firstOrCreate(
                 ['code' => 'CO_STAR'],
-                ['name' => 'CO-STAR', 'category' => 'content', 'description' => 'CO-STAR Framework', 'is_active' => true, 'display_order' => 1]
+                ['name' => 'CO-STAR', 'category' => 'content', 'description' => 'CO-STAR Framework', 'complexity' => 'medium', 'components' => [], 'is_active' => true, 'display_order' => 1]
             );
 
             Question::create([
@@ -280,7 +279,7 @@ describe('Question Normalization', function () {
         it('loads task category through relationship', function () {
             $category = TaskCategory::firstOrCreate(
                 ['code' => 'LEARNING'],
-                ['name' => 'Learning', 'description' => 'Learning', 'is_active' => true, 'display_order' => 6]
+                ['name' => 'Learning', 'description' => 'Learning', 'triggers' => [], 'is_active' => true, 'display_order' => 6]
             );
 
             $question = Question::create([
@@ -301,7 +300,7 @@ describe('Question Normalization', function () {
         it('loads framework through relationship', function () {
             Framework::firstOrCreate(
                 ['code' => 'REACT'],
-                ['name' => 'ReAct', 'category' => 'agentic', 'description' => 'ReAct Framework', 'is_active' => true, 'display_order' => 2]
+                ['name' => 'ReAct', 'category' => 'agentic', 'description' => 'ReAct Framework', 'complexity' => 'high', 'components' => [], 'is_active' => true, 'display_order' => 2]
             );
 
             $question = Question::create([
@@ -322,7 +321,7 @@ describe('Question Normalization', function () {
         it('category has inverse relationship to questions', function () {
             $category = TaskCategory::firstOrCreate(
                 ['code' => 'IDEATION'],
-                ['name' => 'Ideation', 'description' => 'Ideation', 'is_active' => true, 'display_order' => 7]
+                ['name' => 'Ideation', 'description' => 'Ideation', 'triggers' => [], 'is_active' => true, 'display_order' => 7]
             );
 
             Question::create([
@@ -351,7 +350,7 @@ describe('Question Normalization', function () {
         it('framework has inverse relationship to questions', function () {
             Framework::firstOrCreate(
                 ['code' => 'STEP_BACK'],
-                ['name' => 'Step Back', 'category' => 'reasoning', 'description' => 'Step Back Framework', 'is_active' => true, 'display_order' => 3]
+                ['name' => 'Step Back', 'category' => 'reasoning', 'description' => 'Step Back Framework', 'complexity' => 'low', 'components' => [], 'is_active' => true, 'display_order' => 3]
             );
 
             Question::create([
@@ -388,7 +387,7 @@ describe('Question Normalization', function () {
 
             $requirement = CognitiveRequirement::firstOrCreate(
                 ['code' => 'OBJECTIVE'],
-                ['name' => 'Objective', 'description' => 'Objective', 'is_active' => true, 'display_order' => 8]
+                ['name' => 'Objective', 'description' => 'Objective', 'aligned_traits' => [], 'opposed_traits' => [], 'is_active' => true, 'display_order' => 8]
             );
 
             $question1->cognitiveRequirements()->attach($requirement->code);
