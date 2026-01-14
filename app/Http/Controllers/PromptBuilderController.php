@@ -202,10 +202,7 @@ class PromptBuilderController extends Controller
             // The job will either show questions or proceed directly to main analysis
             ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
-            return redirect()->route('prompt-builder.show', [
-                'country' => $request->route('country'),
-                'promptRun' => $promptRun,
-            ]);
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]));
 
         } catch (Exception $e) {
             Log::error('Failed to create prompt run', [
@@ -260,8 +257,7 @@ class PromptBuilderController extends Controller
             // Dispatch workflow_1 (which will enhance + analyse)
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
-            return redirect()
-                ->route('prompt-builder.show', $promptRun)
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
                 ->with('success', __('messages.prompt_builder.analysing_task'));
 
         } catch (Exception $e) {
@@ -316,8 +312,7 @@ class PromptBuilderController extends Controller
             // Dispatch workflow_1 again to re-analyse with new answers
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
-            return redirect()
-                ->route('prompt-builder.show', $promptRun)
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
                 ->with('success', __('messages.prompt_builder.updating_answers'));
 
         } catch (Exception $e) {
@@ -461,8 +456,7 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
-            return redirect()
-                ->route('prompt-builder.show', $promptRun);
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]));
 
         } catch (Exception $e) {
             Log::error('Failed to go back (PromptBuilder)', [
@@ -717,8 +711,7 @@ class PromptBuilderController extends Controller
             // Dispatch the job to generate the prompt asynchronously
             ProcessPromptGeneration::dispatch($childPromptRun, $this->getJobDatabase($request));
 
-            return redirect()
-                ->route('prompt-builder.show', $childPromptRun)
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $childPromptRun]))
                 ->with('success', __('messages.prompt_builder.generating_optimised_prompt'));
         } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
@@ -781,8 +774,7 @@ class PromptBuilderController extends Controller
 
             // Redirect to the new prompt run's show page
             // Inertia will handle the redirect and fetch the full page data
-            return redirect()
-                ->route('prompt-builder.show', $childPromptRun)
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $childPromptRun]))
                 ->with('success', __('messages.prompt_builder.switching_framework'));
         } catch (Exception $e) {
             Log::error('Failed to switch framework (PromptBuilder)', [
@@ -835,8 +827,7 @@ class PromptBuilderController extends Controller
                 // Dispatch the job to run pre-analysis asynchronously
                 ProcessPreAnalysis::dispatch($promptRun, $this->getJobDatabase($request));
 
-                return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
                     ->with('success', __('messages.prompt_builder.retrying_pre_analysis'));
 
             } elseif ($failedWorkflow === 1) {
@@ -856,8 +847,7 @@ class PromptBuilderController extends Controller
                 // Dispatch the job to analyse the task asynchronously
                 ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
-                return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
                     ->with('success', __('messages.prompt_builder.retrying_analysis'));
 
             } elseif ($failedWorkflow === 2) {
@@ -876,8 +866,7 @@ class PromptBuilderController extends Controller
                 // Dispatch the job to generate the prompt asynchronously
                 ProcessPromptGeneration::dispatch($promptRun, $this->getJobDatabase($request));
 
-                return redirect()
-                    ->route('prompt-builder.show', $promptRun)
+                return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
                     ->with('success', __('messages.prompt_builder.retrying_prompt_generation'));
             }
 
