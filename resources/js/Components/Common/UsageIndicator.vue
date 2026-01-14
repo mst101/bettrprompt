@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useCountryRoute } from '@/Composables/useCountryRoute';
+import { analyticsService } from '@/services/analytics';
 import { router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const page = usePage();
+const { countryRoute } = useCountryRoute();
 const subscription = computed(() => page.props.subscription);
 
 const usagePercent = computed(() => {
@@ -16,6 +19,14 @@ const isWarning = computed(() => usagePercent.value >= 80);
 const isExhausted = computed(() => subscription.value?.promptsRemaining === 0);
 
 function goToPricing() {
+    analyticsService.track({
+        name: 'upgrade_cta_clicked',
+        properties: {
+            source: 'usage_indicator',
+            current_tier: subscription.value?.tier ?? 'free',
+        },
+    });
+
     router.visit(countryRoute('pricing'));
 }
 </script>

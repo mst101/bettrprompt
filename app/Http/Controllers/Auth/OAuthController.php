@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\SetCountry;
+use App\Models\AnalyticsEvent;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -16,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
 
@@ -180,6 +182,21 @@ class OAuthController extends Controller
 
             // Log the user in
             Auth::login($user, remember: true);
+
+            // Track registration completion (only for new users)
+            if ($isNewUser) {
+                AnalyticsEvent::create([
+                    'event_id' => (string) Str::uuid(),
+                    'name' => 'registration_completed',
+                    'visitor_id' => $request->cookie('visitor_id'),
+                    'user_id' => $user->id,
+                    'source' => 'server',
+                    'occurred_at' => now(),
+                    'properties' => [
+                        'registration_method' => 'google',
+                    ],
+                ]);
+            }
 
             Log::info('User authenticated via Google OAuth', [
                 'user_id' => $user->id,

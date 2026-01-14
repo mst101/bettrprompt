@@ -3,10 +3,15 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { analyticsService } from '@/services/analytics';
 import { Head, router } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 defineProps<Props>();
+
+const { countryRoute } = useCountryRoute();
 
 defineOptions({
     layout: AppLayout,
@@ -15,6 +20,16 @@ defineOptions({
 interface Props {
     message: string;
 }
+
+// Track checkout cancellation
+onMounted(() => {
+    analyticsService.track({
+        name: 'checkout_cancelled',
+        properties: {
+            source: 'stripe_checkout',
+        },
+    });
+});
 
 function goToPricing() {
     router.visit(countryRoute('pricing'));

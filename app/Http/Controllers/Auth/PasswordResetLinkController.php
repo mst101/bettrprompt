@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForgotPasswordRequest;
+use App\Models\AnalyticsEvent;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,6 +42,18 @@ class PasswordResetLinkController extends Controller
         ]);
 
         if ($status == Password::RESET_LINK_SENT) {
+            // Track password reset request
+            AnalyticsEvent::create([
+                'event_id' => (string) Str::uuid(),
+                'name' => 'password_reset_requested',
+                'visitor_id' => $request->cookie('visitor_id'),
+                'source' => 'server',
+                'occurred_at' => now(),
+                'properties' => [
+                    'email' => $validated['email'],
+                ],
+            ]);
+
             return back()->with('status', __($status));
         }
 

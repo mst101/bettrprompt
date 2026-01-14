@@ -3,6 +3,7 @@ import ButtonGoogleSignIn from '@/Components/Base/Button/ButtonGoogleSignIn.vue'
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonText from '@/Components/Base/Button/ButtonText.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
+import { analyticsService } from '@/services/analytics';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, watch } from 'vue';
 import BaseAuthModal from './BaseAuthModal.vue';
@@ -36,6 +37,16 @@ watch(
     () => props.show,
     async (newValue) => {
         if (newValue) {
+            // Track registration started (fresh attempt)
+            if (!form.name && !form.email) {
+                analyticsService.track({
+                    name: 'registration_started',
+                    properties: {
+                        modal_opened: true,
+                    },
+                });
+            }
+
             await nextTick();
             const inputElement = document.getElementById(
                 'register-name',

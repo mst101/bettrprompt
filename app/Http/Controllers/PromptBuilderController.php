@@ -17,6 +17,7 @@ use App\Http\Resources\PromptRunResource;
 use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
+use App\Models\AnalyticsEvent;
 use App\Models\ClaudeModel;
 use App\Models\Country;
 use App\Models\Currency;
@@ -28,6 +29,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class PromptBuilderController extends Controller
@@ -180,6 +182,21 @@ class PromptBuilderController extends Controller
                     'workflow_stage' => '0_processing',
                 ]);
             });
+
+            // Track prompt started
+            AnalyticsEvent::create([
+                'event_id' => (string) Str::uuid(),
+                'name' => 'prompt_started',
+                'visitor_id' => $visitorId,
+                'user_id' => $userId,
+                'prompt_run_id' => $promptRun->id,
+                'source' => 'server',
+                'occurred_at' => now(),
+                'properties' => [
+                    'task_description_length' => strlen($validated['task_description']),
+                    'has_personality_type' => $personalityType !== null,
+                ],
+            ]);
 
             // Dispatch the job to generate pre-analysis questions (Workflow 0)
             // The job will either show questions or proceed directly to main analysis

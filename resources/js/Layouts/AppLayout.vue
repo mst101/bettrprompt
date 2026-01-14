@@ -16,6 +16,7 @@ import CookieBanner from '@/Components/Common/CookieBanner.vue';
 import Footer from '@/Components/Common/Footer.vue';
 import LanguageSwitcher from '@/Components/Common/LanguageSwitcher.vue';
 import NotificationCenter from '@/Components/Common/NotificationCenter.vue';
+import { usePageTracking } from '@/Composables/analytics/usePageTracking';
 import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
@@ -54,6 +55,9 @@ if (isAuthenticated.value) {
 
 // Use country-aware route generation
 const { countryRoute } = useCountryRoute();
+
+// Track page views
+usePageTracking();
 
 // Determine logo destination based on admin status and current route
 const logoDestination = computed(() => {

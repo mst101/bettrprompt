@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { useAnalyticsInit } from './Composables/analytics/useAnalyticsInit';
 import { useNotification } from './Composables/ui/useNotification';
 import { createCountryRoutePlugin } from './Plugins/countryRoutePlugin';
 import { getCookie } from './Utils/cookies';
@@ -78,6 +79,9 @@ createInertiaApp({
         identifyVisitorInFullstory(
             props.initialPage.props.auth as FullStoryAuth,
         );
+
+        // Initialize analytics tracking after consent
+        useAnalyticsInit();
 
         return app;
     },

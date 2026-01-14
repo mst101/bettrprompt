@@ -27,6 +27,7 @@ import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { analyticsService } from '@/services/analytics';
 import type { ClaudeModel, PromptRunResource, User } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, inject, nextTick, onUnmounted, ref, watch } from 'vue';
@@ -296,6 +297,17 @@ useRealtimeUpdates(
                 '🎉 [WebSocket] PreAnalysisCompleted event received:',
                 data,
             );
+
+            // Track workflow stage completion
+            analyticsService.track({
+                name: 'workflow_stage_completed',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    stage: 0,
+                    workflow_name: 'pre_analysis',
+                },
+            });
+
             // Reload page to show Quick Queries
             router.reload({
                 only: ['promptRun'],
@@ -310,6 +322,18 @@ useRealtimeUpdates(
                 '🎉 [WebSocket] AnalysisCompleted event received:',
                 data,
             );
+
+            // Track workflow stage completion
+            analyticsService.track({
+                name: 'workflow_stage_completed',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    stage: 1,
+                    workflow_name: 'main_analysis',
+                    framework_selected: data.selectedFramework?.code,
+                },
+            });
+
             // Reload page to show analysis results
             router.reload({
                 only: ['promptRun'],
@@ -324,6 +348,28 @@ useRealtimeUpdates(
                 '🎉 [WebSocket] PromptOptimizationCompleted event received:',
                 data,
             );
+
+            // Track prompt completion
+            analyticsService.track({
+                name: 'prompt_completed',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    workflow_stage: 2,
+                    personality_type: props.promptRun.personalityType,
+                    framework_used: props.promptRun.selectedFramework?.code,
+                },
+            });
+
+            // Track workflow stage completion
+            analyticsService.track({
+                name: 'workflow_stage_completed',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    stage: 2,
+                    workflow_name: 'prompt_generation',
+                },
+            });
+
             // Reload page to show completed prompt
             // The watcher on optimizedPrompt will automatically switch to the prompt tab
             router.reload({

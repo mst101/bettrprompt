@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\SetCountry;
 use App\Http\Requests\RegisterRequest;
+use App\Models\AnalyticsEvent;
 use App\Models\User;
 use App\Services\GeolocationService;
 use App\Services\VisitorMigrationService;
@@ -14,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class RegisteredUserController extends Controller
@@ -86,6 +88,19 @@ class RegisteredUserController extends Controller
         $user->updateProfileCompletion();
 
         Auth::login($user);
+
+        // Track registration completion
+        AnalyticsEvent::create([
+            'event_id' => (string) Str::uuid(),
+            'name' => 'registration_completed',
+            'visitor_id' => $request->cookie('visitor_id'),
+            'user_id' => $user->id,
+            'source' => 'server',
+            'occurred_at' => now(),
+            'properties' => [
+                'registration_method' => 'email',
+            ],
+        ]);
 
         // Redirect to history page if visitor had completed prompts, otherwise to prompt builder
         if ($claimedCount > 0) {

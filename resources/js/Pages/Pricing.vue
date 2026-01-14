@@ -6,6 +6,7 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { analyticsService } from '@/services/analytics';
 import type { PricingPlans, SubscriptionStatus } from '@/Types';
 import { getCsrfToken } from '@/Utils/cookies';
 import { Head, router, usePage } from '@inertiajs/vue3';
@@ -94,6 +95,17 @@ function updateCurrency(newCurrency: string) {
 }
 
 async function subscribe(tier: 'pro' | 'private') {
+    // Track subscription started
+    analyticsService.track({
+        name: 'subscription_started',
+        properties: {
+            tier,
+            interval: selectedPlan.value,
+            currency: selectedCurrency.value,
+            source: 'pricing_page',
+        },
+    });
+
     if (!isAuthenticated.value) {
         // Open register modal for unauthenticated users
         if (openRegisterModal) {

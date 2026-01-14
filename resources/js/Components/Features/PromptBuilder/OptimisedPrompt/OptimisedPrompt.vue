@@ -5,6 +5,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
+import { analyticsService } from '@/services/analytics';
 import { router } from '@inertiajs/vue3';
 import { marked } from 'marked';
 import { computed, ref, watchEffect } from 'vue';
@@ -58,6 +59,15 @@ const copyToClipboard = async (text: string) => {
     try {
         await navigator.clipboard.writeText(text);
         copied.value = true;
+
+        analyticsService.track({
+            name: 'prompt_copied',
+            properties: {
+                prompt_run_id: props.promptRunId,
+                prompt_length: text.length,
+            },
+        });
+
         setTimeout(() => {
             copied.value = false;
         }, 2000);
@@ -103,6 +113,24 @@ const saveEdits = () => {
         {
             preserveScroll: true,
             onSuccess: () => {
+                // Track prompt edit
+                const editPercentage = Math.abs(
+                    ((editedPrompt.value.length -
+                        props.optimizedPrompt.length) /
+                        props.optimizedPrompt.length) *
+                        100,
+                );
+
+                analyticsService.track({
+                    name: 'prompt_edited',
+                    properties: {
+                        prompt_run_id: props.promptRunId,
+                        original_length: props.optimizedPrompt.length,
+                        edited_length: editedPrompt.value.length,
+                        edit_percentage: parseFloat(editPercentage.toFixed(2)),
+                    },
+                });
+
                 isEditing.value = false;
                 shouldFocusCopyButton.value = true;
             },

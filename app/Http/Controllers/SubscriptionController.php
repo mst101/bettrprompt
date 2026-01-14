@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\SetCountry;
+use App\Models\AnalyticsEvent;
 use App\Models\Price;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -106,6 +108,21 @@ class SubscriptionController extends Controller
                 'allow_promotion_codes' => true,
             ]);
 
+        // Track checkout initiation
+        AnalyticsEvent::create([
+            'event_id' => (string) Str::uuid(),
+            'name' => 'checkout_initiated',
+            'visitor_id' => $request->cookie('visitor_id'),
+            'user_id' => $user->id,
+            'source' => 'server',
+            'occurred_at' => now(),
+            'properties' => [
+                'tier' => $tier,
+                'interval' => $interval,
+                'stripe_session_id' => $checkout->id,
+            ],
+        ]);
+
         return response()->json(['url' => $checkout->url]);
     }
 
@@ -123,6 +140,20 @@ class SubscriptionController extends Controller
         }
 
         $user->update(['subscription_tier' => $tier]);
+
+        // Track subscription completion
+        AnalyticsEvent::create([
+            'event_id' => (string) Str::uuid(),
+            'name' => 'subscription_completed',
+            'visitor_id' => $request->cookie('visitor_id'),
+            'user_id' => $user->id,
+            'source' => 'server',
+            'occurred_at' => now(),
+            'properties' => [
+                'tier' => $tier,
+                'previous_tier' => 'free',
+            ],
+        ]);
 
         return Inertia::render('Subscription/Success', [
             'message' => $tier === 'private'
@@ -180,6 +211,20 @@ class SubscriptionController extends Controller
 
         if ($subscription) {
             $subscription->cancel();
+
+            // Track subscription cancellation
+            AnalyticsEvent::create([
+                'event_id' => (string) Str::uuid(),
+                'name' => 'subscription_cancelled',
+                'visitor_id' => $request->cookie('visitor_id'),
+                'user_id' => $user->id,
+                'source' => 'server',
+                'occurred_at' => now(),
+                'properties' => [
+                    'tier' => $user->subscription_tier,
+                    'cancellation_source' => 'settings_page',
+                ],
+            ]);
 
             // Set grace period end date
             $user->update([

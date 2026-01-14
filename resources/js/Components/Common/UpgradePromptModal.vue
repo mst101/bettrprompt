@@ -2,6 +2,7 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
+import { analyticsService } from '@/services/analytics';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -19,6 +20,14 @@ const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
 const isLoading = ref(false);
 
 function subscribe() {
+    analyticsService.track({
+        name: 'upgrade_cta_clicked',
+        properties: {
+            source: 'upgrade_prompt_modal',
+            interval: selectedPlan.value,
+        },
+    });
+
     isLoading.value = true;
     router.post(
         route('subscription.checkout'),

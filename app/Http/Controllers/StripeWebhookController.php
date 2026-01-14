@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnalyticsEvent;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Cashier\Http\Controllers\WebhookController as CashierController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,6 +25,20 @@ class StripeWebhookController extends CashierController
 
             $user->update([
                 'subscription_tier' => $tier,
+            ]);
+
+            // Track subscription activation
+            AnalyticsEvent::create([
+                'event_id' => (string) Str::uuid(),
+                'name' => 'subscription_activated',
+                'user_id' => $user->id,
+                'source' => 'server',
+                'occurred_at' => now(),
+                'properties' => [
+                    'tier' => $tier,
+                    'stripe_subscription_id' => $subscription['id'] ?? null,
+                    'billing_interval' => $subscription['items']['data'][0]['price']['recurring']['interval'] ?? null,
+                ],
             ]);
         }
 
