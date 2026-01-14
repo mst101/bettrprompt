@@ -1296,6 +1296,58 @@
                     "subtitle": "Review common tasks and prompt runs"
                 }
             }
+        },
+        "common": {
+            "notAvailable": "Not available"
+        },
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "show": "Show",
+            "perPage": "per page"
+        },
+        "tasks": {
+            "title": "Tasks",
+            "headTitle": "Tasks",
+            "empty": "No tasks found",
+            "promptRunsTitle": "Prompt Runs",
+            "emptyRuns": "No prompt runs found",
+            "searchPlaceholder": "Search tasks...",
+            "taskDescriptionLabel": "Task description",
+            "guest": "Guest",
+            "backToDashboard": "Back to Dashboard",
+            "backToTasks": "Back to Tasks",
+            "columns": {
+                "id": "ID",
+                "description": "Description",
+                "created": "Created",
+                "personality": "Personality",
+                "framework": "Framework",
+                "workflowStage": "Status",
+                "runs": "Runs",
+                "user": "User"
+            }
+        },
+        "users": {
+            "title": "Users",
+            "headTitle": "Users",
+            "backToDashboard": "Back to Dashboard",
+            "backToUsers": "Back to Users",
+            "detailsTitle": "User Details",
+            "promptsTitle": "Prompt Runs",
+            "emptyPrompts": "No prompt runs found",
+            "searchPlaceholder": "Search users...",
+            "adminLabel": "Admin",
+            "columns": {
+                "email": "Email",
+                "name": "Name",
+                "promptRuns": "Prompt Runs",
+                "visitors": "Visitors"
+            },
+            "table": {
+                "status": "Status",
+                "created": "Created"
+            }
         }
     },
     "profile": {
@@ -1809,7 +1861,8 @@
         "warningTitle": "Warning",
         "errorTitle": "Error",
         "confirmTitle": "Confirm",
-        "infoTitle": "Information"
+        "infoTitle": "Information",
+        "confirmButton": "Confirm"
     },
     "audio": {
         "errors": {

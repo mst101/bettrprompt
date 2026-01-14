@@ -1283,6 +1283,58 @@
                     "subtitle": "Häufige Aufgaben und Prompt-Läufe überprüfen"
                 }
             }
+        },
+        "common": {
+            "notAvailable": "Nicht verfügbar"
+        },
+        "pagination": {
+            "previous": "Zurück",
+            "next": "Weiter",
+            "show": "Anzeigen",
+            "perPage": "pro Seite"
+        },
+        "tasks": {
+            "title": "Aufgaben",
+            "headTitle": "Aufgaben",
+            "empty": "Keine Aufgaben gefunden",
+            "promptRunsTitle": "Prompt-Läufe",
+            "emptyRuns": "Keine Prompt-Läufe gefunden",
+            "searchPlaceholder": "Aufgaben durchsuchen...",
+            "taskDescriptionLabel": "Aufgabenbeschreibung",
+            "guest": "Gast",
+            "backToDashboard": "Zurück zum Dashboard",
+            "backToTasks": "Zurück zu Aufgaben",
+            "columns": {
+                "id": "ID",
+                "description": "Beschreibung",
+                "created": "Erstellt",
+                "personality": "Persönlichkeit",
+                "framework": "Framework",
+                "workflowStage": "Status",
+                "runs": "Läufe",
+                "user": "Benutzer"
+            }
+        },
+        "users": {
+            "title": "Benutzer",
+            "headTitle": "Benutzer",
+            "backToDashboard": "Zurück zum Dashboard",
+            "backToUsers": "Zurück zu Benutzern",
+            "detailsTitle": "Benutzerdetails",
+            "promptsTitle": "Prompt-Läufe",
+            "emptyPrompts": "Keine Prompt-Läufe gefunden",
+            "searchPlaceholder": "Benutzer durchsuchen...",
+            "adminLabel": "Admin",
+            "columns": {
+                "email": "E-Mail",
+                "name": "Name",
+                "promptRuns": "Prompt-Läufe",
+                "visitors": "Besucher"
+            },
+            "table": {
+                "status": "Status",
+                "created": "Erstellt"
+            }
         }
     },
     "profile": {
@@ -1796,7 +1848,8 @@
         "warningTitle": "Warnung",
         "errorTitle": "Fehler",
         "confirmTitle": "Bestätigen",
-        "infoTitle": "Information"
+        "infoTitle": "Information",
+        "confirmButton": "Bestätigen"
     },
     "audio": {
         "errors": {

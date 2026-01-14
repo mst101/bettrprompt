@@ -1775,7 +1775,8 @@
         "warningTitle": "Attention",
         "errorTitle": "Erreur",
         "confirmTitle": "Confirmer",
-        "infoTitle": "Information"
+        "infoTitle": "Information",
+        "confirmButton": "Confirmer"
     },
     "audio": {
         "errors": {
@@ -1829,6 +1830,58 @@
                     "title": "Aperçu des tâches",
                     "subtitle": "Examiner les tâches courantes et les exécutions de prompts"
                 }
+            }
+        },
+        "common": {
+            "notAvailable": "Non disponible"
+        },
+        "pagination": {
+            "previous": "Précédent",
+            "next": "Suivant",
+            "show": "Afficher",
+            "perPage": "par page"
+        },
+        "tasks": {
+            "title": "Tâches",
+            "headTitle": "Tâches",
+            "empty": "Aucune tâche trouvée",
+            "promptRunsTitle": "Exécutions de prompts",
+            "emptyRuns": "Aucune exécution de prompt trouvée",
+            "searchPlaceholder": "Rechercher des tâches...",
+            "taskDescriptionLabel": "Description de la tâche",
+            "guest": "Invité",
+            "backToDashboard": "Retour au tableau de bord",
+            "backToTasks": "Retour aux tâches",
+            "columns": {
+                "id": "ID",
+                "description": "Description",
+                "created": "Créé",
+                "personality": "Personnalité",
+                "framework": "Framework",
+                "workflowStage": "Statut",
+                "runs": "Exécutions",
+                "user": "Utilisateur"
+            }
+        },
+        "users": {
+            "title": "Utilisateurs",
+            "headTitle": "Utilisateurs",
+            "backToDashboard": "Retour au tableau de bord",
+            "backToUsers": "Retour aux utilisateurs",
+            "detailsTitle": "Détails de l'utilisateur",
+            "promptsTitle": "Exécutions de prompts",
+            "emptyPrompts": "Aucune exécution de prompt trouvée",
+            "searchPlaceholder": "Rechercher des utilisateurs...",
+            "adminLabel": "Administrateur",
+            "columns": {
+                "email": "Email",
+                "name": "Nom",
+                "promptRuns": "Exécutions de prompts",
+                "visitors": "Visiteurs"
+            },
+            "table": {
+                "status": "Statut",
+                "created": "Créé"
             }
         }
     }

@@ -1283,6 +1283,58 @@
                     "subtitle": "Revisar tareas comunes y ejecuciones de prompts"
                 }
             }
+        },
+        "common": {
+            "notAvailable": "No disponible"
+        },
+        "pagination": {
+            "previous": "Anterior",
+            "next": "Siguiente",
+            "show": "Mostrar",
+            "perPage": "por página"
+        },
+        "tasks": {
+            "title": "Tareas",
+            "headTitle": "Tareas",
+            "empty": "No se encontraron tareas",
+            "promptRunsTitle": "Ejecuciones de prompts",
+            "emptyRuns": "No se encontraron ejecuciones de prompts",
+            "searchPlaceholder": "Buscar tareas...",
+            "taskDescriptionLabel": "Descripción de la tarea",
+            "guest": "Invitado",
+            "backToDashboard": "Volver al Panel",
+            "backToTasks": "Volver a Tareas",
+            "columns": {
+                "id": "ID",
+                "description": "Descripción",
+                "created": "Creado",
+                "personality": "Personalidad",
+                "framework": "Framework",
+                "workflowStage": "Estado",
+                "runs": "Ejecuciones",
+                "user": "Usuario"
+            }
+        },
+        "users": {
+            "title": "Usuarios",
+            "headTitle": "Usuarios",
+            "backToDashboard": "Volver al Panel",
+            "backToUsers": "Volver a Usuarios",
+            "detailsTitle": "Detalles del Usuario",
+            "promptsTitle": "Ejecuciones de prompts",
+            "emptyPrompts": "No se encontraron ejecuciones de prompts",
+            "searchPlaceholder": "Buscar usuarios...",
+            "adminLabel": "Administrador",
+            "columns": {
+                "email": "Correo electrónico",
+                "name": "Nombre",
+                "promptRuns": "Ejecuciones de prompts",
+                "visitors": "Visitantes"
+            },
+            "table": {
+                "status": "Estado",
+                "created": "Creado"
+            }
         }
     },
     "profile": {
@@ -1796,7 +1848,8 @@
         "warningTitle": "Advertencia",
         "errorTitle": "Error",
         "confirmTitle": "Confirmar",
-        "infoTitle": "Información"
+        "infoTitle": "Información",
+        "confirmButton": "Confirmar"
     },
     "audio": {
         "errors": {
