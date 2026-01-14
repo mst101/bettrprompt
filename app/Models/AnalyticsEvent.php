@@ -11,6 +11,18 @@ class AnalyticsEvent extends Model
 {
     use HasFactory;
 
+    /**
+     * Automatically derive the event type if it's missing.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (self $event) {
+            if (empty($event->type) && $event->name) {
+                $event->type = self::deriveType($event->name);
+            }
+        });
+    }
+
     protected $primaryKey = 'event_id';
 
     protected $keyType = 'string';
@@ -85,6 +97,21 @@ class AnalyticsEvent extends Model
     public function eventExperiments(): HasMany
     {
         return $this->hasMany(AnalyticsEventExperiment::class, 'event_id', 'event_id');
+    }
+
+    /**
+     * Derive the event type from its name.
+     */
+    public static function deriveType(string $name): string
+    {
+        return match (true) {
+            str_contains($name, 'success') || str_contains($name, 'completed') => 'conversion',
+            str_contains($name, 'exposure') => 'exposure',
+            str_contains($name, 'failed') || str_contains($name, 'error') => 'error',
+            str_contains($name, 'consent') => 'system',
+            str_contains($name, 'session') => 'system',
+            default => 'engagement',
+        };
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\ProcessAnalyticsEvents;
+use App\Models\AnalyticsEvent;
 use Carbon\Carbon;
 
 it('enriches events with visitor context and derived type metadata', function () {
@@ -59,12 +60,10 @@ it('rejects events missing required identifiers', function () {
 });
 
 it('derives event types from naming conventions', function () {
-    $job = new ProcessAnalyticsEvents(events: []);
-
-    expect(callJobMethod($job, 'deriveEventType', ['subscription_completed']))->toBe('conversion');
-    expect(callJobMethod($job, 'deriveEventType', ['workflow_failed']))->toBe('error');
-    expect(callJobMethod($job, 'deriveEventType', ['session_expired']))->toBe('system');
-    expect(callJobMethod($job, 'deriveEventType', ['prompt_started']))->toBe('engagement');
+    expect(AnalyticsEvent::deriveType('subscription_completed'))->toBe('conversion');
+    expect(AnalyticsEvent::deriveType('workflow_failed'))->toBe('error');
+    expect(AnalyticsEvent::deriveType('session_expired'))->toBe('system');
+    expect(AnalyticsEvent::deriveType('prompt_started'))->toBe('engagement');
 });
 
 function callJobMethod(ProcessAnalyticsEvents $job, string $method, array $arguments = [])

@@ -182,7 +182,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
         return [
             'event_id' => $event['event_id'],
             'name' => $event['name'],
-            'type' => $this->deriveEventType($event['name']),
+            'type' => AnalyticsEvent::deriveType($event['name']),
             'properties' => $event['properties'] ?? null,
             'visitor_id' => $this->visitorId,
             'user_id' => $this->userId,
@@ -200,21 +200,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'created_at' => now(),
             'updated_at' => now(),
         ];
-    }
-
-    /**
-     * Derive event type from event name
-     */
-    private function deriveEventType(string $name): string
-    {
-        return match (true) {
-            str_contains($name, 'success') || str_contains($name, 'completed') => 'conversion',
-            str_contains($name, 'exposure') => 'exposure',
-            str_contains($name, 'failed') || str_contains($name, 'error') => 'error',
-            str_contains($name, 'consent') => 'system',
-            str_contains($name, 'session') => 'system',
-            default => 'engagement',
-        };
     }
 
     /**
