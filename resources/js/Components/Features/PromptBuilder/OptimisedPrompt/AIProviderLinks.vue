@@ -116,7 +116,9 @@ const handleProviderClick = async (provider: AIProvider) => {
                 }}
             </p>
         </div>
-        <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+        <div
+            class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:grid-rows-2 sm:gap-3"
+        >
             <Button
                 v-for="provider in providers"
                 :key="provider.name"
@@ -128,7 +130,7 @@ const handleProviderClick = async (provider: AIProvider) => {
                         provider: provider.name,
                     })
                 "
-                class="group relative justify-center px-3 py-2 sm:justify-start"
+                class="group relative flex w-full items-center justify-center px-3 py-2"
                 :class="
                     prompt.length > 0
                         ? 'bg-indigo-50! hover:bg-indigo-100! dark:bg-indigo-100! dark:hover:bg-indigo-200!'
@@ -138,7 +140,7 @@ const handleProviderClick = async (provider: AIProvider) => {
             >
                 <component
                     :is="provider.logo"
-                    class="mr-2 -ml-1 h-7 w-7 flex-shrink-0"
+                    class="mr-2 -ml-1 h-7 w-7 shrink-0"
                 />
                 <span class="text-xs text-indigo-800">
                     {{ provider.name }}
