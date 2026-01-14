@@ -240,7 +240,7 @@
                 "stage3": {
                     "title": "Framework",
                     "description": "We select a framework tailored to your task.",
-                    "frameworkName": "STP + 4Ps",
+                    "frameworkName": "COAST",
                     "chipChallenge": "Challenge",
                     "chipObjective": "Objective",
                     "chipActions": "Actions",
