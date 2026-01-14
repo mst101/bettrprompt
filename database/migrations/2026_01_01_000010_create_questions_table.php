@@ -15,10 +15,9 @@ return new class extends Migration
             $table->string('id', 10)->primary(); // U1, D1, S1, COS3, etc.
             $table->text('question_text');
             $table->text('purpose');
-            $table->jsonb('cognitive_requirements')->nullable();
             $table->string('priority', 10); // high, medium, low
-            $table->string('category', 30); // universal, decision, strategy, co_star, etc.
-            $table->string('framework', 30)->nullable(); // co_star, react, self_refine, etc.
+            $table->string('task_category_code', 30)->nullable();
+            $table->string('framework_code', 30)->nullable();
             $table->boolean('is_universal')->default(false);
             $table->boolean('is_conditional')->default(false);
             $table->text('condition_text')->nullable(); // e.g., "research task", "technical task"
@@ -27,13 +26,23 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes for common queries
-            $table->index('category');
-            $table->index('framework');
             $table->index('priority');
             $table->index('is_active');
             $table->index('is_universal');
             $table->index('is_conditional');
-            $table->index(['category', 'framework']);
+            $table->index('task_category_code');
+            $table->index('framework_code');
+            $table->index(['task_category_code', 'framework_code']);
+
+            $table->foreign('task_category_code')
+                ->references('code')
+                ->on('task_categories')
+                ->restrictOnDelete();
+
+            $table->foreign('framework_code')
+                ->references('code')
+                ->on('frameworks')
+                ->restrictOnDelete();
         });
     }
 

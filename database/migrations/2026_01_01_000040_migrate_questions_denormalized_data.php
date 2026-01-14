@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,7 +13,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Map old lowercase category values to uppercase codes
+        if (! Schema::hasTable('questions')) {
+            return;
+        }
+
+        if (
+            ! Schema::hasColumn('questions', 'category')
+            && ! Schema::hasColumn('questions', 'framework')
+            && ! Schema::hasColumn('questions', 'cognitive_requirements')
+        ) {
+            return;
+        }
+
         $categoryMap = [
             'universal' => null, // Universal questions have no category
             'co_star' => 'CO_STAR',
@@ -31,7 +43,6 @@ return new class extends Migration
             'goal_setting' => 'GOAL_SETTING',
         ];
 
-        // Map old lowercase framework values to uppercase codes
         $frameworkMap = [
             'co_star' => 'CO_STAR',
             'react' => 'REACT',
@@ -42,9 +53,10 @@ return new class extends Migration
             'atomic_prompting' => 'ATOMIC_PROMPTING',
         ];
 
-        // Migrate task_category_code and framework_code from old string columns
         DB::table('questions')->get()->each(function ($question) use ($categoryMap, $frameworkMap) {
-            $categoryCode = $categoryMap[$question->category] ?? strtoupper(str_replace(' ', '_', $question->category));
+            $categoryCode = $question->category
+                ? ($categoryMap[$question->category] ?? strtoupper(str_replace(' ', '_', $question->category)))
+                : null;
             $frameworkCode = $question->framework
                 ? ($frameworkMap[$question->framework] ?? strtoupper(str_replace(' ', '_', $question->framework)))
                 : null;
@@ -57,7 +69,10 @@ return new class extends Migration
                 ]);
         });
 
-        // Migrate cognitive_requirements JSONB to junction table
+        if (! Schema::hasTable('question_cognitive_requirements')) {
+            return;
+        }
+
         DB::table('questions')
             ->whereNotNull('cognitive_requirements')
             ->get()
@@ -69,7 +84,7 @@ return new class extends Migration
                         DB::table('question_cognitive_requirements')->insertOrIgnore([
                             'question_id' => $question->id,
                             'cognitive_requirement_code' => $reqCode,
-                            'requirement_level' => 'primary', // Default to primary
+                            'requirement_level' => 'primary',
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -83,13 +98,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Clear new columns
-        DB::table('questions')->update([
-            'task_category_code' => null,
-            'framework_code' => null,
-        ]);
+        if (Schema::hasTable('questions')) {
+            DB::table('questions')->update([
+                'task_category_code' => null,
+                'framework_code' => null,
+            ]);
+        }
 
-        // Clear junction table
-        DB::table('question_cognitive_requirements')->truncate();
+        if (Schema::hasTable('question_cognitive_requirements')) {
+            DB::table('question_cognitive_requirements')->truncate();
+        }
     }
 };

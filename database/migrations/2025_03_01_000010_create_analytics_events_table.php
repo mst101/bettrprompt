@@ -49,6 +49,16 @@ return new class extends Migration
             $table->index(['name', 'occurred_at']);
             $table->index(['type', 'occurred_at']);
             $table->index(['session_id', 'occurred_at']);
+
+            $table->foreign('visitor_id')
+                ->references('id')
+                ->on('visitors')
+                ->nullOnDelete();
+
+            $table->foreign('session_id')
+                ->references('id')
+                ->on('analytics_sessions')
+                ->nullOnDelete();
         });
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary(); // The analytics_session_id
 
             // Identity
-            $table->uuid('visitor_id')->index();
+            $table->uuid('visitor_id')->nullable()->index();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
 
             // Timing
@@ -56,6 +56,11 @@ return new class extends Migration
             $table->index(['visitor_id', 'started_at']);
             $table->index('ended_at');
             $table->index(['converted', 'started_at']);
+
+            $table->foreign('visitor_id')
+                ->references('id')
+                ->on('visitors')
+                ->nullOnDelete();
         });
     }
 
