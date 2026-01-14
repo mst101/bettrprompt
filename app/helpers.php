@@ -28,6 +28,8 @@ function inertiaPaginated($paginator, $resource): array
  * @param  bool  $absolute  Whether to return absolute URL
  * @return string The generated route URL
  */
+use App\Http\Middleware\SetCountry;
+
 function countryRoute(string $name, mixed $parameters = [], bool $absolute = true): string
 {
     if (! is_array($parameters)) {
@@ -36,7 +38,8 @@ function countryRoute(string $name, mixed $parameters = [], bool $absolute = tru
 
     // Add country if not already present
     if (! isset($parameters['country'])) {
-        $parameters['country'] = request()->route('country');
+        $parameters['country'] = request()->route('country')
+            ?? SetCountry::detectCountry(request());
     }
 
     return route($name, $parameters, $absolute);
