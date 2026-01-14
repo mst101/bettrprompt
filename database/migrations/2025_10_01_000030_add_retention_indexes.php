@@ -21,6 +21,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         Schema::table('visitors', function (Blueprint $table) {
             // Check if index doesn't exist before creating
             $indexName = 'visitors_last_visit_at_index';
@@ -81,6 +85,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'pgsql') {
+            return;
+        }
+
         Schema::table('visitors', function (Blueprint $table) {
             $table->dropIndex(['last_visit_at']);
             $table->dropIndex(['user_id', 'converted_at']);

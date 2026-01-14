@@ -431,3 +431,13 @@ Potential events for future implementation:
 - Frontend service: `resources/js/services/analytics.ts`
 - Backend controller: `app/Http/Controllers/Api/AnalyticsEventController.php`
 - Job processing: `app/Jobs/ProcessAnalyticsEvents.php`
+
+## Testing
+
+- **`tests/Feature/AnalyticsEventsControllerTest.php`** exercises `/api/analytics/events` with a valid payload (visitor cookie + headers) to ensure it returns the queued response and rejects empty event lists. `Bus::fake()` keeps the job from running, so the assertion focuses on the controller layer.
+- **`tests/Unit/ProcessAnalyticsEventsTest.php`** reflects into `ProcessAnalyticsEvents` to verify enrichment of visitor, session, and page context, the rejection of malformed payloads, and the event-type derivation logic that keeps the documented categories (`conversion`, `error`, `system`, `engagement`) consistent.
+- Run the checks with the lightweight SQLite command below to avoid needing Postgres locally:
+
+```bash
+DB_CONNECTION=sqlite DB_DATABASE=:memory: ./vendor/bin/pest tests/Feature/AnalyticsEventsControllerTest.php tests/Unit/ProcessAnalyticsEventsTest.php
+```
