@@ -66,6 +66,17 @@ it('derives event types from naming conventions', function () {
     expect(AnalyticsEvent::deriveType('prompt_started'))->toBe('engagement');
 });
 
+it('serializes properties before inserting', function () {
+    $job = new ProcessAnalyticsEvents(events: []);
+
+    $arrayProperties = ['a' => 'b'];
+    $json = callJobMethod($job, 'jsonEncodeProperties', [$arrayProperties]);
+
+    expect($json)->toBe(json_encode($arrayProperties, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    expect(callJobMethod($job, 'jsonEncodeProperties', [null]))->toBeNull();
+    expect(callJobMethod($job, 'jsonEncodeProperties', ['raw']))->toBe('raw');
+});
+
 function callJobMethod(ProcessAnalyticsEvents $job, string $method, array $arguments = [])
 {
     $reflection = new \ReflectionMethod(ProcessAnalyticsEvents::class, $method);

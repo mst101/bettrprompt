@@ -454,9 +454,28 @@ class ProcessAnalyticsEvents implements ShouldQueue
      */
     private function batchInsertEvents(array $events): void
     {
+        $prepared = array_map(function (array $event) {
+            $event['properties'] = $this->jsonEncodeProperties($event['properties'] ?? null);
+
+            return $event;
+        }, $events);
+
         // Use insertOrIgnore to prevent duplicate event_ids
         // This achieves idempotency: if the same event_id is sent multiple times,
         // only the first insert succeeds
-        DB::table('analytics_events')->insertOrIgnore($events);
+        DB::table('analytics_events')->insertOrIgnore($prepared);
+    }
+
+    private function jsonEncodeProperties(mixed $properties): ?string
+    {
+        if ($properties === null) {
+            return null;
+        }
+
+        if (is_string($properties)) {
+            return $properties;
+        }
+
+        return json_encode($properties, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }
