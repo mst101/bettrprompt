@@ -16,7 +16,7 @@ class FeedbackController extends Controller
         $existingFeedback = Feedback::findByUser(auth()->id());
 
         if ($existingFeedback) {
-            return redirect()->route('feedback.show');
+            return redirect()->route('feedback.show', ['country' => request()->route('country')]);
         }
 
         return Inertia::render('Feedback/Create');
@@ -27,7 +27,7 @@ class FeedbackController extends Controller
         $feedback = Feedback::findByUser(auth()->id());
 
         if (! $feedback) {
-            return redirect()->route('feedback.create');
+            return redirect()->route('feedback.create', ['country' => request()->route('country')]);
         }
 
         return Inertia::render('Feedback/Show', [
@@ -59,7 +59,7 @@ class FeedbackController extends Controller
             'desired_features_other' => $validated['desired_features_other'] ?? null,
         ]);
 
-        return redirect()->route('feedback.thank-you')
+        return redirect()->route('feedback.thank-you', ['country' => request()->route('country')])
             ->with('success', __('messages.feedback.thank_you'));
     }
 
@@ -78,7 +78,7 @@ class FeedbackController extends Controller
             'desired_features_other' => $validated['desired_features_other'] ?? null,
         ]);
 
-        return redirect()->route('feedback.show')
+        return redirect()->route('feedback.show', ['country' => request()->route('country')])
             ->with('success', __('messages.feedback.thank_you_update'));
     }
 
@@ -87,13 +87,13 @@ class FeedbackController extends Controller
         $feedback = Feedback::findByUser(auth()->id());
 
         if (! $feedback) {
-            return redirect()->route('feedback.create');
+            return redirect()->route('feedback.create', ['country' => request()->route('country')]);
         }
 
         // Get or generate referral code
         $user = auth()->user();
         $referralCode = $user->getReferralCode();
-        $referralUrl = route('home', ['ref' => $referralCode]);
+        $referralUrl = route('home', ['country' => request()->route('country'), 'ref' => $referralCode]);
 
         return Inertia::render('Feedback/ThankYou', [
             'referralUrl' => $referralUrl,
