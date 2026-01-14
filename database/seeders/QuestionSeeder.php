@@ -38,27 +38,17 @@ class QuestionSeeder extends Seeder
                 continue;
             }
 
-            // Parse cognitive requirements JSON
-            $cognitiveRequirements = null;
-            if (! empty($row[3])) {
-                $decoded = json_decode($row[3], true);
-                if (is_array($decoded)) {
-                    $cognitiveRequirements = $decoded;
-                }
-            }
-
             $questionsToInsert[] = [
                 'id' => $questionId,
                 'question_text' => $row[1],
                 'purpose' => $row[2],
-                'cognitive_requirements' => $cognitiveRequirements ? json_encode($cognitiveRequirements) : null,
-                'priority' => $row[4],
-                'category' => $row[5],
-                'framework' => $row[6] ?: null,
-                'is_universal' => (bool) $row[7],
-                'is_conditional' => (bool) $row[8],
-                'condition_text' => $row[9] ?: null,
-                'display_order' => (int) $row[10],
+                'priority' => $row[3],
+                'task_category_code' => $row[4] ?: null,
+                'framework_code' => $row[5] ?: null,
+                'is_universal' => (bool) $row[6],
+                'is_conditional' => (bool) $row[7],
+                'condition_text' => $row[8] ?: null,
+                'display_order' => (int) $row[9],
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -72,7 +62,7 @@ class QuestionSeeder extends Seeder
             DB::table('questions')->upsert(
                 $questionsToInsert,
                 ['id'],
-                ['question_text', 'purpose', 'cognitive_requirements', 'priority', 'category', 'framework', 'is_universal', 'is_conditional', 'condition_text', 'display_order', 'updated_at']
+                ['question_text', 'purpose', 'priority', 'task_category_code', 'framework_code', 'is_universal', 'is_conditional', 'condition_text', 'display_order', 'updated_at']
             );
         }
     }

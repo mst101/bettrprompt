@@ -22,20 +22,20 @@ class QuestionController extends Controller
     {
         $questions = Question::with('variants')
             ->when($request->filled('category'), function ($query) use ($request) {
-                return $query->where('category', $request->category);
+                return $query->where('task_category_code', $request->category);
             })
             ->when($request->filled('framework'), function ($query) use ($request) {
-                return $query->where('framework', $request->framework);
+                return $query->where('framework_code', $request->framework);
             })
             ->when($request->filled('search'), function ($query) use ($request) {
                 return $query->where('question_text', 'ilike', '%'.$request->search.'%');
             })
-            ->orderBy('category')
+            ->orderBy('task_category_code')
             ->orderBy('display_order')
             ->paginate(25);
 
-        $categories = Question::distinct('category')->pluck('category')->sort();
-        $frameworks = Question::whereNotNull('framework')->distinct('framework')->pluck('framework')->sort();
+        $categories = Question::distinct('task_category_code')->whereNotNull('task_category_code')->pluck('task_category_code')->sort();
+        $frameworks = Question::distinct('framework_code')->whereNotNull('framework_code')->pluck('framework_code')->sort();
 
         return Inertia::render('Admin/Questions/Index', [
             'questions' => QuestionResource::collection($questions)->response()->getData(true),
@@ -50,8 +50,8 @@ class QuestionController extends Controller
      */
     public function create(): Response
     {
-        $categories = Question::distinct('category')->pluck('category')->sort();
-        $frameworks = Question::whereNotNull('framework')->distinct('framework')->pluck('framework')->sort();
+        $categories = Question::distinct('task_category_code')->whereNotNull('task_category_code')->pluck('task_category_code')->sort();
+        $frameworks = Question::distinct('framework_code')->whereNotNull('framework_code')->pluck('framework_code')->sort();
 
         return Inertia::render('Admin/Questions/Create', [
             'categories' => $categories,
@@ -78,8 +78,8 @@ class QuestionController extends Controller
     {
         $question->load('variants');
 
-        $categories = Question::distinct('category')->pluck('category')->sort();
-        $frameworks = Question::whereNotNull('framework')->distinct('framework')->pluck('framework')->sort();
+        $categories = Question::distinct('task_category_code')->whereNotNull('task_category_code')->pluck('task_category_code')->sort();
+        $frameworks = Question::distinct('framework_code')->whereNotNull('framework_code')->pluck('framework_code')->sort();
         $personalityPatterns = ['high_t_high_j', 'high_f_high_j', 'high_t_high_p', 'high_f_high_p', 'high_a', 'high_t_identity', 'high_s', 'high_n', 'high_t', 'high_f', 'high_j', 'high_p', 'neutral'];
 
         return Inertia::render('Admin/Questions/Edit', [

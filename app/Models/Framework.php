@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Framework extends Model
 {
@@ -31,6 +32,14 @@ class Framework extends Model
         'is_active' => 'boolean',
         'display_order' => 'integer',
     ];
+
+    /**
+     * Get all questions that use this framework.
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'framework_code', 'code');
+    }
 
     public function cognitiveRequirements(): BelongsToMany
     {

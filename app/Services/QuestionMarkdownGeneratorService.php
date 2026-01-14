@@ -74,7 +74,7 @@ MD;
      */
     protected function buildUniversalQuestionsSection(): string
     {
-        $questions = Question::where('category', 'universal')->active()->orderBy('display_order')->get();
+        $questions = Question::universal()->active()->orderBy('display_order')->get();
 
         $md = [];
         $md[] = '## Universal Questions';
@@ -87,8 +87,8 @@ MD;
         $md[] = '|----|----------|---------|----------------|----------|';
 
         foreach ($questions as $question) {
-            $cogReqs = $question->cognitive_requirements
-                ? implode(', ', array_map(fn ($r) => "`$r`", $question->cognitive_requirements))
+            $cogReqs = $question->cognitiveRequirements->isNotEmpty()
+                ? implode(', ', $question->cognitiveRequirements->pluck('code')->map(fn ($code) => "`$code`")->toArray())
                 : '';
             $md[] = "| {$question->id} | {$question->question_text} | {$question->purpose} | {$cogReqs} | {$question->priority} |";
         }
@@ -122,18 +122,18 @@ MD;
     protected function buildFrameworkSpecificSections(): string
     {
         $frameworks = [
-            'co_star' => 'CO-STAR Tasks (Content with Tone/Style Requirements)',
-            'react' => 'ReAct Tasks (Agentic/Tool-Using Workflows)',
-            'self_refine' => 'Self-Refine Tasks (Quality-Critical Iterative Work)',
-            'step_back' => 'Step-Back Tasks (Principle-Based Reasoning)',
-            'skeleton_of_thought' => 'Skeleton-of-Thought Tasks (Structured Parallel Content)',
-            'meta_prompting' => 'Meta Prompting Tasks (Prompt Optimisation)',
+            'CO_STAR' => 'CO-STAR Tasks (Content with Tone/Style Requirements)',
+            'REACT' => 'ReAct Tasks (Agentic/Tool-Using Workflows)',
+            'SELF_REFINE' => 'Self-Refine Tasks (Quality-Critical Iterative Work)',
+            'STEP_BACK' => 'Step-Back Tasks (Principle-Based Reasoning)',
+            'SKELETON_OF_THOUGHT' => 'Skeleton-of-Thought Tasks (Structured Parallel Content)',
+            'META_PROMPTING' => 'Meta Prompting Tasks (Prompt Optimisation)',
         ];
 
         $sections = [];
 
-        foreach ($frameworks as $frameworkId => $frameworkTitle) {
-            $questions = Question::where('framework', $frameworkId)
+        foreach ($frameworks as $frameworkCode => $frameworkTitle) {
+            $questions = Question::where('framework_code', $frameworkCode)
                 ->where('is_conditional', false)
                 ->active()
                 ->orderBy('display_order')
@@ -152,8 +152,8 @@ MD;
             $md[] = '|----|----------|---------|----------------|----------|';
 
             foreach ($questions as $question) {
-                $cogReqs = $question->cognitive_requirements
-                    ? implode(', ', array_map(fn ($r) => "`$r`", $question->cognitive_requirements))
+                $cogReqs = $question->cognitiveRequirements->isNotEmpty()
+                    ? implode(', ', $question->cognitiveRequirements->pluck('code')->map(fn ($code) => "`$code`")->toArray())
                     : '';
                 $md[] = "| {$question->id} | {$question->question_text} | {$question->purpose} | {$cogReqs} | {$question->priority} |";
             }
@@ -175,7 +175,7 @@ MD;
             }
 
             // Add conditional questions
-            $conditionalQuestions = Question::where('framework', $frameworkId)
+            $conditionalQuestions = Question::where('framework_code', $frameworkCode)
                 ->where('is_conditional', true)
                 ->active()
                 ->get();
@@ -202,24 +202,24 @@ MD;
     protected function buildCategorySpecificSections(): string
     {
         $categories = [
-            'decision' => 'DECISION Tasks',
-            'strategy' => 'STRATEGY Tasks',
-            'analysis' => 'ANALYSIS Tasks',
-            'creation_content' => 'CREATION_CONTENT Tasks',
-            'creation_technical' => 'CREATION_TECHNICAL Tasks',
-            'ideation' => 'IDEATION Tasks',
-            'problem_solving' => 'PROBLEM_SOLVING Tasks',
-            'learning' => 'LEARNING Tasks',
-            'persuasion' => 'PERSUASION Tasks',
-            'feedback' => 'FEEDBACK Tasks',
-            'research' => 'RESEARCH Tasks',
-            'goal_setting' => 'GOAL_SETTING Tasks',
+            'DECISION' => 'DECISION Tasks',
+            'STRATEGY' => 'STRATEGY Tasks',
+            'ANALYSIS' => 'ANALYSIS Tasks',
+            'CREATION_CONTENT' => 'CREATION_CONTENT Tasks',
+            'CREATION_TECHNICAL' => 'CREATION_TECHNICAL Tasks',
+            'IDEATION' => 'IDEATION Tasks',
+            'PROBLEM_SOLVING' => 'PROBLEM_SOLVING Tasks',
+            'LEARNING' => 'LEARNING Tasks',
+            'PERSUASION' => 'PERSUASION Tasks',
+            'FEEDBACK' => 'FEEDBACK Tasks',
+            'RESEARCH' => 'RESEARCH Tasks',
+            'GOAL_SETTING' => 'GOAL_SETTING Tasks',
         ];
 
         $sections = [];
 
-        foreach ($categories as $categoryId => $categoryTitle) {
-            $questions = Question::where('category', $categoryId)
+        foreach ($categories as $categoryCode => $categoryTitle) {
+            $questions = Question::where('task_category_code', $categoryCode)
                 ->where('is_universal', false)
                 ->where('is_conditional', false)
                 ->active()
@@ -239,14 +239,14 @@ MD;
             $md[] = '|----|----------|---------|----------------|----------|';
 
             foreach ($questions as $question) {
-                $cogReqs = $question->cognitive_requirements
-                    ? implode(', ', array_map(fn ($r) => "`$r`", $question->cognitive_requirements))
+                $cogReqs = $question->cognitiveRequirements->isNotEmpty()
+                    ? implode(', ', $question->cognitiveRequirements->pluck('code')->map(fn ($code) => "`$code`")->toArray())
                     : '';
                 $md[] = "| {$question->id} | {$question->question_text} | {$question->purpose} | {$cogReqs} | {$question->priority} |";
             }
 
             // Add conditional questions
-            $conditionalQuestions = Question::where('category', $categoryId)
+            $conditionalQuestions = Question::where('task_category_code', $categoryCode)
                 ->where('is_conditional', true)
                 ->active()
                 ->get();
@@ -272,7 +272,9 @@ MD;
      */
     protected function buildFrameworkSelectionSection(): string
     {
-        $questions = Question::where('category', 'framework_selection')->active()->orderBy('display_order')->get();
+        // Framework selection questions are not currently categorised in the database
+        // This section is a placeholder for future expansion
+        $questions = collect();
 
         if ($questions->isEmpty()) {
             return '';

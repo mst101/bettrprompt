@@ -30,6 +30,19 @@ class CognitiveRequirement extends Model
         'display_order' => 'integer',
     ];
 
+    /**
+     * Get all questions that require this cognitive requirement.
+     */
+    public function questions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Question::class,
+            'question_cognitive_requirements',
+            'cognitive_requirement_code',
+            'question_id'
+        )->withPivot('requirement_level')->withTimestamps();
+    }
+
     public function frameworks(): BelongsToMany
     {
         return $this->belongsToMany(

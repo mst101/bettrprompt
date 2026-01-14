@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
@@ -20,10 +22,9 @@ class Question extends Model
         'id',
         'question_text',
         'purpose',
-        'cognitive_requirements',
         'priority',
-        'category',
-        'framework',
+        'task_category_code',
+        'framework_code',
         'is_universal',
         'is_conditional',
         'condition_text',
@@ -32,7 +33,6 @@ class Question extends Model
     ];
 
     protected $casts = [
-        'cognitive_requirements' => 'array',
         'is_universal' => 'boolean',
         'is_conditional' => 'boolean',
         'is_active' => 'boolean',
@@ -47,6 +47,35 @@ class Question extends Model
     }
 
     /**
+     * Get the task category for this question.
+     */
+    public function taskCategory(): BelongsTo
+    {
+        return $this->belongsTo(TaskCategory::class, 'task_category_code', 'code');
+    }
+
+    /**
+     * Get the framework for this question.
+     */
+    public function framework(): BelongsTo
+    {
+        return $this->belongsTo(Framework::class, 'framework_code', 'code');
+    }
+
+    /**
+     * Get the cognitive requirements for this question.
+     */
+    public function cognitiveRequirements(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CognitiveRequirement::class,
+            'question_cognitive_requirements',
+            'question_id',
+            'cognitive_requirement_code'
+        )->withPivot('requirement_level')->withTimestamps();
+    }
+
+    /**
      * Scope: Filter active questions only.
      */
     public function scopeActive($query)
@@ -57,17 +86,17 @@ class Question extends Model
     /**
      * Scope: Filter by category.
      */
-    public function scopeByCategory($query, string $category)
+    public function scopeByCategory($query, string $categoryCode)
     {
-        return $query->where('category', $category);
+        return $query->where('task_category_code', $categoryCode);
     }
 
     /**
      * Scope: Filter by framework.
      */
-    public function scopeByFramework($query, string $framework)
+    public function scopeByFramework($query, string $frameworkCode)
     {
-        return $query->where('framework', $framework);
+        return $query->where('framework_code', $frameworkCode);
     }
 
     /**
@@ -75,7 +104,7 @@ class Question extends Model
      */
     public function scopeUniversal($query)
     {
-        return $query->where('is_universal', true);
+        return $query->whereNull('task_category_code')->whereNull('framework_code');
     }
 
     /**

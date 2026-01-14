@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskCategory extends Model
 {
@@ -27,6 +28,14 @@ class TaskCategory extends Model
         'is_active' => 'boolean',
         'display_order' => 'integer',
     ];
+
+    /**
+     * Get all questions in this task category.
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'task_category_code', 'code');
+    }
 
     public function cognitiveRequirements(): BelongsToMany
     {

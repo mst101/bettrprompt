@@ -13,7 +13,6 @@ import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
 
 interface Props {
     categories: string[];
@@ -29,53 +28,17 @@ defineOptions({
 const { countryRoute } = useCountryRoute();
 useNotification();
 
-const cognitiveReqOptions = [
-    'STRUCTURE',
-    'DETAIL',
-    'DECISIVE',
-    'OBJECTIVE',
-    'EMPATHY',
-    'PERSUASION',
-    'SYNTHESIS',
-    'EXPLORE',
-    'ITERATIVE',
-    'AGENTIC',
-    'RISK',
-    'CREATIVE',
-    'WARM',
-    'PEDAGOGY',
-    'ABSTRACTION',
-    'VISION',
-    'PARALLEL',
-];
-
 const form = useForm({
     id: '',
     questionText: '',
     purpose: '',
-    cognitiveRequirements: [] as string[],
     priority: 'high',
-    category: '',
-    framework: '',
+    taskCategoryCode: '',
+    frameworkCode: '',
     isUniversal: false,
     isConditional: false,
     conditionText: '',
     displayOrder: 0,
-});
-
-const selectedCogReqs = ref<string[]>([]);
-
-const toggleCogReq = (req: string) => {
-    const index = selectedCogReqs.value.indexOf(req);
-    if (index > -1) {
-        selectedCogReqs.value.splice(index, 1);
-    } else {
-        selectedCogReqs.value.push(req);
-    }
-};
-
-watch(selectedCogReqs, (newValue) => {
-    form.cognitiveRequirements = newValue;
 });
 
 const submit = () => {
@@ -127,24 +90,6 @@ const submit = () => {
                     :error="form.errors.purpose"
                 />
 
-                <!-- Cognitive Requirements -->
-                <div>
-                    <label class="block font-medium text-indigo-900">
-                        Cognitive Requirements
-                    </label>
-                    <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                        <FormCheckbox
-                            v-for="req in cognitiveReqOptions"
-                            :id="`cog-req-${req}`"
-                            :key="req"
-                            :label="req"
-                            :checked="selectedCogReqs.includes(req)"
-                            data-testid="cognitive-requirement"
-                            @update:checked="toggleCogReq(req)"
-                        />
-                    </div>
-                </div>
-
                 <!-- Priority -->
                 <FormSelect
                     id="priority"
@@ -161,12 +106,12 @@ const submit = () => {
 
                 <!-- Category -->
                 <FormSelect
-                    id="category"
-                    v-model="form.category"
+                    id="task-category-code"
+                    v-model="form.taskCategoryCode"
                     label="Category"
-                    data-testid="category"
+                    data-testid="task-category-code"
                     required
-                    :error="form.errors.category"
+                    :error="form.errors.taskCategoryCode"
                 >
                     <option value="">Select a category...</option>
                     <option v-for="cat in categories" :key="cat" :value="cat">
@@ -176,11 +121,11 @@ const submit = () => {
 
                 <!-- Framework -->
                 <FormSelect
-                    id="framework"
-                    v-model="form.framework"
+                    id="framework-code"
+                    v-model="form.frameworkCode"
                     label="Framework"
-                    data-testid="framework"
-                    :error="form.errors.framework"
+                    data-testid="framework-code"
+                    :error="form.errors.frameworkCode"
                 >
                     <option value="">None (optional)</option>
                     <option v-for="fw in frameworks" :key="fw" :value="fw">

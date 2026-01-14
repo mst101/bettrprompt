@@ -17,8 +17,8 @@ interface Question {
     id: string;
     questionText: string;
     purpose: string;
-    category: string;
-    framework: string | null;
+    taskCategoryCode: string | null;
+    frameworkCode: string | null;
     priority: string;
     isUniversal: boolean;
     variantsCount: number;
@@ -323,17 +323,19 @@ const regenerateMarkdown = async () => {
                             </td>
                             <td class="px-4 py-3 text-sm text-indigo-700">
                                 <span
+                                    v-if="question.taskCategoryCode"
                                     class="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800"
                                 >
-                                    {{ question.category }}
+                                    {{ question.taskCategoryCode }}
                                 </span>
+                                <span v-else class="text-indigo-400">—</span>
                             </td>
                             <td class="px-4 py-3 text-sm text-indigo-700">
                                 <span
-                                    v-if="question.framework"
+                                    v-if="question.frameworkCode"
                                     class="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800"
                                 >
-                                    {{ question.framework }}
+                                    {{ question.frameworkCode }}
                                 </span>
                                 <span v-else class="text-indigo-400">—</span>
                             </td>
