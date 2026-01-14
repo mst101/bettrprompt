@@ -31,7 +31,6 @@ return new class extends Migration
             // Visit tracking
             $table->timestamp('first_visit_at');
             $table->timestamp('last_visit_at');
-            $table->integer('visit_count')->default(1);
             $table->timestamp('converted_at')->nullable(); // When user_id was set
             $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->index('referred_by_user_id');
@@ -70,9 +69,12 @@ return new class extends Migration
 
             // Indexes for performance
             $table->index(['user_id', 'first_visit_at']);
+            $table->index(['user_id', 'converted_at']);
             $table->index('converted_at');
             $table->index('country_code');
             $table->index('timezone');
+            $table->index('last_visit_at');
+            $table->index(['utm_source', 'last_visit_at']);
         });
     }
 

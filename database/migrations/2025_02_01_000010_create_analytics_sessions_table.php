@@ -54,6 +54,7 @@ return new class extends Migration
 
             // Indexes
             $table->index(['visitor_id', 'started_at']);
+            $table->index('ended_at');
             $table->index(['converted', 'started_at']);
         });
     }

@@ -49,6 +49,7 @@ return new class extends Migration
 
             $table->timestamps();
 
+            $table->index('ended_at');
             $table->index(['status', 'started_at']);
         });
 

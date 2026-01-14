@@ -50,6 +50,8 @@ return new class extends Migration
             $table->index(['funnel_id', 'visitor_id']);
             $table->index(['funnel_id', 'is_converted']);
             $table->index('conversion_date');
+            $table->index('updated_at');
+            $table->index('is_converted');
         });
 
         // Funnel Daily Stats
