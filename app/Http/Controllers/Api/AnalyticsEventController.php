@@ -27,9 +27,15 @@ class AnalyticsEventController extends Controller
         $pagePath = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
-        // Extract UTM parameters from the referrer (page URL)
+        // Extract UTM parameters from the referrer (page URL) first
         $referrer = $request->header('Referer');
         $utmParams = $this->extractUtmFromUrl($referrer);
+
+        // Fall back to utm_params cookie if not found in referrer
+        // (cookie is set by TrackVisitor middleware and survives redirects)
+        if (! array_filter($utmParams)) {
+            $utmParams = $this->extractUtmFromCookie($request->cookie('utm_params'));
+        }
 
         // Dispatch job to process events asynchronously
         ProcessAnalyticsEvents::dispatch(
@@ -71,6 +77,33 @@ class AnalyticsEventController extends Controller
         }
 
         return 'desktop';
+    }
+
+    /**
+     * Extract UTM parameters from the utm_params cookie
+     */
+    private function extractUtmFromCookie(?string $cookieValue): array
+    {
+        $params = ['utm_source' => null, 'utm_medium' => null, 'utm_campaign' => null];
+
+        if (! $cookieValue) {
+            return $params;
+        }
+
+        try {
+            $decoded = json_decode($cookieValue, true);
+            if (is_array($decoded)) {
+                return [
+                    'utm_source' => $decoded['utm_source'] ?? null,
+                    'utm_medium' => $decoded['utm_medium'] ?? null,
+                    'utm_campaign' => $decoded['utm_campaign'] ?? null,
+                ];
+            }
+        } catch (\Exception $e) {
+            // Invalid JSON in cookie, return defaults
+        }
+
+        return $params;
     }
 
     /**

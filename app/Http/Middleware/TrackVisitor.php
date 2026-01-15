@@ -71,6 +71,20 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
+        // Store current utm params in a cookie (refreshed on each visit)
+        // This preserves utm params through redirects
+        $utmParams = [
+            'utm_source' => $request->query('utm_source'),
+            'utm_medium' => $request->query('utm_medium'),
+            'utm_campaign' => $request->query('utm_campaign'),
+            'utm_term' => $request->query('utm_term'),
+            'utm_content' => $request->query('utm_content'),
+        ];
+        // Only set cookie if there are utm params present
+        if (array_filter($utmParams)) {
+            Cookie::queue('utm_params', json_encode($utmParams), 60); // 1 hour
+        }
+
         // Process the request
         $response = $next($request);
 
