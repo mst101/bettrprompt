@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAnalyticsEventsRequest;
 use App\Jobs\ProcessAnalyticsEvents;
+use App\Models\Visitor;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
@@ -29,16 +30,15 @@ class AnalyticsEventController extends Controller
         $referrer = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
-        // Get UTM parameters from request attributes (set by TrackVisitor middleware if present in current request)
-        $currentUtmParams = $request->attributes->get('current_utm_params', []);
+        // Load visitor to get current utm values (updated on each visit with utm params)
+        $visitor = $visitorId ? Visitor::find($visitorId) : null;
         $utmParams = [
-            'utm_source' => $currentUtmParams['utm_source'] ?? null,
-            'utm_medium' => $currentUtmParams['utm_medium'] ?? null,
-            'utm_campaign' => $currentUtmParams['utm_campaign'] ?? null,
+            'utm_source' => $visitor?->current_utm_source,
+            'utm_medium' => $visitor?->current_utm_medium,
+            'utm_campaign' => $visitor?->current_utm_campaign,
         ];
 
-        Log::info('AnalyticsEventController: utm params', [
-            'has_current_utm_params' => ! empty($currentUtmParams),
+        Log::info('AnalyticsEventController: utm params from visitor', [
             'utm_source' => $utmParams['utm_source'],
             'utm_medium' => $utmParams['utm_medium'],
             'utm_campaign' => $utmParams['utm_campaign'],

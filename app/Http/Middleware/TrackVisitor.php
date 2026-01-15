@@ -46,9 +46,9 @@ class TrackVisitor
             $visitorExists = Visitor::where('id', $visitorId)->exists();
 
             if ($visitorExists) {
-                // Existing visitor - update their record
+                // Existing visitor - update their record (including current utm params if present)
                 //                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
-                $this->updateVisitor($visitorId);
+                $this->updateVisitor($visitorId, $currentUtmParams);
             } else {
                 // Cookie exists but visitor not in DB (e.g., database was cleared)
                 // Create new visitor with new ID
@@ -71,20 +71,20 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Store current utm params in request attributes so they're available to controllers
+        // Capture and store current utm params if present
+        $currentUtmParams = null;
         if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
-            $utmData = [
+            $currentUtmParams = [
                 'utm_source' => $request->query('utm_source'),
                 'utm_medium' => $request->query('utm_medium'),
                 'utm_campaign' => $request->query('utm_campaign'),
                 'utm_term' => $request->query('utm_term'),
                 'utm_content' => $request->query('utm_content'),
             ];
-            $request->attributes->set('current_utm_params', $utmData);
             Log::info('TrackVisitor: captured utm params', [
-                'utm_source' => $utmData['utm_source'],
-                'utm_medium' => $utmData['utm_medium'],
-                'utm_campaign' => $utmData['utm_campaign'],
+                'utm_source' => $currentUtmParams['utm_source'],
+                'utm_medium' => $currentUtmParams['utm_medium'],
+                'utm_campaign' => $currentUtmParams['utm_campaign'],
                 'visitor_id' => $visitorId,
             ]);
         }
@@ -195,13 +195,26 @@ class TrackVisitor
     /**
      * Update an existing visitor's last visit time.
      */
-    protected function updateVisitor(string $visitorId): void
+    protected function updateVisitor(string $visitorId, ?array $currentUtmParams = null): void
     {
         $visitor = Visitor::find($visitorId);
 
-        $visitor?->update([
+        if (! $visitor) {
+            return;
+        }
+
+        $updateData = [
             'last_visit_at' => now(),
-        ]);
+        ];
+
+        // Update current utm params if present in this visit
+        if ($currentUtmParams) {
+            $updateData['current_utm_source'] = $currentUtmParams['utm_source'];
+            $updateData['current_utm_medium'] = $currentUtmParams['utm_medium'];
+            $updateData['current_utm_campaign'] = $currentUtmParams['utm_campaign'];
+        }
+
+        $visitor->update($updateData);
     }
 
     /**
