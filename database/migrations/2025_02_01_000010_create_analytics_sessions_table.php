@@ -37,8 +37,6 @@ return new class extends Migration
 
             // Device (captured at session start)
             $table->string('device_type', 20)->nullable();
-            $table->string('browser', 50)->nullable();
-            $table->string('os', 50)->nullable();
             $table->string('country_code', 2)->nullable();
 
             // Outcomes

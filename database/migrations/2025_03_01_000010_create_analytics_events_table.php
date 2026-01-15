@@ -32,8 +32,6 @@ return new class extends Migration
             $table->string('page_path', 255)->nullable();
             $table->string('referrer', 500)->nullable();
             $table->string('device_type', 20)->nullable(); // desktop, mobile, tablet
-            $table->string('browser', 50)->nullable();
-            $table->string('os', 50)->nullable();
             $table->string('country_code', 2)->nullable();
 
             // Prompt context (when applicable)
@@ -41,8 +39,6 @@ return new class extends Migration
 
             // Timestamps
             $table->timestamp('occurred_at')->index(); // When event happened (client time)
-            $table->timestamp('received_at')->useCurrent(); // When server received it
-            $table->timestamps();
 
             // Query indexes
             $table->index(['visitor_id', 'occurred_at']);
