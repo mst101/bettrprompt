@@ -73,12 +73,19 @@ class TrackVisitor
 
         // Store current utm params in request attributes so they're available to controllers
         if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
-            $request->attributes->set('current_utm_params', [
+            $utmData = [
                 'utm_source' => $request->query('utm_source'),
                 'utm_medium' => $request->query('utm_medium'),
                 'utm_campaign' => $request->query('utm_campaign'),
                 'utm_term' => $request->query('utm_term'),
                 'utm_content' => $request->query('utm_content'),
+            ];
+            $request->attributes->set('current_utm_params', $utmData);
+            Log::info('TrackVisitor: captured utm params', [
+                'utm_source' => $utmData['utm_source'],
+                'utm_medium' => $utmData['utm_medium'],
+                'utm_campaign' => $utmData['utm_campaign'],
+                'visitor_id' => $visitorId,
             ]);
         }
 

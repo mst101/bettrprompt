@@ -37,6 +37,14 @@ class AnalyticsEventController extends Controller
             'utm_campaign' => $currentUtmParams['utm_campaign'] ?? null,
         ];
 
+        Log::info('AnalyticsEventController: utm params', [
+            'has_current_utm_params' => ! empty($currentUtmParams),
+            'utm_source' => $utmParams['utm_source'],
+            'utm_medium' => $utmParams['utm_medium'],
+            'utm_campaign' => $utmParams['utm_campaign'],
+            'visitor_id' => $visitorId,
+        ]);
+
         // Dispatch job to process events asynchronously
         ProcessAnalyticsEvents::dispatch(
             events: $validated['events'],
