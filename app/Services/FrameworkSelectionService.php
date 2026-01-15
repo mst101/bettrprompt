@@ -58,6 +58,41 @@ class FrameworkSelectionService
     }
 
     /**
+     * Update framework selection when user changes their choice
+     *
+     * Called when a user changes the chosen framework after seeing the recommendation
+     */
+    public function updateChosenFramework(
+        FrameworkSelection $selection,
+        string $newChosenFramework,
+    ): FrameworkSelection {
+        try {
+            $accepted = $selection->recommended_framework === $newChosenFramework;
+
+            $selection->update([
+                'chosen_framework' => $newChosenFramework,
+                'accepted_recommendation' => $accepted,
+            ]);
+
+            Log::info('Framework selection changed', [
+                'selection_id' => $selection->id,
+                'previous_choice' => $selection->getOriginal('chosen_framework'),
+                'new_choice' => $newChosenFramework,
+                'accepted' => $accepted,
+            ]);
+
+            return $selection->refresh();
+        } catch (\Exception $e) {
+            Log::error('Failed to update chosen framework', [
+                'selection_id' => $selection->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+    }
+
+    /**
      * Update framework selection with outcome metrics
      *
      * Called when the prompt is rated or interacted with

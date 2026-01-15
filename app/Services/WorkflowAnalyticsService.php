@@ -61,7 +61,7 @@ class WorkflowAnalyticsService
     ): WorkflowAnalytic {
         try {
             $completedAt = now();
-            $durationMs = $analytic->started_at->diffInMilliseconds($completedAt);
+            $durationMs = (int) $analytic->started_at->diffInMilliseconds($completedAt);
 
             $analytic->update([
                 'completed_at' => $completedAt,
@@ -105,7 +105,7 @@ class WorkflowAnalyticsService
     ): WorkflowAnalytic {
         try {
             $failedAt = now();
-            $durationMs = $analytic->started_at->diffInMilliseconds($failedAt);
+            $durationMs = (int) $analytic->started_at->diffInMilliseconds($failedAt);
 
             $analytic->update([
                 'completed_at' => $failedAt,
@@ -144,7 +144,7 @@ class WorkflowAnalyticsService
     {
         try {
             $timedOutAt = now();
-            $durationMs = $analytic->started_at->diffInMilliseconds($timedOutAt);
+            $durationMs = (int) $analytic->started_at->diffInMilliseconds($timedOutAt);
 
             $analytic->update([
                 'completed_at' => $timedOutAt,

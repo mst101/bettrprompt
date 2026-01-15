@@ -10,6 +10,8 @@ use App\Http\Controllers\MailgunWebhookController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
+use App\Services\FrameworkSelectionService;
+use App\Services\WorkflowAnalyticsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -127,32 +129,120 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             $promptRun->update($updateData);
 
+            // Record analytics for workflow completion/failure
+            $workflowAnalyticsService = app(WorkflowAnalyticsService::class);
+            $frameworkSelectionService = app(FrameworkSelectionService::class);
+
             // Broadcast events: 1_completed, 2_completed, _failed
             if ($workflowStage === '1_completed') {
                 try {
+                    // Record workflow 1 completion
+                    $stage = 1;
+                    $analytic = $promptRun->workflowAnalytics()
+                        ->where('workflow_stage', $stage)
+                        ->where('status', 'processing')
+                        ->latest()
+                        ->first();
+
+                    if ($analytic) {
+                        $apiUsage = $promptRun->analysis_api_usage ?? [];
+                        $workflowAnalyticsService->recordCompletion(
+                            analytic: $analytic,
+                            inputTokens: $apiUsage['input_tokens'] ?? null,
+                            outputTokens: $apiUsage['output_tokens'] ?? null,
+                            estimatedCostUsd: $apiUsage['cost'] ?? null,
+                            modelUsed: $apiUsage['model'] ?? null,
+                        );
+                    }
+
+                    // Record framework selection when analysis completes
+                    if ($promptRun->selected_framework) {
+                        $frameworkSelectionService->recordSelection(
+                            promptRun: $promptRun,
+                            visitorId: $promptRun->visitor_id,
+                            userId: $promptRun->user_id,
+                            recommendedFramework: $promptRun->selected_framework['code'],
+                            chosenFramework: $promptRun->selected_framework['code'],
+                            recommendationScores: $promptRun->alternative_frameworks ?? [],
+                            taskCategory: $promptRun->task_classification['primary_category'] ?? null,
+                            personalityType: $promptRun->personality_type,
+                        );
+                    }
+
+                    // Record question presentations when analysis completes
+                    if (! empty($promptRun->framework_questions)) {
+                        $questionService = app(\App\Services\QuestionAnalyticsService::class);
+                        foreach ($promptRun->framework_questions as $index => $question) {
+                            $questionService->recordPresentation(
+                                promptRun: $promptRun,
+                                visitorId: $promptRun->visitor_id,
+                                userId: $promptRun->user_id,
+                                questionId: $question['id'] ?? "Q{$index}",
+                                questionCategory: $question['category'] ?? 'framework',
+                                personalityVariant: $question['personality_variant'] ?? null,
+                                displayOrder: $index + 1,
+                                wasRequired: $question['required'] ?? true,
+                            );
+                        }
+                    }
+
                     event(new AnalysisCompleted($promptRun));
                 } catch (\Exception $e) {
-                    Log::error('Failed to broadcast AnalysisCompleted event', [
+                    Log::error('Failed to process analysis completion', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
                     ]);
                 }
             } elseif ($workflowStage === '2_completed') {
                 try {
+                    // Record workflow 2 completion
+                    $stage = 2;
+                    $analytic = $promptRun->workflowAnalytics()
+                        ->where('workflow_stage', $stage)
+                        ->where('status', 'processing')
+                        ->latest()
+                        ->first();
+
+                    if ($analytic) {
+                        $apiUsage = $promptRun->generation_api_usage ?? [];
+                        $workflowAnalyticsService->recordCompletion(
+                            analytic: $analytic,
+                            inputTokens: $apiUsage['input_tokens'] ?? null,
+                            outputTokens: $apiUsage['output_tokens'] ?? null,
+                            estimatedCostUsd: $apiUsage['cost'] ?? null,
+                            modelUsed: $apiUsage['model'] ?? null,
+                        );
+                    }
+
                     event(new PromptOptimizationCompleted($promptRun));
                 } catch (\Exception $e) {
-                    Log::error('Failed to broadcast PromptOptimizationCompleted event', [
+                    Log::error('Failed to process prompt optimization completion', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
                     ]);
                 }
             } elseif ($workflowStage && str_ends_with($workflowStage, '_failed')) {
                 try {
+                    // Record workflow failure
+                    $stage = (int) substr($workflowStage, 0, 1);
+                    $analytic = $promptRun->workflowAnalytics()
+                        ->where('workflow_stage', $stage)
+                        ->where('status', 'processing')
+                        ->latest()
+                        ->first();
+
+                    if ($analytic) {
+                        $workflowAnalyticsService->recordFailure(
+                            analytic: $analytic,
+                            errorCode: $request->input('error_context.error_type') ?? 'UNKNOWN_ERROR',
+                            errorMessage: $request->input('error_message') ?? 'Unknown error occurred',
+                        );
+                    }
+
                     event(new WorkflowFailed($promptRun));
 
                     // Trigger workflow failure alert
                     $alertService = app(AlertService::class);
-                    $stage = intval(substr($workflowStage, 0, 1)); // Extract stage number
                     $alertHistory = $alertService->triggerWorkflowAlert(
                         workflowStage: $stage,
                         status: 'failed',

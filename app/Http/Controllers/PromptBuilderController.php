@@ -25,6 +25,8 @@ use App\Models\PromptRun;
 use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
+use App\Services\QuestionAnalyticsService;
+use App\Services\WorkflowAnalyticsService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -34,6 +36,11 @@ use Inertia\Inertia;
 
 class PromptBuilderController extends Controller
 {
+    public function __construct(
+        private WorkflowAnalyticsService $workflowAnalytics,
+        private QuestionAnalyticsService $questionAnalytics,
+    ) {}
+
     /**
      * Display the prompt builder landing page
      */
@@ -183,6 +190,9 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
+            // Record workflow 0 start in analytics
+            $this->workflowAnalytics->recordStart($promptRun, 0);
+
             // Track prompt started
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
@@ -254,6 +264,10 @@ class PromptBuilderController extends Controller
                 ]);
             });
 
+            // Record workflow 1 start in analytics
+            $promptRun->refresh();
+            $this->workflowAnalytics->recordStart($promptRun, 1);
+
             // Dispatch workflow_1 (which will enhance + analyse)
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
 
@@ -308,6 +322,10 @@ class PromptBuilderController extends Controller
                     'workflow_stage' => '1_processing',
                 ]);
             });
+
+            // Record workflow 1 start in analytics
+            $promptRun->refresh();
+            $this->workflowAnalytics->recordStart($promptRun, 1);
 
             // Dispatch workflow_1 again to re-analyse with new answers
             ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
@@ -412,6 +430,33 @@ class PromptBuilderController extends Controller
 
         $answers = $promptRun->recordClarifyingAnswer($validated['question_index'], $validated['answer']);
 
+        // Track question response in analytics
+        try {
+            $questionIndex = $validated['question_index'];
+            $question = $promptRun->framework_questions[$questionIndex] ?? null;
+
+            if ($question) {
+                // Find existing analytics record for this question
+                $analytic = $promptRun->questionAnalytics()
+                    ->where('question_id', $question['id'] ?? "Q{$questionIndex}")
+                    ->first();
+
+                if ($analytic) {
+                    $this->questionAnalytics->recordResponse(
+                        analytic: $analytic,
+                        responseLength: strlen($validated['answer'] ?? ''),
+                        timeToAnswerMs: $request->input('time_to_answer_ms'),
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            Log::error('Failed to track question response', [
+                'prompt_run_id' => $promptRun->id,
+                'question_index' => $validated['question_index'] ?? null,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
         return response()->json(['clarifying_answers' => $answers]);
     }
 
@@ -500,6 +545,10 @@ class PromptBuilderController extends Controller
                     'workflow_stage' => '2_processing',
                 ]);
             });
+
+            // Record workflow 2 start in analytics
+            $promptRun->refresh();
+            $this->workflowAnalytics->recordStart($promptRun, 2);
 
             // Dispatch the job to generate the prompt asynchronously
             ProcessPromptGeneration::dispatch($promptRun, $this->getJobDatabase($request));

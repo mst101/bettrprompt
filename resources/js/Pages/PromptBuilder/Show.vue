@@ -298,13 +298,12 @@ useRealtimeUpdates(
                 data,
             );
 
-            // Track workflow stage completion
+            // Track workflow 0 completion
             analyticsService.track({
-                name: 'workflow_stage_completed',
+                name: 'workflow_completed',
                 properties: {
                     prompt_run_id: props.promptRun.id,
-                    stage: 0,
-                    workflow_name: 'pre_analysis',
+                    workflow_stage: 0,
                 },
             });
 
@@ -323,13 +322,12 @@ useRealtimeUpdates(
                 data,
             );
 
-            // Track workflow stage completion
+            // Track workflow 1 completion
             analyticsService.track({
-                name: 'workflow_stage_completed',
+                name: 'workflow_completed',
                 properties: {
                     prompt_run_id: props.promptRun.id,
-                    stage: 1,
-                    workflow_name: 'main_analysis',
+                    workflow_stage: 1,
                     framework_selected: data.selectedFramework?.code,
                 },
             });
@@ -360,13 +358,12 @@ useRealtimeUpdates(
                 },
             });
 
-            // Track workflow stage completion
+            // Track workflow 2 completion
             analyticsService.track({
-                name: 'workflow_stage_completed',
+                name: 'workflow_completed',
                 properties: {
                     prompt_run_id: props.promptRun.id,
-                    stage: 2,
-                    workflow_name: 'prompt_generation',
+                    workflow_stage: 2,
                 },
             });
 
