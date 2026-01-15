@@ -12,9 +12,13 @@ import { onMounted } from 'vue';
  * Call this once per layout
  */
 export function usePageTracking() {
-    const trackPageView = (url?: string) => {
-        const path = getAnalyticsPathname(url);
-        if (!path || isAnalyticsBlockedPath(path)) {
+    let hasTrackedInitial = false;
+    let initialPath: string | null = null;
+    let initialTrackedAt = 0;
+    let initialFallbackTimer: number | null = null;
+
+    const trackPageViewWithPath = (path: string) => {
+        if (isAnalyticsBlockedPath(path)) {
             return;
         }
 
@@ -28,17 +32,64 @@ export function usePageTracking() {
         });
     };
 
+    const trackInitialPageView = (url?: string) => {
+        if (hasTrackedInitial) {
+            return;
+        }
+
+        const path = getAnalyticsPathname(url);
+        if (!path) {
+            return;
+        }
+
+        hasTrackedInitial = true;
+        initialPath = path;
+        initialTrackedAt = Date.now();
+        trackPageViewWithPath(path);
+    };
+
     // Track initial page view on mount
     onMounted(() => {
-        trackPageView();
+        initialFallbackTimer = window.setTimeout(() => {
+            if (!hasTrackedInitial) {
+                trackInitialPageView();
+            }
+            initialFallbackTimer = null;
+        }, 500);
     });
 
     // Track subsequent Inertia navigations
     router.on('navigate', (event) => {
-        trackPageView(event.detail.page.url);
+        const path = getAnalyticsPathname(event.detail.page.url);
+        if (!path) {
+            return;
+        }
+
+        if (initialFallbackTimer !== null) {
+            clearTimeout(initialFallbackTimer);
+            initialFallbackTimer = null;
+        }
+
+        if (!hasTrackedInitial) {
+            trackInitialPageView(path);
+            return;
+        }
+
+        if (initialPath === path && Date.now() - initialTrackedAt < 2000) {
+            return;
+        }
+
+        trackPageViewWithPath(path);
     });
 
     return {
-        trackPageView,
+        trackPageView: (url?: string) => {
+            const path = getAnalyticsPathname(url);
+            if (!path) {
+                return;
+            }
+
+            trackPageViewWithPath(path);
+        },
     };
 }
