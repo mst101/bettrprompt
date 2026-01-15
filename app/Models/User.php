@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Services\DatabaseService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,10 +32,8 @@ class User extends Authenticatable
         'trait_percentages',
         'ui_complexity',
         'referral_code',
-        'referred_by_user_id',
         // Location fields
         'country_code',
-        'country_name',
         'region',
         'city',
         'timezone',
@@ -133,6 +132,14 @@ class User extends Authenticatable
     public function promptRuns(): HasMany
     {
         return $this->hasMany(PromptRun::class);
+    }
+
+    /**
+     * Get the country associated with this user
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_code', 'id');
     }
 
     /**
@@ -296,13 +303,6 @@ class User extends Authenticatable
                 if (array_key_exists($field, $locationData)) {
                     $updates[$field] = $locationData[$field];
                 }
-            }
-
-            if (array_key_exists('country_code', $locationData)) {
-                $country = $locationData['country_code']
-                    ? Country::find($locationData['country_code'])
-                    : null;
-                $updates['country_name'] = $country?->name;
             }
 
             // Always mark location as manually set when updating

@@ -42,7 +42,6 @@ class Visitor extends Model
         'referred_by_user_id',
         // Location fields
         'country_code',
-        'country_name',
         'region',
         'city',
         'timezone',
@@ -87,6 +86,14 @@ class Visitor extends Model
     public function promptRuns(): HasMany
     {
         return $this->hasMany(PromptRun::class);
+    }
+
+    /**
+     * Get the country associated with this visitor.
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_code', 'id');
     }
 
     /**
@@ -140,10 +147,12 @@ class Visitor extends Model
             return __('messages.location.unknown');
         }
 
+        $countryName = $this->country?->name ?? 'Unknown';
+
         if (is_null($this->city)) {
-            return "$this->region, $this->country_name";
+            return "$this->region, $countryName";
         }
 
-        return "$this->city, $this->region, $this->country_name";
+        return "$this->city, $this->region, $countryName";
     }
 }

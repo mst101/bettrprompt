@@ -74,8 +74,8 @@ class ProfileController extends Controller
             ? $routeCountry
             : $user->country_code;
         $resolvedCountryName = $useRouteDefaults
-            ? ($routeCountryModel?->name ?? $user->country_name)
-            : $user->country_name;
+            ? ($routeCountryModel?->name ?? $user->country?->name)
+            : $user->country?->name;
         $resolvedRegion = $useRouteDefaults ? null : $user->region;
         $resolvedCity = $useRouteDefaults ? null : $user->city;
         $resolvedTimezone = $useRouteDefaults ? null : $user->timezone;

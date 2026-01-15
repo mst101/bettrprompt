@@ -64,7 +64,6 @@ return new class extends Migration
 
             // Geolocation data
             $table->string('country_code', 2)->nullable();
-            $table->string('country_name')->nullable();
             $table->string('region')->nullable();
             $table->string('city')->nullable();
             $table->string('timezone')->nullable();

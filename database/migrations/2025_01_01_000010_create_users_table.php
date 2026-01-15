@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->boolean('is_admin')->default(false);
             $table->string('referral_code', 10)->unique()->nullable();
-            $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->index('referred_by_user_id');
             $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
@@ -42,7 +40,6 @@ return new class extends Migration
 
             // Geolocation data
             $table->string('country_code', 2)->nullable();
-            $table->string('country_name')->nullable();
             $table->string('region')->nullable();
             $table->string('city')->nullable();
             $table->string('timezone')->nullable();
@@ -137,7 +134,6 @@ return new class extends Migration
                 $table->dropIndex(['experience_level']);
                 $table->dropIndex(['team_role']);
                 $table->dropIndex(['budget_consciousness']);
-                $table->dropIndex(['referred_by_user_id']);
                 $table->dropIndex(['stripe_id']);
                 $table->dropIndex(['subscription_tier']);
             });

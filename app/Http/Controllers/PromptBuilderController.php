@@ -139,7 +139,6 @@ class PromptBuilderController extends Controller
                     if ($locationData !== null) {
                         $user->update([
                             'country_code' => $locationData->countryCode,
-                            'country_name' => $locationData->countryName,
                             'region' => $locationData->region,
                             'city' => $locationData->city,
                             'timezone' => $locationData->timezone,
@@ -1140,7 +1139,7 @@ class PromptBuilderController extends Controller
 
             return [
                 'countryCode' => $user->country_code,
-                'countryName' => $user->country_name,
+                'countryName' => $user->country?->name,
                 'region' => $user->region,
                 'city' => $user->city,
                 'timezone' => $user->timezone,
@@ -1157,7 +1156,7 @@ class PromptBuilderController extends Controller
             if ($visitor) {
                 return [
                     'countryCode' => $visitor->country_code,
-                    'countryName' => $visitor->country_name,
+                    'countryName' => $visitor->country?->name,
                     'region' => $visitor->region,
                     'city' => $visitor->city,
                     'timezone' => $visitor->timezone,

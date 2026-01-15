@@ -52,14 +52,9 @@ class VisitorMigrationService
             $updates['trait_percentages'] = $visitor->trait_percentages;
         }
 
-        if ($visitor->referred_by_user_id && ! $user->referred_by_user_id) {
-            $updates['referred_by_user_id'] = $visitor->referred_by_user_id;
-        }
-
         // Copy location data from visitor if user doesn't have it
         if ($visitor->hasLocationData() && ! $user->hasLocationData()) {
             $updates['country_code'] = $visitor->country_code;
-            $updates['country_name'] = $visitor->country_name;
             $updates['region'] = $visitor->region;
             $updates['city'] = $visitor->city;
             $updates['timezone'] = $visitor->timezone;

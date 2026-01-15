@@ -56,7 +56,6 @@ class RegisteredUserController extends Controller
                 if ($locationData !== null) {
                     $user->update([
                         'country_code' => $locationData->countryCode,
-                        'country_name' => $locationData->countryName,
                         'region' => $locationData->region,
                         'city' => $locationData->city,
                         'timezone' => $locationData->timezone,

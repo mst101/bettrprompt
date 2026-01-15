@@ -90,19 +90,15 @@ class OAuthController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor && ! $visitor->user_id) {
-                    // Copy personality data, location data, and referrer from visitor to user
+                    // Copy personality data and location data from visitor to user
                     $updates = [];
                     if ($visitor->personality_type) {
                         $updates['personality_type'] = $visitor->personality_type;
                         $updates['trait_percentages'] = $visitor->trait_percentages;
                     }
-                    if ($visitor->referred_by_user_id) {
-                        $updates['referred_by_user_id'] = $visitor->referred_by_user_id;
-                    }
                     // Copy location data from visitor
                     if ($visitor->hasLocationData()) {
                         $updates['country_code'] = $visitor->country_code;
-                        $updates['country_name'] = $visitor->country_name;
                         $updates['region'] = $visitor->region;
                         $updates['city'] = $visitor->city;
                         $updates['timezone'] = $visitor->timezone;
@@ -135,7 +131,6 @@ class OAuthController extends Controller
                         'claimed_prompt_runs' => $claimedCount,
                         'copied_personality' => (bool) $visitor->personality_type,
                         'copied_location' => $visitor->hasLocationData(),
-                        'copied_referrer' => (bool) $visitor->referred_by_user_id,
                     ]);
                 }
             }
@@ -149,7 +144,6 @@ class OAuthController extends Controller
                     if ($locationData !== null) {
                         $user->update([
                             'country_code' => $locationData->countryCode,
-                            'country_name' => $locationData->countryName,
                             'region' => $locationData->region,
                             'city' => $locationData->city,
                             'timezone' => $locationData->timezone,

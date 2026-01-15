@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\SetCountry;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Requests\UpdateVisitorPersonalityRequest;
-use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
@@ -144,11 +143,6 @@ class VisitorController extends Controller
             }
         }
 
-        if (array_key_exists('country_code', $updates)) {
-            $country = Country::find($updates['country_code']);
-            $updates['country_name'] = $country?->name;
-        }
-
         if (! empty($updates)) {
             $visitor->update($updates);
         }
@@ -180,7 +174,6 @@ class VisitorController extends Controller
 
         $visitor->update([
             'country_code' => null,
-            'country_name' => null,
             'region' => null,
             'city' => null,
             'timezone' => null,
