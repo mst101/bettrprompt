@@ -29,12 +29,12 @@ class AnalyticsEventController extends Controller
         $referrer = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
-        // Get UTM parameters from session (set by TrackVisitor middleware)
-        // Session is updated whenever user visits with new utm params
+        // Get UTM parameters from request attributes (set by TrackVisitor middleware if present in current request)
+        $currentUtmParams = $request->attributes->get('current_utm_params', []);
         $utmParams = [
-            'utm_source' => session('utm_source'),
-            'utm_medium' => session('utm_medium'),
-            'utm_campaign' => session('utm_campaign'),
+            'utm_source' => $currentUtmParams['utm_source'] ?? null,
+            'utm_medium' => $currentUtmParams['utm_medium'] ?? null,
+            'utm_campaign' => $currentUtmParams['utm_campaign'] ?? null,
         ];
 
         // Dispatch job to process events asynchronously

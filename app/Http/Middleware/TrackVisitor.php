@@ -71,9 +71,9 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Store utm params in session so they survive redirects
+        // Store current utm params in request attributes so they're available to controllers
         if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
-            session([
+            $request->attributes->set('current_utm_params', [
                 'utm_source' => $request->query('utm_source'),
                 'utm_medium' => $request->query('utm_medium'),
                 'utm_campaign' => $request->query('utm_campaign'),
