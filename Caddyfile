@@ -21,6 +21,9 @@ app.localhost {
         output stdout
     }
 
+    # Upgrade insecure requests to HTTPS (suppresses mixed content warnings)
+    header Content-Security-Policy "upgrade-insecure-requests"
+
     # WebSocket support for Laravel Reverb
     # Match requests to /app/* which is the Reverb WebSocket endpoint
     @websockets {

@@ -50,11 +50,11 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'personality_type' => $type,
             'trait_percentages' => [
-                'mind' => \fake()->numberBetween(50, 100),
-                'energy' => \fake()->numberBetween(50, 100),
-                'nature' => \fake()->numberBetween(50, 100),
-                'tactics' => \fake()->numberBetween(50, 100),
-                'identity' => \fake()->numberBetween(50, 100),
+                'mind' => 75,
+                'energy' => 55,
+                'nature' => 80,
+                'tactics' => 70,
+                'identity' => 65,
             ],
         ]);
     }
