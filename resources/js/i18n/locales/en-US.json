@@ -1437,6 +1437,7 @@
                 "region": "Region/State",
                 "city": "City",
                 "timezone": "Timezone",
+                "timezoneSearch": "Search timezones",
                 "currency": "Currency",
                 "language": "Language"
             },
@@ -1445,6 +1446,7 @@
                 "region": "e.g., California, Lancashire",
                 "city": "e.g., San Francisco, London",
                 "timezone": "Select timezone",
+                "timezoneSearch": "Search timezones",
                 "currency": "Select currency",
                 "language": "Select language"
             },

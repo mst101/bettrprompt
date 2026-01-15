@@ -1424,6 +1424,7 @@
                 "region": "Región/Estado",
                 "city": "Ciudad",
                 "timezone": "Zona horaria",
+                "timezoneSearch": "Buscar zona horaria",
                 "currency": "Moneda",
                 "language": "Idioma"
             },
@@ -1432,6 +1433,7 @@
                 "region": "p.ej., California, Lancashire",
                 "city": "p.ej., San Francisco, Londres",
                 "timezone": "Selecciona zona horaria",
+                "timezoneSearch": "Buscar zona horaria",
                 "currency": "Selecciona moneda",
                 "language": "Selecciona idioma"
             },

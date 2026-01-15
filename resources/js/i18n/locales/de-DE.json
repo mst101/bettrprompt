@@ -1424,6 +1424,7 @@
                 "region": "Region/Bundesland",
                 "city": "Stadt",
                 "timezone": "Zeitzone",
+                "timezoneSearch": "Zeitzone suchen",
                 "currency": "Währung",
                 "language": "Sprache"
             },
@@ -1432,6 +1433,7 @@
                 "region": "z. B. Bayern, Kalifornien",
                 "city": "z. B. München, San Francisco",
                 "timezone": "Zeitzone auswählen",
+                "timezoneSearch": "Zeitzone suchen",
                 "currency": "Währung auswählen",
                 "language": "Sprache auswählen"
             },

@@ -1351,6 +1351,7 @@
                 "region": "Région/État",
                 "city": "Ville",
                 "timezone": "Fuseau horaire",
+                "timezoneSearch": "Rechercher un fuseau horaire",
                 "currency": "Devise",
                 "language": "Langue"
             },
@@ -1359,6 +1360,7 @@
                 "region": "par exemple, Californie, Lancashire",
                 "city": "par exemple, San Francisco, Londres",
                 "timezone": "Sélectionner le fuseau horaire",
+                "timezoneSearch": "Rechercher un fuseau horaire",
                 "currency": "Sélectionner la devise",
                 "language": "Sélectionner la langue"
             },

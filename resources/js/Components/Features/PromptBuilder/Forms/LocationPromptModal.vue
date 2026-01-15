@@ -7,6 +7,7 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import Modal from '@/Components/Base/Modal/Modal.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import TimezoneSelect from '@/Components/Common/TimezoneSelect.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import axios from 'axios';
@@ -70,24 +71,6 @@ const form = reactive({
 });
 
 const errors = reactive<Record<string, string>>({});
-
-const timezones = [
-    { value: 'UTC', label: 'UTC' },
-    { value: 'Europe/London', label: 'Europe/London (GMT/BST)' },
-    { value: 'Europe/Paris', label: 'Europe/Paris (CET/CEST)' },
-    { value: 'Europe/Berlin', label: 'Europe/Berlin (CET/CEST)' },
-    { value: 'America/New_York', label: 'America/New_York (EST/EDT)' },
-    { value: 'America/Los_Angeles', label: 'America/Los_Angeles (PST/PDT)' },
-    { value: 'America/Chicago', label: 'America/Chicago (CST/CDT)' },
-    { value: 'Asia/Tokyo', label: 'Asia/Tokyo (JST)' },
-    { value: 'Asia/Shanghai', label: 'Asia/Shanghai (CST)' },
-    { value: 'Asia/Hong_Kong', label: 'Asia/Hong_Kong (HKT)' },
-    { value: 'Asia/Singapore', label: 'Asia/Singapore (SGT)' },
-    { value: 'Asia/Dubai', label: 'Asia/Dubai (GST)' },
-    { value: 'Australia/Sydney', label: 'Australia/Sydney (AEDT/AEST)' },
-    { value: 'Australia/Melbourne', label: 'Australia/Melbourne (AEDT/AEST)' },
-    { value: 'Pacific/Auckland', label: 'Pacific/Auckland (NZDT/NZST)' },
-];
 
 const updateEndpoint = computed(() =>
     props.isAuthenticated
@@ -257,16 +240,14 @@ const clearLocation = async () => {
                                 :error="errors.city"
                             />
 
-                            <FormSelect
+                            <TimezoneSelect
                                 id="prompt-location-timezone"
                                 v-model="form.timezone"
                                 :label="$t('profile.location.fields.timezone')"
-                                :options="timezones"
                                 :error="errors.timezone"
                                 :placeholder="
                                     $t('profile.location.placeholders.timezone')
                                 "
-                                show-placeholder
                             />
 
                             <FormSelect
