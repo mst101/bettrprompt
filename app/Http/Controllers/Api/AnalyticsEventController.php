@@ -51,24 +51,6 @@ class AnalyticsEventController extends Controller
     }
 
     /**
-     * Detect device type from user agent
-     */
-    private function detectDeviceType($request): string
-    {
-        $userAgent = strtolower($request->userAgent() ?? '');
-
-        if (preg_match('/(mobile|android|iphone|ipod|blackberry|windows phone)/', $userAgent)) {
-            return 'mobile';
-        }
-
-        if (preg_match('/(tablet|ipad|kindle|playbook)/', $userAgent)) {
-            return 'tablet';
-        }
-
-        return 'desktop';
-    }
-
-    /**
      * Extract UTM parameters from the utm_params cookie
      * Note: This is an unencrypted raw cookie set directly via Set-Cookie header
      */

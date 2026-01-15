@@ -43,12 +43,17 @@ class PasswordResetLinkController extends Controller
 
         if ($status == Password::RESET_LINK_SENT) {
             // Track password reset request
+            $context = $this->getAnalyticsContext($request);
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
                 'name' => 'password_reset_requested',
                 'visitor_id' => $request->cookie('visitor_id'),
                 'source' => 'server',
                 'occurred_at' => now(),
+                'session_id' => $context['session_id'],
+                'page_path' => $context['page_path'],
+                'referrer' => $context['referrer'],
+                'device_type' => $context['device_type'],
                 'properties' => [
                     'email' => $validated['email'],
                 ],

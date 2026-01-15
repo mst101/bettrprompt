@@ -109,6 +109,7 @@ class SubscriptionController extends Controller
             ]);
 
         // Track checkout initiation
+        $context = $this->getAnalyticsContext($request);
         AnalyticsEvent::create([
             'event_id' => (string) Str::uuid(),
             'name' => 'checkout_initiated',
@@ -116,6 +117,10 @@ class SubscriptionController extends Controller
             'user_id' => $user->id,
             'source' => 'server',
             'occurred_at' => now(),
+            'session_id' => $context['session_id'],
+            'page_path' => $context['page_path'],
+            'referrer' => $context['referrer'],
+            'device_type' => $context['device_type'],
             'properties' => [
                 'tier' => $tier,
                 'interval' => $interval,
@@ -142,6 +147,7 @@ class SubscriptionController extends Controller
         $user->update(['subscription_tier' => $tier]);
 
         // Track subscription completion
+        $context = $this->getAnalyticsContext($request);
         AnalyticsEvent::create([
             'event_id' => (string) Str::uuid(),
             'name' => 'subscription_completed',
@@ -149,6 +155,10 @@ class SubscriptionController extends Controller
             'user_id' => $user->id,
             'source' => 'server',
             'occurred_at' => now(),
+            'session_id' => $context['session_id'],
+            'page_path' => $context['page_path'],
+            'referrer' => $context['referrer'],
+            'device_type' => $context['device_type'],
             'properties' => [
                 'tier' => $tier,
                 'previous_tier' => 'free',
@@ -213,6 +223,7 @@ class SubscriptionController extends Controller
             $subscription->cancel();
 
             // Track subscription cancellation
+            $context = $this->getAnalyticsContext($request);
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
                 'name' => 'subscription_cancelled',
@@ -220,6 +231,10 @@ class SubscriptionController extends Controller
                 'user_id' => $user->id,
                 'source' => 'server',
                 'occurred_at' => now(),
+                'session_id' => $context['session_id'],
+                'page_path' => $context['page_path'],
+                'referrer' => $context['referrer'],
+                'device_type' => $context['device_type'],
                 'properties' => [
                     'tier' => $user->subscription_tier,
                     'cancellation_source' => 'settings_page',

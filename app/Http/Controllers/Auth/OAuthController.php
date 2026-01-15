@@ -179,6 +179,7 @@ class OAuthController extends Controller
 
             // Track registration completion (only for new users)
             if ($isNewUser) {
+                $context = $this->getAnalyticsContext($request);
                 AnalyticsEvent::create([
                     'event_id' => (string) Str::uuid(),
                     'name' => 'registration_completed',
@@ -186,6 +187,10 @@ class OAuthController extends Controller
                     'user_id' => $user->id,
                     'source' => 'server',
                     'occurred_at' => now(),
+                    'session_id' => $context['session_id'],
+                    'page_path' => $context['page_path'],
+                    'referrer' => $context['referrer'],
+                    'device_type' => $context['device_type'],
                     'properties' => [
                         'registration_method' => 'google',
                     ],

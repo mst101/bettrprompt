@@ -26,6 +26,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Track login completion
+        $context = $this->getAnalyticsContext($request);
         AnalyticsEvent::create([
             'event_id' => (string) Str::uuid(),
             'name' => 'login_completed',
@@ -33,6 +34,10 @@ class AuthenticatedSessionController extends Controller
             'user_id' => Auth::id(),
             'source' => 'server',
             'occurred_at' => now(),
+            'session_id' => $context['session_id'],
+            'page_path' => $context['page_path'],
+            'referrer' => $context['referrer'],
+            'device_type' => $context['device_type'],
             'properties' => [
                 'login_method' => 'email',
             ],

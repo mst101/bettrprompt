@@ -193,6 +193,7 @@ class PromptBuilderController extends Controller
             $this->workflowAnalytics->recordStart($promptRun, 0);
 
             // Track prompt started
+            $context = $this->getAnalyticsContext($request);
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
                 'name' => 'prompt_started',
@@ -201,6 +202,10 @@ class PromptBuilderController extends Controller
                 'prompt_run_id' => $promptRun->id,
                 'source' => 'server',
                 'occurred_at' => now(),
+                'session_id' => $context['session_id'],
+                'page_path' => $context['page_path'],
+                'referrer' => $context['referrer'],
+                'device_type' => $context['device_type'],
                 'properties' => [
                     'task_description_length' => strlen($validated['task_description']),
                     'has_personality_type' => $personalityType !== null,
