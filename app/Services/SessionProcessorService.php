@@ -136,8 +136,12 @@ class SessionProcessorService
             Log::info('Session processed', [
                 'session_id' => $sessionId,
                 'visitor_id' => $visitorId,
+                'visitor_found' => $visitor ? true : false,
                 'page_count' => $pageCount,
                 'converted' => $hasConverted,
+                'utm_source' => $session->utm_source,
+                'utm_medium' => $session->utm_medium,
+                'utm_campaign' => $session->utm_campaign,
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to process session', [

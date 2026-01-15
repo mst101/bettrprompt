@@ -227,6 +227,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
             Log::info('Created analytics session', [
                 'session_id' => $this->sessionId,
                 'visitor_id' => $this->visitorId,
+                'visitor_found' => $visitor ? true : false,
+                'utm_source' => $sessionData['utm_source'],
+                'utm_medium' => $sessionData['utm_medium'],
+                'utm_campaign' => $sessionData['utm_campaign'],
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to create analytics session', [
