@@ -20,9 +20,11 @@ interface QueuedEvent extends AnalyticsEvent {
  */
 export class AnalyticsService {
     private eventQueue: QueuedEvent[] = [];
+    private pendingQueue: QueuedEvent[] = [];
     private batchTimeout: number | null = null;
     private readonly BATCH_SIZE = 10;
     private readonly BATCH_DELAY_MS = 5000; // 5 seconds
+    private readonly MAX_PENDING_EVENTS = 100;
     private readonly API_ENDPOINT = '/api/analytics/events';
 
     /**
@@ -32,11 +34,6 @@ export class AnalyticsService {
      */
     track(event: AnalyticsEvent): void {
         const { hasConsentFor } = useCookieConsent();
-
-        // Don't track without analytics consent
-        if (!hasConsentFor('analytics')) {
-            return;
-        }
 
         if (
             typeof window !== 'undefined' &&
@@ -51,6 +48,12 @@ export class AnalyticsService {
             event_id: event.event_id || crypto.randomUUID(),
             occurred_at_ms: event.occurred_at_ms || Date.now(),
         };
+
+        // Buffer events until consent is granted (in-memory only)
+        if (!hasConsentFor('analytics')) {
+            this.enqueuePending(queuedEvent);
+            return;
+        }
 
         this.eventQueue.push(queuedEvent);
 
@@ -67,12 +70,23 @@ export class AnalyticsService {
      * Flush any queued events immediately
      */
     async flushBatch(): Promise<void> {
+        const { hasConsentFor } = useCookieConsent();
+
         if (this.batchTimeout !== null) {
             clearTimeout(this.batchTimeout);
             this.batchTimeout = null;
         }
 
         if (this.eventQueue.length === 0) {
+            return;
+        }
+
+        if (!hasConsentFor('analytics')) {
+            this.pendingQueue = [
+                ...this.eventQueue,
+                ...this.pendingQueue,
+            ].slice(0, this.MAX_PENDING_EVENTS);
+            this.eventQueue = [];
             return;
         }
 
@@ -146,6 +160,31 @@ export class AnalyticsService {
                 navigator.sendBeacon(this.API_ENDPOINT, data);
             }
         });
+    }
+
+    flushPending(): void {
+        const { hasConsentFor } = useCookieConsent();
+
+        if (!hasConsentFor('analytics') || this.pendingQueue.length === 0) {
+            return;
+        }
+
+        this.eventQueue = [...this.pendingQueue, ...this.eventQueue];
+        this.pendingQueue = [];
+
+        if (this.eventQueue.length >= this.BATCH_SIZE) {
+            this.flushBatch();
+        } else {
+            this.scheduleBatchFlush();
+        }
+    }
+
+    private enqueuePending(event: QueuedEvent): void {
+        this.pendingQueue.push(event);
+
+        if (this.pendingQueue.length > this.MAX_PENDING_EVENTS) {
+            this.pendingQueue.shift();
+        }
     }
 }
 

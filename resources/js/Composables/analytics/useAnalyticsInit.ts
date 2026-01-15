@@ -37,6 +37,8 @@ export function useAnalyticsInit() {
                     });
                 }
 
+                analyticsService.flushPending();
+
                 console.log(
                     '[Analytics] Consent granted, session started:',
                     sessionId,

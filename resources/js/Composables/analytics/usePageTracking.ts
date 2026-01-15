@@ -1,4 +1,3 @@
-import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import { analyticsService } from '@/services/analytics';
 import {
     getAnalyticsPathname,
@@ -13,13 +12,7 @@ import { onMounted } from 'vue';
  * Call this once per layout
  */
 export function usePageTracking() {
-    const { hasConsentFor } = useCookieConsent();
-
     const trackPageView = (url?: string) => {
-        if (!hasConsentFor('analytics')) {
-            return;
-        }
-
         const path = getAnalyticsPathname(url);
         if (!path || isAnalyticsBlockedPath(path)) {
             return;
