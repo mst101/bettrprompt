@@ -254,6 +254,13 @@ class ProcessAnalyticsEvents implements ShouldQueue
         // Convert occurred_at_ms to datetime
         $occurredAt = Carbon::createFromTimestampMs($event['occurred_at_ms'] ?? now()->getTimestampMs());
 
+        $pagePath = array_key_exists('page_path', $event)
+            ? $event['page_path']
+            : ($this->pageContext['page_path'] ?? null);
+        $referrer = array_key_exists('referrer', $event)
+            ? $event['referrer']
+            : ($this->pageContext['referrer'] ?? null);
+
         return [
             'event_id' => $event['event_id'],
             'name' => $event['name'],
@@ -263,8 +270,8 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'user_id' => $this->userId,
             'session_id' => $this->sessionId,
             'source' => 'client',
-            'page_path' => $event['page_path'] ?? $this->pageContext['page_path'] ?? null,
-            'referrer' => $event['referrer'] ?? $this->pageContext['referrer'] ?? null,
+            'page_path' => $pagePath,
+            'referrer' => $referrer,
             'device_type' => $this->pageContext['device_type'] ?? null,
             'browser' => null, // Could be parsed from user agent if needed
             'os' => null, // Could be parsed from user agent if needed

@@ -16,6 +16,19 @@ export function usePageTracking() {
     let initialPath: string | null = null;
     let initialTrackedAt = 0;
     let initialFallbackTimer: number | null = null;
+    let lastPath: string | null = null;
+    const externalReferrer =
+        typeof document !== 'undefined' && document.referrer
+            ? document.referrer
+            : null;
+
+    const buildReferrer = (): string | null => {
+        if (lastPath) {
+            return new URL(lastPath, window.location.origin).toString();
+        }
+
+        return externalReferrer;
+    };
 
     const trackPageViewWithPath = (path: string) => {
         if (isAnalyticsBlockedPath(path)) {
@@ -25,11 +38,13 @@ export function usePageTracking() {
         analyticsService.track({
             name: 'page_view',
             page_path: path,
-            referrer: document.referrer || null,
+            referrer: buildReferrer(),
             properties: {
                 title: document.title,
             },
         });
+
+        lastPath = path;
     };
 
     const trackInitialPageView = (url?: string) => {
@@ -52,15 +67,29 @@ export function usePageTracking() {
     onMounted(() => {
         initialFallbackTimer = window.setTimeout(() => {
             if (!hasTrackedInitial) {
-                trackInitialPageView();
+                requestAnimationFrame(() => {
+                    trackInitialPageView();
+                });
             }
             initialFallbackTimer = null;
         }, 500);
     });
 
+    // Track the initial page view before the first navigation starts.
+    router.on('start', () => {
+        if (!hasTrackedInitial) {
+            if (initialFallbackTimer !== null) {
+                clearTimeout(initialFallbackTimer);
+                initialFallbackTimer = null;
+            }
+
+            trackInitialPageView();
+        }
+    });
+
     // Track subsequent Inertia navigations
-    router.on('navigate', (event) => {
-        const path = getAnalyticsPathname(event.detail.page.url);
+    router.on('finish', () => {
+        const path = getAnalyticsPathname();
         if (!path) {
             return;
         }
@@ -79,7 +108,11 @@ export function usePageTracking() {
             return;
         }
 
-        trackPageViewWithPath(path);
+        requestAnimationFrame(() => {
+            window.setTimeout(() => {
+                trackPageViewWithPath(path);
+            }, 0);
+        });
     });
 
     return {
