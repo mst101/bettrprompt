@@ -41,6 +41,18 @@ class TrackVisitor
         //            'url' => $request->fullUrl(),
         //        ]);
 
+        // Capture current utm params if present in this request
+        $currentUtmParams = null;
+        if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
+            $currentUtmParams = [
+                'utm_source' => $request->query('utm_source'),
+                'utm_medium' => $request->query('utm_medium'),
+                'utm_campaign' => $request->query('utm_campaign'),
+                'utm_term' => $request->query('utm_term'),
+                'utm_content' => $request->query('utm_content'),
+            ];
+        }
+
         if ($visitorId) {
             // Check if visitor exists in database
             $visitorExists = Visitor::where('id', $visitorId)->exists();
@@ -71,16 +83,8 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Capture and store current utm params if present
-        $currentUtmParams = null;
-        if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
-            $currentUtmParams = [
-                'utm_source' => $request->query('utm_source'),
-                'utm_medium' => $request->query('utm_medium'),
-                'utm_campaign' => $request->query('utm_campaign'),
-                'utm_term' => $request->query('utm_term'),
-                'utm_content' => $request->query('utm_content'),
-            ];
+        // Log if utm params were captured
+        if ($currentUtmParams) {
             Log::info('TrackVisitor: captured utm params', [
                 'utm_source' => $currentUtmParams['utm_source'],
                 'utm_medium' => $currentUtmParams['utm_medium'],
