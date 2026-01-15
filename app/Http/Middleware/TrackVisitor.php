@@ -43,7 +43,7 @@ class TrackVisitor
 
         // Capture current utm params if present in this request
         $currentUtmParams = null;
-        if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
+        if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign') || $request->has('utm_term') || $request->has('utm_content')) {
             $currentUtmParams = [
                 'utm_source' => $request->query('utm_source'),
                 'utm_medium' => $request->query('utm_medium'),
@@ -167,6 +167,8 @@ class TrackVisitor
                 'current_utm_source' => $currentUtmParams ? $currentUtmParams['utm_source'] : null,
                 'current_utm_medium' => $currentUtmParams ? $currentUtmParams['utm_medium'] : null,
                 'current_utm_campaign' => $currentUtmParams ? $currentUtmParams['utm_campaign'] : null,
+                'current_utm_term' => $currentUtmParams ? $currentUtmParams['utm_term'] : null,
+                'current_utm_content' => $currentUtmParams ? $currentUtmParams['utm_content'] : null,
                 'referrer' => $request->header('referer'),
                 'landing_page' => $request->fullUrl(),
                 'user_agent' => $request->userAgent(),
@@ -210,6 +212,8 @@ class TrackVisitor
             $updateData['current_utm_source'] = $currentUtmParams['utm_source'];
             $updateData['current_utm_medium'] = $currentUtmParams['utm_medium'];
             $updateData['current_utm_campaign'] = $currentUtmParams['utm_campaign'];
+            $updateData['current_utm_term'] = $currentUtmParams['utm_term'];
+            $updateData['current_utm_content'] = $currentUtmParams['utm_content'];
         }
 
         $visitor->update($updateData);

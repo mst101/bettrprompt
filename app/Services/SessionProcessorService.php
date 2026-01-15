@@ -123,11 +123,13 @@ class SessionProcessorService
             'conversion_type' => $conversionType,
             'prompts_started' => $promptsStarted,
             'prompts_completed' => $promptsCompleted,
-            // Attribution from current session (utm params from current visit, not visitor's original ones)
-            'utm_source' => $pageContext['utm_source'] ?? null,
-            'utm_medium' => $pageContext['utm_medium'] ?? null,
-            'utm_campaign' => $pageContext['utm_campaign'] ?? null,
-            'referrer' => $firstEvent['referrer'] ?? null,
+            // Attribution from visitor's current utm (updated on each visit when utm params present)
+            'utm_source' => $visitor?->current_utm_source,
+            'utm_medium' => $visitor?->current_utm_medium,
+            'utm_campaign' => $visitor?->current_utm_campaign,
+            'utm_term' => $visitor?->current_utm_term,
+            'utm_content' => $visitor?->current_utm_content,
+            'referrer' => $visitor?->referrer,
             'device_type' => $firstEvent['device_type'] ?? null,
         ]);
 
@@ -143,6 +145,9 @@ class SessionProcessorService
                 'utm_source' => $session->utm_source,
                 'utm_medium' => $session->utm_medium,
                 'utm_campaign' => $session->utm_campaign,
+                'utm_term' => $session->utm_term,
+                'utm_content' => $session->utm_content,
+                'referrer' => $session->referrer,
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to process session', [

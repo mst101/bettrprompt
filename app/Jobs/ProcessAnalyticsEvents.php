@@ -203,13 +203,15 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'page_count' => 0,
                 'event_count' => 0,
                 'device_type' => $firstEvent['device_type'] ?? null,
-                'referrer' => $firstEvent['referrer'] ?? null,
+                'referrer' => $visitor?->referrer,
                 'is_bounce' => true,
                 'converted' => false,
-                // Attribution from current session (utm params from current visit, not visitor's original ones)
-                'utm_source' => $this->pageContext['utm_source'] ?? null,
-                'utm_medium' => $this->pageContext['utm_medium'] ?? null,
-                'utm_campaign' => $this->pageContext['utm_campaign'] ?? null,
+                // Attribution from visitor's current utm (updated on each visit when utm params present)
+                'utm_source' => $visitor?->current_utm_source,
+                'utm_medium' => $visitor?->current_utm_medium,
+                'utm_campaign' => $visitor?->current_utm_campaign,
+                'utm_term' => $visitor?->current_utm_term,
+                'utm_content' => $visitor?->current_utm_content,
             ];
 
             // Only include user_id and visitor_id if they exist to avoid foreign key violations
@@ -231,6 +233,9 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'utm_source' => $sessionData['utm_source'],
                 'utm_medium' => $sessionData['utm_medium'],
                 'utm_campaign' => $sessionData['utm_campaign'],
+                'utm_term' => $sessionData['utm_term'],
+                'utm_content' => $sessionData['utm_content'],
+                'referrer' => $sessionData['referrer'],
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to create analytics session', [

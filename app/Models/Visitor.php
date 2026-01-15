@@ -27,6 +27,8 @@ class Visitor extends Model
         'current_utm_source',
         'current_utm_medium',
         'current_utm_campaign',
+        'current_utm_term',
+        'current_utm_content',
         'referrer',
         'landing_page',
         'user_agent',

@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAnalyticsEventsRequest;
 use App\Jobs\ProcessAnalyticsEvents;
-use App\Models\Visitor;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AnalyticsEventController extends Controller
@@ -30,22 +28,8 @@ class AnalyticsEventController extends Controller
         $referrer = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
-        // Load visitor to get current utm values (updated on each visit with utm params)
-        $visitor = $visitorId ? Visitor::find($visitorId) : null;
-        $utmParams = [
-            'utm_source' => $visitor?->current_utm_source,
-            'utm_medium' => $visitor?->current_utm_medium,
-            'utm_campaign' => $visitor?->current_utm_campaign,
-        ];
-
-        Log::info('AnalyticsEventController: utm params from visitor', [
-            'utm_source' => $utmParams['utm_source'],
-            'utm_medium' => $utmParams['utm_medium'],
-            'utm_campaign' => $utmParams['utm_campaign'],
-            'visitor_id' => $visitorId,
-        ]);
-
         // Dispatch job to process events asynchronously
+        // Note: utm values are read from visitor.current_utm_* in the job
         ProcessAnalyticsEvents::dispatch(
             events: $validated['events'],
             visitorId: $visitorId,
@@ -56,9 +40,6 @@ class AnalyticsEventController extends Controller
                 'device_type' => $deviceType,
                 'referrer' => $referrer,
                 'user_agent' => $request->userAgent(),
-                'utm_source' => $utmParams['utm_source'],
-                'utm_medium' => $utmParams['utm_medium'],
-                'utm_campaign' => $utmParams['utm_campaign'],
             ]
         );
 
