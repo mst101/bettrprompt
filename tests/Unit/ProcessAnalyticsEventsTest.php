@@ -16,7 +16,6 @@ it('enriches events with visitor context and derived type metadata', function ()
             'page_path' => '/features',
             'referrer' => 'https://ref.example.com',
             'device_type' => 'desktop',
-            'country_code' => 'gb',
         ],
     );
 
@@ -39,7 +38,6 @@ it('enriches events with visitor context and derived type metadata', function ()
     expect($enriched['page_path'])->toBe('/features');
     expect($enriched['referrer'])->toBe('https://ref.example.com');
     expect($enriched['device_type'])->toBe('desktop');
-    expect($enriched['country_code'])->toBe('gb');
     expect($enriched['prompt_run_id'])->toBe(42);
     expect($enriched['source'])->toBe('client');
     expect($enriched['occurred_at'])->toBeInstanceOf(Carbon::class);

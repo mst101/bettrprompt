@@ -196,11 +196,11 @@ describe('Visitor location summary', function () {
     test('getLocationSummary returns full city, region, country when all available', function () {
         $visitor = Visitor::factory()->create([
             'country_code' => 'GB',
-            'country_name' => 'United Kingdom',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
         ]);
+        $visitor->load('country');
 
         expect($visitor->getLocationSummary())->toBe('London, England, United Kingdom');
     });
@@ -208,11 +208,11 @@ describe('Visitor location summary', function () {
     test('getLocationSummary returns region and country when city is null', function () {
         $visitor = Visitor::factory()->create([
             'country_code' => 'GB',
-            'country_name' => 'United Kingdom',
             'region' => 'England',
             'city' => null,
             'timezone' => 'Europe/London',
         ]);
+        $visitor->load('country');
 
         expect($visitor->getLocationSummary())->toBe('England, United Kingdom');
     });
