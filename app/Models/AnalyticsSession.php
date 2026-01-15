@@ -32,8 +32,6 @@ class AnalyticsSession extends Model
         'utm_campaign',
         'referrer',
         'device_type',
-        'browser',
-        'os',
         'country_code',
         'is_bounce',
         'converted',
