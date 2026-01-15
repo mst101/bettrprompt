@@ -26,7 +26,7 @@ class SessionProcessorService
      * - Entry/exit page tracking
      * - Bounce detection (single page visit)
      */
-    public function processSessionEvents(array $events): void
+    public function processSessionEvents(array $events, array $pageContext = []): void
     {
         // Group events by session_id and visitor_id
         $sessionGroups = collect($events)->groupBy(function ($event) {
@@ -38,14 +38,14 @@ class SessionProcessorService
                 continue; // Skip events without session ID
             }
 
-            $this->processSession($sessionId, $sessionEvents->all());
+            $this->processSession($sessionId, $sessionEvents->all(), $pageContext);
         }
     }
 
     /**
      * Process a single session's worth of events
      */
-    private function processSession(string $sessionId, array $events): void
+    private function processSession(string $sessionId, array $events, array $pageContext = []): void
     {
         if (empty($events)) {
             return;
@@ -123,9 +123,9 @@ class SessionProcessorService
             'prompts_started' => $promptsStarted,
             'prompts_completed' => $promptsCompleted,
             // Attribution: use current request params if available, otherwise visitor's original params
-            'utm_source' => $firstEvent['utm_source'] ?? $visitor?->utm_source,
-            'utm_medium' => $firstEvent['utm_medium'] ?? $visitor?->utm_medium,
-            'utm_campaign' => $firstEvent['utm_campaign'] ?? $visitor?->utm_campaign,
+            'utm_source' => $pageContext['utm_source'] ?? $visitor?->utm_source,
+            'utm_medium' => $pageContext['utm_medium'] ?? $visitor?->utm_medium,
+            'utm_campaign' => $pageContext['utm_campaign'] ?? $visitor?->utm_campaign,
             'referrer' => $firstEvent['referrer'] ?? null,
             'device_type' => $firstEvent['device_type'] ?? null,
         ]);

@@ -165,7 +165,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
         foreach ($bySession as $sessionId => $events) {
             if ($sessionId) {
-                $sessionService->processSessionEvents($events->toArray());
+                $sessionService->processSessionEvents($events->toArray(), $this->pageContext);
             }
         }
     }
@@ -276,9 +276,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'page_path' => $pagePath,
             'referrer' => $referrer,
             'device_type' => $this->pageContext['device_type'] ?? null,
-            'utm_source' => $this->pageContext['utm_source'] ?? null,
-            'utm_medium' => $this->pageContext['utm_medium'] ?? null,
-            'utm_campaign' => $this->pageContext['utm_campaign'] ?? null,
             'prompt_run_id' => $event['properties']['prompt_run_id'] ?? null,
             'occurred_at' => $occurredAt,
         ];
