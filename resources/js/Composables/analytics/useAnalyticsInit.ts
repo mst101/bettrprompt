@@ -2,7 +2,7 @@ import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import { analyticsService } from '@/services/analytics';
 import { analyticsSessionService } from '@/services/analyticsSession';
 import { isAnalyticsBlockedPath } from '@/Utils/analyticsGuard';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 
 /**
  * Initialize analytics tracking after consent
@@ -10,12 +10,25 @@ import { watch } from 'vue';
  */
 export function useAnalyticsInit() {
     const { hasConsentFor } = useCookieConsent();
-    // Track consent granted event when analytics consent is given
+    // Track the previous consent state to detect actual changes
+    // (not the immediate watcher callback on first mount)
+    const previousConsentState = ref<boolean | undefined>(undefined);
+
+    // Track consent state changes (but NOT on initial mount)
     watch(
         () => hasConsentFor('analytics'),
-        (hasConsent, wasConsented) => {
-            // Only fire once when consent transitions from false→true
-            if (hasConsent && !wasConsented) {
+        (currentConsent) => {
+            // Skip on first mount (when previousConsentState is undefined)
+            if (previousConsentState.value === undefined) {
+                previousConsentState.value = currentConsent;
+                return;
+            }
+
+            const wasConsented = previousConsentState.value;
+            previousConsentState.value = currentConsent;
+
+            // Only fire when consent transitions from false→true
+            if (currentConsent && !wasConsented) {
                 // Initialize session (creates session ID)
                 const sessionId = analyticsSessionService.getSessionId();
 
@@ -37,6 +50,25 @@ export function useAnalyticsInit() {
                     '[Analytics] Consent granted, session started:',
                     sessionId,
                 );
+            }
+            // Fire consent_denied when consent transitions from true→false
+            else if (!currentConsent && wasConsented) {
+                // Track consent denied before stopping analytics
+                if (
+                    typeof window === 'undefined' ||
+                    !isAnalyticsBlockedPath(window.location.pathname)
+                ) {
+                    analyticsService.track({
+                        name: 'consent_denied',
+                        page_path: window.location.pathname,
+                        referrer: null,
+                    });
+                }
+
+                // Flush the consent_denied event before clearing
+                analyticsService.flushPending();
+
+                console.log('[Analytics] Consent denied, analytics disabled');
             }
         },
         { immediate: true },

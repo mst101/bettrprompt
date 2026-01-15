@@ -32,7 +32,7 @@ export class AnalyticsService {
     /**
      * Track an analytics event
      * Event is queued and sent in a batch
-     * Only sends if analytics consent is granted
+     * Only sends if analytics consent is granted, unless it's a consent event
      */
     track(event: AnalyticsEvent): void {
         const { hasConsentFor } = useCookieConsent();
@@ -51,8 +51,14 @@ export class AnalyticsService {
             occurred_at_ms: event.occurred_at_ms || Date.now(),
         };
 
+        // Consent events (consent_granted, consent_denied) are system events
+        // that should always be sent immediately, regardless of consent state
+        const isConsentEvent =
+            event.name === 'consent_granted' || event.name === 'consent_denied';
+
         // Buffer events until consent is granted (in-memory only)
-        if (!hasConsentFor('analytics')) {
+        // Exception: consent events are always queued for sending
+        if (!hasConsentFor('analytics') && !isConsentEvent) {
             this.enqueuePending(queuedEvent);
             return;
         }
@@ -83,13 +89,30 @@ export class AnalyticsService {
             return;
         }
 
+        // Separate consent events from regular events
+        const consentEvents = this.eventQueue.filter(
+            (e) => e.name === 'consent_granted' || e.name === 'consent_denied',
+        );
+        const regularEvents = this.eventQueue.filter(
+            (e) => e.name !== 'consent_granted' && e.name !== 'consent_denied',
+        );
+
+        // Move regular events to pending if consent is not granted
         if (!hasConsentFor('analytics')) {
-            this.pendingQueue = [
-                ...this.eventQueue,
-                ...this.pendingQueue,
-            ].slice(0, this.MAX_PENDING_EVENTS);
-            this.eventQueue = [];
-            return;
+            this.pendingQueue = [...regularEvents, ...this.pendingQueue].slice(
+                0,
+                this.MAX_PENDING_EVENTS,
+            );
+            // Keep consent events in queue for sending
+            this.eventQueue = consentEvents;
+
+            // If we only have consent events, send them now
+            if (consentEvents.length > 0 && regularEvents.length > 0) {
+                // Proceed to send consent events below
+            } else if (regularEvents.length > 0) {
+                // No consent to send regular events, exit
+                return;
+            }
         }
 
         const events = [...this.eventQueue];
