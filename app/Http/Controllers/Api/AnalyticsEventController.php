@@ -38,6 +38,9 @@ class AnalyticsEventController extends Controller
                 'device_type' => $deviceType,
                 'referrer' => $request->header('Referer'),
                 'user_agent' => $request->userAgent(),
+                'utm_source' => $request->query('utm_source'),
+                'utm_medium' => $request->query('utm_medium'),
+                'utm_campaign' => $request->query('utm_campaign'),
             ]
         );
 

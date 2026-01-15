@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AnalyticsSession;
+use App\Models\Visitor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -67,6 +68,9 @@ class SessionProcessorService
         $endedAt = Carbon::parse($lastEvent['occurred_at']);
         $duration = $endedAt->diffInSeconds($startedAt);
 
+        // Load visitor for fallback utm data (if not in current request)
+        $visitor = $visitorId ? Visitor::find($visitorId) : null;
+
         // Find entry and exit pages
         $entryPage = null;
         $exitPage = null;
@@ -118,10 +122,10 @@ class SessionProcessorService
             'conversion_type' => $conversionType,
             'prompts_started' => $promptsStarted,
             'prompts_completed' => $promptsCompleted,
-            // Attribution captured at session start
-            'utm_source' => $firstEvent['properties']['utm_source'] ?? null,
-            'utm_medium' => $firstEvent['properties']['utm_medium'] ?? null,
-            'utm_campaign' => $firstEvent['properties']['utm_campaign'] ?? null,
+            // Attribution: use current request params if available, otherwise visitor's original params
+            'utm_source' => $firstEvent['utm_source'] ?? $visitor?->utm_source,
+            'utm_medium' => $firstEvent['utm_medium'] ?? $visitor?->utm_medium,
+            'utm_campaign' => $firstEvent['utm_campaign'] ?? $visitor?->utm_campaign,
             'referrer' => $firstEvent['referrer'] ?? null,
             'device_type' => $firstEvent['device_type'] ?? null,
         ]);

@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
 use App\Models\PromptRun;
+use App\Models\Visitor;
 use App\Services\ConversionAttributionService;
 use App\Services\FrameworkSelectionService;
 use App\Services\FunnelProcessingService;
@@ -188,6 +189,9 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             $startedAt = Carbon::parse($firstEvent['occurred_at']);
 
+            // Load visitor if available
+            $visitor = $this->visitorId ? Visitor::find($this->visitorId) : null;
+
             // Build the session data
             $sessionData = [
                 'id' => $this->sessionId,
@@ -202,6 +206,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'referrer' => $firstEvent['referrer'] ?? null,
                 'is_bounce' => true,
                 'converted' => false,
+                // Attribution from current request (utm params in query string)
+                'utm_source' => $this->pageContext['utm_source'] ?? null,
+                'utm_medium' => $this->pageContext['utm_medium'] ?? null,
+                'utm_campaign' => $this->pageContext['utm_campaign'] ?? null,
             ];
 
             // Only include user_id and visitor_id if they exist to avoid foreign key violations
@@ -209,15 +217,8 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 $sessionData['user_id'] = $this->userId;
             }
 
-            if ($this->visitorId) {
-                // Check if visitor exists before including it
-                $visitorExists = DB::table('visitors')
-                    ->where('id', $this->visitorId)
-                    ->exists();
-
-                if ($visitorExists) {
-                    $sessionData['visitor_id'] = $this->visitorId;
-                }
+            if ($visitor) {
+                $sessionData['visitor_id'] = $visitor->id;
             }
 
             // Create a minimal session record
@@ -275,6 +276,9 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'page_path' => $pagePath,
             'referrer' => $referrer,
             'device_type' => $this->pageContext['device_type'] ?? null,
+            'utm_source' => $this->pageContext['utm_source'] ?? null,
+            'utm_medium' => $this->pageContext['utm_medium'] ?? null,
+            'utm_campaign' => $this->pageContext['utm_campaign'] ?? null,
             'prompt_run_id' => $event['properties']['prompt_run_id'] ?? null,
             'occurred_at' => $occurredAt,
         ];
