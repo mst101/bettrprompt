@@ -6,7 +6,7 @@ test('registration route redirects to home page with register modal open', funct
     $response->assertRedirect(route('home', ['modal' => 'register'], absolute: false));
 });
 
-test('new users can register', function () {
+test('registers new user', function () {
     $response = $this->post('/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',

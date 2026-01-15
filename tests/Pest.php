@@ -76,6 +76,17 @@ function webhookPost(array $data, ?string $secret = null): \Illuminate\Testing\T
 }
 
 /**
+ * Configure n8n webhook auth in tests and return the shared secret.
+ */
+function setupN8nWebhookAuth(): string
+{
+    $secret = 'test-webhook-secret-123';
+    config(['services.n8n.webhook_secret' => $secret]);
+
+    return $secret;
+}
+
+/**
  * Create a SMART Goals framework array for webhook testing
  */
 function createSmartFramework(string $rationale = 'This framework suits your task'): array

@@ -6,16 +6,7 @@ use App\Models\Visitor;
 use App\Services\N8nWorkflowClient;
 
 beforeEach(function () {
-    $this->user = User::factory()->create([
-        'personality_type' => 'INTJ-A',
-        'trait_percentages' => [
-            'mind' => 75,
-            'energy' => 55,
-            'nature' => 80,
-            'tactics' => 70,
-            'identity' => 65,
-        ],
-    ]);
+    $this->user = User::factory()->withPersonality()->create();
 });
 
 test('create prompt run validates task description required', function () {

@@ -4,16 +4,7 @@ use App\Models\PromptRun;
 use App\Models\User;
 
 beforeEach(function () {
-    $this->user = User::factory()->create([
-        'personality_type' => 'INTJ-A',
-        'trait_percentages' => [
-            'mind' => 75,
-            'energy' => 55,
-            'nature' => 80,
-            'tactics' => 70,
-            'identity' => 65,
-        ],
-    ]);
+    $this->user = User::factory()->withPersonality()->create();
     $this->actingAs($this->user);
 });
 
@@ -24,14 +15,8 @@ test('retry handles service failure', function () {
         'user_id' => $this->user->id,
         'workflow_stage' => '0_failed',
         'task_description' => 'Failed task',
-        'personality_type' => 'INTJ-A',
-        'trait_percentages' => [
-            'mind' => 75,
-            'energy' => 55,
-            'nature' => 80,
-            'tactics' => 70,
-            'identity' => 65,
-        ],
+        'personality_type' => $this->user->personality_type,
+        'trait_percentages' => $this->user->trait_percentages,
     ]);
 
     $response = $this->post($this->countryRoute('prompt-builder.retry', [
@@ -51,14 +36,8 @@ test('retry resets failed prompt run to processing state', function () {
         'user_id' => $this->user->id,
         'workflow_stage' => '0_failed',
         'task_description' => 'Failed task',
-        'personality_type' => 'INTJ-A',
-        'trait_percentages' => [
-            'mind' => 75,
-            'energy' => 55,
-            'nature' => 80,
-            'tactics' => 70,
-            'identity' => 65,
-        ],
+        'personality_type' => $this->user->personality_type,
+        'trait_percentages' => $this->user->trait_percentages,
     ]);
 
     $response = $this->post($this->countryRoute('prompt-builder.retry', [

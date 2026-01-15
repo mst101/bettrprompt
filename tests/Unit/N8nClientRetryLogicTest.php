@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 
+const N8N_MAX_ATTEMPTS = 3;
+
 beforeEach(function () {
     // Configure N8n service
     Config::set('services.n8n.url', 'http://test-n8n.localhost');
@@ -31,7 +33,7 @@ test('retries on 5xx server errors up to max attempts', function () {
     $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
 
     expect($result['success'])->toBeTrue();
-    Http::assertSentCount(3); // 2 failures + 1 success
+    Http::assertSentCount(N8N_MAX_ATTEMPTS); // 2 failures + 1 success
 });
 
 test('does not retry on 4xx client errors', function () {
@@ -67,7 +69,7 @@ test('fails after max retry attempts on persistent 5xx errors', function () {
         ->toHaveKey('error', 'N8n webhook failed after multiple attempts');
 
     // Should attempt 3 times (max retries)
-    Http::assertSentCount(3);
+    Http::assertSentCount(N8N_MAX_ATTEMPTS);
 });
 
 test('retries with exponential backoff strategy', function () {
@@ -89,7 +91,7 @@ test('retries with exponential backoff strategy', function () {
     expect($result['success'])->toBeTrue()
         ->and($result['data'])->toEqual(['success' => true]);
 
-    Http::assertSentCount(3);
+    Http::assertSentCount(N8N_MAX_ATTEMPTS);
 });
 
 test('retries on connection exceptions', function () {
@@ -110,7 +112,7 @@ test('retries on connection exceptions', function () {
     $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
 
     expect($result['success'])->toBeTrue()
-        ->and($callCount)->toBe(3);
+        ->and($callCount)->toBe(N8N_MAX_ATTEMPTS);
 });
 
 test('fails after max retries on persistent connection exceptions', function () {
@@ -128,7 +130,7 @@ test('fails after max retries on persistent connection exceptions', function () 
     expect($result)
         ->toHaveKey('success', false)
         ->toHaveKey('error', 'N8n service is unavailable. Please try again later.')
-        ->and($callCount)->toBe(3); // Max retries
+        ->and($callCount)->toBe(N8N_MAX_ATTEMPTS); // Max retries
 });
 
 test('retries on request exceptions', function () {
@@ -153,7 +155,7 @@ test('retries on request exceptions', function () {
     $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
 
     expect($result['success'])->toBeTrue()
-        ->and($callCount)->toBe(3);
+        ->and($callCount)->toBe(N8N_MAX_ATTEMPTS);
 });
 
 test('throws immediately on unexpected errors without retry', function () {
@@ -166,20 +168,6 @@ test('throws immediately on unexpected errors without retry', function () {
 
     expect(fn () => $client->triggerWebhook('/webhook/test', ['data' => 'test']))
         ->toThrow(\RuntimeException::class, 'Unexpected error occurred');
-});
-
-test('respects 30 second timeout per request', function () {
-    $client = new N8nClient;
-
-    Http::fake([
-        '*' => Http::response(['success' => true], 200),
-    ]);
-
-    $result = $client->triggerWebhook('/webhook/test', ['data' => 'test']);
-
-    // Verify the request was successful (confirming timeout didn't interrupt)
-    expect($result['success'])->toBeTrue();
-    Http::assertSentCount(1);
 });
 
 test('uses basic authentication for all requests', function () {

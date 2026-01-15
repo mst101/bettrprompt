@@ -5,7 +5,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 
-test('email verification screen can be rendered', function () {
+test('renders email verification screen', function () {
     $user = User::factory()->unverified()->create();
 
     $response = $this->actingAs($user)->get('/verify-email');
@@ -13,7 +13,7 @@ test('email verification screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
-test('email can be verified', function () {
+test('verifies email', function () {
     $user = User::factory()->unverified()->create();
 
     Event::fake();

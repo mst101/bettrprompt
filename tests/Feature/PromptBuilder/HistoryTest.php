@@ -4,9 +4,7 @@ use App\Models\PromptRun;
 use App\Models\User;
 
 beforeEach(function () {
-    $this->user = User::factory()->create([
-        'personality_type' => 'INTJ-A',
-    ]);
+    $this->user = User::factory()->withPersonality()->create();
 
     $this->actingAs($this->user);
 });

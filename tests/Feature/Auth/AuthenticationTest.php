@@ -8,7 +8,7 @@ test('login screen redirects to home page with login modal open', function () {
     $response->assertRedirect($this->countryRoute('home', ['modal' => 'login'], absolute: false));
 });
 
-test('users can authenticate using the login screen', function () {
+test('authenticates user using the login screen', function () {
     $user = User::factory()->create([
         'language_code' => 'en-US',
     ]);
@@ -29,7 +29,7 @@ test('users can authenticate using the login screen', function () {
     expect($user->language_code)->toBeIn(config('app.supported_locales'));
 });
 
-test('users can not authenticate with invalid password', function () {
+test('rejects authentication with invalid password', function () {
     $user = User::factory()->create();
 
     $this->post('/login', [
@@ -40,7 +40,7 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('users can logout', function () {
+test('logs out user', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->post('/logout');

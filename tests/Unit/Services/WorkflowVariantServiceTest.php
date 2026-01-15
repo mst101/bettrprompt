@@ -1,131 +1,107 @@
 <?php
 
-namespace Tests\Unit\Services;
-
 use App\Services\WorkflowVariantService;
-use Tests\TestCase;
 
-class WorkflowVariantServiceTest extends TestCase
-{
-    private WorkflowVariantService $variantService;
+beforeEach(function () {
+    $this->variantService = app(WorkflowVariantService::class);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->variantService = app(WorkflowVariantService::class);
-    }
+test('get variants returns configured variants', function () {
+    $variants = $this->variantService->getVariants(1);
 
-    public function test_get_variants_returns_configured_variants(): void
-    {
-        $variants = $this->variantService->getVariants(1);
+    expect($variants)->toBeArray()
+        ->and($variants)->not->toBeEmpty()
+        ->and($variants[0])->toHaveKey('key')
+        ->and($variants[0])->toHaveKey('name');
+});
 
-        $this->assertIsArray($variants);
-        $this->assertGreaterThan(0, count($variants));
-        $this->assertArrayHasKey('key', $variants[0]);
-        $this->assertArrayHasKey('name', $variants[0]);
-    }
+test('get variants includes single pass for workflow 1', function () {
+    $variants = $this->variantService->getVariants(1);
+    $variantKeys = array_column($variants, 'key');
 
-    public function test_get_variants_includes_single_pass_for_workflow_1(): void
-    {
-        $variants = $this->variantService->getVariants(1);
-        $variantKeys = array_column($variants, 'key');
+    expect($variantKeys)->toContain('single-pass');
+});
 
-        $this->assertContains('single-pass', $variantKeys);
-    }
+test('get variants includes two pass for workflow 1', function () {
+    $variants = $this->variantService->getVariants(1);
+    $variantKeys = array_column($variants, 'key');
 
-    public function test_get_variants_includes_two_pass_for_workflow_1(): void
-    {
-        $variants = $this->variantService->getVariants(1);
-        $variantKeys = array_column($variants, 'key');
+    expect($variantKeys)->toContain('two-pass');
+});
 
-        $this->assertContains('two-pass', $variantKeys);
-    }
+test('get default variant returns single pass for workflow 1', function () {
+    $default = $this->variantService->getDefaultVariant(1);
 
-    public function test_get_default_variant_returns_single_pass_for_workflow_1(): void
-    {
-        $default = $this->variantService->getDefaultVariant(1);
+    expect($default)->toBe('single-pass');
+});
 
-        $this->assertEquals('single-pass', $default);
-    }
+test('get variant config returns correct config', function () {
+    $config = $this->variantService->getVariantConfig(1, 'single-pass');
 
-    public function test_get_variant_config_returns_correct_config(): void
-    {
-        $config = $this->variantService->getVariantConfig(1, 'single-pass');
+    expect($config)->toBeArray()
+        ->and($config)->toHaveKey('name')
+        ->and($config)->toHaveKey('workflow_file')
+        ->and($config)->toHaveKey('prepare_prompt_nodes');
+});
 
-        $this->assertIsArray($config);
-        $this->assertArrayHasKey('name', $config);
-        $this->assertArrayHasKey('workflow_file', $config);
-        $this->assertArrayHasKey('prepare_prompt_nodes', $config);
-    }
+test('get variant config single pass has one node', function () {
+    $config = $this->variantService->getVariantConfig(1, 'single-pass');
+    $nodes = $config['prepare_prompt_nodes'];
 
-    public function test_get_variant_config_single_pass_has_one_node(): void
-    {
-        $config = $this->variantService->getVariantConfig(1, 'single-pass');
-        $nodes = $config['prepare_prompt_nodes'];
+    expect($nodes)->toHaveCount(1)
+        ->and($nodes[0])->toBe('Prepare Prompt');
+});
 
-        $this->assertCount(1, $nodes);
-        $this->assertEquals('Prepare Prompt', $nodes[0]);
-    }
+test('get variant config two pass has two nodes', function () {
+    $config = $this->variantService->getVariantConfig(1, 'two-pass');
+    $nodes = $config['prepare_prompt_nodes'];
 
-    public function test_get_variant_config_two_pass_has_two_nodes(): void
-    {
-        $config = $this->variantService->getVariantConfig(1, 'two-pass');
-        $nodes = $config['prepare_prompt_nodes'];
+    expect($nodes)->toHaveCount(2)
+        ->and($nodes[0])->toBe('Prepare Prompt 1')
+        ->and($nodes[1])->toBe('Prepare Prompt 2');
+});
 
-        $this->assertCount(2, $nodes);
-        $this->assertEquals('Prepare Prompt 1', $nodes[0]);
-        $this->assertEquals('Prepare Prompt 2', $nodes[1]);
-    }
+test('extract prepare prompt node names returns node names', function () {
+    $nodeNames = $this->variantService->extractPreparePromptNodeNames(1, 'single-pass');
 
-    public function test_extract_prepare_prompt_node_names_returns_node_names(): void
-    {
-        $nodeNames = $this->variantService->extractPreparePromptNodeNames(1, 'single-pass');
+    expect($nodeNames)->toBeArray()
+        ->and($nodeNames)->toHaveCount(1)
+        ->and($nodeNames[0])->toBe('Prepare Prompt');
+});
 
-        $this->assertIsArray($nodeNames);
-        $this->assertCount(1, $nodeNames);
-        $this->assertEquals('Prepare Prompt', $nodeNames[0]);
-    }
+test('extract prepare prompt node names two pass returns two nodes', function () {
+    $nodeNames = $this->variantService->extractPreparePromptNodeNames(1, 'two-pass');
 
-    public function test_extract_prepare_prompt_node_names_two_pass_returns_two_nodes(): void
-    {
-        $nodeNames = $this->variantService->extractPreparePromptNodeNames(1, 'two-pass');
+    expect($nodeNames)->toBeArray()
+        ->and($nodeNames)->toHaveCount(2)
+        ->and($nodeNames)->toContain('Prepare Prompt 1')
+        ->and($nodeNames)->toContain('Prepare Prompt 2');
+});
 
-        $this->assertIsArray($nodeNames);
-        $this->assertCount(2, $nodeNames);
-        $this->assertContains('Prepare Prompt 1', $nodeNames);
-        $this->assertContains('Prepare Prompt 2', $nodeNames);
-    }
+test('get workflow file path single pass', function () {
+    $path = $this->variantService->getWorkflowFilePath(1, 'single-pass');
 
-    public function test_get_workflow_file_path_single_pass(): void
-    {
-        $path = $this->variantService->getWorkflowFilePath(1, 'single-pass');
+    expect($path)->toContain('workflow_1.json')
+        ->and($path)->not->toEndWith('_two_pass.json');
+});
 
-        $this->assertStringContainsString('workflow_1.json', $path);
-        $this->assertStringEndsNotWith('_two_pass.json', $path);
-    }
+test('get workflow file path two pass', function () {
+    $path = $this->variantService->getWorkflowFilePath(1, 'two-pass');
 
-    public function test_get_workflow_file_path_two_pass(): void
-    {
-        $path = $this->variantService->getWorkflowFilePath(1, 'two-pass');
+    expect($path)->toContain('workflow_1_two_pass.json');
+});
 
-        $this->assertStringContainsString('workflow_1_two_pass.json', $path);
-    }
+test('get variant storage path includes variant name', function () {
+    $path = $this->variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
 
-    public function test_get_variant_storage_path_includes_variant_name(): void
-    {
-        $path = $this->variantService->getVariantStoragePath('two-pass', 'prepare_prompt/old');
+    expect($path)->toContain('two-pass')
+        ->and($path)->toContain('prepare_prompt')
+        ->and($path)->toContain('old');
+});
 
-        $this->assertStringContainsString('two-pass', $path);
-        $this->assertStringContainsString('prepare_prompt', $path);
-        $this->assertStringContainsString('old', $path);
-    }
+test('get variant storage path returns directory path', function () {
+    $path = $this->variantService->getVariantStoragePath('single-pass', 'prompt/new');
 
-    public function test_get_variant_storage_path_returns_directory_path(): void
-    {
-        $path = $this->variantService->getVariantStoragePath('single-pass', 'prompt/new');
-
-        // Path should be a directory path ending with /
-        $this->assertStringEndsWith('/', $path);
-        $this->assertStringContainsString('n8n_debug', $path);
-    }
-}
+    expect($path)->toEndWith('/')
+        ->and($path)->toContain('n8n_debug');
+});

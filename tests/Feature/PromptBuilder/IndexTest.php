@@ -3,16 +3,7 @@
 use App\Models\User;
 
 beforeEach(function () {
-    $this->user = User::factory()->create([
-        'personality_type' => 'INTJ-A',
-        'trait_percentages' => [
-            'mind' => 75,
-            'energy' => 55,
-            'nature' => 80,
-            'tactics' => 70,
-            'identity' => 65,
-        ],
-    ]);
+    $this->user = User::factory()->withPersonality()->create();
 });
 
 test('index page displays form for authenticated users', function () {
