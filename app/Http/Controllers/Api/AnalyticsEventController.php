@@ -27,6 +27,10 @@ class AnalyticsEventController extends Controller
         $pagePath = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
+        // Extract UTM parameters from the referrer (page URL)
+        $referrer = $request->header('Referer');
+        $utmParams = $this->extractUtmFromUrl($referrer);
+
         // Dispatch job to process events asynchronously
         ProcessAnalyticsEvents::dispatch(
             events: $validated['events'],
@@ -36,11 +40,11 @@ class AnalyticsEventController extends Controller
             pageContext: [
                 'page_path' => $pagePath,
                 'device_type' => $deviceType,
-                'referrer' => $request->header('Referer'),
+                'referrer' => $referrer,
                 'user_agent' => $request->userAgent(),
-                'utm_source' => $request->query('utm_source'),
-                'utm_medium' => $request->query('utm_medium'),
-                'utm_campaign' => $request->query('utm_campaign'),
+                'utm_source' => $utmParams['utm_source'],
+                'utm_medium' => $utmParams['utm_medium'],
+                'utm_campaign' => $utmParams['utm_campaign'],
             ]
         );
 
@@ -67,6 +71,31 @@ class AnalyticsEventController extends Controller
         }
 
         return 'desktop';
+    }
+
+    /**
+     * Extract UTM parameters from a URL
+     */
+    private function extractUtmFromUrl(?string $url): array
+    {
+        $params = ['utm_source' => null, 'utm_medium' => null, 'utm_campaign' => null];
+
+        if (! $url) {
+            return $params;
+        }
+
+        $parsed = parse_url($url);
+        if (! isset($parsed['query'])) {
+            return $params;
+        }
+
+        parse_str($parsed['query'], $query);
+
+        return [
+            'utm_source' => $query['utm_source'] ?? null,
+            'utm_medium' => $query['utm_medium'] ?? null,
+            'utm_campaign' => $query['utm_campaign'] ?? null,
+        ];
     }
 
     /**
