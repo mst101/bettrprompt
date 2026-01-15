@@ -30,7 +30,7 @@ class FreshCommand extends Command
     protected array $availableStores = [
         'default',
         'cache',
-        'analytics',
+        //        'analytics',
     ];
 
     /**
