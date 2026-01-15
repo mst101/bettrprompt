@@ -214,6 +214,13 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'utm_content' => $visitor?->current_utm_content,
             ];
 
+            Log::debug('ensureSessionExists: session data before create', [
+                'visitor_id' => $this->visitorId,
+                'visitor_found' => $visitor ? 'yes' : 'no',
+                'utm_term' => $sessionData['utm_term'],
+                'utm_content' => $sessionData['utm_content'],
+            ]);
+
             // Only include user_id and visitor_id if they exist to avoid foreign key violations
             if ($this->userId) {
                 $sessionData['user_id'] = $this->userId;

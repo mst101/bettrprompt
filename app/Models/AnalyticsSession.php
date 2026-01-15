@@ -30,6 +30,8 @@ class AnalyticsSession extends Model
         'utm_source',
         'utm_medium',
         'utm_campaign',
+        'utm_term',
+        'utm_content',
         'referrer',
         'device_type',
         'country_code',
