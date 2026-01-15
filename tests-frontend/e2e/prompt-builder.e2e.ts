@@ -62,31 +62,32 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should submit a prompt and navigate to show page', async ({
         authenticatedPage,
     }) => {
+        // Import the page object class to create an instance
+        const { PromptBuilderPage } = await import('./pages/PromptBuilderPage');
+        const promptBuilderPage = new PromptBuilderPage(authenticatedPage);
+
         // Note: n8n mocking is automatically enabled via the authenticatedPage fixture
         // No need to set it up manually here
 
         // Navigate to the prompt builder index
-        await authenticatedPage.goto('/prompt-builder');
+        await promptBuilderPage.goto();
 
         // Fill in the task description
-        const taskInput = authenticatedPage.getByLabel(/task description/i);
-        await taskInput.fill(
+        await promptBuilderPage.enterTaskDescription(
             'Help me write better code documentation for my Vue components',
         );
 
-        // Submit the form and wait for navigation
-        // With mocked n8n responses, this should complete in under 1 second
-        const submitButton = authenticatedPage.getByRole('button', {
-            name: /analyse|submit|optimis/i,
-        });
+        // Submit the form
+        await promptBuilderPage.submitButton.click();
+
+        // Dismiss location/language modal if it appears
+        await promptBuilderPage.dismissLocationLanguageModal();
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
             /\/[a-z]{2}\/prompt-builder\/\d+/,
             { timeout: 10000 },
         );
-
-        await submitButton.click();
 
         try {
             await navigationPromise;
@@ -139,27 +140,32 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
     test('should wait for framework selection and see framework tab', async ({
         authenticatedPage,
     }) => {
+        // Import the page object class to create an instance
+        const { PromptBuilderPage } = await import('./pages/PromptBuilderPage');
+        const promptBuilderPage = new PromptBuilderPage(authenticatedPage);
+
         // Note: n8n mocking is automatically enabled via the authenticatedPage fixture
         // No need to set it up manually here
 
         // Navigate to the prompt builder
-        await authenticatedPage.goto('/prompt-builder');
+        await promptBuilderPage.goto();
 
         // Submit a prompt
-        const taskInput = authenticatedPage.getByLabel(/task description/i);
-        await taskInput.fill('Create a project plan for a new web application');
+        await promptBuilderPage.enterTaskDescription(
+            'Create a project plan for a new web application',
+        );
 
-        const submitButton = authenticatedPage.getByRole('button', {
-            name: /analyse|submit|optimis/i,
-        });
+        // Click submit
+        await promptBuilderPage.submitButton.click();
+
+        // Dismiss location/language modal if it appears
+        await promptBuilderPage.dismissLocationLanguageModal();
 
         // Wait for navigation after submission
         const navigationPromise = authenticatedPage.waitForURL(
             /\/[a-z]{2}\/prompt-builder\/\d+/,
             { timeout: 10000 },
         );
-
-        await submitButton.click();
 
         try {
             await navigationPromise;
@@ -576,6 +582,10 @@ test.describe('Prompt Builder - Error Scenarios', () => {
     test('should handle API errors gracefully', async ({
         authenticatedPage,
     }) => {
+        // Import the page object class to create an instance
+        const { PromptBuilderPage } = await import('./pages/PromptBuilderPage');
+        const promptBuilderPage = new PromptBuilderPage(authenticatedPage);
+
         // Setup n8n mocking with API error scenario
         const n8nMock = new N8nMockService(authenticatedPage);
         await n8nMock.enableMocking({
@@ -587,7 +597,7 @@ test.describe('Prompt Builder - Error Scenarios', () => {
         const testPage = authenticatedPage;
 
         // Navigate to prompt builder
-        await testPage.goto('/prompt-builder');
+        await promptBuilderPage.goto();
         await testPage.waitForLoadState('networkidle');
 
         // Wait for task input to be available (may take time due to Inertia/React loading)
@@ -598,11 +608,14 @@ test.describe('Prompt Builder - Error Scenarios', () => {
             name: /analyse|submit|optimis/i,
         });
 
-        // Submit and wait for navigation to show page
+        // Submit and dismiss location modal if it appears
+        await submitButton.click();
+        await promptBuilderPage.dismissLocationLanguageModal();
+
+        // Wait for navigation to show page
         const navigationPromise = testPage.waitForURL(/\/prompt-builder\/\d+/, {
             timeout: 10000,
         });
-        await submitButton.click();
 
         try {
             await navigationPromise;

@@ -55,13 +55,11 @@ export class PromptBuilderPage {
     }
 
     get locationLanguageModal(): Locator {
-        return this.page.locator('[role="dialog"]');
+        return this.page.getByTestId('location-prompt-modal');
     }
 
     get continueWithoutChangesButton(): Locator {
-        return this.page.getByRole('button', {
-            name: /continue/i,
-        });
+        return this.page.getByTestId('location-prompt-continue');
     }
 
     // ===== Navigation =====

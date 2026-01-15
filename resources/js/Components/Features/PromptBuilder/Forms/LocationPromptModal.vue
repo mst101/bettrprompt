@@ -201,7 +201,12 @@ const clearLocation = async () => {
 </script>
 
 <template>
-    <Modal :show="show" max-width="lg" @close="emit('close')">
+    <Modal
+        :show="show"
+        max-width="lg"
+        data-testid="location-prompt-modal"
+        @close="emit('close')"
+    >
         <div class="p-6">
             <div class="flex items-start gap-3">
                 <DynamicIcon
@@ -309,6 +314,7 @@ const clearLocation = async () => {
                             <div class="flex flex-wrap gap-3 lg:justify-end">
                                 <ButtonSecondary
                                     type="button"
+                                    data-testid="location-prompt-continue"
                                     :disabled="isSubmitting"
                                     @click="emit('continue', { dontAskAgain })"
                                 >
