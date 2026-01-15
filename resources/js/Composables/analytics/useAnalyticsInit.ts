@@ -26,9 +26,8 @@ export function useAnalyticsInit() {
                 ) {
                     analyticsService.track({
                         name: 'consent_granted',
-                        properties: {
-                            initial_page_path: window.location.pathname,
-                        },
+                        page_path: window.location.pathname,
+                        referrer: null,
                     });
                 }
 

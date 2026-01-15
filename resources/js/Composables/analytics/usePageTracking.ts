@@ -17,14 +17,26 @@ export function usePageTracking() {
     let initialTrackedAt = 0;
     let initialFallbackTimer: number | null = null;
     let lastPath: string | null = null;
-    const externalReferrer =
-        typeof document !== 'undefined' && document.referrer
-            ? document.referrer
-            : null;
+    const externalReferrer = (() => {
+        if (typeof document === 'undefined' || !document.referrer) {
+            return null;
+        }
+
+        try {
+            const referrerUrl = new URL(document.referrer);
+            if (referrerUrl.origin === window.location.origin) {
+                return null;
+            }
+        } catch {
+            return null;
+        }
+
+        return document.referrer;
+    })();
 
     const buildReferrer = (): string | null => {
         if (lastPath) {
-            return new URL(lastPath, window.location.origin).toString();
+            return lastPath;
         }
 
         return externalReferrer;

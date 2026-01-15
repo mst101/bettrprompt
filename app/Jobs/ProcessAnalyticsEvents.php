@@ -261,6 +261,9 @@ class ProcessAnalyticsEvents implements ShouldQueue
             ? $event['referrer']
             : ($this->pageContext['referrer'] ?? null);
 
+        $pagePath = $this->normalizeInternalUrl($pagePath);
+        $referrer = $this->normalizeInternalUrl($referrer);
+
         return [
             'event_id' => $event['event_id'],
             'name' => $event['name'],
@@ -278,10 +281,41 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'country_code' => $this->pageContext['country_code'] ?? null,
             'prompt_run_id' => $event['properties']['prompt_run_id'] ?? null,
             'occurred_at' => $occurredAt,
-            'received_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
         ];
+    }
+
+    /**
+     * Normalize internal URLs to paths to save storage space.
+     */
+    private function normalizeInternalUrl(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        $url = parse_url($value);
+        if (! is_array($url)) {
+            return $value;
+        }
+
+        $host = $url['host'] ?? null;
+        if ($host && $this->isInternalHost($host)) {
+            $path = $url['path'] ?? '/';
+            if (! empty($url['query'])) {
+                $path .= '?'.$url['query'];
+            }
+
+            return $path;
+        }
+
+        return $value;
+    }
+
+    private function isInternalHost(string $host): bool
+    {
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        return $appHost && strcasecmp($appHost, $host) === 0;
     }
 
     /**

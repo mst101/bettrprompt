@@ -29,6 +29,8 @@ class AnalyticsEvent extends Model
 
     public $incrementing = false;
 
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -46,12 +48,9 @@ class AnalyticsEvent extends Model
         'page_path',
         'referrer',
         'device_type',
-        'browser',
-        'os',
         'country_code',
         'prompt_run_id',
         'occurred_at',
-        'received_at',
     ];
 
     /**
@@ -62,9 +61,6 @@ class AnalyticsEvent extends Model
     protected $casts = [
         'properties' => 'json',
         'occurred_at' => 'datetime',
-        'received_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
 
     /**
