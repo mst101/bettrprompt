@@ -105,7 +105,9 @@ class AnalyticsEventController extends Controller
         }
 
         try {
-            $decoded = json_decode($cookieValue, true);
+            // Decrypt the cookie value first (Laravel encrypts cookies by default)
+            $decrypted = Crypt::decryptString($cookieValue);
+            $decoded = json_decode($decrypted, true);
             if (is_array($decoded)) {
                 return [
                     'utm_source' => $decoded['utm_source'] ?? null,
@@ -114,7 +116,8 @@ class AnalyticsEventController extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            // Invalid JSON in cookie, return defaults
+            // Invalid JSON or decryption failed, return defaults
+            Log::warning('Failed to extract UTM from cookie', ['error' => $e->getMessage()]);
         }
 
         return $params;
