@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\AnalyticsEvent;
+use App\Models\AnalyticsSession;
 use App\Models\PromptRun;
 use App\Services\ConversionAttributionService;
 use App\Services\FrameworkSelectionService;
@@ -70,6 +71,12 @@ class ProcessAnalyticsEvents implements ShouldQueue
                     $eventsToInsert[] = $enrichedEvent;
                     $insertedEventIds[] = $enrichedEvent['event_id'];
                 }
+            }
+
+            // Ensure the analytics session exists before inserting events
+            // This prevents foreign key constraint violations
+            if (! empty($eventsToInsert) && $this->sessionId) {
+                $this->ensureSessionExists($eventsToInsert);
             }
 
             // Batch insert with upsert semantics (ignore duplicates)
@@ -159,6 +166,74 @@ class ProcessAnalyticsEvents implements ShouldQueue
             if ($sessionId) {
                 $sessionService->processSessionEvents($events->toArray());
             }
+        }
+    }
+
+    /**
+     * Ensure the analytics session exists before inserting events.
+     * Creates a minimal session record from the session ID and first event data.
+     */
+    private function ensureSessionExists(array $enrichedEvents): void
+    {
+        try {
+            // Check if session already exists
+            if (AnalyticsSession::where('id', $this->sessionId)->exists()) {
+                return;
+            }
+
+            $firstEvent = reset($enrichedEvents);
+            if (! $firstEvent) {
+                return;
+            }
+
+            $startedAt = Carbon::parse($firstEvent['occurred_at']);
+
+            // Build the session data
+            $sessionData = [
+                'id' => $this->sessionId,
+                'started_at' => $startedAt,
+                'ended_at' => $startedAt,
+                'duration_seconds' => 0,
+                'entry_page' => $firstEvent['page_path'] ?? null,
+                'exit_page' => $firstEvent['page_path'] ?? null,
+                'page_count' => 0,
+                'event_count' => 0,
+                'device_type' => $firstEvent['device_type'] ?? null,
+                'country_code' => $firstEvent['country_code'] ?? null,
+                'referrer' => $firstEvent['referrer'] ?? null,
+                'is_bounce' => true,
+                'converted' => false,
+            ];
+
+            // Only include user_id and visitor_id if they exist to avoid foreign key violations
+            if ($this->userId) {
+                $sessionData['user_id'] = $this->userId;
+            }
+
+            if ($this->visitorId) {
+                // Check if visitor exists before including it
+                $visitorExists = DB::table('visitors')
+                    ->where('id', $this->visitorId)
+                    ->exists();
+
+                if ($visitorExists) {
+                    $sessionData['visitor_id'] = $this->visitorId;
+                }
+            }
+
+            // Create a minimal session record
+            AnalyticsSession::create($sessionData);
+
+            Log::info('Created analytics session', [
+                'session_id' => $this->sessionId,
+                'visitor_id' => $this->visitorId,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to create analytics session', [
+                'session_id' => $this->sessionId,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't rethrow - the ProcessSessions will handle updating the session
         }
     }
 
