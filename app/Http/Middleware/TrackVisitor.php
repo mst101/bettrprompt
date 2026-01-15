@@ -46,9 +46,9 @@ class TrackVisitor
             $visitorExists = Visitor::where('id', $visitorId)->exists();
 
             if ($visitorExists) {
-                // Existing visitor - update their record
+                // Existing visitor - update their record (including utm params if present)
                 //                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
-                $this->updateVisitor($visitorId);
+                $this->updateVisitor($visitorId, $request);
             } else {
                 // Cookie exists but visitor not in DB (e.g., database was cleared)
                 // Create new visitor with new ID
@@ -71,33 +71,8 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Store current utm params in an unencrypted cookie (refreshed on each visit)
-        // This preserves utm params through redirects
-        $utmParams = [
-            'utm_source' => $request->query('utm_source'),
-            'utm_medium' => $request->query('utm_medium'),
-            'utm_campaign' => $request->query('utm_campaign'),
-            'utm_term' => $request->query('utm_term'),
-            'utm_content' => $request->query('utm_content'),
-        ];
-
         // Process the request
         $response = $next($request);
-
-        // Only set cookie if there are utm params present
-        if (array_filter($utmParams)) {
-            // Set raw unencrypted cookie by manipulating headers directly
-            // This bypasses Laravel's EncryptCookies middleware
-            $cookieValue = json_encode($utmParams);
-            $expiryTime = time() + (60 * 60); // 1 hour
-            $cookieString = "utm_params={$cookieValue}; Path=/; Max-Age=3600; SameSite=Lax";
-            $response->header('Set-Cookie', $cookieString, false);
-            Log::info('TrackVisitor: set utm_params cookie', [
-                'utm_source' => $utmParams['utm_source'],
-                'utm_medium' => $utmParams['utm_medium'],
-                'utm_campaign' => $utmParams['utm_campaign'],
-            ]);
-        }
 
         // Set cookie for new visitors (cookie will be sent with response)
         if ($isNewVisitor) {
@@ -202,13 +177,28 @@ class TrackVisitor
     /**
      * Update an existing visitor's last visit time.
      */
-    protected function updateVisitor(string $visitorId): void
+    protected function updateVisitor(string $visitorId, Request $request): void
     {
         $visitor = Visitor::find($visitorId);
 
-        $visitor?->update([
+        if (! $visitor) {
+            return;
+        }
+
+        $updateData = [
             'last_visit_at' => now(),
-        ]);
+        ];
+
+        // Update utm params if present in current request
+        if ($request->query('utm_source') || $request->query('utm_medium') || $request->query('utm_campaign')) {
+            $updateData['utm_source'] = $request->query('utm_source');
+            $updateData['utm_medium'] = $request->query('utm_medium');
+            $updateData['utm_campaign'] = $request->query('utm_campaign');
+            $updateData['utm_term'] = $request->query('utm_term');
+            $updateData['utm_content'] = $request->query('utm_content');
+        }
+
+        $visitor->update($updateData);
     }
 
     /**

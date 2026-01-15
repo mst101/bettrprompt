@@ -122,10 +122,10 @@ class SessionProcessorService
             'conversion_type' => $conversionType,
             'prompts_started' => $promptsStarted,
             'prompts_completed' => $promptsCompleted,
-            // Attribution: use current session's utm params (not visitor's old values)
-            'utm_source' => $pageContext['utm_source'] ?? null,
-            'utm_medium' => $pageContext['utm_medium'] ?? null,
-            'utm_campaign' => $pageContext['utm_campaign'] ?? null,
+            // Attribution from visitor (updated on each visit with latest utm params)
+            'utm_source' => $visitor?->utm_source,
+            'utm_medium' => $visitor?->utm_medium,
+            'utm_campaign' => $visitor?->utm_campaign,
             'referrer' => $firstEvent['referrer'] ?? null,
             'device_type' => $firstEvent['device_type'] ?? null,
         ]);
