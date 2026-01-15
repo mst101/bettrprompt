@@ -83,16 +83,6 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Log if utm params were captured
-        if ($currentUtmParams) {
-            Log::info('TrackVisitor: captured utm params', [
-                'utm_source' => $currentUtmParams['utm_source'],
-                'utm_medium' => $currentUtmParams['utm_medium'],
-                'utm_campaign' => $currentUtmParams['utm_campaign'],
-                'visitor_id' => $visitorId,
-            ]);
-        }
-
         // Process the request
         $response = $next($request);
 
@@ -140,7 +130,7 @@ class TrackVisitor
             ? Country::with(['language', 'currency'])->find($routeCountryCode)
             : null;
 
-        $visitor = DB::transaction(function () use ($request, $referredByUserId, $routeCountry) {
+        $visitor = DB::transaction(function () use ($request, $referredByUserId, $routeCountry, $currentUtmParams) {
             $locationData = null;
 
             if ($routeCountry) {
@@ -173,10 +163,10 @@ class TrackVisitor
                 'utm_campaign' => $request->query('utm_campaign'),
                 'utm_term' => $request->query('utm_term'),
                 'utm_content' => $request->query('utm_content'),
-                // Set current utm to match original on first visit
-                'current_utm_source' => $currentUtmParams['utm_source'] ?? null,
-                'current_utm_medium' => $currentUtmParams['utm_medium'] ?? null,
-                'current_utm_campaign' => $currentUtmParams['utm_campaign'] ?? null,
+                // Set current utm to match original on first visit (or null if no utm params present)
+                'current_utm_source' => $currentUtmParams ? $currentUtmParams['utm_source'] : null,
+                'current_utm_medium' => $currentUtmParams ? $currentUtmParams['utm_medium'] : null,
+                'current_utm_campaign' => $currentUtmParams ? $currentUtmParams['utm_campaign'] : null,
                 'referrer' => $request->header('referer'),
                 'landing_page' => $request->fullUrl(),
                 'user_agent' => $request->userAgent(),
