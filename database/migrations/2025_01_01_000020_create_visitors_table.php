@@ -12,15 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('visitors', function (Blueprint $table) {
+            // Primary & foreign keys
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
 
-            // Attribution tracking
+            // Attribution tracking (first visit)
             $table->string('utm_source')->nullable();
             $table->string('utm_medium')->nullable();
             $table->string('utm_campaign')->nullable();
             $table->string('utm_term')->nullable();
             $table->string('utm_content')->nullable();
+
+            // Attribution tracking (latest visit - updated on each visit with utm params)
+            $table->string('current_utm_source')->nullable();
+            $table->string('current_utm_medium')->nullable();
+            $table->string('current_utm_campaign')->nullable();
+            $table->string('current_utm_term')->nullable();
+            $table->string('current_utm_content')->nullable();
+
+            // Referrer & landing page
             $table->string('referrer')->nullable();
             $table->string('landing_page')->nullable();
 
@@ -32,8 +43,6 @@ return new class extends Migration
             $table->timestamp('first_visit_at');
             $table->timestamp('last_visit_at');
             $table->timestamp('converted_at')->nullable(); // When user_id was set
-            $table->foreignId('referred_by_user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->index('referred_by_user_id');
 
             // Personality data (before conversion to user)
             $table->enum('personality_type', [
@@ -49,7 +58,7 @@ return new class extends Migration
                 // Explorers (SP)
                 'ISTP-A', 'ISTP-T', 'ISFP-A', 'ISFP-T',
                 'ESTP-A', 'ESTP-T', 'ESFP-A', 'ESFP-T',
-            ])->nullable(); // 32 personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
+            ])->nullable();
             $table->json('trait_percentages')->nullable();
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
 
@@ -68,6 +77,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes for performance
+            $table->index('referred_by_user_id');
             $table->index(['user_id', 'first_visit_at']);
             $table->index(['user_id', 'converted_at']);
             $table->index('converted_at');

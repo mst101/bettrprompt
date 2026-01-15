@@ -33,6 +33,8 @@ return new class extends Migration
             $table->string('utm_source', 100)->nullable();
             $table->string('utm_medium', 100)->nullable();
             $table->string('utm_campaign', 100)->nullable();
+            $table->string('utm_term', 100)->nullable();
+            $table->string('utm_content', 100)->nullable();
             $table->string('referrer', 500)->nullable();
 
             // Device (captured at session start)
