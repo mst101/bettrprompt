@@ -17,6 +17,10 @@
 
     <!-- Fullstory Analytics -->
     @production
+        @php
+            $shouldDisableAnalytics = request()->is('horizon', 'horizon/*', '*/admin', '*/admin/*');
+        @endphp
+        @unless($shouldDisableAnalytics)
         <script>
             window['_fs_host'] = 'fullstory.com';
             window['_fs_script'] = 'edge.fullstory.com/s/fs.js';
@@ -135,6 +139,7 @@
                 }), g._v = '2.0.0');
             }(window, document, window._fs_namespace, 'script', window._fs_script);
         </script>
+        @endunless
     @endproduction
 
     <!-- Scripts -->

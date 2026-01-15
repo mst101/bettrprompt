@@ -2,6 +2,7 @@ import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import { useVisitor } from '@/Composables/useVisitor';
 import { analyticsService } from '@/services/analytics';
 import { analyticsSessionService } from '@/services/analyticsSession';
+import { isAnalyticsBlockedPath } from '@/Utils/analyticsGuard';
 import { watch } from 'vue';
 
 /**
@@ -22,14 +23,19 @@ export function useAnalyticsInit() {
                 const sessionId = analyticsSessionService.getSessionId();
 
                 // Track consent granted
-                analyticsService.track({
-                    name: 'consent_granted',
-                    properties: {
-                        initial_page_path: window.location.pathname,
-                        visitor_id: visitorId.value,
-                        session_id: sessionId,
-                    },
-                });
+                if (
+                    typeof window === 'undefined' ||
+                    !isAnalyticsBlockedPath(window.location.pathname)
+                ) {
+                    analyticsService.track({
+                        name: 'consent_granted',
+                        properties: {
+                            initial_page_path: window.location.pathname,
+                            visitor_id: visitorId.value,
+                            session_id: sessionId,
+                        },
+                    });
+                }
 
                 console.log(
                     '[Analytics] Consent granted, session started:',

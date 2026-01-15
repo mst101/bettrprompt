@@ -1,5 +1,9 @@
 import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import { analyticsService } from '@/services/analytics';
+import {
+    getAnalyticsPathname,
+    isAnalyticsBlockedPath,
+} from '@/Utils/analyticsGuard';
 import { router } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 
@@ -16,7 +20,10 @@ export function usePageTracking() {
             return;
         }
 
-        const path = url || window.location.pathname;
+        const path = getAnalyticsPathname(url);
+        if (!path || isAnalyticsBlockedPath(path)) {
+            return;
+        }
 
         analyticsService.track({
             name: 'page_view',

@@ -1,4 +1,5 @@
 import { useCookieConsent } from '@/Composables/features/useCookieConsent';
+import { isAnalyticsBlockedPath } from '@/Utils/analyticsGuard';
 import { analyticsSessionService } from './analyticsSession';
 
 export interface AnalyticsEvent {
@@ -37,6 +38,13 @@ export class AnalyticsService {
             return;
         }
 
+        if (
+            typeof window !== 'undefined' &&
+            isAnalyticsBlockedPath(window.location.pathname)
+        ) {
+            return;
+        }
+
         // Enrich event with defaults
         const queuedEvent: QueuedEvent = {
             ...event,
@@ -44,7 +52,6 @@ export class AnalyticsService {
             occurred_at_ms: event.occurred_at_ms || Date.now(),
         };
 
-        // Add to queue
         this.eventQueue.push(queuedEvent);
 
         // Send batch if we've reached the batch size

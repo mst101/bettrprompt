@@ -1,3 +1,4 @@
+import { isAnalyticsBlockedPath } from '@/Utils/analyticsGuard';
 import axios from 'axios';
 import { analyticsSessionService } from './services/analyticsSession';
 
@@ -10,6 +11,13 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * The session ID is optional and only added if analytics consent is granted
  */
 window.axios.interceptors.request.use((config) => {
+    if (
+        typeof window !== 'undefined' &&
+        isAnalyticsBlockedPath(window.location.pathname)
+    ) {
+        return config;
+    }
+
     const sessionId = analyticsSessionService.getCurrentSessionId();
     if (sessionId) {
         config.headers['X-Analytics-Session-Id'] = sessionId;
