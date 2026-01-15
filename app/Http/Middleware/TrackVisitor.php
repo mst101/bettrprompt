@@ -71,7 +71,7 @@ class TrackVisitor
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
 
-        // Store current utm params in a cookie (refreshed on each visit)
+        // Store current utm params in an unencrypted cookie (refreshed on each visit)
         // This preserves utm params through redirects
         $utmParams = [
             'utm_source' => $request->query('utm_source'),
@@ -80,18 +80,24 @@ class TrackVisitor
             'utm_term' => $request->query('utm_term'),
             'utm_content' => $request->query('utm_content'),
         ];
+
+        // Process the request
+        $response = $next($request);
+
         // Only set cookie if there are utm params present
         if (array_filter($utmParams)) {
-            Cookie::queue('utm_params', json_encode($utmParams), 60); // 1 hour
-            Log::info('TrackVisitor: queued utm_params cookie', [
+            // Set raw unencrypted cookie by manipulating headers directly
+            // This bypasses Laravel's EncryptCookies middleware
+            $cookieValue = json_encode($utmParams);
+            $expiryTime = time() + (60 * 60); // 1 hour
+            $cookieString = "utm_params={$cookieValue}; Path=/; Max-Age=3600; SameSite=Lax";
+            $response->header('Set-Cookie', $cookieString, false);
+            Log::info('TrackVisitor: set utm_params cookie', [
                 'utm_source' => $utmParams['utm_source'],
                 'utm_medium' => $utmParams['utm_medium'],
                 'utm_campaign' => $utmParams['utm_campaign'],
             ]);
         }
-
-        // Process the request
-        $response = $next($request);
 
         // Set cookie for new visitors (cookie will be sent with response)
         if ($isNewVisitor) {

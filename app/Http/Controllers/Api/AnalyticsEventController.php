@@ -95,6 +95,7 @@ class AnalyticsEventController extends Controller
 
     /**
      * Extract UTM parameters from the utm_params cookie
+     * Note: This is an unencrypted raw cookie set directly via Set-Cookie header
      */
     private function extractUtmFromCookie(?string $cookieValue): array
     {
@@ -105,10 +106,14 @@ class AnalyticsEventController extends Controller
         }
 
         try {
-            // Decrypt the cookie value first (Laravel encrypts cookies by default)
-            $decrypted = Crypt::decryptString($cookieValue);
-            $decoded = json_decode($decrypted, true);
+            $decoded = json_decode($cookieValue, true);
             if (is_array($decoded)) {
+                Log::info('AnalyticsEventController: successfully decoded utm_params from cookie', [
+                    'utm_source' => $decoded['utm_source'] ?? null,
+                    'utm_medium' => $decoded['utm_medium'] ?? null,
+                    'utm_campaign' => $decoded['utm_campaign'] ?? null,
+                ]);
+
                 return [
                     'utm_source' => $decoded['utm_source'] ?? null,
                     'utm_medium' => $decoded['utm_medium'] ?? null,
@@ -116,8 +121,8 @@ class AnalyticsEventController extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            // Invalid JSON or decryption failed, return defaults
-            Log::warning('Failed to extract UTM from cookie', ['error' => $e->getMessage()]);
+            // Invalid JSON in cookie, return defaults
+            Log::warning('Failed to extract UTM from cookie', ['error' => $e->getMessage(), 'cookie' => $cookieValue]);
         }
 
         return $params;
