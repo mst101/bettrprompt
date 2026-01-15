@@ -206,10 +206,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'referrer' => $firstEvent['referrer'] ?? null,
                 'is_bounce' => true,
                 'converted' => false,
-                // Attribution from visitor (updated on each visit with latest utm params)
-                'utm_source' => $visitor?->utm_source,
-                'utm_medium' => $visitor?->utm_medium,
-                'utm_campaign' => $visitor?->utm_campaign,
+                // Attribution from current session (utm params from current visit, not visitor's original ones)
+                'utm_source' => $this->pageContext['utm_source'] ?? null,
+                'utm_medium' => $this->pageContext['utm_medium'] ?? null,
+                'utm_campaign' => $this->pageContext['utm_campaign'] ?? null,
             ];
 
             // Only include user_id and visitor_id if they exist to avoid foreign key violations

@@ -28,11 +28,13 @@ class AnalyticsEventController extends Controller
         $pagePath = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
-        // Extract UTM parameters from the referrer (page URL)
-        // Note: utm params are now updated in visitor record on each visit by TrackVisitor middleware
-        // so analytics sessions will read them from the visitor, not from pageContext
-        $referrer = $request->header('Referer');
-        $utmParams = $this->extractUtmFromUrl($referrer);
+        // Get UTM parameters from session (set by TrackVisitor middleware)
+        // Session is updated whenever user visits with new utm params
+        $utmParams = [
+            'utm_source' => session('utm_source'),
+            'utm_medium' => session('utm_medium'),
+            'utm_campaign' => session('utm_campaign'),
+        ];
 
         // Dispatch job to process events asynchronously
         ProcessAnalyticsEvents::dispatch(

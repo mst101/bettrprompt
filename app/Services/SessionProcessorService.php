@@ -66,7 +66,8 @@ class SessionProcessorService
         $userId = $firstEvent['user_id'] ?? null;
         $startedAt = Carbon::parse($firstEvent['occurred_at']);
         $endedAt = Carbon::parse($lastEvent['occurred_at']);
-        $duration = $endedAt->diffInSeconds($startedAt);
+        // Ensure duration is never negative and cast to int (column is unsignedInteger)
+        $duration = max(0, (int) abs($endedAt->diffInSeconds($startedAt)));
 
         // Load visitor for fallback utm data (if not in current request)
         $visitor = $visitorId ? Visitor::find($visitorId) : null;
@@ -122,10 +123,10 @@ class SessionProcessorService
             'conversion_type' => $conversionType,
             'prompts_started' => $promptsStarted,
             'prompts_completed' => $promptsCompleted,
-            // Attribution from visitor (updated on each visit with latest utm params)
-            'utm_source' => $visitor?->utm_source,
-            'utm_medium' => $visitor?->utm_medium,
-            'utm_campaign' => $visitor?->utm_campaign,
+            // Attribution from current session (utm params from current visit, not visitor's original ones)
+            'utm_source' => $pageContext['utm_source'] ?? null,
+            'utm_medium' => $pageContext['utm_medium'] ?? null,
+            'utm_campaign' => $pageContext['utm_campaign'] ?? null,
             'referrer' => $firstEvent['referrer'] ?? null,
             'device_type' => $firstEvent['device_type'] ?? null,
         ]);

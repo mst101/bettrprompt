@@ -46,9 +46,9 @@ class TrackVisitor
             $visitorExists = Visitor::where('id', $visitorId)->exists();
 
             if ($visitorExists) {
-                // Existing visitor - update their record (including utm params if present)
+                // Existing visitor - update their record
                 //                Log::info('Updating existing visitor', ['visitor_id' => $visitorId]);
-                $this->updateVisitor($visitorId, $request);
+                $this->updateVisitor($visitorId);
             } else {
                 // Cookie exists but visitor not in DB (e.g., database was cleared)
                 // Create new visitor with new ID
@@ -70,6 +70,17 @@ class TrackVisitor
         // This allows controllers to read the visitor_id even for new visitors
         $request->cookies->set('visitor_id', $visitorId);
         //        Log::info('Set visitor_id in request cookies', ['visitor_id' => $visitorId]);
+
+        // Store utm params in session so they survive redirects
+        if ($request->has('utm_source') || $request->has('utm_medium') || $request->has('utm_campaign')) {
+            session([
+                'utm_source' => $request->query('utm_source'),
+                'utm_medium' => $request->query('utm_medium'),
+                'utm_campaign' => $request->query('utm_campaign'),
+                'utm_term' => $request->query('utm_term'),
+                'utm_content' => $request->query('utm_content'),
+            ]);
+        }
 
         // Process the request
         $response = $next($request);
@@ -177,28 +188,13 @@ class TrackVisitor
     /**
      * Update an existing visitor's last visit time.
      */
-    protected function updateVisitor(string $visitorId, Request $request): void
+    protected function updateVisitor(string $visitorId): void
     {
         $visitor = Visitor::find($visitorId);
 
-        if (! $visitor) {
-            return;
-        }
-
-        $updateData = [
+        $visitor?->update([
             'last_visit_at' => now(),
-        ];
-
-        // Update utm params if present in current request
-        if ($request->query('utm_source') || $request->query('utm_medium') || $request->query('utm_campaign')) {
-            $updateData['utm_source'] = $request->query('utm_source');
-            $updateData['utm_medium'] = $request->query('utm_medium');
-            $updateData['utm_campaign'] = $request->query('utm_campaign');
-            $updateData['utm_term'] = $request->query('utm_term');
-            $updateData['utm_content'] = $request->query('utm_content');
-        }
-
-        $visitor->update($updateData);
+        ]);
     }
 
     /**
