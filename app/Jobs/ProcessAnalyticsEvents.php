@@ -263,8 +263,8 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'user_id' => $this->userId,
             'session_id' => $this->sessionId,
             'source' => 'client',
-            'page_path' => $this->pageContext['page_path'] ?? null,
-            'referrer' => $this->pageContext['referrer'] ?? null,
+            'page_path' => $event['page_path'] ?? $this->pageContext['page_path'] ?? null,
+            'referrer' => $event['referrer'] ?? $this->pageContext['referrer'] ?? null,
             'device_type' => $this->pageContext['device_type'] ?? null,
             'browser' => null, // Could be parsed from user agent if needed
             'os' => null, // Could be parsed from user agent if needed

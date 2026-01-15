@@ -27,6 +27,8 @@ class StoreAnalyticsEventsRequest extends FormRequest
             'events.*.event_id' => 'required|uuid',
             'events.*.name' => 'required|string|max:100',
             'events.*.occurred_at_ms' => 'required|integer|min:0',
+            'events.*.page_path' => 'nullable|string|max:2048',
+            'events.*.referrer' => 'nullable|string|max:2048',
             'events.*.properties' => 'nullable|array',
         ];
     }

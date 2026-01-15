@@ -24,9 +24,9 @@ export function usePageTracking() {
 
         analyticsService.track({
             name: 'page_view',
+            page_path: path,
+            referrer: document.referrer || null,
             properties: {
-                path,
-                referrer: document.referrer,
                 title: document.title,
             },
         });

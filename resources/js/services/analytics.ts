@@ -6,6 +6,8 @@ export interface AnalyticsEvent {
     event_id?: string; // Generated client-side
     name: string;
     occurred_at_ms?: number;
+    page_path?: string;
+    referrer?: string | null;
     properties?: Record<string, unknown>;
 }
 

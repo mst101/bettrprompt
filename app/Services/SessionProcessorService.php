@@ -74,10 +74,12 @@ class SessionProcessorService
 
         foreach ($events as $event) {
             if ($event['name'] === 'page_view') {
+                $pagePath = $event['properties']['path'] ?? $event['page_path'] ?? null;
+                $pagePath = $this->extractPath($pagePath);
                 if ($entryPage === null) {
-                    $entryPage = $event['properties']['path'] ?? null;
+                    $entryPage = $pagePath;
                 }
-                $exitPage = $event['properties']['path'] ?? null;
+                $exitPage = $pagePath;
                 $pageCount++;
             }
         }
@@ -161,5 +163,19 @@ class SessionProcessorService
         }
 
         return $conversions->first()?->name ?? null;
+    }
+
+    /**
+     * Extract the path component from a URL if possible.
+     */
+    private function extractPath(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        $path = parse_url($value, PHP_URL_PATH);
+
+        return is_string($path) && $path !== '' ? $path : $value;
     }
 }
