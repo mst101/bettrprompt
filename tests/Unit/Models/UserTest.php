@@ -13,7 +13,7 @@ describe('User profile management', function () {
         ]);
 
         $locationData = [
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
@@ -24,7 +24,7 @@ describe('User profile management', function () {
         $user->updateLocation($locationData);
 
         expect($user->fresh())
-            ->country_code->toBe('GB')
+            ->country_code->toBe('gb')
             ->region->toBe('England')
             ->city->toBe('London')
             ->timezone->toBe('Europe/London')
@@ -55,7 +55,7 @@ describe('User profile management', function () {
 
     test('clearLocation removes all location fields and updates profile completion', function () {
         $user = User::factory()->create([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
@@ -99,7 +99,7 @@ describe('User profile management', function () {
         ]);
 
         $user->updateLocation([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
@@ -157,8 +157,7 @@ describe('User referral code', function () {
 describe('User context building', function () {
     test('getUserContext returns complete context for fully profiled user', function () {
         $user = User::factory()->create([
-            'country_code' => 'GB',
-            'country_name' => 'United Kingdom',
+            'country_code' => 'gb',
             'timezone' => 'Europe/London',
             'currency_code' => 'GBP',
             'job_title' => 'Developer',
@@ -174,7 +173,7 @@ describe('User context building', function () {
 
         expect($context)
             ->toHaveKeys(['location', 'professional', 'team', 'preferences', 'personality'])
-            ->and($context['location']['country_code'])->toBe('GB')
+            ->and($context['location']['country_code'])->toBe('gb')
             ->and($context['professional']['job_title'])->toBe('Developer')
             ->and($context['preferences']['budget_consciousness'])->toBe('mixed')
             ->and($context['personality']['type'])->toBe('INTJ-A');

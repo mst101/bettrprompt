@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Country;
+use App\Models\Currency;
+use App\Models\Language;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -7,6 +10,40 @@ use App\Models\Visitor;
 /**
  * Unit tests for Visitor model business logic
  */
+
+/**
+ * Helper function to create necessary reference data for location tests
+ */
+function createCountryWithDependencies(string $countryCode, string $countryName): Country
+{
+    $currency = Currency::where('id', 'GBP')->first();
+    if (! $currency) {
+        $currency = Currency::create([
+            'id' => 'GBP',
+            'symbol' => '£',
+            'thousands_separator' => ',',
+            'decimal_separator' => '.',
+            'symbol_on_left' => true,
+            'decimal_digits' => 2,
+        ]);
+    }
+
+    $language = Language::where('id', 'en-GB')->first();
+    if (! $language) {
+        $language = Language::create([
+            'id' => 'en-GB',
+            'name' => 'English (GB)',
+        ]);
+    }
+
+    return Country::create([
+        'id' => $countryCode,
+        'continent_id' => 'E',
+        'currency_id' => $currency->id,
+        'language_id' => $language->id,
+        'name' => $countryName,
+    ]);
+}
 describe('Visitor conversion status', function () {
     test('hasConverted returns true when visitor has user_id and converted_at', function () {
         $user = User::factory()->create();
@@ -157,7 +194,7 @@ describe('Visitor prompt completion status', function () {
 describe('Visitor location data', function () {
     test('hasLocationData returns true when country_code and timezone are set', function () {
         $visitor = Visitor::factory()->create([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'timezone' => 'Europe/London',
         ]);
 
@@ -175,7 +212,7 @@ describe('Visitor location data', function () {
 
     test('hasLocationData returns false when timezone is null', function () {
         $visitor = Visitor::factory()->create([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'timezone' => null,
         ]);
 
@@ -194,25 +231,27 @@ describe('Visitor location data', function () {
 
 describe('Visitor location summary', function () {
     test('getLocationSummary returns full city, region, country when all available', function () {
+        createCountryWithDependencies('gb', 'United Kingdom');
+
         $visitor = Visitor::factory()->create([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
         ]);
-        $visitor->load('country');
 
         expect($visitor->getLocationSummary())->toBe('London, England, United Kingdom');
     });
 
     test('getLocationSummary returns region and country when city is null', function () {
+        createCountryWithDependencies('gb', 'United Kingdom');
+
         $visitor = Visitor::factory()->create([
-            'country_code' => 'GB',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => null,
             'timezone' => 'Europe/London',
         ]);
-        $visitor->load('country');
 
         expect($visitor->getLocationSummary())->toBe('England, United Kingdom');
     });
@@ -220,7 +259,6 @@ describe('Visitor location summary', function () {
     test('getLocationSummary returns Unknown location when country_code is null', function () {
         $visitor = Visitor::factory()->create([
             'country_code' => null,
-            'country_name' => 'United Kingdom',
             'region' => 'England',
             'city' => 'London',
             'timezone' => 'Europe/London',
@@ -231,8 +269,7 @@ describe('Visitor location summary', function () {
 
     test('getLocationSummary returns Unknown location when timezone is null', function () {
         $visitor = Visitor::factory()->create([
-            'country_code' => 'GB',
-            'country_name' => 'United Kingdom',
+            'country_code' => 'gb',
             'region' => 'England',
             'city' => 'London',
             'timezone' => null,
