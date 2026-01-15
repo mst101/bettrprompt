@@ -199,7 +199,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'page_count' => 0,
                 'event_count' => 0,
                 'device_type' => $firstEvent['device_type'] ?? null,
-                'country_code' => $firstEvent['country_code'] ?? null,
                 'referrer' => $firstEvent['referrer'] ?? null,
                 'is_bounce' => true,
                 'converted' => false,
@@ -276,9 +275,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
             'page_path' => $pagePath,
             'referrer' => $referrer,
             'device_type' => $this->pageContext['device_type'] ?? null,
-            'browser' => null, // Could be parsed from user agent if needed
-            'os' => null, // Could be parsed from user agent if needed
-            'country_code' => $this->pageContext['country_code'] ?? null,
             'prompt_run_id' => $event['properties']['prompt_run_id'] ?? null,
             'occurred_at' => $occurredAt,
         ];

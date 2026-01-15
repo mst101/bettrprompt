@@ -124,7 +124,6 @@ class SessionProcessorService
             'utm_campaign' => $firstEvent['properties']['utm_campaign'] ?? null,
             'referrer' => $firstEvent['referrer'] ?? null,
             'device_type' => $firstEvent['device_type'] ?? null,
-            'country_code' => $firstEvent['country_code'] ?? null,
         ]);
 
         try {

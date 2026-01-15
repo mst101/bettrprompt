@@ -32,7 +32,6 @@ return new class extends Migration
             $table->string('page_path', 255)->nullable();
             $table->string('referrer', 500)->nullable();
             $table->string('device_type', 20)->nullable(); // desktop, mobile, tablet
-            $table->string('country_code', 2)->nullable();
 
             // Prompt context (when applicable)
             $table->foreignId('prompt_run_id')->nullable()->constrained()->cascadeOnDelete();

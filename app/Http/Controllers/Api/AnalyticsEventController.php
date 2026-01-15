@@ -38,7 +38,6 @@ class AnalyticsEventController extends Controller
                 'device_type' => $deviceType,
                 'referrer' => $request->header('Referer'),
                 'user_agent' => $request->userAgent(),
-                'country_code' => $request->route('country'),
             ]
         );
 

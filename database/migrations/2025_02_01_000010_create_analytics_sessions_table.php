@@ -37,7 +37,6 @@ return new class extends Migration
 
             // Device (captured at session start)
             $table->string('device_type', 20)->nullable();
-            $table->string('country_code', 2)->nullable();
 
             // Outcomes
             $table->boolean('is_bounce')->default(true); // False after 2nd page view
