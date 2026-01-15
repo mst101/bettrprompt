@@ -83,6 +83,11 @@ class TrackVisitor
         // Only set cookie if there are utm params present
         if (array_filter($utmParams)) {
             Cookie::queue('utm_params', json_encode($utmParams), 60); // 1 hour
+            Log::info('TrackVisitor: queued utm_params cookie', [
+                'utm_source' => $utmParams['utm_source'],
+                'utm_medium' => $utmParams['utm_medium'],
+                'utm_campaign' => $utmParams['utm_campaign'],
+            ]);
         }
 
         // Process the request

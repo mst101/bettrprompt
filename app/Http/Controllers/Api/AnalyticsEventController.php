@@ -8,6 +8,7 @@ use App\Jobs\ProcessAnalyticsEvents;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AnalyticsEventController extends Controller
@@ -34,7 +35,20 @@ class AnalyticsEventController extends Controller
         // Fall back to utm_params cookie if not found in referrer
         // (cookie is set by TrackVisitor middleware and survives redirects)
         if (! array_filter($utmParams)) {
-            $utmParams = $this->extractUtmFromCookie($request->cookie('utm_params'));
+            $cookieValue = $request->cookie('utm_params');
+            $utmParams = $this->extractUtmFromCookie($cookieValue);
+            Log::info('AnalyticsEventController: using utm_params from cookie', [
+                'cookie_value' => $cookieValue,
+                'utm_source' => $utmParams['utm_source'],
+                'utm_medium' => $utmParams['utm_medium'],
+                'utm_campaign' => $utmParams['utm_campaign'],
+            ]);
+        } else {
+            Log::info('AnalyticsEventController: using utm_params from referrer', [
+                'utm_source' => $utmParams['utm_source'],
+                'utm_medium' => $utmParams['utm_medium'],
+                'utm_campaign' => $utmParams['utm_campaign'],
+            ]);
         }
 
         // Dispatch job to process events asynchronously
