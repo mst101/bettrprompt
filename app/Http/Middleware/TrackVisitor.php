@@ -67,13 +67,13 @@ class TrackVisitor
                 //                Log::info('Visitor cookie exists but not in database, creating new visitor', [
                 //                    'old_visitor_id' => $visitorId,
                 //                ]);
-                $visitorId = $this->createVisitor($request);
+                $visitorId = $this->createVisitor($request, $currentUtmParams);
                 $isNewVisitor = true;
                 //                Log::info('Created new visitor to replace missing one', ['visitor_id' => $visitorId]);
             }
         } else {
             // New visitor - create record BEFORE processing request
-            $visitorId = $this->createVisitor($request);
+            $visitorId = $this->createVisitor($request, $currentUtmParams);
             $isNewVisitor = true;
             //            Log::info('Created new visitor', ['visitor_id' => $visitorId]);
         }
@@ -120,7 +120,7 @@ class TrackVisitor
      *
      * @throws Throwable
      */
-    protected function createVisitor(Request $request): string
+    protected function createVisitor(Request $request, ?array $currentUtmParams = null): string
     {
         //        Log::info('Creating visitor record', [
         //            'url' => $request->fullUrl(),
@@ -173,6 +173,10 @@ class TrackVisitor
                 'utm_campaign' => $request->query('utm_campaign'),
                 'utm_term' => $request->query('utm_term'),
                 'utm_content' => $request->query('utm_content'),
+                // Set current utm to match original on first visit
+                'current_utm_source' => $currentUtmParams['utm_source'] ?? null,
+                'current_utm_medium' => $currentUtmParams['utm_medium'] ?? null,
+                'current_utm_campaign' => $currentUtmParams['utm_campaign'] ?? null,
                 'referrer' => $request->header('referer'),
                 'landing_page' => $request->fullUrl(),
                 'user_agent' => $request->userAgent(),
