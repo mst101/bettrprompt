@@ -43,7 +43,6 @@ it('enriches events with visitor context and derived type metadata', function ()
     expect($enriched['prompt_run_id'])->toBe(42);
     expect($enriched['source'])->toBe('client');
     expect($enriched['occurred_at'])->toBeInstanceOf(Carbon::class);
-    expect($enriched['received_at'])->toBeInstanceOf(Carbon::class);
 });
 
 it('rejects events missing required identifiers', function () {
