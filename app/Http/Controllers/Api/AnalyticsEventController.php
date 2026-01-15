@@ -26,6 +26,7 @@ class AnalyticsEventController extends Controller
         $userId = $request->user()?->id;
         $sessionId = $request->header('X-Analytics-Session-Id');
         $pagePath = $request->header('Referer');
+        $referrer = $request->header('Referer');
         $deviceType = $this->detectDeviceType($request);
 
         // Get UTM parameters from session (set by TrackVisitor middleware)
