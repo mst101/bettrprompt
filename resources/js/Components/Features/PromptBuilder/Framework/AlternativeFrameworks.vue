@@ -3,6 +3,8 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
+import { analyticsService } from '@/services/analytics';
+import type { PromptRunResource } from '@/Types';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -16,6 +18,8 @@ interface Framework {
 interface Props {
     frameworks: Framework[];
     promptRunId: number;
+    promptRun: PromptRunResource;
+    currentFramework?: { code: string; slug?: string } | null;
 }
 
 const props = defineProps<Props>();
@@ -36,6 +40,21 @@ const handleSwitchFramework = async (frameworkCode: string) => {
     }
 
     switchingFramework.value = frameworkCode;
+
+    // Track framework switch event
+    analyticsService.track({
+        name: 'framework_switched',
+        properties: {
+            prompt_run_id: props.promptRun.id,
+            from_framework:
+                props.currentFramework?.slug ||
+                props.currentFramework?.code ||
+                'unknown',
+            to_framework: frameworkCode,
+            personality_type: props.promptRun.personalityType,
+            task_category: props.promptRun.taskCategory,
+        },
+    });
 
     router.post(
         countryRoute('prompt-builder.create-child-with-framework', {

@@ -294,4 +294,39 @@ class QuestionAnalyticsService
 
         return array_slice($performance, 0, $limit);
     }
+
+    /**
+     * Update question with user rating
+     *
+     * Called when a user rates an individual question
+     */
+    public function updateWithRating(
+        int $promptRunId,
+        string $questionId,
+        int $rating,
+        ?string $explanation = null,
+    ): void {
+        try {
+            QuestionAnalytic::where('prompt_run_id', $promptRunId)
+                ->where('question_id', $questionId)
+                ->update([
+                    'user_rating' => $rating,
+                    'rating_explanation' => $explanation,
+                ]);
+
+            Log::info('Question rating recorded', [
+                'prompt_run_id' => $promptRunId,
+                'question_id' => $questionId,
+                'rating' => $rating,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to update question rating', [
+                'prompt_run_id' => $promptRunId,
+                'question_id' => $questionId,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+    }
 }

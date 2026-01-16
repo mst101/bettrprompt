@@ -132,6 +132,114 @@ Track the entire prompt creation and generation workflow across all 3 stages.
 - **Use Case:** Identify workflow bottlenecks and completion rates by stage
 - **Status:** ✅ IMPLEMENTED
 
+#### `framework_recommended` ⚠️ NEW
+- **Priority:** 🟡 Medium
+- **Type:** Frontend event
+- **Trigger:** Framework recommendation shown to user after workflow 1 completes
+- **Location:** `resources/js/Pages/PromptBuilder/Show.vue` (framework watch)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `recommended_framework: string` - Framework code/slug
+  - `task_category: string` - Task category
+  - `personality_type: string | null` - User's personality type
+- **Use Case:** Track framework recommendation acceptance and effectiveness
+- **Status:** ⚠️ NEW IMPLEMENTATION
+
+#### `framework_switched` ⚠️ NEW
+- **Priority:** 🟡 Medium
+- **Type:** Frontend event
+- **Trigger:** User chooses alternative framework
+- **Location:** `resources/js/Components/Features/PromptBuilder/Framework/AlternativeFrameworks.vue` (handleSwitchFramework)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `from_framework: string` - Previous framework code
+  - `to_framework: string` - New framework code
+  - `personality_type: string | null` - User's personality type
+  - `task_category: string` - Task category
+- **Use Case:** Understand framework selection patterns and recommendation accuracy
+- **Status:** ⚠️ NEW IMPLEMENTATION
+
+#### `questions_presented` ⚠️ NEW
+- **Priority:** 🟡 Medium
+- **Type:** Frontend event
+- **Trigger:** Framework-specific questions shown (fires once per prompt run)
+- **Location:** `resources/js/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue` (questions watch)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `question_ids: string[]` - Array of question IDs
+  - `question_count: integer` - Total number of questions
+  - `display_mode: string` - 'one-at-a-time' or 'show-all'
+  - `personality_type: string | null` - User's personality type
+  - `task_category: string` - Task category
+- **Use Case:** Track question funnel entry and display preference impact
+- **Status:** ⚠️ NEW IMPLEMENTATION
+
+#### `question_answered` (Updated) ✅
+- **Priority:** 🟡 Medium
+- **Type:** Frontend event
+- **Trigger:** User provides answer to a question
+- **Location:** `resources/js/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue` (saveAnswer)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `question_index: integer` - Index in question array
+  - `question_id: string` - Question ID
+  - `answer_length: integer` - Length of answer text
+  - `time_to_answer_ms: integer | null` - **NEW** Time from shown to answered
+  - `display_mode: string` - **NEW** 'one-at-a-time' or 'show-all'
+  - `question_category: string | null` - **NEW** Question category
+  - `total_questions: integer` - Total number of questions
+  - `answered_count: integer` - Number answered so far
+- **Use Case:** Analyse response patterns, timing, and completion rates
+- **Status:** ✅ ENHANCED WITH NEW FIELDS
+
+#### `question_skipped` ⚠️ NEW
+- **Priority:** 🟢 Low
+- **Type:** Frontend event
+- **Trigger:** User skips question (any question without answer when submitted)
+- **Location:** `resources/js/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue` (submitAllAnswers)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `question_index: integer` - Index in question array
+  - `question_id: string` - Question ID
+  - `question_category: string | null` - Question category
+  - `personality_type: string | null` - User's personality type
+  - `display_mode: string` - 'one-at-a-time' or 'show-all'
+- **Use Case:** Identify confusing or unhelpful questions
+- **Status:** ⚠️ NEW IMPLEMENTATION
+
+#### `prompt_rated` ⚠️ NEW
+- **Priority:** 🟡 Medium
+- **Type:** Frontend event
+- **Trigger:** User submits rating for optimised prompt
+- **Location:** `resources/js/Components/Features/PromptBuilder/OptimisedPrompt/OptimisedPrompt.vue` (handleRatingSubmit)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `rating: integer` - Rating value (1-5 stars)
+  - `has_explanation: boolean` - Whether explanation provided
+  - `explanation_length: integer` - Length of explanation text
+  - `prompt_length: integer` - Length of generated prompt
+- **Database Persistence:** Also saved directly to `prompt_quality_metrics` table
+- **Use Case:** Track prompt quality and user satisfaction
+- **Status:** ⚠️ NEW IMPLEMENTATION
+
+#### `question_rated` ⚠️ NEW (Optional)
+- **Priority:** 🟢 Low
+- **Type:** Frontend event
+- **Trigger:** User submits rating for individual question
+- **Location:** `resources/js/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue` (handleQuestionRatingSubmit)
+- **Properties:**
+  - `prompt_run_id: number` - The prompt run ID
+  - `question_id: string` - Question ID
+  - `question_index: integer` - Index in question array
+  - `rating: integer` - Rating value (1-5 stars)
+  - `has_explanation: boolean` - Whether explanation provided
+  - `explanation_length: integer` - Length of explanation text
+  - `question_category: string | null` - Question category
+  - `was_answered: boolean` - Whether user answered the question
+- **Database Persistence:** Also saved to `question_analytics` table
+- **Use Case:** Improve question bank quality
+- **Status:** ⚠️ NEW IMPLEMENTATION (OPTIONAL)
+
 ---
 
 ### 3. Subscription Flow Events

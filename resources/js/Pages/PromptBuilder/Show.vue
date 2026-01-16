@@ -449,6 +449,17 @@ watch(
             !oldFramework &&
             props.promptRun.workflowStage === '1_completed'
         ) {
+            // Fire framework_recommended event
+            analyticsService.track({
+                name: 'framework_recommended',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    recommended_framework: newFramework.slug,
+                    task_category: props.promptRun.taskCategory,
+                    personality_type: props.promptRun.personalityType,
+                },
+            });
+
             switchTabProgrammatically('framework');
         }
     },
@@ -732,6 +743,8 @@ onUnmounted(() => {
                     v-if="promptRun.alternativeFrameworks"
                     :frameworks="promptRun.alternativeFrameworks as any"
                     :prompt-run-id="promptRun.id"
+                    :prompt-run="promptRun"
+                    :current-framework="promptRun.selectedFramework as any"
                 />
             </div>
 

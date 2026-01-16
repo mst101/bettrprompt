@@ -10,7 +10,7 @@ use App\Http\Controllers\MailgunWebhookController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
-use App\Services\FrameworkSelectionService;
+use App\Services\FrameworkAnalyticsService;
 use App\Services\WorkflowAnalyticsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +22,21 @@ use Illuminate\Support\Facades\Validator;
 Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
     ->middleware('throttle:100,1') // Generous limit for event batches
     ->name('analytics.events.store');
+
+// Authenticated user routes
+Route::middleware(['auth'])->group(function () {
+    // Prompt rating
+    Route::post('/prompt-runs/{promptRun}/rate', [\App\Http\Controllers\Api\PromptRatingController::class, 'store'])
+        ->name('api.prompt-runs.rate');
+
+    // Question rating
+    Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [\App\Http\Controllers\Api\QuestionRatingController::class, 'store'])
+        ->name('api.questions.rate');
+
+    // User preferences
+    Route::patch('/user/preferences', [\App\Http\Controllers\Api\UserPreferenceController::class, 'update'])
+        ->name('api.user.preferences.update');
+});
 
 // Experiment results (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -131,7 +146,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             // Record analytics for workflow completion/failure
             $workflowAnalyticsService = app(WorkflowAnalyticsService::class);
-            $frameworkSelectionService = app(FrameworkSelectionService::class);
+            $frameworkAnalyticsService = app(FrameworkAnalyticsService::class);
 
             // Broadcast events: 1_completed, 2_completed, _failed
             if ($workflowStage === '1_completed') {
@@ -157,7 +172,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
                     // Record framework selection when analysis completes
                     if ($promptRun->selected_framework) {
-                        $frameworkSelectionService->recordSelection(
+                        $frameworkAnalyticsService->recordSelection(
                             promptRun: $promptRun,
                             visitorId: $promptRun->visitor_id,
                             userId: $promptRun->user_id,

@@ -16,10 +16,13 @@ class QuestionAnalytic extends Model
         'personality_variant',
         'display_order',
         'was_required',
+        'display_mode',
         'response_status',
         'response_length',
         'time_to_answer_ms',
         'prompt_rating',
+        'user_rating',
+        'rating_explanation',
         'prompt_copied',
         'presented_at',
     ];

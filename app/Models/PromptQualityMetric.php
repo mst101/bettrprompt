@@ -10,6 +10,7 @@ class PromptQualityMetric extends Model
     protected $fillable = [
         'prompt_run_id',
         'user_rating',
+        'rating_explanation',
         'was_copied',
         'copy_count',
         'was_edited',

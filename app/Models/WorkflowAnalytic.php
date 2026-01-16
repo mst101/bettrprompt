@@ -19,7 +19,7 @@ class WorkflowAnalytic extends Model
         'error_message',
         'input_tokens',
         'output_tokens',
-        'estimated_cost_usd',
+        'cost_usd',
         'model_used',
         'attempt_number',
         'was_retry',
@@ -105,7 +105,7 @@ class WorkflowAnalytic extends Model
      */
     public function scopeByCost($query, float $minUsd, float $maxUsd)
     {
-        return $query->whereBetween('estimated_cost_usd', [$minUsd, $maxUsd]);
+        return $query->whereBetween('cost_usd', [$minUsd, $maxUsd]);
     }
 
     /**
@@ -145,7 +145,7 @@ class WorkflowAnalytic extends Model
      */
     public function getTotalCost(): float
     {
-        return $this->sum('estimated_cost_usd') ?? 0;
+        return $this->sum('cost_usd') ?? 0;
     }
 
     /**

@@ -61,13 +61,19 @@ const questions = computed<ClarifyingQuestion[]>(() => {
 const answers = ref<(string | null)[]>([]);
 const currentIndex = ref(0);
 const currentAnswerDraft = ref('');
-const showAllQuestions = ref(false);
+
+// Load display mode preference from Inertia props, defaulting to one-at-a-time
+const savedDisplayMode =
+    (page.props.preferences?.question_display_mode as string | null) ??
+    'one-at-a-time';
+const showAllQuestions = ref(savedDisplayMode === 'show-all');
 const isEditingAnswers = ref(false);
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
 const shouldFocusBulkQuestions = ref(false);
 const shouldFocusEditButton = ref(false);
 const showQuestionRationale = ref(false);
+const isSavingPreference = ref(false);
 const rationaleContainerRef = ref<HTMLDivElement | null>(null);
 const rationaleMaxHeight = ref('0px');
 const questionFormRef = ref<InstanceType<typeof QuestionAnsweringForm> | null>(
@@ -77,6 +83,11 @@ const bulkQuestionsRef = ref<InstanceType<typeof BulkQuestions> | null>(null);
 const editAnswersButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(
     null,
 );
+
+// Analytics tracking state for timing and display mode
+const questionsFirstShownAt = ref<number | null>(null);
+const questionShownTimestamps = ref<Map<number, number>>(new Map());
+const questionsPresentedEventFired = ref<boolean>(false);
 
 // Watch for bulk questions ref and focus first textarea when available
 watchEffect(() => {
@@ -170,6 +181,71 @@ watch(
     { immediate: true },
 );
 
+// Fire questions_presented event once when questions load
+watch(
+    () => questions.value,
+    (newQuestions) => {
+        // Fire only once per prompt run
+        if (newQuestions.length > 0 && !questionsPresentedEventFired.value) {
+            questionsFirstShownAt.value = Date.now();
+            questionsPresentedEventFired.value = true;
+
+            const displayMode = showAllQuestions.value
+                ? 'show-all'
+                : 'one-at-a-time';
+
+            analyticsService.track({
+                name: 'questions_presented',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    question_ids: newQuestions.map((q) => q.id),
+                    question_count: newQuestions.length,
+                    display_mode: displayMode,
+                    personality_type: props.promptRun.personality_type,
+                    task_category: props.promptRun.task_category,
+                },
+            });
+
+            // Initialise per-question timestamps (all shown at once for now)
+            newQuestions.forEach((_, index) => {
+                questionShownTimestamps.value.set(index, Date.now());
+            });
+        }
+    },
+    { immediate: true },
+);
+
+// Track individual question visibility in one-at-a-time mode
+watch(
+    () => currentIndex.value,
+    (newIndex) => {
+        if (!showAllQuestions.value && newIndex !== null) {
+            // One-at-a-time mode: record timestamp when this question first appears
+            if (!questionShownTimestamps.value.has(newIndex)) {
+                questionShownTimestamps.value.set(newIndex, Date.now());
+            }
+        }
+    },
+);
+
+// Save display mode preference when user toggles it
+watch(
+    () => showAllQuestions.value,
+    async (newValue) => {
+        isSavingPreference.value = true;
+        try {
+            const mode = newValue ? 'show-all' : 'one-at-a-time';
+            await axios.patch(countryRoute('api.user.preferences.update'), {
+                question_display_mode: mode,
+            });
+        } catch (error) {
+            console.error('Failed to save display mode preference:', error);
+        } finally {
+            isSavingPreference.value = false;
+        }
+    },
+);
+
 // Check if any answers have changed from their original values
 const clarifyingAnswersHaveChanged = computed(() => {
     const original =
@@ -219,6 +295,16 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
             (_, idx) => normalizeAnswer(updated[idx]) ?? null,
         );
 
+        // Calculate time to answer and determine display mode
+        const questionShownAt =
+            questionShownTimestamps.value.get(questionIndex);
+        const timeToAnswerMs = questionShownAt
+            ? Date.now() - questionShownAt
+            : null;
+        const displayMode = showAllQuestions.value
+            ? 'show-all'
+            : 'one-at-a-time';
+
         // Track analytics for question answered
         analyticsService.track({
             name: 'question_answered',
@@ -227,9 +313,13 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
                 question_id:
                     questions.value[questionIndex]?.id ?? `Q${questionIndex}`,
                 answer_length: value?.length ?? 0,
+                time_to_answer_ms: timeToAnswerMs,
+                display_mode: displayMode,
                 prompt_run_id: props.promptRun.id,
                 total_questions: questions.value.length,
                 answered_count: answers.value.filter((a) => a !== null).length,
+                question_category:
+                    questions.value[questionIndex]?.category ?? null,
             },
         });
 
@@ -295,6 +385,30 @@ const submitAllAnswers = async () => {
     submitError.value = null;
 
     const payload = answers.value.map((value) => normalizeAnswer(value));
+
+    // Track skipped questions before submitting
+    const displayMode = showAllQuestions.value ? 'show-all' : 'one-at-a-time';
+    questions.value.forEach((question, index) => {
+        const wasShown = questionShownTimestamps.value.has(index);
+        const wasAnswered =
+            answers.value[index] !== null && answers.value[index] !== '';
+
+        // If question was shown but NOT answered → it was skipped
+        // NOTE: This applies to ALL questions, not just optional ones
+        if (wasShown && !wasAnswered) {
+            analyticsService.track({
+                name: 'question_skipped',
+                properties: {
+                    question_index: index,
+                    question_id: question.id,
+                    prompt_run_id: props.promptRun.id,
+                    question_category: question.category ?? null,
+                    personality_type: props.promptRun.personality_type,
+                    display_mode: displayMode,
+                },
+            });
+        }
+    });
 
     try {
         await axios.post(

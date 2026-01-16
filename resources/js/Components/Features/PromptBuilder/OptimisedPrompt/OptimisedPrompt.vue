@@ -4,9 +4,11 @@ import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
+import PromptRating from '@/Components/Features/PromptBuilder/PromptRating.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { analyticsService } from '@/services/analytics';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 import { marked } from 'marked';
 import { computed, ref, watchEffect } from 'vue';
 import AIProviderLinks from './AIProviderLinks.vue';
@@ -30,6 +32,12 @@ const shouldFocusCopyButton = ref(false);
 const textareaRef = ref<InstanceType<typeof FormTextarea> | null>(null);
 const editButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(null);
 const copyButtonRef = ref<InstanceType<typeof ButtonPrimary> | null>(null);
+
+// Rating state
+const userRating = ref<number | null>(null);
+const ratingExplanation = ref<string | null>(null);
+const hasRated = ref<boolean>(false);
+const isSavingRating = ref<boolean>(false);
 
 // Watch for textarea ref and focus when it becomes available
 watchEffect(() => {
@@ -136,6 +144,46 @@ const saveEdits = () => {
             },
         },
     );
+};
+
+const handleRatingSubmit = async (data: {
+    rating: number;
+    explanation: string | null;
+}) => {
+    userRating.value = data.rating;
+    ratingExplanation.value = data.explanation;
+    hasRated.value = true;
+    isSavingRating.value = true;
+
+    try {
+        // Save to database immediately (not just analytics event)
+        await axios.post(
+            countryRoute('api.prompt-runs.rate', {
+                promptRun: props.promptRunId,
+            }),
+            {
+                rating: data.rating,
+                explanation: data.explanation,
+            },
+        );
+
+        // Also fire analytics event (for consent-aware tracking)
+        analyticsService.track({
+            name: 'prompt_rated',
+            properties: {
+                prompt_run_id: props.promptRunId,
+                rating: data.rating,
+                has_explanation: !!data.explanation,
+                explanation_length: data.explanation?.length ?? 0,
+                prompt_length: props.optimizedPrompt.length,
+            },
+        });
+    } catch (error) {
+        console.error('Failed to save rating:', error);
+        hasRated.value = false;
+    } finally {
+        isSavingRating.value = false;
+    }
 };
 </script>
 
@@ -280,6 +328,7 @@ const saveEdits = () => {
             </div>
 
             <!-- View Mode - Formatted Markdown -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div
                 v-if="!isEditing && showFormatted"
                 data-testid="optimized-prompt-formatted"
@@ -376,6 +425,39 @@ const saveEdits = () => {
                 >
                     {{ $t('common.buttons.cancel') }}
                 </ButtonSecondary>
+            </div>
+
+            <!-- Rating Section -->
+            <div v-if="!isEditing" class="mt-6 border-t border-gray-200 pt-6">
+                <div class="flex flex-col items-center gap-3">
+                    <h3 class="text-sm font-medium text-gray-700">
+                        {{
+                            $t(
+                                'promptBuilder.components.optimizedPrompt.ratePrompt',
+                            ) || 'How useful was this prompt?'
+                        }}
+                    </h3>
+                    <PromptRating
+                        v-model="userRating"
+                        :explanation="ratingExplanation"
+                        size="md"
+                        :show-explanation="true"
+                        @submit="handleRatingSubmit"
+                    />
+                    <p
+                        v-if="hasRated && !isSavingRating"
+                        class="text-sm text-green-600"
+                    >
+                        {{
+                            $t(
+                                'promptBuilder.components.optimizedPrompt.ratingThankYou',
+                            ) || 'Thank you for your feedback!'
+                        }}
+                    </p>
+                    <p v-if="isSavingRating" class="text-sm text-gray-500">
+                        {{ $t('common.labels.saving') || 'Saving...' }}
+                    </p>
+                </div>
             </div>
 
             <!-- AI Provider Links (visible on all screens) -->

@@ -31,6 +31,7 @@ class User extends Authenticatable
         'personality_type',
         'trait_percentages',
         'ui_complexity',
+        'question_display_mode',
         'referral_code',
         // Location fields
         'country_code',

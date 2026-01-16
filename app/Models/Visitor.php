@@ -39,6 +39,7 @@ class Visitor extends Model
         'personality_type',
         'trait_percentages',
         'ui_complexity',
+        'question_display_mode',
         'referred_by_user_id',
         // Location fields
         'country_code',

@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Framework selections: track recommended vs chosen frameworks
-        Schema::create('framework_selections', function (Blueprint $table) {
+        // Framework analytics: track recommended vs chosen frameworks
+        Schema::create('framework_analytics', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prompt_run_id')->constrained()->cascadeOnDelete();
 
@@ -29,6 +29,7 @@ return new class extends Migration
 
             // Outcome
             $table->unsignedTinyInteger('prompt_rating')->nullable();
+            $table->text('rating_explanation')->nullable();
             $table->boolean('prompt_copied')->nullable();
             $table->boolean('prompt_edited')->nullable();
             $table->decimal('edit_percentage', 5, 2)->nullable();
@@ -57,6 +58,7 @@ return new class extends Migration
             $table->string('personality_variant', 50)->nullable();
             $table->unsignedTinyInteger('display_order');
             $table->boolean('was_required');
+            $table->enum('display_mode', ['one-at-a-time', 'show-all'])->nullable();
 
             // User response
             $table->enum('response_status', ['answered', 'skipped', 'not_shown'])->index();
@@ -65,6 +67,8 @@ return new class extends Migration
 
             // Outcome correlation
             $table->unsignedTinyInteger('prompt_rating')->nullable();
+            $table->unsignedTinyInteger('user_rating')->nullable();
+            $table->text('rating_explanation')->nullable();
             $table->boolean('prompt_copied')->nullable();
 
             $table->timestamp('presented_at')->index();
@@ -96,7 +100,7 @@ return new class extends Migration
             // Cost tracking
             $table->unsignedInteger('input_tokens')->nullable();
             $table->unsignedInteger('output_tokens')->nullable();
-            $table->decimal('estimated_cost_usd', 8, 6)->nullable();
+            $table->decimal('cost_usd', 8, 6)->nullable();
             $table->string('model_used', 50)->nullable();
 
             // Retry tracking
@@ -116,6 +120,7 @@ return new class extends Migration
 
             // User engagement
             $table->unsignedTinyInteger('user_rating')->nullable();
+            $table->text('rating_explanation')->nullable();
             $table->boolean('was_copied')->default(false);
             $table->unsignedSmallInteger('copy_count')->default(0);
             $table->boolean('was_edited')->default(false);
@@ -248,6 +253,6 @@ return new class extends Migration
         Schema::dropIfExists('prompt_quality_metrics');
         Schema::dropIfExists('workflow_analytics');
         Schema::dropIfExists('question_analytics');
-        Schema::dropIfExists('framework_selections');
+        Schema::dropIfExists('framework_analytics');
     }
 };

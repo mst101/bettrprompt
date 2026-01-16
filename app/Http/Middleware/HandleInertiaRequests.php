@@ -50,6 +50,13 @@ class HandleInertiaRequests extends Middleware
         $setCountryMiddleware = new \App\Http\Middleware\SetCountry;
         $currency = $setCountryMiddleware->resolveCurrencyCode($country, $request);
 
+        // Get user preferences (question_display_mode, ui_complexity)
+        $user = $request->user();
+        $preferences = [
+            'question_display_mode' => $user?->question_display_mode ?? $visitor?->question_display_mode ?? 'one-at-a-time',
+            'ui_complexity' => $user?->ui_complexity ?? $visitor?->ui_complexity ?? 'advanced',
+        ];
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -57,6 +64,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'visitor' => fn () => $visitorId ? ['id' => $visitorId] : null,
             'experiments' => fn () => $request->input('experiment_assignments', []),
+            'preferences' => fn () => $preferences,
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
