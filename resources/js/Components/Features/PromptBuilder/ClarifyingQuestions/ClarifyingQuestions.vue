@@ -1074,11 +1074,35 @@ onBeforeUnmount(() => {
             :show-back="viewMode === 'answering'"
             :back-label="backLabel"
             :is-edit-mode="viewMode === 'editing'"
+            :question-ratings="questionRatings"
+            :saved-question-ratings="savedQuestionRatings"
             @update:answer="
                 (index: number, value: string) => (answers[index] = value)
             "
             @save-answer="
                 (index: number, value: string) => saveAnswer(index, value)
+            "
+            @update-question-rating-draft="
+                (data: {
+                    index: number;
+                    rating?: number | null;
+                    explanation?: string | null;
+                }) => handleQuestionRatingDraft(data.index, data)
+            "
+            @save-star-rating="
+                (data: { index: number; rating: number }) =>
+                    handleStarRatingSave(data.index, data.rating)
+            "
+            @submit-explanation="
+                (data: {
+                    index: number;
+                    rating: number;
+                    explanation: string | null;
+                }) =>
+                    handleQuestionExplanationSubmit(data.index, {
+                        rating: data.rating,
+                        explanation: data.explanation,
+                    })
             "
             @submit-all="
                 viewMode === 'editing'

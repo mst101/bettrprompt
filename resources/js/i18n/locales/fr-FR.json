@@ -1057,7 +1057,8 @@
                 "submitAll": "Soumettre toutes les réponses",
                 "backToSingle": "Retour au un par un",
                 "answerLabel": "Réponse {number}",
-                "answerPlaceholder": "Tapez votre réponse ici, ou enregistrez une note rapide..."
+                "answerPlaceholder": "Tapez votre réponse ici, ou enregistrez une note rapide...",
+                "rateQuestion": "Évaluer cette question (optionnel)"
             },
             "clarifyingQuestions": {
                 "title": "Questions clarificatrices",

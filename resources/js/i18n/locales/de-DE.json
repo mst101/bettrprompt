@@ -1057,7 +1057,8 @@
                 "submitAll": "Alle Antworten senden",
                 "backToSingle": "Zurück zu eins nach dem anderen",
                 "answerLabel": "Antwort {number}",
-                "answerPlaceholder": "Geben Sie Ihre Antwort ein oder nehmen Sie eine schnelle Notiz auf..."
+                "answerPlaceholder": "Geben Sie Ihre Antwort ein oder nehmen Sie eine schnelle Notiz auf...",
+                "rateQuestion": "Diese Frage bewerten (optional)"
             },
             "clarifyingQuestions": {
                 "title": "Klärungsfragen",

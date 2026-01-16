@@ -1070,7 +1070,8 @@
                 "submitAll": "Submit all answers",
                 "backToSingle": "Back to one-at-a-time",
                 "answerLabel": "Answer {number}",
-                "answerPlaceholder": "Type your answer here, or record a quick note..."
+                "answerPlaceholder": "Type your answer here, or record a quick note...",
+                "rateQuestion": "Rate this question (optional)"
             },
             "clarifyingQuestions": {
                 "title": "Clarifying questions",

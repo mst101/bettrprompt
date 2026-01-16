@@ -5,6 +5,7 @@ import ButtonVoiceInput from '@/Components/Base/Button/ButtonVoiceInput.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import OptionalBadge from '@/Components/Common/OptionalBadge.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
+import PromptRating from '@/Components/Features/PromptBuilder/PromptRating.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { computed, ref } from 'vue';
@@ -22,6 +23,11 @@ const props = withDefaults(
         showBack?: boolean;
         backLabel?: string;
         isEditMode?: boolean;
+        questionRatings?: Map<
+            number,
+            { rating: number | null; explanation: string | null }
+        >;
+        savedQuestionRatings?: Set<number>;
     }>(),
     {
         showBack: true,
@@ -34,6 +40,19 @@ const emit = defineEmits<{
     (e: 'save-answer', index: number, value: string): void;
     (e: 'submit-all'): void;
     (e: 'back'): void;
+    (
+        e: 'update-question-rating-draft',
+        data: {
+            index: number;
+            rating?: number | null;
+            explanation?: string | null;
+        },
+    ): void;
+    (e: 'save-star-rating', data: { index: number; rating: number }): void;
+    (
+        e: 'submit-explanation',
+        data: { index: number; rating: number; explanation: string | null },
+    ): void;
 }>();
 
 const { t } = useI18n({ useScope: 'global' });
@@ -42,6 +61,10 @@ const { appendText } = useTextAppend();
 const textareaRefs = ref<
     (InstanceType<typeof FormTextareaWithActions> | null)[]
 >([]);
+const visibleThankYouMessages = ref<Set<number>>(new Set());
+const thankYouTimeouts = ref<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map(),
+);
 
 // Check if we're on a larger screen (sm breakpoint and above)
 const isLargeScreen = () => window.matchMedia('(min-width: 640px)').matches;
@@ -109,6 +132,26 @@ const resolvedBackLabel = computed(
         props.backLabel ||
         t('promptBuilder.components.bulkQuestions.backToSingle'),
 );
+
+const showThankYouMessageWithAutoHide = (questionIndex: number) => {
+    const existingTimeout = thankYouTimeouts.value.get(questionIndex);
+    if (existingTimeout) clearTimeout(existingTimeout);
+
+    visibleThankYouMessages.value.add(questionIndex);
+    const timeout = setTimeout(() => {
+        visibleThankYouMessages.value.delete(questionIndex);
+        thankYouTimeouts.value.delete(questionIndex);
+    }, 4000);
+    thankYouTimeouts.value.set(questionIndex, timeout);
+};
+
+const handleExplanationSubmit = (
+    index: number,
+    data: { rating: number; explanation: string | null },
+) => {
+    emit('submit-explanation', { index, ...data });
+    showThankYouMessageWithAutoHide(index);
+};
 </script>
 
 <template>
@@ -165,6 +208,65 @@ const resolvedBackLabel = computed(
                         />
                     </template>
                 </FormTextareaWithActions>
+
+                <!-- Question rating UI -->
+                <div class="mt-4 border-t border-indigo-200 pt-4">
+                    <h5 class="mb-3 text-xs font-medium text-indigo-700">
+                        {{
+                            $t(
+                                'promptBuilder.components.bulkQuestions.rateQuestion',
+                            )
+                        }}
+                    </h5>
+                    <PromptRating
+                        :model-value="
+                            props.questionRatings?.get(index)?.rating ?? null
+                        "
+                        :explanation="
+                            props.questionRatings?.get(index)?.explanation ??
+                            null
+                        "
+                        :is-saved="
+                            props.savedQuestionRatings?.has(index) ?? false
+                        "
+                        size="sm"
+                        :show-explanation="true"
+                        :placeholder="
+                            $t(
+                                'promptBuilder.components.promptRating.placeholder',
+                            )
+                        "
+                        @update:model-value="
+                            (rating) =>
+                                emit('update-question-rating-draft', {
+                                    index,
+                                    rating,
+                                })
+                        "
+                        @rate-immediately="
+                            (rating) =>
+                                emit('save-star-rating', { index, rating })
+                        "
+                        @update:explanation="
+                            (explanation) =>
+                                emit('update-question-rating-draft', {
+                                    index,
+                                    explanation,
+                                })
+                        "
+                        @submit="handleExplanationSubmit(index, $event)"
+                    />
+                    <p
+                        v-if="visibleThankYouMessages.has(index)"
+                        class="mt-2 text-xs text-green-600"
+                    >
+                        {{
+                            $t(
+                                'promptBuilder.components.clarifyingQuestions.rateQuestionThankYou',
+                            )
+                        }}
+                    </p>
+                </div>
             </div>
         </div>
         <div

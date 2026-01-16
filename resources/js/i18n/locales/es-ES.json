@@ -1057,7 +1057,8 @@
                 "submitAll": "Enviar todas las respuestas",
                 "backToSingle": "Volver a una a la vez",
                 "answerLabel": "Respuesta {number}",
-                "answerPlaceholder": "Escribe tu respuesta aquí, o graba una nota rápida..."
+                "answerPlaceholder": "Escribe tu respuesta aquí, o graba una nota rápida...",
+                "rateQuestion": "Califica esta pregunta (opcional)"
             },
             "clarifyingQuestions": {
                 "title": "Preguntas aclaratorias",
