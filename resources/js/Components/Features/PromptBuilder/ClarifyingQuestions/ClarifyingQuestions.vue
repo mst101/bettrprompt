@@ -616,6 +616,12 @@ const submitAllAnswersEarly = async () => {
 };
 
 const startEditingAnswers = () => {
+    // Check if unregistered visitor has completed prompts
+    if (!user.value && props.visitorHasCompletedPrompts) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     isEditingAnswers.value = true;
     showAllQuestions.value = true;
     shouldFocusBulkQuestions.value = true;

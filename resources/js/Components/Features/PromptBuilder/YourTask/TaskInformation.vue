@@ -54,6 +54,12 @@ watchEffect(() => {
 });
 
 const startEditing = () => {
+    // Check if unregistered visitor has completed prompts
+    if (!user.value && props.visitorHasCompletedPrompts) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     isEditing.value = true;
     shouldFocusTextarea.value = true;
 };
