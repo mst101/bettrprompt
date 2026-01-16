@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
+import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
-import { computed, getCurrentInstance, nextTick, ref } from 'vue';
+import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
@@ -12,11 +13,13 @@ interface Props {
     readonly?: boolean;
     showExplanation?: boolean;
     placeholder?: string;
+    isSaved?: boolean;
 }
 
 interface Emits {
     (event: 'update:modelValue', rating: number): void;
     (event: 'update:explanation', explanation: string): void;
+    (event: 'rateImmediately', rating: number): void;
     (
         event: 'submit',
         data: { rating: number; explanation: string | null },
@@ -30,6 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
     readonly: false,
     showExplanation: true,
     placeholder: '',
+    isSaved: false,
 });
 
 const emit = defineEmits<Emits>();
@@ -38,10 +42,21 @@ const { t } = useI18n({ useScope: 'global' });
 const hoveredStar = ref<number | null>(null);
 const localExplanation = ref<string>(props.explanation || '');
 const explanationRef = ref<InstanceType<typeof FormTextarea> | null>(null);
+const isExplanationFocused = ref<boolean>(false);
+
+// Sync localExplanation when explanation prop changes (e.g., switching between questions)
+watch(
+    () => props.explanation,
+    (newExplanation) => {
+        localExplanation.value = newExplanation || '';
+    },
+);
 
 const handleStarClick = (rating: number) => {
     if (!props.readonly) {
         emit('update:modelValue', rating);
+        // Immediately save the rating
+        emit('rateImmediately', rating);
         if (props.showExplanation) {
             nextTick(() => {
                 explanationRef.value?.focus();
@@ -96,6 +111,22 @@ const explanationPlaceholder = computed(() => {
         props.placeholder ||
         t('promptBuilder.components.promptRating.placeholder')
     );
+});
+
+const textareaClass = computed(() => {
+    const baseClasses =
+        'text-sm block w-full rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500';
+    // Text colour based on state:
+    // - Unsaved: text-indigo-900
+    // - Saved & not focused: text-indigo-600 (reduced contrast)
+    // - Saved & focused: text-indigo-800 (darker when editing)
+    let textColorClass = 'text-indigo-900';
+    if (props.isSaved && !props.readonly) {
+        textColorClass = isExplanationFocused.value
+            ? 'text-indigo-950'
+            : 'text-indigo-600';
+    }
+    return `${baseClasses} ${textColorClass}`;
 });
 
 const instanceId = getCurrentInstance()?.uid ?? 0;
@@ -159,26 +190,41 @@ const explanationId = `prompt-rating-explanation-${instanceId}`;
                 :placeholder="explanationPlaceholder"
                 :disabled="readonly"
                 :rows="2"
-                textarea-class="text-sm block w-full text-indigo-900 rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500"
+                :class="{ 'opacity-75': isSaved && !readonly }"
+                :textarea-class="textareaClass"
                 @update:model-value="handleExplanationChange"
+                @focus="isExplanationFocused = true"
+                @blur="isExplanationFocused = false"
             />
             <div
                 v-if="modelValue && !readonly"
                 class="mt-3 flex justify-start sm:justify-end"
             >
-                <ButtonPrimary type="button" @click="handleSubmit">
+                <ButtonSecondary
+                    v-if="isSaved && localExplanation"
+                    size="sm"
+                    type="button"
+                    @click="handleSubmit"
+                >
                     {{
-                        t('promptBuilder.components.promptRating.submitButton')
+                        t(
+                            'promptBuilder.components.promptRating.updateExplanation',
+                        )
+                    }}
+                </ButtonSecondary>
+                <ButtonPrimary
+                    v-else
+                    size="sm"
+                    type="button"
+                    @click="handleSubmit"
+                >
+                    {{
+                        t(
+                            'promptBuilder.components.promptRating.addExplanation',
+                        )
                     }}
                 </ButtonPrimary>
             </div>
-        </div>
-
-        <!-- Submit button when explanation is hidden -->
-        <div v-else-if="modelValue && !readonly" class="mt-1">
-            <ButtonPrimary type="button" @click="handleSubmit">
-                {{ t('promptBuilder.components.promptRating.submitButton') }}
-            </ButtonPrimary>
         </div>
     </div>
 </template>

@@ -1087,7 +1087,9 @@
                 "starLabel": "{star} Sterne bewerten",
                 "explanationLabel": "Bewertungserklärung",
                 "placeholder": "Optional: Erzählen Sie uns mehr über Ihre Bewertung...",
-                "submitButton": "Bewertung senden"
+                "submitButton": "Bewertung senden",
+                "addExplanation": "Erklärung hinzufügen (optional)",
+                "updateExplanation": "Erklärung aktualisieren"
             },
             "preAnalysisQuestions": {
                 "title": "Schnelle Abfragen",

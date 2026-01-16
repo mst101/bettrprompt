@@ -1100,7 +1100,9 @@
                 "starLabel": "Rate {star} stars",
                 "explanationLabel": "Rating explanation",
                 "placeholder": "Optionally, tell us more about your rating...",
-                "submitButton": "Submit rating"
+                "submitButton": "Submit rating",
+                "addExplanation": "Add explanation (optional)",
+                "updateExplanation": "Update explanation"
             },
             "preAnalysisQuestions": {
                 "title": "Quick queries",

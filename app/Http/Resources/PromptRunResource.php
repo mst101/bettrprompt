@@ -48,6 +48,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     readonly analysisApiUsage: Record<string, unknown> | null;
  *     readonly generationApiUsage: Record<string, unknown> | null;
  *
+ *     // Question ratings
+ *     readonly questionRatings?: Array<{
+ *         questionId: string;
+ *         questionIndex: number;
+ *         rating: number;
+ *         explanation: string | null;
+ *     }>;
+ *
  *     // Relationships
  *     readonly visitor?: VisitorResource;
  *     readonly user?: UserResource | null;
@@ -106,6 +114,16 @@ class PromptRunResource extends JsonResource
             'preAnalysisApiUsage' => $this->pre_analysis_api_usage,
             'analysisApiUsage' => $this->analysis_api_usage,
             'generationApiUsage' => $this->generation_api_usage,
+
+            // Question ratings
+            'questionRatings' => $this->whenLoaded('questionAnalytics', function () {
+                return $this->questionAnalytics->map(fn ($analytic) => [
+                    'questionId' => $analytic->question_id,
+                    'questionIndex' => $analytic->display_order - 1,
+                    'rating' => $analytic->user_rating,
+                    'explanation' => $analytic->rating_explanation,
+                ])->filter(fn ($item) => $item['rating'] !== null)->values()->all();
+            }),
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {

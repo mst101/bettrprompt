@@ -360,7 +360,8 @@ class PromptBuilderController extends Controller
 
         // Load parent/children relationships (minimal data only via PromptRunRelationshipResource)
         // Full details are fetched on-demand via API
-        $promptRun->load(['parent', 'children']);
+        // Also load question analytics for rating persistence
+        $promptRun->load(['parent', 'children', 'questionAnalytics']);
 
         $currentQuestionIndex = $promptRun->current_question_index ?? 0;
 

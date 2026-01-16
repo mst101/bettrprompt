@@ -13,7 +13,15 @@ import type { PromptRunResource } from '@/Types';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { computed, inject, nextTick, ref, watch, watchEffect } from 'vue';
+import {
+    computed,
+    inject,
+    nextTick,
+    onBeforeUnmount,
+    ref,
+    watch,
+    watchEffect,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 import AnsweredList from './AnsweredList.vue';
 import BulkQuestions from './BulkQuestions.vue';
@@ -110,6 +118,12 @@ const questionRatings = ref<
     Map<number, { rating: number | null; explanation: string | null }>
 >(new Map());
 const savingQuestionRatings = ref<Set<number>>(new Set());
+const savedQuestionRatings = ref<Set<number>>(new Set());
+const ratingsWithExplanationSubmitted = ref<Set<number>>(new Set());
+const visibleThankYouMessages = ref<Set<number>>(new Set());
+const thankYouTimeouts = ref<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map(),
+);
 
 // Watch for bulk questions ref and focus first textarea when available
 watchEffect(() => {
@@ -194,6 +208,27 @@ const hydrateAnswers = () => {
 
     // Reset analytics tracking for new prompt run
     questionsWithEventsFired.value.clear();
+
+    // Clear saved ratings for new prompt run
+    savedQuestionRatings.value.clear();
+    ratingsWithExplanationSubmitted.value.clear();
+
+    // Load existing ratings from backend
+    if (props.promptRun.questionRatings) {
+        props.promptRun.questionRatings.forEach((savedRating) => {
+            const index = savedRating.questionIndex;
+            questionRatings.value.set(index, {
+                rating: savedRating.rating,
+                explanation: savedRating.explanation,
+            });
+            // Mark as saved (both star and explanation if present)
+            savedQuestionRatings.value.add(index);
+            // Mark explanation as submitted if it exists
+            if (savedRating.explanation) {
+                ratingsWithExplanationSubmitted.value.add(index);
+            }
+        });
+    }
 };
 
 watch(
@@ -425,7 +460,81 @@ const submitAnswer = async () => {
     }
 };
 
-const handleQuestionRatingSubmit = async (
+const handleStarRatingSave = async (questionIndex: number, rating: number) => {
+    // Update local state
+    const existing = questionRatings.value.get(questionIndex) ?? {
+        rating: null,
+        explanation: null,
+    };
+    questionRatings.value.set(questionIndex, {
+        ...existing,
+        rating,
+    });
+
+    savingQuestionRatings.value.add(questionIndex);
+
+    const question = questions.value[questionIndex];
+    const questionId = question?.id ?? `Q${questionIndex}`;
+
+    try {
+        // Save to database
+        await axios.post(
+            route('api.questions.rate', {
+                promptRun: props.promptRun.id,
+                questionId,
+            }),
+            {
+                rating,
+                explanation: existing.explanation,
+            },
+        );
+
+        // Mark as saved
+        savedQuestionRatings.value.add(questionIndex);
+
+        // Fire analytics event
+        analyticsService.track({
+            name: 'question_rated',
+            properties: {
+                prompt_run_id: props.promptRun.id,
+                question_id: questionId,
+                question_index: questionIndex,
+                rating,
+                has_explanation: !!existing.explanation,
+                explanation_length: existing.explanation?.length ?? 0,
+                question_category: question.category ?? null,
+                was_answered: answers.value[questionIndex] !== null,
+            },
+        });
+    } catch (error) {
+        console.error('Failed to save question rating:', error);
+        questionRatings.value.delete(questionIndex);
+        savedQuestionRatings.value.delete(questionIndex);
+    } finally {
+        savingQuestionRatings.value.delete(questionIndex);
+    }
+};
+
+const showThankYouMessageWithAutoHide = (questionIndex: number) => {
+    // Clear any existing timeout for this question
+    const existingTimeout = thankYouTimeouts.value.get(questionIndex);
+    if (existingTimeout) {
+        clearTimeout(existingTimeout);
+    }
+
+    // Show the thank you message
+    visibleThankYouMessages.value.add(questionIndex);
+
+    // Auto-hide after 4 seconds
+    const timeout = setTimeout(() => {
+        visibleThankYouMessages.value.delete(questionIndex);
+        thankYouTimeouts.value.delete(questionIndex);
+    }, 4000);
+
+    thankYouTimeouts.value.set(questionIndex, timeout);
+};
+
+const handleQuestionExplanationSubmit = async (
     questionIndex: number,
     data: { rating: number; explanation: string | null },
 ) => {
@@ -448,22 +557,30 @@ const handleQuestionRatingSubmit = async (
             },
         );
 
-        // Fire analytics event
-        analyticsService.track({
-            name: 'question_rated',
-            properties: {
-                prompt_run_id: props.promptRun.id,
-                question_id: questionId,
-                question_index: questionIndex,
-                rating: data.rating,
-                has_explanation: !!data.explanation,
-                explanation_length: data.explanation?.length ?? 0,
-                question_category: question.category ?? null,
-                was_answered: answers.value[questionIndex] !== null,
-            },
-        });
+        // Mark explanation as submitted
+        ratingsWithExplanationSubmitted.value.add(questionIndex);
+
+        // Show thank you message with auto-hide
+        showThankYouMessageWithAutoHide(questionIndex);
+
+        // Fire analytics event (if rating wasn't already tracked)
+        if (!savedQuestionRatings.value.has(questionIndex)) {
+            analyticsService.track({
+                name: 'question_rated',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    question_id: questionId,
+                    question_index: questionIndex,
+                    rating: data.rating,
+                    has_explanation: !!data.explanation,
+                    explanation_length: data.explanation?.length ?? 0,
+                    question_category: question.category ?? null,
+                    was_answered: answers.value[questionIndex] !== null,
+                },
+            });
+        }
     } catch (error) {
-        console.error('Failed to save question rating:', error);
+        console.error('Failed to save question explanation:', error);
         questionRatings.value.delete(questionIndex);
     } finally {
         savingQuestionRatings.value.delete(questionIndex);
@@ -687,6 +804,27 @@ const backLabel = computed(() =>
         ? t('promptBuilder.components.clarifyingQuestions.cancelEdit')
         : undefined,
 );
+
+// Clear thank you message when switching questions
+watch(currentIndex, (newIndex, oldIndex) => {
+    // Clear thank you message timeout when switching to a different question
+    if (oldIndex !== undefined && oldIndex !== newIndex) {
+        const timeout = thankYouTimeouts.value.get(oldIndex);
+        if (timeout) {
+            clearTimeout(timeout);
+            thankYouTimeouts.value.delete(oldIndex);
+        }
+        visibleThankYouMessages.value.delete(oldIndex);
+    }
+});
+
+// Clean up timeouts when component unmounts
+onBeforeUnmount(() => {
+    thankYouTimeouts.value.forEach((timeout) => {
+        clearTimeout(timeout);
+    });
+    thankYouTimeouts.value.clear();
+});
 </script>
 
 <template>
@@ -867,6 +1005,7 @@ const backLabel = computed(() =>
                     :explanation="
                         questionRatings.get(currentIndex)?.explanation ?? null
                     "
+                    :is-saved="savedQuestionRatings.has(currentIndex)"
                     size="sm"
                     :show-explanation="true"
                     :placeholder="
@@ -878,6 +1017,9 @@ const backLabel = computed(() =>
                         (rating) =>
                             handleQuestionRatingDraft(currentIndex, { rating })
                     "
+                    @rate-immediately="
+                        (rating) => handleStarRatingSave(currentIndex, rating)
+                    "
                     @update:explanation="
                         (explanation) =>
                             handleQuestionRatingDraft(currentIndex, {
@@ -885,12 +1027,13 @@ const backLabel = computed(() =>
                             })
                     "
                     @submit="
-                        (data) => handleQuestionRatingSubmit(currentIndex, data)
+                        (data) =>
+                            handleQuestionExplanationSubmit(currentIndex, data)
                     "
                 />
                 <p
                     v-if="
-                        questionRatings.has(currentIndex) &&
+                        visibleThankYouMessages.has(currentIndex) &&
                         !savingQuestionRatings.has(currentIndex)
                     "
                     class="text-sm text-green-600"

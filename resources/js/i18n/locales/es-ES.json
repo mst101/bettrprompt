@@ -1087,7 +1087,9 @@
                 "starLabel": "Calificar {star} estrellas",
                 "explanationLabel": "Explicación de la calificación",
                 "placeholder": "Opcional: cuéntanos más sobre tu calificación...",
-                "submitButton": "Enviar calificación"
+                "submitButton": "Enviar calificación",
+                "addExplanation": "Añadir explicación (opcional)",
+                "updateExplanation": "Actualizar explicación"
             },
             "preAnalysisQuestions": {
                 "title": "Consultas rápidas",

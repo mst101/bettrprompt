@@ -1087,7 +1087,9 @@
                 "starLabel": "Noter {star} étoiles",
                 "explanationLabel": "Explication de la note",
                 "placeholder": "Facultatif : dites-nous en plus sur votre note...",
-                "submitButton": "Envoyer la note"
+                "submitButton": "Envoyer la note",
+                "addExplanation": "Ajouter une explication (optionnel)",
+                "updateExplanation": "Mettre à jour l'explication"
             },
             "preAnalysisQuestions": {
                 "title": "Questions rapides",
