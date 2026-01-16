@@ -14,8 +14,8 @@ async function globalSetup() {
     console.log('🧪 Setting up E2E test environment...');
 
     const envPath = path.join(process.cwd(), '.env');
+    const envLocalPath = path.join(process.cwd(), '.env.local');
     const envE2ePath = path.join(process.cwd(), '.env.e2e');
-    const envBackupPath = path.join(process.cwd(), '.env.backup');
     const configCachePath = path.join(
         process.cwd(),
         'bootstrap/cache/config.php',
@@ -37,11 +37,55 @@ async function globalSetup() {
                 'Config cache detected. Run "sail artisan config:clear" before running e2e tests.',
             );
         }
-        // CRITICAL: Backup and swap .env files
-        // This ensures the running Laravel dev server will use bettrprompt_e2e database
+
+        // CRITICAL: Ensure .env.local exists as a backup of the local environment
+        // This is used to restore .env after tests complete
         if (fs.existsSync(envPath)) {
-            fs.copyFileSync(envPath, envBackupPath);
-            console.log('📝 Backed up production .env to .env.backup');
+            const envContent = fs.readFileSync(envPath, 'utf-8');
+
+            // Check if current .env is in test mode (shouldn't be when tests start)
+            if (envContent.includes('APP_ENV=e2e')) {
+                console.warn(
+                    '⚠️  WARNING: .env already has APP_ENV=e2e (corrupted state detected)',
+                );
+                console.warn(
+                    '   This indicates a previous E2E test run did not complete cleanly.',
+                );
+
+                // Try to recover from the corrupted state
+                if (fs.existsSync(envLocalPath)) {
+                    const localContent = fs.readFileSync(envLocalPath, 'utf-8');
+                    if (localContent.includes('APP_ENV=local')) {
+                        console.log(
+                            '   Restoring from .env.local (backup of local environment)...',
+                        );
+                        fs.copyFileSync(envLocalPath, envPath);
+                        console.log('✅ Restored .env to local state');
+                    }
+                } else {
+                    console.warn(
+                        '   No .env.local backup found. Cannot auto-recover.',
+                    );
+                    throw new Error(
+                        '.env is in e2e mode but no .env.local backup exists for recovery',
+                    );
+                }
+            }
+
+            // Now that .env is in a good state, ensure we have .env.local for restoration later
+            if (!fs.existsSync(envLocalPath)) {
+                const currentContent = fs.readFileSync(envPath, 'utf-8');
+                if (currentContent.includes('APP_ENV=local')) {
+                    fs.copyFileSync(envPath, envLocalPath);
+                    console.log(
+                        '📝 Created .env.local as backup of local environment',
+                    );
+                } else {
+                    throw new Error(
+                        '.env does not contain APP_ENV=local - cannot create backup',
+                    );
+                }
+            }
         }
 
         if (fs.existsSync(envE2ePath)) {
