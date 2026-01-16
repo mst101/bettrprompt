@@ -1071,7 +1071,8 @@
                 "backToSingle": "Back to one-at-a-time",
                 "answerLabel": "Answer {number}",
                 "answerPlaceholder": "Type your answer here, or record a quick note...",
-                "rateQuestion": "Rate this question (optional)"
+                "rateQuestion": "Rate this question (optional)",
+                "hideRateQuestion": "Hide rating"
             },
             "clarifyingQuestions": {
                 "title": "Clarifying questions",

@@ -61,6 +61,7 @@ const { appendText } = useTextAppend();
 const textareaRefs = ref<
     (InstanceType<typeof FormTextareaWithActions> | null)[]
 >([]);
+const expandedRatingUIs = ref<Set<number>>(new Set());
 const visibleThankYouMessages = ref<Set<number>>(new Set());
 const thankYouTimeouts = ref<Map<number, ReturnType<typeof setTimeout>>>(
     new Map(),
@@ -152,6 +153,20 @@ const handleExplanationSubmit = (
     emit('submit-explanation', { index, ...data });
     showThankYouMessageWithAutoHide(index);
 };
+
+const toggleRatingUI = (index: number) => {
+    if (expandedRatingUIs.value.has(index)) {
+        expandedRatingUIs.value.delete(index);
+    } else {
+        expandedRatingUIs.value.add(index);
+    }
+};
+
+const handleStarRatingSaveBulk = (index: number, rating: number) => {
+    // Auto-expand rating UI when user clicks a star
+    expandedRatingUIs.value.add(index);
+    emit('save-star-rating', { index, rating });
+};
 </script>
 
 <template>
@@ -209,63 +224,76 @@ const handleExplanationSubmit = (
                     </template>
                 </FormTextareaWithActions>
 
-                <!-- Question rating UI -->
+                <!-- Question rating UI (collapsible) -->
                 <div class="mt-4 border-t border-indigo-200 pt-4">
-                    <h5 class="mb-3 text-xs font-medium text-indigo-700">
-                        {{
-                            $t(
-                                'promptBuilder.components.bulkQuestions.rateQuestion',
-                            )
-                        }}
-                    </h5>
-                    <PromptRating
-                        :model-value="
-                            props.questionRatings?.get(index)?.rating ?? null
-                        "
-                        :explanation="
-                            props.questionRatings?.get(index)?.explanation ??
-                            null
-                        "
-                        :is-saved="
-                            props.savedQuestionRatings?.has(index) ?? false
-                        "
-                        size="sm"
-                        :show-explanation="true"
-                        :placeholder="
-                            $t(
-                                'promptBuilder.components.promptRating.placeholder',
-                            )
-                        "
-                        @update:model-value="
-                            (rating) =>
-                                emit('update-question-rating-draft', {
-                                    index,
-                                    rating,
-                                })
-                        "
-                        @rate-immediately="
-                            (rating) =>
-                                emit('save-star-rating', { index, rating })
-                        "
-                        @update:explanation="
-                            (explanation) =>
-                                emit('update-question-rating-draft', {
-                                    index,
-                                    explanation,
-                                })
-                        "
-                        @submit="handleExplanationSubmit(index, $event)"
-                    />
-                    <p
-                        v-if="visibleThankYouMessages.has(index)"
-                        class="mt-2 text-xs text-green-600"
+                    <!-- Toggle button to show/hide rating UI -->
+                    <button
+                        type="button"
+                        class="rounded px-2 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        @click="toggleRatingUI(index)"
                     >
                         {{
-                            $t(
-                                'promptBuilder.components.clarifyingQuestions.rateQuestionThankYou',
-                            )
+                            expandedRatingUIs.has(index)
+                                ? $t(
+                                      'promptBuilder.components.bulkQuestions.hideRateQuestion',
+                                  )
+                                : $t(
+                                      'promptBuilder.components.bulkQuestions.rateQuestion',
+                                  )
                         }}
-                    </p>
+                    </button>
+
+                    <!-- Rating component (shown only when expanded) -->
+                    <div v-if="expandedRatingUIs.has(index)" class="mt-3">
+                        <PromptRating
+                            :model-value="
+                                props.questionRatings?.get(index)?.rating ??
+                                null
+                            "
+                            :explanation="
+                                props.questionRatings?.get(index)
+                                    ?.explanation ?? null
+                            "
+                            :is-saved="
+                                props.savedQuestionRatings?.has(index) ?? false
+                            "
+                            size="sm"
+                            :show-explanation="true"
+                            :placeholder="
+                                $t(
+                                    'promptBuilder.components.promptRating.placeholder',
+                                )
+                            "
+                            @update:model-value="
+                                (rating) =>
+                                    emit('update-question-rating-draft', {
+                                        index,
+                                        rating,
+                                    })
+                            "
+                            @rate-immediately="
+                                handleStarRatingSaveBulk(index, $event)
+                            "
+                            @update:explanation="
+                                (explanation) =>
+                                    emit('update-question-rating-draft', {
+                                        index,
+                                        explanation,
+                                    })
+                            "
+                            @submit="handleExplanationSubmit(index, $event)"
+                        />
+                        <p
+                            v-if="visibleThankYouMessages.has(index)"
+                            class="mt-2 text-xs text-green-600"
+                        >
+                            {{
+                                $t(
+                                    'promptBuilder.components.clarifyingQuestions.rateQuestionThankYou',
+                                )
+                            }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

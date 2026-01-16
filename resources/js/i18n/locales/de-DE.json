@@ -1058,7 +1058,8 @@
                 "backToSingle": "Zurück zu eins nach dem anderen",
                 "answerLabel": "Antwort {number}",
                 "answerPlaceholder": "Geben Sie Ihre Antwort ein oder nehmen Sie eine schnelle Notiz auf...",
-                "rateQuestion": "Diese Frage bewerten (optional)"
+                "rateQuestion": "Diese Frage bewerten (optional)",
+                "hideRateQuestion": "Bewertung verbergen"
             },
             "clarifyingQuestions": {
                 "title": "Klärungsfragen",
