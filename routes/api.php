@@ -144,6 +144,9 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             $promptRun->update($updateData);
 
+            // Refresh the model to ensure in-memory attributes match the database
+            $promptRun->refresh();
+
             // Record analytics for workflow completion/failure
             $workflowAnalyticsService = app(WorkflowAnalyticsService::class);
             $frameworkAnalyticsService = app(FrameworkAnalyticsService::class);

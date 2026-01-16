@@ -88,7 +88,22 @@ const editAnswersButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(
 // Analytics tracking state for timing and display mode
 const questionsFirstShownAt = ref<number | null>(null);
 const questionShownTimestamps = ref<Map<number, number>>(new Map());
-const questionsPresentedEventFired = ref<boolean>(false);
+const questionsWithEventsFired = ref<Set<number>>(new Set());
+
+// Check if questions_presented event has already fired for this prompt run in this session
+const hasQuestionsPresentedEventFired = (
+    promptRunId: string | number,
+): boolean => {
+    return (
+        sessionStorage.getItem(`questions_presented_${promptRunId}`) === 'true'
+    );
+};
+
+const markQuestionsPresentedEventFired = (
+    promptRunId: string | number,
+): void => {
+    sessionStorage.setItem(`questions_presented_${promptRunId}`, 'true');
+};
 
 // Question rating state
 const questionRatings = ref<
@@ -173,8 +188,12 @@ const hydrateAnswers = () => {
     currentAnswerDraft.value = answers.value[currentIndex.value] ?? '';
 
     isEditingAnswers.value = false;
-    showAllQuestions.value = false;
+    // Preserve the user's saved display mode preference
+    showAllQuestions.value = savedDisplayMode === 'show-all';
     submitError.value = null;
+
+    // Reset analytics tracking for new prompt run
+    questionsWithEventsFired.value.clear();
 };
 
 watch(
@@ -188,14 +207,17 @@ watch(
     { immediate: true },
 );
 
-// Fire questions_presented event once when questions load
+// Fire questions_presented event once per prompt run per session (persisted across page refreshes)
 watch(
     () => questions.value,
     (newQuestions) => {
-        // Fire only once per prompt run
-        if (newQuestions.length > 0 && !questionsPresentedEventFired.value) {
+        // Fire only once per prompt run in this session (sessionStorage persists across refreshes)
+        if (
+            newQuestions.length > 0 &&
+            !hasQuestionsPresentedEventFired(props.promptRun.id)
+        ) {
             questionsFirstShownAt.value = Date.now();
-            questionsPresentedEventFired.value = true;
+            markQuestionsPresentedEventFired(props.promptRun.id);
 
             const displayMode = showAllQuestions.value
                 ? 'show-all'
@@ -244,6 +266,18 @@ watch(
             const mode = newValue ? 'show-all' : 'one-at-a-time';
             await axios.patch(countryRoute('api.user.preferences.update'), {
                 question_display_mode: mode,
+            });
+
+            // Track analytics event for display mode toggle
+            analyticsService.track({
+                name: 'question_display_mode_toggled',
+                properties: {
+                    prompt_run_id: props.promptRun.id,
+                    new_display_mode: mode,
+                    question_count: questions.value.length,
+                    personality_type: props.promptRun.personality_type,
+                    task_category: props.promptRun.task_category,
+                },
             });
         } catch (error) {
             console.error('Failed to save display mode preference:', error);
@@ -312,23 +346,48 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
             ? 'show-all'
             : 'one-at-a-time';
 
-        // Track analytics for question answered
-        analyticsService.track({
-            name: 'question_answered',
-            properties: {
-                question_index: questionIndex,
-                question_id:
-                    questions.value[questionIndex]?.id ?? `Q${questionIndex}`,
-                answer_length: value?.length ?? 0,
-                time_to_answer_ms: timeToAnswerMs,
-                display_mode: displayMode,
-                prompt_run_id: props.promptRun.id,
-                total_questions: questions.value.length,
-                answered_count: answers.value.filter((a) => a !== null).length,
-                question_category:
-                    questions.value[questionIndex]?.category ?? null,
-            },
-        });
+        // Track analytics based on whether answer was provided or skipped
+        if (value !== null && value.trim().length > 0) {
+            // Question was answered
+            analyticsService.track({
+                name: 'question_answered',
+                properties: {
+                    question_index: questionIndex,
+                    question_id:
+                        questions.value[questionIndex]?.id ??
+                        `Q${questionIndex}`,
+                    answer_length: value.length,
+                    time_to_answer_ms: timeToAnswerMs,
+                    display_mode: displayMode,
+                    prompt_run_id: props.promptRun.id,
+                    total_questions: questions.value.length,
+                    answered_count: answers.value.filter((a) => a !== null)
+                        .length,
+                    question_category:
+                        questions.value[questionIndex]?.category ?? null,
+                },
+            });
+        } else {
+            // Question was skipped (shown but not answered)
+            analyticsService.track({
+                name: 'question_skipped',
+                properties: {
+                    question_index: questionIndex,
+                    question_id:
+                        questions.value[questionIndex]?.id ??
+                        `Q${questionIndex}`,
+                    prompt_run_id: props.promptRun.id,
+                    question_category:
+                        questions.value[questionIndex]?.category ?? null,
+                    personality_type: props.promptRun.personality_type,
+                    display_mode: displayMode,
+                    time_to_skip_ms: timeToAnswerMs,
+                },
+            });
+        }
+
+        // Mark that an analytics event has been fired for this question (to avoid duplicates in submitAllAnswers)
+        questionsWithEventsFired.value.add(questionIndex);
 
         // Update draft to match saved answer
         currentAnswerDraft.value = answers.value[questionIndex] ?? '';
@@ -437,16 +496,18 @@ const submitAllAnswers = async () => {
 
     const payload = answers.value.map((value) => normalizeAnswer(value));
 
-    // Track skipped questions before submitting
+    // Track skipped questions before submitting (but only for questions that haven't already fired an event)
     const displayMode = showAllQuestions.value ? 'show-all' : 'one-at-a-time';
     questions.value.forEach((question, index) => {
         const wasShown = questionShownTimestamps.value.has(index);
         const wasAnswered =
             answers.value[index] !== null && answers.value[index] !== '';
+        const eventAlreadyFired = questionsWithEventsFired.value.has(index);
 
-        // If question was shown but NOT answered → it was skipped
-        // NOTE: This applies to ALL questions, not just optional ones
-        if (wasShown && !wasAnswered) {
+        // If question was shown but NOT answered AND no event was fired yet → it was skipped
+        // (In one-at-a-time mode, skip events are fired immediately in saveAnswer)
+        // (In show-all mode, we fire them here only if the question was never explicitly submitted)
+        if (wasShown && !wasAnswered && !eventAlreadyFired) {
             analyticsService.track({
                 name: 'question_skipped',
                 properties: {
