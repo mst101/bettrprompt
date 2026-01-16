@@ -495,6 +495,8 @@ Route::post('/test/create-prompt-run', [TestBroadcastController::class, 'createT
     ->name('test.create-prompt-run');
 Route::post('/test/set-personality', [TestBroadcastController::class, 'setPersonalityType'])
     ->name('test.set-personality');
+Route::get('/test/analytics-events', [TestBroadcastController::class, 'getAnalyticsEvents'])
+    ->name('test.analytics-events');
 
 Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     $promptRun = PromptRun::find($promptRunId);

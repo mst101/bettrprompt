@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
+use App\Models\AnalyticsEvent;
 use App\Models\PromptRun;
 use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
@@ -337,5 +338,52 @@ class TestBroadcastController extends Controller
                 'trait_percentages' => $user->trait_percentages,
             ],
         ]);
+    }
+
+    /**
+     * Get analytics events for testing
+     *
+     * Allows E2E tests to verify that analytics events were properly tracked
+     *
+     * Query parameters:
+     * - event_name: Filter by event name (e.g., 'tab_viewed', 'question_answered')
+     * - prompt_run_id: Filter by prompt run ID
+     * - page_path: Filter by page path
+     * - limit: Maximum number of events to return (default: 100)
+     */
+    public function getAnalyticsEvents(Request $request): JsonResponse
+    {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised');
+        }
+
+        $query = AnalyticsEvent::query();
+
+        // Filter by event name
+        if ($request->has('event_name')) {
+            $query->where('name', $request->query('event_name'));
+        }
+
+        // Filter by prompt run ID
+        if ($request->has('prompt_run_id')) {
+            $query->where('prompt_run_id', $request->query('prompt_run_id'));
+        }
+
+        // Filter by page path
+        if ($request->has('page_path')) {
+            $query->where('page_path', $request->query('page_path'));
+        }
+
+        // Order by most recent first
+        $query->orderBy('occurred_at', 'desc');
+
+        // Limit results
+        $limit = $request->query('limit', 100);
+        $query->limit($limit);
+
+        $events = $query->get();
+
+        return response()->json($events);
     }
 }

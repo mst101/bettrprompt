@@ -120,6 +120,21 @@ export const test = base.extend<TestFixtures>({
         // Accept cookies first
         await acceptCookies(page);
 
+        // Grant analytics consent so events are sent to backend during tests
+        await page.context().addCookies([
+            {
+                name: 'cookie_consent',
+                value: JSON.stringify({
+                    essential: true,
+                    functional: false,
+                    analytics: true,
+                }),
+                domain: 'app.localhost',
+                path: '/',
+                sameSite: 'Strict',
+            },
+        ]);
+
         // Log in as test user
         await loginAsTestUser(page);
 
@@ -147,6 +162,21 @@ export const test = base.extend<TestFixtures>({
     authenticatedPageWithUniqueUser: async ({ page }, use) => {
         // Accept cookies first
         await acceptCookies(page);
+
+        // Grant analytics consent so events are sent to backend during tests
+        await page.context().addCookies([
+            {
+                name: 'cookie_consent',
+                value: JSON.stringify({
+                    essential: true,
+                    functional: false,
+                    analytics: true,
+                }),
+                domain: 'app.localhost',
+                path: '/',
+                sameSite: 'Strict',
+            },
+        ]);
 
         // Generate unique email for this test
         const uniqueSuffix = Math.random().toString(36).substring(2, 8);
