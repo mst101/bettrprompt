@@ -14,20 +14,24 @@ const props = withDefaults(
     defineProps<{
         questions: ClarifyingQuestion[];
         answers: (string | null)[];
+        savedAnswers: (string | null)[]; // Backend-saved answers for comparison
         hasOptionalQuestions: boolean;
         optionalQuestionsLabel: string;
         isSubmitting: boolean;
         submitLabel?: string;
         showBack?: boolean;
         backLabel?: string;
+        isEditMode?: boolean;
     }>(),
     {
         showBack: true,
+        isEditMode: false,
     },
 );
 
 const emit = defineEmits<{
     (e: 'update:answer', index: number, value: string): void;
+    (e: 'save-answer', index: number, value: string): void;
     (e: 'submit-all'): void;
     (e: 'back'): void;
 }>();
@@ -70,6 +74,28 @@ const updateAnswer = (index: number, value: string) => {
 const handleTranscription = (index: number, transcript: string) => {
     const current = props.answers[index] ?? '';
     updateAnswer(index, appendText(current, transcript));
+};
+
+const handleBlur = (index: number, value: string) => {
+    // Only save in answering mode, not edit mode
+    if (props.isEditMode) {
+        return;
+    }
+
+    // Normalize values for comparison (trim and treat empty as null)
+    const normalizeValue = (val: string | null | undefined) => {
+        if (!val) return null;
+        const trimmed = val.trim();
+        return trimmed.length ? trimmed : null;
+    };
+
+    const currentValue = normalizeValue(value);
+    const savedValue = normalizeValue(props.savedAnswers[index]);
+
+    // Only save if the value has actually changed from what's saved in the backend
+    if (currentValue !== savedValue) {
+        emit('save-answer', index, value);
+    }
 };
 
 const resolvedSubmitLabel = computed(
@@ -127,6 +153,7 @@ const resolvedBackLabel = computed(
                     @update:model-value="
                         (value: string) => updateAnswer(index, value)
                     "
+                    @blur="handleBlur(index, answers[index] ?? '')"
                 >
                     <template #actions>
                         <ButtonVoiceInput

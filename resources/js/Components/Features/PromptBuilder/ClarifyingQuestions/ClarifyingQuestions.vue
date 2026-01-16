@@ -7,6 +7,7 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/Forms/QuestionAnsweringForm.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
+import { analyticsService } from '@/services/analytics';
 import type { PromptRunResource } from '@/Types';
 import type { ClarifyingQuestion } from '@/Types/models/ClarifyingQuestion';
 import { router, usePage } from '@inertiajs/vue3';
@@ -217,6 +218,20 @@ const saveAnswer = async (questionIndex: number, value: string | null) => {
         answers.value = allQuestions.value.map(
             (_, idx) => normalizeAnswer(updated[idx]) ?? null,
         );
+
+        // Track analytics for question answered
+        analyticsService.track({
+            name: 'question_answered',
+            properties: {
+                question_index: questionIndex,
+                question_id:
+                    questions.value[questionIndex]?.id ?? `Q${questionIndex}`,
+                answer_length: value?.length ?? 0,
+                prompt_run_id: props.promptRun.id,
+                total_questions: questions.value.length,
+                answered_count: answers.value.filter((a) => a !== null).length,
+            },
+        });
 
         // Update draft to match saved answer
         currentAnswerDraft.value = answers.value[questionIndex] ?? '';
@@ -588,14 +603,26 @@ const backLabel = computed(() =>
             ref="bulkQuestionsRef"
             :questions="allQuestions"
             :answers="answers"
+            :saved-answers="
+                allQuestions.map((_, idx) => {
+                    const val = (promptRun.clarifyingAnswers ?? [])[idx];
+                    return normalizeAnswer(
+                        typeof val === 'string' ? val : (val ?? null),
+                    );
+                })
+            "
             :has-optional-questions="hasOptionalQuestions"
             :optional-questions-label="optionalQuestionsLabel"
             :is-submitting="isSubmitting"
             :submit-label="bulkSubmitLabel"
             :show-back="viewMode === 'answering'"
             :back-label="backLabel"
+            :is-edit-mode="viewMode === 'editing'"
             @update:answer="
                 (index: number, value: string) => (answers[index] = value)
+            "
+            @save-answer="
+                (index: number, value: string) => saveAnswer(index, value)
             "
             @submit-all="
                 viewMode === 'editing'

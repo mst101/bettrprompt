@@ -67,6 +67,7 @@ defineExpose({ focus });
             :is-submitting="props.isSubmitting"
             :textarea-class="props.textareaClass"
             label=""
+            v-bind="$attrs"
             @update:model-value="emit('update:modelValue', $event)"
         />
     </div>

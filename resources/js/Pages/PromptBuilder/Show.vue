@@ -194,12 +194,22 @@ const getInitialTab = (): string => {
 };
 
 const activeTab = ref<string>(getInitialTab());
+const isProgrammaticTabSwitch = ref(false);
 const clarifyingQuestionsRef = ref<InstanceType<
     typeof ClarifyingQuestions
 > | null>(null);
 const selectedFrameworkRef = ref<InstanceType<typeof SelectedFramework> | null>(
     null,
 );
+
+// Helper to switch tabs programmatically (without triggering analytics)
+const switchTabProgrammatically = (tab: string) => {
+    isProgrammaticTabSwitch.value = true;
+    activeTab.value = tab;
+    nextTick(() => {
+        isProgrammaticTabSwitch.value = false;
+    });
+};
 
 // Check if we're on a larger screen (sm breakpoint and above)
 // We use matchMedia to detect screen size at runtime
@@ -312,7 +322,7 @@ useRealtimeUpdates(
                 only: ['promptRun'],
                 onSuccess: () => {
                     // Stay on Task tab to show Quick Queries
-                    activeTab.value = 'task';
+                    switchTabProgrammatically('task');
                 },
             });
         },
@@ -337,7 +347,7 @@ useRealtimeUpdates(
                 only: ['promptRun'],
                 onSuccess: () => {
                     // Switch to Framework tab after reload
-                    activeTab.value = 'framework';
+                    switchTabProgrammatically('framework');
                 },
             });
         },
@@ -380,7 +390,7 @@ useRealtimeUpdates(
                 only: ['promptRun'],
                 onSuccess: () => {
                     // Stay on Task tab to show error
-                    activeTab.value = 'task';
+                    switchTabProgrammatically('task');
                 },
             });
         },
@@ -404,7 +414,7 @@ watch(
                 router.reload({
                     only: ['promptRun'],
                     onSuccess: () => {
-                        activeTab.value = 'task';
+                        switchTabProgrammatically('task');
                     },
                 });
             } else if (newStage === '1_processing') {
@@ -419,7 +429,7 @@ watch(
             router.reload({
                 only: ['promptRun'],
                 onSuccess: () => {
-                    activeTab.value = 'framework';
+                    switchTabProgrammatically('framework');
                 },
             });
         }
@@ -439,7 +449,7 @@ watch(
             !oldFramework &&
             props.promptRun.workflowStage === '1_completed'
         ) {
-            activeTab.value = 'framework';
+            switchTabProgrammatically('framework');
         }
     },
 );
@@ -449,7 +459,7 @@ watch(
     () => props.promptRun.optimizedPrompt,
     (newPrompt) => {
         if (newPrompt) {
-            activeTab.value = 'prompt';
+            switchTabProgrammatically('prompt');
         }
     },
 );
@@ -461,22 +471,32 @@ watch(
         const tabIds = newTabs.map((tab) => tab.id);
         if (!tabIds.includes(activeTab.value)) {
             // Current tab is no longer valid, switch to first tab
-            activeTab.value = newTabs[0]?.id || 'task';
+            switchTabProgrammatically(newTabs[0]?.id || 'task');
         }
     },
     { immediate: true },
 );
 
-// Focus first textarea and reload data when switching to questions tab
+// Focus first textarea when switching to questions tab
 watch(activeTab, async (newTab) => {
     if (newTab === 'questions') {
-        // Reload the prompt run data to ensure we have the latest answers from auto-saves
-        router.reload({
-            only: ['promptRun'],
-            onSuccess: async () => {
-                await nextTick();
-                // The component will handle screen size check internally
-                clarifyingQuestionsRef.value?.focus();
+        await nextTick();
+        // The component will handle screen size check internally
+        clarifyingQuestionsRef.value?.focus();
+    }
+});
+
+// Track manual tab switches for analytics
+watch(activeTab, (newTab, oldTab) => {
+    if (!isProgrammaticTabSwitch.value && oldTab) {
+        analyticsService.track({
+            name: 'tab_viewed',
+            page_path: window.location.pathname,
+            properties: {
+                tab: newTab,
+                previous_tab: oldTab,
+                prompt_run_id: props.promptRun.id,
+                workflow_stage: props.promptRun.workflowStage,
             },
         });
     }
