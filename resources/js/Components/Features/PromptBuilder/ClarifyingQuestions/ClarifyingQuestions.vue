@@ -6,6 +6,7 @@ import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import QuestionAnsweringForm from '@/Components/Features/PromptBuilder/Forms/QuestionAnsweringForm.vue';
+import PromptRating from '@/Components/Features/PromptBuilder/PromptRating.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { analyticsService } from '@/services/analytics';
 import type { PromptRunResource } from '@/Types';
@@ -88,6 +89,12 @@ const editAnswersButtonRef = ref<InstanceType<typeof ButtonSecondary> | null>(
 const questionsFirstShownAt = ref<number | null>(null);
 const questionShownTimestamps = ref<Map<number, number>>(new Map());
 const questionsPresentedEventFired = ref<boolean>(false);
+
+// Question rating state
+const questionRatings = ref<
+    Map<number, { rating: number; explanation: string | null }>
+>(new Map());
+const savingQuestionRatings = ref<Set<number>>(new Set());
 
 // Watch for bulk questions ref and focus first textarea when available
 watchEffect(() => {
@@ -356,6 +363,50 @@ const submitAnswer = async () => {
         // Focus the next question's textarea
         await nextTick();
         questionFormRef.value?.focus();
+    }
+};
+
+const handleQuestionRatingSubmit = async (
+    questionIndex: number,
+    data: { rating: number; explanation: string | null },
+) => {
+    questionRatings.value.set(questionIndex, data);
+    savingQuestionRatings.value.add(questionIndex);
+
+    const question = questions.value[questionIndex];
+
+    try {
+        // Save to database
+        await axios.post(
+            countryRoute('api.questions.rate', {
+                promptRun: props.promptRun.id,
+                questionId: question.id,
+            }),
+            {
+                rating: data.rating,
+                explanation: data.explanation,
+            },
+        );
+
+        // Fire analytics event
+        analyticsService.track({
+            name: 'question_rated',
+            properties: {
+                prompt_run_id: props.promptRun.id,
+                question_id: question.id,
+                question_index: questionIndex,
+                rating: data.rating,
+                has_explanation: !!data.explanation,
+                explanation_length: data.explanation?.length ?? 0,
+                question_category: question.category ?? null,
+                was_answered: answers.value[questionIndex] !== null,
+            },
+        });
+    } catch (error) {
+        console.error('Failed to save question rating:', error);
+        questionRatings.value.delete(questionIndex);
+    } finally {
+        savingQuestionRatings.value.delete(questionIndex);
     }
 };
 
@@ -710,6 +761,64 @@ const backLabel = computed(() =>
             @clear="clearCurrentAnswer"
             @toggle-show-all="showAllQuestions = !showAllQuestions"
         />
+
+        <!-- Question Rating UI (one-at-a-time mode) -->
+        <div
+            v-if="
+                shouldShowQuestionForm &&
+                currentQuestion &&
+                answers[currentIndex] !== null &&
+                !showAllQuestions
+            "
+            class="mt-6 border-t border-gray-200 pt-6"
+        >
+            <div class="flex flex-col items-center gap-3">
+                <h4 class="text-sm font-medium text-gray-700">
+                    {{
+                        $t(
+                            'promptBuilder.components.clarifyingQuestions.rateQuestion',
+                        ) || 'How helpful was this question?'
+                    }}
+                </h4>
+                <PromptRating
+                    :model-value="
+                        questionRatings.get(currentIndex)?.rating ?? null
+                    "
+                    :explanation="
+                        questionRatings.get(currentIndex)?.explanation ?? null
+                    "
+                    size="sm"
+                    :show-explanation="true"
+                    :placeholder="
+                        $t(
+                            'promptBuilder.components.clarifyingQuestions.rateQuestionExplanationPlaceholder',
+                        ) || 'Optional: Why was this question helpful or not?'
+                    "
+                    @submit="
+                        (data) => handleQuestionRatingSubmit(currentIndex, data)
+                    "
+                />
+                <p
+                    v-if="
+                        questionRatings.has(currentIndex) &&
+                        !savingQuestionRatings.has(currentIndex)
+                    "
+                    class="text-sm text-green-600"
+                >
+                    {{
+                        $t(
+                            'promptBuilder.components.clarifyingQuestions.rateQuestionThankYou',
+                        ) || 'Thank you for your feedback!'
+                    }}
+                </p>
+                <p
+                    v-if="savingQuestionRatings.has(currentIndex)"
+                    class="text-sm text-gray-500"
+                >
+                    {{ $t('common.labels.saving') || 'Saving...' }}
+                </p>
+            </div>
+        </div>
 
         <!-- Answering mode (bulk) or Editing mode: Bulk ClarifyingQuestions -->
         <BulkQuestions
