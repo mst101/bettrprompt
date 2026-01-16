@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
         AnalyticsEvent::create([
             'event_id' => (string) Str::uuid(),
             'name' => 'login_completed',
-            'visitor_id' => $request->cookie('visitor_id'),
+            'visitor_id' => getVisitorIdFromCookie($request),
             'user_id' => Auth::id(),
             'source' => 'server',
             'occurred_at' => now(),
@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         // Migrate visitor data to logged-in user
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
         $claimedCount = 0;
 
         if ($visitorId) {

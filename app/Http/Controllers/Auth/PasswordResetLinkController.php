@@ -47,7 +47,7 @@ class PasswordResetLinkController extends Controller
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
                 'name' => 'password_reset_requested',
-                'visitor_id' => $request->cookie('visitor_id'),
+                'visitor_id' => getVisitorIdFromCookie($request),
                 'source' => 'server',
                 'occurred_at' => now(),
                 'session_id' => $context['session_id'],

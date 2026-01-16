@@ -58,3 +58,47 @@ function supportedCountries(): array
         fn () => \App\Models\Country::pluck('id')->all()
     );
 }
+
+/**
+ * Extract visitor ID from the request cookie.
+ * Handles encrypted cookies (API routes) and pipe-separated format (hash|id).
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return string|null The extracted visitor ID, or null if not present
+ */
+function getVisitorIdFromCookie($request): ?string
+{
+    $cookieValue = $request->cookie('visitor_id');
+
+    if (! $cookieValue) {
+        return null;
+    }
+
+    // Try to decrypt if the cookie value looks encrypted (starts with base64-like pattern)
+    if (preg_match('/^eyJ/', $cookieValue)) {
+        try {
+            $cookieValue = \Illuminate\Support\Facades\Crypt::decryptString($cookieValue);
+        } catch (\Exception $e) {
+            \Log::debug('Failed to decrypt visitor_id cookie', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    // Extract UUID from pipe-separated format (finds the segment that is a valid UUID)
+    $segments = array_filter(explode('|', $cookieValue));
+    foreach (array_reverse($segments) as $segment) {
+        if (\Illuminate\Support\Str::isUuid($segment)) {
+            return $segment;
+        }
+    }
+
+    // Fallback: return the value as-is if it looks like a UUID
+    if (\Illuminate\Support\Str::isUuid($cookieValue)) {
+        return $cookieValue;
+    }
+
+    return null;
+}

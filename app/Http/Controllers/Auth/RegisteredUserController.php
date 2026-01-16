@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         // Migrate visitor data to newly registered user
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
         $claimedCount = 0;
 
         if ($visitorId) {
@@ -93,7 +93,7 @@ class RegisteredUserController extends Controller
         AnalyticsEvent::create([
             'event_id' => (string) Str::uuid(),
             'name' => 'registration_completed',
-            'visitor_id' => $request->cookie('visitor_id'),
+            'visitor_id' => getVisitorIdFromCookie($request),
             'user_id' => $user->id,
             'source' => 'server',
             'occurred_at' => now(),

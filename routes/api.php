@@ -32,11 +32,11 @@ Route::middleware(['auth'])->group(function () {
     // Question rating
     Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [\App\Http\Controllers\Api\QuestionRatingController::class, 'store'])
         ->name('api.questions.rate');
-
-    // User preferences
-    Route::patch('/user/preferences', [\App\Http\Controllers\Api\UserPreferenceController::class, 'update'])
-        ->name('api.user.preferences.update');
 });
+
+// User preferences (works for both authenticated users and guest visitors)
+Route::patch('/user/preferences', [\App\Http\Controllers\Api\UserPreferenceController::class, 'update'])
+    ->name('api.user.preferences.update');
 
 // Experiment results (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {

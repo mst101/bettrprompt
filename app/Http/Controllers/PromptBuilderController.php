@@ -1098,7 +1098,7 @@ class PromptBuilderController extends Controller
      */
     protected function getVisitorId(Request $request): ?string
     {
-        return $request->cookie('visitor_id');
+        return getVisitorIdFromCookie($request);
     }
 
     /**

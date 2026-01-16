@@ -22,7 +22,7 @@ class VisitorController extends Controller
     {
         $validated = $request->validated();
 
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
 
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
@@ -44,7 +44,7 @@ class VisitorController extends Controller
             'language_code' => ['required', 'string', 'max:10', Rule::in(config('app.supported_locales'))],
         ]);
 
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
         if ($visitorId) {
             $visitor = Visitor::find($visitorId);
             $visitor?->update(['language_code' => $validated['language_code']]);
@@ -83,7 +83,7 @@ class VisitorController extends Controller
                 ->update(['currency_code' => $validated['currency_code']]);
 
             // Also sync visitor from cookie if present (e.g., user was visitor before authenticating)
-            $visitorId = $request->cookie('visitor_id');
+            $visitorId = getVisitorIdFromCookie($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
@@ -93,7 +93,7 @@ class VisitorController extends Controller
             SetCountry::clearCachePattern("user.{$request->user()->id}.currency.*");
         } else {
             // Visitor: update database if visitor exists
-            $visitorId = $request->cookie('visitor_id');
+            $visitorId = getVisitorIdFromCookie($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 $visitor?->update(['currency_code' => $validated['currency_code']]);
@@ -111,7 +111,7 @@ class VisitorController extends Controller
      */
     public function updateLocation(UpdateLocationRequest $request): JsonResponse
     {
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
         if (! $visitorId) {
             return response()->json(['success' => false], 404);
         }
@@ -162,7 +162,7 @@ class VisitorController extends Controller
      */
     public function clearLocation(Request $request): JsonResponse
     {
-        $visitorId = $request->cookie('visitor_id');
+        $visitorId = getVisitorIdFromCookie($request);
         if (! $visitorId) {
             return response()->json(['success' => false], 404);
         }

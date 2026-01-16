@@ -84,7 +84,7 @@ class OAuthController extends Controller
 
             // Check if we need to link visitor and copy data
             $isNewUser = $user->wasRecentlyCreated;
-            $visitorId = $request->cookie('visitor_id');
+            $visitorId = getVisitorIdFromCookie($request);
             $claimedCount = 0;
 
             if ($visitorId) {
@@ -183,7 +183,7 @@ class OAuthController extends Controller
                 AnalyticsEvent::create([
                     'event_id' => (string) Str::uuid(),
                     'name' => 'registration_completed',
-                    'visitor_id' => $request->cookie('visitor_id'),
+                    'visitor_id' => getVisitorIdFromCookie($request),
                     'user_id' => $user->id,
                     'source' => 'server',
                     'occurred_at' => now(),

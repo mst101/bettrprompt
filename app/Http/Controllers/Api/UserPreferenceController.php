@@ -17,7 +17,7 @@ class UserPreferenceController extends Controller
             $user->update($validated);
         } else {
             // Guest visitor - update visitor preferences via cookie
-            $visitorId = $request->cookie('visitor_id');
+            $visitorId = getVisitorIdFromCookie($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor) {
