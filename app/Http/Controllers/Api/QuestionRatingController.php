@@ -18,19 +18,22 @@ class QuestionRatingController extends Controller
         PromptRun $promptRun,
         string $questionId
     ) {
-        // Ensure user owns this prompt run or is admin
-        if ($promptRun->user_id !== auth()->id() && ! auth()->user()?->is_admin) {
-            abort(403, 'Unauthorized');
+        $user = auth()->user();
+        $visitorId = getVisitorIdFromCookie($request);
+
+        // Ensure user/visitor owns this prompt run or is admin
+        if (! $promptRun->canBeAccessedBy($user?->id, $visitorId) && ! $user?->is_admin) {
+            abort(403, __('messages.api.unauthorized'));
         }
 
         // Update question_analytics table
         $this->questionAnalyticsService->updateWithRating(
-            promptRunId: $promptRun->id,
+            promptRun: $promptRun,
             questionId: $questionId,
             rating: $request->validated('rating'),
             explanation: $request->validated('explanation')
         );
 
-        return response()->json(['message' => 'Question rating saved successfully']);
+        return response()->json(['message' => __('messages.api.question_rating_saved')]);
     }
 }

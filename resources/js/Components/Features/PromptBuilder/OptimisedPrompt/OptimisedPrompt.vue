@@ -434,7 +434,7 @@ const handleRatingSubmit = async (data: {
                         {{
                             $t(
                                 'promptBuilder.components.optimizedPrompt.ratePrompt',
-                            ) || 'How useful was this prompt?'
+                            )
                         }}
                     </h3>
                     <PromptRating
@@ -451,11 +451,11 @@ const handleRatingSubmit = async (data: {
                         {{
                             $t(
                                 'promptBuilder.components.optimizedPrompt.ratingThankYou',
-                            ) || 'Thank you for your feedback!'
+                            )
                         }}
                     </p>
                     <p v-if="isSavingRating" class="text-sm text-gray-500">
-                        {{ $t('common.labels.saving') || 'Saving...' }}
+                        {{ $t('common.labels.saving') }}
                     </p>
                 </div>
             </div>

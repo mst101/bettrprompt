@@ -427,16 +427,43 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Question response events
             elseif ($eventName === 'question_answered') {
+                $questionId = $properties['question_id'] ?? 'unknown';
+
                 // Find the latest question analytic for this question
                 $analytic = $promptRun->questionAnalytics()
-                    ->where('question_id', $properties['question_id'] ?? 'unknown')
+                    ->where('question_id', $questionId)
                     ->latest()
                     ->first();
 
+                if (! $analytic) {
+                    $presentation = $this->buildQuestionPresentationData(
+                        $promptRun,
+                        $properties,
+                    );
+
+                    $analytic = $questionService->recordPresentation(
+                        promptRun: $promptRun,
+                        visitorId: $this->visitorId,
+                        userId: $this->userId,
+                        questionId: $presentation['question_id'],
+                        questionCategory: $presentation['question_category'],
+                        personalityVariant: $presentation['personality_variant'],
+                        displayOrder: $presentation['display_order'],
+                        wasRequired: $presentation['was_required'],
+                    );
+                }
+
                 if ($analytic) {
+                    $responseLength = null;
+                    if (isset($properties['answer_length']) && is_numeric($properties['answer_length'])) {
+                        $responseLength = (int) $properties['answer_length'];
+                    } else {
+                        $responseLength = strlen($properties['response'] ?? '');
+                    }
+
                     $questionService->recordResponse(
                         analytic: $analytic,
-                        responseLength: strlen($properties['response'] ?? ''),
+                        responseLength: $responseLength,
                         timeToAnswerMs: $properties['time_to_answer_ms'] ?? null,
                     );
                 }
@@ -444,15 +471,37 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Question skip events
             elseif ($eventName === 'question_skipped') {
+                $questionId = $properties['question_id'] ?? 'unknown';
+
                 $analytic = $promptRun->questionAnalytics()
-                    ->where('question_id', $properties['question_id'] ?? 'unknown')
+                    ->where('question_id', $questionId)
                     ->latest()
                     ->first();
+
+                if (! $analytic) {
+                    $presentation = $this->buildQuestionPresentationData(
+                        $promptRun,
+                        $properties,
+                    );
+
+                    $analytic = $questionService->recordPresentation(
+                        promptRun: $promptRun,
+                        visitorId: $this->visitorId,
+                        userId: $this->userId,
+                        questionId: $presentation['question_id'],
+                        questionCategory: $presentation['question_category'],
+                        personalityVariant: $presentation['personality_variant'],
+                        displayOrder: $presentation['display_order'],
+                        wasRequired: $presentation['was_required'],
+                    );
+                }
 
                 if ($analytic) {
                     $questionService->recordSkip(
                         analytic: $analytic,
-                        timeBeforeSkipMs: $properties['time_before_skip_ms'] ?? null,
+                        timeBeforeSkipMs: $properties['time_to_skip_ms']
+                            ?? $properties['time_before_skip_ms']
+                            ?? null,
                     );
                 }
             }
@@ -544,6 +593,66 @@ class ProcessAnalyticsEvents implements ShouldQueue
             ]);
             // Don't rethrow - continue processing other events
         }
+    }
+
+    private function buildQuestionPresentationData(
+        PromptRun $promptRun,
+        array $properties,
+    ): array {
+        $questionId = $properties['question_id'] ?? null;
+        $questionIndex = null;
+        if (isset($properties['question_index']) && is_numeric($properties['question_index'])) {
+            $questionIndex = (int) $properties['question_index'];
+        }
+
+        $questions = $promptRun->framework_questions ?? [];
+        $matchedQuestion = null;
+        $matchedIndex = null;
+
+        foreach ($questions as $index => $question) {
+            if (is_array($question) && ($question['id'] ?? null) === $questionId) {
+                $matchedQuestion = $question;
+                $matchedIndex = $index;
+                break;
+            }
+        }
+
+        if ($matchedQuestion === null && $questionIndex !== null && array_key_exists($questionIndex, $questions)) {
+            $matchedQuestion = $questions[$questionIndex];
+            $matchedIndex = $questionIndex;
+        }
+
+        $questionCategory = $properties['question_category'] ?? 'unknown';
+        $personalityVariant = $properties['personality_variant'] ?? null;
+        $wasRequired = $properties['was_required'] ?? false;
+
+        if (is_array($matchedQuestion)) {
+            $questionCategory = $matchedQuestion['category'] ?? $questionCategory;
+            $personalityVariant = $matchedQuestion['personality_variant'] ?? $personalityVariant;
+            if (array_key_exists('required', $matchedQuestion)) {
+                $wasRequired = (bool) $matchedQuestion['required'];
+            }
+        } elseif (is_string($matchedQuestion)) {
+            $wasRequired = true;
+        }
+
+        $displayOrder = $properties['display_order'] ?? null;
+        if ($displayOrder === null && $matchedIndex !== null) {
+            $displayOrder = $matchedIndex + 1;
+        }
+        if ($displayOrder === null && $questionIndex !== null) {
+            $displayOrder = $questionIndex + 1;
+        }
+
+        $questionId = $questionId ?? ($questionIndex !== null ? "Q{$questionIndex}" : 'unknown');
+
+        return [
+            'question_id' => $questionId,
+            'question_category' => $questionCategory,
+            'personality_variant' => $personalityVariant,
+            'display_order' => $displayOrder ?? 0,
+            'was_required' => $wasRequired,
+        ];
     }
 
     /**

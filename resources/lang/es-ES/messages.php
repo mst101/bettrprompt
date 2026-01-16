@@ -224,6 +224,7 @@ return [
         'unauthorized' => 'No autorizado',
         'invalid_payload' => 'Carga no válida',
         'prompt_run_not_found' => 'Ejecución de prompt no encontrada',
+        'question_rating_saved' => 'La valoración de la pregunta se guardó correctamente.',
         'database_error' => 'Error de base de datos',
         'internal_server_error' => 'Error interno del servidor',
     ],

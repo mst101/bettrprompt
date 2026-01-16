@@ -27,6 +27,9 @@
             "ok": "OK",
             "embedAll": "Embed All"
         },
+        "labels": {
+            "saving": "Saving..."
+        },
         "aria": {
             "userMenu": "User menu"
         },
@@ -1040,7 +1043,9 @@
                 "edit": "Edit prompt",
                 "saveChanges": "Save changes",
                 "label": "Optimized prompt",
-                "useProvider": "Use with AI provider"
+                "useProvider": "Use with AI provider",
+                "ratePrompt": "How useful was this prompt?",
+                "ratingThankYou": "Thank you for your feedback!"
             },
             "aiProviderLinks": {
                 "description": "Click a provider to copy your optimized prompt and open their chat in a new tab. Then paste your prompt for a better response:",
@@ -1081,11 +1086,21 @@
                     "show": "Show question rationale",
                     "hide": "Hide question rationale"
                 },
+                "rateQuestion": "How helpful was this question?",
+                "rateQuestionExplanationPlaceholder": "Optional: Why was this question helpful or not?",
+                "rateQuestionThankYou": "Thank you for your feedback!",
                 "errors": {
                     "save": "Failed to save answer. Please try again.",
                     "submit": "Failed to submit answers.",
                     "edit": "Failed to optimize with edited answers. Please try again."
                 }
+            },
+            "promptRating": {
+                "ariaLabel": "Rate from 1 to 5 stars",
+                "starLabel": "Rate {star} stars",
+                "explanationLabel": "Rating explanation",
+                "placeholder": "Optionally, tell us more about your rating...",
+                "submitButton": "Submit rating"
             },
             "preAnalysisQuestions": {
                 "title": "Quick queries",

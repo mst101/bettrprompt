@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import { computed, ref } from 'vue';
+import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
+import { computed, getCurrentInstance, nextTick, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     modelValue?: number | null;
@@ -26,17 +29,24 @@ const props = withDefaults(defineProps<Props>(), {
     size: 'md',
     readonly: false,
     showExplanation: true,
-    placeholder: 'Optionally, tell us more about your rating...',
+    placeholder: '',
 });
 
 const emit = defineEmits<Emits>();
+const { t } = useI18n({ useScope: 'global' });
 
 const hoveredStar = ref<number | null>(null);
 const localExplanation = ref<string>(props.explanation || '');
+const explanationRef = ref<InstanceType<typeof FormTextarea> | null>(null);
 
 const handleStarClick = (rating: number) => {
     if (!props.readonly) {
         emit('update:modelValue', rating);
+        if (props.showExplanation) {
+            nextTick(() => {
+                explanationRef.value?.focus();
+            });
+        }
     }
 };
 
@@ -50,8 +60,7 @@ const handleMouseLeave = () => {
     hoveredStar.value = null;
 };
 
-const handleExplanationChange = (event: Event) => {
-    const value = (event.target as HTMLTextAreaElement).value;
+const handleExplanationChange = (value: string) => {
     localExplanation.value = value;
     emit('update:explanation', value);
 };
@@ -81,15 +90,25 @@ const sizeClasses = computed(() => {
             return 'size-6';
     }
 });
+
+const explanationPlaceholder = computed(() => {
+    return (
+        props.placeholder ||
+        t('promptBuilder.components.promptRating.placeholder')
+    );
+});
+
+const instanceId = getCurrentInstance()?.uid ?? 0;
+const explanationId = `prompt-rating-explanation-${instanceId}`;
 </script>
 
 <template>
-    <div class="flex flex-col gap-3">
+    <div class="flex w-full flex-col items-center gap-4">
         <!-- Star rating -->
         <div
-            class="flex items-center gap-1"
+            class="flex items-center gap-2"
             role="radiogroup"
-            aria-label="Rate from 1 to 5 stars"
+            :aria-label="t('promptBuilder.components.promptRating.ariaLabel')"
             @mouseleave="handleMouseLeave"
         >
             <button
@@ -97,15 +116,19 @@ const sizeClasses = computed(() => {
                 :key="star"
                 type="button"
                 :disabled="readonly"
-                :aria-label="`Rate ${star} stars`"
+                :aria-label="
+                    t('promptBuilder.components.promptRating.starLabel', {
+                        star,
+                    })
+                "
                 :aria-checked="modelValue === star"
                 role="radio"
-                class="transition-transform duration-150"
+                class="rounded p-1 transition-transform duration-150 outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-indigo-500"
                 :class="{
                     'cursor-pointer hover:scale-110': !readonly,
                     'cursor-default': readonly,
                     'text-yellow-400': star <= displayRating,
-                    'text-gray-300': star > displayRating,
+                    'text-indigo-300': star > displayRating,
                 }"
                 @click="handleStarClick(star)"
                 @mouseenter="handleStarHover(star)"
@@ -120,27 +143,42 @@ const sizeClasses = computed(() => {
             </button>
         </div>
 
-        <!-- Optional explanation textarea -->
-        <div v-if="showExplanation && modelValue" class="w-full">
-            <textarea
-                :value="localExplanation"
-                :placeholder="placeholder"
-                :readonly="readonly"
-                rows="3"
-                class="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-indigo-500"
-                :class="{ 'bg-gray-50': readonly }"
-                @input="handleExplanationChange"
+        <!-- Optional explanation textarea + submit -->
+        <div
+            v-if="showExplanation && modelValue"
+            class="justify-center-center flex w-full flex-col sm:max-w-xl"
+        >
+            <FormTextarea
+                :id="explanationId"
+                ref="explanationRef"
+                :label="
+                    t('promptBuilder.components.promptRating.explanationLabel')
+                "
+                :sr-only-label="true"
+                :model-value="localExplanation"
+                :placeholder="explanationPlaceholder"
+                :disabled="readonly"
+                :rows="2"
+                textarea-class="text-sm block w-full text-indigo-900 rounded-md border-indigo-100 bg-indigo-50 dark:bg-indigo-100 inset-4 inset-shadow focus:ring-2 focus:ring-indigo-500"
+                @update:model-value="handleExplanationChange"
             />
+            <div
+                v-if="modelValue && !readonly"
+                class="mt-3 flex justify-start sm:justify-end"
+            >
+                <ButtonPrimary type="button" @click="handleSubmit">
+                    {{
+                        t('promptBuilder.components.promptRating.submitButton')
+                    }}
+                </ButtonPrimary>
+            </div>
         </div>
 
-        <!-- Submit button (optional, could be handled by parent) -->
-        <button
-            v-if="modelValue && !readonly"
-            type="button"
-            class="mt-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-            @click="handleSubmit"
-        >
-            Submit Rating
-        </button>
+        <!-- Submit button when explanation is hidden -->
+        <div v-else-if="modelValue && !readonly" class="mt-1">
+            <ButtonPrimary type="button" @click="handleSubmit">
+                {{ t('promptBuilder.components.promptRating.submitButton') }}
+            </ButtonPrimary>
+        </div>
     </div>
 </template>

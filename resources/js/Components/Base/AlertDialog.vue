@@ -39,7 +39,7 @@ const translatedConfirmText = computed(() => {
         return t('common.buttons.ok');
     }
     if (alertState.confirmText === 'Confirm') {
-        return t('alert.confirmButton') || 'Confirm';
+        return t('alert.confirmButton');
     }
     // Custom text - keep as-is
     return alertState.confirmText;

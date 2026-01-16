@@ -107,7 +107,7 @@ const markQuestionsPresentedEventFired = (
 
 // Question rating state
 const questionRatings = ref<
-    Map<number, { rating: number; explanation: string | null }>
+    Map<number, { rating: number | null; explanation: string | null }>
 >(new Map());
 const savingQuestionRatings = ref<Set<number>>(new Set());
 
@@ -433,13 +433,14 @@ const handleQuestionRatingSubmit = async (
     savingQuestionRatings.value.add(questionIndex);
 
     const question = questions.value[questionIndex];
+    const questionId = question?.id ?? `Q${questionIndex}`;
 
     try {
         // Save to database
         await axios.post(
-            countryRoute('api.questions.rate', {
+            route('api.questions.rate', {
                 promptRun: props.promptRun.id,
-                questionId: question.id,
+                questionId,
             }),
             {
                 rating: data.rating,
@@ -452,7 +453,7 @@ const handleQuestionRatingSubmit = async (
             name: 'question_rated',
             properties: {
                 prompt_run_id: props.promptRun.id,
-                question_id: question.id,
+                question_id: questionId,
                 question_index: questionIndex,
                 rating: data.rating,
                 has_explanation: !!data.explanation,
@@ -467,6 +468,27 @@ const handleQuestionRatingSubmit = async (
     } finally {
         savingQuestionRatings.value.delete(questionIndex);
     }
+};
+
+const handleQuestionRatingDraft = (
+    questionIndex: number,
+    update: { rating?: number | null; explanation?: string | null },
+) => {
+    const existing = questionRatings.value.get(questionIndex) ?? {
+        rating: null,
+        explanation: null,
+    };
+
+    questionRatings.value.set(questionIndex, {
+        rating:
+            update.rating !== undefined
+                ? update.rating
+                : (existing.rating ?? null),
+        explanation:
+            update.explanation !== undefined
+                ? update.explanation
+                : (existing.explanation ?? null),
+    });
 };
 
 const submitAllAnswersEarly = async () => {
@@ -826,19 +848,16 @@ const backLabel = computed(() =>
         <!-- Question Rating UI (one-at-a-time mode) -->
         <div
             v-if="
-                shouldShowQuestionForm &&
-                currentQuestion &&
-                answers[currentIndex] !== null &&
-                !showAllQuestions
+                shouldShowQuestionForm && currentQuestion && !showAllQuestions
             "
-            class="mt-6 border-t border-gray-200 pt-6"
+            class="mt-6 border-t border-indigo-200 pt-6"
         >
             <div class="flex flex-col items-center gap-3">
-                <h4 class="text-sm font-medium text-gray-700">
+                <h4 class="text-sm font-medium text-indigo-700">
                     {{
                         $t(
                             'promptBuilder.components.clarifyingQuestions.rateQuestion',
-                        ) || 'How helpful was this question?'
+                        )
                     }}
                 </h4>
                 <PromptRating
@@ -853,7 +872,17 @@ const backLabel = computed(() =>
                     :placeholder="
                         $t(
                             'promptBuilder.components.clarifyingQuestions.rateQuestionExplanationPlaceholder',
-                        ) || 'Optional: Why was this question helpful or not?'
+                        )
+                    "
+                    @update:model-value="
+                        (rating) =>
+                            handleQuestionRatingDraft(currentIndex, { rating })
+                    "
+                    @update:explanation="
+                        (explanation) =>
+                            handleQuestionRatingDraft(currentIndex, {
+                                explanation,
+                            })
                     "
                     @submit="
                         (data) => handleQuestionRatingSubmit(currentIndex, data)
@@ -869,14 +898,14 @@ const backLabel = computed(() =>
                     {{
                         $t(
                             'promptBuilder.components.clarifyingQuestions.rateQuestionThankYou',
-                        ) || 'Thank you for your feedback!'
+                        )
                     }}
                 </p>
                 <p
                     v-if="savingQuestionRatings.has(currentIndex)"
-                    class="text-sm text-gray-500"
+                    class="text-sm text-indigo-500"
                 >
-                    {{ $t('common.labels.saving') || 'Saving...' }}
+                    {{ $t('common.labels.saving') }}
                 </p>
             </div>
         </div>

@@ -47,6 +47,10 @@ export function usePageTracking() {
             return;
         }
 
+        if (lastPath === path) {
+            return;
+        }
+
         analyticsService.track({
             name: 'page_view',
             page_path: path,

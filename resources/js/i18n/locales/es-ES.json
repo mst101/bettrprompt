@@ -27,6 +27,9 @@
             "ok": "Aceptar",
             "embedAll": "Incrustar todo"
         },
+        "labels": {
+            "saving": "Guardando..."
+        },
         "aria": {
             "userMenu": "Menú de usuario"
         },
@@ -1027,7 +1030,9 @@
                 "edit": "Editar prompt",
                 "saveChanges": "Guardar cambios",
                 "label": "Prompt optimizado",
-                "useProvider": "Usar con proveedor de IA"
+                "useProvider": "Usar con proveedor de IA",
+                "ratePrompt": "¿Qué tan útil fue este prompt?",
+                "ratingThankYou": "¡Gracias por tus comentarios!"
             },
             "aiProviderLinks": {
                 "description": "Haz clic en un proveedor para copiar tu prompt optimizado y abrir su chat en una nueva pestaña. Luego pega tu prompt para una respuesta mejor:",
@@ -1068,11 +1073,21 @@
                     "show": "Mostrar razonamiento de pregunta",
                     "hide": "Ocultar razonamiento de pregunta"
                 },
+                "rateQuestion": "¿Qué tan útil fue esta pregunta?",
+                "rateQuestionExplanationPlaceholder": "Opcional: ¿por qué fue útil esta pregunta o no?",
+                "rateQuestionThankYou": "¡Gracias por tus comentarios!",
                 "errors": {
                     "save": "Error al guardar la respuesta. Por favor, intenta de nuevo.",
                     "submit": "Error al enviar respuestas.",
                     "edit": "Error al optimizar con respuestas editadas. Por favor, intenta de nuevo."
                 }
+            },
+            "promptRating": {
+                "ariaLabel": "Calificar de 1 a 5 estrellas",
+                "starLabel": "Calificar {star} estrellas",
+                "explanationLabel": "Explicación de la calificación",
+                "placeholder": "Opcional: cuéntanos más sobre tu calificación...",
+                "submitButton": "Enviar calificación"
             },
             "preAnalysisQuestions": {
                 "title": "Consultas rápidas",

@@ -224,6 +224,7 @@ return [
         'unauthorized' => 'Nicht berechtigt',
         'invalid_payload' => 'Ungültige Nutzlast',
         'prompt_run_not_found' => 'Anfrage-Durchlauf nicht gefunden',
+        'question_rating_saved' => 'Fragenbewertung erfolgreich gespeichert.',
         'database_error' => 'Datenbankfehler',
         'internal_server_error' => 'Interner Serverfehler',
     ],

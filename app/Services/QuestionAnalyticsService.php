@@ -301,32 +301,104 @@ class QuestionAnalyticsService
      * Called when a user rates an individual question
      */
     public function updateWithRating(
-        int $promptRunId,
+        PromptRun $promptRun,
         string $questionId,
         int $rating,
         ?string $explanation = null,
-    ): void {
+    ): QuestionAnalytic {
         try {
-            QuestionAnalytic::where('prompt_run_id', $promptRunId)
+            $analytic = QuestionAnalytic::where('prompt_run_id', $promptRun->id)
                 ->where('question_id', $questionId)
-                ->update([
-                    'user_rating' => $rating,
-                    'rating_explanation' => $explanation,
+                ->latest()
+                ->first();
+
+            if (! $analytic) {
+                $presentation = $this->resolveQuestionPresentation(
+                    $promptRun,
+                    $questionId,
+                );
+
+                $analytic = QuestionAnalytic::create([
+                    'prompt_run_id' => $promptRun->id,
+                    'visitor_id' => $promptRun->visitor_id,
+                    'user_id' => $promptRun->user_id,
+                    'question_id' => $presentation['question_id'],
+                    'question_category' => $presentation['question_category'],
+                    'personality_variant' => $presentation['personality_variant'],
+                    'display_order' => $presentation['display_order'],
+                    'was_required' => $presentation['was_required'],
+                    'response_status' => 'not_shown',
+                    'presented_at' => now(),
                 ]);
+            }
+
+            $analytic->update([
+                'user_rating' => $rating,
+                'rating_explanation' => $explanation,
+            ]);
 
             Log::info('Question rating recorded', [
-                'prompt_run_id' => $promptRunId,
+                'prompt_run_id' => $promptRun->id,
                 'question_id' => $questionId,
                 'rating' => $rating,
             ]);
+
+            return $analytic->refresh();
         } catch (\Exception $e) {
             Log::error('Failed to update question rating', [
-                'prompt_run_id' => $promptRunId,
+                'prompt_run_id' => $promptRun->id,
                 'question_id' => $questionId,
                 'error' => $e->getMessage(),
             ]);
 
             throw $e;
         }
+    }
+
+    private function resolveQuestionPresentation(
+        PromptRun $promptRun,
+        string $questionId,
+    ): array {
+        $questions = $promptRun->framework_questions ?? [];
+        $matchedQuestion = null;
+        $matchedIndex = null;
+
+        foreach ($questions as $index => $question) {
+            if (is_array($question) && ($question['id'] ?? null) === $questionId) {
+                $matchedQuestion = $question;
+                $matchedIndex = $index;
+                break;
+            }
+        }
+
+        if ($matchedQuestion === null && preg_match('/^Q(\d+)$/', $questionId, $matches)) {
+            $index = (int) $matches[1];
+            if (array_key_exists($index, $questions)) {
+                $matchedQuestion = $questions[$index];
+                $matchedIndex = $index;
+            }
+        }
+
+        $questionCategory = 'framework';
+        $personalityVariant = null;
+        $wasRequired = true;
+
+        if (is_array($matchedQuestion)) {
+            $questionCategory = $matchedQuestion['category'] ?? $questionCategory;
+            $personalityVariant = $matchedQuestion['personality_variant'] ?? null;
+            if (array_key_exists('required', $matchedQuestion)) {
+                $wasRequired = (bool) $matchedQuestion['required'];
+            }
+        }
+
+        $displayOrder = $matchedIndex !== null ? $matchedIndex + 1 : 0;
+
+        return [
+            'question_id' => $questionId,
+            'question_category' => $questionCategory,
+            'personality_variant' => $personalityVariant,
+            'display_order' => $displayOrder,
+            'was_required' => $wasRequired,
+        ];
     }
 }

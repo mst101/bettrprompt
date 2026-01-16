@@ -27,6 +27,9 @@
             "ok": "OK",
             "embedAll": "Alle einbetten"
         },
+        "labels": {
+            "saving": "Wird gespeichert..."
+        },
         "aria": {
             "userMenu": "Benutzermenü"
         },
@@ -1027,7 +1030,9 @@
                 "edit": "Anfrage bearbeiten",
                 "saveChanges": "Änderungen speichern",
                 "label": "Optimierte Anfrage",
-                "useProvider": "Mit KI-Anbieter verwenden"
+                "useProvider": "Mit KI-Anbieter verwenden",
+                "ratePrompt": "Wie hilfreich war dieser Prompt?",
+                "ratingThankYou": "Vielen Dank für Ihr Feedback!"
             },
             "aiProviderLinks": {
                 "description": "Klicken Sie auf einen Anbieter, um Ihre optimierte Anfrage zu kopieren und seinen Chat in einem neuen Tab zu öffnen. Fügen Sie dann Ihre Anfrage ein, um eine bessere Antwort zu erhalten:",
@@ -1068,11 +1073,21 @@
                     "show": "Fragelogik anzeigen",
                     "hide": "Fragelogik verbergen"
                 },
+                "rateQuestion": "Wie hilfreich war diese Frage?",
+                "rateQuestionExplanationPlaceholder": "Optional: Warum war diese Frage hilfreich oder nicht?",
+                "rateQuestionThankYou": "Vielen Dank für Ihr Feedback!",
                 "errors": {
                     "save": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
                     "submit": "Fehler beim Senden der Antworten.",
                     "edit": "Fehler bei der Optimierung mit geänderten Antworten. Bitte versuchen Sie es erneut."
                 }
+            },
+            "promptRating": {
+                "ariaLabel": "Von 1 bis 5 Sterne bewerten",
+                "starLabel": "{star} Sterne bewerten",
+                "explanationLabel": "Bewertungserklärung",
+                "placeholder": "Optional: Erzählen Sie uns mehr über Ihre Bewertung...",
+                "submitButton": "Bewertung senden"
             },
             "preAnalysisQuestions": {
                 "title": "Schnelle Abfragen",

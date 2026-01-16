@@ -3,15 +3,22 @@
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
+use App\Http\Controllers\Admin\AlertNotificationController;
 use App\Http\Controllers\Admin\DomainAnalyticsController;
 use App\Http\Controllers\Admin\ExperimentResultsController;
 use App\Http\Controllers\Api\AnalyticsEventController;
+use App\Http\Controllers\Api\PromptRatingController;
+use App\Http\Controllers\Api\QuestionRatingController;
+use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\MailgunWebhookController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
 use App\Services\FrameworkAnalyticsService;
+use App\Services\QuestionAnalyticsService;
 use App\Services\WorkflowAnalyticsService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -23,19 +30,16 @@ Route::post('/analytics/events', [AnalyticsEventController::class, 'store'])
     ->middleware('throttle:100,1') // Generous limit for event batches
     ->name('analytics.events.store');
 
-// Authenticated user routes
-Route::middleware(['auth'])->group(function () {
-    // Prompt rating
-    Route::post('/prompt-runs/{promptRun}/rate', [\App\Http\Controllers\Api\PromptRatingController::class, 'store'])
-        ->name('api.prompt-runs.rate');
+// Guest + authenticated routes
+Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [QuestionRatingController::class, 'store'])
+    ->name('api.questions.rate');
 
-    // Question rating
-    Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [\App\Http\Controllers\Api\QuestionRatingController::class, 'store'])
-        ->name('api.questions.rate');
-});
+// Prompt rating
+Route::post('/prompt-runs/{promptRun}/rate', [PromptRatingController::class, 'store'])
+    ->name('api.prompt-runs.rate');
 
 // User preferences (works for both authenticated users and guest visitors)
-Route::patch('/user/preferences', [\App\Http\Controllers\Api\UserPreferenceController::class, 'update'])
+Route::patch('/user/preferences', [UserPreferenceController::class, 'update'])
     ->name('api.user.preferences.update');
 
 // Experiment results (admin only)
@@ -189,13 +193,13 @@ Route::post('/n8n/webhook', function (Request $request) {
 
                     // Record question presentations when analysis completes
                     if (! empty($promptRun->framework_questions)) {
-                        $questionService = app(\App\Services\QuestionAnalyticsService::class);
+                        $questionService = app(QuestionAnalyticsService::class);
                         foreach ($promptRun->framework_questions as $index => $question) {
                             $questionService->recordPresentation(
                                 promptRun: $promptRun,
                                 visitorId: $promptRun->visitor_id,
                                 userId: $promptRun->user_id,
-                                questionId: $question['id'] ?? "Q{$index}",
+                                questionId: $question['id'] ?? "Q$index",
                                 questionCategory: $question['category'] ?? 'framework',
                                 personalityVariant: $question['personality_variant'] ?? null,
                                 displayOrder: $index + 1,
@@ -205,7 +209,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                     }
 
                     event(new AnalysisCompleted($promptRun));
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to process analysis completion', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
@@ -233,7 +237,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                     }
 
                     event(new PromptOptimizationCompleted($promptRun));
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to process prompt optimization completion', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
@@ -274,7 +278,7 @@ Route::post('/n8n/webhook', function (Request $request) {
                             SendAlertEmail::dispatch($notification);
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to process workflow failure', [
                         'prompt_run_id' => $promptRun->id,
                         'error' => $e->getMessage(),
@@ -290,12 +294,12 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             return response()->json(['success' => true]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-    } catch (\Illuminate\Database\QueryException $e) {
+    } catch (QueryException $e) {
         Log::error('Database error processing N8n webhook', [
             'error' => $e->getMessage(),
             'payload' => $request->all(),
@@ -306,7 +310,7 @@ Route::post('/n8n/webhook', function (Request $request) {
             'error' => __('messages.api.database_error'),
         ], 500);
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         Log::error('Unexpected error processing N8n webhook', [
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
@@ -327,7 +331,7 @@ Route::prefix('webhooks/mailgun')->middleware(['mailgun.signature', 'throttle:60
 });
 
 // Stripe webhooks (handled by Laravel Cashier)
-Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
     ->name('stripe.webhook');
 
 // Domain analytics API (admin only)
@@ -345,17 +349,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Alert notifications API
     Route::prefix('admin/alert-notifications')->group(function () {
-        Route::get('/pending', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getPending'])
+        Route::get('/pending', [AlertNotificationController::class, 'getPending'])
             ->name('api.admin.alert-notifications.pending');
-        Route::post('/{notificationId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledge'])
+        Route::post('/{notificationId}/acknowledge', [AlertNotificationController::class, 'acknowledge'])
             ->name('api.admin.alert-notifications.acknowledge');
     });
 
     // Alerts API
     Route::prefix('admin/alerts')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'getAlerts'])
+        Route::get('/', [AlertNotificationController::class, 'getAlerts'])
             ->name('api.admin.alerts.index');
-        Route::post('/{alertId}/acknowledge', [\App\Http\Controllers\Admin\AlertNotificationController::class, 'acknowledgeAlert'])
+        Route::post('/{alertId}/acknowledge', [AlertNotificationController::class, 'acknowledgeAlert'])
             ->name('api.admin.alerts.acknowledge');
     });
 });

@@ -223,6 +223,7 @@ return [
         'unauthorized' => 'Unauthorized',
         'invalid_payload' => 'Invalid payload',
         'prompt_run_not_found' => 'Prompt run not found',
+        'question_rating_saved' => 'Question rating saved successfully.',
         'database_error' => 'Database error',
         'internal_server_error' => 'Internal server error',
     ],

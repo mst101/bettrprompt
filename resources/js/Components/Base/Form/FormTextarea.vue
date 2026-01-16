@@ -19,7 +19,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 // Configuration constants
-const MIN_ROWS = 3;
+const MIN_ROWS = props.rows;
 const MAX_ROWS = 16;
 const DEFAULT_LINE_HEIGHT = 20;
 

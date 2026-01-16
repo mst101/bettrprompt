@@ -224,6 +224,7 @@ return [
         'unauthorized' => 'Non autorisé',
         'invalid_payload' => 'Charge utile invalide',
         'prompt_run_not_found' => 'Exécution d\'invite non trouvée',
+        'question_rating_saved' => 'Évaluation de la question enregistrée avec succès.',
         'database_error' => 'Erreur de base de données',
         'internal_server_error' => 'Erreur interne du serveur',
     ],

@@ -27,6 +27,9 @@
             "ok": "OK",
             "embedAll": "Tout incorporer"
         },
+        "labels": {
+            "saving": "Enregistrement..."
+        },
         "aria": {
             "userMenu": "Menu utilisateur"
         },
@@ -1027,7 +1030,9 @@
                 "edit": "Modifier l'invite",
                 "saveChanges": "Enregistrer les modifications",
                 "label": "Invite optimisée",
-                "useProvider": "Utiliser avec le fournisseur d'IA"
+                "useProvider": "Utiliser avec le fournisseur d'IA",
+                "ratePrompt": "Dans quelle mesure cette invite a-t-elle été utile ?",
+                "ratingThankYou": "Merci pour votre retour !"
             },
             "aiProviderLinks": {
                 "description": "Cliquez sur un fournisseur pour copier votre invite optimisée et ouvrir son chat dans un nouvel onglet. Collez ensuite votre invite pour une meilleure réponse :",
@@ -1068,11 +1073,21 @@
                     "show": "Afficher la justification de la question",
                     "hide": "Masquer la justification de la question"
                 },
+                "rateQuestion": "Dans quelle mesure cette question a-t-elle été utile ?",
+                "rateQuestionExplanationPlaceholder": "Facultatif : pourquoi cette question était-elle utile ou non ?",
+                "rateQuestionThankYou": "Merci pour votre retour !",
                 "errors": {
                     "save": "Impossible d'enregistrer la réponse. Veuillez réessayer.",
                     "submit": "Impossible de soumettre les réponses.",
                     "edit": "Impossible d'optimiser avec les réponses modifiées. Veuillez réessayer."
                 }
+            },
+            "promptRating": {
+                "ariaLabel": "Noter de 1 à 5 étoiles",
+                "starLabel": "Noter {star} étoiles",
+                "explanationLabel": "Explication de la note",
+                "placeholder": "Facultatif : dites-nous en plus sur votre note...",
+                "submitButton": "Envoyer la note"
             },
             "preAnalysisQuestions": {
                 "title": "Questions rapides",
