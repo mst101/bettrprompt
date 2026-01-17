@@ -220,9 +220,9 @@ class PromptQualityService
 
         return [
             'total_prompts' => $total,
-            'average_quality_score' => PromptQualityMetric::avg('quality_score') ?? 0,
-            'average_engagement_score' => PromptQualityMetric::avg('engagement_score') ?? 0,
-            'average_rating' => PromptQualityMetric::avg('user_rating') ?? 0,
+            'average_quality_score' => (float) (PromptQualityMetric::avg('quality_score') ?? 0),
+            'average_engagement_score' => (float) (PromptQualityMetric::avg('engagement_score') ?? 0),
+            'average_rating' => (float) (PromptQualityMetric::avg('user_rating') ?? 0),
             'copy_rate' => (PromptQualityMetric::where('was_copied', true)->count() / $total) * 100,
             'edit_rate' => (PromptQualityMetric::where('was_edited', true)->count() / $total) * 100,
         ];
@@ -242,11 +242,11 @@ class PromptQualityService
         $count = count($metrics);
 
         return [
-            'p10' => $metrics[intval($count * 0.1)],
-            'p25' => $metrics[intval($count * 0.25)],
-            'p50' => $metrics[intval($count * 0.5)],
-            'p75' => $metrics[intval($count * 0.75)],
-            'p90' => $metrics[intval($count * 0.9)],
+            'p10' => (float) $metrics[ceil($count * 0.1) - 1],
+            'p25' => (float) $metrics[ceil($count * 0.25) - 1],
+            'p50' => (float) $metrics[ceil($count * 0.5) - 1],
+            'p75' => (float) $metrics[ceil($count * 0.75) - 1],
+            'p90' => (float) $metrics[ceil($count * 0.9) - 1],
         ];
     }
 
