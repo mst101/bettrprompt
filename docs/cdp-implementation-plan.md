@@ -125,7 +125,7 @@ AnalyticsEvent::dispatch('conversion', 'registration_complete', [
 // Listeners automatically handle:
 // 1. CDPEventListener → analytics_events table
 // 2. ExperimentEventListener → experiment_conversions (if user in experiment)
-// 3. FrameworkAnalyticsListener → framework_selections (if framework event)
+// 3. FrameworkSelectionListener → framework_selections (if framework event)
 // 4. QuestionAnalyticsListener → question_analytics (if question event)
 ```
 
@@ -1516,7 +1516,7 @@ Schema::create('analytics_segment_users', function (Blueprint $table) {
 - [ ] Implement event listeners:
   - [ ] `CDPEventListener` → writes to analytics_events
   - [ ] `ExperimentEventListener` → updates experiment_conversions
-  - [ ] `FrameworkAnalyticsListener` → writes to framework_selections
+  - [ ] `FrameworkSelectionListener` → writes to framework_selections
   - [ ] `QuestionAnalyticsListener` → writes to question_analytics
 - [ ] Create API endpoint for frontend event collection
 

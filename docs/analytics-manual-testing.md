@@ -7,12 +7,12 @@ All 7 core implementation phases have been successfully completed:
 ### ✅ Phase 0: Database & Models
 - Created `add_question_display_mode_to_users_and_visitors` migration
 - Updated `create_domain_analytics_tables` migration with:
-  - Renamed `framework_selections` → `framework_analytics`
+  - Created `framework_selections` table for tracking framework selections
   - Added `display_mode` enum to `question_analytics`
   - Added `user_rating` and `rating_explanation` to `question_analytics`
   - Added `rating_explanation` to `prompt_quality_metrics`
   - Renamed `estimated_cost_usd` → `cost_usd` in `workflow_analytics`
-- Updated models: User, Visitor, FrameworkAnalytic, QuestionAnalytic, PromptQualityMetric, WorkflowAnalytic
+- Updated models: User, Visitor, FrameworkSelection, QuestionAnalytic, PromptQualityMetric, WorkflowAnalytic
 
 ### ✅ Phase 1: Framework Event Tracking
 - Show.vue: `framework_recommended` event fires when workflow 1 completes and Framework tab displayed
@@ -55,7 +55,7 @@ All 7 core implementation phases have been successfully completed:
 ## Database Verification Checklist
 
 ### Tables Created & Structure Verified ✓
-- [x] `framework_analytics` - Renamed from `framework_selections`
+- [x] `framework_selections` - Table for tracking framework selections
 - [x] `question_analytics` - With display_mode, user_rating, rating_explanation
 - [x] `workflow_analytics` - With cost_usd (renamed from estimated_cost_usd)
 - [x] `prompt_quality_metrics` - With rating_explanation
@@ -63,10 +63,10 @@ All 7 core implementation phases have been successfully completed:
 - [x] `visitors` table - With question_display_mode field
 
 ### Models & Services Verified ✓
-- [x] FrameworkAnalytic model exists and uses correct table
+- [x] FrameworkSelection model exists and uses correct table
 - [x] QuestionAnalytic model with new fields
 - [x] PromptQualityMetric model with rating_explanation
-- [x] FrameworkAnalyticsService (renamed) exists
+- [x] FrameworkSelectionService exists
 - [x] QuestionAnalyticsService exists
 - [x] PromptQualityService exists
 
@@ -95,9 +95,9 @@ All 7 core implementation phases have been successfully completed:
 **Setup**: Complete personality assessment through workflow 1
 **Expected**:
 1. `framework_recommended` event fires when Framework tab shown
-2. `framework_analytics` table has one row with recommended framework
+2. `framework_selections` table has one row with recommended framework
 3. User clicks alternative framework → `framework_switched` event fires
-4. Second row appears in `framework_analytics` with chosen framework different from recommended
+4. Second row appears in `framework_selections` with chosen framework different from recommended
 
 **Fields to Verify**:
 - `prompt_run_id`: Matches current session
@@ -196,15 +196,15 @@ All 7 core implementation phases have been successfully completed:
 
 ## SQL Verification Queries
 
-### Check Framework Analytics Data
+### Check Framework Selection Data
 ```sql
-SELECT 
+SELECT
     prompt_run_id,
     recommended_framework,
     chosen_framework,
     accepted_recommendation,
     created_at
-FROM framework_analytics
+FROM framework_selections
 WHERE created_at > NOW() - INTERVAL '1 day'
 ORDER BY created_at DESC
 LIMIT 5;
@@ -286,9 +286,9 @@ ORDER BY name;
 
 ### Framework Events
 - [ ] Complete workflow 1, verify `framework_recommended` in browser console/network
-- [ ] `framework_analytics` table has recommendation row
+- [ ] `framework_selections` table has recommendation row
 - [ ] Switch to alternative framework, verify `framework_switched` event
-- [ ] Check `framework_analytics` has both rows
+- [ ] Check `framework_selections` has both rows
 
 ### Question Events
 - [ ] Load clarifying questions, verify `questions_presented` fires once only
@@ -338,7 +338,7 @@ ORDER BY name;
 
 | Metric | Expected Behavior | Location |
 |--------|------------------|----------|
-| Framework Recommendation Rate | % choosing recommended framework | `framework_analytics.accepted_recommendation` |
+| Framework Recommendation Rate | % choosing recommended framework | `framework_selections.accepted_recommendation` |
 | Average Question Response Time | Typical 30-120 seconds | `question_analytics.time_to_answer_ms` |
 | Question Skip Rate | % of questions skipped per prompt run | `question_analytics` count where `response_status` = 'skipped' |
 | Prompt Quality Score | Average rating across all prompts | `prompt_quality_metrics.user_rating` average |

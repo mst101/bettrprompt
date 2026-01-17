@@ -34,9 +34,9 @@ This document outlines the automated test implementation strategy for the analyt
 
 ## Phase 1: Backend Unit Tests - Analytics Services
 
-### 1.1: FrameworkAnalyticsService Tests
+### 1.1: FrameworkSelectionService Tests
 
-**New File:** `tests/Unit/Services/FrameworkAnalyticsServiceTest.php`
+**New File:** `tests/Unit/Services/FrameworkSelectionServiceTest.php`
 
 **Test Coverage:**
 
@@ -57,10 +57,10 @@ describe('Framework Switching', function () {
 });
 
 describe('Outcome Recording', function () {
-    test('updates framework analytic with rating');
-    test('updates framework analytic with rating explanation');
-    test('updates framework analytic with copy status');
-    test('updates framework analytic with edit percentage');
+    test('updates framework selection with rating');
+    test('updates framework selection with rating explanation');
+    test('updates framework selection with copy status');
+    test('updates framework selection with edit percentage');
     test('handles null rating gracefully');
 });
 
@@ -463,7 +463,7 @@ test.describe('Question Display Mode Preference', () => {
 ```typescript
 test.describe('Framework Switching Analytics', () => {
     test('fires framework_switched analytics event');
-    test('creates framework_analytics record on switch');
+    test('creates framework_selections record on switch');
     test('allows cancelling framework switch');
 });
 ```
@@ -549,7 +549,7 @@ test.describe('Complete Rating Journey', () => {
 - `GET /test/analytics-events` - Get analytics events
 - `GET /test/question-analytics/{promptRunId}` - Get question analytics
 - `GET /test/prompt-quality-metrics/{promptRunId}` - Get prompt quality metrics
-- `GET /test/framework-analytics/{promptRunId}` - Get framework analytics
+- `GET /test/framework-selections/{promptRunId}` - Get framework selections
 - `GET /test/user-preferences/{userId}` - Get user preferences
 - `GET /test/visitor-preferences/{visitorId}` - Get visitor preferences
 
@@ -567,7 +567,7 @@ if (config('app.env') === 'e2e') {
         Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);
         Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
         Route::get('/prompt-quality-metrics/{promptRunId}', [AnalyticsTestController::class, 'getPromptQualityMetrics']);
-        Route::get('/framework-analytics/{promptRunId}', [AnalyticsTestController::class, 'getFrameworkAnalytics']);
+        Route::get('/framework-selections/{promptRunId}', [AnalyticsTestController::class, 'getFrameworkSelections']);
         Route::get('/user-preferences/{userId}', [AnalyticsTestController::class, 'getUserPreferences']);
         Route::get('/visitor-preferences/{visitorId}', [AnalyticsTestController::class, 'getVisitorPreferences']);
     });
@@ -667,7 +667,7 @@ pnpm test:e2e --grep "submits prompt rating via API"
 ## Files to Create
 
 ### Backend Tests (Pest)
-1. `tests/Unit/Services/FrameworkAnalyticsServiceTest.php` - ~300 lines
+1. `tests/Unit/Services/FrameworkSelectionServiceTest.php` - ~300 lines
 2. `tests/Unit/Services/QuestionAnalyticsServiceTest.php` - ~400 lines
 3. `tests/Unit/Services/PromptQualityServiceTest.php` - ~350 lines
 4. `tests/Feature/Api/PromptRatingControllerTest.php` - ~200 lines
@@ -695,7 +695,7 @@ pnpm test:e2e --grep "submits prompt rating via API"
 ## Implementation Order
 
 1. **Week 1:** Backend Unit Tests (Phases 1)
-   - Day 1-2: FrameworkAnalyticsService tests
+   - Day 1-2: FrameworkSelectionService tests
    - Day 3-4: QuestionAnalyticsService tests
    - Day 5: PromptQualityService tests
 

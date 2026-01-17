@@ -1987,7 +1987,7 @@ Each phase includes specific tasks, dependencies, and acceptance criteria.
 **Files:**
 
 - `resources/js/Components/PromptBuilder/FrameworkSelector.vue` (extend)
-- `app/Services/FrameworkAnalyticsService.php`
+- `app/Services/FrameworkSelectionService.php`
 
 **Acceptance Criteria:**
 
