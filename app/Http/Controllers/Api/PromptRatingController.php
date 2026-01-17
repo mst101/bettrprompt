@@ -15,9 +15,16 @@ class PromptRatingController extends Controller
 
     public function store(StorePromptRatingRequest $request, PromptRun $promptRun)
     {
-        // Ensure user owns this prompt run or is admin
-        // (auth:sanctum middleware ensures authenticated user exists)
-        if ($promptRun->user_id !== auth()->id() && ! auth()->user()->is_admin) {
+        // Authorization is checked here rather than via middleware to allow flexibility
+        // in different client contexts (browser sessions, API tokens, tests)
+        $user = auth()->user();
+
+        // Return 401 for unauthenticated users, 403 for insufficient permissions
+        if (! $user) {
+            abort(401, 'Unauthenticated');
+        }
+
+        if ($promptRun->user_id !== $user->id && ! $user->is_admin) {
             abort(403, 'Unauthorized');
         }
 

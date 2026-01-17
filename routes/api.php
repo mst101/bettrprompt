@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Test\AnalyticsTestController;
+use App\Http\Middleware\VerifyE2eTestAuth;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
@@ -37,7 +38,6 @@ Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [QuestionRat
 
 // Prompt rating
 Route::post('/prompt-runs/{promptRun}/rate', [PromptRatingController::class, 'store'])
-    ->middleware('auth:sanctum')
     ->name('api.prompt-runs.rate');
 
 // User preferences (works for both authenticated users and guest visitors)
@@ -386,14 +386,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Test-only endpoints for E2E testing
 if (config('app.env') === 'e2e') {
-    Route::prefix('test')->middleware(function ($request, $next) {
-        // Security: Verify X-Test-Auth header
-        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
-            abort(403, 'Unauthorized test endpoint access');
-        }
-
-        return $next($request);
-    })->group(function () {
+    Route::prefix('test')->middleware(VerifyE2eTestAuth::class)->group(function () {
         // Analytics & Rating Data Access
         Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
         Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);
