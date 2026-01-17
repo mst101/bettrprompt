@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\QuestionRatingController;
 use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\MailgunWebhookController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Test\AnalyticsTestController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
@@ -366,7 +367,25 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Test-only endpoints for E2E testing
 if (config('app.env') === 'e2e') {
-    Route::prefix('test')->group(function () {
+    Route::prefix('test')->middleware(function ($request, $next) {
+        // Security: Verify X-Test-Auth header
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorized test endpoint access');
+        }
+
+        return $next($request);
+    })->group(function () {
+        // Analytics & Rating Data Access
+        Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
+        Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);
+
+        // Visitor & Prompt Run Creation
+        Route::post('/create-visitor-prompt-run', [AnalyticsTestController::class, 'createVisitorPromptRun']);
+        Route::post('/create-visitor-with-completed-prompt', [AnalyticsTestController::class, 'createVisitorWithCompletedPrompt']);
+        Route::post('/create-visitor-with-completed-prompt-for-edit', [AnalyticsTestController::class, 'createVisitorWithCompletedPromptForEdit']);
+        Route::post('/create-visitor-prompt-run-2-completed', [AnalyticsTestController::class, 'createVisitorPromptRun2Completed']);
+
+        // Mock Scenario Management
         Route::post('set-mock-scenario', function (Request $request) {
             $scenario = $request->input('scenario', 'success');
             $scenarioFile = storage_path('app/test_mock_scenario.txt');
