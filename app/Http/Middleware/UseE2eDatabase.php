@@ -24,6 +24,9 @@ class UseE2eDatabase
             // (SwitchDataCollectionDatabase middleware runs first and takes priority)
             $currentDb = Config::get('database.connections.pgsql.database');
             if ($currentDb !== 'bettrprompt_data_collection') {
+                // Ensure queued jobs run inline for E2E requests so they share the same DB context.
+                Config::set('queue.default', 'sync');
+
                 // Switch to the E2E database
                 Config::set('database.connections.pgsql.database', 'bettrprompt_e2e');
 
