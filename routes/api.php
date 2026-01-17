@@ -87,6 +87,21 @@ Route::post('/n8n/webhook', function (Request $request) {
             'error_context.execution_id' => 'nullable|string',
             'error_context.timestamp' => 'nullable|string',
             'retry_count' => 'nullable|integer|min:0|max:10',
+            'pre_analysis_api_usage' => 'nullable|array',
+            'pre_analysis_api_usage.input_tokens' => 'nullable|integer',
+            'pre_analysis_api_usage.output_tokens' => 'nullable|integer',
+            'pre_analysis_api_usage.cost' => 'nullable|numeric',
+            'pre_analysis_api_usage.model' => 'nullable|string',
+            'analysis_api_usage' => 'nullable|array',
+            'analysis_api_usage.input_tokens' => 'nullable|integer',
+            'analysis_api_usage.output_tokens' => 'nullable|integer',
+            'analysis_api_usage.cost' => 'nullable|numeric',
+            'analysis_api_usage.model' => 'nullable|string',
+            'generation_api_usage' => 'nullable|array',
+            'generation_api_usage.input_tokens' => 'nullable|integer',
+            'generation_api_usage.output_tokens' => 'nullable|integer',
+            'generation_api_usage.cost' => 'nullable|numeric',
+            'generation_api_usage.model' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -138,6 +153,9 @@ Route::post('/n8n/webhook', function (Request $request) {
                 'error_message',
                 'error_context',
                 'retry_count',
+                'pre_analysis_api_usage',
+                'analysis_api_usage',
+                'generation_api_usage',
             ]);
 
             // Add timestamps based on workflow stage
