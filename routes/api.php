@@ -16,7 +16,7 @@ use App\Http\Controllers\Test\AnalyticsTestController;
 use App\Jobs\SendAlertEmail;
 use App\Models\PromptRun;
 use App\Services\AlertService;
-use App\Services\FrameworkAnalyticsService;
+use App\Services\FrameworkSelectionService;
 use App\Services\QuestionAnalyticsService;
 use App\Services\WorkflowAnalyticsService;
 use Illuminate\Database\QueryException;
@@ -154,7 +154,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
             // Record analytics for workflow completion/failure
             $workflowAnalyticsService = app(WorkflowAnalyticsService::class);
-            $frameworkAnalyticsService = app(FrameworkAnalyticsService::class);
+            $frameworkSelectionService = app(FrameworkSelectionService::class);
 
             // Broadcast events: 1_completed, 2_completed, _failed
             if ($workflowStage === '1_completed') {
@@ -180,7 +180,7 @@ Route::post('/n8n/webhook', function (Request $request) {
 
                     // Record framework selection when analysis completes
                     if ($promptRun->selected_framework) {
-                        $frameworkAnalyticsService->recordSelection(
+                        $frameworkSelectionService->recordSelection(
                             promptRun: $promptRun,
                             visitorId: $promptRun->visitor_id,
                             userId: $promptRun->user_id,

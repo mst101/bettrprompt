@@ -390,24 +390,38 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Framework selection events
             if ($eventName === 'framework_recommended') {
+                $recommendedFramework = 'unknown';
+                if (isset($properties['selected_framework']['code'])) {
+                    $recommendedFramework = $properties['selected_framework']['code'];
+                } elseif (isset($properties['framework'])) {
+                    $recommendedFramework = $properties['framework'];
+                }
+
                 $frameworkService->recordSelection(
                     promptRun: $promptRun,
                     visitorId: $this->visitorId,
                     userId: $this->userId,
-                    recommendedFramework: $properties['framework'] ?? 'unknown',
-                    chosenFramework: $properties['framework'] ?? 'unknown',
+                    recommendedFramework: $recommendedFramework,
+                    chosenFramework: $recommendedFramework,
                     recommendationScores: $properties['scores'] ?? [],
                     taskCategory: $properties['task_category'] ?? null,
                     personalityType: $properties['personality_type'] ?? null,
                 );
             } elseif ($eventName === 'framework_selected') {
                 // User chose a different framework than recommended
+                $chosenFramework = 'unknown';
+                if (isset($properties['selected_framework']['code'])) {
+                    $chosenFramework = $properties['selected_framework']['code'];
+                } elseif (isset($properties['framework'])) {
+                    $chosenFramework = $properties['framework'];
+                }
+
                 $selection = $promptRun->frameworkSelections()
                     ->latest()
                     ->first();
 
-                if ($selection && $selection->recommended_framework !== $properties['framework']) {
-                    $selection->update(['chosen_framework' => $properties['framework']]);
+                if ($selection && $selection->recommended_framework !== $chosenFramework) {
+                    $selection->update(['chosen_framework' => $chosenFramework]);
                 }
             }
 
