@@ -167,7 +167,11 @@ class AnalyticsTestController extends Controller
 
         // Filter by prompt_run_id if provided
         if ($request->query('prompt_run_id')) {
-            $query->where('properties->prompt_run_id', '=', $request->query('prompt_run_id'));
+            // Cast to integer for JSON comparison (prompt_run_id is stored as number in JSON)
+            $query->whereRaw(
+                '(properties->>\'prompt_run_id\')::integer = ?',
+                [(int) $request->query('prompt_run_id')]
+            );
         }
 
         return response()->json($query->get());
