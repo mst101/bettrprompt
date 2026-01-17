@@ -45,9 +45,7 @@ async function globalSetup() {
 
             // Check if current .env is in test mode (shouldn't be when tests start)
             if (envContent.includes('APP_ENV=e2e')) {
-                console.warn(
-                    '⚠️  WARNING: .env already has APP_ENV=e2e (corrupted state detected)',
-                );
+                console.warn('⚠️  WARNING: .env already has APP_ENV=e2e');
                 console.warn(
                     '   This indicates a previous E2E test run did not complete cleanly.',
                 );

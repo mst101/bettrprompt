@@ -384,45 +384,42 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 });
 
-// Test-only endpoints for E2E testing
-if (config('app.env') === 'e2e') {
-    Route::prefix('test')->middleware(VerifyE2eTestAuth::class)->group(function () {
-        // Analytics & Rating Data Access
-        Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
-        Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);
+// Test-only endpoints for E2E testing (guarded by header middleware)
+Route::prefix('test')->middleware(VerifyE2eTestAuth::class)->group(function () {
+    // Analytics & Rating Data Access
+    Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
+    Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);
 
-        // Visitor & Prompt Run Creation
-        Route::post('/create-visitor-prompt-run', [AnalyticsTestController::class, 'createVisitorPromptRun']);
-        Route::post('/create-visitor-with-completed-prompt', [AnalyticsTestController::class, 'createVisitorWithCompletedPrompt']);
-        Route::post('/create-visitor-with-completed-prompt-for-edit', [AnalyticsTestController::class, 'createVisitorWithCompletedPromptForEdit']);
-        Route::post('/create-visitor-prompt-run-2-completed', [AnalyticsTestController::class, 'createVisitorPromptRun2Completed']);
+    // Visitor & Prompt Run Creation
+    Route::post('/create-visitor-prompt-run', [AnalyticsTestController::class, 'createVisitorPromptRun']);
+    Route::post('/create-visitor-with-completed-prompt', [AnalyticsTestController::class, 'createVisitorWithCompletedPrompt']);
+    Route::post('/create-visitor-with-completed-prompt-for-edit', [AnalyticsTestController::class, 'createVisitorWithCompletedPromptForEdit']);
+    Route::post('/create-visitor-prompt-run-2-completed', [AnalyticsTestController::class, 'createVisitorPromptRun2Completed']);
 
-        // Mock Scenario Management
-        Route::post('set-mock-scenario', function (Request $request) {
-            $scenario = $request->input('scenario', 'success');
-            $scenarioFile = storage_path('app/test_mock_scenario.txt');
+    // Mock Scenario Management
+    Route::post('set-mock-scenario', function (Request $request) {
+        $scenario = $request->input('scenario', 'success');
+        $scenarioFile = storage_path('app/test_mock_scenario.txt');
 
-            // Ensure storage directory exists
-            @mkdir(dirname($scenarioFile), 0755, true);
+        // Ensure storage directory exists
+        @mkdir(dirname($scenarioFile), 0755, true);
 
-            // Write scenario to file
-            file_put_contents($scenarioFile, $scenario);
+        // Write scenario to file
+        file_put_contents($scenarioFile, $scenario);
 
-            Log::info('Test mock scenario set', ['scenario' => $scenario, 'file' => $scenarioFile]);
+        Log::info('Test mock scenario set', ['scenario' => $scenario, 'file' => $scenarioFile]);
 
-            return response()->json(['scenario' => $scenario]);
-        });
-
-        Route::post('clear-mock-scenario', function () {
-            $scenarioFile = storage_path('app/test_mock_scenario.txt');
-            if (file_exists($scenarioFile)) {
-                @unlink($scenarioFile);
-            }
-
-            Log::info('Test mock scenario cleared');
-
-            return response()->json(['cleared' => true]);
-        });
-
+        return response()->json(['scenario' => $scenario]);
     });
-}
+
+    Route::post('clear-mock-scenario', function () {
+        $scenarioFile = storage_path('app/test_mock_scenario.txt');
+        if (file_exists($scenarioFile)) {
+            @unlink($scenarioFile);
+        }
+
+        Log::info('Test mock scenario cleared');
+
+        return response()->json(['cleared' => true]);
+    });
+});

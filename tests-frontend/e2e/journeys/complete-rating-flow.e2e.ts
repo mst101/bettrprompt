@@ -75,7 +75,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
 
             // Rate with 5 stars
             const fiveStarButton = authenticatedPage
-                .locator('button[aria-label="Rate 5 stars"]')
+                .getByTestId('prompt-rating-star-5')
                 .first();
 
             const isFiveStarVisible = await fiveStarButton
@@ -91,7 +91,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
                     async (id: number) => {
                         try {
                             const response = await fetch(
-                                `/test/question-analytics/${id}`,
+                                `/api/test/question-analytics/${id}`,
                                 {
                                     headers: {
                                         'X-Test-Auth': 'playwright-e2e-tests',
@@ -127,7 +127,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
 
         // Look for rating interface
         const ratingUI = authenticatedPage.locator(
-            'button[aria-label*="Rate"][aria-label*="stars"]',
+            '[data-testid^="prompt-rating-star-"]',
         );
 
         const hasRating = await ratingUI.isVisible().catch(() => false);
@@ -153,7 +153,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
 
         // Rate first question
         const star3 = authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first();
 
         const hasStar = await star3.isVisible().catch(() => false);
@@ -164,8 +164,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
 
             // Add explanation
             const explanationField = authenticatedPage
-                .locator('textarea')
-                .filter({ hasText: /add.*explanation/i })
+                .getByTestId('prompt-rating-explanation')
                 .first();
 
             const hasExplanation = await explanationField
@@ -180,7 +179,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
 
                 // Submit explanation
                 const submitButton = authenticatedPage
-                    .getByRole('button', { name: /add explanation/i })
+                    .getByTestId('prompt-rating-submit')
                     .first();
 
                 const isSubmitVisible = await submitButton
@@ -199,7 +198,7 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
             async (id: number) => {
                 try {
                     const response = await fetch(
-                        `/test/question-analytics/${id}`,
+                        `/api/test/question-analytics/${id}`,
                         {
                             headers: {
                                 'X-Test-Auth': 'playwright-e2e-tests',
@@ -235,7 +234,7 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
 
         // Rate first question
         let stars = authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first();
 
         if (await stars.isVisible().catch(() => false)) {
@@ -257,7 +256,7 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
 
                 // Rate second question
                 stars = authenticatedPage
-                    .locator('button[aria-label="Rate 4 stars"]')
+                    .getByTestId('prompt-rating-star-4')
                     .first();
 
                 if (await stars.isVisible().catch(() => false)) {
@@ -270,11 +269,14 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
         // Verify at least one rating was saved
         const ratings = await authenticatedPage.evaluate(async (id: number) => {
             try {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
+                const response = await fetch(
+                    `/api/test/question-analytics/${id}`,
+                    {
+                        headers: {
+                            'X-Test-Auth': 'playwright-e2e-tests',
+                        },
                     },
-                });
+                );
                 const data = await response.json();
                 return data.filter((r: AnalyticsRecord) => r.user_rating);
             } catch {
@@ -322,7 +324,7 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
                 await authenticatedPage.waitForTimeout(300);
 
                 const star5 = authenticatedPage
-                    .locator('button[aria-label="Rate 5 stars"]')
+                    .getByTestId('prompt-rating-star-5')
                     .first();
 
                 if (await star5.isVisible().catch(() => false)) {
@@ -343,7 +345,7 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
                         await authenticatedPage.waitForTimeout(300);
 
                         const star4 = authenticatedPage
-                            .locator('button[aria-label="Rate 4 stars"]')
+                            .getByTestId('prompt-rating-star-4')
                             .nth(1);
 
                         if (await star4.isVisible().catch(() => false)) {
@@ -358,11 +360,14 @@ test.describe('Complete Rating Flow - Multi-Question Rating', () => {
         // Verify ratings saved
         const ratings = await authenticatedPage.evaluate(async (id: number) => {
             try {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
+                const response = await fetch(
+                    `/api/test/question-analytics/${id}`,
+                    {
+                        headers: {
+                            'X-Test-Auth': 'playwright-e2e-tests',
+                        },
                     },
-                });
+                );
                 const data = await response.json();
                 return data.filter((r: AnalyticsRecord) => r.user_rating);
             } catch {
@@ -391,7 +396,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
         // Initial rating: 3 stars
         let stars = authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first();
 
         if (await stars.isVisible().catch(() => false)) {
@@ -403,7 +408,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
                 async (id: number) => {
                     try {
                         const response = await fetch(
-                            `/test/question-analytics/${id}`,
+                            `/api/test/question-analytics/${id}`,
                             {
                                 headers: {
                                     'X-Test-Auth': 'playwright-e2e-tests',
@@ -423,7 +428,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
             // Update rating: 5 stars
             stars = authenticatedPage
-                .locator('button[aria-label="Rate 5 stars"]')
+                .getByTestId('prompt-rating-star-5')
                 .first();
 
             if (await stars.isVisible().catch(() => false)) {
@@ -435,7 +440,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
                     async (id: number) => {
                         try {
                             const response = await fetch(
-                                `/test/question-analytics/${id}`,
+                                `/api/test/question-analytics/${id}`,
                                 {
                                     headers: {
                                         'X-Test-Auth': 'playwright-e2e-tests',
@@ -472,7 +477,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
         // Rate question
         const star4 = authenticatedPage
-            .locator('button[aria-label="Rate 4 stars"]')
+            .getByTestId('prompt-rating-star-4')
             .first();
 
         if (await star4.isVisible().catch(() => false)) {
@@ -481,8 +486,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
             // Add initial explanation
             const textarea = authenticatedPage
-                .locator('textarea')
-                .filter({ hasText: /add.*explanation/i })
+                .getByTestId('prompt-rating-explanation')
                 .first();
 
             if (await textarea.isVisible().catch(() => false)) {
@@ -491,7 +495,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
                 // Submit
                 const submitButton = authenticatedPage
-                    .getByRole('button', { name: /add explanation/i })
+                    .getByTestId('prompt-rating-submit')
                     .first();
 
                 if (await submitButton.isVisible().catch(() => false)) {
@@ -500,8 +504,7 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
                     // Update explanation
                     const updatedTextarea = authenticatedPage
-                        .locator('textarea')
-                        .filter({ hasText: /update.*explanation/i })
+                        .getByTestId('prompt-rating-explanation')
                         .first();
 
                     if (await updatedTextarea.isVisible().catch(() => false)) {
@@ -529,11 +532,14 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
         // Verify final state
         const rating = await authenticatedPage.evaluate(async (id: number) => {
             try {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
+                const response = await fetch(
+                    `/api/test/question-analytics/${id}`,
+                    {
+                        headers: {
+                            'X-Test-Auth': 'playwright-e2e-tests',
+                        },
                     },
-                });
+                );
                 const data = await response.json();
                 return {
                     rating: data[0]?.user_rating,
@@ -564,7 +570,7 @@ test.describe('Complete Rating Flow - End-to-End Validation', () => {
         await authenticatedPage.waitForTimeout(500);
 
         const star5 = authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first();
 
         if (await star5.isVisible().catch(() => false)) {
@@ -573,14 +579,13 @@ test.describe('Complete Rating Flow - End-to-End Validation', () => {
 
             // Add explanation
             const textarea = authenticatedPage
-                .locator('textarea')
-                .filter({ hasText: /add.*explanation/i })
+                .getByTestId('prompt-rating-explanation')
                 .first();
 
             if (await textarea.isVisible().catch(() => false)) {
                 await textarea.fill('Excellent question');
                 const submitButton = authenticatedPage
-                    .getByRole('button', { name: /add explanation/i })
+                    .getByTestId('prompt-rating-submit')
                     .first();
 
                 if (await submitButton.isVisible().catch(() => false)) {
@@ -595,7 +600,7 @@ test.describe('Complete Rating Flow - End-to-End Validation', () => {
             async (id: number) => {
                 try {
                     const response = await fetch(
-                        `/test/question-analytics/${id}`,
+                        `/api/test/question-analytics/${id}`,
                         {
                             headers: {
                                 'X-Test-Auth': 'playwright-e2e-tests',
@@ -634,7 +639,7 @@ test.describe('Complete Rating Flow - End-to-End Validation', () => {
         await authenticatedPage.waitForTimeout(500);
 
         const star5 = authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first();
 
         if (await star5.isVisible().catch(() => false)) {
@@ -653,11 +658,14 @@ test.describe('Complete Rating Flow - End-to-End Validation', () => {
         // Verify rating persisted
         const rating = await authenticatedPage.evaluate(async (id: number) => {
             try {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
+                const response = await fetch(
+                    `/api/test/question-analytics/${id}`,
+                    {
+                        headers: {
+                            'X-Test-Auth': 'playwright-e2e-tests',
+                        },
                     },
-                });
+                );
                 const data = await response.json();
                 return data[0]?.user_rating;
             } catch {

@@ -167,8 +167,9 @@ class TestBroadcastController extends Controller
         $state = $request->query('state', '1_processing');
         $userId = auth()->id();
 
-        // Get the first existing visitor, or create a new one if none exist
-        $visitor = Visitor::first();
+        $visitorId = $request->cookie('visitor_id');
+        $visitor = $visitorId ? Visitor::find($visitorId) : null;
+
         if (! $visitor) {
             $visitor = Visitor::create();
         }

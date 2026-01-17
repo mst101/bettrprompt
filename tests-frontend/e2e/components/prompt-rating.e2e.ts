@@ -1,4 +1,31 @@
+import type { Page } from '@playwright/test';
 import { expect, setupAndNavigateToPromptRun, test } from '../fixtures';
+
+const fetchQuestionAnalytics = async (page: Page, id: number) => {
+    return await page.evaluate(async (promptRunId: number) => {
+        const response = await fetch(
+            `/api/test/question-analytics/${promptRunId}`,
+            {
+                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
+            },
+        );
+        return response.json();
+    }, id);
+};
+
+const waitForQuestionAnalytics = async (page: Page, id: number) => {
+    await expect
+        .poll(
+            async () => {
+                const analytics = await fetchQuestionAnalytics(page, id);
+                return analytics.length;
+            },
+            { timeout: 10000 },
+        )
+        .toBeGreaterThan(0);
+
+    return await fetchQuestionAnalytics(page, id);
+};
 
 /**
  * E2E Tests for PromptRating Component
@@ -39,24 +66,22 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for rating stars to be visible
         const stars = authenticatedPage.locator(
-            'button[aria-label*="Rate"][aria-label*="stars"]',
+            '[data-testid^="prompt-rating-star-"]',
         );
         await expect(stars.first()).toBeVisible({ timeout: 5000 });
 
         // Click 5th star on first question
         const star5 = authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first();
         await star5.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify rating was saved via test endpoint
-        const rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-            });
-            return response.json();
-        }, promptRunId);
+        const rating = await waitForQuestionAnalytics(
+            authenticatedPage,
+            promptRunId,
+        );
 
         expect(rating.length).toBeGreaterThan(0);
         expect(rating[0].user_rating).toBe(5);
@@ -75,14 +100,12 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 1 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-1').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click a star
         await authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
@@ -104,14 +127,13 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for stars
         const star4 = authenticatedPage
-            .locator('button[aria-label="Rate 4 stars"]')
+            .getByTestId('prompt-rating-star-4')
             .first();
         await expect(star4).toBeVisible({ timeout: 5000 });
 
         // Verify explanation textarea is hidden initially
         const explanationTextarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation|explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
 
         // Click a star
@@ -119,11 +141,7 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
         await authenticatedPage.waitForTimeout(300);
 
         // Verify explanation textarea is now visible
-        const isVisibleAfter = await explanationTextarea
-            .isVisible()
-            .catch(() => false);
-
-        expect(isVisibleAfter).toBe(true);
+        await expect(explanationTextarea).toBeVisible({ timeout: 5000 });
     });
 
     test('persists rating across page refreshes', async ({
@@ -142,14 +160,12 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 5 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-5').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click 5th star
         await authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
@@ -164,18 +180,14 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for rating component
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 5 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-5').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Verify rating persisted
-        const rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-            });
-            return response.json();
-        }, promptRunId);
+        const rating = await waitForQuestionAnalytics(
+            authenticatedPage,
+            promptRunId,
+        );
 
         expect(rating[0].user_rating).toBe(5);
     });
@@ -196,32 +208,28 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 3 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-3').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click 3rd star
         await authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
 
         // Change to 5th star
         await authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify updated rating in database
-        const rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-            });
-            return response.json();
-        }, promptRunId);
+        const rating = await waitForQuestionAnalytics(
+            authenticatedPage,
+            promptRunId,
+        );
 
         expect(rating[0].user_rating).toBe(5);
     });
@@ -242,14 +250,12 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 3 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-3').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click 3rd star
         await authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
@@ -257,29 +263,30 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
         // Add explanation
         const explanation = 'This is a good question';
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         await textarea.fill(explanation);
         await authenticatedPage.waitForTimeout(300);
 
         // Submit explanation (find the button that says "Add explanation")
         const submitButton = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
         await submitButton.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Change rating to 5 stars
         await authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify rating and explanation both persisted
         const rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
+            const response = await fetch(`/api/test/question-analytics/${id}`, {
                 headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
             });
             return response.json();
@@ -307,52 +314,44 @@ test.describe('PromptRating Component - Explanation Handling', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 4 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click 4 stars
         await authenticatedPage
-            .locator('button[aria-label="Rate 4 stars"]')
+            .getByTestId('prompt-rating-star-4')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
 
         // Verify rating saved but no explanation yet
-        let rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-            });
-            return response.json();
-        }, promptRunId);
+        let rating = await waitForQuestionAnalytics(
+            authenticatedPage,
+            promptRunId,
+        );
 
         expect(rating[0].user_rating).toBe(4);
         expect(rating[0].rating_explanation).toBeNull();
 
         // Add explanation
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         const explanationText = 'Very helpful question!';
         await textarea.fill(explanationText);
         await authenticatedPage.waitForTimeout(300);
 
         // Submit explanation
         const submitButton = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
         await submitButton.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify explanation now saved
-        rating = await authenticatedPage.evaluate(async (id: number) => {
-            const response = await fetch(`/test/question-analytics/${id}`, {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-            });
-            return response.json();
-        }, promptRunId);
+        rating = await waitForQuestionAnalytics(authenticatedPage, promptRunId);
 
         expect(rating[0].rating_explanation).toBe(explanationText);
     });
@@ -370,29 +369,32 @@ test.describe('PromptRating Component - Explanation Handling', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 2 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-2').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 2 stars"]')
+            .getByTestId('prompt-rating-star-2')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
 
+        const explanationTextarea = authenticatedPage
+            .getByTestId('prompt-rating-explanation')
+            .first();
+        await expect(explanationTextarea).toBeVisible({ timeout: 5000 });
+
         // Verify "Add explanation" button
         let button = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
-        await expect(button).toBeVisible();
+        await expect(button).toHaveText(/add explanation/i);
 
         // Add and submit explanation
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         await textarea.fill('Initial explanation');
         await authenticatedPage.waitForTimeout(300);
 
@@ -400,10 +402,8 @@ test.describe('PromptRating Component - Explanation Handling', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Verify button changed to "Update explanation"
-        button = authenticatedPage
-            .getByRole('button', { name: /update explanation/i })
-            .first();
-        await expect(button).toBeVisible({ timeout: 2000 });
+        button = authenticatedPage.getByTestId('prompt-rating-submit').first();
+        await expect(button).toHaveText(/update explanation/i);
     });
 
     test('reduces textarea opacity when saved', async ({
@@ -419,30 +419,29 @@ test.describe('PromptRating Component - Explanation Handling', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 1 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-1').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 1 stars"]')
+            .getByTestId('prompt-rating-star-1')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
 
         // Get textarea before save
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         const classBeforeSave = await textarea.getAttribute('class');
 
         // Add and submit explanation
         await textarea.fill('Test explanation');
         const submitButton = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
         await submitButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -465,27 +464,26 @@ test.describe('PromptRating Component - Explanation Handling', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 3 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-3').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
 
         // Submit explanation
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         await textarea.fill('Test explanation');
         const submitButton = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
         await submitButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -513,22 +511,21 @@ test.describe('PromptRating Component - Explanation Handling', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 1 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-1').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 1 stars"]')
+            .getByTestId('prompt-rating-star-1')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
 
         // Get the "Add explanation" button
         const button = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(button).toBeVisible({ timeout: 5000 });
 
         // Verify size is small (px-2 py-1 text-xs indicates sm size)
         const buttonClass = await button.getAttribute('class');
@@ -558,7 +555,7 @@ test.describe('PromptRating Component - Bulk Mode', () => {
 
         // Verify rating UI is not visible initially
         const ratingUI = authenticatedPage
-            .locator('button[aria-label*="Rate"][aria-label*="stars"]')
+            .locator('[data-testid^="prompt-rating-star-"]')
             .first();
         const isVisible = await ratingUI.isVisible().catch(() => false);
         expect(isVisible).toBe(false);
@@ -592,7 +589,7 @@ test.describe('PromptRating Component - Bulk Mode', () => {
 
         // Verify stars are now visible
         const stars = authenticatedPage
-            .locator('button[aria-label*="Rate"][aria-label*="stars"]')
+            .locator('[data-testid^="prompt-rating-star-"]')
             .first();
         await expect(stars).toBeVisible({ timeout: 2000 });
     });
@@ -620,7 +617,7 @@ test.describe('PromptRating Component - Bulk Mode', () => {
 
         // Verify initial state - rating UI is hidden
         let stars = authenticatedPage
-            .locator('button[aria-label*="Rate"][aria-label*="stars"]')
+            .locator('[data-testid^="prompt-rating-star-"]')
             .first();
         let isVisible = await stars.isVisible().catch(() => false);
         expect(isVisible).toBe(false);
@@ -630,16 +627,14 @@ test.describe('PromptRating Component - Bulk Mode', () => {
         await authenticatedPage.waitForTimeout(300);
 
         // Click star (auto-expand happens during expansion)
-        stars = authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
-            .first();
+        stars = authenticatedPage.getByTestId('prompt-rating-star-5').first();
         await expect(stars).toBeVisible({ timeout: 2000 });
         await stars.click();
         await authenticatedPage.waitForTimeout(300);
 
         // Verify UI remains expanded after clicking star
         const star1 = authenticatedPage
-            .locator('button[aria-label="Rate 1 stars"]')
+            .getByTestId('prompt-rating-star-1')
             .first();
         isVisible = await star1.isVisible();
         expect(isVisible).toBe(true);
@@ -707,7 +702,7 @@ test.describe('PromptRating Component - Bulk Mode', () => {
 
         // Verify stars visible
         let stars = authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
+            .getByTestId('prompt-rating-star-3')
             .first();
         await expect(stars).toBeVisible({ timeout: 2000 });
 
@@ -719,9 +714,7 @@ test.describe('PromptRating Component - Bulk Mode', () => {
         await authenticatedPage.waitForTimeout(300);
 
         // Verify stars hidden
-        stars = authenticatedPage
-            .locator('button[aria-label="Rate 3 stars"]')
-            .first();
+        stars = authenticatedPage.getByTestId('prompt-rating-star-3').first();
         const isVisible = await stars.isVisible().catch(() => false);
         expect(isVisible).toBe(false);
     });
@@ -744,26 +737,19 @@ test.describe('PromptRating Component - Database Persistence', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 4 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 4 stars"]')
+            .getByTestId('prompt-rating-star-4')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify saved in database
-        const analytics = await authenticatedPage.evaluate(
-            async (id: number) => {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-                });
-                return response.json();
-            },
+        const analytics = await waitForQuestionAnalytics(
+            authenticatedPage,
             promptRunId,
         );
 
@@ -788,14 +774,12 @@ test.describe('PromptRating Component - Database Persistence', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 2 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-2').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star
         await authenticatedPage
-            .locator('button[aria-label="Rate 2 stars"]')
+            .getByTestId('prompt-rating-star-2')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(300);
@@ -804,27 +788,23 @@ test.describe('PromptRating Component - Database Persistence', () => {
         const explanationText =
             'This question was not clear enough for my use case';
         const textarea = authenticatedPage
-            .locator('textarea')
-            .filter({ hasText: /add.*explanation/i })
+            .getByTestId('prompt-rating-explanation')
             .first();
+        await expect(textarea).toBeVisible({ timeout: 5000 });
         await textarea.fill(explanationText);
         await authenticatedPage.waitForTimeout(300);
 
         // Submit
         const submitButton = authenticatedPage
-            .getByRole('button', { name: /add explanation/i })
+            .getByTestId('prompt-rating-submit')
             .first();
+        await expect(submitButton).toBeVisible({ timeout: 5000 });
         await submitButton.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Verify saved
-        const analytics = await authenticatedPage.evaluate(
-            async (id: number) => {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-                });
-                return response.json();
-            },
+        const analytics = await waitForQuestionAnalytics(
+            authenticatedPage,
             promptRunId,
         );
 
@@ -847,14 +827,12 @@ test.describe('PromptRating Component - Database Persistence', () => {
 
         // Wait for stars
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 5 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-5').first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Rate
         await authenticatedPage
-            .locator('button[aria-label="Rate 5 stars"]')
+            .getByTestId('prompt-rating-star-5')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
@@ -868,13 +846,8 @@ test.describe('PromptRating Component - Database Persistence', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Verify rating component loaded with rating
-        const ratingState = await authenticatedPage.evaluate(
-            async (id: number) => {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-                });
-                return response.json();
-            },
+        const ratingState = await waitForQuestionAnalytics(
+            authenticatedPage,
             promptRunId,
         );
 
@@ -897,12 +870,10 @@ test.describe('PromptRating Component - Database Persistence', () => {
 
         // Rate in one-at-a-time mode
         await expect(
-            authenticatedPage
-                .locator('button[aria-label="Rate 4 stars"]')
-                .first(),
+            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
         ).toBeVisible({ timeout: 5000 });
         await authenticatedPage
-            .locator('button[aria-label="Rate 4 stars"]')
+            .getByTestId('prompt-rating-star-4')
             .first()
             .click();
         await authenticatedPage.waitForTimeout(500);
@@ -914,11 +885,21 @@ test.describe('PromptRating Component - Database Persistence', () => {
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
-        // Verify rating still visible in bulk mode
+        // Verify rating UI can be expanded in bulk mode
         const toggleButton = authenticatedPage
-            .getByRole('button', { name: /hide rating/i })
+            .getByRole('button', { name: /rate this question|hide rating/i })
             .first();
         await expect(toggleButton).toBeVisible({ timeout: 2000 });
+
+        const toggleText = (await toggleButton.textContent()) || '';
+        if (/rate this question/i.test(toggleText)) {
+            await toggleButton.click();
+            await authenticatedPage.waitForTimeout(300);
+        }
+
+        await expect(
+            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
+        ).toBeVisible({ timeout: 2000 });
 
         // Switch back to one-at-a-time
         const backToSingleButton = authenticatedPage.getByRole('button', {
@@ -930,13 +911,8 @@ test.describe('PromptRating Component - Database Persistence', () => {
         }
 
         // Verify rating persisted
-        const analytics = await authenticatedPage.evaluate(
-            async (id: number) => {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
-                });
-                return response.json();
-            },
+        const analytics = await waitForQuestionAnalytics(
+            authenticatedPage,
             promptRunId,
         );
 

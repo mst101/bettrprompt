@@ -147,6 +147,7 @@ const explanationId = `prompt-rating-explanation-${instanceId}`;
                 :key="star"
                 type="button"
                 :disabled="readonly"
+                :data-testid="`prompt-rating-star-${star}`"
                 :aria-label="
                     t('promptBuilder.components.promptRating.starLabel', {
                         star,
@@ -182,6 +183,7 @@ const explanationId = `prompt-rating-explanation-${instanceId}`;
             <FormTextarea
                 :id="explanationId"
                 ref="explanationRef"
+                data-testid="prompt-rating-explanation"
                 :label="
                     t('promptBuilder.components.promptRating.explanationLabel')
                 "
@@ -202,6 +204,7 @@ const explanationId = `prompt-rating-explanation-${instanceId}`;
             >
                 <ButtonSecondary
                     v-if="isSaved && localExplanation"
+                    data-testid="prompt-rating-submit"
                     size="sm"
                     type="button"
                     @click="handleSubmit"
@@ -214,6 +217,7 @@ const explanationId = `prompt-rating-explanation-${instanceId}`;
                 </ButtonSecondary>
                 <ButtonPrimary
                     v-else
+                    data-testid="prompt-rating-submit"
                     size="sm"
                     type="button"
                     @click="handleSubmit"

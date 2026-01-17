@@ -42,9 +42,7 @@ export async function rateQuestion(
         throw new Error('Rating must be between 1 and 5');
     }
 
-    const starButton = page
-        .locator('button[aria-label*="Rate"][aria-label*="stars"]')
-        .filter({ hasText: new RegExp(`${rating}`, 'i') });
+    const starButton = page.getByTestId(`prompt-rating-star-${rating}`);
 
     // Get the Nth instance if multiple questions
     await starButton.nth(questionIndex).click();
@@ -63,16 +61,12 @@ export async function addExplanation(
     explanation: string,
     questionIndex: number = 0,
 ): Promise<void> {
-    const textarea = page
-        .locator('textarea')
-        .filter({ hasText: /add.*explanation|explanation/i });
+    const textarea = page.getByTestId('prompt-rating-explanation');
 
     await textarea.nth(questionIndex).fill(explanation);
     await page.waitForTimeout(300);
 
-    const submitButton = page.getByRole('button', {
-        name: /add explanation/i,
-    });
+    const submitButton = page.getByTestId('prompt-rating-submit');
 
     await submitButton.nth(questionIndex).click();
     await page.waitForTimeout(500);
@@ -88,16 +82,12 @@ export async function updateExplanation(
     newExplanation: string,
     questionIndex: number = 0,
 ): Promise<void> {
-    const textarea = page
-        .locator('textarea')
-        .filter({ hasText: /update.*explanation/i });
+    const textarea = page.getByTestId('prompt-rating-explanation');
 
     await textarea.nth(questionIndex).fill(newExplanation);
     await page.waitForTimeout(300);
 
-    const updateButton = page.getByRole('button', {
-        name: /update explanation/i,
-    });
+    const updateButton = page.getByTestId('prompt-rating-submit');
 
     await updateButton.nth(questionIndex).click();
     await page.waitForTimeout(500);
@@ -177,12 +167,11 @@ export async function rateQuestionInBulk(
     }
 
     // Need to find the correct star within the visible rating UI
-    const allStars = page.locator(
-        'button[aria-label*="Rate"][aria-label*="stars"]',
-    );
-    const ratingIndex = questionIndex * 5 + (rating - 1); // Rough estimate
+    const starButton = page
+        .getByTestId(`prompt-rating-star-${rating}`)
+        .nth(questionIndex);
 
-    await allStars.nth(ratingIndex).click();
+    await starButton.click();
     await page.waitForTimeout(500);
 }
 
@@ -224,11 +213,14 @@ export async function waitForRatingToSave(
     while (Date.now() < endTime) {
         const rating = await page.evaluate(async (id: number) => {
             try {
-                const response = await fetch(`/test/question-analytics/${id}`, {
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
+                const response = await fetch(
+                    `/api/test/question-analytics/${id}`,
+                    {
+                        headers: {
+                            'X-Test-Auth': 'playwright-e2e-tests',
+                        },
                     },
-                });
+                );
                 const data = await response.json();
                 return data[0]?.user_rating;
             } catch {
@@ -263,7 +255,7 @@ export async function getPromptRunAnalytics(
 ): Promise<AnalyticsRecord[]> {
     return await page.evaluate(async (id: number) => {
         try {
-            const response = await fetch(`/test/question-analytics/${id}`, {
+            const response = await fetch(`/api/test/question-analytics/${id}`, {
                 headers: {
                     'X-Test-Auth': 'playwright-e2e-tests',
                 },
@@ -380,9 +372,7 @@ export async function getDisplayModePreference(page: Page): Promise<string> {
  * Checks that the rating UI elements are visible in the current view.
  */
 export async function isRatingUIVisible(page: Page): Promise<boolean> {
-    const starButtons = page.locator(
-        'button[aria-label*="Rate"][aria-label*="stars"]',
-    );
+    const starButtons = page.locator('[data-testid^="prompt-rating-star-"]');
     return await starButtons
         .first()
         .isVisible()

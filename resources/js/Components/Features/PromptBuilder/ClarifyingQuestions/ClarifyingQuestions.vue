@@ -18,6 +18,7 @@ import {
     inject,
     nextTick,
     onBeforeUnmount,
+    reactive,
     ref,
     watch,
     watchEffect,
@@ -114,15 +115,15 @@ const markQuestionsPresentedEventFired = (
 };
 
 // Question rating state
-const questionRatings = ref<
-    Map<number, { rating: number | null; explanation: string | null }>
->(new Map());
-const savingQuestionRatings = ref<Set<number>>(new Set());
-const savedQuestionRatings = ref<Set<number>>(new Set());
-const ratingsWithExplanationSubmitted = ref<Set<number>>(new Set());
-const visibleThankYouMessages = ref<Set<number>>(new Set());
-const thankYouTimeouts = ref<Map<number, ReturnType<typeof setTimeout>>>(
-    new Map(),
+const questionRatings = reactive(
+    new Map<number, { rating: number | null; explanation: string | null }>(),
+);
+const savingQuestionRatings = reactive(new Set<number>());
+const savedQuestionRatings = reactive(new Set<number>());
+const ratingsWithExplanationSubmitted = reactive(new Set<number>());
+const visibleThankYouMessages = reactive(new Set<number>());
+const thankYouTimeouts = reactive(
+    new Map<number, ReturnType<typeof setTimeout>>(),
 );
 
 // Watch for bulk questions ref and focus first textarea when available
@@ -210,22 +211,22 @@ const hydrateAnswers = () => {
     questionsWithEventsFired.value.clear();
 
     // Clear saved ratings for new prompt run
-    savedQuestionRatings.value.clear();
-    ratingsWithExplanationSubmitted.value.clear();
+    savedQuestionRatings.clear();
+    ratingsWithExplanationSubmitted.clear();
 
     // Load existing ratings from backend
     if (props.promptRun.questionRatings) {
         props.promptRun.questionRatings.forEach((savedRating) => {
             const index = savedRating.questionIndex;
-            questionRatings.value.set(index, {
+            questionRatings.set(index, {
                 rating: savedRating.rating,
                 explanation: savedRating.explanation,
             });
             // Mark as saved (both star and explanation if present)
-            savedQuestionRatings.value.add(index);
+            savedQuestionRatings.add(index);
             // Mark explanation as submitted if it exists
             if (savedRating.explanation) {
-                ratingsWithExplanationSubmitted.value.add(index);
+                ratingsWithExplanationSubmitted.add(index);
             }
         });
     }
@@ -462,16 +463,16 @@ const submitAnswer = async () => {
 
 const handleStarRatingSave = async (questionIndex: number, rating: number) => {
     // Update local state
-    const existing = questionRatings.value.get(questionIndex) ?? {
+    const existing = questionRatings.get(questionIndex) ?? {
         rating: null,
         explanation: null,
     };
-    questionRatings.value.set(questionIndex, {
+    questionRatings.set(questionIndex, {
         ...existing,
         rating,
     });
 
-    savingQuestionRatings.value.add(questionIndex);
+    savingQuestionRatings.add(questionIndex);
 
     const question = questions.value[questionIndex];
     const questionId = question?.id ?? `Q${questionIndex}`;
@@ -490,7 +491,7 @@ const handleStarRatingSave = async (questionIndex: number, rating: number) => {
         );
 
         // Mark as saved
-        savedQuestionRatings.value.add(questionIndex);
+        savedQuestionRatings.add(questionIndex);
 
         // Fire analytics event
         analyticsService.track({
@@ -508,38 +509,38 @@ const handleStarRatingSave = async (questionIndex: number, rating: number) => {
         });
     } catch (error) {
         console.error('Failed to save question rating:', error);
-        questionRatings.value.delete(questionIndex);
-        savedQuestionRatings.value.delete(questionIndex);
+        questionRatings.delete(questionIndex);
+        savedQuestionRatings.delete(questionIndex);
     } finally {
-        savingQuestionRatings.value.delete(questionIndex);
+        savingQuestionRatings.delete(questionIndex);
     }
 };
 
 const showThankYouMessageWithAutoHide = (questionIndex: number) => {
     // Clear any existing timeout for this question
-    const existingTimeout = thankYouTimeouts.value.get(questionIndex);
+    const existingTimeout = thankYouTimeouts.get(questionIndex);
     if (existingTimeout) {
         clearTimeout(existingTimeout);
     }
 
     // Show the thank you message
-    visibleThankYouMessages.value.add(questionIndex);
+    visibleThankYouMessages.add(questionIndex);
 
     // Auto-hide after 4 seconds
     const timeout = setTimeout(() => {
-        visibleThankYouMessages.value.delete(questionIndex);
-        thankYouTimeouts.value.delete(questionIndex);
+        visibleThankYouMessages.delete(questionIndex);
+        thankYouTimeouts.delete(questionIndex);
     }, 4000);
 
-    thankYouTimeouts.value.set(questionIndex, timeout);
+    thankYouTimeouts.set(questionIndex, timeout);
 };
 
 const handleQuestionExplanationSubmit = async (
     questionIndex: number,
     data: { rating: number; explanation: string | null },
 ) => {
-    questionRatings.value.set(questionIndex, data);
-    savingQuestionRatings.value.add(questionIndex);
+    questionRatings.set(questionIndex, data);
+    savingQuestionRatings.add(questionIndex);
 
     const question = questions.value[questionIndex];
     const questionId = question?.id ?? `Q${questionIndex}`;
@@ -558,13 +559,13 @@ const handleQuestionExplanationSubmit = async (
         );
 
         // Mark explanation as submitted
-        ratingsWithExplanationSubmitted.value.add(questionIndex);
+        ratingsWithExplanationSubmitted.add(questionIndex);
 
         // Show thank you message with auto-hide
         showThankYouMessageWithAutoHide(questionIndex);
 
         // Fire analytics event (if rating wasn't already tracked)
-        if (!savedQuestionRatings.value.has(questionIndex)) {
+        if (!savedQuestionRatings.has(questionIndex)) {
             analyticsService.track({
                 name: 'question_rated',
                 properties: {
@@ -581,9 +582,9 @@ const handleQuestionExplanationSubmit = async (
         }
     } catch (error) {
         console.error('Failed to save question explanation:', error);
-        questionRatings.value.delete(questionIndex);
+        questionRatings.delete(questionIndex);
     } finally {
-        savingQuestionRatings.value.delete(questionIndex);
+        savingQuestionRatings.delete(questionIndex);
     }
 };
 
@@ -591,12 +592,12 @@ const handleQuestionRatingDraft = (
     questionIndex: number,
     update: { rating?: number | null; explanation?: string | null },
 ) => {
-    const existing = questionRatings.value.get(questionIndex) ?? {
+    const existing = questionRatings.get(questionIndex) ?? {
         rating: null,
         explanation: null,
     };
 
-    questionRatings.value.set(questionIndex, {
+    questionRatings.set(questionIndex, {
         rating:
             update.rating !== undefined
                 ? update.rating
@@ -815,21 +816,21 @@ const backLabel = computed(() =>
 watch(currentIndex, (newIndex, oldIndex) => {
     // Clear thank you message timeout when switching to a different question
     if (oldIndex !== undefined && oldIndex !== newIndex) {
-        const timeout = thankYouTimeouts.value.get(oldIndex);
+        const timeout = thankYouTimeouts.get(oldIndex);
         if (timeout) {
             clearTimeout(timeout);
-            thankYouTimeouts.value.delete(oldIndex);
+            thankYouTimeouts.delete(oldIndex);
         }
-        visibleThankYouMessages.value.delete(oldIndex);
+        visibleThankYouMessages.delete(oldIndex);
     }
 });
 
 // Clean up timeouts when component unmounts
 onBeforeUnmount(() => {
-    thankYouTimeouts.value.forEach((timeout) => {
+    thankYouTimeouts.forEach((timeout) => {
         clearTimeout(timeout);
     });
-    thankYouTimeouts.value.clear();
+    thankYouTimeouts.clear();
 });
 </script>
 
