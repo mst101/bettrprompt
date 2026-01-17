@@ -69,7 +69,7 @@ class WorkflowAnalyticsService
                 'status' => 'completed',
                 'input_tokens' => $inputTokens,
                 'output_tokens' => $outputTokens,
-                'estimated_cost_usd' => $estimatedCostUsd,
+                'cost_usd' => $estimatedCostUsd,
                 'model_used' => $modelUsed,
             ]);
 
@@ -243,8 +243,8 @@ class WorkflowAnalyticsService
     public function getTotalCost(int $workflowStage): float
     {
         return WorkflowAnalytic::where('workflow_stage', $workflowStage)
-            ->whereNotNull('estimated_cost_usd')
-            ->sum('estimated_cost_usd') ?? 0;
+            ->whereNotNull('cost_usd')
+            ->sum('cost_usd') ?? 0;
     }
 
     /**

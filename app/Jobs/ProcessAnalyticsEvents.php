@@ -396,12 +396,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 // Priority 1: recommended_framework from analytics event
                 if (isset($properties['recommended_framework'])) {
                     $recommendedFramework = $properties['recommended_framework'];
-                }
-                // Priority 2: selected_framework.code from webhook data
+                } // Priority 2: selected_framework.code from webhook data
                 elseif (isset($properties['selected_framework']['code'])) {
                     $recommendedFramework = $properties['selected_framework']['code'];
-                }
-                // Priority 3: framework fallback
+                } // Priority 3: framework fallback
                 elseif (isset($properties['framework'])) {
                     $recommendedFramework = $properties['framework'];
                 }
@@ -423,12 +421,10 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 // Priority 1: selected_framework from analytics event
                 if (isset($properties['selected_framework'])) {
                     $chosenFramework = $properties['selected_framework'];
-                }
-                // Priority 2: selected_framework.code from webhook data
+                } // Priority 2: selected_framework.code from webhook data
                 elseif (isset($properties['selected_framework']['code'])) {
                     $chosenFramework = $properties['selected_framework']['code'];
-                }
-                // Priority 3: framework fallback
+                } // Priority 3: framework fallback
                 elseif (isset($properties['framework'])) {
                     $chosenFramework = $properties['framework'];
                 }
@@ -440,9 +436,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 if ($selection && $selection->recommended_framework !== $chosenFramework) {
                     $selection->update(['chosen_framework' => $chosenFramework]);
                 }
-            }
-
-            // Question presentation events
+            } // Question presentation events
             elseif ($eventName === 'question_presented') {
                 $questionService->recordPresentation(
                     promptRun: $promptRun,
@@ -454,9 +448,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                     displayOrder: $properties['display_order'] ?? 0,
                     wasRequired: $properties['was_required'] ?? false,
                 );
-            }
-
-            // Question response events
+            } // Question response events
             elseif ($eventName === 'question_answered') {
                 $questionId = $properties['question_id'] ?? 'unknown';
 
@@ -498,9 +490,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                         timeToAnswerMs: $properties['time_to_answer_ms'] ?? null,
                     );
                 }
-            }
-
-            // Question skip events
+            } // Question skip events
             elseif ($eventName === 'question_skipped') {
                 $questionId = $properties['question_id'] ?? 'unknown';
 
@@ -531,13 +521,11 @@ class ProcessAnalyticsEvents implements ShouldQueue
                     $questionService->recordSkip(
                         analytic: $analytic,
                         timeBeforeSkipMs: $properties['time_to_skip_ms']
-                            ?? $properties['time_before_skip_ms']
-                            ?? null,
+                        ?? $properties['time_before_skip_ms']
+                        ?? null,
                     );
                 }
-            }
-
-            // Workflow events
+            } // Workflow events
             elseif ($eventName === 'workflow_started') {
                 $workflowService->recordStart(
                     promptRun: $promptRun,
@@ -556,7 +544,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                         analytic: $analytic,
                         inputTokens: $properties['input_tokens'] ?? null,
                         outputTokens: $properties['output_tokens'] ?? null,
-                        estimatedCostUsd: $properties['estimated_cost_usd'] ?? null,
+                        estimatedCostUsd: $properties['cost_usd'] ?? null,
                         modelUsed: $properties['model_used'] ?? null,
                     );
                 }
@@ -586,9 +574,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 if ($analytic) {
                     $workflowService->recordTimeout(analytic: $analytic);
                 }
-            }
-
-            // Prompt quality events
+            } // Prompt quality events
             elseif ($eventName === 'prompt_rated') {
                 $qualityService->recordMetrics(
                     promptRun: $promptRun,

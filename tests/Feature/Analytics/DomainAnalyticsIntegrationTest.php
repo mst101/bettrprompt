@@ -39,7 +39,7 @@ describe('Domain Analytics Integration', function () {
             expect($completed->status)->toBe('completed');
             expect($completed->input_tokens)->toBe(1000);
             expect($completed->output_tokens)->toBe(500);
-            expect((float) $completed->estimated_cost_usd)->toEqual(0.05);
+            expect((float) $completed->cost_usd)->toEqual(0.05);
             expect($completed->model_used)->toBe('gpt-4');
             expect($completed->duration_ms)->toBeGreaterThan(0);
             expect($completed->completed_at)->not->toBeNull();

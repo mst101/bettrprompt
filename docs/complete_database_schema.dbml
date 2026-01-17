@@ -622,7 +622,7 @@ Table workflow_analytics {
 
   input_tokens int [null]
   output_tokens int [null]
-  estimated_cost_usd decimal [null]
+  cost_usd decimal [null]
 
   model_used string(50) [null]
   attempt_number smallint [default: 1]

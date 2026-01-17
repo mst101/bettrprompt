@@ -78,7 +78,7 @@ describe('Workflow Analytics Service', function () {
         expect($completed->status)->toBe('completed')
             ->and($completed->input_tokens)->toBeNull()
             ->and($completed->output_tokens)->toBeNull()
-            ->and($completed->estimated_cost_usd)->toBeNull();
+            ->and($completed->cost_usd)->toBeNull();
     });
 
     test('records workflow failure with error details', function () {

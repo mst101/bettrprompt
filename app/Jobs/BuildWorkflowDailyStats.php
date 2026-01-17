@@ -78,7 +78,7 @@ class BuildWorkflowDailyStats implements ShouldQueue
                 // Calculate costs
                 $totalInputTokens = $stageAnalytics->sum('input_tokens') ?? 0;
                 $totalOutputTokens = $stageAnalytics->sum('output_tokens') ?? 0;
-                $totalCost = $stageAnalytics->sum('estimated_cost_usd') ?? 0;
+                $totalCost = $stageAnalytics->sum('cost_usd') ?? 0;
                 $avgCost = $successful > 0 ? ($totalCost / $successful) : 0;
 
                 // Calculate retry rate

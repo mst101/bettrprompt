@@ -43,8 +43,7 @@ describe('QuestionRatingController', function () {
         });
 
         test('guest visitor can rate questions on accessible prompt run', function () {
-            $visitor = $this->visitor;
-            $visitorIdString = (string) $visitor->id;
+            $visitor = Visitor::factory()->create();
 
             $promptRun = PromptRun::factory()->create([
                 'visitor_id' => $visitor->id,
@@ -55,22 +54,18 @@ describe('QuestionRatingController', function () {
                 'question_id' => 'q-1',
             ]);
 
-            $response = $this
-                ->withHeaders([
-                    'Cookie' => 'visitor_id='.$visitorIdString,
-                ])
-                ->postJson(
-                    route('api.questions.rate', [
-                        'promptRun' => $promptRun->id,
-                        'questionId' => 'q-1',
-                    ]),
-                    [
-                        'rating' => 4,
-                        'explanation' => 'Good question',
-                    ]
-                );
+            $response = $this->withCookie('visitor_id', $visitor->id)->post(
+                route('api.questions.rate', [
+                    'promptRun' => $promptRun->id,
+                    'questionId' => 'q-1',
+                ]),
+                [
+                    'rating' => 4,
+                    'explanation' => 'Good question',
+                ]
+            );
 
-            $response->assertOk();
+            expect($response->status())->toBe(200);
 
             $updated = $analytic->fresh();
             expect($updated->user_rating)->toBe(4);
@@ -631,8 +626,7 @@ describe('QuestionRatingController', function () {
 
     describe('Guest Visitor Permissions', function () {
         test('visitor can rate questions on their own prompt run', function () {
-            $visitor = $this->visitor;
-            $visitorIdString = (string) $visitor->id;
+            $visitor = Visitor::factory()->create();
 
             $promptRun = PromptRun::factory()->create([
                 'visitor_id' => $visitor->id,
@@ -641,19 +635,15 @@ describe('QuestionRatingController', function () {
                 'question_id' => 'q-1',
             ]);
 
-            $response = $this
-                ->withHeaders([
-                    'Cookie' => 'visitor_id='.$visitorIdString,
-                ])
-                ->postJson(
-                    route('api.questions.rate', [
-                        'promptRun' => $promptRun->id,
-                        'questionId' => 'q-1',
-                    ]),
-                    ['rating' => 5]
-                );
+            $response = $this->withCookie('visitor_id', $visitor->id)->post(
+                route('api.questions.rate', [
+                    'promptRun' => $promptRun->id,
+                    'questionId' => 'q-1',
+                ]),
+                ['rating' => 5]
+            );
 
-            $response->assertOk();
+            expect($response->status())->toBe(200);
 
             $updated = $analytic->fresh();
             expect($updated->user_rating)->toBe(5);

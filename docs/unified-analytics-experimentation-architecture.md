@@ -929,7 +929,7 @@ Schema::create('workflow_analytics', function (Blueprint $table) {
     // Cost tracking
     $table->unsignedInteger('input_tokens')->nullable();
     $table->unsignedInteger('output_tokens')->nullable();
-    $table->decimal('estimated_cost_usd', 8, 6)->nullable();
+    $table->decimal('cost_usd', 8, 6)->nullable();
     $table->string('model_used', 50)->nullable();
 
     // Retry tracking
@@ -2093,6 +2093,7 @@ Each phase includes specific tasks, dependencies, and acceptance criteria.
 **Goal:** Implement the most valuable advanced features with minimal complexity.
 
 **Scope:**
+
 - ✅ Registration Funnel tracking (predefined, not configurable)
 - ✅ Workflow error alerts (email + in-app)
 - ❌ Other funnels (deferred to Phase 5.1)
@@ -2106,12 +2107,12 @@ Each phase includes specific tasks, dependencies, and acceptance criteria.
 
 **Funnel stages (in order):**
 
-| Stage | Event Name | Definition | Notes |
-|-------|------------|------------|-------|
-| 1. Visit | `page_view` | First page view by visitor | Any page, first event per visitor |
-| 2. First Prompt | `prompt_completed` | First completed prompt | `prompt_completed` where count for visitor = 1 |
-| 3. Sign Up | `registration_completed` | User registration | Standard registration event |
-| 4. Subscription | `subscription_success` | Paid subscription | `tier` in ('pro', 'private'), any interval |
+| Stage           | Event Name               | Definition                 | Notes                                          |
+|-----------------|--------------------------|----------------------------|------------------------------------------------|
+| 1. Visit        | `page_view`              | First page view by visitor | Any page, first event per visitor              |
+| 2. First Prompt | `prompt_completed`       | First completed prompt     | `prompt_completed` where count for visitor = 1 |
+| 3. Sign Up      | `registration_completed` | User registration          | Standard registration event                    |
+| 4. Subscription | `subscription_success`   | Paid subscription          | `tier` in ('pro', 'private'), any interval     |
 
 **Attribution window:** 30 days between stages (if > 30 days between stages, conversion not attributed)
 
@@ -2209,9 +2210,11 @@ Schema::create('funnel_daily_stats', function (Blueprint $table) {
 ```
 
 **Files:**
+
 - `database/migrations/xxxx_create_funnel_tables.php`
 
 **Acceptance Criteria:**
+
 - [ ] All four tables created with correct indexes
 - [ ] Foreign keys work correctly
 - [ ] Unique constraints prevent duplicate progress rows
@@ -2225,30 +2228,32 @@ Schema::create('funnel_daily_stats', function (Blueprint $table) {
 **Models to create:**
 
 1. **Funnel** - Funnel definition
-   - Relationships: `stages()`, `progress()`, `dailyStats()`
-   - Scopes: `active()`
+    - Relationships: `stages()`, `progress()`, `dailyStats()`
+    - Scopes: `active()`
 
 2. **FunnelStage** - Individual stage definition
-   - Relationships: `funnel()`
-   - Methods: `matchesEvent(AnalyticsEvent $event): bool`
+    - Relationships: `funnel()`
+    - Methods: `matchesEvent(AnalyticsEvent $event): bool`
 
 3. **FunnelProgress** - Visitor progress through funnel
-   - Relationships: `funnel()`, `visitor()`, `user()`
-   - Methods: `advanceToStage(int $stage, Carbon $timestamp): bool`
-   - Methods: `canAdvanceTo(int $stage, Carbon $timestamp): bool` (checks attribution window)
-   - Scopes: `atStage(int $stage)`, `completed()`, `incomplete()`
+    - Relationships: `funnel()`, `visitor()`, `user()`
+    - Methods: `advanceToStage(int $stage, Carbon $timestamp): bool`
+    - Methods: `canAdvanceTo(int $stage, Carbon $timestamp): bool` (checks attribution window)
+    - Scopes: `atStage(int $stage)`, `completed()`, `incomplete()`
 
 4. **FunnelDailyStat** - Daily aggregated statistics
-   - Relationships: `funnel()`
-   - Scopes: `forFunnel(string $slug)`, `inDateRange($start, $end)`
+    - Relationships: `funnel()`
+    - Scopes: `forFunnel(string $slug)`, `inDateRange($start, $end)`
 
 **Files:**
+
 - `app/Models/Funnel.php`
 - `app/Models/FunnelStage.php`
 - `app/Models/FunnelProgress.php`
 - `app/Models/FunnelDailyStat.php`
 
 **Acceptance Criteria:**
+
 - [ ] All models created with relationships
 - [ ] `canAdvanceTo()` correctly enforces 30-day window
 - [ ] `matchesEvent()` handles event conditions correctly
@@ -2306,9 +2311,11 @@ FunnelStage::create([
 ```
 
 **Files:**
+
 - `database/seeders/FunnelSeeder.php`
 
 **Acceptance Criteria:**
+
 - [ ] Seeder is idempotent (safe to run multiple times)
 - [ ] Registration funnel correctly defined
 - [ ] Stage conditions accurately reflect requirements
@@ -2338,15 +2345,18 @@ For each analytics event received:
 ```
 
 **Files:**
+
 - `app/Services/FunnelProcessorService.php`
 
 **Methods:**
+
 - `processEvent(AnalyticsEvent $event): void`
 - `processEventBatch(array $events): void`
 - `evaluateStageConditions(FunnelStage $stage, AnalyticsEvent $event): bool`
 - `isWithinAttributionWindow(FunnelProgress $progress, int $targetStage, Carbon $eventTime): bool`
 
 **Acceptance Criteria:**
+
 - [ ] Events correctly advance visitors through funnel
 - [ ] Attribution window enforced (events >30 days apart don't count)
 - [ ] First occurrence conditions checked (only first prompt_completed counts)
@@ -2380,9 +2390,11 @@ private function processFunnels(array $events, FunnelProcessorService $funnelSer
 ```
 
 **Files:**
+
 - `app/Jobs/ProcessAnalyticsEvents.php` (modify)
 
 **Acceptance Criteria:**
+
 - [ ] Funnel processor called for every event batch
 - [ ] Errors in funnel processing don't break main event pipeline
 - [ ] Logging captures funnel advancement
@@ -2405,11 +2417,13 @@ For each active funnel:
 ```
 
 **Files:**
+
 - `app/Jobs/BuildFunnelDailyStats.php`
 
 **Schedule:** Run daily at 01:00 UTC (after BuildDailyAnalyticsAggregates)
 
 **Acceptance Criteria:**
+
 - [ ] Daily stats calculated correctly
 - [ ] Conversion rates accurate (entered_stage_N / entered_stage_N-1)
 - [ ] Job is idempotent
@@ -2454,9 +2468,11 @@ GET /api/admin/funnels/{slug}/visitors
 ```
 
 **Files:**
+
 - `app/Http/Controllers/Admin/FunnelController.php`
 
 **Acceptance Criteria:**
+
 - [ ] Summary stats calculate correctly from daily stats
 - [ ] Date range filtering works
 - [ ] Response format matches specification
@@ -2470,30 +2486,32 @@ GET /api/admin/funnels/{slug}/visitors
 **Components:**
 
 1. **FunnelDashboard.vue** (main page)
-   - Date range picker
-   - Funnel selector (dropdown, though only Registration for now)
-   - Summary stats cards
-   - Funnel visualisation
+    - Date range picker
+    - Funnel selector (dropdown, though only Registration for now)
+    - Summary stats cards
+    - Funnel visualisation
 
 2. **FunnelChart.vue** (partial)
-   - Horizontal funnel bar chart
-   - Shows each stage with:
-     - Stage name
-     - Count entered
-     - Percentage of previous stage
-     - Visual bar proportional to count
+    - Horizontal funnel bar chart
+    - Shows each stage with:
+        - Stage name
+        - Count entered
+        - Percentage of previous stage
+        - Visual bar proportional to count
 
 3. **FunnelTable.vue** (partial)
-   - Detailed breakdown table
-   - Daily trend sparklines
-   - Source attribution breakdown
+    - Detailed breakdown table
+    - Daily trend sparklines
+    - Source attribution breakdown
 
 **Files:**
+
 - `resources/js/Pages/Admin/Funnels/Index.vue`
 - `resources/js/Pages/Admin/Funnels/Partials/FunnelChart.vue`
 - `resources/js/Pages/Admin/Funnels/Partials/FunnelTable.vue`
 
 **Acceptance Criteria:**
+
 - [ ] Funnel visualisation clearly shows drop-off at each stage
 - [ ] Conversion percentages displayed between stages
 - [ ] Date range filtering updates data
@@ -2589,9 +2607,11 @@ Schema::create('alert_notifications', function (Blueprint $table) {
 ```
 
 **Files:**
+
 - `database/migrations/xxxx_create_alert_tables.php`
 
 **Acceptance Criteria:**
+
 - [ ] All tables created with correct indexes
 - [ ] Foreign keys to users table for admin notifications
 - [ ] Flexible conditions JSON allows different alert types
@@ -2605,25 +2625,27 @@ Schema::create('alert_notifications', function (Blueprint $table) {
 **Models:**
 
 1. **AlertRule** - Alert definition
-   - Relationships: `history()`
-   - Scopes: `active()`, `ofType(string $type)`
-   - Methods: `shouldTrigger(array $context): bool`
-   - Methods: `isDebounced(): bool` (checks if recently triggered)
+    - Relationships: `history()`
+    - Scopes: `active()`, `ofType(string $type)`
+    - Methods: `shouldTrigger(array $context): bool`
+    - Methods: `isDebounced(): bool` (checks if recently triggered)
 
 2. **AlertHistory** - Historical record of alerts
-   - Relationships: `rule()`, `promptRun()`, `notifications()`, `acknowledgedBy()`
-   - Scopes: `unacknowledged()`, `recent(int $hours = 24)`
+    - Relationships: `rule()`, `promptRun()`, `notifications()`, `acknowledgedBy()`
+    - Scopes: `unacknowledged()`, `recent(int $hours = 24)`
 
 3. **AlertNotification** - In-app notification
-   - Relationships: `alertHistory()`, `user()`
-   - Scopes: `unread()`, `forUser(int $userId)`
+    - Relationships: `alertHistory()`, `user()`
+    - Scopes: `unread()`, `forUser(int $userId)`
 
 **Files:**
+
 - `app/Models/AlertRule.php`
 - `app/Models/AlertHistory.php`
 - `app/Models/AlertNotification.php`
 
 **Acceptance Criteria:**
+
 - [ ] `shouldTrigger()` evaluates conditions correctly
 - [ ] `isDebounced()` checks last trigger time against debounce_minutes
 - [ ] Relationships defined correctly
@@ -2655,9 +2677,11 @@ AlertRule::create([
 ```
 
 **Files:**
+
 - `database/seeders/AlertRuleSeeder.php`
 
 **Acceptance Criteria:**
+
 - [ ] Workflow failure alert rule created
 - [ ] Email recipient set to hello@bettrprompt.ai
 - [ ] 15-minute debounce configured
@@ -2722,9 +2746,11 @@ class AlertService
 ```
 
 **Files:**
+
 - `app/Services/AlertService.php`
 
 **Acceptance Criteria:**
+
 - [ ] Workflow failures correctly matched against rules
 - [ ] Debouncing prevents duplicate alerts within window
 - [ ] Both email and in-app notifications created when enabled
@@ -2758,11 +2784,13 @@ You are receiving this because you are subscribed to workflow alerts.
 ```
 
 **Files:**
+
 - `app/Jobs/SendAlertEmail.php`
 - `app/Mail/WorkflowFailureAlert.php`
 - `resources/views/emails/alerts/workflow-failure.blade.php`
 
 **Acceptance Criteria:**
+
 - [ ] Email sent via configured mail driver (Mailgun)
 - [ ] Subject includes error_code for easy filtering
 - [ ] Link to admin prompt run page included
@@ -2777,6 +2805,7 @@ You are receiving this because you are subscribed to workflow alerts.
 **Integration points:**
 
 1. **N8n webhook handler** (`routes/api.php`):
+
 ```php
 // After updating prompt run with failure
 if (str_ends_with($workflowStage, '_failed')) {
@@ -2790,6 +2819,7 @@ if (str_ends_with($workflowStage, '_failed')) {
 ```
 
 2. **WorkflowAnalyticsService** (when recording failures):
+
 ```php
 public function recordFailure(...): WorkflowAnalytic
 {
@@ -2808,10 +2838,12 @@ public function recordFailure(...): WorkflowAnalytic
 ```
 
 **Files:**
+
 - `routes/api.php` (modify)
 - `app/Services/WorkflowAnalyticsService.php` (modify)
 
 **Acceptance Criteria:**
+
 - [ ] Alerts triggered for all workflow failures (stages 0, 1, 2)
 - [ ] Alerts triggered for timeouts
 - [ ] Alert not triggered if debounced
@@ -2840,10 +2872,12 @@ POST /api/notifications/read-all
 ```
 
 **Files:**
+
 - `app/Http/Controllers/Api/NotificationController.php`
 - `routes/api.php` (add routes)
 
 **Acceptance Criteria:**
+
 - [ ] Only returns notifications for authenticated user
 - [ ] Admin middleware applied (only admins see alert notifications)
 - [ ] Pagination supported for large notification counts
@@ -2859,21 +2893,24 @@ POST /api/notifications/read-all
 1. Show bell icon with badge showing unread count
 2. Click opens dropdown with recent notifications
 3. Each notification shows:
-   - Severity indicator (colour)
-   - Title and message excerpt
-   - Time ago
-   - Click to view details / mark read
+    - Severity indicator (colour)
+    - Title and message excerpt
+    - Time ago
+    - Click to view details / mark read
 4. "Mark all as read" button
 5. Poll for new notifications every 60 seconds (or use WebSocket if available)
 
 **Files:**
+
 - `resources/js/Components/NotificationBell.vue`
 - `resources/js/Composables/useNotifications.ts`
 
 **Integration:**
+
 - Add to AdminLayout.vue header
 
 **Acceptance Criteria:**
+
 - [ ] Unread count visible on bell icon
 - [ ] Dropdown shows recent notifications
 - [ ] Clicking notification marks as read and navigates
@@ -2888,19 +2925,21 @@ POST /api/notifications/read-all
 **Sections:**
 
 1. **Recent Alerts** - List of recent AlertHistory
-   - Filterable by: acknowledged/unacknowledged, rule, date range
-   - Shows: time, rule name, trigger data, status
-   - Actions: acknowledge, view details
+    - Filterable by: acknowledged/unacknowledged, rule, date range
+    - Shows: time, rule name, trigger data, status
+    - Actions: acknowledge, view details
 
 2. **Alert Rules** - List of AlertRule (read-only for now)
-   - Shows: name, type, conditions, email recipients, debounce
-   - Status badge (active/inactive)
+    - Shows: name, type, conditions, email recipients, debounce
+    - Status badge (active/inactive)
 
 **Files:**
+
 - `resources/js/Pages/Admin/Alerts/Index.vue`
 - `app/Http/Controllers/Admin/AlertController.php`
 
 **Acceptance Criteria:**
+
 - [ ] Alert history viewable with filters
 - [ ] Acknowledge action works
 - [ ] Alert rules displayed (not editable in Phase 5 Lite)
@@ -2943,10 +2982,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 ```
 
 **Files:**
+
 - `routes/web.php` (modify)
 - `routes/api.php` (modify)
 
 **Acceptance Criteria:**
+
 - [ ] All routes registered and accessible
 - [ ] Auth and admin middleware applied
 - [ ] Route names follow conventions
@@ -2956,6 +2997,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 ### Phase 5 Lite Summary
 
 **What's included:**
+
 1. Registration Funnel (Visit → First Prompt → Sign Up → Subscription)
 2. Funnel progress tracking with 30-day attribution window
 3. Daily funnel statistics aggregation
