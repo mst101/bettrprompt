@@ -454,7 +454,7 @@ watch(
                 name: 'framework_recommended',
                 properties: {
                     prompt_run_id: props.promptRun.id,
-                    recommended_framework: newFramework.slug,
+                    recommended_framework: newFramework.code,
                     task_category: props.promptRun.taskCategory,
                     personality_type: props.promptRun.personalityType,
                 },

@@ -390,10 +390,19 @@ class ProcessAnalyticsEvents implements ShouldQueue
 
             // Framework selection events
             if ($eventName === 'framework_recommended') {
+                // Extract framework code from multiple possible locations
                 $recommendedFramework = 'unknown';
-                if (isset($properties['selected_framework']['code'])) {
+
+                // Priority 1: recommended_framework from analytics event
+                if (isset($properties['recommended_framework'])) {
+                    $recommendedFramework = $properties['recommended_framework'];
+                }
+                // Priority 2: selected_framework.code from webhook data
+                elseif (isset($properties['selected_framework']['code'])) {
                     $recommendedFramework = $properties['selected_framework']['code'];
-                } elseif (isset($properties['framework'])) {
+                }
+                // Priority 3: framework fallback
+                elseif (isset($properties['framework'])) {
                     $recommendedFramework = $properties['framework'];
                 }
 
@@ -410,9 +419,17 @@ class ProcessAnalyticsEvents implements ShouldQueue
             } elseif ($eventName === 'framework_selected') {
                 // User chose a different framework than recommended
                 $chosenFramework = 'unknown';
-                if (isset($properties['selected_framework']['code'])) {
+
+                // Priority 1: selected_framework from analytics event
+                if (isset($properties['selected_framework'])) {
+                    $chosenFramework = $properties['selected_framework'];
+                }
+                // Priority 2: selected_framework.code from webhook data
+                elseif (isset($properties['selected_framework']['code'])) {
                     $chosenFramework = $properties['selected_framework']['code'];
-                } elseif (isset($properties['framework'])) {
+                }
+                // Priority 3: framework fallback
+                elseif (isset($properties['framework'])) {
                     $chosenFramework = $properties['framework'];
                 }
 
