@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Framework analytics: track recommended vs chosen frameworks
-        Schema::create('framework_analytics', function (Blueprint $table) {
+        Schema::create('framework_selections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prompt_run_id')->constrained()->cascadeOnDelete();
 
@@ -253,6 +253,6 @@ return new class extends Migration
         Schema::dropIfExists('prompt_quality_metrics');
         Schema::dropIfExists('workflow_analytics');
         Schema::dropIfExists('question_analytics');
-        Schema::dropIfExists('framework_analytics');
+        Schema::dropIfExists('framework_selections');
     }
 };

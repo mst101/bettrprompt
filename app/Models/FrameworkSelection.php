@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FrameworkSelection extends Model
 {
+    protected $table = 'framework_selections';
+
     protected $fillable = [
         'prompt_run_id',
         'visitor_id',
