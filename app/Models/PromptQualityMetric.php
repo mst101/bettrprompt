@@ -24,6 +24,8 @@ class PromptQualityMetric extends Model
         'personality_type',
         'engagement_score',
         'quality_score',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [

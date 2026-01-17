@@ -16,16 +16,22 @@ class PromptRatingController extends Controller
     public function store(StorePromptRatingRequest $request, PromptRun $promptRun)
     {
         // Ensure user owns this prompt run or is admin
-        if ($promptRun->user_id !== auth()->id() && ! auth()->user()?->is_admin) {
+        // (auth:sanctum middleware ensures authenticated user exists)
+        if ($promptRun->user_id !== auth()->id() && ! auth()->user()->is_admin) {
             abort(403, 'Unauthorized');
         }
 
         // Update prompt_quality_metrics table
-        $this->promptQualityService->recordMetrics([
-            'prompt_run_id' => $promptRun->id,
-            'user_rating' => $request->validated('rating'),
-            'rating_explanation' => $request->validated('explanation'),
-        ]);
+        // Check if explanation was explicitly provided in the request (even if empty)
+        $validated = $request->validated();
+        $hasExplanation = array_key_exists('explanation', $validated);
+
+        $this->promptQualityService->recordMetrics(
+            promptRun: $promptRun,
+            userRating: $validated['rating'],
+            ratingExplanation: $validated['explanation'] ?? null,
+            shouldUpdateExplanation: $hasExplanation,
+        );
 
         return response()->json(['message' => 'Rating saved successfully']);
     }

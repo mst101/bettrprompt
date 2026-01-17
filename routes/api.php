@@ -37,6 +37,7 @@ Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [QuestionRat
 
 // Prompt rating
 Route::post('/prompt-runs/{promptRun}/rate', [PromptRatingController::class, 'store'])
+    ->middleware('auth:sanctum')
     ->name('api.prompt-runs.rate');
 
 // User preferences (works for both authenticated users and guest visitors)

@@ -16,6 +16,8 @@ class PromptQualityService
     public function recordMetrics(
         PromptRun $promptRun,
         ?int $userRating = null,
+        ?string $ratingExplanation = null,
+        ?bool $shouldUpdateExplanation = false,
         ?bool $wasCopied = null,
         ?int $copyCount = null,
         ?bool $wasEdited = null,
@@ -34,7 +36,7 @@ class PromptQualityService
             $existing = PromptQualityMetric::where('prompt_run_id', $promptRun->id)->first();
 
             if ($existing) {
-                $existing->update(array_filter([
+                $updateData = [
                     'user_rating' => $userRating ?? $existing->user_rating,
                     'was_copied' => $wasCopied ?? $existing->was_copied,
                     'copy_count' => $copyCount ?? $existing->copy_count,
@@ -49,13 +51,22 @@ class PromptQualityService
                     'personality_type' => $personalityType ?? $existing->personality_type,
                     'engagement_score' => $engagementScore ?? $existing->engagement_score,
                     'quality_score' => $qualityScore ?? $existing->quality_score,
-                ], fn ($value) => $value !== null));
+                ];
+
+                // Only update explanation if explicitly provided (allows clearing with NULL)
+                if ($shouldUpdateExplanation) {
+                    $updateData['rating_explanation'] = $ratingExplanation;
+                    $existing->update($updateData);
+                } else {
+                    $existing->update(array_filter($updateData, fn ($value) => $value !== null));
+                }
 
                 $metric = $existing->refresh();
             } else {
-                $metric = PromptQualityMetric::create([
+                $metric = PromptQualityMetric::create(array_filter([
                     'prompt_run_id' => $promptRun->id,
                     'user_rating' => $userRating,
+                    'rating_explanation' => $ratingExplanation,
                     'was_copied' => $wasCopied,
                     'copy_count' => $copyCount,
                     'was_edited' => $wasEdited,
@@ -69,7 +80,7 @@ class PromptQualityService
                     'personality_type' => $personalityType,
                     'engagement_score' => $engagementScore,
                     'quality_score' => $qualityScore,
-                ]);
+                ], fn ($value) => $value !== null));
             }
 
             Log::info('Prompt quality metrics recorded', [
