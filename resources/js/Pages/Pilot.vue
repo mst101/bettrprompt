@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -177,33 +178,19 @@ defineOptions({
                             </h3>
                             <ul class="mt-3 space-y-2 text-base text-indigo-50">
                                 <li class="flex items-start gap-3">
-                                    <svg
+                                    <DynamicIcon
+                                        name="check-circle"
                                         class="mt-1 h-5 w-5 flex-shrink-0 text-indigo-200"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
+                                    />
                                     <span>{{
                                         $t('pilot.join.commitments.use')
                                     }}</span>
                                 </li>
                                 <li class="flex items-start gap-3">
-                                    <svg
+                                    <DynamicIcon
+                                        name="check-circle"
                                         class="mt-1 h-5 w-5 flex-shrink-0 text-indigo-200"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
+                                    />
                                     <span>{{
                                         $t('pilot.join.commitments.feedback')
                                     }}</span>
@@ -223,19 +210,7 @@ defineOptions({
                             class="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition-all hover:bg-indigo-50 hover:shadow-xl focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 focus:outline-none"
                         >
                             {{ $t('pilot.join.ctaRegister') }}
-                            <svg
-                                class="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                                />
-                            </svg>
+                            <DynamicIcon name="arrow-right" class="h-5 w-5" />
                         </Link>
                         <a
                             v-else
@@ -243,19 +218,7 @@ defineOptions({
                             class="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-lg font-semibold text-indigo-600 shadow-lg transition-all hover:bg-indigo-50 hover:shadow-xl focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 focus:outline-none"
                         >
                             {{ $t('pilot.join.ctaInvite') }}
-                            <svg
-                                class="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                                />
-                            </svg>
+                            <DynamicIcon name="arrow-right" class="h-5 w-5" />
                         </a>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
+import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { Link } from '@inertiajs/vue3';
 
 export interface MetadataItem {
@@ -97,19 +98,7 @@ defineProps<Props>();
                 :href="countryRoute('admin.users.show', { user: userId })"
                 class="inline-flex items-center gap-2 rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
             >
-                <svg
-                    class="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                </svg>
+                <DynamicIcon name="information-circle" class="h-4 w-4" />
                 {{ $t('components.common.compactMetadataCard.showProfile') }}
             </Link>
         </div>
