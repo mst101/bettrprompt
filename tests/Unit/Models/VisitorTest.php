@@ -36,6 +36,12 @@ function createCountryWithDependencies(string $countryCode, string $countryName)
         ]);
     }
 
+    // Check if country already exists before creating
+    $country = Country::where('id', $countryCode)->first();
+    if ($country) {
+        return $country;
+    }
+
     return Country::create([
         'id' => $countryCode,
         'continent_id' => 'E',
