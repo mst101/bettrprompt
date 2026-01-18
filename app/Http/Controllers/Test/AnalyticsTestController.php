@@ -9,6 +9,7 @@ use App\Models\Visitor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Test Endpoints Controller for E2E Tests
@@ -51,13 +52,47 @@ class AnalyticsTestController extends Controller
      *
      * @return JsonResponse Contains visitor_id and prompt_run_id
      */
-    public function createVisitorPromptRun(): JsonResponse
+    public function createVisitorPromptRun(Request $request): JsonResponse
     {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised test endpoint access');
+        }
+
         $visitor = Visitor::factory()->create();
 
-        $promptRun = PromptRun::factory()
-            ->for($visitor)
-            ->create(['workflow_stage' => '1_completed']);
+        $promptRun = PromptRun::create([
+            'visitor_id' => $visitor->id,
+            'personality_type' => 'INTJ-A',
+            'trait_percentages' => [
+                'mind' => 80,
+                'energy' => 75,
+                'nature' => 70,
+                'tactics' => 85,
+                'identity' => 80,
+            ],
+            'task_description' => 'Test task for visitor restrictions',
+            'workflow_stage' => '1_completed',
+            'selected_framework' => [
+                'code' => 'smart',
+                'name' => 'S.M.A.R.T. Goals Framework',
+                'components' => [
+                    'Specific - Clear and well-defined',
+                    'Measurable - Quantifiable criteria',
+                    'Achievable - Realistic and attainable',
+                    'Relevant - Aligned with objectives',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+            ],
+            'framework_questions' => [
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
+            ],
+            'task_classification' => ['type' => 'analytical', 'complexity' => 'moderate'],
+            'cognitive_requirements' => ['analytical', 'critical-thinking'],
+        ]);
 
         return response()->json([
             'visitor_id' => $visitor->id,
@@ -73,19 +108,73 @@ class AnalyticsTestController extends Controller
      *
      * @return JsonResponse Contains visitor_id and prompt_run_id
      */
-    public function createVisitorWithCompletedPrompt(): JsonResponse
+    public function createVisitorWithCompletedPrompt(Request $request): JsonResponse
     {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised test endpoint access');
+        }
+
+        Log::info('Test: Creating visitor with completed prompt');
+
         $visitor = Visitor::factory()->create();
+        Log::info('Test: Visitor created', ['visitor_id' => $visitor->id]);
 
         // Create a completed prompt run (2_completed stage)
-        $promptRun = PromptRun::factory()
-            ->for($visitor)
-            ->create(['workflow_stage' => '2_completed']);
+        try {
+            $promptRun = PromptRun::create([
+                'visitor_id' => $visitor->id,
+                'personality_type' => 'INTJ-A',
+                'trait_percentages' => [
+                    'mind' => 80,
+                    'energy' => 75,
+                    'nature' => 70,
+                    'tactics' => 85,
+                    'identity' => 80,
+                ],
+                'task_description' => 'Test task for visitor restrictions',
+                'workflow_stage' => '2_completed',
+                'selected_framework' => [
+                    'code' => 'smart',
+                    'name' => 'S.M.A.R.T. Goals Framework',
+                    'components' => [
+                        'Specific - Clear and well-defined',
+                        'Measurable - Quantifiable criteria',
+                        'Achievable - Realistic and attainable',
+                        'Relevant - Aligned with objectives',
+                        'Time-bound - Specific deadline or timeline',
+                    ],
+                    'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+                ],
+                'framework_questions' => [
+                    'What is the specific goal you want to achieve?',
+                    'How will you measure success?',
+                    'What is your timeline for achieving this goal?',
+                ],
+                'optimized_prompt' => '# Test Optimised Prompt\n\nThis is a test optimised prompt for E2E testing.',
+                'completed_at' => now(),
+                'task_classification' => ['type' => 'analytical', 'complexity' => 'moderate'],
+                'cognitive_requirements' => ['analytical', 'critical-thinking'],
+            ]);
 
-        return response()->json([
-            'visitor_id' => $visitor->id,
-            'prompt_run_id' => $promptRun->id,
-        ]);
+            Log::info('Test: Prompt run created', [
+                'prompt_run_id' => $promptRun->id,
+                'workflow_stage' => $promptRun->workflow_stage,
+                'optimized_prompt' => ! empty($promptRun->optimized_prompt) ? 'SET' : 'NULL',
+            ]);
+
+            return response()->json([
+                'visitor_id' => $visitor->id,
+                'prompt_run_id' => $promptRun->id,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Test: Failed to create prompt run', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
     }
 
     /**
@@ -99,19 +188,55 @@ class AnalyticsTestController extends Controller
      *
      * @return JsonResponse Contains visitor_id, completed_prompt_run_id, and editable_prompt_run_id
      */
-    public function createVisitorWithCompletedPromptForEdit(): JsonResponse
+    public function createVisitorWithCompletedPromptForEdit(Request $request): JsonResponse
     {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised test endpoint access');
+        }
+
         $visitor = Visitor::factory()->create();
 
+        $testData = [
+            'visitor_id' => $visitor->id,
+            'personality_type' => 'INTJ-A',
+            'trait_percentages' => [
+                'mind' => 80,
+                'energy' => 75,
+                'nature' => 70,
+                'tactics' => 85,
+                'identity' => 80,
+            ],
+            'task_description' => 'Test task for visitor restrictions',
+            'workflow_stage' => '2_completed',
+            'selected_framework' => [
+                'code' => 'smart',
+                'name' => 'S.M.A.R.T. Goals Framework',
+                'components' => [
+                    'Specific - Clear and well-defined',
+                    'Measurable - Quantifiable criteria',
+                    'Achievable - Realistic and attainable',
+                    'Relevant - Aligned with objectives',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+            ],
+            'framework_questions' => [
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
+            ],
+            'optimized_prompt' => '# Test Optimised Prompt\n\nThis is a test optimised prompt for E2E testing.',
+            'completed_at' => now(),
+            'task_classification' => ['type' => 'analytical', 'complexity' => 'moderate'],
+            'cognitive_requirements' => ['analytical', 'critical-thinking'],
+        ];
+
         // Create a completed prompt run (the first one they finished)
-        $completedPromptRun = PromptRun::factory()
-            ->for($visitor)
-            ->create(['workflow_stage' => '2_completed']);
+        $completedPromptRun = PromptRun::create($testData);
 
         // Create another prompt run in 2_completed state that they should be restricted from editing
-        $editablePromptRun = PromptRun::factory()
-            ->for($visitor)
-            ->create(['workflow_stage' => '2_completed']);
+        $editablePromptRun = PromptRun::create($testData);
 
         return response()->json([
             'visitor_id' => $visitor->id,
@@ -128,14 +253,50 @@ class AnalyticsTestController extends Controller
      *
      * @return JsonResponse Contains visitor_id and prompt_run_id
      */
-    public function createVisitorPromptRun2Completed(): JsonResponse
+    public function createVisitorPromptRun2Completed(Request $request): JsonResponse
     {
+        // Security check
+        if ($request->header('X-Test-Auth') !== 'playwright-e2e-tests') {
+            abort(403, 'Unauthorised test endpoint access');
+        }
+
         $visitor = Visitor::factory()->create();
 
         // Create a prompt run in 2_completed state but with no prior completions
-        $promptRun = PromptRun::factory()
-            ->for($visitor)
-            ->create(['workflow_stage' => '2_completed']);
+        $promptRun = PromptRun::create([
+            'visitor_id' => $visitor->id,
+            'personality_type' => 'INTJ-A',
+            'trait_percentages' => [
+                'mind' => 80,
+                'energy' => 75,
+                'nature' => 70,
+                'tactics' => 85,
+                'identity' => 80,
+            ],
+            'task_description' => 'Test task for visitor restrictions',
+            'workflow_stage' => '2_completed',
+            'selected_framework' => [
+                'code' => 'smart',
+                'name' => 'S.M.A.R.T. Goals Framework',
+                'components' => [
+                    'Specific - Clear and well-defined',
+                    'Measurable - Quantifiable criteria',
+                    'Achievable - Realistic and attainable',
+                    'Relevant - Aligned with objectives',
+                    'Time-bound - Specific deadline or timeline',
+                ],
+                'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
+            ],
+            'framework_questions' => [
+                'What is the specific goal you want to achieve?',
+                'How will you measure success?',
+                'What is your timeline for achieving this goal?',
+            ],
+            'optimized_prompt' => '# Test Optimised Prompt\n\nThis is a test optimised prompt for E2E testing.',
+            'completed_at' => now(),
+            'task_classification' => ['type' => 'analytical', 'complexity' => 'moderate'],
+            'cognitive_requirements' => ['analytical', 'critical-thinking'],
+        ]);
 
         return response()->json([
             'visitor_id' => $visitor->id,

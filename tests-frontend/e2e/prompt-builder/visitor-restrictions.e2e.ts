@@ -52,14 +52,23 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor without completed prompt can edit task', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create a visitor without completed prompts
         const setupData = await page.evaluate(async () => {
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content');
+
             const response = await fetch('/test/create-visitor-prompt-run', {
                 method: 'POST',
                 headers: {
                     'X-Test-Auth': 'playwright-e2e-tests',
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken || '',
                 },
+                credentials: 'include',
             });
             return response.json();
         });
@@ -106,8 +115,15 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create a visitor with completed prompt run
         const setupData = await page.evaluate(async () => {
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content');
+
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -115,7 +131,9 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                     headers: {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || '',
                     },
+                    credentials: 'include',
                 },
             );
             return response.json();
@@ -163,6 +181,9 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('modal shows correct messaging for account creation', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
             const response = await fetch(
@@ -222,6 +243,9 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking create account button opens registration modal', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
             const response = await fetch(
@@ -290,6 +314,9 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking cancel closes modal without entering edit mode', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
             const response = await fetch(
@@ -390,8 +417,15 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor without completed prompt can edit answers', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor without completed prompts
         const setupData = await page.evaluate(async () => {
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content');
+
             const response = await fetch(
                 '/test/create-visitor-prompt-run-2-completed',
                 {
@@ -399,7 +433,9 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                     headers: {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || '',
                     },
+                    credentials: 'include',
                 },
             );
             return response.json();
@@ -447,8 +483,15 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt and create a new 2_completed run to edit
         const setupData = await page.evaluate(async () => {
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content');
+
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt-for-edit',
                 {
@@ -456,7 +499,9 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                     headers: {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || '',
                     },
+                    credentials: 'include',
                 },
             );
             return response.json();
@@ -503,6 +548,9 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('fallback check on submit still prevents editing if modal bypassed', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
             const response = await fetch(
@@ -575,6 +623,9 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
     test('task edit submission blocked for guest with completed prompt', async ({
         page,
     }) => {
+        // Navigate to establish domain context for fetch
+        await page.goto('/');
+
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
             const response = await fetch(

@@ -16,6 +16,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromptBuilderController;
 use App\Http\Controllers\ReferenceDocumentsController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Test\AnalyticsTestController;
 use App\Http\Controllers\TestBroadcastController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\VoiceTranscriptionController;
@@ -497,6 +498,16 @@ Route::post('/test/set-personality', [TestBroadcastController::class, 'setPerson
     ->name('test.set-personality');
 Route::get('/test/analytics-events', [TestBroadcastController::class, 'getAnalyticsEvents'])
     ->name('test.analytics-events');
+
+// E2E Test Visitor Creation Routes (must be before broadcast-event)
+Route::post('/test/create-visitor-prompt-run', [AnalyticsTestController::class, 'createVisitorPromptRun'])
+    ->name('test.create-visitor-prompt-run');
+Route::post('/test/create-visitor-with-completed-prompt', [AnalyticsTestController::class, 'createVisitorWithCompletedPrompt'])
+    ->name('test.create-visitor-with-completed-prompt');
+Route::post('/test/create-visitor-with-completed-prompt-for-edit', [AnalyticsTestController::class, 'createVisitorWithCompletedPromptForEdit'])
+    ->name('test.create-visitor-with-completed-prompt-for-edit');
+Route::post('/test/create-visitor-prompt-run-2-completed', [AnalyticsTestController::class, 'createVisitorPromptRun2Completed'])
+    ->name('test.create-visitor-prompt-run-2-completed');
 
 Route::post('/test/broadcast-event/{promptRunId}', function ($promptRunId) {
     $promptRun = PromptRun::find($promptRunId);

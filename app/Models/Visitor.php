@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log as LogFacade;
 
 class Visitor extends Model
 {
@@ -125,10 +126,22 @@ class Visitor extends Model
      */
     public function hasCompletedPrompts(): bool
     {
-        return $this->promptRuns()
+        $result = $this->promptRuns()
             ->where('workflow_stage', '2_completed')
             ->whereNotNull('optimized_prompt')
             ->exists();
+
+        // Debug logging
+        $allPrompts = $this->promptRuns()->get();
+        LogFacade::info('Checking completed prompts', [
+            'visitor_id' => $this->id,
+            'total_prompts' => $allPrompts->count(),
+            'all_stages' => $allPrompts->pluck('workflow_stage')->toArray(),
+            'optimized_prompts' => $allPrompts->pluck('optimized_prompt')->toArray(),
+            'has_completed' => $result,
+        ]);
+
+        return $result;
     }
 
     /**

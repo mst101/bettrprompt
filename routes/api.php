@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DomainAnalyticsController;
 use App\Http\Controllers\Admin\ExperimentResultsController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Api\PromptRatingController;
+use App\Http\Controllers\Api\PromptRunEditController;
 use App\Http\Controllers\Api\QuestionRatingController;
 use App\Http\Controllers\Api\UserPreferenceController;
 use App\Http\Controllers\MailgunWebhookController;
@@ -39,6 +40,14 @@ Route::post('/prompt-runs/{promptRun}/questions/{questionId}/rate', [QuestionRat
 // Prompt rating
 Route::post('/prompt-runs/{promptRun}/rate', [PromptRatingController::class, 'store'])
     ->name('api.prompt-runs.rate');
+
+// Prompt run edit operations (with visitor restrictions)
+Route::post('/prompt-runs/{promptRun}/create-child-from-task', [PromptRunEditController::class, 'createChildFromTask'])
+    ->name('api.prompt-runs.create-child-from-task');
+Route::post('/prompt-runs/{promptRun}/create-child-from-answers', [PromptRunEditController::class, 'createChildFromAnswers'])
+    ->name('api.prompt-runs.create-child-from-answers');
+Route::post('/prompt-runs/{promptRun}/edit-answers', [PromptRunEditController::class, 'editAnswers'])
+    ->name('api.prompt-runs.edit-answers');
 
 // User preferences (works for both authenticated users and guest visitors)
 Route::patch('/user/preferences', [UserPreferenceController::class, 'update'])
