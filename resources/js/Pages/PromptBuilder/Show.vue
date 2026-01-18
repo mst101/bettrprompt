@@ -64,6 +64,20 @@ const hasWorkflowFailed = computed(() => {
     return props.promptRun.workflowStage?.endsWith('_failed') ?? false;
 });
 
+// Compute whether visitor has completed prompts (reactively)
+// This updates when the current prompt completes via WebSocket
+const visitorHasCompletedPromptsComputed = computed(() => {
+    // If the backend prop was true, keep it true
+    if (props.visitorHasCompletedPrompts) {
+        return true;
+    }
+    // If guest and current prompt is complete, they now have a completed prompt
+    if (isGuest.value && props.promptRun.workflowStage === '2_completed') {
+        return true;
+    }
+    return false;
+});
+
 defineOptions({
     layout: AppLayout,
 });
@@ -698,12 +712,17 @@ onUnmounted(() => {
                 <TaskInformation
                     :prompt-run="promptRun"
                     :visitor-has-completed-prompts="
-                        visitorHasCompletedPrompts || false
+                        visitorHasCompletedPromptsComputed
                     "
                 />
 
                 <!-- Pre-analysis questions/answers -->
-                <PreAnalysisQuestions :prompt-run="promptRun" />
+                <PreAnalysisQuestions
+                    :prompt-run="promptRun"
+                    :visitor-has-completed-prompts="
+                        visitorHasCompletedPromptsComputed
+                    "
+                />
 
                 <RelatedPromptRuns
                     v-if="hasRelatedRuns"
@@ -745,6 +764,9 @@ onUnmounted(() => {
                     :prompt-run-id="promptRun.id"
                     :prompt-run="promptRun"
                     :current-framework="promptRun.selectedFramework as any"
+                    :visitor-has-completed-prompts="
+                        visitorHasCompletedPromptsComputed
+                    "
                 />
             </div>
 
@@ -801,7 +823,7 @@ onUnmounted(() => {
                     :prompt-run="promptRun"
                     :ui-complexity="uiComplexity"
                     :visitor-has-completed-prompts="
-                        visitorHasCompletedPrompts || false
+                        visitorHasCompletedPromptsComputed
                     "
                 />
             </div>

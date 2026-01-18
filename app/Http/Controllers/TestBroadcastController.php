@@ -210,6 +210,19 @@ class TestBroadcastController extends Controller
                 'How will you measure success?',
                 'What is your timeline for achieving this goal?',
             ];
+            // Add alternative frameworks for testing
+            $data['alternative_frameworks'] = [
+                [
+                    'name' => 'STAR',
+                    'code' => 'STAR',
+                    'when_to_use_instead' => 'For storytelling-based feedback',
+                ],
+                [
+                    'name' => 'RISE',
+                    'code' => 'RISE',
+                    'when_to_use_instead' => 'For structured improvement plans',
+                ],
+            ];
         } elseif ($state === '1_failed') {
             $data['workflow_stage'] = '1_failed';
             $data['error_message'] = 'Test main analysis failure for E2E testing';

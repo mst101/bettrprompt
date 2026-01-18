@@ -243,6 +243,17 @@ class PromptBuilderController extends Controller
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
+        // Check if unregistered visitor has already completed a prompt
+        if (! auth()->check()) {
+            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                if ($visitor && $visitor->hasCompletedPrompts()) {
+                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
+                }
+            }
+        }
+
         // Validate workflow stage
         if ($promptRun->workflow_stage !== '0_completed') {
             return back()->with('error', __('messages.prompt_builder.invalid_workflow_stage'));
@@ -301,6 +312,17 @@ class PromptBuilderController extends Controller
     ) {
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
+
+        // Check if unregistered visitor has already completed a prompt
+        if (! auth()->check()) {
+            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                if ($visitor && $visitor->hasCompletedPrompts()) {
+                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
+                }
+            }
+        }
 
         // Validate workflow stage - should have pre-analysis questions
         if (! $promptRun->pre_analysis_questions || empty($promptRun->pre_analysis_questions)) {
@@ -791,6 +813,17 @@ class PromptBuilderController extends Controller
     ) {
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
+
+        // Check if unregistered visitor has already completed a prompt
+        if (! auth()->check()) {
+            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
+            if ($visitorId) {
+                $visitor = Visitor::find($visitorId);
+                if ($visitor && $visitor->hasCompletedPrompts()) {
+                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
+                }
+            }
+        }
 
         $validated = $request->validated();
 

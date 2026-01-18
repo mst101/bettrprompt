@@ -29,7 +29,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear for authenticated user
-        const modal = authenticatedPage.getByTestId('modal-dialog');
+        const modal = authenticatedPage.getByTestId('modal-dialog').first();
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -99,7 +99,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal appears
-        const modal = page.getByTestId('modal-dialog');
+        const modal = page.getByTestId('modal-dialog').first();
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Verify edit mode NOT entered (textarea should not be in edit state)
@@ -132,7 +132,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal contains expected messaging
-        const modal = page.getByTestId('modal-dialog');
+        const modal = page.getByTestId('modal-dialog').first();
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Check for account creation call-to-action
@@ -171,7 +171,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify visitor limit modal appeared
-        const visitorLimitModal = page.getByTestId('modal-dialog');
+        const visitorLimitModal = page.getByTestId('modal-dialog').first();
         await expect(visitorLimitModal).toBeVisible({ timeout: 2000 });
 
         // Click "Create account" button
@@ -218,7 +218,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal appeared
-        const modal = page.getByTestId('modal-dialog');
+        const modal = page.getByTestId('modal-dialog').first();
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Click cancel/close button
@@ -269,7 +269,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear for authenticated user
-        const modal = authenticatedPage.getByTestId('modal-dialog');
+        const modal = authenticatedPage.getByTestId('modal-dialog').first();
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -281,8 +281,9 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create prompt run - will use the visitor_id cookie from above
-        const promptRunId = await createTestPromptRun(page, '2_completed');
+        // Create prompt run without completed workflow (0_completed means pre-analysis complete, not final completion)
+        // Final completion is 2_completed, so 1_completed means analysis done but no final prompt yet
+        const promptRunId = await createTestPromptRun(page, '1_completed');
 
         // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
@@ -306,7 +307,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear
-        const modal = page.getByTestId('modal-dialog');
+        const modal = page.getByTestId('modal-dialog').first();
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -342,7 +343,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal appears
-        const modal = page.getByTestId('modal-dialog');
+        const modal = page.getByTestId('modal-dialog').first();
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // In bulk edit mode, textareas are visible even in non-edit, so we check for edit class instead
@@ -402,5 +403,110 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         // Verify the fallback check prevented the edit (expect 403 Forbidden)
         expect(result.status).toBe(403);
         expect(result.allowed).toBe(false);
+    });
+});
+
+test.describe('Visitor Restrictions - Alternative Frameworks', () => {
+    test('authenticated user can use alternative framework', async ({
+        authenticatedPage,
+    }) => {
+        // Authenticated user should have no restrictions
+        await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
+        await authenticatedPage.waitForLoadState('domcontentloaded');
+
+        // Navigate to Framework tab
+        const frameworkTab = authenticatedPage.getByTestId(
+            'tab-button-framework',
+        );
+        await expect(frameworkTab).toBeVisible({ timeout: 5000 });
+        await frameworkTab.click();
+        await authenticatedPage.waitForTimeout(500);
+
+        // Find alternative framework button (should be able to click without modal)
+        const useFrameworkButton = authenticatedPage
+            .getByRole('button', { name: /use this framework/i })
+            .first();
+        await expect(useFrameworkButton).toBeVisible({ timeout: 5000 });
+
+        // No modal should appear for authenticated user
+        const modal = authenticatedPage.getByTestId('modal-dialog').first();
+        const isModalVisible = await modal.isVisible().catch(() => false);
+        expect(isModalVisible).toBe(false);
+    });
+
+    test('guest visitor can use alternative framework if no prior completions', async ({
+        page,
+    }) => {
+        // Establish visitor session by visiting a simple page
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+
+        // Create prompt run with 1_completed state (no prior completions)
+        const promptRunId = await createTestPromptRun(page, '1_completed');
+
+        // Navigate to prompt builder
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to Framework tab
+        const frameworkTab = page.getByTestId('tab-button-framework');
+        await expect(frameworkTab).toBeVisible({ timeout: 5000 });
+        await frameworkTab.click();
+        await page.waitForTimeout(500);
+
+        // Find alternative framework button
+        const useFrameworkButton = page
+            .getByRole('button', { name: /use this framework/i })
+            .first();
+        await expect(useFrameworkButton).toBeVisible({ timeout: 5000 });
+
+        // No modal should appear for guest without completed prompts
+        const modal = page.getByTestId('modal-dialog').first();
+        const isModalVisible = await modal.isVisible().catch(() => false);
+        expect(isModalVisible).toBe(false);
+    });
+
+    test('guest visitor is restricted from using alternative framework after completion', async ({
+        page,
+    }) => {
+        // Establish visitor session
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+
+        // Create first prompt to mark this visitor as having completed a prompt
+        await createTestPromptRun(page, '2_completed');
+
+        // Create second prompt to test restrictions
+        const secondPromptId = await createTestPromptRun(page, '1_completed');
+
+        // Navigate to second prompt
+        await page.goto(`/gb/prompt-builder/${secondPromptId}`);
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to Framework tab
+        const frameworkTab = page.getByTestId('tab-button-framework');
+        await expect(frameworkTab).toBeVisible({ timeout: 5000 });
+        await frameworkTab.click();
+        await page.waitForTimeout(500);
+
+        // Try to click alternative framework button
+        const useFrameworkButton = page
+            .getByRole('button', { name: /use this framework/i })
+            .first();
+        await expect(useFrameworkButton).toBeVisible({ timeout: 5000 });
+        await useFrameworkButton.click();
+        await page.waitForTimeout(300);
+
+        // Verify modal appears
+        const modal = page.getByTestId('modal-dialog').first();
+        await expect(modal).toBeVisible({ timeout: 2000 });
+
+        // Verify the modal shows account creation messaging
+        const createAccountButton = page.getByRole('button', {
+            name: /create.*account|register/i,
+        });
+        await expect(createAccountButton).toBeVisible({ timeout: 2000 });
     });
 });

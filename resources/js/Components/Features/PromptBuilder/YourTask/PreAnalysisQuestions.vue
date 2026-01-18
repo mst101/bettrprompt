@@ -8,21 +8,29 @@ import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormTextarea from '@/Components/Base/Form/FormTextarea.vue';
 import FormTextareaWithActions from '@/Components/Base/Form/FormTextareaWithActions.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import { useTextAppend } from '@/Composables/features/useTextAppend';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import type {
     PreAnalysisQuestion,
     PromptRunResource,
 } from '@/Types/resources/PromptRunResource';
-import { router, useForm } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch, watchEffect } from 'vue';
+import { router, useForm, usePage } from '@inertiajs/vue3';
+import { computed, nextTick, ref, watch, watchEffect, withDefaults } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
     promptRun: PromptRunResource;
+    visitorHasCompletedPrompts?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    visitorHasCompletedPrompts: false,
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+const showVisitorLimitModal = ref(false);
 
 const questions = computed<PreAnalysisQuestion[]>(
     () => props.promptRun.preAnalysisQuestions ?? [],
@@ -191,6 +199,17 @@ const getAnswerLabel = (
 };
 
 const startEditing = () => {
+    // Check if unregistered visitor has completed prompts when trying to edit existing answers
+    // Only block if there are already answers (edit mode), not on initial form load
+    if (
+        !user.value &&
+        props.visitorHasCompletedPrompts &&
+        Object.keys(answers.value).length > 0
+    ) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     currentAnswers.value = { ...answers.value };
     otherResponses.value = {};
     previousOtherSelections.value.clear();
@@ -278,6 +297,16 @@ const submitAnswers = () => {
         return;
     }
 
+    // Check if unregistered visitor has completed prompts when trying to edit existing answers
+    if (
+        !user.value &&
+        props.visitorHasCompletedPrompts &&
+        Object.keys(answers.value).length > 0
+    ) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     const finalAnswers = buildFinalAnswers();
 
     // If we have existing answers, this is an edit (create new prompt run)
@@ -323,6 +352,16 @@ const submitAnswers = () => {
 };
 
 const continueToAnalysis = () => {
+    // Check if unregistered visitor has completed prompts when trying to continue analysis
+    if (
+        !user.value &&
+        props.visitorHasCompletedPrompts &&
+        Object.keys(answers.value).length > 0
+    ) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     isSubmitting.value = true;
     submitError.value = null;
 
@@ -392,6 +431,12 @@ const isDisabled = computed(() =>
 </script>
 
 <template>
+    <!-- Visitor limit modal -->
+    <VisitorLimitModal
+        :show="showVisitorLimitModal"
+        @close="showVisitorLimitModal = false"
+    />
+
     <Card v-if="shouldShow" class="space-y-4" data-testid="pre-analysis">
         <!-- Header -->
         <div

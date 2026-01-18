@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import Card from '@/Components/Base/Card.vue';
+import VisitorLimitModal from '@/Components/Common/VisitorLimitModal.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { analyticsService } from '@/services/analytics';
 import type { PromptRunResource } from '@/Types';
-import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
+import { computed, ref, withDefaults } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Framework {
@@ -20,16 +21,29 @@ interface Props {
     promptRunId: number;
     promptRun: PromptRunResource;
     currentFramework?: { code: string; slug?: string } | null;
+    visitorHasCompletedPrompts?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    visitorHasCompletedPrompts: false,
+});
 
 const switchingFramework = ref<string | null>(null);
+const showVisitorLimitModal = ref(false);
 const { confirm } = useAlert();
 const { t } = useI18n({ useScope: 'global' });
 const { countryRoute } = useCountryRoute();
 
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+
 const handleSwitchFramework = async (frameworkCode: string) => {
+    // Check if unregistered visitor has completed prompts
+    if (!user.value && props.visitorHasCompletedPrompts) {
+        showVisitorLimitModal.value = true;
+        return;
+    }
+
     const confirmed = await confirm(
         t('promptBuilder.components.alternativeFrameworks.confirm.message'),
         t('promptBuilder.components.alternativeFrameworks.confirm.title'),
@@ -97,6 +111,12 @@ const handleSwitchFramework = async (frameworkCode: string) => {
 </script>
 
 <template>
+    <!-- Visitor limit modal -->
+    <VisitorLimitModal
+        :show="showVisitorLimitModal"
+        @close="showVisitorLimitModal = false"
+    />
+
     <Card v-if="frameworks.length > 0" class="space-y-3">
         <h2 class="mb-4 text-lg font-semibold text-indigo-900">
             {{ $t('promptBuilder.components.alternativeFrameworks.title') }}
