@@ -235,6 +235,47 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         const isEditActive = await editTextarea.isVisible().catch(() => false);
         expect(isEditActive).toBe(false);
     });
+
+    test('guest visitor can edit pre-analysis questions if no prior completions', async ({
+        page,
+    }) => {
+        // Establish visitor session by visiting a simple page
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+
+        // Create a prompt run with 1_completed state (no prior completions)
+        const promptRunId = await createTestPromptRun(page, '1_completed');
+
+        // Navigate to prompt builder - same visitor_id cookie will be sent
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to Your Task tab
+        const taskTab = page.getByTestId('tab-button-task');
+        await expect(taskTab).toBeVisible({ timeout: 5000 });
+        await taskTab.click();
+        await page.waitForTimeout(500);
+
+        // Verify pre-analysis questions component is visible
+        // When there are no pre-analysis answers yet, the component auto-enters edit mode
+        // so we should be able to interact with the form controls directly
+        const preAnalysisSection = page.getByTestId('pre-analysis');
+        await expect(preAnalysisSection).toBeVisible({ timeout: 5000 });
+
+        // Verify edit controls are visible (either select/input fields for pre-analysis questions)
+        // The component will be in edit mode, so form controls should be visible
+        const editControls = preAnalysisSection.locator(
+            'input, select, textarea',
+        );
+        const firstControl = editControls.first();
+        await expect(firstControl).toBeVisible({ timeout: 2000 });
+
+        // No modal should appear for guest without completed prompts
+        const modal = page.getByTestId('modal-dialog').first();
+        const isModalVisible = await modal.isVisible().catch(() => false);
+        expect(isModalVisible).toBe(false);
+    });
 });
 
 test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
@@ -270,44 +311,6 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
 
         // No modal should appear for authenticated user
         const modal = authenticatedPage.getByTestId('modal-dialog').first();
-        const isModalVisible = await modal.isVisible().catch(() => false);
-        expect(isModalVisible).toBe(false);
-    });
-
-    test('guest visitor can edit questions if no prior completions', async ({
-        page,
-    }) => {
-        // Establish visitor session by visiting a simple page
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-
-        // Create prompt run without completed workflow (0_completed means pre-analysis complete, not final completion)
-        // Final completion is 2_completed, so 1_completed means analysis done but no final prompt yet
-        const promptRunId = await createTestPromptRun(page, '1_completed');
-
-        // Navigate to prompt run
-        await page.goto(`/gb/prompt-builder/${promptRunId}`);
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to Questions tab
-        const questionsTab = page.getByTestId('tab-button-questions');
-        await expect(questionsTab).toBeVisible({ timeout: 5000 });
-        await questionsTab.click();
-        await page.waitForTimeout(500);
-
-        // Find and click edit button
-        const editButton = page.getByRole('button', { name: /edit/i }).first();
-        await expect(editButton).toBeVisible({ timeout: 5000 });
-        await editButton.click();
-        await page.waitForTimeout(300);
-
-        // Verify edit mode entered
-        const textarea = page.locator('textarea[id^="bulk-answer-"]').first();
-        await expect(textarea).toBeVisible({ timeout: 2000 });
-
-        // No modal should appear
-        const modal = page.getByTestId('modal-dialog').first();
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });

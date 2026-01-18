@@ -210,6 +210,19 @@ class TestBroadcastController extends Controller
                 'How will you measure success?',
                 'What is your timeline for achieving this goal?',
             ];
+            // Add pre-analysis questions for testing
+            $data['pre_analysis_questions'] = [
+                [
+                    'id' => 'task-clarity',
+                    'question' => 'Is your task clear and well-defined?',
+                    'type' => 'yes_no',
+                    'options' => [
+                        ['value' => 'yes', 'label' => 'Yes'],
+                        ['value' => 'no', 'label' => 'No'],
+                    ],
+                    'allowsOther' => false,
+                ],
+            ];
             // Add alternative frameworks for testing
             $data['alternative_frameworks'] = [
                 [
