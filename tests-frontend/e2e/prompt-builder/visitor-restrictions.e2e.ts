@@ -2,7 +2,7 @@ import { expect, setupAndNavigateToPromptRun, test } from '../fixtures';
 import { createTestPromptRun } from '../helpers/broadcast';
 
 test.describe('Visitor Restrictions - TaskInformation Edit', () => {
-    test('authenticated user can edit task normally', async ({
+    test('authenticated user can edit task description', async ({
         authenticatedPage,
     }) => {
         // Authenticated user should have no restrictions
@@ -34,7 +34,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor without completed prompt can edit task', async ({
+    test('guest visitor can edit task if no prior completions', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -71,7 +71,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor with completed prompt sees modal when editing task', async ({
+    test('guest visitor is restricted from editing task after completion', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -108,7 +108,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isEditActive).toBe(false);
     });
 
-    test('modal shows correct messaging for account creation', async ({
+    test('visitor limit modal shows account creation messaging', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -147,7 +147,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isCloseVisible).toBe(true);
     });
 
-    test('clicking create account button opens registration modal', async ({
+    test('visitor limit modal: create account button opens sign up form', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -190,7 +190,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isRegistrationVisible).toBe(true);
     });
 
-    test('clicking cancel closes modal without entering edit mode', async ({
+    test('visitor limit modal: cancel button closes without entering edit mode', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -238,7 +238,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
 });
 
 test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
-    test('authenticated user can edit answers normally', async ({
+    test('authenticated user can edit clarifying question answers', async ({
         authenticatedPage,
     }) => {
         // Authenticated users should have no restrictions
@@ -274,7 +274,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor without completed prompt can edit answers', async ({
+    test('guest visitor can edit questions if no prior completions', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -311,7 +311,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor with completed prompt sees modal when editing questions', async ({
+    test('guest visitor is restricted from editing questions after completion', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -350,7 +350,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         expect(modal).toBeTruthy();
     });
 
-    test('fallback check on submit still prevents editing if modal bypassed', async ({
+    test('API fallback prevents submission if guest bypasses modal', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
