@@ -67,13 +67,8 @@ class AnalyticsTestController extends Controller
             abort(403, 'Unauthorised test endpoint access');
         }
 
-        // Use existing visitor from cookie if available, otherwise create a new one
-        $visitorId = $request->cookie('visitor_id');
-        if ($visitorId) {
-            $visitor = Visitor::findOrFail($visitorId);
-        } else {
-            $visitor = Visitor::factory()->create();
-        }
+        // Create a fresh visitor for this test
+        $visitor = Visitor::factory()->create();
 
         $promptRun = PromptRun::create([
             'visitor_id' => $visitor->id,
@@ -131,13 +126,8 @@ class AnalyticsTestController extends Controller
 
         Log::info('Test: Creating visitor with completed prompt');
 
-        // Use existing visitor from cookie if available, otherwise create a new one
-        $visitorId = $request->cookie('visitor_id');
-        if ($visitorId) {
-            $visitor = Visitor::findOrFail($visitorId);
-        } else {
-            $visitor = Visitor::factory()->create();
-        }
+        // Create a fresh visitor for this test
+        $visitor = Visitor::factory()->create();
         Log::info('Test: Visitor created', ['visitor_id' => $visitor->id]);
 
         // Create a completed prompt run (2_completed stage)
@@ -215,13 +205,8 @@ class AnalyticsTestController extends Controller
             abort(403, 'Unauthorised test endpoint access');
         }
 
-        // Use existing visitor from cookie if available, otherwise create a new one
-        $visitorId = $request->cookie('visitor_id');
-        if ($visitorId) {
-            $visitor = Visitor::findOrFail($visitorId);
-        } else {
-            $visitor = Visitor::factory()->create();
-        }
+        // Create a fresh visitor for this test
+        $visitor = Visitor::factory()->create();
 
         $testData = [
             'visitor_id' => $visitor->id,
@@ -286,13 +271,8 @@ class AnalyticsTestController extends Controller
             abort(403, 'Unauthorised test endpoint access');
         }
 
-        // Use existing visitor from cookie if available, otherwise create a new one
-        $visitorId = $request->cookie('visitor_id');
-        if ($visitorId) {
-            $visitor = Visitor::findOrFail($visitorId);
-        } else {
-            $visitor = Visitor::factory()->create();
-        }
+        // Create a fresh visitor for this test
+        $visitor = Visitor::factory()->create();
 
         // Create a prompt run in 2_completed state but with no prior completions
         $promptRun = PromptRun::create([

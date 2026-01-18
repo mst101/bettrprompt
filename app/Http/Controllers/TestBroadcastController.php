@@ -280,9 +280,10 @@ class TestBroadcastController extends Controller
         return response()->json([
             'success' => true,
             'prompt_run_id' => $promptRun->id,
+            'visitor_id' => $visitor->id,
             'state' => $state,
             'url' => "/prompt-builder/$promptRun->id",
-        ]);
+        ])->cookie('visitor_id', $visitor->id);
     }
 
     /**

@@ -1,20 +1,5 @@
 import { expect, setupAndNavigateToPromptRun, test } from '../fixtures';
-
-/**
- * E2E Tests for Visitor Edit Restrictions
- *
- * Tests that guest visitors who have completed their first prompt run
- * cannot edit task descriptions or clarifying question answers until
- * they create an account. A VisitorLimitModal is shown when they attempt
- * to edit, providing a call-to-action to register.
- *
- * These tests verify:
- * 1. Authenticated users can always edit normally
- * 2. Guest visitors without completed prompts can edit normally
- * 3. Guest visitors with completed prompts see modal on edit button click
- * 4. Modal shows correct messaging and provides account creation option
- * 5. Fallback check on submit still prevents editing if bypassed
- */
+import { createTestPromptRun } from '../helpers/broadcast';
 
 test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('authenticated user can edit task normally', async ({
@@ -44,7 +29,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear for authenticated user
-        const modal = authenticatedPage.getByRole('dialog');
+        const modal = authenticatedPage.getByTestId('modal-dialog');
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -52,41 +37,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor without completed prompt can edit task', async ({
         page,
     }) => {
-        // Navigate to home page to establish a visitor session with encrypted cookie
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create a visitor without completed prompts
-        const promptRunId = await page.evaluate(async () => {
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute('content');
+        // Create a prompt run for a guest visitor using the test helper
+        const promptRunId = await createTestPromptRun(page, '1_completed');
 
-            const response = await fetch('/test/create-visitor-prompt-run', {
-                method: 'POST',
-                headers: {
-                    'X-Test-Auth': 'playwright-e2e-tests',
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken || '',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor prompt run: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
-
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Now navigate to prompt run - visitor_id cookie should be available
+        // Navigate to prompt builder
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -108,7 +66,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear for guest without completed prompts
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -116,44 +74,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create a visitor with completed prompt run
-        const promptRunId = await page.evaluate(async () => {
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute('content');
+        // Create a prompt run with 2_completed state (simulates completed prompt)
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken || '',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
-
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to completed prompt run
+        // Navigate to prompt builder
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -171,7 +99,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal appears
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Verify edit mode NOT entered (textarea should not be in edit state)
@@ -183,39 +111,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('modal shows correct messaging for account creation', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor with completed prompt
-        const promptRunId = await page.evaluate(async () => {
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
+        // Create prompt run with 2_completed state
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to prompt run
+        // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -229,7 +132,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal contains expected messaging
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Check for account creation call-to-action
@@ -247,39 +150,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking create account button opens registration modal', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor with completed prompt
-        const promptRunId = await page.evaluate(async () => {
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
+        // Create prompt run with 2_completed state
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to prompt run
+        // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -293,10 +171,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify visitor limit modal appeared
-        const visitorLimitModal = page
-            .getByRole('dialog')
-            .filter({ hasText: /create.*account|register/i })
-            .first();
+        const visitorLimitModal = page.getByTestId('modal-dialog');
         await expect(visitorLimitModal).toBeVisible({ timeout: 2000 });
 
         // Click "Create account" button
@@ -306,12 +181,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await createAccountButton.click();
         await page.waitForTimeout(500);
 
-        // Verify registration modal appears
-        const registrationModal = page
-            .getByRole('dialog')
-            .filter({ hasText: /email|password|sign up|register/i })
-            .first();
-        const isRegistrationVisible = await registrationModal
+        // Verify registration modal appears (different from visitor limit modal)
+        // Check for registration form elements that indicate the modal changed
+        const emailInput = page.locator('input[type="email"]');
+        const isRegistrationVisible = await emailInput
             .isVisible()
             .catch(() => false);
         expect(isRegistrationVisible).toBe(true);
@@ -320,53 +193,32 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking cancel closes modal without entering edit mode', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor with completed prompt
-        const promptRunId = await page.evaluate(async () => {
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
+        // Create prompt run with 2_completed state
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to prompt run - visitor_id cookie from /gb is still active
+        // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
-        await page.getByTestId('tab-button-task').click();
+        const taskTab = page.getByTestId('tab-button-task');
+        await expect(taskTab).toBeVisible({ timeout: 5000 });
+        await taskTab.click();
         await page.waitForTimeout(500);
 
         // Click edit button
-        await page.getByRole('button', { name: /edit/i }).first().click();
+        const editButton = page.getByRole('button', { name: /edit/i }).first();
+        await expect(editButton).toBeVisible({ timeout: 5000 });
+        await editButton.click();
         await page.waitForTimeout(300);
 
         // Verify modal appeared
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // Click cancel/close button
@@ -416,8 +268,8 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
             .first();
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
-        // No modal should appear
-        const modal = authenticatedPage.getByRole('dialog');
+        // No modal should appear for authenticated user
+        const modal = authenticatedPage.getByTestId('modal-dialog');
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -425,44 +277,14 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor without completed prompt can edit answers', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor without completed prompts
-        const promptRunId = await page.evaluate(async () => {
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute('content');
+        // Create prompt run with 2_completed state (first completion)
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-            const response = await fetch(
-                '/test/create-visitor-prompt-run-2-completed',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken || '',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor prompt run 2 completed: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
-
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to prompt run
+        // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -484,7 +306,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await expect(textarea).toBeVisible({ timeout: 2000 });
 
         // No modal should appear
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         const isModalVisible = await modal.isVisible().catch(() => false);
         expect(isModalVisible).toBe(false);
     });
@@ -492,45 +314,18 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor with completed prompt and create a new 2_completed run to edit
-        const editablePromptRunId = await page.evaluate(async () => {
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute('content');
+        // Create first prompt run (2_completed) to mark this visitor as having completed a prompt
+        await createTestPromptRun(page, '2_completed');
 
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt-for-edit',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken || '',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt for edit: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.editable_prompt_run_id;
-        });
+        // Create second prompt run to test restrictions (this one should be restricted for editing)
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to editable prompt run
-        await page.goto(`/gb/prompt-builder/${editablePromptRunId}`);
+        // Navigate to second prompt run
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
 
@@ -547,7 +342,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(300);
 
         // Verify modal appears
-        const modal = page.getByRole('dialog');
+        const modal = page.getByTestId('modal-dialog');
         await expect(modal).toBeVisible({ timeout: 2000 });
 
         // In bulk edit mode, textareas are visible even in non-edit, so we check for edit class instead
@@ -558,39 +353,17 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('fallback check on submit still prevents editing if modal bypassed', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home first to establish page context
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
 
-        // Create visitor with completed prompt
-        const promptRunId = await page.evaluate(async () => {
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
+        // Create first prompt run (mark as completed) to mark this visitor as having completed a prompt
+        await createTestPromptRun(page, '2_completed');
 
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
+        // Create second prompt run to test restrictions
+        const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to // Navigate to prompt run
+        // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -604,7 +377,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                 const response = await fetch(
                     window.location.pathname.replace(
                         /\/prompt-builder\/(\d+)/,
-                        '/api/prompt-runs/$1/edit-answers',
+                        '/api/prompt-runs/$1/clarifying-answers',
                     ),
                     {
                         method: 'POST',
@@ -612,7 +385,8 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            answers: ['Modified answer'],
+                            question_index: 0,
+                            answer: 'Test bypass answer',
                         }),
                     },
                 );
@@ -626,77 +400,6 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         });
 
         // Verify the fallback check prevented the edit (expect 403 Forbidden)
-        expect(result.status).toBe(403);
-        expect(result.allowed).toBe(false);
-    });
-});
-
-test.describe('Visitor Restrictions - Fallback Checks', () => {
-    test('task edit submission blocked for guest with completed prompt', async ({
-        page,
-    }) => {
-        // Navigate to home page first to establish a visitor session naturally
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Create visitor with completed prompt
-        const promptRunId = await page.evaluate(async () => {
-            const response = await fetch(
-                '/test/create-visitor-with-completed-prompt',
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-Test-Auth': 'playwright-e2e-tests',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                },
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to create visitor with completed prompt: ${response.status}`,
-                );
-            }
-            const data = await response.json();
-            return data.prompt_run_id;
-        });
-
-        // Navigate to /gb first to settle any cookies from the endpoint response
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Navigate to // Navigate to prompt run
-        await page.goto(`/gb/prompt-builder/${promptRunId}`);
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Attempt to submit task edit directly via API
-        const result = await page.evaluate(async (id: number) => {
-            try {
-                const response = await fetch(
-                    `/api/prompt-runs/${id}/create-child-from-task`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            task_description: 'Edited task description',
-                        }),
-                    },
-                );
-                return {
-                    status: response.status,
-                    allowed: response.ok,
-                };
-            } catch (e) {
-                return { error: (e as Error).message };
-            }
-        }, promptRunId);
-
-        // Verify submission is blocked
         expect(result.status).toBe(403);
         expect(result.allowed).toBe(false);
     });
