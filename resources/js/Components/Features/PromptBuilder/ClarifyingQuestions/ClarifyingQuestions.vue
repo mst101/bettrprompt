@@ -889,6 +889,7 @@ onBeforeUnmount(() => {
                         type="button"
                         :disabled="isSubmitting"
                         class="w-full sm:w-auto"
+                        data-testid="edit-clarifying-answers-button"
                         @click="startEditingAnswers"
                     >
                         <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />

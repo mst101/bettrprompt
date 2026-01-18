@@ -18,7 +18,7 @@ const emit = defineEmits<{
 
 <template>
     <Modal :show="show" max-width="md" @close="emit('close')">
-        <div class="p-6">
+        <div class="p-6" data-testid="visitor-limit-modal">
             <div class="flex items-start gap-3">
                 <DynamicIcon
                     name="information-circle"

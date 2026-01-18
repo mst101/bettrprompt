@@ -144,6 +144,7 @@ watch(
                 ref="editButtonRef"
                 type="button"
                 class="inline-flex w-full items-center gap-1 sm:w-fit"
+                data-testid="edit-task-description-button"
                 @click="startEditing"
             >
                 <DynamicIcon name="edit" class="mr-2 -ml-1 h-4 w-4" />
