@@ -207,11 +207,15 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -267,11 +271,15 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -336,11 +344,15 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run - visitor_id cookie from /gb is still active
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run - visitor_id cookie from /gb is still active
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -442,11 +454,15 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -482,7 +498,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt and create a new 2_completed run to edit
-        const { editablePromptRunId } = await page.evaluate(async () => {
+        const editablePromptRunId = await page.evaluate(async () => {
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 ?.getAttribute('content');
@@ -505,11 +521,15 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                editablePromptRunId: data.editable_prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to editable prompt run
+            return data.editable_prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to editable prompt run
         await page.goto(`/gb/prompt-builder/${editablePromptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -562,11 +582,15 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -635,11 +659,15 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
                 );
             }
             const data = await response.json();
-            return {
-                promptRunId: data.prompt_run_id,
-                visitorId: data.visitor_id,
-            };
-        }); // Navigate to prompt run
+            return data.prompt_run_id;
+        });
+
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
+
+        // Navigate to // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
