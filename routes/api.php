@@ -395,6 +395,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // Test-only endpoints for E2E testing (guarded by header middleware)
 Route::prefix('test')->middleware(VerifyE2eTestAuth::class)->group(function () {
+    // Health check
+    Route::get('/ping', [AnalyticsTestController::class, 'ping']);
+
     // Analytics & Rating Data Access
     Route::get('/question-analytics/{promptRunId}', [AnalyticsTestController::class, 'getQuestionAnalytics']);
     Route::get('/analytics-events', [AnalyticsTestController::class, 'getAnalyticsEvents']);

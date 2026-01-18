@@ -28,6 +28,14 @@ use Illuminate\Support\Facades\Log;
 class AnalyticsTestController extends Controller
 {
     /**
+     * Health check endpoint to verify the test controller is reachable
+     */
+    public function ping(): JsonResponse
+    {
+        return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]);
+    }
+
+    /**
      * Get question analytics for a specific prompt run
      *
      * Returns all question analytics records for a given prompt run,

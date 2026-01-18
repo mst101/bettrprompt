@@ -98,6 +98,18 @@ async function globalSetup() {
         // Set APP_ENV to e2e for any Node/artisan processes
         process.env.APP_ENV = 'e2e';
 
+        // Clear config cache to ensure Laravel picks up the new .env file
+        console.log('🧹 Clearing config cache...');
+        try {
+            execSync('./vendor/bin/sail artisan config:clear', {
+                stdio: 'inherit',
+            });
+            console.log('✅ Config cache cleared');
+        } catch (error) {
+            console.warn('⚠️  Warning: Failed to clear config cache:', error);
+            // Don't throw - continue anyway as config caching might be disabled
+        }
+
         console.log('📦 Creating test database...');
         // Create the test database if it doesn't exist
         // Using psql -tc to suppress unnecessary output

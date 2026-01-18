@@ -6,9 +6,20 @@ const fetchQuestionAnalytics = async (page: Page, id: number) => {
         const response = await fetch(
             `/api/test/question-analytics/${promptRunId}`,
             {
-                headers: { 'X-Test-Auth': 'playwright-e2e-tests' },
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'X-Test-Auth': 'playwright-e2e-tests',
+                    'Content-Type': 'application/json',
+                },
             },
         );
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(
+                `HTTP ${response.status}: ${text.substring(0, 100)}`,
+            );
+        }
         return response.json();
     }, id);
 };

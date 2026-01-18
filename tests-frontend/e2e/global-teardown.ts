@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -88,6 +89,20 @@ async function globalTeardown() {
         console.error('');
         console.error('Backup file location: ' + envLocalPath);
         // Don't throw - let tests complete normally but warn the user
+    }
+
+    // Clear config cache to ensure Laravel picks up the restored .env file
+    try {
+        execSync('./vendor/bin/sail artisan config:clear', {
+            stdio: 'inherit',
+        });
+        console.log('✅ Config cache cleared after restoring .env');
+    } catch (error) {
+        console.warn(
+            '⚠️  Warning: Failed to clear config cache after restoration:',
+            error,
+        );
+        // Don't throw - non-critical cleanup
     }
 }
 
