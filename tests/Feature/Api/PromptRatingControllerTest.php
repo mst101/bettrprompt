@@ -24,7 +24,7 @@ describe('PromptRatingController', function () {
             );
 
             $response->assertOk();
-            $response->assertJson(['message' => 'Rating saved successfully']);
+            $response->assertJson(['message' => __('messages.api.prompt_rating_saved')]);
 
             $this->assertDatabaseHas('prompt_quality_metrics', [
                 'prompt_run_id' => $promptRun->id,
@@ -344,7 +344,7 @@ describe('PromptRatingController', function () {
                 ['rating' => 4]
             );
 
-            $response->assertJson(['message' => 'Rating saved successfully']);
+            $response->assertJson(['message' => __('messages.api.prompt_rating_saved')]);
         });
 
         test('returns 200 OK status code', function () {
