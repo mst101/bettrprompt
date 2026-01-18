@@ -109,6 +109,12 @@ export const test = base.extend<TestFixtures>({
             }
         });
 
+        // CRITICAL: Add X-Test-Auth header to all requests so middleware routes to test database
+        // Without this header, page navigations would hit the production database!
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         await use(page);
     },
     /**
