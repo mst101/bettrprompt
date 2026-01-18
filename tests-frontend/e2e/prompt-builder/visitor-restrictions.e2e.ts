@@ -52,8 +52,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor without completed prompt can edit task', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create a visitor without completed prompts
         const setupData = await page.evaluate(async () => {
@@ -70,25 +72,31 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                 },
                 credentials: 'include',
             });
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor prompt run: ${response.status}`,
+                );
+            }
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
+        const visitorIdEncrypted = setupData.visitor_id_encrypted;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
+        // Set visitor cookie with encrypted value
         await page.context().addCookies([
             {
                 name: 'visitor_id',
-                value: visitorId.toString(),
+                value: visitorIdEncrypted,
                 domain: 'app.localhost',
                 path: '/',
             },
         ]);
 
         // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
         const taskTab = page.getByTestId('tab-button-task');
@@ -115,8 +123,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create a visitor with completed prompt run
         const setupData = await page.evaluate(async () => {
@@ -139,22 +149,12 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorId.toString(),
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to completed prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        // Navigate to completed prompt run (endpoint already set visitor_id cookie)
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
         const taskTab = page.getByTestId('tab-button-task');
@@ -181,8 +181,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('modal shows correct messaging for account creation', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
@@ -199,22 +201,23 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
+        const visitorIdEncrypted = setupData.visitor_id_encrypted;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
+        // Set visitor cookie with encrypted value
         await page.context().addCookies([
             {
                 name: 'visitor_id',
-                value: visitorId.toString(),
+                value: visitorIdEncrypted,
                 domain: 'app.localhost',
                 path: '/',
             },
         ]);
 
         // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
         await page.getByTestId('tab-button-task').click();
@@ -243,8 +246,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking create account button opens registration modal', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
@@ -261,22 +266,23 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
+        const visitorIdEncrypted = setupData.visitor_id_encrypted;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
+        // Set visitor cookie with encrypted value
         await page.context().addCookies([
             {
                 name: 'visitor_id',
-                value: visitorId.toString(),
+                value: visitorIdEncrypted,
                 domain: 'app.localhost',
                 path: '/',
             },
         ]);
 
         // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
         await page.getByTestId('tab-button-task').click();
@@ -314,8 +320,10 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking cancel closes modal without entering edit mode', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
@@ -332,22 +340,23 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
+        const visitorIdEncrypted = setupData.visitor_id_encrypted;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
+        // Set visitor cookie with encrypted value
         await page.context().addCookies([
             {
                 name: 'visitor_id',
-                value: visitorId.toString(),
+                value: visitorIdEncrypted,
                 domain: 'app.localhost',
                 path: '/',
             },
         ]);
 
         // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Your Task tab
         await page.getByTestId('tab-button-task').click();
@@ -417,8 +426,10 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor without completed prompt can edit answers', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor without completed prompts
         const setupData = await page.evaluate(async () => {
@@ -441,22 +452,12 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorId.toString(),
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        // Navigate to prompt run (endpoint already set visitor_id cookie)
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Questions tab
         const questionsTab = page.getByTestId('tab-button-questions');
@@ -483,8 +484,10 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt and create a new 2_completed run to edit
         const setupData = await page.evaluate(async () => {
@@ -507,22 +510,23 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
+        const visitorIdEncrypted = setupData.visitor_id_encrypted;
         const editablePromptRunId = setupData.editable_prompt_run_id;
 
-        // Set visitor cookie
+        // Set visitor cookie with encrypted value
         await page.context().addCookies([
             {
                 name: 'visitor_id',
-                value: visitorId.toString(),
+                value: visitorIdEncrypted,
                 domain: 'app.localhost',
                 path: '/',
             },
         ]);
 
         // Navigate to editable prompt run
-        await page.goto(`/prompt-builder/${editablePromptRunId}`);
+        await page.goto(`/gb/prompt-builder/${editablePromptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Navigate to Questions tab
         const questionsTab = page.getByTestId('tab-button-questions');
@@ -548,8 +552,10 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('fallback check on submit still prevents editing if modal bypassed', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
@@ -566,22 +572,12 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorId.toString(),
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        // Navigate to prompt run (endpoint already set visitor_id cookie)
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Attempt to bypass the edit button restriction via direct JavaScript
         // This tests the fallback check in the submit handler
@@ -623,8 +619,10 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
     test('task edit submission blocked for guest with completed prompt', async ({
         page,
     }) => {
-        // Navigate to establish domain context for fetch
-        await page.goto('/');
+        // Navigate to home page first to establish a visitor session naturally
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
         const setupData = await page.evaluate(async () => {
@@ -641,22 +639,12 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
             return response.json();
         });
 
-        const visitorId = setupData.visitor_id;
         const promptRunId = setupData.prompt_run_id;
 
-        // Set visitor cookie
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorId.toString(),
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
-        await page.goto(`/prompt-builder/${promptRunId}`);
+        // Navigate to prompt run (endpoint already set visitor_id cookie)
+        await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
         // Attempt to submit task edit directly via API
         const result = await page.evaluate(async (id: number) => {

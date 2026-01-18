@@ -104,6 +104,7 @@ class AnalyticsTestController extends Controller
 
         return response()->json([
             'visitor_id' => $visitor->id,
+            'visitor_id_encrypted' => encrypt((string) $visitor->id),
             'prompt_run_id' => $promptRun->id,
         ]);
     }
@@ -174,7 +175,7 @@ class AnalyticsTestController extends Controller
             return response()->json([
                 'visitor_id' => $visitor->id,
                 'prompt_run_id' => $promptRun->id,
-            ]);
+            ])->cookie('visitor_id', $visitor->id);
         } catch (\Exception $e) {
             Log::error('Test: Failed to create prompt run', [
                 'error' => $e->getMessage(),
@@ -250,7 +251,7 @@ class AnalyticsTestController extends Controller
             'visitor_id' => $visitor->id,
             'completed_prompt_run_id' => $completedPromptRun->id,
             'editable_prompt_run_id' => $editablePromptRun->id,
-        ]);
+        ])->cookie('visitor_id', $visitor->id);
     }
 
     /**
@@ -308,6 +309,7 @@ class AnalyticsTestController extends Controller
 
         return response()->json([
             'visitor_id' => $visitor->id,
+            'visitor_id_encrypted' => encrypt((string) $visitor->id),
             'prompt_run_id' => $promptRun->id,
         ]);
     }
