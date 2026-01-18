@@ -26,6 +26,11 @@ test.describe('Language Persistence - Authenticated User', () => {
         // rather than relying on the authenticatedPage fixture which has auth issues
         const page = await context.newPage();
 
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         // Set a cookie that would indicate an authenticated user
         // Note: Real tests would use proper authentication
         // For now, verify the page structure exists for authenticated users
@@ -53,6 +58,11 @@ test.describe('Language Persistence - Visitor (via Cookie)', () => {
         context,
     }) => {
         const page = await context.newPage();
+
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
 
         // Visit as unauthenticated visitor
         await page.goto('http://app.localhost/gb/prompt-builder');
@@ -95,6 +105,11 @@ test.describe('Language Persistence - Visitor (via Cookie)', () => {
     }) => {
         const page = await context.newPage();
 
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         await page.goto('http://app.localhost/gb/prompt-builder');
         await page.waitForLoadState('networkidle');
 
@@ -130,6 +145,11 @@ test.describe('Language Persistence - Visitor (via Cookie)', () => {
         context,
     }) => {
         const page = await context.newPage();
+
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
 
         // Visit as visitor to /pricing (simpler page without modal)
         await page.goto('http://app.localhost/gb/pricing');
@@ -180,6 +200,11 @@ test.describe('Language Persistence - Visitor (via Cookie)', () => {
     }) => {
         const page1 = await context.newPage();
 
+        // Add X-Test-Auth header so requests route to test database
+        await page1.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         // First tab: set visitor language on /pricing (simpler page)
         await page1.goto('http://app.localhost/gb/pricing');
         await page1.waitForLoadState('networkidle');
@@ -203,6 +228,12 @@ test.describe('Language Persistence - Visitor (via Cookie)', () => {
 
         // Second tab: should have same visitor_id cookie, so Spanish should be selected
         const page2 = await context.newPage();
+
+        // Add X-Test-Auth header so requests route to test database
+        await page2.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         await page2.goto('http://app.localhost/gb/pricing');
         await page2.waitForLoadState('networkidle');
 
@@ -226,6 +257,12 @@ test.describe('Language Switcher - UI Behavior', () => {
         context,
     }) => {
         const page = await context.newPage();
+
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         await page.goto('http://app.localhost/gb/pricing');
         await page.waitForLoadState('networkidle');
 
@@ -255,6 +292,12 @@ test.describe('Language Switcher - UI Behavior', () => {
 
     test('should close dropdown when clicking outside', async ({ context }) => {
         const page = await context.newPage();
+
+        // Add X-Test-Auth header so requests route to test database
+        await page.setExtraHTTPHeaders({
+            'X-Test-Auth': 'playwright-e2e-tests',
+        });
+
         await page.goto('http://app.localhost/gb/pricing');
         await page.waitForLoadState('networkidle');
 
