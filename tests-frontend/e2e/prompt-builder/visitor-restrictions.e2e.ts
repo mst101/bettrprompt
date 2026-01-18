@@ -52,13 +52,13 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor without completed prompt can edit task', async ({
         page,
     }) => {
-        // Navigate to home page first to establish a visitor session naturally
+        // Navigate to home page to establish a visitor session with encrypted cookie
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
 
         // Create a visitor without completed prompts
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 ?.getAttribute('content');
@@ -77,23 +77,16 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                     `Failed to create visitor prompt run: ${response.status}`,
                 );
             }
-            return response.json();
+            const data = await response.json();
+            return data.prompt_run_id;
         });
 
-        const visitorIdEncrypted = setupData.visitor_id_encrypted;
-        const promptRunId = setupData.prompt_run_id;
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
-        // Set visitor cookie with encrypted value
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorIdEncrypted,
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
+        // Now navigate to prompt run - visitor_id cookie should be available
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -129,7 +122,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(500);
 
         // Create a visitor with completed prompt run
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 ?.getAttribute('content');
@@ -146,12 +139,21 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                     credentials: 'include',
                 },
             );
-            return response.json();
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return data.prompt_run_id;
         });
 
-        const promptRunId = setupData.prompt_run_id;
+        // Navigate to /gb first to settle any cookies from the endpoint response
+        await page.goto('/gb');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(500);
 
-        // Navigate to completed prompt run (endpoint already set visitor_id cookie)
+        // Navigate to completed prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -187,7 +189,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -196,25 +198,20 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const visitorIdEncrypted = setupData.visitor_id_encrypted;
-        const promptRunId = setupData.prompt_run_id;
-
-        // Set visitor cookie with encrypted value
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorIdEncrypted,
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -252,7 +249,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -261,25 +258,20 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const visitorIdEncrypted = setupData.visitor_id_encrypted;
-        const promptRunId = setupData.prompt_run_id;
-
-        // Set visitor cookie with encrypted value
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorIdEncrypted,
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -326,7 +318,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -335,25 +327,20 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const visitorIdEncrypted = setupData.visitor_id_encrypted;
-        const promptRunId = setupData.prompt_run_id;
-
-        // Set visitor cookie with encrypted value
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorIdEncrypted,
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to prompt run
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run - visitor_id cookie from /gb is still active
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -432,7 +419,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor without completed prompts
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 ?.getAttribute('content');
@@ -449,12 +436,17 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                     credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const promptRunId = setupData.prompt_run_id;
-
-        // Navigate to prompt run (endpoint already set visitor_id cookie)
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor prompt run 2 completed: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -490,7 +482,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt and create a new 2_completed run to edit
-        const setupData = await page.evaluate(async () => {
+        const { editablePromptRunId } = await page.evaluate(async () => {
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 ?.getAttribute('content');
@@ -507,23 +499,17 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                     credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const visitorIdEncrypted = setupData.visitor_id_encrypted;
-        const editablePromptRunId = setupData.editable_prompt_run_id;
-
-        // Set visitor cookie with encrypted value
-        await page.context().addCookies([
-            {
-                name: 'visitor_id',
-                value: visitorIdEncrypted,
-                domain: 'app.localhost',
-                path: '/',
-            },
-        ]);
-
-        // Navigate to editable prompt run
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt for edit: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                editablePromptRunId: data.editable_prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to editable prompt run
         await page.goto(`/gb/prompt-builder/${editablePromptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -558,7 +544,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -567,14 +553,20 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const promptRunId = setupData.prompt_run_id;
-
-        // Navigate to prompt run (endpoint already set visitor_id cookie)
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -625,7 +617,7 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
         await page.waitForTimeout(500);
 
         // Create visitor with completed prompt
-        const setupData = await page.evaluate(async () => {
+        const promptRunId = await page.evaluate(async () => {
             const response = await fetch(
                 '/test/create-visitor-with-completed-prompt',
                 {
@@ -634,14 +626,20 @@ test.describe('Visitor Restrictions - Fallback Checks', () => {
                         'X-Test-Auth': 'playwright-e2e-tests',
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 },
             );
-            return response.json();
-        });
-
-        const promptRunId = setupData.prompt_run_id;
-
-        // Navigate to prompt run (endpoint already set visitor_id cookie)
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to create visitor with completed prompt: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return {
+                promptRunId: data.prompt_run_id,
+                visitorId: data.visitor_id,
+            };
+        }); // Navigate to prompt run
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
