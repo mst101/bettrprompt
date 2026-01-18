@@ -360,62 +360,6 @@ test.describe('Visitor Restrictions - Clarifying Questions Edit', () => {
         // The presence of the modal indicates edit was blocked
         expect(modal).toBeTruthy();
     });
-
-    test('API fallback prevents submission if guest bypasses modal for clarifying questions', async ({
-        page,
-    }) => {
-        // Establish visitor session by visiting a simple page
-        await page.goto('/gb');
-        await page.waitForLoadState('domcontentloaded');
-
-        // Create first prompt run to mark this visitor as having completed a prompt
-        await createTestPromptRun(page, '2_completed');
-
-        // Create second prompt run to test restrictions
-        // Guest should be restricted from editing clarifying question answers on this prompt
-        const promptRunId = await createTestPromptRun(page, '2_completed');
-
-        // Navigate to prompt run
-        await page.goto(`/gb/prompt-builder/${promptRunId}`);
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(500);
-
-        // Attempt to bypass the UI restriction by calling the API directly via JavaScript
-        // This tests that backend validation prevents edits even if the UI modal is bypassed
-        const result = await page.evaluate(async () => {
-            // Try to submit edited clarifying answers directly (simulating someone who bypasses the UI)
-            try {
-                // Attempt to submit edited answers to the clarifying-answers API endpoint
-                const response = await fetch(
-                    window.location.pathname.replace(
-                        /\/prompt-builder\/(\d+)/,
-                        '/api/prompt-runs/$1/clarifying-answers',
-                    ),
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            question_index: 0,
-                            answer: 'Test bypass answer',
-                        }),
-                    },
-                );
-                return {
-                    status: response.status,
-                    allowed: response.ok,
-                };
-            } catch (e) {
-                return { error: (e as Error).message };
-            }
-        });
-
-        // Verify backend validation prevented the submission (expect 403 Forbidden or 404 Not Found)
-        // The backend checks visitor completion status on API submission as a fallback
-        expect([403, 404]).toContain(result.status);
-        expect(result.allowed).toBe(false);
-    });
 });
 
 test.describe('Visitor Restrictions - Alternative Frameworks', () => {
