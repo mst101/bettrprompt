@@ -71,7 +71,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor with completed prompt sees modal on edit click', async ({
+    test('guest visitor with completed prompt sees modal when editing task', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
@@ -311,7 +311,7 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
         expect(isModalVisible).toBe(false);
     });
 
-    test('guest visitor with completed prompt sees modal on edit click', async ({
+    test('guest visitor with completed prompt sees modal when editing questions', async ({
         page,
     }) => {
         // Establish visitor session by visiting a simple page
