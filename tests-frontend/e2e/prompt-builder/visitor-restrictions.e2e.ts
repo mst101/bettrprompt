@@ -37,14 +37,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor without completed prompt can edit task', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create a prompt run for a guest visitor using the test helper
+        // Create a prompt run - will use the visitor_id cookie from above
         const promptRunId = await createTestPromptRun(page, '1_completed');
 
-        // Navigate to prompt builder
+        // Navigate to prompt builder - same visitor_id cookie will be sent
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -74,14 +74,14 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create a prompt run with 2_completed state (simulates completed prompt)
+        // Create a prompt run with 2_completed state - will use the visitor_id cookie from above
         const promptRunId = await createTestPromptRun(page, '2_completed');
 
-        // Navigate to prompt builder
+        // Navigate to prompt builder - same visitor_id cookie will be sent
         await page.goto(`/gb/prompt-builder/${promptRunId}`);
         await page.waitForLoadState('domcontentloaded');
         await page.waitForTimeout(500);
@@ -111,7 +111,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('modal shows correct messaging for account creation', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
@@ -150,7 +150,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking create account button opens registration modal', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
@@ -193,7 +193,7 @@ test.describe('Visitor Restrictions - TaskInformation Edit', () => {
     test('clicking cancel closes modal without entering edit mode', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
@@ -277,11 +277,11 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor without completed prompt can edit answers', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create prompt run with 2_completed state (first completion)
+        // Create prompt run - will use the visitor_id cookie from above
         const promptRunId = await createTestPromptRun(page, '2_completed');
 
         // Navigate to prompt run
@@ -314,14 +314,14 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('guest visitor with completed prompt sees modal on edit click', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create first prompt run (2_completed) to mark this visitor as having completed a prompt
+        // Create first prompt run to mark this visitor as having completed a prompt
         await createTestPromptRun(page, '2_completed');
 
-        // Create second prompt run to test restrictions (this one should be restricted for editing)
+        // Create second prompt run to test restrictions (should be restricted for editing)
         const promptRunId = await createTestPromptRun(page, '2_completed');
 
         // Navigate to second prompt run
@@ -353,11 +353,11 @@ test.describe('Visitor Restrictions - ClarifyingQuestions Edit', () => {
     test('fallback check on submit still prevents editing if modal bypassed', async ({
         page,
     }) => {
-        // Navigate to home first to establish page context
+        // Establish visitor session by visiting a simple page
         await page.goto('/gb');
         await page.waitForLoadState('domcontentloaded');
 
-        // Create first prompt run (mark as completed) to mark this visitor as having completed a prompt
+        // Create first prompt run to mark this visitor as having completed a prompt
         await createTestPromptRun(page, '2_completed');
 
         // Create second prompt run to test restrictions
