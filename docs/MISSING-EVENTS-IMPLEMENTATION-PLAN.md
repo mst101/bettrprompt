@@ -1,465 +1,309 @@
-# Missing Events Implementation Plan
+# Analytics Events Implementation Plan (Revised)
 
 ## Overview
 
-This document details the plan to implement all missing events from the **Event Catalog** in `unified-analytics-experimentation-architecture.md` that are not yet being recorded or documented in `ANALYTICS-EVENTS.md`.
+This document details the **revised plan** to implement missing or enhance incomplete events from the **Event Catalog** in `unified-analytics-experimentation-architecture.md`.
+
+This revision is based on:
+- Actual investigation of tracked events in production
+- DRY principle (avoid duplicating data in dedicated tables/fields)
+- Bug fixes (page_view triplication)
+- Redundancy elimination (events that duplicate existing tracking)
 
 ---
 
-## Event Audit Results
+## Event Audit Results (Revised)
 
-### ✅ Already Implemented (17 events)
-- registration_started
-- registration_completed
+### ✅ Already Implemented & Documented (17 events)
+- registration_started, registration_completed
 - login_completed
 - password_reset_requested
-- subscription_started (named "subscription_started" in code, "subscription_initiated" in catalog)
-- subscription_completed (named "subscription_completed" in code, "subscription_success" in catalog)
-- subscription_cancelled
-- prompt_started
-- prompt_completed
-- prompt_copied
-- prompt_edited
-- prompt_rated (recently added)
-- questions_presented (recently added)
-- question_answered (recently added)
-- question_skipped (recently added)
-- framework_recommended (recently added)
-- framework_switched (recently added)
+- subscription_started, subscription_completed, subscription_cancelled
+- prompt_started, prompt_completed, prompt_copied, prompt_edited, prompt_rated
+- questions_presented, question_answered, question_skipped
+- framework_recommended, framework_switched
 
-### ⚠️ Extra Implementation Events Not in Catalog (4 events)
-These are implemented but not in the original Event Catalog:
-- checkout_initiated
-- checkout_cancelled
-- subscription_activated (webhook)
-- upgrade_cta_clicked
-- workflow_stage_completed (3 events for stages 0, 1, 2)
-- question_rated (optional, for individual questions)
+### ✅ Already Tracked - Just Needs Enhancement (2 events)
+1. **`consent_granted`** - Tracked ✅, needs `categories: string[]` array in properties
+2. **`page_view`** - Tracked ✅, but **CRITICAL BUG**: recorded 3 times per page (needs fix)
 
-### ❌ Missing Events from Catalog (12 events)
+### ✅ Already Tracked - Just Needs Naming (1 event)
+- **`consent_revoked`** - Currently tracked as `consent_denied`, just rename it
 
-#### 1. **Lifecycle Events (4 missing)**
-- `consent_granted` - User grants analytics consent
-- `consent_revoked` - User revokes analytics consent
-- `session_start` - Analytics session begins (post-consent)
-- `page_view` - User views a page
+### ✅ Already Covered by Dedicated Tables (2 events)
+Don't need new events; query existing tables instead:
+1. **`workflow_failed`** → Query `workflow_analytics` table where `status = 'failed'`
+2. **`experiment_exposure`** → Query `experiment_exposures` table (dedicated structured table)
 
-#### 2. **Subscription Events (1 missing)**
-- `pricing_page_viewed` - User views pricing page
+### ⏳ Worth Implementing (3 events)
+1. **`session_start`** - Analytics session begins (not yet tracked)
+2. **`client_error`** - Client-side errors (not yet tracked)
+3. **`prompt_abandoned`** - User abandons prompt (optional, if can implement reliably)
 
-#### 3. **Prompt Builder Events (4 missing)**
-- `task_entered` - User enters task description (separate from prompt_started)
-- `personality_applied` - Personality assessment applied to prompt
-- `prompt_generated` - Final prompt generated (separate from prompt_completed)
-- `prompt_abandoned` - User leaves without completing
+### ❌ Dropped from Plan (7 events)
+These are redundant or violate DRY principles:
 
-#### 4. **Error Events (2 missing)**
-- `workflow_failed` - n8n workflow failed
-- `client_error` - Client-side error occurred
-
-#### 5. **Experiment Events (1 missing)**
-- `experiment_exposure` - Variant rendered to user (partially auto-tracked)
+| Event | Reason | Alternative |
+|-------|--------|-------------|
+| `pricing_page_viewed` | Can derive from page_view | Query `page_view` where `page_path LIKE '%/pricing'` |
+| `task_entered` | Redundant | Use `prompt_started` (captures same entry point) |
+| `personality_applied` | Redundant | Enhance `prompt_started` properties instead |
+| `prompt_generated` | Covered by existing event | Use `workflow_stage_completed` where `stage = 2` |
+| `subscription_started.source` | Always "pricing_page" (constant) | Remove property, store nowhere if meaningless |
+| Initial page properties in events | Stored in dedicated fields | Use `page_path`, `referrer` fields (not properties) |
 
 ---
 
-## Implementation Plan
+## Implementation Plan (Simplified)
 
-### Phase 1: Lifecycle Events (High Priority)
+### Priority 1: Bug Fixes & Critical Issues
 
-These are foundational events required for accurate session tracking.
+#### Task 1.1: Fix `page_view` Triplication Bug
 
-#### Task 1.1: `consent_granted`
+**Problem:** page_view recorded exactly 3 times per page view (verified)
 
-**Type:** System event (server-side)
+**Root Cause:** Multiple tracking hooks in `usePageTracking.ts`:
+- Line 83-91: `onMounted()` with fallback timer
+- Line 95-104: `router.on('start')` event
+- Line 107-132: `router.on('finish')` event
 
-**Trigger:** User grants analytics consent via cookie banner
+**Solution:** Debug and consolidate tracking logic to fire once per unique page path
 
-**Location:**
-- Frontend: Cookie consent banner component (likely in `resources/js/Components/`)
-- Backend: Session created via middleware
-
-**Properties:**
-- `categories: string[]` - Consent categories (e.g., ["analytics", "marketing"])
-- `initial_page_path: string` - Page where consent was given
-
-**Implementation:**
-1. Find cookie consent implementation
-2. Add backend event tracking when consent is recorded
-3. Track via middleware after setting consent cookie
-4. Include consent categories in properties
+**Files:**
+- `resources/js/Composables/analytics/usePageTracking.ts`
 
 **Testing:**
-- Verify event recorded when user accepts consent
-- Verify categories array populated correctly
-- Verify initial_page_path matches entry point
+- Verify only 1 page_view event per navigation
+- Check no duplicates within 1 second window
+- Verify same visitor/session/path don't duplicate
 
 ---
 
-#### Task 1.2: `consent_revoked`
+#### Task 1.2: Enhance `consent_granted` with Categories
 
-**Type:** System event (server-side)
+**Current State:** Event exists but properties are `null`
 
-**Trigger:** User revokes analytics consent
-
-**Location:** Backend - when consent is revoked in settings
-
-**Properties:**
-- `categories: string[]` - Consent categories being revoked
+**Change:** Add `categories: string[]` array to properties
 
 **Implementation:**
-1. Find consent revocation endpoint
-2. Record event before clearing consent cookie
-3. Stop all event tracking after revocation
-4. Clear analytics session ID from storage
+1. Find where `consent_granted` event is created
+2. Extract consent categories from cookie banner
+3. Store as array: `["analytics", "marketing"]` or similar
+4. DO NOT store `initial_page_path` (already in `page_path` field)
+
+**Files:**
+- Backend: Consent tracking middleware/controller
+- `tests/` - Verify categories populated
 
 **Testing:**
-- Verify event recorded when consent revoked
-- Verify no further events tracked after revocation
-- Verify consent state persisted correctly
+- Verify categories array populated
+- Verify common categories tracked
 
 ---
 
-#### Task 1.3: `session_start`
+### Priority 2: Enhancement & Property Fixes
+
+#### Task 2.1: Rename `consent_denied` → `consent_revoked`
+
+**Current State:** Event exists as `consent_denied`
+
+**Change:** Rename to match Event Catalog
+
+**Implementation:**
+1. Update event name when tracking consent denial
+2. Update ANALYTICS-EVENTS.md documentation
+
+**Files:**
+- Consent tracking code
+- ANALYTICS-EVENTS.md
+
+**Testing:**
+- Verify old name removed, new name used
+
+---
+
+#### Task 2.2: Enhance `prompt_started` Properties
+
+**Current State:** Has `has_personality_type: boolean`
+
+**Better State:** `personality_type: string | null` (more informative)
+
+**Change:** Store actual personality type, not just boolean
+
+**Implementation:**
+1. Modify `prompt_started` event creation
+2. Store `personality_type: string` (e.g., "INTJ") or `null` if not set
+3. **Drop** `has_personality_type` boolean
+
+**Benefits:**
+- More useful for analysis
+- Removes need for separate `personality_applied` event
+- Allows immediate personality → prompt correlation
+
+**Files:**
+- `app/Http/Controllers/PromptBuilderController.php` (line 197)
+- Tests
+
+**Testing:**
+- Verify personality_type stored correctly
+- Verify null when no personality
+
+---
+
+### Priority 3: New Event Implementations
+
+#### Task 3.1: Implement `session_start` Event
 
 **Type:** System event (server-side)
 
 **Trigger:** Analytics session begins (post-consent)
 
-**Location:** Middleware - after consent confirmed
+**Location:** Middleware or session initialization
 
 **Properties:**
-- `entry_page: string` - Initial page URL
-- `referrer?: string` - HTTP referrer (optional)
+- `referrer?: string` - HTTP referrer (use dedicated field, not properties)
 
 **Implementation:**
-1. Modify SessionProcessorService to emit event
-2. Fire after consent confirmed and session ID generated
-3. Track once per session
-4. Include referrer from request headers
+1. Create event after session ID generated
+2. Fire once per session
+3. Track via middleware after consent confirmed
+4. Store referrer in `referrer` field (not properties)
+
+**Files:**
+- Middleware for session tracking
+- `tests/Feature/` for session_start tests
 
 **Testing:**
-- Verify one session_start per analytics session
-- Verify entry_page correct
-- Verify referrer captured when available
+- One session_start per analytics session
+- Referrer captured when available
+- No duplicates
 
 ---
 
-#### Task 1.4: `page_view`
+#### Task 3.2: Implement `client_error` Event
 
-**Type:** Engagement event (frontend)
+**Type:** System event (frontend)
 
-**Trigger:** User views a page (on initial load + navigation)
+**Trigger:** Uncaught client-side error
 
-**Location:** Frontend - route/page component lifecycle
+**Location:** Frontend error handler / Vue error boundary
 
 **Properties:**
-- `path: string` - Current page path (e.g., "/gb/prompt-builder")
-- `title?: string` - Page title (optional)
-- `referrer?: string` - Referrer from previous page (optional)
+- `error_type: string` - e.g., "ReferenceError", "TypeError"
+- `message: string` - Error message
+- `stack?: string` - Stack trace (optional)
 
 **Implementation:**
-1. Create Inertia middleware to track page views
-2. Fire on initial render + page navigation
-3. Use router.before hooks to capture navigation
-4. Get referrer from document.referrer
-5. Deduplicate consecutive identical page_view events
+1. Create global error handler
+2. Track `window.onerror` events
+3. Debounce same errors (prevent flooding)
+4. Filter out intentional 404s, etc.
+
+**Files:**
+- `resources/js/plugins/errorHandler.ts` (or similar)
+- Tests
 
 **Testing:**
-- Verify page_view on initial load
-- Verify page_view on navigation
-- Verify no duplicate events on same page
-- Verify path/title correct
+- Errors captured
+- Debouncing works
+- Stack traces included when available
 
 ---
 
-### Phase 2: Subscription Events (Medium Priority)
-
-#### Task 2.1: `pricing_page_viewed`
-
-**Type:** Funnel event (frontend)
-
-**Trigger:** User navigates to pricing page
-
-**Location:** `resources/js/Pages/Pricing.vue` (or equivalent)
-
-**Properties:**
-- None in catalog, but could add:
-  - `country: string` - Country code from URL
-  - `currency: string` - Currency displayed
-
-**Implementation:**
-1. Add event tracking in Pricing page component
-2. Fire once on mount
-3. Include locale context
-
-**Testing:**
-- Verify event fired on pricing page load
-- Verify only one event per page visit
-- Verify country/currency populated
-
----
-
-### Phase 3: Prompt Builder Events (Medium Priority)
-
-#### Task 3.1: `task_entered`
-
-**Type:** Engagement event (frontend)
-
-**Trigger:** User enters/modifies task description (not submission)
-
-**Location:** `resources/js/Components/Features/PromptBuilder/` (task input component)
-
-**Properties:**
-- `prompt_run_id: uuid` - The prompt run ID
-- `task_length: int` - Character length of task description
-
-**Implementation:**
-1. Add event on task input component (debounced, ~1s after last keystroke)
-2. Track only on first entry + when length changes significantly
-3. Fire before prompt_started
-4. Include task length for analysis
-
-**Testing:**
-- Verify event fires when user starts typing task
-- Verify task_length accurate
-- Verify fired before form submission
-
----
-
-#### Task 3.2: `personality_applied`
-
-**Type:** Engagement event (frontend)
-
-**Trigger:** Personality assessment applied to current prompt run
-
-**Location:** `resources/js/Pages/PromptBuilder/Show.vue` (personality application)
-
-**Properties:**
-- `prompt_run_id: uuid` - The prompt run ID
-- `personality_type: string` - Applied personality type (e.g., "INTJ")
-
-**Implementation:**
-1. Track when personality is applied/selected
-2. Fire once per prompt run
-3. Distinguish from initial assessment (might be same event)
-4. Include personality type
-
-**Testing:**
-- Verify event fired when personality applied
-- Verify personality_type correct
-- Verify fires at correct point in flow
-
----
-
-#### Task 3.3: `prompt_generated`
-
-**Type:** Engagement event (frontend)
-
-**Trigger:** Final prompt generated by workflow 2
-
-**Location:** `resources/js/Pages/PromptBuilder/Show.vue` (after workflow 2 completion)
-
-**Properties:**
-- `prompt_run_id: uuid` - The prompt run ID
-- `framework: string` - Framework used
-- `prompt_length: int` - Character length of generated prompt
-
-**Implementation:**
-1. Fire after workflow 2 completes
-2. Separate from prompt_completed (which is when user accepts it)
-3. Include framework and length
-4. Could differentiate from prompt_completed by user action
-
-**Testing:**
-- Verify event fires when prompt first generated
-- Verify before prompt_completed event
-- Verify framework and length correct
-
----
-
-#### Task 3.4: `prompt_abandoned`
+#### Task 3.3: Implement `prompt_abandoned` Event (Optional)
 
 **Type:** Engagement event (frontend)
 
 **Trigger:** User leaves prompt builder without completing
 
-**Location:** `resources/js/Pages/PromptBuilder/Show.vue` (page unload or navigation away)
+**Challenge:** Detecting abandonment reliably (beforeunload unreliable on mobile)
 
-**Properties:**
-- `prompt_run_id: uuid` - The prompt run ID
-- `stage: string` - Where they abandoned (e.g., "questions", "framework_selection", "generated")
-- `time_spent_ms: int` - Time spent in prompt builder
+**Alternative Approach:**
+- Could calculate from analytics: `prompt_started` without corresponding `prompt_completed`
+- Better than real-time event tracking which is unreliable
 
-**Implementation:**
-1. Track beforeUnload or route guard
-2. Calculate time spent since prompt_started
-3. Determine current stage based on prompt_run state
-4. Only track if not completed
-5. Fire on window.onbeforeunload
+**Decision:** **Skip for now** - calculate from event correlation instead
 
-**Testing:**
-- Verify event fires when navigating away without completion
-- Verify stage accurate
-- Verify time_spent_ms reasonable
-- Verify not fired if prompt_completed
+**Files:** None (calculate from existing events)
 
 ---
 
-### Phase 4: Error Events (Medium Priority)
+## ANALYTICS-EVENTS.md Updates Required
 
-#### Task 4.1: `workflow_failed`
+### Remove/Update Sections
+1. Remove: `task_entered` section
+2. Remove: `personality_applied` section
+3. Remove: `prompt_generated` section
+4. Update: `pricing_page_viewed` section → move to "Can be derived" section
+5. Remove: Error Events section (workflow_failed, client_error from "missing")
+6. Update: Implementation Status phases
 
-**Type:** System event (server-side)
+### Add New Content
+1. Add explicit warning about page_view triplication bug
+2. Add notes about consent_granted categories enhancement
+3. Add session_start section (planned)
+4. Add client_error section (planned)
+5. Add table showing which catalog events are covered by dedicated tables
 
-**Trigger:** n8n workflow fails at any stage
-
-**Location:** Backend - n8n webhook receiver or workflow tracker
-
-**Properties:**
-- `prompt_run_id: uuid` - The prompt run ID
-- `workflow_stage: int` - Stage that failed (0, 1, or 2)
-- `error_code: string` - Error code from n8n
-
-**Implementation:**
-1. Track in n8n webhook receiver
-2. When workflow returns error status
-3. Extract error code from n8n response
-4. Include workflow stage
-5. Could add error_message for debugging
-
-**Testing:**
-- Verify event fires on workflow error
-- Verify error_code from n8n included
-- Verify workflow_stage correct
+### Update Coverage Summary
+- Previously: 12 missing events
+- Now: 3 worth implementing + 1 critical bug fix + 2 enhancements
+- Total simplified from 12 down to 3 new + 3 fixes/enhancements
 
 ---
 
-#### Task 4.2: `client_error`
+## Success Criteria
 
-**Type:** System event (frontend)
+✅ **Bug Fix:**
+- page_view events reduce from 3x to 1x per page
 
-**Trigger:** Client-side error occurs (uncaught exception)
+✅ **Enhancements:**
+- consent_granted has categories array
+- prompt_started has personality_type instead of boolean
+- consent_denied renamed to consent_revoked
 
-**Location:** Frontend - error boundary / global error handler
+✅ **New Events:**
+- session_start implemented and tested
+- client_error implemented and tested
+- Both fire at correct times with valid properties
 
-**Properties:**
-- `error_type: string` - Type of error (e.g., "ReferenceError", "TypeError")
-- `message: string` - Error message
-- `stack?: string` - Stack trace (optional, for dev)
+✅ **Documentation:**
+- ANALYTICS-EVENTS.md reflects revised scope
+- Redundant events removed from plan
+- Implementation notes clear and complete
 
-**Implementation:**
-1. Create global error handler (Vue error boundary)
-2. Track window.onerror events
-3. Include error type, message, and optional stack
-4. Debounce to avoid flooding with same errors
-5. Only track for non-404, non-intentional errors
-
-**Testing:**
-- Verify error events captured
-- Verify error_type and message populated
-- Verify debouncing works
-- Verify stack trace included when available
-
----
-
-### Phase 5: Experiment Events (Low Priority)
-
-#### Task 5.1: `experiment_exposure`
-
-**Type:** Exposure event (frontend or backend)
-
-**Trigger:** Variant rendered to user
-
-**Location:** Backend or Frontend - wherever experiment logic lives
-
-**Properties:**
-- `experiment_slug: string` - Experiment identifier (e.g., "registration_cta_copy_v1")
-- `variant_slug: string` - Variant identifier (e.g., "get_started_free", "create_first_prompt")
-- `component?: string` - Component name where exposed (optional)
-
-**Implementation:**
-1. Integrate with experimentation framework
-2. Fire whenever variant is assigned/rendered
-3. Include experiment and variant slugs
-4. Optional: include component name for debugging
-5. Could be auto-tracked or explicit
-
-**Testing:**
-- Verify event fires when variant shown
-- Verify experiment and variant slugs correct
-- Verify one event per exposure
-- Verify deduplicated on page reload
+✅ **Data Quality:**
+- No duplicate events
+- Properties use dedicated fields (page_path, referrer) not properties
+- All tests passing
+- No performance impact
 
 ---
 
 ## Implementation Order
 
-1. **Week 1:** Lifecycle events (consent_granted, consent_revoked, session_start)
-2. **Week 1:** Page view event (critical for all analysis)
-3. **Week 2:** Pricing page event
-4. **Week 2:** Prompt builder events (task_entered, personality_applied)
-5. **Week 3:** Prompt completion events (prompt_generated, prompt_abandoned)
-6. **Week 3:** Error events (workflow_failed, client_error)
-7. **Week 4:** Experiment exposure event
+1. **Day 1:** Fix page_view triplication bug (critical)
+2. **Day 1:** Enhance consent_granted with categories
+3. **Day 1:** Rename consent_denied → consent_revoked
+4. **Day 2:** Enhance prompt_started with personality_type
+5. **Day 2:** Implement session_start event
+6. **Day 2:** Implement client_error event
+7. **Day 3:** Update ANALYTICS-EVENTS.md
+8. **Day 3:** Testing & validation
 
 ---
 
-## ANALYTICS-EVENTS.md Updates
+## Files Modified
 
-Once implemented, ANALYTICS-EVENTS.md should be updated to:
-
-1. Add all 12 missing events with full documentation
-2. Move `experiment_exposure` from "Future Enhancements" to implemented section
-3. Update status indicators:
-   - ✅ IMPLEMENTED (for all events once complete)
-   - ⚠️ NEW only for recently added events
-4. Add implementation status for each event
-5. Update Phase completion status
-6. Add SQL queries for analyzing new events
-
----
-
-## Testing & Validation
-
-### Test Coverage
-- Unit tests for event creation
-- Feature tests for event ingestion
-- E2E tests for complete user flows
-- Analytics dashboard verification
-
-### Monitoring
-- Alert if event rate drops significantly
-- Monitor queue job failures
-- Check for missing event_ids (duplicates)
-- Validate event properties populated correctly
-
-### SQL Validation Queries
-
-```sql
--- Check consent flow
-SELECT name, COUNT(*) as count FROM analytics_events
-WHERE name IN ('consent_granted', 'consent_revoked')
-GROUP BY name;
-
--- Check page view volume
-SELECT DATE(occurred_at) as date, COUNT(*) as page_views
-FROM analytics_events
-WHERE name = 'page_view'
-GROUP BY DATE(occurred_at)
-ORDER BY date DESC;
-
--- Check prompt abandonment
-SELECT COUNT(*) as abandoned
-FROM analytics_events
-WHERE name = 'prompt_abandoned'
-  AND DATE(occurred_at) > NOW() - INTERVAL '7 days';
-
--- Check error events
-SELECT name, COUNT(*) as count
-FROM analytics_events
-WHERE name IN ('workflow_failed', 'client_error')
-GROUP BY name;
-```
+| File | Change | Lines |
+|------|--------|-------|
+| `resources/js/Composables/analytics/usePageTracking.ts` | Fix triplication bug | ~20 |
+| `app/Http/Controllers/PromptBuilderController.php` | Enhance properties | ~5 |
+| Consent middleware/controller | Enhance consent_granted | ~10 |
+| `resources/js/plugins/errorHandler.ts` | New client_error handler | ~50 |
+| Session middleware | New session_start event | ~20 |
+| `docs/ANALYTICS-EVENTS.md` | Update documentation | ~100 |
+| Tests | Add/update tests | ~150 |
 
 ---
 
@@ -467,29 +311,17 @@ GROUP BY name;
 
 | Risk | Mitigation |
 |------|-----------|
-| High event volume from page_view | Deduplicate consecutive identical events, sample if needed |
-| Abandoned prompts hard to identify | Use workflow_stage or UI state to determine stage |
-| Client errors flood queue | Debounce same error, sample stack traces |
-| Consent_revoked stops tracking | Clear session ID, stop all tracking immediately |
-| Experiment exposure timing | Fire before rendering variant, not after |
-
----
-
-## Success Criteria
-
-- ✅ All 12 missing events implemented
-- ✅ Events firing at correct times with valid properties
-- ✅ No duplicate events in database
-- ✅ Event properties match Event Catalog schema
-- ✅ ANALYTICS-EVENTS.md updated with all events
-- ✅ Tests passing (unit + feature + E2E)
-- ✅ Analytics dashboard shows correct volumes
-- ✅ No performance impact from new tracking
+| Removing events breaks analysis | Only removing events that are redundant or non-functional |
+| Page_view fix causes regression | Comprehensive testing on different navigation scenarios |
+| Property changes break existing queries | Property names remain same, just enhanced with more data |
+| Client_error floods database | Implement debouncing from start, sample large traces |
+| Session_start timing issues | Test with and without consent, verify single firing |
 
 ---
 
 ## References
 
 - Event Catalog: `docs/unified-analytics-experimentation-architecture.md` (lines 1092-1154)
-- Current Documentation: `docs/ANALYTICS-EVENTS.md`
-- Implementation Examples: `app/Http/Controllers/Auth/`, `tests/Feature/AnalyticsEventsControllerTest.php`
+- Current Events Docs: `docs/ANALYTICS-EVENTS.md`
+- Tracking Implementation: `resources/js/Composables/analytics/usePageTracking.ts`
+- Event Model: `app/Models/AnalyticsEvent.php`

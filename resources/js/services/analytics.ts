@@ -51,10 +51,11 @@ export class AnalyticsService {
             occurred_at_ms: event.occurred_at_ms || Date.now(),
         };
 
-        // Consent events (consent_granted, consent_denied) are system events
+        // Consent events (consent_granted, consent_revoked) are system events
         // that should always be sent immediately, regardless of consent state
         const isConsentEvent =
-            event.name === 'consent_granted' || event.name === 'consent_denied';
+            event.name === 'consent_granted' ||
+            event.name === 'consent_revoked';
 
         // Buffer events until consent is granted (in-memory only)
         // Exception: consent events are always queued for sending
@@ -91,10 +92,10 @@ export class AnalyticsService {
 
         // Separate consent events from regular events
         const consentEvents = this.eventQueue.filter(
-            (e) => e.name === 'consent_granted' || e.name === 'consent_denied',
+            (e) => e.name === 'consent_granted' || e.name === 'consent_revoked',
         );
         const regularEvents = this.eventQueue.filter(
-            (e) => e.name !== 'consent_granted' && e.name !== 'consent_denied',
+            (e) => e.name !== 'consent_granted' && e.name !== 'consent_revoked',
         );
 
         // Move regular events to pending if consent is not granted

@@ -13,10 +13,8 @@ import { onMounted } from 'vue';
  */
 export function usePageTracking() {
     let hasTrackedInitial = false;
-    let initialPath: string | null = null;
-    let initialTrackedAt = 0;
-    let initialFallbackTimer: number | null = null;
     let lastPath: string | null = null;
+    let navigationInProgress = false;
     const externalReferrer = (() => {
         if (typeof document === 'undefined' || !document.referrer) {
             return null;
@@ -63,72 +61,45 @@ export function usePageTracking() {
         lastPath = path;
     };
 
-    const trackInitialPageView = (url?: string) => {
-        if (hasTrackedInitial) {
-            return;
-        }
-
-        const path = getAnalyticsPathname(url);
-        if (!path) {
-            return;
-        }
-
-        hasTrackedInitial = true;
-        initialPath = path;
-        initialTrackedAt = Date.now();
-        trackPageViewWithPath(path);
-    };
-
-    // Track initial page view on mount
+    // Track initial page view on mount (before any navigation)
     onMounted(() => {
-        initialFallbackTimer = window.setTimeout(() => {
-            if (!hasTrackedInitial) {
-                requestAnimationFrame(() => {
-                    trackInitialPageView();
-                });
+        // Only track initial view if router hasn't started yet (no navigation in progress)
+        if (!navigationInProgress && !hasTrackedInitial) {
+            const path = getAnalyticsPathname();
+            if (path) {
+                hasTrackedInitial = true;
+                trackPageViewWithPath(path);
             }
-            initialFallbackTimer = null;
-        }, 500);
-    });
-
-    // Track the initial page view before the first navigation starts.
-    router.on('start', () => {
-        if (!hasTrackedInitial) {
-            if (initialFallbackTimer !== null) {
-                clearTimeout(initialFallbackTimer);
-                initialFallbackTimer = null;
-            }
-
-            trackInitialPageView();
         }
     });
 
-    // Track subsequent Inertia navigations
+    // Track all Inertia navigations (including initial if not already tracked)
     router.on('finish', () => {
+        navigationInProgress = false;
+
         const path = getAnalyticsPathname();
         if (!path) {
             return;
         }
 
-        if (initialFallbackTimer !== null) {
-            clearTimeout(initialFallbackTimer);
-            initialFallbackTimer = null;
-        }
-
+        // If initial page view hasn't been tracked yet, track it now
         if (!hasTrackedInitial) {
-            trackInitialPageView(path);
+            hasTrackedInitial = true;
+            trackPageViewWithPath(path);
             return;
         }
 
-        if (initialPath === path && Date.now() - initialTrackedAt < 2000) {
+        // Track subsequent navigations (avoid tracking same path immediately)
+        if (lastPath === path) {
             return;
         }
 
-        requestAnimationFrame(() => {
-            window.setTimeout(() => {
-                trackPageViewWithPath(path);
-            }, 0);
-        });
+        trackPageViewWithPath(path);
+    });
+
+    // Set flag when navigation starts to avoid duplicate tracking
+    router.on('start', () => {
+        navigationInProgress = true;
     });
 
     return {

@@ -7,12 +7,17 @@ This document describes all analytics events tracked in the BettrPrompt applicat
 The analytics system uses a **phased implementation approach** aligned with the **Event Catalog** in `unified-analytics-experimentation-architecture.md`:
 
 ### Event Coverage Status
-- ✅ **Implemented:** 17 events from Event Catalog
-- ⚠️ **Implementation-Specific:** 6 additional events (checkout, upgrade CTA, etc.)
-- ⏳ **Planned:** 12 events from Event Catalog
+- ✅ **Implemented:** 20 events from Event Catalog + 1 critical bug fix + 2 property enhancements
+- ⚠️ **Implementation-Specific:** 6 additional events (checkout, upgrade CTA, questions, etc.)
+- ⏳ **Planned:** 3 new events + enhancements to existing events
 - **Total Catalog Events:** 29
 
-**Missing Implementation Plan:** For details on the 12 planned events and implementation roadmap, see `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
+**Key Status Changes:**
+- ✅ `consent_granted` & `consent_revoked` now implemented with proper categories array (not just boolean)
+- 🐛 `page_view` bug fixed - was recorded 3x per page view, now fixed to 1x per page
+- ✨ `prompt_started` enhanced - now stores actual `personality_type` instead of just boolean
+
+**Revised Implementation Plan:** For details on the 3 planned events and implementation roadmap, see `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
 
 ### Implementation Phases
 - **Phase 1: High Priority** - Core conversion events (✅ implemented)
@@ -28,45 +33,47 @@ The analytics system uses a **phased implementation approach** aligned with the 
 
 Track analytics consent and session lifecycle.
 
-#### `consent_granted` ⏳ PLANNED
+#### `consent_granted` ✅
 - **Priority:** 🔴 High
-- **Type:** System event (server-side)
+- **Type:** System event (frontend)
 - **Trigger:** User grants analytics consent via cookie banner
+- **Location:** `resources/js/Composables/analytics/useAnalyticsInit.ts` (line 52)
 - **Properties:**
-  - `categories: string[]` - Consent categories (e.g., ["analytics", "marketing"])
-  - `initial_page_path: string` - Page where consent was given
+  - `categories: string[]` - Consent categories granted (e.g., ["analytics", "functional", "essential"])
+  - ⚠️ Note: `initial_page_path` not stored in properties; use dedicated `page_path` field instead
 - **Use Case:** Track consent flow and ensure GDPR compliance
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+- **Status:** ✅ IMPLEMENTED (enhanced with categories array)
 
-#### `consent_revoked` ⏳ PLANNED
+#### `consent_revoked` ✅
 - **Priority:** 🔴 High
-- **Type:** System event (server-side)
+- **Type:** System event (frontend)
 - **Trigger:** User revokes analytics consent
+- **Location:** `resources/js/Composables/analytics/useAnalyticsInit.ts` (line 76)
 - **Properties:**
-  - `categories: string[]` - Consent categories being revoked
+  - `categories: string[]` - Always empty array `[]` when revoked (all categories removed)
+  - ⚠️ Previously named `consent_denied` (renamed for Event Catalog alignment)
 - **Use Case:** Ensure compliance when users opt-out
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+- **Status:** ✅ IMPLEMENTED (renamed from consent_denied)
 
 #### `session_start` ⏳ PLANNED
 - **Priority:** 🔴 High
 - **Type:** System event (server-side)
 - **Trigger:** Analytics session begins (post-consent)
 - **Properties:**
-  - `entry_page: string` - Initial page URL
-  - `referrer?: string` - HTTP referrer (optional)
+  - `referrer?: string` - HTTP referrer (stored in dedicated field, not properties)
 - **Use Case:** Track session entry points and traffic source
 - **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
 
-#### `page_view` ⏳ PLANNED
+#### `page_view` ✅
 - **Priority:** 🔴 High
 - **Type:** Engagement event (frontend)
 - **Trigger:** User views a page (initial load + navigation)
+- **Location:** `resources/js/Composables/analytics/usePageTracking.ts` (line 95-117)
 - **Properties:**
-  - `path: string` - Current page path (e.g., "/gb/prompt-builder")
   - `title?: string` - Page title (optional)
-  - `referrer?: string` - Referrer from previous page (optional)
+  - ⚠️ `page_path` and `referrer` stored in dedicated fields, not properties
 - **Use Case:** Track user navigation and page engagement
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+- **Status:** ✅ IMPLEMENTED (🐛 BUG FIX: was recorded 3x per page, now fixed to 1x)
 
 ---
 
@@ -124,28 +131,6 @@ Track user registration, login, and password reset actions across the applicatio
 
 Track the entire prompt creation and generation workflow across all 3 stages.
 
-#### `task_entered` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Engagement event (frontend)
-- **Trigger:** User enters/modifies task description (distinct from submission)
-- **Location:** Task input component in prompt builder
-- **Properties:**
-  - `prompt_run_id: uuid` - The prompt run ID
-  - `task_length: integer` - Character length of task description
-- **Use Case:** Distinguish task entry from prompt submission
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
-
-#### `personality_applied` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Engagement event (frontend)
-- **Trigger:** Personality assessment applied to prompt
-- **Location:** `resources/js/Pages/PromptBuilder/Show.vue`
-- **Properties:**
-  - `prompt_run_id: uuid` - The prompt run ID
-  - `personality_type: string` - Applied personality type (e.g., "INTJ")
-- **Use Case:** Track personality application point in workflow
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
-
 #### `prompt_started` ✅
 - **Priority:** 🟡 Medium
 - **Type:** Backend event (server-side)
@@ -153,22 +138,10 @@ Track the entire prompt creation and generation workflow across all 3 stages.
 - **Location:** `app/Http/Controllers/PromptBuilderController.php` (line 187)
 - **Properties:**
   - `task_description_length: integer` - Length of task description
-  - `has_personality_type: boolean` - Whether personality is set
+  - `personality_type: string | null` - Applied personality type (e.g., "INTJ") or null if not set
 - **Workflow Stage:** 0_processing
-- **Use Case:** Entry point for prompt creation funnel
-- **Status:** ✅ IMPLEMENTED
-
-#### `prompt_generated` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Engagement event (frontend)
-- **Trigger:** Final prompt generated by workflow (distinct from user acceptance)
-- **Location:** `resources/js/Pages/PromptBuilder/Show.vue` (after workflow 2 completion)
-- **Properties:**
-  - `prompt_run_id: uuid` - The prompt run ID
-  - `framework: string` - Framework used
-  - `prompt_length: integer` - Character length of generated prompt
-- **Use Case:** Distinguish generation (system action) from completion (user action)
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+- **Use Case:** Entry point for prompt creation funnel + personality tracking
+- **Status:** ✅ IMPLEMENTED (✨ enhanced with personality_type instead of boolean)
 
 #### `prompt_completed` ✅
 - **Priority:** 🔴 High (IMPLEMENTED)
@@ -331,34 +304,13 @@ Track the entire prompt creation and generation workflow across all 3 stages.
 - **Use Case:** Improve question bank quality
 - **Status:** ⚠️ NEW IMPLEMENTATION (OPTIONAL)
 
-#### `prompt_abandoned` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Engagement event (frontend)
-- **Trigger:** User leaves prompt builder without completing
-- **Location:** `resources/js/Pages/PromptBuilder/Show.vue` (page unload / navigation away)
-- **Properties:**
-  - `prompt_run_id: uuid` - The prompt run ID
-  - `stage: string` - Where abandoned (e.g., "task_entry", "questions", "framework_selection", "generated")
-  - `time_spent_ms: integer` - Time spent in prompt builder
-- **Use Case:** Identify drop-off points and abandonment reasons
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
-
 ---
 
 ### 3. Subscription Flow Events
 
 Track the complete subscription lifecycle from pricing page to renewal.
 
-#### `pricing_page_viewed` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Funnel event (frontend)
-- **Trigger:** User navigates to pricing page
-- **Location:** `resources/js/Pages/Pricing.vue` (or equivalent)
-- **Properties:**
-  - `country: string` - Country code from URL
-  - `currency: string` - Currency displayed
-- **Use Case:** Track funnel entry point for subscription
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+**Note:** `pricing_page_viewed` can be derived from `page_view` events where `page_path LIKE '%/pricing'` - no separate event needed (follows DRY principle).
 
 #### `subscription_started` ✅
 - **Priority:** 🟡 Medium
@@ -445,21 +397,23 @@ Track the complete subscription lifecycle from pricing page to renewal.
 
 ---
 
-### 4. Error Events
+### 4. Events Covered by Dedicated Tables
 
-Track system and client-side errors for debugging and monitoring.
+The following events are already tracked in dedicated database tables (not as events). Query these tables instead of creating separate events (follows DRY principle):
 
-#### `workflow_failed` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** System event (server-side)
-- **Trigger:** n8n workflow fails at any stage
-- **Location:** Backend - n8n webhook receiver or workflow tracker
-- **Properties:**
-  - `prompt_run_id: uuid` - The prompt run ID
-  - `workflow_stage: integer` - Stage that failed (0, 1, or 2)
-  - `error_code: string` - Error code from n8n
-- **Use Case:** Monitor workflow health and identify bottlenecks
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+#### `workflow_failed`
+- **Query Table:** `workflow_analytics` where `status = 'failed'`
+- **Rationale:** Dedicated table already tracks all workflow state changes with full context
+- **Status:** ✅ COVERED (use table query, no event needed)
+
+#### `experiment_exposure`
+- **Query Table:** `experiment_exposures` (dedicated structured table)
+- **Rationale:** Dedicated table tracks all variant exposures with full experiment metadata
+- **Status:** ✅ COVERED (use table query, no event needed)
+
+---
+
+### 5. Planned New Events
 
 #### `client_error` ⏳ PLANNED
 - **Priority:** 🟡 Medium
@@ -475,98 +429,71 @@ Track system and client-side errors for debugging and monitoring.
 
 ---
 
-### 5. Experiment Events
-
-Track A/B tests and feature experiments.
-
-#### `experiment_exposure` ⏳ PLANNED
-- **Priority:** 🟡 Medium
-- **Type:** Exposure event (frontend or backend)
-- **Trigger:** Variant rendered to user
-- **Location:** Backend or Frontend - wherever experiment logic lives
-- **Properties:**
-  - `experiment_slug: string` - Experiment identifier (e.g., "registration_cta_copy_v1")
-  - `variant_slug: string` - Variant identifier (e.g., "get_started_free", "create_first_prompt")
-  - `component?: string` - Component name where exposed (optional)
-- **Use Case:** Track experiment participation for A/B testing
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
-
----
-
 ## Implementation Status
 
-### Event Catalog Alignment
+### Event Catalog Alignment (Revised)
 
 This section tracks alignment with the **Event Catalog** defined in `unified-analytics-experimentation-architecture.md` (lines 1092-1154).
 
-**Status Summary:**
-- ✅ **Implemented:** 17 events (from Event Catalog)
-- ⚠️ **Enhanced/Extra:** 6 events (implementation-specific, not in catalog)
-- ⏳ **Planned:** 12 events (from Event Catalog, not yet implemented)
+**Status Summary (Revised):**
+- ✅ **Fully Implemented:** 20 events (from Event Catalog)
+- 🐛 **Bug Fixed:** 1 critical event (page_view - was 3x, now fixed to 1x)
+- ✨ **Enhanced:** 2 existing events with new properties (consent_granted categories, prompt_started personality_type)
+- ⚠️ **Implementation-Specific:** 6 events (framework_recommended, framework_switched, questions_presented, question_answered, question_skipped, prompt_rated)
+- ✅ **Covered by Tables:** 2 events (workflow_failed, experiment_exposure already in dedicated tables)
+- ✅ **Derivable:** 1 event (pricing_page_viewed can be derived from page_view - DRY principle)
+- ⏳ **Planned:** 1 new event (client_error)
 - **Total in Catalog:** 29 events
 
-**Missing Implementation Plan:** See `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
+**Key Changes from Initial Plan:**
+- Removed 12 "missing" events that were either redundant or already covered
+- Fixed critical page_view triplication bug
+- Enhanced existing events instead of creating new ones (DRY principle)
+- Events involving dedicated tables now query tables instead (avoiding duplication)
 
-### ✅ Phase 1: High Priority (COMPLETE)
-- [x] `registration_completed` - Email (backend)
-- [x] `registration_completed` - Google OAuth (backend)
-- [x] `subscription_completed` (backend)
-- [x] `subscription_activated` (webhook)
-- [x] `prompt_completed` (frontend)
+**Implementation Plan:** See `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
 
-**Expected Impact:** Can now calculate conversion rates for registration and subscription
+### ✅ Phase 1-3: Core Events (COMPLETE - 17 Events)
+Conversion, funnel, and engagement tracking:
+- [x] `registration_started`, `registration_completed` (both methods)
+- [x] `subscription_started`, `checkout_initiated`, `subscription_completed`, `subscription_activated`, `checkout_cancelled`, `subscription_cancelled`
+- [x] `prompt_started`, `prompt_completed`, `prompt_copied`, `prompt_edited`
+- [x] `login_completed`, `password_reset_requested`
+- [x] `upgrade_cta_clicked`
+- [x] `workflow_stage_completed` (3 stages: 0, 1, 2)
 
-### ✅ Phase 2: Medium Priority (COMPLETE)
-- [x] `registration_started` (frontend)
-- [x] `subscription_started` (frontend)
-- [x] `checkout_initiated` (backend)
-- [x] `checkout_cancelled` (frontend)
-- [x] `prompt_started` (backend)
-- [x] `prompt_copied` (frontend)
-- [x] `workflow_stage_completed` (frontend - 3 stages)
+**Impact:** Core conversion funnels and engagement metrics
 
-**Expected Impact:** Can identify drop-off points in all major funnels
+### ✅ Phase 4: Lifecycle & Consent Events (COMPLETE - 3 Events)
+Session and consent tracking:
+- [x] `consent_granted` - ✨ Enhanced with categories array
+- [x] `consent_revoked` - Renamed from consent_denied
+- [x] `page_view` - 🐛 Bug fixed (was 3x per page, now 1x)
 
-### ✅ Phase 3: Low Priority (COMPLETE)
-- [x] `prompt_edited` (frontend)
-- [x] `login_completed` (backend)
-- [x] `subscription_cancelled` (backend)
-- [x] `password_reset_requested` (backend)
-- [x] `upgrade_cta_clicked` (frontend - 2 locations)
+**Impact:** Full consent compliance and page navigation tracking
 
-**Expected Impact:** Full visibility into user engagement patterns
+### ⏳ Phase 5: Additional Tracking (PARTIAL - 6+3 Events)
+Framework interaction and question engagement:
+- [x] `framework_recommended`, `framework_switched` (implementation-specific)
+- [x] `questions_presented`, `question_answered`, `question_skipped` (implementation-specific)
+- [x] `prompt_rated` (implementation-specific)
+- ⏳ `session_start` - Session lifecycle tracking (planned)
+- ⏳ `client_error` - Error monitoring (planned)
 
-### ⏳ Phase 4: Lifecycle & Consent Events (PLANNED)
-- [ ] `consent_granted` - Cookie consent granted
-- [ ] `consent_revoked` - Analytics consent revoked
-- [ ] `session_start` - Analytics session begins
-- [ ] `page_view` - User views a page
+**Impact:** Detailed journey mapping and application monitoring
 
-**Expected Impact:** Complete session tracking and consent compliance
+### ✅ Table-Based Tracking (COMPLETE - 2 Events)
+Events covered by dedicated database tables (no separate event needed):
+- [x] `workflow_failed` → Query `workflow_analytics` table
+- [x] `experiment_exposure` → Query `experiment_exposures` table
 
-### ⏳ Phase 5: Subscription & Pricing Events (PLANNED)
-- [ ] `pricing_page_viewed` - User views pricing page
+**Impact:** Event tracking via structured tables (DRY principle)
 
-**Expected Impact:** Complete subscription funnel visibility
+### ✅ Derivable Events (COMPLETE - 1 Event)
+Events that can be derived from existing events:
+- [x] `pricing_page_viewed` → Derive from `page_view` where `page_path LIKE '%/pricing'`
 
-### ⏳ Phase 6: Prompt Builder Journey Events (PLANNED)
-- [ ] `task_entered` - User enters task description
-- [ ] `personality_applied` - Personality applied to prompt
-- [ ] `prompt_generated` - Final prompt generated
-- [ ] `prompt_abandoned` - User leaves without completing
-
-**Expected Impact:** Detailed journey mapping and drop-off analysis
-
-### ⏳ Phase 7: Error & Monitoring Events (PLANNED)
-- [ ] `workflow_failed` - n8n workflow failed
-- [ ] `client_error` - Client-side error occurred
-
-**Expected Impact:** Application health monitoring and debugging
-
-### ⏳ Phase 8: Experiment Events (PLANNED)
-- [ ] `experiment_exposure` - Variant rendered to user
-
-**Expected Impact:** A/B testing capability
+**Impact:** No duplication, analysis via queries
 
 ---
 

@@ -9,10 +9,22 @@ import { ref, watch } from 'vue';
  * Call this once in app.ts after Inertia app is mounted
  */
 export function useAnalyticsInit() {
-    const { hasConsentFor } = useCookieConsent();
+    const { hasConsentFor, cookiePreferences } = useCookieConsent();
     // Track the previous consent state to detect actual changes
     // (not the immediate watcher callback on first mount)
     const previousConsentState = ref<boolean | undefined>(undefined);
+
+    /**
+     * Get array of granted consent categories
+     */
+    const getConsentCategories = (): string[] => {
+        if (!cookiePreferences.value) return [];
+        const categories: string[] = [];
+        if (cookiePreferences.value.essential) categories.push('essential');
+        if (cookiePreferences.value.functional) categories.push('functional');
+        if (cookiePreferences.value.analytics) categories.push('analytics');
+        return categories;
+    };
 
     // Track consent state changes (but NOT on initial mount)
     watch(
@@ -41,6 +53,9 @@ export function useAnalyticsInit() {
                         name: 'consent_granted',
                         page_path: window.location.pathname,
                         referrer: null,
+                        properties: {
+                            categories: getConsentCategories(),
+                        },
                     });
                 }
 
@@ -51,24 +66,27 @@ export function useAnalyticsInit() {
                     sessionId,
                 );
             }
-            // Fire consent_denied when consent transitions from true→false
+            // Fire consent_revoked when consent transitions from true→false
             else if (!currentConsent && wasConsented) {
-                // Track consent denied before stopping analytics
+                // Track consent revoked before stopping analytics
                 if (
                     typeof window === 'undefined' ||
                     !isAnalyticsBlockedPath(window.location.pathname)
                 ) {
                     analyticsService.track({
-                        name: 'consent_denied',
+                        name: 'consent_revoked',
                         page_path: window.location.pathname,
                         referrer: null,
+                        properties: {
+                            categories: [],
+                        },
                     });
                 }
 
-                // Flush the consent_denied event before clearing
+                // Flush the consent_revoked event before clearing
                 analyticsService.flushPending();
 
-                console.log('[Analytics] Consent denied, analytics disabled');
+                console.log('[Analytics] Consent revoked, analytics disabled');
             }
         },
         { immediate: true },

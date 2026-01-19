@@ -208,7 +208,7 @@ class PromptBuilderController extends Controller
                 'device_type' => $context['device_type'],
                 'properties' => [
                     'task_description_length' => strlen($validated['task_description']),
-                    'has_personality_type' => $personalityType !== null,
+                    'personality_type' => $personalityType,
                 ],
             ]);
 
