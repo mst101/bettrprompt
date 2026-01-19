@@ -6,21 +6,21 @@ This document describes all analytics events tracked in the BettrPrompt applicat
 
 The analytics system uses a **phased implementation approach** aligned with the **Event Catalog** in `unified-analytics-experimentation-architecture.md`:
 
-### Event Coverage Status
-- ✅ **Implemented:** 20 events from Event Catalog + 1 critical bug fix + 2 property enhancements
+### Event Coverage Status (Complete)
+- ✅ **Implemented:** 21 events from Event Catalog + 1 critical bug fix + 2 property enhancements
 - ⚠️ **Implementation-Specific:** 6 additional events (framework, questions, ratings)
-- ✅ **Covered by Existing:** 3 events via tables or derivation (workflow_failed, experiment_exposure, session_start)
+- ✅ **Covered by Tables:** 3 events via dedicated tables (workflow_failed, experiment_exposure, session_start)
 - ✅ **Derivable from Events:** 2 events (pricing_page_viewed from page_view, prompt_abandoned from event correlation)
-- ⏳ **Planned:** 1 new event (client_error - error tracking)
-- **Total Catalog Events:** 29
+- **Total Catalog Events:** 29 - **100% ACCOUNTED FOR**
 
 **Key Achievements:**
 - ✅ `consent_granted` & `consent_revoked` implemented with proper categories array
 - 🐛 `page_view` bug fixed - was recorded 3x per page, now 1x per page
 - ✨ `prompt_started` enhanced with actual `personality_type` instead of boolean
+- 🚨 `client_error` implemented - captures uncaught JS errors, promise rejections, Vue errors with deduplication
 - 🎯 Eliminated redundancy: Using tables and derivation instead of duplicate events (DRY principle)
 
-**Revised Implementation Plan:** See `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
+**Implementation Complete:** All 29 Event Catalog events are now implemented, enhanced, or accounted for via alternative tracking methods.
 
 ### Implementation Phases
 - **Phase 1: High Priority** - Core conversion events (✅ implemented)
@@ -410,17 +410,23 @@ The following events are already tracked in dedicated database tables (not as ev
 
 ### 5. Planned New Events
 
-#### `client_error` ⏳ PLANNED
+#### `client_error` ✅
 - **Priority:** 🟡 Medium
 - **Type:** System event (frontend)
 - **Trigger:** Client-side error occurs (uncaught exception)
-- **Location:** Frontend - error boundary / global error handler
+- **Location:** `resources/js/Plugins/errorTrackingPlugin.ts`
 - **Properties:**
-  - `error_type: string` - Type of error (e.g., "ReferenceError", "TypeError")
+  - `error_type: string` - Type of error (e.g., "ReferenceError", "TypeError", "SyntaxError")
   - `message: string` - Error message
-  - `stack?: string` - Stack trace (optional, for dev)
+  - `stack?: string` - Stack trace (optional, truncated at 2000 chars)
+- **Filtering:** Automatically excludes ChunkLoadError, AbortError, NetworkError, ResizeObserver, NotFound
+- **Deduplication:** 5-second debounce window to prevent error flooding
+- **Captures From:**
+  - Uncaught JavaScript errors (window.onerror)
+  - Unhandled promise rejections
+  - Vue component errors
 - **Use Case:** Monitor application stability and debug client-side issues
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
+- **Status:** ✅ IMPLEMENTED
 
 ---
 
@@ -430,15 +436,14 @@ The following events are already tracked in dedicated database tables (not as ev
 
 This section tracks alignment with the **Event Catalog** defined in `unified-analytics-experimentation-architecture.md` (lines 1092-1154).
 
-**Status Summary (Revised):**
-- ✅ **Fully Implemented:** 20 events (from Event Catalog)
+**Status Summary (Final):**
+- ✅ **Fully Implemented:** 21 events (from Event Catalog)
 - 🐛 **Bug Fixed:** 1 critical event (page_view - was 3x, now fixed to 1x)
 - ✨ **Enhanced:** 2 existing events with new properties (consent_granted categories, prompt_started personality_type)
 - ⚠️ **Implementation-Specific:** 6 events (framework_recommended, framework_switched, questions_presented, question_answered, question_skipped, prompt_rated)
 - ✅ **Query-Based (No Events):** 3 events (workflow_failed, experiment_exposure via tables, session_start via analytics_sessions)
-- ✅ **Derivable:** 1 event (pricing_page_viewed from page_view - DRY principle)
-- ⏳ **Planned:** 1 new event (client_error - error tracking)
-- **Total in Catalog:** 29 events
+- ✅ **Derivable:** 2 events (pricing_page_viewed, prompt_abandoned - DRY principle)
+- **Total in Catalog:** 29 events - **100% ACCOUNTED FOR**
 
 **Key Changes from Initial Plan:**
 - Removed 12 "missing" events that were either redundant or already covered
@@ -467,14 +472,14 @@ Session and consent tracking:
 
 **Impact:** Full consent compliance and page navigation tracking
 
-### ⏳ Phase 5: Additional Tracking (COMPLETE - 6 Events, PLANNED - 1 Event)
-Framework interaction and question engagement:
+### ✅ Phase 5: Additional Tracking (COMPLETE - 7 Events)
+Framework interaction, question engagement, and error monitoring:
 - [x] `framework_recommended`, `framework_switched` (implementation-specific)
 - [x] `questions_presented`, `question_answered`, `question_skipped` (implementation-specific)
 - [x] `prompt_rated` (implementation-specific)
-- ⏳ `client_error` - Error monitoring (planned for Phase 6)
+- [x] `client_error` - Error monitoring (captures uncaught JS errors, promise rejections, Vue errors)
 
-**Impact:** Detailed journey mapping and application monitoring
+**Impact:** Detailed journey mapping, application monitoring, and error tracking
 
 ### ✅ Query-Based Tracking (COMPLETE - 3 Events)
 Events covered by existing database tables (no separate event needed):
