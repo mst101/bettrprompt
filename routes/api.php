@@ -408,6 +408,11 @@ Route::prefix('test')->middleware(VerifyE2eTestAuth::class)->group(function () {
     Route::post('/create-visitor-with-completed-prompt-for-edit', [AnalyticsTestController::class, 'createVisitorWithCompletedPromptForEdit']);
     Route::post('/create-visitor-prompt-run-2-completed', [AnalyticsTestController::class, 'createVisitorPromptRun2Completed']);
 
+    // User management for testing
+    // Intentionally NOT using auth middleware - this is a test-only endpoint
+    // that's already protected by VerifyE2eTestAuth header validation
+    Route::post('/user/update-prompts', [\App\Http\Controllers\Test\UserTestController::class, 'updatePrompts']);
+
     // Mock Scenario Management
     Route::post('set-mock-scenario', function (Request $request) {
         $scenario = $request->input('scenario', 'success');

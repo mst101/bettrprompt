@@ -128,6 +128,7 @@ Route::prefix('{country}')
         Route::get('/prompt-builder', [PromptBuilderController::class, 'index'])
             ->name('prompt-builder.index');
         Route::post('/prompt-builder/analyse', [PromptBuilderController::class, 'preAnalyse'])
+            ->middleware(['prompt.limit', 'prompt.track'])
             ->name('prompt-builder.pre-analyse');
         Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
             [PromptBuilderController::class, 'analyse'])
@@ -149,12 +150,15 @@ Route::prefix('{country}')
             ->name('prompt-builder.generate');
         Route::post('/prompt-builder/{parentPromptRun}/create-child-from-task',
             [PromptBuilderController::class, 'createChild'])
+            ->middleware(['auth', 'prompt.limit', 'prompt.track'])
             ->name('prompt-builder.create-child-from-task');
         Route::post('/prompt-builder/{parentPromptRun}/create-child-from-answers',
             [PromptBuilderController::class, 'createChildFromAnswers'])
+            ->middleware(['auth', 'prompt.limit', 'prompt.track'])
             ->name('prompt-builder.create-child-from-answers');
         Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
             [PromptBuilderController::class, 'switchFramework'])
+            ->middleware(['auth', 'prompt.limit', 'prompt.track'])
             ->name('prompt-builder.create-child-with-framework');
         Route::delete('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'destroy'])
             ->name('prompt-builder.destroy');

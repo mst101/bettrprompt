@@ -17,7 +17,15 @@ class ShareSubscriptionStatus
     public function handle(Request $request, Closure $next): Response
     {
         if ($user = $request->user()) {
-            Inertia::share('subscription', fn () => $user->getSubscriptionStatus());
+            $subscription = $user->getSubscriptionStatus();
+            Inertia::share('subscription', fn () => $subscription);
+            // Debug: log the subscription for test users
+            if ($user->email === 'test@example.com') {
+                \Illuminate\Support\Facades\Log::debug('[TEST] ShareSubscriptionStatus', [
+                    'user_id' => $user->id,
+                    'subscription' => $subscription,
+                ]);
+            }
         }
 
         return $next($request);

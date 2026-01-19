@@ -2,6 +2,7 @@
 import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import UpgradePromptModal from '@/Components/Common/UpgradePromptModal.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
 import LocationPromptModal from '@/Components/Features/PromptBuilder/Forms/LocationPromptModal.vue';
 import PersonalityTypePrompt from '@/Components/Features/PromptBuilder/Forms/PersonalityTypePrompt.vue';
@@ -65,6 +66,10 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+// Get subscription from both possible locations - page level (middleware) or nested under user (resource)
+const subscription = computed(() => {
+    return page.props.subscription || user.value?.subscription || {};
+});
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');
 const { t } = useI18n({ useScope: 'global' });
@@ -80,6 +85,14 @@ const hasPersonalityType = computed(() => {
     }
     // Visitors check props passed from controller
     return !!props.visitorPersonalityType;
+});
+
+const showLowPromptsWarning = computed(() => {
+    return (
+        subscription.value.isFree &&
+        subscription.value.promptsRemaining > 0 &&
+        subscription.value.promptsRemaining <= 2
+    );
 });
 
 const taskDescriptionFormRef = ref<InstanceType<
@@ -98,12 +111,28 @@ const form = useForm({
 });
 
 const submissionError = ref<string | null>(null);
+const showUpgradeModal = ref(false);
+const limitErrorData = ref<{
+    promptsUsed: number;
+    promptLimit: number;
+    daysUntilReset: number;
+} | null>(null);
 
 const submit = () => {
     submissionError.value = null;
     form.post(countryRoute('prompt-builder.pre-analyse'), {
-        onError: () => {
-            submissionError.value = t('promptBuilder.errors.submitFailed');
+        onError: (errors) => {
+            // Check if it's a 403 prompt limit error
+            if (errors && 'promptLimit' in errors && 'promptsUsed' in errors) {
+                limitErrorData.value = {
+                    promptsUsed: errors.promptsUsed as number,
+                    promptLimit: errors.promptLimit as number,
+                    daysUntilReset: (errors.daysUntilReset as number) || 0,
+                };
+                showUpgradeModal.value = true;
+            } else {
+                submissionError.value = t('promptBuilder.errors.submitFailed');
+            }
         },
     });
 };
@@ -361,6 +390,63 @@ const handleSubmit = () => {
                 @login="openLoginModal"
             />
 
+            <!-- Low Prompts Warning Banner -->
+            <div
+                v-if="showLowPromptsWarning"
+                class="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4"
+                data-testid="low-prompts-warning"
+            >
+                <div class="flex items-start">
+                    <svg
+                        class="mt-0.5 h-5 w-5 text-amber-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-sm font-medium text-amber-900">
+                            {{
+                                $tc(
+                                    'promptBuilder.lowPromptsWarning.title',
+                                    subscription.promptsRemaining,
+                                    {
+                                        count: subscription.promptsRemaining,
+                                    },
+                                )
+                            }}
+                        </h3>
+                        <p class="mt-1 text-sm text-amber-700">
+                            {{
+                                $tc(
+                                    'promptBuilder.lowPromptsWarning.description',
+                                    subscription.daysUntilReset,
+                                    {
+                                        days: subscription.daysUntilReset,
+                                    },
+                                )
+                            }}
+                        </p>
+                        <div class="mt-3">
+                            <a
+                                :href="countryRoute('pricing')"
+                                class="text-sm font-medium text-amber-900 underline hover:text-amber-800"
+                            >
+                                {{
+                                    $t(
+                                        'promptBuilder.lowPromptsWarning.upgradeLink',
+                                    )
+                                }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <TaskDescriptionForm
                 v-else
                 ref="taskDescriptionFormRef"
@@ -386,6 +472,11 @@ const handleSubmit = () => {
             @close="showLocationPrompt = false"
             @continue="handleLocationContinue"
             @updated="handleLocationUpdated"
+        />
+
+        <UpgradePromptModal
+            :show="showUpgradeModal"
+            @close="showUpgradeModal = false"
         />
     </ContainerPage>
 </template>

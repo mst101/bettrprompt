@@ -72,7 +72,7 @@ return [
     */
 
     'free_tier' => [
-        'monthly_prompt_limit' => env('FREE_TIER_PROMPT_LIMIT', 10),
+        'monthly_prompt_limit' => env('FREE_TIER_PROMPT_LIMIT', 5),
     ],
 
     /*

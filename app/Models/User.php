@@ -542,6 +542,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the number of days until the monthly prompt count resets.
+     */
+    public function getDaysUntilPromptReset(): int
+    {
+        if (! $this->prompt_count_reset_at) {
+            return 0;
+        }
+
+        $resetDate = $this->prompt_count_reset_at->copy()->addMonth();
+
+        return max(0, now()->diffInDays($resetDate, false));
+    }
+
+    /**
      * Check if user can create a prompt
      */
     public function canCreatePrompt(): bool
@@ -595,6 +609,7 @@ class User extends Authenticatable
             'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),
             'subscriptionEndsAt' => $this->subscription_ends_at?->toIso8601String(),
             'onGracePeriod' => $this->subscription('default')?->onGracePeriod() ?? false,
+            'daysUntilReset' => $this->getDaysUntilPromptReset(),
         ];
     }
 

@@ -33,17 +33,17 @@ describe('Subscription Feature Tests', function () {
         it('free user can create prompts within limit', function () {
             $user = User::factory()->create([
                 'subscription_tier' => 'free',
-                'monthly_prompt_count' => 5,
+                'monthly_prompt_count' => 2,
             ]);
 
-            expect($user->getPromptsRemaining())->toBe(5);
+            expect($user->getPromptsRemaining())->toBe(3);
             expect($user->canCreatePrompt())->toBeTrue();
         });
 
         it('free user at limit cannot create more prompts', function () {
             $user = User::factory()->create([
                 'subscription_tier' => 'free',
-                'monthly_prompt_count' => 10,
+                'monthly_prompt_count' => 5,
             ]);
 
             expect($user->getPromptsRemaining())->toBe(0);
@@ -75,6 +75,41 @@ describe('Subscription Feature Tests', function () {
         });
     });
 
+    describe('Prompt Reset', function () {
+        it('getDaysUntilPromptReset returns correct number of days', function () {
+            $user = User::factory()->create([
+                'monthly_prompt_count' => 1,
+                'prompt_count_reset_at' => now()->subDays(15),
+            ]);
+
+            $days = $user->getDaysUntilPromptReset();
+            // Should reset in approximately 15 days (30 day month - 15 days elapsed)
+            expect($days)->toBeGreaterThanOrEqual(14);
+            expect($days)->toBeLessThanOrEqual(16);
+        });
+
+        it('getDaysUntilPromptReset returns 0 when no reset date set', function () {
+            $user = User::factory()->create([
+                'monthly_prompt_count' => 0,
+                'prompt_count_reset_at' => null,
+            ]);
+
+            expect($user->getDaysUntilPromptReset())->toBe(0);
+        });
+
+        it('getSubscriptionStatus includes daysUntilReset', function () {
+            $user = User::factory()->create([
+                'subscription_tier' => 'free',
+                'monthly_prompt_count' => 1,
+                'prompt_count_reset_at' => now(),
+            ]);
+
+            $status = $user->getSubscriptionStatus();
+            expect($status)->toHaveKey('daysUntilReset');
+            expect($status['daysUntilReset'])->toBeInt();
+        });
+    });
+
     describe('Subscription Status', function () {
         it('returns correct subscription status for free user', function () {
             $user = User::factory()->create([
@@ -87,7 +122,7 @@ describe('Subscription Feature Tests', function () {
             expect($status['tier'])->toBe('free');
             expect($status['isPaid'])->toBeFalse();
             expect($status['isFree'])->toBeTrue();
-            expect($status['promptsRemaining'])->toBe(7);
+            expect($status['promptsRemaining'])->toBe(2);
         });
 
         it('returns correct subscription status for pro user', function () {

@@ -29,6 +29,7 @@ class EnforcePromptLimit
                     'message' => __('messages.subscription.prompt_limit_reached'),
                     'promptsUsed' => $user->monthly_prompt_count,
                     'promptLimit' => config('stripe.free_tier.monthly_prompt_limit'),
+                    'daysUntilReset' => $user->getDaysUntilPromptReset(),
                     'upgradeUrl' => route('pricing'),
                 ], 403);
             }

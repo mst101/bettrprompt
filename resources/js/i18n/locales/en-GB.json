@@ -907,6 +907,11 @@
             "submitFailed": "Failed to submit prompt. Please check your connection and try again.",
             "retryFailed": "Failed to retry generation. Please try again."
         },
+        "lowPromptsWarning": {
+            "title": "You have {count} prompt remaining | You have {count} prompts remaining",
+            "description": "Your free tier resets in {days} day. Upgrade to Pro for unlimited prompts. | Your free tier resets in {days} days. Upgrade to Pro for unlimited prompts.",
+            "upgradeLink": "View pricing"
+        },
         "messages": {
             "preAnalysisSkippedTitle": "Excellent! Your task is clear",
             "preAnalysisSkippedDescription": "Your task description is sufficiently clear for us to proceed directly to the main analysis. We're now selecting the best prompt framework for you."
