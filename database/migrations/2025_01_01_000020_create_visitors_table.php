@@ -61,6 +61,8 @@ return new class extends Migration
             ])->nullable();
             $table->json('trait_percentages')->nullable();
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
+            $table->enum('question_display_mode', ['one-at-a-time', 'show-all'])
+                ->default('one-at-a-time');
 
             // Geolocation data
             $table->string('country_code', 2)->nullable();

@@ -37,6 +37,8 @@ return new class extends Migration
             ])->nullable(); // 32 personality types (16 base × 2 identities: A=Assertive, T=Turbulent)
             $table->json('trait_percentages')->nullable(); // Store trait percentages
             $table->enum('ui_complexity', ['simple', 'advanced'])->default('advanced');
+            $table->enum('question_display_mode', ['one-at-a-time', 'show-all'])
+                ->default('one-at-a-time');
 
             // Geolocation data
             $table->string('country_code', 2)->nullable();
