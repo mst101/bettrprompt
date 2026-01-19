@@ -118,7 +118,7 @@ const submit = () => {
     const currentUrl = page.url || '';
     const isOnPromptBuilder = currentUrl.includes('/prompt-builder');
 
-    form.patch(route(routeName), {
+    form.patch(countryRoute(routeName), {
         preserveScroll: true,
         onSuccess: async () => {
             success(t('profile.personality.notifications.updated'));
@@ -173,7 +173,7 @@ const clearPersonality = async () => {
         const currentUrl = page.url || '';
         const isOnPromptBuilder = currentUrl.includes('/prompt-builder');
 
-        clearForm.patch(route(routeName), {
+        clearForm.patch(countryRoute(routeName), {
             preserveScroll: true,
             onSuccess: () => {
                 personalityBase.value = '';
