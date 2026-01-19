@@ -8,16 +8,19 @@ The analytics system uses a **phased implementation approach** aligned with the 
 
 ### Event Coverage Status
 - ✅ **Implemented:** 20 events from Event Catalog + 1 critical bug fix + 2 property enhancements
-- ⚠️ **Implementation-Specific:** 6 additional events (checkout, upgrade CTA, questions, etc.)
-- ⏳ **Planned:** 3 new events + enhancements to existing events
+- ⚠️ **Implementation-Specific:** 6 additional events (framework, questions, ratings)
+- ✅ **Covered by Existing:** 3 events via tables or derivation (workflow_failed, experiment_exposure, session_start)
+- ✅ **Derivable from Events:** 2 events (pricing_page_viewed from page_view, prompt_abandoned from event correlation)
+- ⏳ **Planned:** 1 new event (client_error - error tracking)
 - **Total Catalog Events:** 29
 
-**Key Status Changes:**
-- ✅ `consent_granted` & `consent_revoked` now implemented with proper categories array (not just boolean)
-- 🐛 `page_view` bug fixed - was recorded 3x per page view, now fixed to 1x per page
-- ✨ `prompt_started` enhanced - now stores actual `personality_type` instead of just boolean
+**Key Achievements:**
+- ✅ `consent_granted` & `consent_revoked` implemented with proper categories array
+- 🐛 `page_view` bug fixed - was recorded 3x per page, now 1x per page
+- ✨ `prompt_started` enhanced with actual `personality_type` instead of boolean
+- 🎯 Eliminated redundancy: Using tables and derivation instead of duplicate events (DRY principle)
 
-**Revised Implementation Plan:** For details on the 3 planned events and implementation roadmap, see `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
+**Revised Implementation Plan:** See `docs/MISSING-EVENTS-IMPLEMENTATION-PLAN.md`
 
 ### Implementation Phases
 - **Phase 1: High Priority** - Core conversion events (✅ implemented)
@@ -55,14 +58,6 @@ Track analytics consent and session lifecycle.
 - **Use Case:** Ensure compliance when users opt-out
 - **Status:** ✅ IMPLEMENTED (renamed from consent_denied)
 
-#### `session_start` ⏳ PLANNED
-- **Priority:** 🔴 High
-- **Type:** System event (server-side)
-- **Trigger:** Analytics session begins (post-consent)
-- **Properties:**
-  - `referrer?: string` - HTTP referrer (stored in dedicated field, not properties)
-- **Use Case:** Track session entry points and traffic source
-- **Status:** ⏳ PLANNED (See MISSING-EVENTS-IMPLEMENTATION-PLAN.md)
 
 #### `page_view` ✅
 - **Priority:** 🔴 High
@@ -440,9 +435,9 @@ This section tracks alignment with the **Event Catalog** defined in `unified-ana
 - 🐛 **Bug Fixed:** 1 critical event (page_view - was 3x, now fixed to 1x)
 - ✨ **Enhanced:** 2 existing events with new properties (consent_granted categories, prompt_started personality_type)
 - ⚠️ **Implementation-Specific:** 6 events (framework_recommended, framework_switched, questions_presented, question_answered, question_skipped, prompt_rated)
-- ✅ **Covered by Tables:** 2 events (workflow_failed, experiment_exposure already in dedicated tables)
-- ✅ **Derivable:** 1 event (pricing_page_viewed can be derived from page_view - DRY principle)
-- ⏳ **Planned:** 1 new event (client_error)
+- ✅ **Query-Based (No Events):** 3 events (workflow_failed, experiment_exposure via tables, session_start via analytics_sessions)
+- ✅ **Derivable:** 1 event (pricing_page_viewed from page_view - DRY principle)
+- ⏳ **Planned:** 1 new event (client_error - error tracking)
 - **Total in Catalog:** 29 events
 
 **Key Changes from Initial Plan:**
@@ -472,26 +467,27 @@ Session and consent tracking:
 
 **Impact:** Full consent compliance and page navigation tracking
 
-### ⏳ Phase 5: Additional Tracking (PARTIAL - 6+3 Events)
+### ⏳ Phase 5: Additional Tracking (COMPLETE - 6 Events, PLANNED - 1 Event)
 Framework interaction and question engagement:
 - [x] `framework_recommended`, `framework_switched` (implementation-specific)
 - [x] `questions_presented`, `question_answered`, `question_skipped` (implementation-specific)
 - [x] `prompt_rated` (implementation-specific)
-- ⏳ `session_start` - Session lifecycle tracking (planned)
-- ⏳ `client_error` - Error monitoring (planned)
+- ⏳ `client_error` - Error monitoring (planned for Phase 6)
 
 **Impact:** Detailed journey mapping and application monitoring
 
-### ✅ Table-Based Tracking (COMPLETE - 2 Events)
-Events covered by dedicated database tables (no separate event needed):
+### ✅ Query-Based Tracking (COMPLETE - 3 Events)
+Events covered by existing database tables (no separate event needed):
 - [x] `workflow_failed` → Query `workflow_analytics` table
 - [x] `experiment_exposure` → Query `experiment_exposures` table
+- [x] `session_start` → Query `analytics_sessions` table
 
 **Impact:** Event tracking via structured tables (DRY principle)
 
-### ✅ Derivable Events (COMPLETE - 1 Event)
+### ✅ Derivable Events (COMPLETE - 2 Events)
 Events that can be derived from existing events:
 - [x] `pricing_page_viewed` → Derive from `page_view` where `page_path LIKE '%/pricing'`
+- [x] `prompt_abandoned` → Calculate from `prompt_started` without corresponding `prompt_completed`
 
 **Impact:** No duplication, analysis via queries
 

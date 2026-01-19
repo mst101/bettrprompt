@@ -35,12 +35,10 @@ Don't need new events; query existing tables instead:
 1. **`workflow_failed`** → Query `workflow_analytics` table where `status = 'failed'`
 2. **`experiment_exposure`** → Query `experiment_exposures` table (dedicated structured table)
 
-### ⏳ Worth Implementing (3 events)
-1. **`session_start`** - Analytics session begins (not yet tracked)
-2. **`client_error`** - Client-side errors (not yet tracked)
-3. **`prompt_abandoned`** - User abandons prompt (optional, if can implement reliably)
+### ⏳ Worth Implementing (1 event)
+1. **`client_error`** - Client-side errors (not yet tracked)
 
-### ❌ Dropped from Plan (7 events)
+### ❌ Dropped from Plan (9 events)
 These are redundant or violate DRY principles:
 
 | Event | Reason | Alternative |
@@ -49,6 +47,8 @@ These are redundant or violate DRY principles:
 | `task_entered` | Redundant | Use `prompt_started` (captures same entry point) |
 | `personality_applied` | Redundant | Enhance `prompt_started` properties instead |
 | `prompt_generated` | Covered by existing event | Use `workflow_stage_completed` where `stage = 2` |
+| `prompt_abandoned` | Unreliable on mobile, better calculated | Derive: prompts with `started` but no `completed` in time window |
+| `session_start` | Redundant with analytics_sessions table | Query `analytics_sessions` table directly (each row = session start) |
 | `subscription_started.source` | Always "pricing_page" (constant) | Remove property, store nowhere if meaningless |
 | Initial page properties in events | Stored in dedicated fields | Use `page_path`, `referrer` fields (not properties) |
 
@@ -152,35 +152,7 @@ These are redundant or violate DRY principles:
 
 ### Priority 3: New Event Implementations
 
-#### Task 3.1: Implement `session_start` Event
-
-**Type:** System event (server-side)
-
-**Trigger:** Analytics session begins (post-consent)
-
-**Location:** Middleware or session initialization
-
-**Properties:**
-- `referrer?: string` - HTTP referrer (use dedicated field, not properties)
-
-**Implementation:**
-1. Create event after session ID generated
-2. Fire once per session
-3. Track via middleware after consent confirmed
-4. Store referrer in `referrer` field (not properties)
-
-**Files:**
-- Middleware for session tracking
-- `tests/Feature/` for session_start tests
-
-**Testing:**
-- One session_start per analytics session
-- Referrer captured when available
-- No duplicates
-
----
-
-#### Task 3.2: Implement `client_error` Event
+#### Task 3.1: Implement `client_error` Event
 
 **Type:** System event (frontend)
 
@@ -207,24 +179,6 @@ These are redundant or violate DRY principles:
 - Errors captured
 - Debouncing works
 - Stack traces included when available
-
----
-
-#### Task 3.3: Implement `prompt_abandoned` Event (Optional)
-
-**Type:** Engagement event (frontend)
-
-**Trigger:** User leaves prompt builder without completing
-
-**Challenge:** Detecting abandonment reliably (beforeunload unreliable on mobile)
-
-**Alternative Approach:**
-- Could calculate from analytics: `prompt_started` without corresponding `prompt_completed`
-- Better than real-time event tracking which is unreliable
-
-**Decision:** **Skip for now** - calculate from event correlation instead
-
-**Files:** None (calculate from existing events)
 
 ---
 
