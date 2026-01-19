@@ -71,6 +71,7 @@ test.describe('Free Tier Prompt Limits', () => {
             {
                 headers: {
                     'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Test-Auth': 'playwright-e2e-tests',
                 },
                 data: {
                     task_description: 'Test task for limit validation',
@@ -128,6 +129,7 @@ test.describe('Free Tier Prompt Limits', () => {
             {
                 headers: {
                     'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Test-Auth': 'playwright-e2e-tests',
                 },
                 data: {
                     task_description: 'Test',
