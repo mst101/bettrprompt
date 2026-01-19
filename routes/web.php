@@ -110,6 +110,7 @@ Route::prefix('{country}')
 
         // Voice transcription endpoint (no authentication required)
         Route::post('/voice-transcription', [VoiceTranscriptionController::class, 'transcribe'])
+            ->name('voice-transcription.transcribe')
             ->middleware('throttle:30,1');
 
         // Visitor preferences (no authentication required)

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { onUnmounted, ref } from 'vue';
 
 export function useAudioRecording() {
@@ -96,6 +97,7 @@ export function useAudioRecording() {
     };
 
     const uploadAndTranscribe = async (audioBlob: Blob): Promise<string> => {
+        const { countryRoute } = useCountryRoute();
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.webm');
 
@@ -117,14 +119,17 @@ export function useAudioRecording() {
         };
 
         try {
-            const response = await fetch('/voice-transcription', {
-                method: 'POST',
-                headers: {
-                    'X-XSRF-TOKEN': getCsrfToken(),
+            const response = await fetch(
+                countryRoute('voice-transcription.transcribe'),
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-XSRF-TOKEN': getCsrfToken(),
+                    },
+                    body: formData,
+                    credentials: 'same-origin',
                 },
-                body: formData,
-                credentials: 'same-origin',
-            });
+            );
 
             if (!response.ok) {
                 throw new Error('Transcription request failed');
