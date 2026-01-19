@@ -10,6 +10,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { useAnalyticsInit } from './Composables/analytics/useAnalyticsInit';
 import { useNotification } from './Composables/ui/useNotification';
 import { createCountryRoutePlugin } from './Plugins/countryRoutePlugin';
+import { createErrorTrackingPlugin } from './Plugins/errorTrackingPlugin';
 import { getCookie } from './Utils/cookies';
 import { i18n, initializeI18n, setLocale, type LocaleCode } from './i18n';
 
@@ -73,6 +74,7 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(i18n)
             .use(createCountryRoutePlugin())
+            .use(createErrorTrackingPlugin())
             .mount(el);
 
         // Identify visitor in Fullstory on initial load
