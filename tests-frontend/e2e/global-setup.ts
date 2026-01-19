@@ -110,34 +110,9 @@ async function globalSetup() {
             // Don't throw - continue anyway as config caching might be disabled
         }
 
-        // IMPORTANT: Restart Laravel dev server to ensure it picks up the new .env file
-        // The running dev server still has the old configuration in memory
-        console.log('🔄 Restarting Laravel dev server...');
-        try {
-            // Stop the running Laravel container
-            execSync('./vendor/bin/sail stop laravel.test', {
-                stdio: 'pipe',
-            });
-            console.log('Stopped Laravel container');
-
-            // Wait a moment for it to fully stop
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-            // Start it again - it will use the new .env file
-            execSync('./vendor/bin/sail up -d laravel.test', {
-                stdio: 'pipe',
-            });
-            console.log('Started Laravel container with new environment');
-
-            // Wait for Laravel to be ready
-            await new Promise((resolve) => setTimeout(resolve, 5000));
-            console.log('✅ Laravel dev server restarted successfully');
-        } catch (error) {
-            console.warn('⚠️  Warning: Failed to restart dev server:', error);
-            console.warn(
-                '   Tests may write to production database. Ensure X-Test-Auth headers are used.',
-            );
-        }
+        // Note: Database isolation is enforced via VerifyE2eTestAuth middleware
+        // which routes requests with X-Test-Auth header to the test database.
+        // Do NOT restart the dev server - it breaks sail composer dev setups.
 
         console.log('📦 Creating test database...');
         // Create the test database if it doesn't exist
