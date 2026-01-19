@@ -76,7 +76,7 @@ class HandleInertiaRequests extends Middleware
                 'previous_answer' => fn () => $request->session()->get('previous_answer'),
             ],
             'visitorHasCompletedPrompts' => $visitorHasCompletedPrompts,
-            'subscription' => fn () => $request->user()?->getSubscriptionStatus(),
+            'subscription' => $request->user()?->getSubscriptionStatus() ?? [],
             'privacy' => fn () => $request->user()?->getPrivacyStatus(),
             'country' => fn () => $country,
             'locale' => fn () => $locale,
