@@ -38,6 +38,7 @@ class BuildDailyAnalyticsAggregates implements ShouldQueue
             ]);
 
             // Dispatch all aggregation jobs
+            BuildAnalyticsDailyStats::dispatch($this->date);
             BuildFrameworkDailyStats::dispatch($this->date);
             BuildQuestionDailyStats::dispatch($this->date);
             BuildWorkflowDailyStats::dispatch($this->date);
