@@ -66,9 +66,9 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
-// Get subscription from both possible locations - page level (middleware) or nested under user (resource)
+// Get subscription from user resource (includes full subscription data)
 const subscription = computed(() => {
-    return page.props.subscription || user.value?.subscription || {};
+    return user.value?.subscription || page.props.subscription || {};
 });
 const openRegisterModal = inject<() => void>('openRegisterModal');
 const openLoginModal = inject<() => void>('openLoginModal');

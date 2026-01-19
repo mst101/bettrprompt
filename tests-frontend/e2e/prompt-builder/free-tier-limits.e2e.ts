@@ -19,6 +19,11 @@ test.describe('Free Tier Prompt Limits', () => {
         await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
+        // Verify page is loaded
+        await expect(
+            authenticatedPage.getByRole('heading', { name: 'Prompt Builder' }),
+        ).toBeVisible();
+
         // Get CSRF token
         const csrfToken = await authenticatedPage.evaluate(() => {
             return (
@@ -48,6 +53,9 @@ test.describe('Free Tier Prompt Limits', () => {
         // Reload page to get fresh state with updated user data
         await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('domcontentloaded');
+
+        // Give Vue time to hydrate after page load
+        await authenticatedPage.waitForTimeout(1000);
 
         // Verify warning banner is visible
         const warningBanner = authenticatedPage.getByTestId(
