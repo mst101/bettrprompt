@@ -26,6 +26,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         identity: number | null;
  *     } | null;
  *     readonly isAdmin: boolean;
+ *     readonly subscription: {
+ *         readonly tier: string;
+ *         readonly isPaid: boolean;
+ *         readonly isPro: boolean;
+ *         readonly isPrivate: boolean;
+ *         readonly isFree: boolean;
+ *         readonly promptsUsed: number;
+ *         readonly promptsRemaining: number;
+ *         readonly promptLimit: number;
+ *         readonly daysUntilReset: number;
+ *         readonly subscriptionEndsAt: string | null;
+ *         readonly onGracePeriod: boolean;
+ *     };
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -48,6 +61,7 @@ class UserResource extends JsonResource
             'personalityType' => $this->personality_type,
             'traitPercentages' => $this->trait_percentages,
             'isAdmin' => $this->is_admin ?? false,
+            'subscription' => $this->getSubscriptionStatus(),
         ];
     }
 }
