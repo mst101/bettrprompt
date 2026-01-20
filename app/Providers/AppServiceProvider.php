@@ -44,7 +44,11 @@ class AppServiceProvider extends ServiceProvider
         Route::model('promptRun', PromptRun::class);
         Route::model('parentPromptRun', PromptRun::class);
         Route::model('question', Question::class);
-        Route::model('visitor', Visitor::class);
+
+        // Explicit binding for Visitor with UUID lookup
+        Route::bind('visitor', function (string $value) {
+            return Visitor::findOrFail($value);
+        });
 
         // Force HTTPS URLs when behind reverse proxy (Caddy)
         if ($this->app->environment('local')) {
