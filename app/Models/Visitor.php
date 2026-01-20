@@ -90,6 +90,14 @@ class Visitor extends Model
     }
 
     /**
+     * Get all sessions for this visitor.
+     */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(AnalyticsSession::class);
+    }
+
+    /**
      * Get the country associated with this visitor.
      */
     public function country(): BelongsTo

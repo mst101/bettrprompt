@@ -85,6 +85,29 @@ class UserController extends Controller
 
         $promptRunsCount = $user->promptRuns()->count();
 
+        // Load visitor data with sessions for session history
+        $user->load([
+            'visitor.sessions' => function ($query) {
+                $query->orderBy('started_at', 'desc')
+                    ->limit(20)
+                    ->with(['events' => function ($q) {
+                        $q->orderBy('occurred_at', 'asc');
+                    }]);
+            },
+        ]);
+
+        // Calculate session statistics if user has a visitor
+        $sessionStats = null;
+        if ($user->visitor) {
+            $allSessions = $user->visitor->sessions()->get();
+            $sessionStats = [
+                'total_sessions' => $allSessions->count(),
+                'total_page_views' => $allSessions->sum('page_count'),
+                'avg_duration' => round($allSessions->avg('duration_seconds') ?? 0),
+                'last_active' => $allSessions->first()?->started_at?->toIso8601String(),
+            ];
+        }
+
         return Inertia::render('Admin/Users/Show', [
             'user' => UserResource::make($user)->resolve(),
             'promptRuns' => PromptRunResource::collection($promptRuns->items())->resolve(),
@@ -105,6 +128,7 @@ class UserController extends Controller
                 'per_page' => $perPage,
             ],
             'promptRunsCount' => $promptRunsCount,
+            'sessionStats' => $sessionStats,
         ]);
     }
 }

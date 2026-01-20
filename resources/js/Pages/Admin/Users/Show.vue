@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SessionListItem from '@/Components/Admin/SessionListItem.vue';
+import StatCard from '@/Components/Admin/StatCard.vue';
 import Card from '@/Components/Base/Card.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
@@ -17,6 +19,13 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+interface SessionStats {
+    total_sessions: number;
+    total_page_views: number;
+    avg_duration: number;
+    last_active: string | null;
+}
+
 interface User {
     id: number;
     name: string;
@@ -24,6 +33,10 @@ interface User {
     personalityType: string | null;
     isAdmin: boolean;
     createdAt: string;
+    visitor?: {
+        id: string;
+        sessions?: unknown[];
+    };
 }
 
 interface Pagination {
@@ -50,6 +63,7 @@ interface Props {
     pagination: Pagination;
     filters: Filters;
     promptRunsCount: number;
+    sessionStats: SessionStats | null;
 }
 
 const props = defineProps<Props>();
@@ -193,6 +207,12 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
 
     // Normal left click - use Inertia navigation
     router.visit(countryRoute('admin.prompt-runs.show', { id: runId }));
+};
+
+const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
 };
 
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
@@ -603,6 +623,82 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                     </div>
                 </div>
             </Card>
+
+            <!-- Session History Section -->
+            <div v-if="props.sessionStats" class="mt-8">
+                <h2 class="mb-4 text-lg font-semibold text-indigo-900">
+                    Session History
+                </h2>
+
+                <!-- Session Stats -->
+                <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard
+                        title="Total Sessions"
+                        :value="props.sessionStats.total_sessions"
+                        icon="chart-line"
+                        icon-colour="blue"
+                    />
+                    <StatCard
+                        title="Page Views"
+                        :value="props.sessionStats.total_page_views"
+                        icon="eye"
+                        icon-colour="green"
+                    />
+                    <StatCard
+                        title="Avg Duration"
+                        :value="formatDuration(props.sessionStats.avg_duration)"
+                        icon="clock"
+                        icon-colour="purple"
+                    />
+                    <StatCard
+                        title="Last Active"
+                        :value="
+                            props.sessionStats.last_active
+                                ? new Date(
+                                      props.sessionStats.last_active,
+                                  ).toLocaleDateString('en-GB', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                  })
+                                : 'Never'
+                        "
+                        icon="calendar-days"
+                        icon-colour="indigo"
+                    />
+                </div>
+
+                <!-- Sessions List -->
+                <div
+                    v-if="
+                        props.user.visitor?.sessions &&
+                        props.user.visitor.sessions.length > 0
+                    "
+                >
+                    <SessionListItem
+                        v-for="session in props.user.visitor.sessions"
+                        :key="session.id"
+                        :session="session"
+                    />
+                    <div class="mt-4 text-center">
+                        <Link
+                            :href="
+                                countryRoute(
+                                    'admin.visitors.show',
+                                    props.user.visitor.id,
+                                )
+                            "
+                            class="text-sm text-indigo-600 hover:text-indigo-900 hover:underline"
+                        >
+                            View all sessions →
+                        </Link>
+                    </div>
+                </div>
+                <Card v-else>
+                    <p class="text-center text-indigo-500">
+                        No sessions recorded for this user
+                    </p>
+                </Card>
+            </div>
         </ContainerPage>
     </AppLayout>
 </template>

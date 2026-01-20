@@ -1321,6 +1321,52 @@
                 }
             }
         },
+        "domain_analytics": {
+            "title": "Domain Analytics",
+            "refresh": "Refresh",
+            "tab_frameworks": "Frameworks",
+            "tab_questions": "Questions",
+            "tab_workflows": "Workflows",
+            "framework": "Framework",
+            "total_recommendations": "Total Recommendations",
+            "acceptance_rate": "Acceptance Rate",
+            "avg_rating": "Avg Rating",
+            "copy_rate": "Copy Rate",
+            "recommended": "Recommended",
+            "chosen": "Chosen",
+            "top_frameworks": "Top Frameworks",
+            "recommendations": "Recommendations",
+            "acceptance": "Acceptance",
+            "question_id": "Question ID",
+            "total_shown": "Total Shown",
+            "answer_rate": "Answer Rate",
+            "skip_rate": "Skip Rate",
+            "avg_time": "Avg Time",
+            "times_shown": "Times Shown",
+            "effectiveness": "Effectiveness",
+            "effective": "Effective",
+            "most_effective": "Most Effective Questions",
+            "needs_improvement": "Questions Needing Improvement",
+            "executions": "Executions",
+            "successful": "Successful",
+            "failed": "Failed",
+            "avg_duration": "Avg Duration",
+            "avg_cost": "Avg Cost",
+            "cost_analysis": "Cost Analysis",
+            "total_cost": "Total Cost",
+            "total_tokens": "Total Tokens",
+            "cost_per_execution": "Cost per Execution",
+            "top_errors": "Top Errors",
+            "no_errors": "No errors recorded",
+            "total_entered": "Total Entered",
+            "total_converted": "Total Converted",
+            "conversion_rate": "Conversion Rate",
+            "date": "Date",
+            "stage": "Stage",
+            "starts": "Starts",
+            "conversions": "Conversions",
+            "current_state": "Current State"
+        },
         "common": {
             "notAvailable": "Not available"
         },
@@ -1369,6 +1415,8 @@
                 "visitors": "Visitors"
             },
             "table": {
+                "taskDescription": "Task Description",
+                "framework": "Framework",
                 "status": "Status",
                 "created": "Created"
             }

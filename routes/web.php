@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\ExperimentsController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\QuestionVariantController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\TrafficAnalyticsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VisitorController as AdminVisitorController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\DebugN8nController;
 use App\Http\Controllers\FeedbackController;
@@ -291,6 +293,13 @@ Route::prefix('{country}')
             Route::get('/domain-analytics', [
                 AdminController::class, 'domainAnalytics',
             ])->name('domain-analytics.index');
+
+            // Visitors
+            Route::get('/visitors', [AdminVisitorController::class, 'index'])->name('visitors.index');
+            Route::get('/visitors/{visitor}', [AdminVisitorController::class, 'show'])->name('visitors.show');
+
+            // Traffic Analytics
+            Route::get('/traffic-analytics', [TrafficAnalyticsController::class, 'index'])->name('traffic-analytics.index');
 
             // Alerts
             Route::get('/alerts', function () {
