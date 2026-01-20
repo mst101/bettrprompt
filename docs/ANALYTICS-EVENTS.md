@@ -64,9 +64,10 @@ Track analytics consent and session lifecycle.
 - **Type:** Engagement event (frontend)
 - **Trigger:** User views a page (initial load + navigation)
 - **Location:** `resources/js/Composables/analytics/usePageTracking.ts` (line 95-117)
-- **Properties:**
-  - `title?: string` - Page title (optional)
-  - ⚠️ `page_path` and `referrer` stored in dedicated fields, not properties
+- **Dedicated Fields:**
+  - `page_path: string` - Uniquely identifies the page
+  - `referrer?: string` - HTTP referrer (from previous page or external source)
+- **Note:** Page titles are *not* stored in properties (DRY principle: derive from `page_path` if needed)
 - **Use Case:** Track user navigation and page engagement
 - **Status:** ✅ IMPLEMENTED (🐛 BUG FIX: was recorded 3x per page, now fixed to 1x)
 

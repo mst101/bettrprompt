@@ -53,9 +53,6 @@ export function usePageTracking() {
             name: 'page_view',
             page_path: path,
             referrer: buildReferrer(),
-            properties: {
-                title: document.title,
-            },
         });
 
         lastPath = path;
