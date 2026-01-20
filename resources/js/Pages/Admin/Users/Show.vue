@@ -199,14 +199,14 @@ const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow Ctrl/Cmd + click to open in new tab
     if (event.ctrlKey || event.metaKey) {
         globalThis.window.open(
-            countryRoute('admin.prompt-runs.show', { id: runId }),
+            countryRoute('admin.prompt-runs.show', { promptRun: runId }),
             '_blank',
         );
         return;
     }
 
     // Normal left click - use Inertia navigation
-    router.visit(countryRoute('admin.prompt-runs.show', { id: runId }));
+    router.visit(countryRoute('admin.prompt-runs.show', { promptRun: runId }));
 };
 
 const formatDuration = (seconds: number): string => {
@@ -218,7 +218,7 @@ const formatDuration = (seconds: number): string => {
 const handleMiddleClick = (event: MouseEvent, runId: number): void => {
     if (event.button === 1) {
         globalThis.window.open(
-            countryRoute('admin.prompt-runs.show', { id: runId }),
+            countryRoute('admin.prompt-runs.show', { promptRun: runId }),
             '_blank',
         );
     }
@@ -387,7 +387,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                         $inertia.visit(
                                             countryRoute(
                                                 'admin.prompt-runs.show',
-                                                { id: run.id },
+                                                { promptRun: run.id },
                                             ),
                                         )
                                     "
