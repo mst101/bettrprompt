@@ -48,6 +48,19 @@ class Kernel extends ConsoleKernel
                 Log::error('Failed to aggregate funnel statistics');
             });
 
+        // Aggregate all analytics daily stats at 1:30 AM UTC
+        // Runs after funnel stats to ensure proper ordering
+        $schedule->command('analytics:build-daily-aggregates')
+            ->daily()
+            ->at('01:30')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                Log::info('Daily analytics aggregates built successfully');
+            })
+            ->onFailure(function () {
+                Log::error('Failed to build daily analytics aggregates');
+            });
+
         // Reset monthly prompt counts for free tier users on 1st of month at 00:00 UTC
         $schedule->command('prompts:reset-monthly-counts')
             ->monthlyOn(1, '00:00')

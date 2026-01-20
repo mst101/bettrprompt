@@ -60,6 +60,20 @@ class AggregateFunnelDailyStats implements ShouldQueue
         $dateStart = $this->aggregationDate->startOfDay();
         $dateEnd = $this->aggregationDate->endOfDay();
 
+        // Check if there's any funnel progress data for this date
+        $hasData = FunnelProgress::where('funnel_id', $funnel->id)
+            ->whereBetween('created_at', [$dateStart, $dateEnd])
+            ->exists();
+
+        if (! $hasData) {
+            Log::info('No funnel progress data for date', [
+                'date' => $this->aggregationDate->toDateString(),
+                'funnel_id' => $funnel->id,
+            ]);
+
+            return;
+        }
+
         foreach ($stages as $stage) {
             $starts = $this->countStageStarts($funnel->id, $stage->order, $dateStart, $dateEnd);
             $conversions = $this->countStageConversions($funnel->id, $stage->order, $dateStart, $dateEnd);
