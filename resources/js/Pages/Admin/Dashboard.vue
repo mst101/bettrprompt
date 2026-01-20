@@ -73,6 +73,102 @@ const formatNumber = (num: number): string => {
             :end-date="dateRange.end"
         />
 
+        <!-- Quick Links -->
+        <div class="mb-6">
+            <h2 class="mb-3 text-lg font-semibold text-indigo-900">
+                Quick Links
+            </h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <!-- Visitors -->
+                <Link :href="countryRoute('admin.visitors.index')">
+                    <Card
+                        class="transition-shadow duration-200 hover:shadow-lg"
+                    >
+                        <div class="flex items-center">
+                            <DynamicIcon
+                                name="eye"
+                                class="h-8 w-8 text-purple-600"
+                            />
+                            <div class="ml-4">
+                                <h3 class="font-semibold text-indigo-900">
+                                    Visitors
+                                </h3>
+                                <p class="text-sm text-indigo-500">
+                                    Search and view session history
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                </Link>
+
+                <!-- Users -->
+                <Link :href="countryRoute('admin.users.index')">
+                    <Card
+                        class="transition-shadow duration-200 hover:shadow-lg"
+                    >
+                        <div class="flex items-center">
+                            <DynamicIcon
+                                name="users"
+                                class="h-8 w-8 text-indigo-600"
+                            />
+                            <div class="ml-4">
+                                <h3 class="font-semibold text-indigo-900">
+                                    Users
+                                </h3>
+                                <p class="text-sm text-indigo-500">
+                                    Manage users and accounts
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                </Link>
+
+                <!-- Traffic Analytics -->
+                <Link :href="countryRoute('admin.traffic-analytics.index')">
+                    <Card
+                        class="transition-shadow duration-200 hover:shadow-lg"
+                    >
+                        <div class="flex items-center">
+                            <DynamicIcon
+                                name="chart-bar"
+                                class="h-8 w-8 text-blue-600"
+                            />
+                            <div class="ml-4">
+                                <h3 class="font-semibold text-indigo-900">
+                                    Traffic Analytics
+                                </h3>
+                                <p class="text-sm text-indigo-500">
+                                    Sources, countries, devices
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                </Link>
+
+                <!-- Domain Analytics -->
+                <Link :href="countryRoute('admin.domain-analytics.index')">
+                    <Card
+                        class="transition-shadow duration-200 hover:shadow-lg"
+                    >
+                        <div class="flex items-center">
+                            <DynamicIcon
+                                name="chart-line"
+                                class="h-8 w-8 text-green-600"
+                            />
+                            <div class="ml-4">
+                                <h3 class="font-semibold text-indigo-900">
+                                    Domain Analytics
+                                </h3>
+                                <p class="text-sm text-indigo-500">
+                                    Frameworks, workflows, funnels
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                </Link>
+            </div>
+        </div>
+
         <!-- Traffic Metrics -->
         <div class="mb-6">
             <h2 class="mb-3 text-lg font-semibold text-indigo-900">
@@ -315,102 +411,6 @@ const formatNumber = (num: number): string => {
                     </table>
                 </div>
             </Card>
-        </div>
-
-        <!-- Quick Links -->
-        <div>
-            <h2 class="mb-3 text-lg font-semibold text-indigo-900">
-                Quick Links
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <!-- Traffic Analytics -->
-                <Link :href="countryRoute('admin.traffic-analytics.index')">
-                    <Card
-                        class="transition-shadow duration-200 hover:shadow-lg"
-                    >
-                        <div class="flex items-center">
-                            <DynamicIcon
-                                name="chart-bar"
-                                class="h-8 w-8 text-blue-600"
-                            />
-                            <div class="ml-4">
-                                <h3 class="font-semibold text-indigo-900">
-                                    Traffic Analytics
-                                </h3>
-                                <p class="text-sm text-indigo-500">
-                                    Sources, countries, devices
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                </Link>
-
-                <!-- Domain Analytics -->
-                <Link :href="countryRoute('admin.domain-analytics.index')">
-                    <Card
-                        class="transition-shadow duration-200 hover:shadow-lg"
-                    >
-                        <div class="flex items-center">
-                            <DynamicIcon
-                                name="chart-line"
-                                class="h-8 w-8 text-green-600"
-                            />
-                            <div class="ml-4">
-                                <h3 class="font-semibold text-indigo-900">
-                                    Domain Analytics
-                                </h3>
-                                <p class="text-sm text-indigo-500">
-                                    Frameworks, workflows, funnels
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                </Link>
-
-                <!-- Visitors -->
-                <Link :href="countryRoute('admin.visitors.index')">
-                    <Card
-                        class="transition-shadow duration-200 hover:shadow-lg"
-                    >
-                        <div class="flex items-center">
-                            <DynamicIcon
-                                name="eye"
-                                class="h-8 w-8 text-purple-600"
-                            />
-                            <div class="ml-4">
-                                <h3 class="font-semibold text-indigo-900">
-                                    Visitors
-                                </h3>
-                                <p class="text-sm text-indigo-500">
-                                    Search and view session history
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                </Link>
-
-                <!-- Users -->
-                <Link :href="countryRoute('admin.users.index')">
-                    <Card
-                        class="transition-shadow duration-200 hover:shadow-lg"
-                    >
-                        <div class="flex items-center">
-                            <DynamicIcon
-                                name="users"
-                                class="h-8 w-8 text-indigo-600"
-                            />
-                            <div class="ml-4">
-                                <h3 class="font-semibold text-indigo-900">
-                                    Users
-                                </h3>
-                                <p class="text-sm text-indigo-500">
-                                    Manage users and accounts
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                </Link>
-            </div>
         </div>
     </ContainerPage>
 </template>
