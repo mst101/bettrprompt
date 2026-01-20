@@ -136,10 +136,9 @@ const truncateId = (id: string): string => {
                                 <Link
                                     v-if="visitor.user"
                                     :href="
-                                        countryRoute(
-                                            'admin.users.show',
-                                            visitor.user.id,
-                                        )
+                                        countryRoute('admin.users.show', {
+                                            user: visitor.user.id,
+                                        })
                                     "
                                     class="text-indigo-600 hover:text-indigo-900 hover:underline"
                                 >

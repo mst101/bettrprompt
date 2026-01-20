@@ -81,7 +81,7 @@ const sortBy = (column: string) => {
     }
 
     router.get(
-        countryRoute('admin.users.show', { id: props.user.id }),
+        countryRoute('admin.users.show', { user: props.user.id }),
         {
             sort_by: column,
             sort_direction: newDirection,
@@ -127,7 +127,7 @@ const changePerPage = () => {
     perPageStorage.value = perPage;
 
     router.get(
-        countryRoute('admin.users.show', { id: props.user.id }),
+        countryRoute('admin.users.show', { user: props.user.id }),
         {
             sort_by: props.filters.sort_by,
             sort_direction: props.filters.sort_direction,
@@ -154,7 +154,7 @@ onMounted(() => {
     const storedPerPage = perPageStorage.value;
     if (storedPerPage !== props.filters.per_page) {
         router.get(
-            countryRoute('admin.users.show', { id: props.user.id }),
+            countryRoute('admin.users.show', { user: props.user.id }),
             {
                 sort_by: props.filters.sort_by,
                 sort_direction: props.filters.sort_direction,
