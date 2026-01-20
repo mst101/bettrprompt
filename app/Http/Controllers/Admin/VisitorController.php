@@ -33,7 +33,21 @@ class VisitorController extends Controller
             ->withQueryString();
 
         return Inertia::render('Admin/Visitors/Index', [
-            'visitors' => $visitors,
+            'visitors' => [
+                'data' => $visitors->items(),
+                'meta' => [
+                    'currentPage' => $visitors->currentPage(),
+                    'lastPage' => $visitors->lastPage(),
+                    'from' => $visitors->firstItem(),
+                    'to' => $visitors->lastItem(),
+                    'perPage' => $visitors->perPage(),
+                    'path' => $visitors->path(),
+                    'total' => $visitors->total(),
+                    'hasMorePages' => $visitors->hasMorePages(),
+                    'nextPageUrl' => $visitors->nextPageUrl(),
+                    'prevPageUrl' => $visitors->previousPageUrl(),
+                ],
+            ],
             'search' => $search,
         ]);
     }

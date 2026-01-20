@@ -5,6 +5,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import Pagination from '@/Components/Common/Pagination.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import type { Paginated } from '@/Types/shared/pagination';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -23,10 +24,7 @@ interface Visitor {
 }
 
 interface Props {
-    visitors: {
-        data: Visitor[];
-        links: Array<{ url: string | null; label: string; active: boolean }>;
-    };
+    visitors: Paginated<Visitor>;
     search: string | null;
 }
 
@@ -195,8 +193,8 @@ const truncateId = (id: string): string => {
         </Card>
 
         <!-- Pagination -->
-        <div v-if="visitors.links.length > 3" class="mt-6">
-            <Pagination :links="visitors.links" />
+        <div v-if="visitors.meta.lastPage > 1" class="mt-6 flex justify-center">
+            <Pagination :meta="visitors.meta" />
         </div>
     </ContainerPage>
 </template>

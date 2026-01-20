@@ -6,6 +6,7 @@ import LinkButton from '@/Components/Base/LinkButton.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import Pagination from '@/Components/Common/Pagination.vue';
 import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { useAlert } from '@/Composables/ui/useAlert';
@@ -578,56 +579,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
 
                         <!-- Navigation -->
                         <div>
-                            <nav
-                                v-if="promptRuns.meta.lastPage > 1"
-                                class="isolate inline-flex -space-x-px rounded-md shadow-xs"
-                                :aria-label="
-                                    $t(
-                                        'promptBuilder.history.pagination.ariaLabel',
-                                    )
-                                "
-                            >
-                                <LinkButton
-                                    v-if="promptRuns.meta.prevPageUrl"
-                                    id="pagination-prev"
-                                    :href="promptRuns.meta.prevPageUrl"
-                                    variant="rounded-left"
-                                    @click="handlePaginationClick('prev')"
-                                >
-                                    {{
-                                        $t(
-                                            'promptBuilder.history.pagination.previous',
-                                        )
-                                    }}
-                                </LinkButton>
-                                <span
-                                    class="relative inline-flex items-center border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700"
-                                >
-                                    {{
-                                        $t(
-                                            'promptBuilder.history.pagination.pageOf',
-                                            {
-                                                current:
-                                                    promptRuns.meta.currentPage,
-                                                total: promptRuns.meta.lastPage,
-                                            },
-                                        )
-                                    }}
-                                </span>
-                                <LinkButton
-                                    v-if="promptRuns.meta.nextPageUrl"
-                                    id="pagination-next"
-                                    :href="promptRuns.meta.nextPageUrl"
-                                    variant="rounded-right"
-                                    @click="handlePaginationClick('next')"
-                                >
-                                    {{
-                                        $t(
-                                            'promptBuilder.history.pagination.next',
-                                        )
-                                    }}
-                                </LinkButton>
-                            </nav>
+                            <Pagination :meta="promptRuns.meta" />
                         </div>
                     </div>
                 </div>

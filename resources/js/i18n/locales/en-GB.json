@@ -41,6 +41,12 @@
             "email": "Please enter a valid email address",
             "minLength": "Must be at least {min} characters",
             "maxLength": "Must be no more than {max} characters"
+        },
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "pageOf": "Page {current} of {total}",
+            "resultsSummary": "Showing {from} to {to} of {total} results"
         }
     },
     "auth": {
