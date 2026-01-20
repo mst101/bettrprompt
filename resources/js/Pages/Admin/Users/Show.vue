@@ -682,10 +682,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                     <div class="mt-4 text-center">
                         <Link
                             :href="
-                                countryRoute(
-                                    'admin.visitors.show',
-                                    props.user.visitor.id,
-                                )
+                                countryRoute('admin.visitors.show', {
+                                    visitor: props.user.visitor.id,
+                                })
                             "
                             class="text-sm text-indigo-600 hover:text-indigo-900 hover:underline"
                         >

@@ -166,10 +166,9 @@ const truncateId = (id: string): string => {
                             <td class="px-6 py-4 text-sm whitespace-nowrap">
                                 <Link
                                     :href="
-                                        countryRoute(
-                                            'admin.visitors.show',
-                                            visitor.id,
-                                        )
+                                        countryRoute('admin.visitors.show', {
+                                            visitor: visitor.id,
+                                        })
                                     "
                                     class="font-medium text-indigo-600 hover:text-indigo-900 hover:underline"
                                     data-testid="view-visitor"
