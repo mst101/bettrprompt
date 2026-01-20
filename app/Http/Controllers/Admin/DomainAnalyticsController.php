@@ -27,19 +27,19 @@ class DomainAnalyticsController
         $frameworks = $stats->map(function ($stat) {
             return [
                 'framework' => $stat->framework,
-                'timesRecommended' => $stat->times_recommended,
-                'timesChosen' => $stat->times_chosen,
-                'acceptanceRate' => $stat->acceptance_rate * 100,
-                'avgRating' => $stat->avg_rating,
-                'copyRate' => $stat->copy_rate * 100,
+                'timesRecommended' => (int) $stat->times_recommended,
+                'timesChosen' => (int) $stat->times_chosen,
+                'acceptanceRate' => (float) ($stat->acceptance_rate * 100),
+                'avgRating' => (float) $stat->avg_rating,
+                'copyRate' => (float) ($stat->copy_rate * 100),
             ];
         })->sortByDesc('acceptanceRate')->values();
 
-        $totalRecommendations = $stats->sum('times_recommended');
-        $totalAccepted = $stats->sum('times_accepted');
-        $avgAcceptance = $totalRecommendations > 0 ? ($totalAccepted / $totalRecommendations) * 100 : 0;
-        $avgRating = $stats->whereNotNull('avg_rating')->avg('avg_rating') ?? 0;
-        $avgCopyRate = $stats->avg('copy_rate') * 100;
+        $totalRecommendations = (int) $stats->sum('times_recommended');
+        $totalAccepted = (int) $stats->sum('times_accepted');
+        $avgAcceptance = $totalRecommendations > 0 ? (float) (($totalAccepted / $totalRecommendations) * 100) : 0.0;
+        $avgRating = (float) ($stats->whereNotNull('avg_rating')->avg('avg_rating') ?? 0);
+        $avgCopyRate = (float) ($stats->avg('copy_rate') * 100);
 
         return response()->json([
             'frameworks' => $frameworks,
@@ -70,23 +70,23 @@ class DomainAnalyticsController
 
             return [
                 'questionId' => $stat->question_id,
-                'timesShown' => $stat->times_shown,
-                'answerRate' => ($stat->answer_rate ?? 0) * 100,
-                'skipRate' => ($stat->skip_rate ?? 0) * 100,
-                'avgTimeMs' => $stat->avg_time_to_answer_ms,
-                'avgResponseLength' => $stat->avg_response_length,
-                'ratingWhenAnswered' => $stat->avg_prompt_rating_when_answered,
-                'ratingWhenSkipped' => $stat->avg_prompt_rating_when_skipped,
+                'timesShown' => (int) $stat->times_shown,
+                'answerRate' => (float) (($stat->answer_rate ?? 0) * 100),
+                'skipRate' => (float) (($stat->skip_rate ?? 0) * 100),
+                'avgTimeMs' => (int) $stat->avg_time_to_answer_ms,
+                'avgResponseLength' => (int) $stat->avg_response_length,
+                'ratingWhenAnswered' => (float) $stat->avg_prompt_rating_when_answered,
+                'ratingWhenSkipped' => (float) $stat->avg_prompt_rating_when_skipped,
                 'isEffective' => $isEffective,
             ];
         })->sortByDesc('timesShown')->values();
 
-        $totalShown = $stats->sum('times_shown');
-        $totalAnswered = $stats->sum('times_answered');
-        $totalSkipped = $stats->sum('times_skipped');
-        $avgAnswerRate = $totalShown > 0 ? ($totalAnswered / $totalShown) * 100 : 0;
-        $avgSkipRate = $totalShown > 0 ? ($totalSkipped / $totalShown) * 100 : 0;
-        $avgTime = $stats->whereNotNull('avg_time_to_answer_ms')->avg('avg_time_to_answer_ms') ?? 0;
+        $totalShown = (int) $stats->sum('times_shown');
+        $totalAnswered = (int) $stats->sum('times_answered');
+        $totalSkipped = (int) $stats->sum('times_skipped');
+        $avgAnswerRate = $totalShown > 0 ? (float) (($totalAnswered / $totalShown) * 100) : 0.0;
+        $avgSkipRate = $totalShown > 0 ? (float) (($totalSkipped / $totalShown) * 100) : 0.0;
+        $avgTime = (float) ($stats->whereNotNull('avg_time_to_answer_ms')->avg('avg_time_to_answer_ms') ?? 0);
 
         return response()->json([
             'questions' => $questions,
@@ -111,21 +111,21 @@ class DomainAnalyticsController
 
         $stages = $stats->map(function ($stat) {
             return [
-                'stage' => $stat->workflow_stage,
-                'totalExecutions' => $stat->total_executions,
-                'successful' => $stat->successful_executions,
-                'failed' => $stat->failed_executions,
-                'successRate' => ($stat->success_rate ?? 0) * 100,
-                'avgDurationMs' => $stat->avg_duration_ms,
-                'avgCostUsd' => $stat->avg_cost_per_execution,
-                'totalCostUsd' => $stat->total_cost_usd,
+                'stage' => (int) $stat->workflow_stage,
+                'totalExecutions' => (int) $stat->total_executions,
+                'successful' => (int) $stat->successful_executions,
+                'failed' => (int) $stat->failed_executions,
+                'successRate' => (float) (($stat->success_rate ?? 0) * 100),
+                'avgDurationMs' => (int) $stat->avg_duration_ms,
+                'avgCostUsd' => (float) $stat->avg_cost_per_execution,
+                'totalCostUsd' => (float) $stat->total_cost_usd,
             ];
         })->sortBy('stage')->values();
 
-        $totalCost = $stats->sum('total_cost_usd');
-        $totalInputTokens = $stats->sum('total_input_tokens');
-        $totalOutputTokens = $stats->sum('total_output_tokens');
-        $totalExecutions = $stats->sum('total_executions');
+        $totalCost = (float) $stats->sum('total_cost_usd');
+        $totalInputTokens = (int) $stats->sum('total_input_tokens');
+        $totalOutputTokens = (int) $stats->sum('total_output_tokens');
+        $totalExecutions = (int) $stats->sum('total_executions');
 
         // Get top errors across all stages
         $topErrors = [];
@@ -134,8 +134,8 @@ class DomainAnalyticsController
                 foreach ($stat->top_errors as $error) {
                     $topErrors[] = [
                         'errorCode' => $error['error_code'],
-                        'count' => $error['count'],
-                        'percentage' => $error['percentage'] ?? 0,
+                        'count' => (int) $error['count'],
+                        'percentage' => (float) ($error['percentage'] ?? 0),
                         'message' => $this->getErrorMessage($error['error_code']),
                     ];
                 }
@@ -152,7 +152,7 @@ class DomainAnalyticsController
             'totalCost' => $totalCost,
             'totalInputTokens' => $totalInputTokens,
             'totalOutputTokens' => $totalOutputTokens,
-            'costPerExecution' => $totalExecutions > 0 ? ($totalCost / $totalExecutions) : 0,
+            'costPerExecution' => (float) ($totalExecutions > 0 ? ($totalCost / $totalExecutions) : 0),
         ]);
     }
 
@@ -185,11 +185,11 @@ class DomainAnalyticsController
             $stageStat = $stats->firstWhere('stage', $stage->order);
 
             $stagesData[] = [
-                'stage' => $stage->order,
+                'stage' => (int) $stage->order,
                 'stageName' => $stage->name,
-                'starts' => $stageStat?->starts ?? 0,
-                'conversions' => $stageStat?->conversions ?? 0,
-                'conversionRate' => $stageStat?->conversion_rate ?? 0,
+                'starts' => (int) ($stageStat?->starts ?? 0),
+                'conversions' => (int) ($stageStat?->conversions ?? 0),
+                'conversionRate' => (float) ($stageStat?->conversion_rate ?? 0),
             ];
         }
 
@@ -197,9 +197,9 @@ class DomainAnalyticsController
         $firstStageStat = $stats->firstWhere('stage', 1);
         $lastStageStat = $stats->where('stage', '>', 1)->last();
 
-        $totalEntered = $firstStageStat?->starts ?? 0;
-        $totalConverted = $lastStageStat?->conversions ?? 0;
-        $overallConversionRate = $totalEntered > 0 ? ($totalConverted / $totalEntered) * 100 : 0;
+        $totalEntered = (int) ($firstStageStat?->starts ?? 0);
+        $totalConverted = (int) ($lastStageStat?->conversions ?? 0);
+        $overallConversionRate = (float) ($totalEntered > 0 ? ($totalConverted / $totalEntered) * 100 : 0);
 
         // Get current state distribution
         $progressData = FunnelProgress::where('funnel_id', $funnel->id)

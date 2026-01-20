@@ -103,7 +103,7 @@ onMounted(() => {
                             }}
                         </p>
                         <p class="mt-2 text-3xl font-bold text-gray-900">
-                            {{ Number(stage.successRate).toFixed(1) }}%
+                            {{ stage.successRate.toFixed(1) }}%
                         </p>
                         <p class="mt-1 text-xs text-gray-500">
                             {{ stage.totalExecutions }}
@@ -148,17 +148,14 @@ onMounted(() => {
                         >
                         <span class="font-medium"
                             >{{
-                                Number(stage.avgDurationMs)?.toFixed(0) ??
-                                'N/A'
+                                stage.avgDurationMs?.toFixed(0) ?? 'N/A'
                             }}ms</span
                         >
                     </div>
                     <div class="flex justify-between">
                         <span>{{ t('admin.domain_analytics.avg_cost') }}:</span>
                         <span class="font-medium"
-                            >${{
-                                Number(stage.avgCostUsd)?.toFixed(4) ?? '0'
-                            }}</span
+                            >${{ stage.avgCostUsd?.toFixed(4) ?? '0' }}</span
                         >
                     </div>
                 </div>
@@ -176,7 +173,7 @@ onMounted(() => {
                         {{ t('admin.domain_analytics.total_cost') }}
                     </p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">
-                        ${{ Number(totalCost).toFixed(2) }}
+                        ${{ totalCost.toFixed(2) }}
                     </p>
                 </div>
                 <div>
@@ -196,7 +193,7 @@ onMounted(() => {
                         {{ t('admin.domain_analytics.cost_per_execution') }}
                     </p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">
-                        ${{ Number(costPerExecution).toFixed(4) }}
+                        ${{ costPerExecution.toFixed(4) }}
                     </p>
                 </div>
             </div>
@@ -224,7 +221,7 @@ onMounted(() => {
                             {{ error.count }}
                         </p>
                         <p class="text-xs text-gray-500">
-                            {{ Number(error.percentage).toFixed(1) }}%
+                            {{ error.percentage.toFixed(1) }}%
                         </p>
                     </div>
                 </div>
