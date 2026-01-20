@@ -561,9 +561,6 @@ Schema::create('analytics_events', function (Blueprint $table) {
     $table->string('page_path', 255)->nullable();
     $table->string('referrer', 500)->nullable();
     $table->string('device_type', 20)->nullable(); // desktop, mobile, tablet
-    $table->string('browser', 50)->nullable();
-    $table->string('os', 50)->nullable();
-    $table->string('country_code', 2)->nullable();
 
     // Prompt context (when applicable)
     $table->foreignId('prompt_run_id')->nullable()->index();
@@ -610,9 +607,6 @@ Schema::create('analytics_sessions', function (Blueprint $table) {
 
     // Device (captured at session start)
     $table->string('device_type', 20)->nullable();
-    $table->string('browser', 50)->nullable();
-    $table->string('os', 50)->nullable();
-    $table->string('country_code', 2)->nullable();
 
     // Outcomes
     $table->boolean('is_bounce')->default(true); // False after 2nd page view
@@ -1095,12 +1089,11 @@ This catalog defines all events to be tracked in v1. Events are grouped by type 
 
 ### Lifecycle Events
 
-| Event Name        | Type       | Description                             | Properties                                            |
-|-------------------|------------|-----------------------------------------|-------------------------------------------------------|
-| `consent_granted` | system     | User grants analytics consent           | `categories: string[]`, `initial_page_path: string`   |
-| `consent_revoked` | system     | User revokes analytics consent          | `categories: string[]`                                |
-| `session_start`   | system     | Analytics session begins (post-consent) | `entry_page: string`, `referrer?: string`             |
-| `page_view`       | engagement | User views a page                       | `path: string`, `title?: string`, `referrer?: string` |
+| Event Name        | Type       | Description                    | Properties            |
+|-------------------|------------|---------------------------------|-----------------------|
+| `consent_granted` | system     | User grants analytics consent   | `categories: string[]` |
+| `consent_revoked` | system     | User revokes analytics consent  | `categories: string[]` |
+| `page_view`       | engagement | User views a page               | —                     |
 
 ### Registration & Auth Events
 
@@ -1124,20 +1117,16 @@ This catalog defines all events to be tracked in v1. Events are grouped by type 
 
 | Event Name              | Type       | Description                    | Properties                                                                                      |
 |-------------------------|------------|--------------------------------|-------------------------------------------------------------------------------------------------|
-| `prompt_started`        | funnel     | User begins prompt builder     | `source: string`, `prompt_run_id: uuid`                                                         |
-| `task_entered`          | engagement | User enters task description   | `prompt_run_id: uuid`, `task_length: int`                                                       |
-| `personality_applied`   | engagement | Personality assessment applied | `prompt_run_id: uuid`, `personality_type: string`                                               |
+| `prompt_started`        | funnel     | User begins prompt builder     | `source: string`, `prompt_run_id: uuid`, `personality_type?: string`                             |
 | `questions_presented`   | engagement | Clarifying questions shown     | `prompt_run_id: uuid`, `question_ids: string[]`, `question_count: int`                          |
 | `question_answered`     | engagement | User answers a question        | `prompt_run_id: uuid`, `question_id: string`, `response_length: int`, `time_ms: int`            |
 | `question_skipped`      | engagement | User skips a question          | `prompt_run_id: uuid`, `question_id: string`                                                    |
 | `framework_recommended` | engagement | Framework recommendation made  | `prompt_run_id: uuid`, `recommended: string`, `scores: object`                                  |
 | `framework_switched`    | engagement | User changes framework         | `prompt_run_id: uuid`, `from: string`, `to: string`                                             |
-| `prompt_generated`      | engagement | Final prompt generated         | `prompt_run_id: uuid`, `framework: string`, `prompt_length: int`                                |
 | `prompt_completed`      | conversion | User accepts final prompt      | `prompt_run_id: uuid`, `framework: string`, `questions_answered: int`, `questions_skipped: int` |
 | `prompt_copied`         | engagement | User copies prompt             | `prompt_run_id: uuid`, `copy_count: int`                                                        |
 | `prompt_edited`         | engagement | User edits generated prompt    | `prompt_run_id: uuid`, `edit_percentage: float`                                                 |
 | `prompt_rated`          | engagement | User rates prompt              | `prompt_run_id: uuid`, `rating: int` (1-5)                                                      |
-| `prompt_abandoned`      | engagement | User leaves without completing | `prompt_run_id: uuid`, `stage: string`, `time_spent_ms: int`                                    |
 
 ### Experiment Events
 
