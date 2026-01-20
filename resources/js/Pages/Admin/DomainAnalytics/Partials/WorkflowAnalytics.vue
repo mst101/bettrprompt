@@ -51,7 +51,18 @@ const loadData = async () => {
         // Fetch from API
         const response = await fetch(
             `/api/admin/domain-analytics/workflows?date=${props.dateRange}`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
+                credentials: 'same-origin',
+            },
         );
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load workflow analytics: HTTP ${response.status}`,
+            );
+        }
         const data = await response.json();
 
         workflowStages.value = data.stages || [];
@@ -92,7 +103,7 @@ onMounted(() => {
                             }}
                         </p>
                         <p class="mt-2 text-3xl font-bold text-gray-900">
-                            {{ stage.successRate.toFixed(1) }}%
+                            {{ Number(stage.successRate).toFixed(1) }}%
                         </p>
                         <p class="mt-1 text-xs text-gray-500">
                             {{ stage.totalExecutions }}
@@ -137,14 +148,17 @@ onMounted(() => {
                         >
                         <span class="font-medium"
                             >{{
-                                stage.avgDurationMs?.toFixed(0) ?? 'N/A'
+                                Number(stage.avgDurationMs)?.toFixed(0) ??
+                                'N/A'
                             }}ms</span
                         >
                     </div>
                     <div class="flex justify-between">
                         <span>{{ t('admin.domain_analytics.avg_cost') }}:</span>
                         <span class="font-medium"
-                            >${{ stage.avgCostUsd?.toFixed(4) ?? '0' }}</span
+                            >${{
+                                Number(stage.avgCostUsd)?.toFixed(4) ?? '0'
+                            }}</span
                         >
                     </div>
                 </div>
@@ -162,7 +176,7 @@ onMounted(() => {
                         {{ t('admin.domain_analytics.total_cost') }}
                     </p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">
-                        ${{ totalCost.toFixed(2) }}
+                        ${{ Number(totalCost).toFixed(2) }}
                     </p>
                 </div>
                 <div>
@@ -182,7 +196,7 @@ onMounted(() => {
                         {{ t('admin.domain_analytics.cost_per_execution') }}
                     </p>
                     <p class="mt-1 text-2xl font-bold text-gray-900">
-                        ${{ costPerExecution.toFixed(4) }}
+                        ${{ Number(costPerExecution).toFixed(4) }}
                     </p>
                 </div>
             </div>
@@ -210,7 +224,7 @@ onMounted(() => {
                             {{ error.count }}
                         </p>
                         <p class="text-xs text-gray-500">
-                            {{ error.percentage.toFixed(1) }}%
+                            {{ Number(error.percentage).toFixed(1) }}%
                         </p>
                     </div>
                 </div>

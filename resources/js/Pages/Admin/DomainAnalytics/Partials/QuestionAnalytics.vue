@@ -39,7 +39,18 @@ const loadData = async () => {
         // Fetch from API
         const response = await fetch(
             `/api/admin/domain-analytics/questions?date=${props.dateRange}`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
+                credentials: 'same-origin',
+            },
         );
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load question analytics: HTTP ${response.status}`,
+            );
+        }
         const data = await response.json();
 
         questions.value = data.questions || [];

@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Enable Sanctum stateful API middleware so session-authenticated requests
+        // to `/api/*` routes (used by the admin UI) don't redirect to `/login`.
+        $middleware->statefulApi();
+
         // Apply SwitchDataCollectionDatabase middleware FIRST (for data collection tests)
         // This must run before UseE2eDatabase so it can take priority
         $middleware->append(\App\Http\Middleware\SwitchDataCollectionDatabase::class);
