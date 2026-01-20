@@ -17,8 +17,12 @@ class AdminController extends Controller
     public function index(Request $request): Response
     {
         // Date range (default: last 30 days)
-        $endDate = $request->input('end_date', now()->endOfDay());
-        $startDate = $request->input('start_date', now()->subDays(29)->startOfDay());
+        $endDate = $request->has('end_date')
+            ? \Carbon\Carbon::parse($request->input('end_date'))->endOfDay()
+            : now()->endOfDay();
+        $startDate = $request->has('start_date')
+            ? \Carbon\Carbon::parse($request->input('start_date'))->startOfDay()
+            : now()->subDays(29)->startOfDay();
 
         // Get metrics from aggregation tables + today's real-time data
         $trafficMetrics = $this->getTrafficMetrics($startDate, $endDate);
