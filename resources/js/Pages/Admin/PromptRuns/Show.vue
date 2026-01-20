@@ -205,6 +205,8 @@ const hasRelatedRuns = computed(
                     v-if="promptRun.alternativeFrameworks"
                     :frameworks="promptRun.alternativeFrameworks as any"
                     :prompt-run-id="promptRun.id"
+                    :prompt-run="promptRun"
+                    :current-framework="promptRun.selectedFramework as any"
                 />
             </div>
 
