@@ -55,7 +55,7 @@ class VisitorController extends Controller
     /**
      * Display the specified visitor with session history
      */
-    public function show(Visitor $visitor): Response
+    public function show(Request $request, string $locale, Visitor $visitor): Response
     {
         $visitor->load([
             'user:id,name,email,created_at,subscription_tier',
