@@ -13,6 +13,14 @@ class Visitor extends Model
     use HasFactory, HasUuids;
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
