@@ -39,6 +39,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         readonly subscriptionEndsAt: string | null;
  *         readonly onGracePeriod: boolean;
  *     };
+ *     readonly visitor?: {
+ *         readonly id: string;
+ *         readonly sessions?: unknown[];
+ *     };
  * }
  * ```
  * The TypeScript interface is generated based on the attributes and relationships defined in this resource.
@@ -62,6 +66,37 @@ class UserResource extends JsonResource
             'traitPercentages' => $this->trait_percentages,
             'isAdmin' => $this->is_admin ?? false,
             'subscription' => $this->getSubscriptionStatus(),
+            'visitor' => $this->whenLoaded('visitor', function () {
+                return [
+                    'id' => $this->visitor->id,
+                    'sessions' => $this->visitor->relationLoaded('sessions')
+                        ? $this->visitor->sessions->map(fn ($session) => [
+                            'id' => $session->id,
+                            'started_at' => $session->started_at?->toIso8601String(),
+                            'ended_at' => $session->ended_at?->toIso8601String(),
+                            'duration_seconds' => $session->duration_seconds,
+                            'page_count' => $session->page_count,
+                            'entry_page' => $session->entry_page,
+                            'exit_page' => $session->exit_page,
+                            'device_type' => $session->device_type,
+                            'utm_source' => $session->utm_source,
+                            'utm_medium' => $session->utm_medium,
+                            'utm_campaign' => $session->utm_campaign,
+                            'is_bounce' => $session->is_bounce,
+                            'converted' => $session->converted,
+                            'events' => $session->relationLoaded('events')
+                                ? $session->events->map(fn ($event) => [
+                                    'event_id' => $event->id,
+                                    'name' => $event->name,
+                                    'page_path' => $event->page_path,
+                                    'occurred_at' => $event->occurred_at?->toIso8601String(),
+                                    'properties' => $event->properties,
+                                ])->toArray()
+                                : null,
+                        ])->toArray()
+                        : null,
+                ];
+            }),
         ];
     }
 }
