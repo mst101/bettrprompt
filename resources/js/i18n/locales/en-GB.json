@@ -1380,7 +1380,8 @@
             "previous": "Previous",
             "next": "Next",
             "show": "Show",
-            "perPage": "per page"
+            "perPage": "per page",
+            "resultsSummary": "Showing {from} to {to} of {total} results"
         },
         "tasks": {
             "title": "Tasks",
@@ -1407,6 +1408,7 @@
         "users": {
             "title": "Users",
             "headTitle": "Users",
+            "headTitleUser": "User: {name}",
             "backToDashboard": "Back to Dashboard",
             "backToUsers": "Back to Users",
             "detailsTitle": "User Details",
@@ -1419,6 +1421,14 @@
                 "name": "Name",
                 "promptRuns": "Prompt Runs",
                 "visitors": "Visitors"
+            },
+            "metadata": {
+                "name": "Name",
+                "email": "Email",
+                "personality": "Personality Type",
+                "role": "Role",
+                "adminRole": "Admin",
+                "joined": "Joined"
             },
             "table": {
                 "taskDescription": "Task Description",
