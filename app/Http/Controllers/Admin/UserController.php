@@ -38,8 +38,8 @@ class UserController extends Controller
             'users' => [
                 'data' => UserListResource::collection($users->items())->resolve(),
                 'links' => $users->linkCollection(),
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
+                'currentPage' => $users->currentPage(),
+                'lastPage' => $users->lastPage(),
             ],
             'filters' => $request->only('search'),
         ]);

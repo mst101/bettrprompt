@@ -22,8 +22,8 @@ interface Props {
             prev: string | null;
         };
         meta: {
-            current_page: number;
-            last_page: number;
+            currentPage: number;
+            lastPage: number;
             total: number;
         };
     };
@@ -392,12 +392,12 @@ const regenerateMarkdown = async () => {
 
             <!-- Pagination -->
             <div
-                v-if="props.questions.meta.last_page > 1"
+                v-if="props.questions.meta.lastPage > 1"
                 class="mt-6 flex items-center justify-between border-t border-indigo-200 pt-4"
             >
                 <span class="text-sm text-indigo-700">
-                    Page {{ props.questions.meta.current_page }} of
-                    {{ props.questions.meta.last_page }}
+                    Page {{ props.questions.meta.currentPage }} of
+                    {{ props.questions.meta.lastPage }}
                 </span>
                 <div class="flex gap-2">
                     <Link

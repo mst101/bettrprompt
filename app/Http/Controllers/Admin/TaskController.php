@@ -37,8 +37,17 @@ class TaskController extends Controller
             return $task;
         });
 
+        // Transform pagination keys to camelCase
+        $tasksData = $tasks->toArray();
+        $tasksData = [
+            'data' => $tasksData['data'],
+            'links' => $tasksData['links'],
+            'currentPage' => $tasks->currentPage(),
+            'lastPage' => $tasks->lastPage(),
+        ];
+
         return Inertia::render('Admin/Tasks/Index', [
-            'tasks' => $tasks,
+            'tasks' => $tasksData,
             'filters' => $request->only('search'),
         ]);
     }

@@ -14,8 +14,8 @@ interface Props {
     users: {
         data: UserListResource[];
         links: Array<Record<string, unknown>>;
-        current_page: number;
-        last_page: number;
+        currentPage: number;
+        lastPage: number;
     };
     filters: {
         search?: string;

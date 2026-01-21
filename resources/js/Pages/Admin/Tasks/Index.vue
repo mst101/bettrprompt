@@ -19,8 +19,8 @@ interface Props {
     tasks: {
         data: Task[];
         links: Array<Record<string, unknown>>;
-        current_page: number;
-        last_page: number;
+        currentPage: number;
+        lastPage: number;
     };
     filters: {
         search?: string;
@@ -139,19 +139,19 @@ watch(search, debouncedSearch);
 
             <!-- Pagination -->
             <div
-                v-if="props.tasks.last_page > 1"
+                v-if="props.tasks.lastPage > 1"
                 class="mt-4 flex items-center justify-between border-t border-indigo-100 px-4 py-3 sm:px-6"
             >
                 <div class="flex flex-1 justify-between sm:hidden">
                     <Link
-                        v-if="props.tasks.current_page > 1"
+                        v-if="props.tasks.currentPage > 1"
                         :href="props.tasks.links[0].url"
                         class="relative inline-flex items-center rounded-md border border-indigo-100 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                     >
                         {{ $t('admin.pagination.previous') }}
                     </Link>
                     <Link
-                        v-if="props.tasks.current_page < props.tasks.last_page"
+                        v-if="props.tasks.currentPage < props.tasks.lastPage"
                         :href="
                             props.tasks.links[props.tasks.links.length - 1].url
                         "
@@ -167,8 +167,8 @@ watch(search, debouncedSearch);
                         <p class="text-sm text-indigo-700">
                             {{
                                 $t('admin.pagination.pageOf', {
-                                    current: props.tasks.current_page,
-                                    total: props.tasks.last_page,
+                                    current: props.tasks.currentPage,
+                                    total: props.tasks.lastPage,
                                 })
                             }}
                         </p>

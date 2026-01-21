@@ -1056,9 +1056,9 @@ class PromptBuilderController extends Controller
         return Inertia::render('PromptBuilder/History', [
             'promptRuns' => inertiaPaginated($promptRuns, PromptRunResource::class),
             'filters' => [
-                'sort_by' => $sortBy,
-                'sort_direction' => $sortDirection,
-                'per_page' => $perPage,
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+                'perPage' => $perPage,
             ],
         ]);
     }

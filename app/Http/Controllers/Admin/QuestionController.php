@@ -37,8 +37,19 @@ class QuestionController extends Controller
         $categories = Question::distinct('task_category_code')->whereNotNull('task_category_code')->pluck('task_category_code')->sort();
         $frameworks = Question::distinct('framework_code')->whereNotNull('framework_code')->pluck('framework_code')->sort();
 
+        $questionsData = QuestionResource::collection($questions)->response()->getData(true);
+
+        // Transform pagination keys to camelCase
+        if (isset($questionsData['meta'])) {
+            $questionsData['meta'] = [
+                'currentPage' => $questionsData['meta']['current_page'] ?? null,
+                'lastPage' => $questionsData['meta']['last_page'] ?? null,
+                'total' => $questionsData['meta']['total'] ?? null,
+            ];
+        }
+
         return Inertia::render('Admin/Questions/Index', [
-            'questions' => QuestionResource::collection($questions)->response()->getData(true),
+            'questions' => $questionsData,
             'categories' => $categories,
             'frameworks' => $frameworks,
             'filters' => $request->only(['category', 'framework', 'search']),

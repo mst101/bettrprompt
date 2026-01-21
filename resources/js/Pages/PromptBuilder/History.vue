@@ -28,15 +28,15 @@ defineOptions({
 interface Props {
     promptRuns: Paginated<PromptRunResource>;
     filters: {
-        sort_by: string;
-        sort_direction: string;
-        per_page: number;
+        sortBy: string;
+        sortDirection: string;
+        perPage: number;
     };
 }
 
 const sortBy = (column: string) => {
-    const currentSortBy = props.filters.sort_by;
-    const currentDirection = props.filters.sort_direction;
+    const currentSortBy = props.filters.sortBy;
+    const currentDirection = props.filters.sortDirection;
 
     let newDirection = 'asc';
     if (currentSortBy === column && currentDirection === 'asc') {
@@ -48,7 +48,7 @@ const sortBy = (column: string) => {
         {
             sort_by: column,
             sort_direction: newDirection,
-            per_page: props.filters.per_page,
+            per_page: props.filters.perPage,
         },
         {
             preserveState: true,
@@ -61,11 +61,11 @@ const sortBy = (column: string) => {
 const perPageStorage = useLocalStorage('history_per_page', 10);
 
 // Use a ref for the input that syncs with props
-const perPageInput = ref(props.filters.per_page.toString());
+const perPageInput = ref(props.filters.perPage.toString());
 
 // Watch props changes and update input
 watch(
-    () => props.filters.per_page,
+    () => props.filters.perPage,
     (newValue) => {
         perPageInput.value = newValue.toString();
     },
@@ -77,12 +77,12 @@ const changePerPage = () => {
     // Validate: must be a number between 1 and 100
     if (isNaN(perPage) || perPage < 1 || perPage > 100) {
         // Reset to current value if invalid
-        perPageInput.value = props.filters.per_page.toString();
+        perPageInput.value = props.filters.perPage.toString();
         return;
     }
 
     // Only navigate if the value has actually changed
-    if (perPage === props.filters.per_page) {
+    if (perPage === props.filters.perPage) {
         return;
     }
 
@@ -92,8 +92,8 @@ const changePerPage = () => {
     router.get(
         countryRoute('prompt-builder.history'),
         {
-            sort_by: props.filters.sort_by,
-            sort_direction: props.filters.sort_direction,
+            sort_by: props.filters.sortBy,
+            sort_direction: props.filters.sortDirection,
             per_page: perPage,
         },
         {
@@ -104,7 +104,7 @@ const changePerPage = () => {
 };
 
 const sortDirection = computed(() => {
-    return props.filters.sort_direction;
+    return props.filters.sortDirection;
 });
 const { t } = useI18n({ useScope: 'global' });
 const { countryRoute } = useCountryRoute();
@@ -117,12 +117,12 @@ const handlePaginationClick = (direction: 'prev' | 'next') => {
 // On mount, if the per_page from server doesn't match localStorage, update it
 onMounted(() => {
     const storedPerPage = perPageStorage.value;
-    if (storedPerPage !== props.filters.per_page) {
+    if (storedPerPage !== props.filters.perPage) {
         router.get(
             countryRoute('prompt-builder.history'),
             {
-                sort_by: props.filters.sort_by,
-                sort_direction: props.filters.sort_direction,
+                sort_by: props.filters.sortBy,
+                sort_direction: props.filters.sortDirection,
                 per_page: storedPerPage,
             },
             {
