@@ -16,12 +16,12 @@ interface Props {
     plans: PricingPlans;
     featureKeys: {
         free: string[];
+        starter: string[];
         pro: string[];
-        private: string[];
+        premium: string[];
     };
     currency: string;
     currencySymbol: string;
-    availableCurrencies: string[];
 }
 
 const props = defineProps<Props>();
@@ -44,15 +44,22 @@ const openRegisterModal = inject<(() => void) | undefined>(
 );
 
 // Computed properties to get prices from database
-const proPrice = computed(() => {
-    const key = `pro_${selectedPlan.value}`;
+const starterPrice = computed(() => {
+    const key = `starter_${selectedPlan.value}`;
     const price = props.plans[key]?.price ?? 0;
     // Remove decimals for yearly prices
     return selectedPlan.value === 'yearly' ? Math.round(price) : price;
 });
 
-const privatePrice = computed(() => {
-    const key = `private_${selectedPlan.value}`;
+const starterMonthlyEquivalent = computed(() => {
+    if (selectedPlan.value === 'yearly') {
+        return (starterPrice.value / 12).toFixed(2);
+    }
+    return null;
+});
+
+const proPrice = computed(() => {
+    const key = `pro_${selectedPlan.value}`;
     const price = props.plans[key]?.price ?? 0;
     // Remove decimals for yearly prices
     return selectedPlan.value === 'yearly' ? Math.round(price) : price;
@@ -65,43 +72,31 @@ const proMonthlyEquivalent = computed(() => {
     return null;
 });
 
-const privateMonthlyEquivalent = computed(() => {
+const premiumPrice = computed(() => {
+    const key = `premium_${selectedPlan.value}`;
+    const price = props.plans[key]?.price ?? 0;
+    // Remove decimals for yearly prices
+    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
+});
+
+const premiumMonthlyEquivalent = computed(() => {
     if (selectedPlan.value === 'yearly') {
-        return (privatePrice.value / 12).toFixed(2);
+        return (premiumPrice.value / 12).toFixed(2);
     }
     return null;
 });
 
 const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
 const isLoading = ref(false);
-const isCurrencyUpdating = ref(false);
 
-// Keep selectedCurrency in sync with props.currency (updates after redirect)
-const selectedCurrency = computed(() => props.currency);
-
-function updateCurrency(newCurrency: string) {
-    router.post(
-        countryRoute('currency.select'),
-        { currencyCode: newCurrency },
-        {
-            onStart: () => {
-                isCurrencyUpdating.value = true;
-            },
-            onFinish: () => {
-                isCurrencyUpdating.value = false;
-            },
-        },
-    );
-}
-
-async function subscribe(tier: 'pro' | 'private') {
+async function subscribe(tier: 'starter' | 'pro' | 'premium') {
     // Track subscription started
     analyticsService.track({
         name: 'subscription_started',
         properties: {
             tier,
             interval: selectedPlan.value,
-            currency: selectedCurrency.value,
+            currency: props.currency,
             source: 'pricing_page',
         },
     });
@@ -199,28 +194,7 @@ function getStarted() {
                 </button>
             </div>
 
-            <!-- Currency Switcher -->
-            <div class="mb-8 flex justify-center gap-2">
-                <button
-                    v-for="curr in availableCurrencies"
-                    :key="curr"
-                    type="button"
-                    :data-testid="`currency-${curr.toLowerCase()}`"
-                    :disabled="isCurrencyUpdating"
-                    :class="[
-                        'rounded-lg px-4 py-2 text-sm font-medium transition',
-                        selectedCurrency === curr
-                            ? 'bg-green-100 text-green-700'
-                            : 'text-gray-600 hover:bg-gray-50',
-                        isCurrencyUpdating && 'cursor-not-allowed opacity-50',
-                    ]"
-                    @click="updateCurrency(curr)"
-                >
-                    {{ curr }}
-                </button>
-            </div>
-
-            <div class="grid gap-8 md:grid-cols-3">
+            <div class="grid gap-8 md:grid-cols-4">
                 <!-- Free Tier -->
                 <div
                     class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
@@ -263,6 +237,76 @@ function getStarted() {
                     </ButtonSecondary>
                 </div>
 
+                <!-- Starter Tier -->
+                <div
+                    class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
+                    data-testid="starter-tier-tab"
+                >
+                    <h2 class="mb-2 text-2xl font-bold text-indigo-900">
+                        {{ $t('pricing.starter.name') }}
+                    </h2>
+
+                    <div class="mb-6">
+                        <div class="text-4xl font-bold text-indigo-900">
+                            {{ currencySymbol }}{{ starterPrice }}
+                            <span class="text-lg font-normal text-indigo-500"
+                                >\ /{{
+                                    selectedPlan === 'yearly'
+                                        ? $t('pricing.period.year')
+                                        : $t('pricing.period.month')
+                                }}
+                            </span>
+                        </div>
+                        <div
+                            v-if="
+                                selectedPlan === 'yearly' &&
+                                starterMonthlyEquivalent
+                            "
+                            class="mt-1 text-sm text-green-600"
+                        >
+                            {{
+                                $t('pricing.starter.yearlySavings', {
+                                    amount: `${currencySymbol}${starterMonthlyEquivalent}`,
+                                    period: $t('pricing.period.month'),
+                                    percent: 17,
+                                })
+                            }}
+                        </div>
+                    </div>
+
+                    <ul class="mb-8 space-y-3">
+                        <li
+                            v-for="featureKey in featureKeys.starter"
+                            :key="featureKey"
+                            class="flex items-center gap-2 text-indigo-700"
+                        >
+                            <DynamicIcon
+                                name="check"
+                                class="h-5 w-5 text-green-500"
+                            />
+                            {{ $t(featureKey) }}
+                        </li>
+                    </ul>
+
+                    <ButtonPrimary
+                        class="w-full"
+                        data-testid="subscribe-button"
+                        :disabled="isLoading || subscription?.isStarter"
+                        :loading="isLoading"
+                        @click="subscribe('starter')"
+                    >
+                        <span v-if="subscription?.isStarter">
+                            {{ $t('messages.subscription.current_plan') }}
+                        </span>
+                        <span v-else-if="isLoading">
+                            {{ $t('pricing.actions.processing') }}
+                        </span>
+                        <span v-else>
+                            {{ $t('pricing.starter.cta') }}
+                        </span>
+                    </ButtonPrimary>
+                </div>
+
                 <!-- Pro Tier -->
                 <div
                     class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
@@ -275,8 +319,8 @@ function getStarted() {
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
                             {{ currencySymbol }}{{ proPrice }}
-                            <span class="text-lg font-normal text-indigo-500">
-                                /{{
+                            <span class="text-lg font-normal text-indigo-500"
+                                >\ /{{
                                     selectedPlan === 'yearly'
                                         ? $t('pricing.period.year')
                                         : $t('pricing.period.month')
@@ -312,13 +356,6 @@ function getStarted() {
                             />
                             {{ $t(featureKey) }}
                         </li>
-                        <li class="flex items-center gap-2 text-indigo-400">
-                            <DynamicIcon
-                                name="x-mark"
-                                class="h-5 w-5 text-indigo-300"
-                            />
-                            {{ $t('pricing.features.privacy') }}
-                        </li>
                     </ul>
 
                     <ButtonPrimary
@@ -340,26 +377,26 @@ function getStarted() {
                     </ButtonPrimary>
                 </div>
 
-                <!-- Private Tier -->
+                <!-- Premium Tier -->
                 <div
                     class="relative rounded-2xl border-2 border-indigo-500 bg-white p-8 shadow-md"
-                    data-testid="private-tier-tab"
+                    data-testid="premium-tier-tab"
                 >
                     <div
                         class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-4 py-1 text-sm font-medium text-white"
                     >
-                        {{ $t('pricing.popularBadge') }}
+                        {{ $t('pricing.recommendedBadge') }}
                     </div>
 
                     <h2 class="mb-2 text-2xl font-bold text-indigo-900">
-                        {{ $t('pricing.private.name') }}
+                        {{ $t('pricing.premium.name') }}
                     </h2>
 
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
-                            {{ currencySymbol }}{{ privatePrice }}
-                            <span class="text-lg font-normal text-indigo-500">
-                                /{{
+                            {{ currencySymbol }}{{ premiumPrice }}
+                            <span class="text-lg font-normal text-indigo-500"
+                                >\ /{{
                                     selectedPlan === 'yearly'
                                         ? $t('pricing.period.year')
                                         : $t('pricing.period.month')
@@ -369,13 +406,13 @@ function getStarted() {
                         <div
                             v-if="
                                 selectedPlan === 'yearly' &&
-                                privateMonthlyEquivalent
+                                premiumMonthlyEquivalent
                             "
                             class="mt-1 text-sm text-green-600"
                         >
                             {{
-                                $t('pricing.private.yearlySavings', {
-                                    amount: `${currencySymbol}${privateMonthlyEquivalent}`,
+                                $t('pricing.premium.yearlySavings', {
+                                    amount: `${currencySymbol}${premiumMonthlyEquivalent}`,
                                     period: $t('pricing.period.month'),
                                     percent: 17,
                                 })
@@ -385,7 +422,7 @@ function getStarted() {
 
                     <ul class="mb-8 space-y-3">
                         <li
-                            v-for="featureKey in featureKeys.private"
+                            v-for="featureKey in featureKeys.premium"
                             :key="featureKey"
                             class="flex items-center gap-2 text-indigo-700"
                         >
@@ -400,18 +437,18 @@ function getStarted() {
                     <ButtonPrimary
                         class="w-full"
                         data-testid="subscribe-button"
-                        :disabled="isLoading || subscription?.isPrivate"
+                        :disabled="isLoading || subscription?.isPremium"
                         :loading="isLoading"
-                        @click="subscribe('private')"
+                        @click="subscribe('premium')"
                     >
-                        <span v-if="subscription?.isPrivate">
+                        <span v-if="subscription?.isPremium">
                             {{ $t('messages.subscription.current_plan') }}
                         </span>
                         <span v-else-if="isLoading">
                             {{ $t('pricing.actions.processing') }}
                         </span>
                         <span v-else>
-                            {{ $t('pricing.private.cta') }}
+                            {{ $t('pricing.premium.cta') }}
                         </span>
                     </ButtonPrimary>
                 </div>
@@ -460,6 +497,11 @@ function getStarted() {
                         </p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Encryption Notice -->
+            <div class="mt-12 text-center text-sm text-gray-600">
+                {{ $t('pricing.encryptionNotice') }}
             </div>
         </div>
     </ContainerPage>
