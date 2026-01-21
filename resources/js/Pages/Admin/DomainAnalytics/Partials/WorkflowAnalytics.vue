@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ErrorAnalyticsResource, WorkflowStageResource } from '@/Types';
 import { AlertCircle, CheckCircle } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -13,26 +14,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-interface WorkflowStageData {
-    stage: number;
-    totalExecutions: number;
-    successful: number;
-    failed: number;
-    successRate: number;
-    avgDurationMs: number | null;
-    avgCostUsd: number | null;
-}
-
-interface ErrorData {
-    errorCode: string;
-    count: number;
-    percentage: number;
-    message: string;
-}
-
 const loading = ref(false);
-const workflowStages = ref<WorkflowStageData[]>([]);
-const topErrors = ref<ErrorData[]>([]);
+const workflowStages = ref<WorkflowStageResource[]>([]);
+const topErrors = ref<ErrorAnalyticsResource[]>([]);
 const totalCost = ref(0);
 const totalInputTokens = ref(0);
 const totalOutputTokens = ref(0);

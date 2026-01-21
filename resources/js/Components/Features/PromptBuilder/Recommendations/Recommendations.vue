@@ -2,16 +2,10 @@
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import QuestionNumber from '@/Components/Features/PromptBuilder/Forms/QuestionNumber.vue';
-
-interface ModelRecommendation {
-    rank: number;
-    model: string;
-    model_id: string;
-    rationale: string;
-}
+import type { ModelRecommendationResource } from '@/Types';
 
 interface Props {
-    modelRecommendations: ModelRecommendation[] | null;
+    modelRecommendations: ModelRecommendationResource[] | null;
     iterationSuggestions: string[] | null;
 }
 
@@ -45,7 +39,7 @@ defineProps<Props>();
                                     {{ rec.model }}
                                 </h4>
                                 <p class="font-mono text-xs text-indigo-600">
-                                    {{ rec.model_id }}
+                                    {{ rec.modelId }}
                                 </p>
                             </div>
                         </div>

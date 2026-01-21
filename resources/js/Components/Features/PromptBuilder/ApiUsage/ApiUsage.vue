@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
-import type { ClaudeModel } from '@/Types/models';
+import type { ApiUsageResource, ClaudeModel } from '@/Types';
 import { computed } from 'vue';
 
-interface ApiUsageData {
-    model: string;
-    input_tokens: number;
-    output_tokens: number;
-}
-
 interface Props {
-    preAnalysisUsage: ApiUsageData | ApiUsageData[] | null;
-    analysisUsage: ApiUsageData | ApiUsageData[] | null;
-    generationUsage: ApiUsageData | ApiUsageData[] | null;
+    preAnalysisUsage: ApiUsageResource | ApiUsageResource[] | null;
+    analysisUsage: ApiUsageResource | ApiUsageResource[] | null;
+    generationUsage: ApiUsageResource | ApiUsageResource[] | null;
     claudeModels?: ClaudeModel[];
 }
 
@@ -22,19 +16,19 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Normalise usage data to array format
 const normaliseUsage = (
-    usage: ApiUsageData | ApiUsageData[] | null,
-): ApiUsageData[] => {
+    usage: ApiUsageResource | ApiUsageResource[] | null,
+): ApiUsageResource[] => {
     if (!usage) return [];
     if (Array.isArray(usage)) return usage;
     return [usage];
 };
 
-const totalTokens = (usage: ApiUsageData | null) => {
+const totalTokens = (usage: ApiUsageResource | null) => {
     if (!usage) return 0;
-    return usage.input_tokens + usage.output_tokens;
+    return usage.inputTokens + usage.outputTokens;
 };
 
-const totalTokensForArray = (usageArray: ApiUsageData[]): number => {
+const totalTokensForArray = (usageArray: ApiUsageResource[]): number => {
     return usageArray.reduce((sum, usage) => sum + totalTokens(usage), 0);
 };
 
@@ -55,20 +49,20 @@ const getModelPricing = (modelId: string): ClaudeModel | undefined => {
     return props.claudeModels?.find((m) => m.id === modelId);
 };
 
-const calculateCost = (usage: ApiUsageData | null) => {
+const calculateCost = (usage: ApiUsageResource | null) => {
     if (!usage) return 0;
 
     const model = getModelPricing(usage.model);
     if (!model) return 0;
 
-    const inputCost = (usage.input_tokens / 1_000_000) * model.inputCostPerMtok;
+    const inputCost = (usage.inputTokens / 1_000_000) * model.inputCostPerMtok;
     const outputCost =
-        (usage.output_tokens / 1_000_000) * model.outputCostPerMtok;
+        (usage.outputTokens / 1_000_000) * model.outputCostPerMtok;
 
     return inputCost + outputCost;
 };
 
-const calculateCostForArray = (usageArray: ApiUsageData[]): number => {
+const calculateCostForArray = (usageArray: ApiUsageResource[]): number => {
     return usageArray.reduce((sum, usage) => sum + calculateCost(usage), 0);
 };
 

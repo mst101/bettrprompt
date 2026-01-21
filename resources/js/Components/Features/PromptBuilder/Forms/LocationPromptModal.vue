@@ -10,6 +10,7 @@ import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
 import TimezoneSelect from '@/Components/Common/TimezoneSelect.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
+import type { LocationDataResource } from '@/Types';
 import axios from 'axios';
 import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -19,21 +20,9 @@ interface SelectOption {
     label: string;
 }
 
-interface LocationData {
-    countryCode: string | null;
-    countryName: string | null;
-    region: string | null;
-    city: string | null;
-    timezone: string | null;
-    currencyCode: string | null;
-    languageCode: string | null;
-    detectedAt: string | null;
-    manuallySet: boolean;
-}
-
 interface Props {
     show: boolean;
-    locationData: LocationData;
+    locationData: LocationDataResource;
     countries: SelectOption[];
     currencies: SelectOption[];
     languages: SelectOption[];

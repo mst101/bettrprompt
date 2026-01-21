@@ -1,29 +1,16 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
-
-interface AmplifiedTrait {
-    trait: string;
-    requirement_aligned: string;
-    reason: string;
-}
-
-interface CounterbalancedTrait {
-    trait: string;
-    requirement_opposed: string;
-    reason: string;
-    injection: string;
-}
-
-interface NeutralTrait {
-    trait: string;
-    reason: string;
-}
+import type {
+    AmplifiedTraitResource,
+    CounterbalancedTraitResource,
+    NeutralTraitResource,
+} from '@/Types';
 
 interface Props {
     alignment: {
-        amplified: AmplifiedTrait[];
-        counterbalanced: CounterbalancedTrait[];
-        neutral: NeutralTrait[];
+        amplified: AmplifiedTraitResource[];
+        counterbalanced: CounterbalancedTraitResource[];
+        neutral: NeutralTraitResource[];
     };
 }
 
@@ -62,7 +49,7 @@ defineProps<Props>();
                                 $t(
                                     'promptBuilder.components.taskTraitAlignment.alignsWith',
                                     {
-                                        requirement: item.requirement_aligned,
+                                        requirement: item.requirementAligned,
                                     },
                                 )
                             }}
@@ -106,7 +93,7 @@ defineProps<Props>();
                                 $t(
                                     'promptBuilder.components.taskTraitAlignment.opposes',
                                     {
-                                        requirement: item.requirement_opposed,
+                                        requirement: item.requirementOpposed,
                                     },
                                 )
                             }}
