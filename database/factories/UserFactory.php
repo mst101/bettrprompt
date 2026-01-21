@@ -68,4 +68,52 @@ class UserFactory extends Factory
             'google_id' => $googleId ?? \Illuminate\Support\Str::ulid(),
         ]);
     }
+
+    /**
+     * Indicate that the user is on the Starter tier.
+     */
+    public function starter(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'subscription_tier' => 'starter',
+            'monthly_prompt_count' => 0,
+            'prompt_count_reset_at' => now(),
+        ]);
+    }
+
+    /**
+     * Indicate that the user is on the Pro tier.
+     */
+    public function pro(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'subscription_tier' => 'pro',
+            'monthly_prompt_count' => 0,
+            'prompt_count_reset_at' => now(),
+        ]);
+    }
+
+    /**
+     * Indicate that the user is on the Premium tier.
+     */
+    public function premium(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'subscription_tier' => 'premium',
+            'monthly_prompt_count' => 0,
+            'prompt_count_reset_at' => now(),
+        ]);
+    }
+
+    /**
+     * Indicate that the user is on the Free tier (default).
+     */
+    public function free(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'subscription_tier' => 'free',
+            'monthly_prompt_count' => 0,
+            'prompt_count_reset_at' => now(),
+        ]);
+    }
 }
