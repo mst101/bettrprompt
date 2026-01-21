@@ -19,7 +19,7 @@ test('free user with prompts remaining can create prompt', function () {
 test('free user at limit is blocked', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
-        'monthly_prompt_count' => 5,
+        'monthly_prompt_count' => 10,
         'prompt_count_reset_at' => now(),
     ]);
 
@@ -35,7 +35,7 @@ test('free user at limit is blocked', function () {
 test('free user at limit receives correct error data', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
-        'monthly_prompt_count' => 5,
+        'monthly_prompt_count' => 10,
         'prompt_count_reset_at' => now()->subDays(10),
     ]);
 
@@ -48,32 +48,17 @@ test('free user at limit receives correct error data', function () {
     $response->assertStatus(403);
     $response->assertJson([
         'error' => 'prompt_limit_reached',
-        'promptsUsed' => 5,
-        'promptLimit' => 5,
+        'promptsUsed' => 10,
+        'promptLimit' => 10,
     ]);
     expect($response->json('daysUntilReset'))->toBeGreaterThan(0);
+    expect($response->json('suggestedTier'))->toBe('starter');
 });
 
-test('free user over limit is blocked', function () {
+test('starter user with prompts remaining can create prompt', function () {
     $user = User::factory()->create([
-        'subscription_tier' => 'free',
+        'subscription_tier' => 'starter',
         'monthly_prompt_count' => 10,
-        'prompt_count_reset_at' => now()->subDays(15),
-    ]);
-
-    $response = $this->actingAs($user)
-        ->withHeader('Accept', 'application/json')
-        ->post(route('prompt-builder.pre-analyse'), [
-            'task_description' => 'Test task',
-        ]);
-
-    expect($response->status())->toBe(403);
-});
-
-test('pro user is never blocked by limit', function () {
-    $user = User::factory()->create([
-        'subscription_tier' => 'pro',
-        'monthly_prompt_count' => 100,
         'prompt_count_reset_at' => now(),
     ]);
 
@@ -84,10 +69,60 @@ test('pro user is never blocked by limit', function () {
     expect($response->status())->not->toBe(403);
 });
 
-test('private user is never blocked by limit', function () {
+test('starter user at limit is blocked', function () {
     $user = User::factory()->create([
-        'subscription_tier' => 'private',
-        'monthly_prompt_count' => 100,
+        'subscription_tier' => 'starter',
+        'monthly_prompt_count' => 25,
+        'prompt_count_reset_at' => now(),
+    ]);
+
+    $response = $this->actingAs($user)
+        ->withHeader('Accept', 'application/json')
+        ->post(route('prompt-builder.pre-analyse'), [
+            'task_description' => 'This is a test task description that is long enough to pass validation requirements',
+        ]);
+
+    expect($response->status())->toBe(403);
+    expect($response->json('promptLimit'))->toBe(25);
+    expect($response->json('suggestedTier'))->toBe('pro');
+});
+
+test('pro user with prompts remaining can create prompt', function () {
+    $user = User::factory()->create([
+        'subscription_tier' => 'pro',
+        'monthly_prompt_count' => 50,
+        'prompt_count_reset_at' => now(),
+    ]);
+
+    $response = $this->actingAs($user)->post(route('prompt-builder.pre-analyse'), [
+        'task_description' => 'This is a test task description that is long enough to pass validation requirements',
+    ]);
+
+    expect($response->status())->not->toBe(403);
+});
+
+test('pro user at limit is blocked', function () {
+    $user = User::factory()->create([
+        'subscription_tier' => 'pro',
+        'monthly_prompt_count' => 90,
+        'prompt_count_reset_at' => now(),
+    ]);
+
+    $response = $this->actingAs($user)
+        ->withHeader('Accept', 'application/json')
+        ->post(route('prompt-builder.pre-analyse'), [
+            'task_description' => 'This is a test task description that is long enough to pass validation requirements',
+        ]);
+
+    expect($response->status())->toBe(403);
+    expect($response->json('promptLimit'))->toBe(90);
+    expect($response->json('suggestedTier'))->toBe('premium');
+});
+
+test('premium user is never blocked by limit', function () {
+    $user = User::factory()->create([
+        'subscription_tier' => 'premium',
+        'monthly_prompt_count' => 999,
         'prompt_count_reset_at' => now(),
     ]);
 
