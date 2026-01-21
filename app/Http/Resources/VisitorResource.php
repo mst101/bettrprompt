@@ -55,11 +55,11 @@ class VisitorResource extends JsonResource
             'landingPage' => $this->landing_page,
             'userAgent' => $this->user_agent,
             'ipAddress' => $this->ip_address,
-            'firstVisitAt' => $this->first_visit_at?->format('Y-m-d H:i:s'),
-            'lastVisitAt' => $this->last_visit_at?->format('Y-m-d H:i:s'),
-            'convertedAt' => $this->converted_at?->format('Y-m-d H:i:s'),
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'firstVisitAt' => $this->first_visit_at?->toIso8601String(),
+            'lastVisitAt' => $this->last_visit_at?->toIso8601String(),
+            'convertedAt' => $this->converted_at?->toIso8601String(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {

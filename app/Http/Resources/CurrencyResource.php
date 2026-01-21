@@ -40,8 +40,8 @@ class CurrencyResource extends JsonResource
             'spaceBetweenAmountAndSymbol' => $this->space_between_amount_and_symbol,
             'roundingCoefficient' => $this->rounding_coefficient,
             'decimalDigits' => $this->decimal_digits,
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

@@ -30,8 +30,8 @@ class LanguageResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'active' => $this->active,
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

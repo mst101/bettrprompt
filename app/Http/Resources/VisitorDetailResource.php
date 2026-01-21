@@ -24,7 +24,7 @@ class VisitorDetailResource extends JsonResource
         return [
             'id' => $this->id,
             'countryCode' => $this->country_code,
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->created_at?->toIso8601String(),
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {

@@ -37,7 +37,7 @@ class UserListResource extends JsonResource
             'email' => $this->email,
             'personalityType' => $this->personality_type,
             'isAdmin' => $this->is_admin ?? false,
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->created_at?->toIso8601String(),
             'visitorsCount' => $this->visitors_count ?? 0,
             'promptRunsCount' => $this->prompt_runs_count ?? 0,
         ];

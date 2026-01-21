@@ -40,8 +40,8 @@ class CountryResource extends JsonResource
             'firstDayOfWeek' => $this->first_day_of_week,
             'usesMiles' => $this->uses_miles,
             'name' => $this->name,
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
             'currency' => $this->whenLoaded('currency', function () {
                 return $this->currency ? (new CurrencyResource($this->currency))->resolve() : null;
             }),

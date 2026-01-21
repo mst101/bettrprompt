@@ -25,7 +25,7 @@ class EventResource extends JsonResource
             'eventId' => $this->event_id,
             'name' => $this->name,
             'pagePath' => $this->page_path,
-            'occurredAt' => $this->occurred_at?->format('Y-m-d H:i:s'),
+            'occurredAt' => $this->occurred_at?->toIso8601String(),
             'properties' => $this->properties ?? [],
         ];
     }

@@ -127,9 +127,9 @@ class PromptRunPageResource extends JsonResource
             'optimizedPrompt' => $this->optimized_prompt,
             'workflowStage' => $this->workflow_stage,
             'errorMessage' => $this->error_message,
-            'completedAt' => $this->completed_at?->format('Y-m-d H:i:s'),
-            'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'completedAt' => $this->completed_at?->toIso8601String(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
 
             // Prompt Builder specific fields - exclude large ones to reduce payload
             'taskClassification' => $this->task_classification,

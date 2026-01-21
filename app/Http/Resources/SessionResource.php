@@ -32,8 +32,8 @@ class SessionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'startedAt' => $this->started_at?->format('Y-m-d H:i:s'),
-            'endedAt' => $this->ended_at?->format('Y-m-d H:i:s'),
+            'startedAt' => $this->started_at?->toIso8601String(),
+            'endedAt' => $this->ended_at?->toIso8601String(),
             'durationSeconds' => $this->duration_seconds,
             'pageCount' => $this->page_count,
             'entryPage' => $this->entry_page,
