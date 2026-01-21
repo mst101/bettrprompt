@@ -564,6 +564,8 @@
         "tagline": "Start free, upgrade when you need more",
         "currency": "£",
         "popularBadge": "Most Popular",
+        "recommendedBadge": "Most Popular",
+        "encryptionNotice": "All plans include encryption at rest for your data. VAT included in GBP and EUR prices.",
         "monthly": "Monthly",
         "yearly": "Yearly",
         "save": "Save {percent}%",
@@ -587,21 +589,34 @@
             "description": "Perfect for trying out BettrPrompt",
             "cta": "Get Started"
         },
+        "starter": {
+            "name": "Starter",
+            "priceMonthly": "9.99",
+            "priceYearly": "99",
+            "period": "per month",
+            "periodYearly": "per year",
+            "description": "For those ready to level up",
+            "cta": "Go Starter",
+            "yearlySavings": "Save {percent}% when billed annually – just {amount}/{period}"
+        },
         "pro": {
             "name": "Pro",
-            "priceMonthly": "12",
-            "priceYearly": "120",
+            "priceMonthly": "24.99",
+            "priceYearly": "249",
             "period": "per month",
             "periodYearly": "per year",
             "description": "For power users who want the best results",
-            "cta": "Start Pro",
+            "cta": "Go Pro",
             "yearlySavings": "Save {percent}% when billed annually – just {amount}/{period}"
         },
-        "private": {
-            "name": "Private",
-            "priceMonthly": "20",
-            "priceYearly": "200",
-            "cta": "Start Private",
+        "premium": {
+            "name": "Premium",
+            "priceMonthly": "49.99",
+            "priceYearly": "499",
+            "period": "per month",
+            "periodYearly": "per year",
+            "description": "For those who need unlimited access and privacy",
+            "cta": "Go Premium",
             "yearlySavings": "Save {percent}% when billed annually – just {amount}/{period}"
         },
         "features": {
@@ -611,19 +626,27 @@
                 "calibration": "Personality calibration",
                 "optimization": "Basic prompt optimisation"
             },
-            "pro": {
-                "unlimited": "Unlimited prompts",
+            "starter": {
+                "limit": "25 prompts per month",
                 "calibration": "Personality calibration",
                 "optimization": "Advanced prompt optimisation",
                 "history": "Prompt history"
             },
-            "private": {
+            "pro": {
+                "limit": "90 prompts per month",
+                "calibration": "Personality calibration",
+                "optimization": "Advanced prompt optimisation",
+                "history": "Unlimited prompt history",
+                "priority_frameworks": "Priority framework suggestions"
+            },
+            "premium": {
                 "unlimited": "Unlimited prompts",
                 "calibration": "Personality calibration",
                 "optimization": "Advanced prompt optimisation",
-                "mode": "Private mode (restricted access)",
-                "support": "Priority support",
-                "history": "Prompt history"
+                "history": "Unlimited prompt history",
+                "priority_frameworks": "Priority framework suggestions",
+                "privacy": "Privacy mode – your data never used for AI training",
+                "support": "Priority email support"
             },
             "unlimited": "Unlimited prompts",
             "priority": "Priority processing",
@@ -635,11 +658,11 @@
             "items": {
                 "limit": {
                     "question": "What happens when I reach my monthly limit?",
-                    "answer": "Free users get 10 prompts per month. Once you've used them, you'll need to upgrade to Pro or Private for more. Your monthly allowance resets on the 1st of each month."
+                    "answer": "Free users get 10 prompts per month, Starter users get 25, and Pro users get 90. Once you've used them, you'll need to upgrade for more. Your monthly allowance resets on the 1st of each month."
                 },
                 "privacy": {
-                    "question": "What is Private mode?",
-                    "answer": "Private mode ensures your data is not used for training or product improvement. It includes restricted staff access (only with your explicit consent) and enhanced encryption."
+                    "question": "What is Privacy mode?",
+                    "answer": "Privacy mode (Premium tier only) ensures your data is not used for training or product improvement. It includes restricted staff access (only with your explicit consent) and enhanced encryption."
                 },
                 "cancel": {
                     "question": "Can I cancel my subscription?",
@@ -653,18 +676,20 @@
         },
         "currentPlan": "Current Plan",
         "upgrade": "Upgrade",
+        "upgradeToStarter": "Upgrade to Starter",
         "upgradeToPro": "Upgrade to Pro",
-        "upgradeToPrivate": "Upgrade to Private"
+        "upgradeToPremium": "Upgrade to Premium"
     },
     "messages": {
         "subscription": {
             "invalid_plan": "Invalid plan selected.",
             "prompt_limit_reached": "You have reached your monthly prompt limit.",
-            "prompt_limit_reached_upgrade": "You have reached your monthly prompt limit. Upgrade to Pro for unlimited prompts.",
-            "welcome_pro": "Welcome to BettrPrompt Pro!",
-            "welcome_private": "Welcome to BettrPrompt Private! Your data is now protected with enhanced privacy.",
+            "prompt_limit_reached_upgrade": "You have reached your monthly prompt limit. Upgrade to {tier} for {prompts} prompts per month.",
+            "welcome_starter": "Welcome to BettrPrompt Starter! You now have 25 prompts per month.",
+            "welcome_pro": "Welcome to BettrPrompt Pro! You now have 90 prompts per month.",
+            "welcome_premium": "Welcome to BettrPrompt Premium! Enjoy unlimited prompts and priority support.",
             "checkout_cancelled": "Subscription checkout was cancelled.",
-            "cancelled_pro_until": "Your subscription has been cancelled. You will retain Pro access until {date}.",
+            "cancelled_pro_until": "Your subscription has been cancelled. You will retain access until {date}.",
             "resumed": "Your subscription has been resumed.",
             "current_plan": "Current Plan"
         }
