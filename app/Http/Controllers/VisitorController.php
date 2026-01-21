@@ -59,7 +59,7 @@ class VisitorController extends Controller
     /**
      * Update currency preference for authenticated users and visitors
      */
-    public function updateCurrency(Request $request): JsonResponse
+    public function updateCurrency(Request $request): RedirectResponse
     {
         $activeCurrencies = Currency::where('active', true)->pluck('id')->all();
 
@@ -107,10 +107,8 @@ class VisitorController extends Controller
             }
         }
 
-        return response()->json([
-            'success' => true,
-            'currency_code' => $currencyCode,
-        ]);
+        // Redirect back to pricing page - Inertia will process this and reload with new currency
+        return back();
     }
 
     /**

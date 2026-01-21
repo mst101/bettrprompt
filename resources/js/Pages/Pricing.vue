@@ -80,35 +80,18 @@ const isCurrencyUpdating = ref(false);
 const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
-    isCurrencyUpdating.value = true;
-    const csrfToken = getCsrfToken();
-
-    fetch(countryRoute('currency.select'), {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
+    router.post(
+        countryRoute('currency.select'),
+        { currency_code: newCurrency },
+        {
+            onStart: () => {
+                isCurrencyUpdating.value = true;
+            },
+            onFinish: () => {
+                isCurrencyUpdating.value = false;
+            },
         },
-        body: JSON.stringify({
-            currency_code: newCurrency,
-        }),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                // Reload the page data through Inertia without full page refresh
-                router.reload();
-            }
-        })
-        .catch((error) => {
-            console.error('Currency update failed:', error);
-            isCurrencyUpdating.value = false;
-        });
+    );
 }
 
 async function subscribe(tier: 'pro' | 'private') {
