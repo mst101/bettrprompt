@@ -37,7 +37,7 @@ class PrivacyController extends Controller
         $user = $request->user();
 
         if (! $user->canEnablePrivacy()) {
-            return back()->withErrors(['privacy' => 'You must be a Pro subscriber to enable privacy encryption.']);
+            return back()->withErrors(['privacy' => __('messages.privacy.premium_required')]);
         }
 
         // Generate DEK and recovery phrase

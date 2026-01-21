@@ -692,6 +692,9 @@
             "cancelled_pro_until": "Your subscription has been cancelled. You will retain access until {date}.",
             "resumed": "Your subscription has been resumed.",
             "current_plan": "Current Plan"
+        },
+        "privacy": {
+            "premium_required": "You must be a Premium subscriber to enable privacy encryption."
         }
     },
     "feedback": {
