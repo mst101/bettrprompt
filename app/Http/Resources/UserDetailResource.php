@@ -33,7 +33,7 @@ class UserDetailResource extends JsonResource
 
             // Relationships
             'visitor' => $this->whenLoaded('visitor', function () {
-                return $this->visitor ? VisitorDetailResource::make($this->visitor)->only(['id', 'sessions']) : null;
+                return $this->visitor ? VisitorDetailResource::make($this->visitor)->resolve() : null;
             }),
         ];
     }
