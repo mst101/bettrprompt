@@ -3,7 +3,7 @@
  * Auto-generated from Resource docblock by bp:types:generate
  */
 
-import type { PromptRunResource, UserResource } from '@/Types';
+import type { UserResource } from '@/Types';
 
 export interface VisitorResource {
     readonly id: string;

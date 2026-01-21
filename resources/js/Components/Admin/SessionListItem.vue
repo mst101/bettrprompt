@@ -1,35 +1,11 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
+import type { AdminSessionResource } from '@/Types';
 import { ref } from 'vue';
 
-interface Event {
-    event_id: string;
-    name: string;
-    page_path: string | null;
-    occurred_at: string;
-    properties: Record<string, unknown>;
-}
-
-interface Session {
-    id: string;
-    started_at: string;
-    ended_at: string | null;
-    duration_seconds: number;
-    page_count: number;
-    entry_page: string;
-    exit_page: string | null;
-    device_type: string;
-    utm_source: string | null;
-    utm_medium: string | null;
-    utm_campaign: string | null;
-    is_bounce: boolean;
-    converted: boolean;
-    events?: Event[];
-}
-
 interface Props {
-    session: Session;
+    session: AdminSessionResource;
 }
 
 const props = defineProps<Props>();
@@ -59,12 +35,12 @@ const formatDuration = (seconds: number): string => {
 
 const getUtmString = (): string => {
     const parts: string[] = [];
-    if (props.session.utm_source)
-        parts.push(`Source: ${props.session.utm_source}`);
-    if (props.session.utm_medium)
-        parts.push(`Medium: ${props.session.utm_medium}`);
-    if (props.session.utm_campaign)
-        parts.push(`Campaign: ${props.session.utm_campaign}`);
+    if (props.session.utmSource)
+        parts.push(`Source: ${props.session.utmSource}`);
+    if (props.session.utmMedium)
+        parts.push(`Medium: ${props.session.utmMedium}`);
+    if (props.session.utmCampaign)
+        parts.push(`Campaign: ${props.session.utmCampaign}`);
     return parts.length > 0 ? parts.join(' • ') : 'Direct';
 };
 </script>
@@ -85,7 +61,7 @@ const getUtmString = (): string => {
                             class="h-4 w-4 text-indigo-500"
                         />
                         <span class="font-medium text-indigo-900">
-                            {{ formatDateTime(session.started_at) }}
+                            {{ formatDateTime(session.startedAt) }}
                         </span>
                         <span
                             v-if="session.converted"
@@ -94,7 +70,7 @@ const getUtmString = (): string => {
                             Converted
                         </span>
                         <span
-                            v-if="session.is_bounce"
+                            v-if="session.isBounce"
                             class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800"
                         >
                             Bounce
@@ -103,18 +79,16 @@ const getUtmString = (): string => {
                     <div
                         class="mt-1 ml-6 flex flex-wrap gap-3 text-sm text-indigo-600"
                     >
-                        <span>{{ session.page_count }} pages</span>
+                        <span>{{ session.pageCount }} pages</span>
                         <span>{{
-                            formatDuration(session.duration_seconds)
+                            formatDuration(session.durationSeconds)
                         }}</span>
-                        <span class="capitalize">{{
-                            session.device_type
-                        }}</span>
+                        <span class="capitalize">{{ session.deviceType }}</span>
                     </div>
                     <div class="mt-1 ml-6 text-xs text-indigo-500">
-                        Entry: {{ session.entry_page }}
-                        <span v-if="session.exit_page">
-                            • Exit: {{ session.exit_page }}
+                        Entry: {{ session.entryPage }}
+                        <span v-if="session.exitPage">
+                            • Exit: {{ session.exitPage }}
                         </span>
                     </div>
                     <div class="mt-1 ml-6 text-xs text-indigo-500">
@@ -135,22 +109,22 @@ const getUtmString = (): string => {
             <div v-if="session.events.length > 0" class="space-y-2">
                 <div
                     v-for="event in session.events"
-                    :key="event.event_id"
+                    :key="event.eventId"
                     class="flex items-start gap-3 text-sm"
                     data-testid="session-event"
                 >
                     <span class="w-32 flex-shrink-0 text-indigo-600">
-                        {{ formatDateTime(event.occurred_at) }}
+                        {{ formatDateTime(event.occurredAt) }}
                     </span>
                     <div class="flex-1">
                         <span class="font-medium text-indigo-900">
                             {{ event.name }}
                         </span>
                         <span
-                            v-if="event.page_path"
+                            v-if="event.pagePath"
                             class="ml-2 text-indigo-600"
                         >
-                            {{ event.page_path }}
+                            {{ event.pagePath }}
                         </span>
                         <div
                             v-if="

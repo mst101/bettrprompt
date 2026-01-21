@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\SessionStatsResource;
+use App\Http\Resources\Admin\VisitorDetailResource;
 use App\Http\Resources\Admin\VisitorResource;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
@@ -82,8 +84,8 @@ class VisitorController extends Controller
         ];
 
         return Inertia::render('Admin/Visitors/Show', [
-            'visitor' => $visitor,
-            'sessionStats' => $sessionStats,
+            'visitor' => VisitorDetailResource::make($visitor)->resolve(),
+            'sessionStats' => SessionStatsResource::make($sessionStats)->resolve(),
         ]);
     }
 }

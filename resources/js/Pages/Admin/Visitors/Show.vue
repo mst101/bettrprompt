@@ -5,60 +5,12 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import type { SessionStatsResource, VisitorDetailResource } from '@/Types';
 import { Head, Link } from '@inertiajs/vue3';
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    created_at: string;
-    subscription_tier: string;
-}
-
-interface Event {
-    event_id: string;
-    name: string;
-    page_path: string | null;
-    occurred_at: string;
-    properties: Record<string, unknown>;
-}
-
-interface Session {
-    id: string;
-    started_at: string;
-    ended_at: string | null;
-    duration_seconds: number;
-    page_count: number;
-    entry_page: string;
-    exit_page: string | null;
-    device_type: string;
-    utm_source: string | null;
-    utm_medium: string | null;
-    utm_campaign: string | null;
-    is_bounce: boolean;
-    converted: boolean;
-    events?: Event[];
-}
-
-interface Visitor {
-    id: string;
-    user: User | null;
-    country_code: string;
-    created_at: string;
-    sessions: Session[];
-}
-
-interface SessionStats {
-    total_sessions: number;
-    total_page_views: number;
-    avg_duration: number;
-    bounce_rate: number;
-    converted: number;
-}
-
 interface Props {
-    visitor: Visitor;
-    sessionStats: SessionStats;
+    visitor: VisitorDetailResource;
+    sessionStats: SessionStatsResource;
 }
 
 defineProps<Props>();
@@ -129,11 +81,11 @@ const truncateId = (id: string): string => {
             <div class="mt-4 flex gap-6 text-sm text-indigo-600">
                 <div>
                     <span class="font-medium">Country:</span>
-                    {{ visitor.country_code || 'Unknown' }}
+                    {{ visitor.countryCode || 'Unknown' }}
                 </div>
                 <div>
                     <span class="font-medium">First seen:</span>
-                    {{ formatDate(visitor.created_at) }}
+                    {{ formatDate(visitor.createdAt) }}
                 </div>
             </div>
         </div>
@@ -146,25 +98,25 @@ const truncateId = (id: string): string => {
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 <StatCard
                     title="Total Sessions"
-                    :value="sessionStats.total_sessions"
+                    :value="sessionStats.totalSessions"
                     icon="chart-line"
                     icon-colour="blue"
                 />
                 <StatCard
                     title="Page Views"
-                    :value="sessionStats.total_page_views"
+                    :value="sessionStats.totalPageViews"
                     icon="eye"
                     icon-colour="green"
                 />
                 <StatCard
                     title="Avg Duration"
-                    :value="formatDuration(sessionStats.avg_duration)"
+                    :value="formatDuration(sessionStats.avgDuration)"
                     icon="clock"
                     icon-colour="purple"
                 />
                 <StatCard
                     title="Bounce Rate"
-                    :value="`${sessionStats.bounce_rate}%`"
+                    :value="`${sessionStats.bounceRate}%`"
                     icon="arrow-down"
                     icon-colour="red"
                 />
