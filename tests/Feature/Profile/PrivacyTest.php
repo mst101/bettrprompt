@@ -33,9 +33,9 @@ test('free user cannot enable privacy', function () {
     expect($user->canEnablePrivacy())->toBeFalse();
 });
 
-test('pro user can enable privacy', function () {
+test('premium user can enable privacy', function () {
     $user = User::factory()->create([
-        'subscription_tier' => 'pro',
+        'subscription_tier' => 'premium',
     ]);
     $user->update(['stripe_id' => 'cus_test']);
     $user->subscriptions()->create([
@@ -48,7 +48,7 @@ test('pro user can enable privacy', function () {
     expect($user->canEnablePrivacy())->toBeTrue();
 });
 
-test('begin setup requires pro subscription', function () {
+test('non-premium user cannot enable privacy', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
     ]);
@@ -61,9 +61,17 @@ test('begin setup requires pro subscription', function () {
     $response->assertSessionHasErrors('privacy');
 });
 
-test('begin setup generates recovery phrase for pro user', function () {
+test('pro user cannot enable privacy', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'pro',
+    ]);
+
+    expect($user->canEnablePrivacy())->toBeFalse();
+});
+
+test('begin setup generates recovery phrase for premium user', function () {
+    $user = User::factory()->create([
+        'subscription_tier' => 'premium',
     ]);
     $user->update(['stripe_id' => 'cus_test']);
     $user->subscriptions()->create([
