@@ -136,7 +136,7 @@ test('premium user is never blocked by limit', function () {
 test('blocks free user at limit on create-child-from-task route', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
-        'monthly_prompt_count' => 5,
+        'monthly_prompt_count' => 10,
         'prompt_count_reset_at' => now(),
     ]);
 
@@ -145,8 +145,7 @@ test('blocks free user at limit on create-child-from-task route', function () {
     ]);
 
     $response = $this->actingAs($user)
-        ->withHeader('Accept', 'application/json')
-        ->post(
+        ->postJson(
             route('prompt-builder.create-child-from-task', ['parentPromptRun' => $parentPromptRun->id]),
             [
                 'task_description' => 'Modified task description that is long enough',
@@ -159,7 +158,7 @@ test('blocks free user at limit on create-child-from-task route', function () {
 test('blocks free user at limit on create-child-from-answers route', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
-        'monthly_prompt_count' => 5,
+        'monthly_prompt_count' => 10,
         'prompt_count_reset_at' => now(),
     ]);
 
@@ -168,10 +167,9 @@ test('blocks free user at limit on create-child-from-answers route', function ()
     ]);
 
     $response = $this->actingAs($user)
-        ->withHeader('Accept', 'application/json')
-        ->post(
+        ->postJson(
             route('prompt-builder.create-child-from-answers', ['parentPromptRun' => $parentPromptRun->id]),
-            []
+            ['clarifying_answers' => ['question1' => 'answer1']]
         );
 
     expect($response->status())->toBe(403);
@@ -180,7 +178,7 @@ test('blocks free user at limit on create-child-from-answers route', function ()
 test('blocks free user at limit on create-child-with-framework route', function () {
     $user = User::factory()->create([
         'subscription_tier' => 'free',
-        'monthly_prompt_count' => 5,
+        'monthly_prompt_count' => 10,
         'prompt_count_reset_at' => now(),
     ]);
 
@@ -189,10 +187,9 @@ test('blocks free user at limit on create-child-with-framework route', function 
     ]);
 
     $response = $this->actingAs($user)
-        ->withHeader('Accept', 'application/json')
-        ->post(
+        ->postJson(
             route('prompt-builder.create-child-with-framework', ['promptRun' => $promptRun->id]),
-            ['framework' => 'test']
+            ['framework_code' => 'MBTI']
         );
 
     expect($response->status())->toBe(403);

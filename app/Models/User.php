@@ -571,8 +571,8 @@ class User extends Authenticatable
      */
     public function getPromptsRemaining(): int
     {
-        // Premium and Pro tiers are unlimited
-        if ($this->isPremium() || $this->isPro()) {
+        // Premium tier is unlimited
+        if ($this->isPremium()) {
             return PHP_INT_MAX;
         }
 
@@ -636,7 +636,20 @@ class User extends Authenticatable
     {
         $currency = $currency ?? $this->currency_code ?? 'GBP';
 
-        return config("stripe.prices.{$currency}.{$tier}.{$interval}");
+        // Try config first (for when env vars are set)
+        $priceId = config("stripe.prices.{$currency}.{$tier}.{$interval}");
+
+        // Fall back to database lookup (for tests and when prices are seeded)
+        if (! $priceId) {
+            $price = \App\Models\Price::where('tier', $tier)
+                ->where('currency_code', $currency)
+                ->where('interval', $interval)
+                ->first();
+
+            $priceId = $price?->stripe_price_id;
+        }
+
+        return $priceId;
     }
 
     /**
