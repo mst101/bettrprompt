@@ -5,8 +5,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import Pagination from '@/Components/Common/Pagination.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import type { AdminVisitorResource } from '@/Types';
-import type { Paginated } from '@/Types/shared/pagination';
+import type { AdminVisitorResource, Paginated } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
