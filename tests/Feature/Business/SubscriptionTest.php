@@ -8,57 +8,108 @@ describe('Subscription Feature Tests', function () {
             $user = User::factory()->create(['subscription_tier' => 'free']);
             expect($user->isFree())->toBeTrue();
             expect($user->isPaid())->toBeFalse();
+            expect($user->isStarter())->toBeFalse();
             expect($user->isPro())->toBeFalse();
-            expect($user->isPrivate())->toBeFalse();
+            expect($user->isPremium())->toBeFalse();
+        });
+
+        it('starter user has correct tier status', function () {
+            $user = User::factory()->create(['subscription_tier' => 'starter']);
+            expect($user->isPaid())->toBeTrue();
+            expect($user->isStarter())->toBeTrue();
+            expect($user->isPro())->toBeFalse();
+            expect($user->isPremium())->toBeFalse();
+            expect($user->isFree())->toBeFalse();
         });
 
         it('pro user has correct tier status', function () {
             $user = User::factory()->create(['subscription_tier' => 'pro']);
             expect($user->isPaid())->toBeTrue();
+            expect($user->isStarter())->toBeFalse();
             expect($user->isPro())->toBeTrue();
-            expect($user->isPrivate())->toBeFalse();
+            expect($user->isPremium())->toBeFalse();
             expect($user->isFree())->toBeFalse();
         });
 
-        it('private user has correct tier status', function () {
-            $user = User::factory()->create(['subscription_tier' => 'private']);
+        it('premium user has correct tier status', function () {
+            $user = User::factory()->create(['subscription_tier' => 'premium']);
             expect($user->isPaid())->toBeTrue();
+            expect($user->isStarter())->toBeFalse();
             expect($user->isPro())->toBeFalse();
-            expect($user->isPrivate())->toBeTrue();
+            expect($user->isPremium())->toBeTrue();
             expect($user->isFree())->toBeFalse();
         });
     });
 
     describe('Free Tier Limits', function () {
-        it('free user can create prompts within limit', function () {
+        it('free user can create prompts within limit of 10', function () {
             $user = User::factory()->create([
                 'subscription_tier' => 'free',
                 'monthly_prompt_count' => 2,
             ]);
 
-            expect($user->getPromptsRemaining())->toBe(3);
+            expect($user->getPromptLimit())->toBe(10);
+            expect($user->getPromptsRemaining())->toBe(8);
             expect($user->canCreatePrompt())->toBeTrue();
         });
 
         it('free user at limit cannot create more prompts', function () {
             $user = User::factory()->create([
                 'subscription_tier' => 'free',
-                'monthly_prompt_count' => 5,
+                'monthly_prompt_count' => 10,
             ]);
 
             expect($user->getPromptsRemaining())->toBe(0);
             expect($user->canCreatePrompt())->toBeFalse();
         });
 
-        it('pro user has unlimited prompts', function () {
+        it('starter user has 25 prompts per month', function () {
+            $user = User::factory()->create(['subscription_tier' => 'starter']);
+            expect($user->getPromptLimit())->toBe(25);
+            expect($user->getPromptsRemaining())->toBe(25);
+            expect($user->canCreatePrompt())->toBeTrue();
+        });
+
+        it('starter user at limit cannot create more prompts', function () {
+            $user = User::factory()->create([
+                'subscription_tier' => 'starter',
+                'monthly_prompt_count' => 25,
+            ]);
+
+            expect($user->getPromptsRemaining())->toBe(0);
+            expect($user->canCreatePrompt())->toBeFalse();
+        });
+
+        it('pro user has 90 prompts per month', function () {
             $user = User::factory()->create(['subscription_tier' => 'pro']);
+            expect($user->getPromptLimit())->toBe(90);
+            expect($user->getPromptsRemaining())->toBe(90);
+            expect($user->canCreatePrompt())->toBeTrue();
+        });
+
+        it('pro user at limit cannot create more prompts', function () {
+            $user = User::factory()->create([
+                'subscription_tier' => 'pro',
+                'monthly_prompt_count' => 90,
+            ]);
+
+            expect($user->getPromptsRemaining())->toBe(0);
+            expect($user->canCreatePrompt())->toBeFalse();
+        });
+
+        it('premium user has unlimited prompts', function () {
+            $user = User::factory()->create(['subscription_tier' => 'premium']);
+            expect($user->getPromptLimit())->toBe(PHP_INT_MAX);
             expect($user->getPromptsRemaining())->toBe(PHP_INT_MAX);
             expect($user->canCreatePrompt())->toBeTrue();
         });
 
-        it('private user has unlimited prompts', function () {
-            $user = User::factory()->create(['subscription_tier' => 'private']);
-            expect($user->getPromptsRemaining())->toBe(PHP_INT_MAX);
+        it('premium user can create prompts even with high count', function () {
+            $user = User::factory()->create([
+                'subscription_tier' => 'premium',
+                'monthly_prompt_count' => 999,
+            ]);
+
             expect($user->canCreatePrompt())->toBeTrue();
         });
 
@@ -122,7 +173,22 @@ describe('Subscription Feature Tests', function () {
             expect($status['tier'])->toBe('free');
             expect($status['isPaid'])->toBeFalse();
             expect($status['isFree'])->toBeTrue();
-            expect($status['promptsRemaining'])->toBe(2);
+            expect($status['isStarter'])->toBeFalse();
+            expect($status['isPro'])->toBeFalse();
+            expect($status['isPremium'])->toBeFalse();
+            expect($status['promptsRemaining'])->toBe(7);
+            expect($status['promptLimit'])->toBe(10);
+        });
+
+        it('returns correct subscription status for starter user', function () {
+            $user = User::factory()->create(['subscription_tier' => 'starter']);
+
+            $status = $user->getSubscriptionStatus();
+
+            expect($status['tier'])->toBe('starter');
+            expect($status['isPaid'])->toBeTrue();
+            expect($status['isStarter'])->toBeTrue();
+            expect($status['promptLimit'])->toBe(25);
         });
 
         it('returns correct subscription status for pro user', function () {
@@ -133,16 +199,18 @@ describe('Subscription Feature Tests', function () {
             expect($status['tier'])->toBe('pro');
             expect($status['isPaid'])->toBeTrue();
             expect($status['isPro'])->toBeTrue();
+            expect($status['promptLimit'])->toBe(90);
         });
 
-        it('returns correct subscription status for private user', function () {
-            $user = User::factory()->create(['subscription_tier' => 'private']);
+        it('returns correct subscription status for premium user', function () {
+            $user = User::factory()->create(['subscription_tier' => 'premium']);
 
             $status = $user->getSubscriptionStatus();
 
-            expect($status['tier'])->toBe('private');
+            expect($status['tier'])->toBe('premium');
             expect($status['isPaid'])->toBeTrue();
-            expect($status['isPrivate'])->toBeTrue();
+            expect($status['isPremium'])->toBeTrue();
+            expect($status['promptLimit'])->toBeNull(); // Unlimited
         });
     });
 
@@ -269,21 +337,27 @@ describe('Subscription Feature Tests', function () {
             ])->assertUnprocessable();
         });
 
-        it('works for both pro and private tiers', function () {
+        it('works for all paid tiers (starter, pro, premium)', function () {
             $user = User::factory()->create(['currency_code' => 'GBP']);
+
+            $starterResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'starter',
+                'interval' => 'monthly',
+            ]);
 
             $proResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
                 'tier' => 'pro',
                 'interval' => 'monthly',
             ]);
 
-            $privateResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
-                'tier' => 'private',
+            $premiumResponse = $this->actingAs($user)->postJson(route('subscription.checkout'), [
+                'tier' => 'premium',
                 'interval' => 'monthly',
             ]);
 
+            $starterResponse->assertSuccessful()->assertJsonStructure(['url']);
             $proResponse->assertSuccessful()->assertJsonStructure(['url']);
-            $privateResponse->assertSuccessful()->assertJsonStructure(['url']);
+            $premiumResponse->assertSuccessful()->assertJsonStructure(['url']);
         });
 
         it('works for both monthly and yearly intervals', function () {
@@ -305,6 +379,15 @@ describe('Subscription Feature Tests', function () {
     });
 
     describe('Subscription Success', function () {
+        it('sets subscription tier to starter after checkout', function () {
+            $user = User::factory()->create(['subscription_tier' => 'free']);
+
+            $this->actingAs($user)->get(route('subscription.success', ['tier' => 'starter']));
+
+            $user->refresh();
+            expect($user->subscription_tier)->toBe('starter');
+        });
+
         it('sets subscription tier to pro after checkout', function () {
             $user = User::factory()->create(['subscription_tier' => 'free']);
 
@@ -314,13 +397,13 @@ describe('Subscription Feature Tests', function () {
             expect($user->subscription_tier)->toBe('pro');
         });
 
-        it('sets subscription tier to private after checkout', function () {
+        it('sets subscription tier to premium after checkout', function () {
             $user = User::factory()->create(['subscription_tier' => 'free']);
 
-            $this->actingAs($user)->get(route('subscription.success', ['tier' => 'private']));
+            $this->actingAs($user)->get(route('subscription.success', ['tier' => 'premium']));
 
             $user->refresh();
-            expect($user->subscription_tier)->toBe('private');
+            expect($user->subscription_tier)->toBe('premium');
         });
 
         it('defaults to pro tier if not specified', function () {
@@ -334,12 +417,32 @@ describe('Subscription Feature Tests', function () {
     });
 
     describe('Stripe Tier Determination', function () {
+        it('determines starter tier from price id', function () {
+            config([
+                'stripe.prices' => [
+                    'GBP' => [
+                        'starter' => ['monthly' => 'price_starter_monthly'],
+                        'pro' => ['monthly' => 'price_pro_monthly'],
+                        'premium' => ['monthly' => 'price_premium_monthly'],
+                    ],
+                ],
+            ]);
+
+            $controller = new \App\Http\Controllers\StripeWebhookController;
+            $method = new \ReflectionMethod($controller, 'determineTierFromPriceId');
+            $method->setAccessible(true);
+
+            $tier = $method->invoke($controller, 'price_starter_monthly');
+            expect($tier)->toBe('starter');
+        });
+
         it('determines pro tier from price id', function () {
             config([
                 'stripe.prices' => [
                     'GBP' => [
+                        'starter' => ['monthly' => 'price_starter_monthly'],
                         'pro' => ['monthly' => 'price_pro_monthly'],
-                        'private' => ['monthly' => 'price_private_monthly'],
+                        'premium' => ['monthly' => 'price_premium_monthly'],
                     ],
                 ],
             ]);
@@ -352,12 +455,13 @@ describe('Subscription Feature Tests', function () {
             expect($tier)->toBe('pro');
         });
 
-        it('determines private tier from price id', function () {
+        it('determines premium tier from price id', function () {
             config([
                 'stripe.prices' => [
                     'GBP' => [
+                        'starter' => ['monthly' => 'price_starter_monthly'],
                         'pro' => ['monthly' => 'price_pro_monthly'],
-                        'private' => ['monthly' => 'price_private_monthly'],
+                        'premium' => ['monthly' => 'price_premium_monthly'],
                     ],
                 ],
             ]);
@@ -366,11 +470,11 @@ describe('Subscription Feature Tests', function () {
             $method = new \ReflectionMethod($controller, 'determineTierFromPriceId');
             $method->setAccessible(true);
 
-            $tier = $method->invoke($controller, 'price_private_monthly');
-            expect($tier)->toBe('private');
+            $tier = $method->invoke($controller, 'price_premium_monthly');
+            expect($tier)->toBe('premium');
         });
 
-        it('defaults to pro if price not found', function () {
+        it('defaults to starter if price not found', function () {
             config([
                 'stripe.prices' => [
                     'GBP' => ['pro' => ['monthly' => 'price_pro_monthly']],
@@ -382,7 +486,7 @@ describe('Subscription Feature Tests', function () {
             $method->setAccessible(true);
 
             $tier = $method->invoke($controller, 'unknown_price');
-            expect($tier)->toBe('pro');
+            expect($tier)->toBe('starter');
         });
     });
 });
