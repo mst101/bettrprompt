@@ -49,7 +49,9 @@ class QuestionResource extends JsonResource
             'displayOrder' => (int) $this->display_order,
             'isActive' => (bool) $this->is_active,
             'variantsCount' => $this->variants_count ?? $this->variants->count(),
-            'variants' => QuestionVariantResource::collection($this->whenLoaded('variants')),
+            'variants' => $this->whenLoaded('variants', function () {
+                return QuestionVariantResource::collection($this->variants)->resolve();
+            }),
             'createdAt' => $this->created_at?->toIso8601String(),
             'updatedAt' => $this->updated_at?->toIso8601String(),
         ];

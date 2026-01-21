@@ -47,7 +47,7 @@ class SessionResource extends JsonResource
 
             // Relationships
             'events' => $this->whenLoaded('events', function () {
-                return EventResource::collection($this->events);
+                return EventResource::collection($this->events)->resolve();
             }),
         ];
     }

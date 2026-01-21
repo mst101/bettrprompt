@@ -31,7 +31,7 @@ class VisitorDetailResource extends JsonResource
                 return $this->user ? (new UserResource($this->user))->resolve() : null;
             }),
             'sessions' => $this->whenLoaded('sessions', function () {
-                return SessionResource::collection($this->sessions);
+                return SessionResource::collection($this->sessions)->resolve();
             }),
         ];
     }
