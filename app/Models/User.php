@@ -503,13 +503,21 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has any active subscription (Pro or Private)
+     * Check if user has any active subscription (Starter, Pro, or Premium)
      */
     public function isPaid(): bool
     {
         return $this->subscribed('default') ||
                ($this->subscription_ends_at && $this->subscription_ends_at->isFuture()) ||
-               in_array($this->subscription_tier, ['pro', 'private']);
+               in_array($this->subscription_tier, ['starter', 'pro', 'premium']);
+    }
+
+    /**
+     * Check if user is on Starter tier
+     */
+    public function isStarter(): bool
+    {
+        return $this->subscription_tier === 'starter';
     }
 
     /**
@@ -517,15 +525,23 @@ class User extends Authenticatable
      */
     public function isPro(): bool
     {
-        return $this->isPaid() && $this->subscription_tier === 'pro';
+        return $this->subscription_tier === 'pro';
     }
 
     /**
-     * Check if user is on Private tier (either via active subscription or grace period)
+     * Check if user is on Premium tier (renamed from Private)
+     */
+    public function isPremium(): bool
+    {
+        return $this->subscription_tier === 'premium';
+    }
+
+    /**
+     * Check if user is on Private tier (legacy, maps to Premium)
      */
     public function isPrivate(): bool
     {
-        return $this->isPaid() && $this->subscription_tier === 'private';
+        return $this->subscription_tier === 'premium';
     }
 
     /**
@@ -537,17 +553,32 @@ class User extends Authenticatable
     }
 
     /**
-     * Get remaining prompts for free tier users
+     * Get prompt limit for this user's tier
+     */
+    public function getPromptLimit(): int
+    {
+        return match ($this->subscription_tier) {
+            'free' => config('stripe.tiers.free.monthly_prompt_limit', 10),
+            'starter' => config('stripe.tiers.starter.monthly_prompt_limit', 25),
+            'pro' => config('stripe.tiers.pro.monthly_prompt_limit', 90),
+            'premium' => PHP_INT_MAX, // Unlimited
+            default => config('stripe.tiers.free.monthly_prompt_limit', 10),
+        };
+    }
+
+    /**
+     * Get remaining prompts for this user
      */
     public function getPromptsRemaining(): int
     {
-        if ($this->isPro() || $this->isPrivate()) {
-            return PHP_INT_MAX; // Unlimited
+        // Premium and Pro tiers are unlimited
+        if ($this->isPremium() || $this->isPro()) {
+            return PHP_INT_MAX;
         }
 
-        $limit = config('stripe.free_tier.monthly_prompt_limit', 10);
+        $limit = $this->getPromptLimit();
 
-        return max(0, $limit - $this->monthly_prompt_count);
+        return max(0, $limit - ($this->monthly_prompt_count ?? 0));
     }
 
     /**
@@ -569,7 +600,13 @@ class User extends Authenticatable
      */
     public function canCreatePrompt(): bool
     {
-        return $this->isPaid() || $this->getPromptsRemaining() > 0;
+        // Premium tier is unlimited
+        if ($this->isPremium()) {
+            return true;
+        }
+
+        // All other tiers have limits (including Pro which was unlimited before)
+        return $this->getPromptsRemaining() > 0;
     }
 
     /**
@@ -591,7 +628,7 @@ class User extends Authenticatable
     /**
      * Get Stripe checkout price ID based on tier and currency
      *
-     * @param  'pro'|'private'  $tier
+     * @param  'starter'|'pro'|'premium'  $tier
      * @param  'monthly'|'yearly'  $interval
      * @param  string|null  $currency  Default: user's currency_code or 'GBP'
      */
@@ -607,15 +644,19 @@ class User extends Authenticatable
      */
     public function getSubscriptionStatus(): array
     {
+        $promptLimit = $this->getPromptLimit();
+
         return [
             'tier' => $this->subscription_tier ?? 'free',
             'isPaid' => $this->isPaid(),
-            'isPro' => $this->isPro(),
-            'isPrivate' => $this->isPrivate(),
             'isFree' => $this->isFree(),
+            'isStarter' => $this->isStarter(),
+            'isPro' => $this->isPro(),
+            'isPremium' => $this->isPremium(),
+            'isPrivate' => $this->isPrivate(), // Legacy
             'promptsUsed' => $this->monthly_prompt_count ?? 0,
             'promptsRemaining' => $this->getPromptsRemaining(),
-            'promptLimit' => config('stripe.free_tier.monthly_prompt_limit', 10),
+            'promptLimit' => $promptLimit === PHP_INT_MAX ? null : $promptLimit,
             'subscriptionEndsAt' => $this->subscription_ends_at?->toIso8601String(),
             'onGracePeriod' => $this->subscription('default')?->onGracePeriod() ?? false,
             'daysUntilReset' => $this->getDaysUntilPromptReset(),
@@ -635,11 +676,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user can enable privacy (must be Pro)
+     * Check if user can enable privacy (must be Premium)
      */
     public function canEnablePrivacy(): bool
     {
-        return $this->isPro() && ! $this->privacy_enabled;
+        return $this->isPremium() && ! $this->privacy_enabled;
     }
 
     /**
