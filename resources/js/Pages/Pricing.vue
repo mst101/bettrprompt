@@ -215,14 +215,14 @@ function getStarted() {
                         >
                             <DynamicIcon
                                 name="check"
-                                class="h-5 w-5 text-green-500"
+                                class="h-5 w-5 shrink-0 text-green-500"
                             />
                             {{ $t(featureKey) }}
                         </li>
                         <li class="flex items-center gap-2 text-indigo-400">
                             <DynamicIcon
                                 name="x-mark"
-                                class="h-5 w-5 text-indigo-300"
+                                class="h-5 w-5 shrink-0 text-indigo-300"
                             />
                             {{ $t('pricing.features.privacy') }}
                         </li>
@@ -249,8 +249,9 @@ function getStarted() {
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
                             {{ currencySymbol }}{{ starterPrice }}
-                            <span class="text-lg font-normal text-indigo-500"
-                                >\ /{{
+                            <span class="text-lg font-normal text-indigo-500">
+                                /
+                                {{
                                     selectedPlan === 'yearly'
                                         ? $t('pricing.period.year')
                                         : $t('pricing.period.month')
@@ -282,7 +283,7 @@ function getStarted() {
                         >
                             <DynamicIcon
                                 name="check"
-                                class="h-5 w-5 text-green-500"
+                                class="h-5 w-5 shrink-0 text-green-500"
                             />
                             {{ $t(featureKey) }}
                         </li>
@@ -309,9 +310,15 @@ function getStarted() {
 
                 <!-- Pro Tier -->
                 <div
-                    class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
+                    class="relative rounded-2xl border-2 border-indigo-500 bg-white p-8 shadow-md"
                     data-testid="pro-tier-tab"
                 >
+                    <div
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-4 py-1 text-sm font-medium text-white"
+                    >
+                        {{ $t('pricing.recommendedBadge') }}
+                    </div>
+
                     <h2 class="mb-2 text-2xl font-bold text-indigo-900">
                         {{ $t('pricing.pro.name') }}
                     </h2>
@@ -319,8 +326,9 @@ function getStarted() {
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
                             {{ currencySymbol }}{{ proPrice }}
-                            <span class="text-lg font-normal text-indigo-500"
-                                >\ /{{
+                            <span class="text-lg font-normal text-indigo-500">
+                                /
+                                {{
                                     selectedPlan === 'yearly'
                                         ? $t('pricing.period.year')
                                         : $t('pricing.period.month')
@@ -352,7 +360,7 @@ function getStarted() {
                         >
                             <DynamicIcon
                                 name="check"
-                                class="h-5 w-5 text-green-500"
+                                class="h-5 w-5 shrink-0 text-green-500"
                             />
                             {{ $t(featureKey) }}
                         </li>
@@ -379,15 +387,9 @@ function getStarted() {
 
                 <!-- Premium Tier -->
                 <div
-                    class="relative rounded-2xl border-2 border-indigo-500 bg-white p-8 shadow-md"
+                    class="rounded-2xl border border-indigo-200 bg-white p-8 shadow-sm"
                     data-testid="premium-tier-tab"
                 >
-                    <div
-                        class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-4 py-1 text-sm font-medium text-white"
-                    >
-                        {{ $t('pricing.recommendedBadge') }}
-                    </div>
-
                     <h2 class="mb-2 text-2xl font-bold text-indigo-900">
                         {{ $t('pricing.premium.name') }}
                     </h2>
@@ -395,8 +397,9 @@ function getStarted() {
                     <div class="mb-6">
                         <div class="text-4xl font-bold text-indigo-900">
                             {{ currencySymbol }}{{ premiumPrice }}
-                            <span class="text-lg font-normal text-indigo-500"
-                                >\ /{{
+                            <span class="text-lg font-normal text-indigo-500">
+                                /
+                                {{
                                     selectedPlan === 'yearly'
                                         ? $t('pricing.period.year')
                                         : $t('pricing.period.month')
@@ -428,7 +431,7 @@ function getStarted() {
                         >
                             <DynamicIcon
                                 name="check"
-                                class="h-5 w-5 text-green-500"
+                                class="h-5 w-5 shrink-0 text-green-500"
                             />
                             {{ $t(featureKey) }}
                         </li>
