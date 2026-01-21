@@ -48,26 +48,33 @@ class SubscriptionController extends Controller
             'plans' => $plans,
             'currency' => $currencyCode,
             'currencySymbol' => $currencySymbol,
-            'availableCurrencies' => ['GBP', 'EUR', 'USD'],
             'featureKeys' => [
                 'free' => [
                     'pricing.features.free.limit',
                     'pricing.features.free.calibration',
                     'pricing.features.free.optimization',
                 ],
+                'starter' => [
+                    'pricing.features.starter.limit',
+                    'pricing.features.starter.calibration',
+                    'pricing.features.starter.optimization',
+                    'pricing.features.starter.history',
+                ],
                 'pro' => [
-                    'pricing.features.pro.unlimited',
+                    'pricing.features.pro.limit',
                     'pricing.features.pro.calibration',
                     'pricing.features.pro.optimization',
                     'pricing.features.pro.history',
+                    'pricing.features.pro.priority_frameworks',
                 ],
-                'private' => [
-                    'pricing.features.private.unlimited',
-                    'pricing.features.private.calibration',
-                    'pricing.features.private.optimization',
-                    'pricing.features.private.mode',
-                    'pricing.features.private.support',
-                    'pricing.features.private.history',
+                'premium' => [
+                    'pricing.features.premium.unlimited',
+                    'pricing.features.premium.calibration',
+                    'pricing.features.premium.optimization',
+                    'pricing.features.premium.history',
+                    'pricing.features.premium.priority_frameworks',
+                    'pricing.features.premium.privacy',
+                    'pricing.features.premium.support',
                 ],
             ],
         ]);
@@ -79,7 +86,7 @@ class SubscriptionController extends Controller
     public function checkout(Request $request): JsonResponse
     {
         $request->validate([
-            'tier' => 'required|in:pro,private',
+            'tier' => 'required|in:starter,pro,premium',
             'interval' => 'required|in:monthly,yearly',
         ]);
 
@@ -140,7 +147,7 @@ class SubscriptionController extends Controller
         $tier = $request->string('tier', 'pro')->toString();
 
         // Validate tier and update subscription tier
-        if (! in_array($tier, ['pro', 'private'])) {
+        if (! in_array($tier, ['starter', 'pro', 'premium'])) {
             $tier = 'pro';
         }
 
@@ -165,10 +172,14 @@ class SubscriptionController extends Controller
             ],
         ]);
 
+        $messageKey = match ($tier) {
+            'starter' => 'messages.subscription.welcome_starter',
+            'premium' => 'messages.subscription.welcome_premium',
+            default => 'messages.subscription.welcome_pro',
+        };
+
         return Inertia::render('Subscription/Success', [
-            'message' => $tier === 'private'
-                ? __('messages.subscription.welcome_private')
-                : __('messages.subscription.welcome_pro'),
+            'message' => __($messageKey),
             'tier' => $tier,
         ]);
     }
