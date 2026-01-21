@@ -81,28 +81,50 @@ const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
     isCurrencyUpdating.value = true;
+    const url = countryRoute('currency.select');
+    const csrfToken = getCsrfToken();
 
-    fetch(countryRoute('currency.select'), {
+    console.log('Updating currency:', {
+        url,
+        newCurrency,
+        hasCSRFToken: !!csrfToken,
+    });
+
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-CSRF-TOKEN': csrfToken,
         },
         body: JSON.stringify({
             currency_code: newCurrency,
         }),
     })
         .then((response) => {
+            console.log('Currency update response:', response.status);
             if (!response.ok) {
-                throw new Error('Failed to update currency');
+                return response.text().then((text) => {
+                    throw new Error(
+                        `HTTP ${response.status}: ${text || response.statusText}`,
+                    );
+                });
             }
-            // Reload the page to get updated pricing data
-            window.location.reload();
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Currency update response data:', data);
+            if (data.success) {
+                // Navigate to pricing page to get updated pricing data
+                const pricingUrl = countryRoute('pricing');
+                console.log('Navigating to:', pricingUrl);
+                window.location.href = pricingUrl;
+            } else {
+                throw new Error('Response did not indicate success');
+            }
         })
         .catch((error) => {
-            console.error('Currency update error:', error);
+            console.error('Currency update failed:', error);
             isCurrencyUpdating.value = false;
-            alert('Failed to update currency. Please try again.');
         });
 }
 

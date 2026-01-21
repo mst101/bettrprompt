@@ -72,21 +72,23 @@ class VisitorController extends Controller
             ],
         ]);
 
+        $currencyCode = $validated['currency_code'];
+
         if ($request->user()) {
             // Authenticated user: update user record
             $request->user()->update([
-                'currency_code' => $validated['currency_code'],
+                'currency_code' => $currencyCode,
             ]);
 
             // Also sync all visitor records linked to this user
             Visitor::where('user_id', $request->user()->id)
-                ->update(['currency_code' => $validated['currency_code']]);
+                ->update(['currency_code' => $currencyCode]);
 
             // Also sync visitor from cookie if present (e.g., user was visitor before authenticating)
             $visitorId = getVisitorIdFromCookie($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
-                $visitor?->update(['currency_code' => $validated['currency_code']]);
+                $visitor?->update(['currency_code' => $currencyCode]);
             }
 
             // Invalidate currency caches (route-specific)
@@ -96,14 +98,19 @@ class VisitorController extends Controller
             $visitorId = getVisitorIdFromCookie($request);
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
-                $visitor?->update(['currency_code' => $validated['currency_code']]);
+                if ($visitor) {
+                    $visitor->update(['currency_code' => $currencyCode]);
 
-                // Invalidate currency cache (route-specific)
-                SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
+                    // Invalidate currency cache (route-specific)
+                    SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
+                }
             }
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'currency_code' => $currencyCode,
+        ]);
     }
 
     /**
