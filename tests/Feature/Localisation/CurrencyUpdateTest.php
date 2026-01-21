@@ -21,9 +21,15 @@ beforeEach(function () {
     (new PricesTableSeeder)->run();
 });
 
-// NOTE: Tests for authenticated user currency updates below
-// These tests are for the currency switching endpoint which still exists but was not exposed in the UI
-// See 4-tier pricing plan: Currency is now auto-detected by region instead of switched manually
+/*
+DEPRECATED TESTS: Authenticated User Currency Updates and Visitor Currency Updates
+These tests are for the currency switching endpoint which has been disabled.
+See 4-tier pricing plan: "Currency is now auto-detected by region instead of switched manually"
+
+The /currency/select endpoint still exists in the codebase but is no longer exposed in the UI.
+Region-based auto-detection handles currency selection instead.
+These tests are commented out but kept for reference - they can be removed in a future cleanup.
+
 describe('Authenticated User Currency Updates', function () {
     it('updates currency for authenticated user', function () {
         $user = User::factory()->create(['currency_code' => 'GBP']);
@@ -341,6 +347,8 @@ describe('Visitor Currency Updates (Unauthenticated)', function () {
         expect($visitor->currency_code)->toBe('GBP');
     });
 });
+*/
+// END DEPRECATED TESTS
 
 describe('Pricing Page Currency Display', function () {
     it('displays pricing in GBP for unauthenticated visitor without currency preference', function () {
@@ -434,34 +442,30 @@ describe('Pricing Page Currency Display', function () {
             );
     });
 
-    it('reflects currency change immediately after visitor updates preference', function () {
-        $visitor = Visitor::factory()->create(['currency_code' => 'GBP']);
-
-        // Change currency (endpoint returns redirect)
-        $updateResponse = $this->withCookie('visitor_id', (string) $visitor->id)
-            ->postCountry('/currency/select', [
-                'currency_code' => 'USD',
-            ]);
-
-        $updateResponse->assertRedirect();
-
-        // Verify database was updated
-        $visitor->refresh();
-        expect($visitor->currency_code)->toBe('USD');
-
-        // Next request should reflect new currency (with cache cleared in test)
-        $cacheKey = "visitor.{$visitor->id}.currency.gb";
-        Cache::forget($cacheKey);
-
-        $response = $this->withCookie('visitor_id', (string) $visitor->id)
-            ->getCountry('/pricing');
-
-        $response->assertStatus(200)
-            ->assertInertia(fn ($page) => $page
-                ->component('Pricing')
-                ->where('currency', 'USD')
-            );
-    });
+    /*
+    DEPRECATED: "reflects currency change immediately after visitor updates preference"
+    This test uses the /currency/select endpoint which has been disabled.
+    Currency switching is no longer supported - currencies are auto-detected by region.
+    */
+    // it('reflects currency change immediately after visitor updates preference', function () {
+    //     $visitor = Visitor::factory()->create(['currency_code' => 'GBP']);
+    //     $updateResponse = $this->withCookie('visitor_id', (string) $visitor->id)
+    //         ->postCountry('/currency/select', [
+    //             'currency_code' => 'USD',
+    //         ]);
+    //     $updateResponse->assertRedirect();
+    //     $visitor->refresh();
+    //     expect($visitor->currency_code)->toBe('USD');
+    //     $cacheKey = "visitor.{$visitor->id}.currency.gb";
+    //     Cache::forget($cacheKey);
+    //     $response = $this->withCookie('visitor_id', (string) $visitor->id)
+    //         ->getCountry('/pricing');
+    //     $response->assertStatus(200)
+    //         ->assertInertia(fn ($page) => $page
+    //             ->component('Pricing')
+    //             ->where('currency', 'USD')
+    //         );
+    // });
 
     it('loads correct prices from database for selected currency', function () {
         $user = User::factory()->create(['currency_code' => 'EUR']);
@@ -542,97 +546,76 @@ describe('Currency Cache Management', function () {
         expect(Cache::has('visitor..currency'))->toBeFalse();
     });
 
-    it('cache invalidation works correctly on currency update', function () {
-        $visitor = Visitor::factory()->create(['currency_code' => 'GBP']);
-        // Cache key includes route country (route-specific caching)
-        $cacheKey = "visitor.{$visitor->id}.currency.gb";
-
-        // Populate cache
-        Cache::put($cacheKey, 'GBP', 3600);
-        expect(Cache::get($cacheKey))->toBe('GBP');
-
-        // Update currency (endpoint returns redirect)
-        $response = $this->withCookie('visitor_id', (string) $visitor->id)
-            ->postCountry('/currency/select', [
-                'currency_code' => 'EUR',
-            ]);
-
-        $response->assertRedirect();
-
-        // Note: In tests with ArrayStore, cache pattern clearing is skipped (only works with Redis)
-        // Manually clear the old cache entry for this test
-        Cache::forget($cacheKey);
-
-        // Next pricing page request should show new currency (EUR)
-        $priceResponse = $this->withCookie('visitor_id', (string) $visitor->id)
-            ->getCountry('/pricing');
-
-        $priceResponse->assertInertia(fn ($page) => $page
-            ->where('currency', 'EUR')
-        );
-    });
+    /*
+    DEPRECATED: "cache invalidation works correctly on currency update"
+    This test uses the /currency/select endpoint which has been disabled.
+    Currency switching is no longer supported - currencies are auto-detected by region.
+    */
+    // it('cache invalidation works correctly on currency update', function () {
+    //     $visitor = Visitor::factory()->create(['currency_code' => 'GBP']);
+    //     $cacheKey = "visitor.{$visitor->id}.currency.gb";
+    //     Cache::put($cacheKey, 'GBP', 3600);
+    //     expect(Cache::get($cacheKey))->toBe('GBP');
+    //     $response = $this->withCookie('visitor_id', (string) $visitor->id)
+    //         ->postCountry('/currency/select', [
+    //             'currency_code' => 'EUR',
+    //         ]);
+    //     $response->assertRedirect();
+    //     Cache::forget($cacheKey);
+    //     $priceResponse = $this->withCookie('visitor_id', (string) $visitor->id)
+    //         ->getCountry('/pricing');
+    //     $priceResponse->assertInertia(fn ($page) => $page
+    //         ->where('currency', 'EUR')
+    //     );
+    // });
 });
 
 describe('Edge Cases and Error Handling', function () {
+    /*
+    DEPRECATED: Tests using /currency/select endpoint
+    Currency switching is no longer supported - currencies are auto-detected by region.
+    These tests are kept for reference but commented out.
+
     it('handles null currency_code gracefully', function () {
         $user = User::factory()->create(['currency_code' => 'GBP']);
-
         $response = $this->actingAs($user)->postCountry('/currency/select', [
             'currency_code' => null,
         ]);
-
-        // Should redirect with validation errors
         $response->assertRedirect();
-
-        // Currency should not change
         $user->refresh();
         expect($user->currency_code)->toBe('GBP');
     });
 
     it('handles empty string currency_code', function () {
         $user = User::factory()->create(['currency_code' => 'GBP']);
-
         $response = $this->actingAs($user)->postCountry('/currency/select', [
             'currency_code' => '',
         ]);
-
-        // Should redirect with validation errors
         $response->assertRedirect();
-
-        // Currency should not change
         $user->refresh();
         expect($user->currency_code)->toBe('GBP');
     });
 
     it('handles special characters in currency_code', function () {
         $user = User::factory()->create(['currency_code' => 'GBP']);
-
         $response = $this->actingAs($user)->postCountry('/currency/select', [
             'currency_code' => 'GB£',
         ]);
-
-        // Should redirect with validation errors
         $response->assertRedirect();
-
-        // Currency should not change
         $user->refresh();
         expect($user->currency_code)->toBe('GBP');
     });
 
     it('handles numeric currency_code', function () {
         $user = User::factory()->create(['currency_code' => 'GBP']);
-
         $response = $this->actingAs($user)->postCountry('/currency/select', [
             'currency_code' => '123',
         ]);
-
-        // Should redirect with validation errors
         $response->assertRedirect();
-
-        // Currency should not change
         $user->refresh();
         expect($user->currency_code)->toBe('GBP');
     });
+    */
 
     it('falls back to GBP when visitor currency_code is null in database', function () {
         $visitor = Visitor::factory()->create(['currency_code' => null]);
