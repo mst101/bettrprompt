@@ -11,6 +11,8 @@ export * from './LanguageResource';
 export * from './PromptRunPageResource';
 export * from './PromptRunRelationshipResource';
 export * from './PromptRunResource';
+export * from './QuestionResource';
+export * from './QuestionVariantResource';
 export * from './SessionResource';
 export * from './SessionStatsResource';
 export * from './UserDetailResource';

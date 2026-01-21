@@ -12,33 +12,12 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import type { QuestionResource, QuestionVariantResource } from '@/Types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 
-interface Variant {
-    id: number;
-    questionId: string;
-    personalityPattern: string;
-    phrasing: string;
-}
-
-interface Question {
-    id: string;
-    questionText: string;
-    purpose: string;
-    cognitiveRequirements: string[];
-    priority: string;
-    category: string;
-    framework: string | null;
-    isUniversal: boolean;
-    isConditional: boolean;
-    conditionText: string | null;
-    displayOrder: number;
-    variants: Variant[];
-}
-
 interface Props {
-    question: Question;
+    question: QuestionResource;
     categories: string[];
     frameworks: string[];
     personalityPatterns: string[];
@@ -76,17 +55,17 @@ const cognitiveReqOptions = [
 const form = useForm({
     questionText: props.question.questionText,
     purpose: props.question.purpose,
-    cognitiveRequirements: props.question.cognitiveRequirements,
+    cognitiveRequirements: [] as string[],
     priority: props.question.priority,
-    category: props.question.category,
-    framework: props.question.framework || '',
+    category: props.question.taskCategoryCode || '',
+    framework: props.question.frameworkCode || '',
     isUniversal: props.question.isUniversal,
     isConditional: props.question.isConditional,
     conditionText: props.question.conditionText || '',
     displayOrder: props.question.displayOrder,
 });
 
-const selectedCogReqs = ref<string[]>(props.question.cognitiveRequirements);
+const selectedCogReqs = ref<string[]>([]);
 
 const toggleCogReq = (req: string) => {
     const index = selectedCogReqs.value.indexOf(req);
@@ -108,7 +87,9 @@ const newVariantForm = useForm({
     phrasing: '',
 });
 
-const variants = ref<Variant[]>(props.question.variants);
+const variants = ref(
+    props.question.variants || ([] as QuestionVariantResource[]),
+);
 
 const addVariant = async () => {
     newVariantForm.post(

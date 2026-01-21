@@ -10,23 +10,13 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import type { QuestionResource } from '@/Types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
-interface Question {
-    id: string;
-    questionText: string;
-    purpose: string;
-    taskCategoryCode: string | null;
-    frameworkCode: string | null;
-    priority: string;
-    isUniversal: boolean;
-    variantsCount: number;
-}
-
 interface Props {
     questions: {
-        data: Question[];
+        data: QuestionResource[];
         links: {
             next: string | null;
             prev: string | null;

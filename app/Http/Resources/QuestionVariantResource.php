@@ -5,6 +5,20 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * TypeScript interface:
+ * ```typescript
+ * interface QuestionVariantResource {
+ *     readonly id: number;
+ *     readonly questionId: string;
+ *     readonly personalityPattern: string | null;
+ *     readonly phrasing: string;
+ *     readonly isActive: boolean;
+ *     readonly createdAt: string;
+ *     readonly updatedAt: string;
+ * }
+ * ```
+ */
 class QuestionVariantResource extends JsonResource
 {
     /**
