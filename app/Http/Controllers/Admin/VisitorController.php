@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\VisitorResource;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,7 +35,7 @@ class VisitorController extends Controller
 
         return Inertia::render('Admin/Visitors/Index', [
             'visitors' => [
-                'data' => $visitors->items(),
+                'data' => VisitorResource::collection($visitors->items()),
                 'meta' => [
                     'currentPage' => $visitors->currentPage(),
                     'lastPage' => $visitors->lastPage(),

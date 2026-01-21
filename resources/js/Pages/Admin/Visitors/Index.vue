@@ -18,9 +18,9 @@ interface User {
 interface Visitor {
     id: string;
     user: User | null;
-    country_code: string;
-    sessions_count: number;
-    created_at: string;
+    countryCode: string;
+    sessionsCount: number;
+    createdAt: string;
 }
 
 interface Props {
@@ -151,17 +151,17 @@ const truncateId = (id: string): string => {
                             <td
                                 class="px-6 py-4 text-sm whitespace-nowrap text-indigo-700"
                             >
-                                {{ visitor.country_code || 'N/A' }}
+                                {{ visitor.countryCode || 'N/A' }}
                             </td>
                             <td
                                 class="px-6 py-4 text-sm whitespace-nowrap text-indigo-700"
                             >
-                                {{ visitor.sessions_count }}
+                                {{ visitor.sessionsCount }}
                             </td>
                             <td
                                 class="px-6 py-4 text-sm whitespace-nowrap text-indigo-700"
                             >
-                                {{ formatDate(visitor.created_at) }}
+                                {{ formatDate(visitor.createdAt) }}
                             </td>
                             <td class="px-6 py-4 text-sm whitespace-nowrap">
                                 <Link

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AdminUserResource;
+use App\Http\Resources\Admin\UserResource;
 use App\Http\Resources\PromptRunResource;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,7 +34,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Index', [
             'users' => [
-                'data' => AdminUserResource::collection($users->items())->resolve(),
+                'data' => UserResource::collection($users->items())->resolve(),
                 'links' => $users->linkCollection(),
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
