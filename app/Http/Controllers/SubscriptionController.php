@@ -44,7 +44,7 @@ class SubscriptionController extends Controller
             ];
         }
 
-        $response = Inertia::render('Pricing', [
+        return Inertia::render('Pricing', [
             'plans' => $plans,
             'currency' => $currencyCode,
             'currencySymbol' => $currencySymbol,
@@ -78,12 +78,6 @@ class SubscriptionController extends Controller
                 ],
             ],
         ]);
-
-        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', '0');
-
-        return $response;
     }
 
     /**

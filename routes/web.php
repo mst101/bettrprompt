@@ -91,6 +91,7 @@ Route::prefix('{country}')
 
         // Pricing page (public)
         Route::get('/pricing', [SubscriptionController::class, 'pricing'])
+            ->middleware(\App\Http\Middleware\NoCachePricingPage::class)
             ->name('pricing');
 
         // Google OAuth routes
