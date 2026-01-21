@@ -37,7 +37,7 @@ class VisitorController extends Controller
 
         return Inertia::render('Admin/Visitors/Index', [
             'visitors' => [
-                'data' => VisitorListResource::collection($visitors->items()),
+                'data' => VisitorListResource::collection($visitors->items())->resolve(),
                 'meta' => [
                     'currentPage' => $visitors->currentPage(),
                     'lastPage' => $visitors->lastPage(),
