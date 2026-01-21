@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\AdminUserDetailResource;
+use App\Http\Resources\Admin\SessionStatsResource;
 use App\Http\Resources\Admin\UserResource;
 use App\Http\Resources\PromptRunResource;
 use App\Models\User;
@@ -99,32 +101,32 @@ class UserController extends Controller
         $sessionStats = null;
         if ($user->visitor) {
             $allSessions = $user->visitor->sessions()->get();
-            $sessionStats = [
+            $sessionStats = SessionStatsResource::make([
                 'total_sessions' => $allSessions->count(),
                 'total_page_views' => $allSessions->sum('page_count'),
                 'avg_duration' => round($allSessions->avg('duration_seconds') ?? 0),
                 'last_active' => $allSessions->first()?->started_at?->toIso8601String(),
-            ];
+            ])->resolve();
         }
 
         return Inertia::render('Admin/Users/Show', [
-            'user' => UserResource::make($user)->resolve(),
+            'user' => AdminUserDetailResource::make($user)->resolve(),
             'promptRuns' => PromptRunResource::collection($promptRuns->items())->resolve(),
             'pagination' => [
-                'current_page' => $promptRuns->currentPage(),
-                'last_page' => $promptRuns->lastPage(),
-                'per_page' => $promptRuns->perPage(),
+                'currentPage' => $promptRuns->currentPage(),
+                'lastPage' => $promptRuns->lastPage(),
+                'perPage' => $promptRuns->perPage(),
                 'total' => $promptRuns->total(),
                 'from' => $promptRuns->firstItem(),
                 'to' => $promptRuns->lastItem(),
-                'next_page_url' => $promptRuns->nextPageUrl(),
-                'prev_page_url' => $promptRuns->previousPageUrl(),
+                'nextPageUrl' => $promptRuns->nextPageUrl(),
+                'prevPageUrl' => $promptRuns->previousPageUrl(),
                 'links' => $promptRuns->linkCollection(),
             ],
             'filters' => [
-                'sort_by' => $sortBy,
-                'sort_direction' => $sortDirection,
-                'per_page' => $perPage,
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+                'perPage' => $perPage,
             ],
             'promptRunsCount' => $promptRunsCount,
             'sessionStats' => $sessionStats,

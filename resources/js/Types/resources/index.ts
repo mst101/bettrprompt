@@ -5,6 +5,7 @@
 
 export * from './AdminEventResource';
 export * from './AdminSessionResource';
+export * from './AdminUserDetailResource';
 export * from './AdminUserResource';
 export * from './AdminVisitorResource';
 export * from './ClaudeModelResource';

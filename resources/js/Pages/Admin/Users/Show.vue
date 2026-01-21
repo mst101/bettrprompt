@@ -13,57 +13,41 @@ import StatusBadge from '@/Components/Common/StatusBadge.vue';
 import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { PromptRunResource } from '@/Types';
+import type {
+    AdminUserDetailResource,
+    PromptRunResource,
+    SessionStatsResource,
+} from '@/Types';
 import { truncateText } from '@/Utils/formatting/formatters';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-interface SessionStats {
-    total_sessions: number;
-    total_page_views: number;
-    avg_duration: number;
-    last_active: string | null;
-}
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    personalityType: string | null;
-    isAdmin: boolean;
-    createdAt: string;
-    visitor?: {
-        id: string;
-        sessions?: unknown[];
-    };
-}
-
 interface Pagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
     total: number;
     from: number | null;
     to: number | null;
-    next_page_url: string | null;
-    prev_page_url: string | null;
+    nextPageUrl: string | null;
+    prevPageUrl: string | null;
     links: Array<Record<string, unknown>>;
 }
 
 interface Filters {
-    sort_by: string;
-    sort_direction: string;
-    per_page: number;
+    sortBy: string;
+    sortDirection: string;
+    perPage: number;
 }
 
 interface Props {
-    user: User;
+    user: AdminUserDetailResource;
     promptRuns: PromptRunResource[];
     pagination: Pagination;
     filters: Filters;
     promptRunsCount: number;
-    sessionStats: SessionStats | null;
+    sessionStats: SessionStatsResource | null;
 }
 
 const props = defineProps<Props>();
@@ -72,8 +56,8 @@ const { countryRoute } = useCountryRoute();
 const { t } = useI18n({ useScope: 'global' });
 
 const sortBy = (column: string) => {
-    const currentSortBy = props.filters.sort_by;
-    const currentDirection = props.filters.sort_direction;
+    const currentSortBy = props.filters.sortBy;
+    const currentDirection = props.filters.sortDirection;
 
     let newDirection = 'asc';
     if (currentSortBy === column && currentDirection === 'asc') {
@@ -85,7 +69,7 @@ const sortBy = (column: string) => {
         {
             sort_by: column,
             sort_direction: newDirection,
-            per_page: props.filters.per_page,
+            per_page: props.filters.perPage,
         },
         {
             preserveState: true,
@@ -98,11 +82,11 @@ const sortBy = (column: string) => {
 const perPageStorage = useLocalStorage('admin_users_per_page', 15);
 
 // Use a ref for the input that syncs with props
-const perPageInput = ref(props.filters.per_page.toString());
+const perPageInput = ref(props.filters.perPage.toString());
 
 // Watch props changes and update input
 watch(
-    () => props.filters.per_page,
+    () => props.filters.perPage,
     (newValue) => {
         perPageInput.value = newValue.toString();
     },
@@ -114,12 +98,12 @@ const changePerPage = () => {
     // Validate: must be a number between 1 and 100
     if (isNaN(perPage) || perPage < 1 || perPage > 100) {
         // Reset to current value if invalid
-        perPageInput.value = props.filters.per_page.toString();
+        perPageInput.value = props.filters.perPage.toString();
         return;
     }
 
     // Only navigate if the value has actually changed
-    if (perPage === props.filters.per_page) {
+    if (perPage === props.filters.perPage) {
         return;
     }
 
@@ -129,8 +113,8 @@ const changePerPage = () => {
     router.get(
         countryRoute('admin.users.show', { user: props.user.id }),
         {
-            sort_by: props.filters.sort_by,
-            sort_direction: props.filters.sort_direction,
+            sort_by: props.filters.sortBy,
+            sort_direction: props.filters.sortDirection,
             per_page: perPage,
         },
         {
@@ -141,7 +125,7 @@ const changePerPage = () => {
 };
 
 const sortDirection = computed(() => {
-    return props.filters.sort_direction;
+    return props.filters.sortDirection;
 });
 
 // Focus management for pagination buttons
@@ -152,12 +136,12 @@ const handlePaginationClick = (direction: 'prev' | 'next') => {
 // On mount, if the per_page from server doesn't match localStorage, update it
 onMounted(() => {
     const storedPerPage = perPageStorage.value;
-    if (storedPerPage !== props.filters.per_page) {
+    if (storedPerPage !== props.filters.perPage) {
         router.get(
             countryRoute('admin.users.show', { user: props.user.id }),
             {
-                sort_by: props.filters.sort_by,
-                sort_direction: props.filters.sort_direction,
+                sort_by: props.filters.sortBy,
+                sort_direction: props.filters.sortDirection,
                 per_page: storedPerPage,
             },
             {
@@ -313,7 +297,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     >
                                         <TableHeaderSortable
                                             column="task_description"
-                                            :current-sort="filters.sort_by"
+                                            :current-sort="props.filters.sortBy"
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
@@ -330,7 +314,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     >
                                         <TableHeaderSortable
                                             column="selected_framework"
-                                            :current-sort="filters.sort_by"
+                                            :current-sort="props.filters.sortBy"
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
@@ -347,7 +331,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     >
                                         <TableHeaderSortable
                                             column="workflow_stage"
-                                            :current-sort="filters.sort_by"
+                                            :current-sort="props.filters.sortBy"
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
@@ -360,7 +344,7 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                     >
                                         <TableHeaderSortable
                                             column="created_at"
-                                            :current-sort="filters.sort_by"
+                                            :current-sort="props.filters.sortBy"
                                             :sort-direction="sortDirection"
                                             @sort="sortBy"
                                         >
@@ -446,9 +430,9 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                     >
                         <div class="flex justify-start">
                             <LinkButton
-                                v-if="pagination.prev_page_url"
+                                v-if="props.pagination.prevPageUrl"
                                 id="pagination-prev-mobile"
-                                :href="pagination.prev_page_url"
+                                :href="props.pagination.prevPageUrl"
                                 @click="handlePaginationClick('prev')"
                             >
                                 {{ $t('admin.pagination.previous') }}
@@ -456,22 +440,22 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                         </div>
 
                         <p
-                            v-if="pagination.last_page > 1"
+                            v-if="props.pagination.lastPage > 1"
                             class="text-center text-sm text-indigo-700"
                         >
                             {{
                                 $t('admin.pagination.pageOf', {
-                                    current: pagination.current_page,
-                                    total: pagination.last_page,
+                                    current: props.pagination.currentPage,
+                                    total: props.pagination.lastPage,
                                 })
                             }}
                         </p>
 
                         <div class="flex justify-end">
                             <LinkButton
-                                v-if="pagination.next_page_url"
+                                v-if="props.pagination.nextPageUrl"
                                 id="pagination-next-mobile"
-                                :href="pagination.next_page_url"
+                                :href="props.pagination.nextPageUrl"
                                 @click="handlePaginationClick('next')"
                             >
                                 {{ $t('admin.pagination.next') }}
@@ -490,20 +474,23 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                 class="mb-3 space-y-1 text-center text-sm text-indigo-700"
                             >
                                 <i18n-t
-                                    v-if="pagination.from && pagination.to"
+                                    v-if="
+                                        props.pagination.from &&
+                                        props.pagination.to
+                                    "
                                     keypath="admin.pagination.resultsSummary"
                                     scope="global"
                                     tag="p"
                                     class="text-center"
                                 >
                                     <span class="font-medium">{{
-                                        pagination.from
+                                        props.pagination.from
                                     }}</span>
                                     <span class="font-medium">{{
-                                        pagination.to
+                                        props.pagination.to
                                     }}</span>
                                     <span class="font-medium">{{
-                                        pagination.total
+                                        props.pagination.total
                                     }}</span>
                                 </i18n-t>
                             </div>
@@ -541,20 +528,23 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                             <!-- Results info -->
                             <div>
                                 <i18n-t
-                                    v-if="pagination.from && pagination.to"
+                                    v-if="
+                                        props.pagination.from &&
+                                        props.pagination.to
+                                    "
                                     keypath="admin.pagination.resultsSummary"
                                     scope="global"
                                     tag="p"
                                     class="text-sm text-indigo-700"
                                 >
                                     <span class="font-medium">{{
-                                        pagination.from
+                                        props.pagination.from
                                     }}</span>
                                     <span class="font-medium">{{
-                                        pagination.to
+                                        props.pagination.to
                                     }}</span>
                                     <span class="font-medium">{{
-                                        pagination.total
+                                        props.pagination.total
                                     }}</span>
                                 </i18n-t>
                             </div>
@@ -585,13 +575,13 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                             <!-- Navigation -->
                             <div>
                                 <nav
-                                    v-if="pagination.last_page > 1"
+                                    v-if="props.pagination.lastPage > 1"
                                     class="isolate inline-flex -space-x-px rounded-md shadow-xs"
                                 >
                                     <LinkButton
-                                        v-if="pagination.prev_page_url"
+                                        v-if="props.pagination.prevPageUrl"
                                         id="pagination-prev"
-                                        :href="pagination.prev_page_url"
+                                        :href="props.pagination.prevPageUrl"
                                         variant="rounded-left"
                                         @click="handlePaginationClick('prev')"
                                     >
@@ -603,15 +593,17 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                                         {{
                                             $t('admin.pagination.pageOf', {
                                                 current:
-                                                    pagination.current_page,
-                                                total: pagination.last_page,
+                                                    props.pagination
+                                                        .currentPage,
+                                                total: props.pagination
+                                                    .lastPage,
                                             })
                                         }}
                                     </span>
                                     <LinkButton
-                                        v-if="pagination.next_page_url"
+                                        v-if="props.pagination.nextPageUrl"
                                         id="pagination-next"
-                                        :href="pagination.next_page_url"
+                                        :href="props.pagination.nextPageUrl"
                                         variant="rounded-right"
                                         @click="handlePaginationClick('next')"
                                     >
@@ -634,28 +626,28 @@ const userMetadataItems = computed<MetadataItem[]>(() => {
                 <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <StatCard
                         title="Total Sessions"
-                        :value="props.sessionStats.total_sessions"
+                        :value="props.sessionStats.totalSessions"
                         icon="chart-line"
                         icon-colour="blue"
                     />
                     <StatCard
                         title="Page Views"
-                        :value="props.sessionStats.total_page_views"
+                        :value="props.sessionStats.totalPageViews"
                         icon="eye"
                         icon-colour="green"
                     />
                     <StatCard
                         title="Avg Duration"
-                        :value="formatDuration(props.sessionStats.avg_duration)"
+                        :value="formatDuration(props.sessionStats.avgDuration)"
                         icon="clock"
                         icon-colour="purple"
                     />
                     <StatCard
                         title="Last Active"
                         :value="
-                            props.sessionStats.last_active
+                            props.sessionStats.lastActive
                                 ? new Date(
-                                      props.sessionStats.last_active,
+                                      props.sessionStats.lastActive,
                                   ).toLocaleDateString('en-GB', {
                                       month: 'short',
                                       day: 'numeric',
