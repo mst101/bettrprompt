@@ -81,16 +81,9 @@ const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
     isCurrencyUpdating.value = true;
-    const url = countryRoute('currency.select');
     const csrfToken = getCsrfToken();
 
-    console.log('Updating currency:', {
-        url,
-        newCurrency,
-        hasCSRFToken: !!csrfToken,
-    });
-
-    fetch(url, {
+    fetch(countryRoute('currency.select'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -101,25 +94,15 @@ function updateCurrency(newCurrency: string) {
         }),
     })
         .then((response) => {
-            console.log('Currency update response:', response.status);
             if (!response.ok) {
-                return response.text().then((text) => {
-                    throw new Error(
-                        `HTTP ${response.status}: ${text || response.statusText}`,
-                    );
-                });
+                throw new Error(`HTTP ${response.status}`);
             }
             return response.json();
         })
         .then((data) => {
-            console.log('Currency update response data:', data);
             if (data.success) {
-                // Navigate to pricing page to get updated pricing data
-                const pricingUrl = countryRoute('pricing');
-                console.log('Navigating to:', pricingUrl);
-                window.location.href = pricingUrl;
-            } else {
-                throw new Error('Response did not indicate success');
+                // Reload the page data through Inertia without full page refresh
+                router.reload();
             }
         })
         .catch((error) => {
