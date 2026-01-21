@@ -54,14 +54,14 @@ const cognitiveReqOptions = [
 
 const form = useForm({
     questionText: props.question.questionText,
-    purpose: props.question.purpose,
+    purpose: props.question.purpose ?? '',
     cognitiveRequirements: [] as string[],
-    priority: props.question.priority,
-    category: props.question.taskCategoryCode || '',
-    framework: props.question.frameworkCode || '',
+    priority: props.question.priority ?? 'high',
+    category: props.question.taskCategoryCode ?? '',
+    framework: props.question.frameworkCode ?? '',
     isUniversal: props.question.isUniversal,
     isConditional: props.question.isConditional,
-    conditionText: props.question.conditionText || '',
+    conditionText: props.question.conditionText ?? '',
     displayOrder: props.question.displayOrder,
 });
 
