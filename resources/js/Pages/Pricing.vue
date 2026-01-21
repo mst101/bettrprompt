@@ -80,18 +80,30 @@ const isCurrencyUpdating = ref(false);
 const selectedCurrency = computed(() => props.currency);
 
 function updateCurrency(newCurrency: string) {
-    router.post(
-        countryRoute('currency.select'),
-        { currency_code: newCurrency },
-        {
-            onStart: () => {
-                isCurrencyUpdating.value = true;
-            },
-            onFinish: () => {
-                isCurrencyUpdating.value = false;
-            },
+    isCurrencyUpdating.value = true;
+
+    fetch(countryRoute('currency.select'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
         },
-    );
+        body: JSON.stringify({
+            currency_code: newCurrency,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to update currency');
+            }
+            // Reload the page to get updated pricing data
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error('Currency update error:', error);
+            isCurrencyUpdating.value = false;
+            alert('Failed to update currency. Please try again.');
+        });
 }
 
 async function subscribe(tier: 'pro' | 'private') {

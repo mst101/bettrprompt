@@ -59,7 +59,7 @@ class VisitorController extends Controller
     /**
      * Update currency preference for authenticated users and visitors
      */
-    public function updateCurrency(Request $request): RedirectResponse
+    public function updateCurrency(Request $request): JsonResponse
     {
         $activeCurrencies = Currency::where('active', true)->pluck('id')->all();
 
@@ -103,7 +103,7 @@ class VisitorController extends Controller
             }
         }
 
-        return back();
+        return response()->json(['success' => true]);
     }
 
     /**

@@ -48,9 +48,11 @@ watch(showingNavigationDropdown, async (isOpen) => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-indigo-50">
+    <div
+        class="min-h-screen bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
+    >
         <!-- Navigation Bar -->
-        <nav class="border-b border-indigo-200 bg-white shadow-sm">
+        <nav class="bg-white shadow-xs shadow-indigo-50">
             <div class="max-w-8xl mx-auto px-4 sm:px-4">
                 <div class="flex h-18 items-center justify-between">
                     <!-- Logo -->
