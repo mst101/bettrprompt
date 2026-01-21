@@ -73,6 +73,7 @@ class VisitorController extends Controller
         ]);
 
         $currencyCode = $validated['currencyCode'];
+        $routeCountry = $request->route('country');
 
         if ($request->user()) {
             // Authenticated user: update user record
@@ -91,8 +92,13 @@ class VisitorController extends Controller
                 $visitor?->update(['currency_code' => $currencyCode]);
             }
 
-            // Invalidate currency caches (route-specific)
-            SetCountry::clearCachePattern("user.{$request->user()->id}.currency.*");
+            // Explicitly invalidate all currency caches for this user across all routes
+            $userId = $request->user()->id;
+            Cache::forget("user.{$userId}.currency.{$routeCountry}");
+            // Also clear for common routes (gb, us, de, mx, sg)
+            foreach (['gb', 'us', 'de', 'mx', 'sg'] as $country) {
+                Cache::forget("user.{$userId}.currency.{$country}");
+            }
         } else {
             // Visitor: update database if visitor exists
             $visitorId = getVisitorIdFromCookie($request);
@@ -101,8 +107,12 @@ class VisitorController extends Controller
                 if ($visitor) {
                     $visitor->update(['currency_code' => $currencyCode]);
 
-                    // Invalidate currency cache (route-specific)
-                    SetCountry::clearCachePattern("visitor.{$visitorId}.currency.*");
+                    // Explicitly invalidate currency cache for this visitor
+                    Cache::forget("visitor.{$visitorId}.currency.{$routeCountry}");
+                    // Also clear for common routes
+                    foreach (['gb', 'us', 'de', 'mx', 'sg'] as $country) {
+                        Cache::forget("visitor.{$visitorId}.currency.{$country}");
+                    }
                 }
             }
         }
