@@ -108,12 +108,15 @@ class StripeWebhookController extends CashierController
      * Determine subscription tier from Stripe price ID
      *
      * Checks the configured prices to find which tier this price belongs to.
-     * Defaults to 'pro' if not found.
+     * Supports: starter, pro, premium
+     * Defaults to 'starter' if not found (safer than 'pro').
      */
     protected function determineTierFromPriceId(?string $priceId): string
     {
         if (! $priceId) {
-            return 'pro';
+            \Log::warning('Empty Stripe price ID during tier determination');
+
+            return 'starter';
         }
 
         $stripeConfig = config('stripe.prices', []);
@@ -122,13 +125,15 @@ class StripeWebhookController extends CashierController
             foreach ($tiers as $tier => $intervals) {
                 foreach ($intervals as $interval => $configuredPriceId) {
                     if ($configuredPriceId === $priceId) {
-                        return $tier; // 'pro' or 'private'
+                        return $tier; // 'starter', 'pro', or 'premium'
                     }
                 }
             }
         }
 
-        return 'pro'; // Safe default
+        \Log::warning("Unknown Stripe price ID: {$priceId}");
+
+        return 'starter'; // Safe default - lowest paid tier
     }
 
     /**
