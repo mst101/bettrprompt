@@ -552,12 +552,14 @@
         }
     },
     "pricing": {
-        "pageTitle": "Precios",
+        "pageTitle": "Precios - BettrPrompt",
         "title": "Precios simples y transparentes",
         "subtitle": "Elige el plan que funcione para ti",
         "tagline": "Comienza gratis, actualiza cuando necesites más",
-        "currency": "EUR",
+        "currency": "€",
         "popularBadge": "Más popular",
+        "recommendedBadge": "Más popular",
+        "encryptionNotice": "Todos los planes incluyen cifrado en reposo para tus datos. IVA incluido en los precios en EUR.",
         "monthly": "Mensual",
         "yearly": "Anual",
         "save": "Ahorrar {percent}%",
@@ -581,74 +583,96 @@
             "cta": "Comenzar",
             "priceMonthly": "Gratis"
         },
+        "starter": {
+            "name": "Starter",
+            "priceMonthly": "11.99",
+            "priceYearly": "119",
+            "period": "por mes",
+            "periodYearly": "por año",
+            "description": "Para quienes están listos para avanzar",
+            "cta": "Elegir Starter",
+            "yearlySavings": "Ahorrar {percent}% con facturación anual – solo {amount}/{period}"
+        },
         "pro": {
             "name": "Pro",
-            "priceMonthly": "12",
-            "priceYearly": "99",
+            "priceMonthly": "29.99",
+            "priceYearly": "299",
             "period": "por mes",
             "periodYearly": "por año",
             "description": "Para usuarios avanzados que quieren los mejores resultados",
-            "cta": "Comenzar Pro",
-            "yearlySavings": "{amount} / {period} - Ahorrar {percent}%"
+            "cta": "Elegir Pro",
+            "yearlySavings": "Ahorrar {percent}% con facturación anual – solo {amount}/{period}"
+        },
+        "premium": {
+            "name": "Premium",
+            "priceMonthly": "59.99",
+            "priceYearly": "599",
+            "period": "por mes",
+            "periodYearly": "por año",
+            "description": "Para quienes necesitan acceso ilimitado y privacidad",
+            "cta": "Elegir Premium",
+            "yearlySavings": "Ahorrar {percent}% con facturación anual – solo {amount}/{period}"
         },
         "features": {
             "title": "Todas las características incluidas",
-            "unlimited": "Prompts ilimitados",
-            "priority": "Procesamiento prioritario",
-            "privacy": "Cifrado de privacidad",
-            "support": "Soporte prioritario",
             "free": {
                 "limit": "10 prompts por mes",
                 "calibration": "Calibración de personalidad",
                 "optimization": "Optimización básica de prompts"
             },
-            "pro": {
-                "unlimited": "Prompts ilimitados",
+            "starter": {
+                "limit": "25 prompts por mes",
                 "calibration": "Calibración de personalidad",
                 "optimization": "Optimización avanzada de prompts",
                 "history": "Historial de prompts"
             },
-            "private": {
+            "pro": {
+                "limit": "90 prompts por mes",
+                "calibration": "Calibración de personalidad",
+                "optimization": "Optimización avanzada de prompts",
+                "history": "Historial ilimitado de prompts",
+                "priority_frameworks": "Sugerencias de framework prioritarias"
+            },
+            "premium": {
                 "unlimited": "Prompts ilimitados",
                 "calibration": "Calibración de personalidad",
                 "optimization": "Optimización avanzada de prompts",
-                "mode": "Modo privado (acceso restringido)",
-                "support": "Soporte prioritario",
-                "history": "Historial de prompts"
-            }
+                "history": "Historial ilimitado de prompts",
+                "priority_frameworks": "Sugerencias de framework prioritarias",
+                "privacy": "Modo privado – tus datos nunca se utilizan para entrenar IA",
+                "support": "Soporte email prioritario"
+            },
+            "unlimited": "Prompts ilimitados",
+            "priority": "Procesamiento prioritario",
+            "privacy": "Cifrado de privacidad",
+            "support": "Soporte prioritario"
         },
         "faq": {
             "title": "Preguntas frecuentes",
             "items": {
                 "limit": {
-                    "question": "¿Qué sucede cuando alcanzo mi límite gratuito?",
-                    "answer": "Las cuentas gratuitas están limitadas a 10 prompts por mes. Tu límite se reinicia el primer día de cada mes. Puedes actualizar a Pro en cualquier momento para obtener prompts ilimitados."
+                    "question": "¿Qué sucede cuando alcanzo mi límite mensual?",
+                    "answer": "Los usuarios gratuitos obtienen 10 prompts por mes, los usuarios Starter obtienen 25 y los usuarios Pro obtienen 90. Una vez que los hayas utilizado, necesitarás actualizar a un plan superior. Tu límite mensual se reinicia el primer día de cada mes."
                 },
                 "privacy": {
-                    "question": "¿Qué es el cifrado de privacidad?",
-                    "answer": "Los usuarios de Pro obtienen sus datos de prompt cifrados en reposo. Esto significa que tus prompts y respuestas están protegidos con claves de cifrado que solo tú controlas, asegurando la máxima privacidad para tareas sensibles."
+                    "question": "¿Qué es el modo privado?",
+                    "answer": "El modo privado (solo nivel Premium) garantiza que tus datos no se utilicen para entrenar ni mejorar el producto. Incluye acceso restringido del personal (solo con tu consentimiento explícito) y cifrado mejorado."
                 },
                 "cancel": {
                     "question": "¿Puedo cancelar mi suscripción?",
-                    "answer": "Sí, puedes cancelar en cualquier momento. Conservarás acceso Pro hasta el final de tu período de facturación actual, luego serás movido al plan gratuito."
+                    "answer": "Sí, puedes cancelar en cualquier momento. Conservarás acceso hasta el final de tu período de facturación actual. Tus datos permanecerán cifrados de forma segura."
                 },
                 "payment": {
                     "question": "¿Qué métodos de pago aceptan?",
-                    "answer": "Aceptamos todas las tarjetas de crédito y débito principales, así como Apple Pay y Google Pay a través de nuestro proveedor de pago seguro, Stripe."
+                    "answer": "Aceptamos todas las tarjetas de crédito y débito principales a través de Stripe. Tu información de pago se procesa de forma segura."
                 }
             }
         },
-        "private": {
-            "name": "Privado",
-            "priceMonthly": "20",
-            "priceYearly": "200",
-            "cta": "Iniciar Privado",
-            "yearlySavings": "Ahorrar {percent}% con facturación anual – solo {amount}/{period}"
-        },
         "currentPlan": "Plan actual",
         "upgrade": "Actualizar",
+        "upgradeToStarter": "Actualizar a Starter",
         "upgradeToPro": "Actualizar a Pro",
-        "upgradeToPrivate": "Actualizar a Privado"
+        "upgradeToPremium": "Actualizar a Premium"
     },
     "feedback": {
         "create": {
@@ -1897,13 +1921,17 @@
         "subscription": {
             "invalid_plan": "Plan inválido seleccionado.",
             "prompt_limit_reached": "Ha alcanzado su límite mensual de prompts.",
-            "prompt_limit_reached_upgrade": "Ha alcanzado su límite mensual de prompts. Actualice a Pro para prompts ilimitados.",
-            "welcome_pro": "¡Bienvenido a BettrPrompt Pro!",
-            "welcome_private": "¡Bienvenido a BettrPrompt Privado! Sus datos están ahora protegidos con privacidad mejorada.",
+            "prompt_limit_reached_upgrade": "Ha alcanzado su límite mensual de prompts. Actualice a {tier} para {prompts} prompts por mes.",
+            "welcome_starter": "¡Bienvenido a BettrPrompt Starter! Ahora tiene 25 prompts por mes.",
+            "welcome_pro": "¡Bienvenido a BettrPrompt Pro! Ahora tiene 90 prompts por mes.",
+            "welcome_premium": "¡Bienvenido a BettrPrompt Premium! Disfrute de prompts ilimitados y soporte prioritario.",
             "checkout_cancelled": "El pago de suscripción fue cancelado.",
-            "cancelled_pro_until": "Su suscripción ha sido cancelada. Mantendrá acceso a Pro hasta {date}.",
+            "cancelled_pro_until": "Su suscripción ha sido cancelada. Mantendrá acceso hasta {date}.",
             "resumed": "Su suscripción ha sido reanudada.",
             "current_plan": "Plan actual"
+        },
+        "privacy": {
+            "premium_required": "Debe ser un suscriptor Premium para habilitar el cifrado de privacidad."
         }
     }
 }

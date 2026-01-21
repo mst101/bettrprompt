@@ -552,12 +552,14 @@
         }
     },
     "pricing": {
-        "pageTitle": "Tarification",
+        "pageTitle": "Tarification - BettrPrompt",
         "title": "Tarification simple et transparente",
         "subtitle": "Choisissez le plan qui vous convient",
         "tagline": "Commencez gratuitement, mettez à niveau quand vous en avez besoin",
-        "currency": "GBP",
+        "currency": "€",
         "popularBadge": "Le plus populaire",
+        "recommendedBadge": "Le plus populaire",
+        "encryptionNotice": "Tous les plans incluent le chiffrement au repos pour vos données. TVA comprise dans les prix en EUR.",
         "monthly": "Mensuel",
         "yearly": "Annuel",
         "save": "Économiser {percent}%",
@@ -581,74 +583,96 @@
             "cta": "Commencer",
             "priceMonthly": "Gratuit"
         },
+        "starter": {
+            "name": "Starter",
+            "priceMonthly": "11.99",
+            "priceYearly": "119",
+            "period": "par mois",
+            "periodYearly": "par an",
+            "description": "Pour ceux qui sont prêts à progresser",
+            "cta": "Choisir Starter",
+            "yearlySavings": "Économisez {percent}% en facturation annuelle – seulement {amount}/{period}"
+        },
         "pro": {
             "name": "Pro",
-            "priceMonthly": "12",
-            "priceYearly": "99",
+            "priceMonthly": "29.99",
+            "priceYearly": "299",
             "period": "par mois",
             "periodYearly": "par an",
             "description": "Pour les utilisateurs avancés qui veulent les meilleurs résultats",
-            "cta": "Commencer Pro",
-            "yearlySavings": "{amount} / {period} - Économiser {percent}%"
+            "cta": "Choisir Pro",
+            "yearlySavings": "Économisez {percent}% en facturation annuelle – seulement {amount}/{period}"
+        },
+        "premium": {
+            "name": "Premium",
+            "priceMonthly": "59.99",
+            "priceYearly": "599",
+            "period": "par mois",
+            "periodYearly": "par an",
+            "description": "Pour ceux qui ont besoin d'un accès illimité et de confidentialité",
+            "cta": "Choisir Premium",
+            "yearlySavings": "Économisez {percent}% en facturation annuelle – seulement {amount}/{period}"
         },
         "features": {
             "title": "Toutes les fonctionnalités incluses",
-            "unlimited": "Invites illimitées",
-            "priority": "Traitement prioritaire",
-            "privacy": "Chiffrement de confidentialité",
-            "support": "Support prioritaire",
             "free": {
                 "limit": "10 prompts par mois",
                 "calibration": "Calibrage de la personnalité",
-                "optimization": "Optimisation de base des invites"
+                "optimization": "Optimisation de base des prompts"
+            },
+            "starter": {
+                "limit": "25 prompts par mois",
+                "calibration": "Calibrage de la personnalité",
+                "optimization": "Optimisation avancée des prompts",
+                "history": "Historique des prompts"
             },
             "pro": {
-                "unlimited": "Prompts illimitées",
+                "limit": "90 prompts par mois",
                 "calibration": "Calibrage de la personnalité",
-                "optimization": "Optimisation avancée des invites",
-                "history": "Historique des prompts"
+                "optimization": "Optimisation avancée des prompts",
+                "history": "Historique illimité des prompts",
+                "priority_frameworks": "Suggestions de framework prioritaires"
             },
-            "private": {
+            "premium": {
                 "unlimited": "Prompts illimitées",
                 "calibration": "Calibrage de la personnalité",
-                "optimization": "Optimisation avancée des invites",
-                "mode": "Mode privé (accès limité)",
-                "support": "Support prioritaire",
-                "history": "Historique des prompts"
-            }
+                "optimization": "Optimisation avancée des prompts",
+                "history": "Historique illimité des prompts",
+                "priority_frameworks": "Suggestions de framework prioritaires",
+                "privacy": "Mode confidentialité – vos données ne sont jamais utilisées pour entraîner l'IA",
+                "support": "Support email prioritaire"
+            },
+            "unlimited": "Invites illimitées",
+            "priority": "Traitement prioritaire",
+            "privacy": "Chiffrement de confidentialité",
+            "support": "Support prioritaire"
         },
         "faq": {
             "title": "Questions fréquemment posées",
             "items": {
                 "limit": {
-                    "question": "Que se passe-t-il quand j'atteins ma limite gratuite ?",
-                    "answer": "Les comptes gratuits sont limités à 10 invites par mois. Votre limite se réinitialise le premier de chaque mois. Vous pouvez passer à Pro à tout moment pour des invites illimitées."
+                    "question": "Que se passe-t-il quand j'atteins ma limite mensuelle ?",
+                    "answer": "Les utilisateurs gratuits obtiennent 10 prompts par mois, les utilisateurs Starter en obtiennent 25 et les utilisateurs Pro en obtiennent 90. Une fois que vous les avez utilisés, vous devrez passer à un plan supérieur. Votre allocation mensuelle se réinitialise le 1er de chaque mois."
                 },
                 "privacy": {
-                    "question": "Qu'est-ce que le chiffrement de confidentialité ?",
-                    "answer": "Les utilisateurs Pro obtiennent leurs données d'invite chiffrées au repos. Cela signifie que vos invites et réponses sont protégées par des clés de chiffrement que seul vous contrôlez, garantissant une confidentialité maximale pour les tâches sensibles."
+                    "question": "Qu'est-ce que le mode confidentialité ?",
+                    "answer": "Le mode confidentialité (niveau Premium uniquement) garantit que vos données ne sont pas utilisées pour l'entraînement ou l'amélioration du produit. Il comprend un accès au personnel limité (uniquement avec votre consentement explicite) et un chiffrement renforcé."
                 },
                 "cancel": {
                     "question": "Puis-je annuler mon abonnement ?",
-                    "answer": "Oui, vous pouvez annuler à tout moment. Vous conserverez l'accès Pro jusqu'à la fin de votre période de facturation actuelle, puis vous serez transféré au plan gratuit."
+                    "answer": "Oui, vous pouvez annuler à tout moment. Vous conserverez l'accès jusqu'à la fin de votre période de facturation actuelle. Vos données resteront chiffrées en toute sécurité."
                 },
                 "payment": {
                     "question": "Quels modes de paiement acceptez-vous ?",
-                    "answer": "Nous acceptons toutes les cartes de crédit et de débit principales, ainsi qu'Apple Pay et Google Pay via notre fournisseur de paiement sécurisé, Stripe."
+                    "answer": "Nous acceptons toutes les cartes de crédit et de débit principales via Stripe. Vos informations de paiement sont traitées en toute sécurité."
                 }
             }
         },
-        "private": {
-            "name": "Privé",
-            "priceMonthly": "20",
-            "priceYearly": "200",
-            "cta": "Commencer Privé",
-            "yearlySavings": "Économisez {percent}% avec la facturation annuelle – seulement {amount}/{period}"
-        },
         "currentPlan": "Plan actuel",
         "upgrade": "Améliorer",
+        "upgradeToStarter": "Passer à Starter",
         "upgradeToPro": "Passer à Pro",
-        "upgradeToPrivate": "Passer à Privé"
+        "upgradeToPremium": "Passer à Premium"
     },
     "feedback": {
         "create": {
@@ -1824,13 +1848,17 @@
         "subscription": {
             "invalid_plan": "Plan invalide sélectionné.",
             "prompt_limit_reached": "Vous avez atteint votre limite mensuelle d'invites.",
-            "prompt_limit_reached_upgrade": "Vous avez atteint votre limite mensuelle d'invites. Mettez à niveau vers Pro pour les prompts illimitées.",
-            "welcome_pro": "Bienvenue chez BettrPrompt Pro!",
-            "welcome_private": "Bienvenue chez BettrPrompt Privé! Vos données sont maintenant protégées par une confidentialité améliorée.",
+            "prompt_limit_reached_upgrade": "Vous avez atteint votre limite mensuelle d'invites. Mettez à niveau vers {tier} pour {prompts} prompts par mois.",
+            "welcome_starter": "Bienvenue chez BettrPrompt Starter! Vous avez maintenant 25 prompts par mois.",
+            "welcome_pro": "Bienvenue chez BettrPrompt Pro! Vous avez maintenant 90 prompts par mois.",
+            "welcome_premium": "Bienvenue chez BettrPrompt Premium! Profitez des prompts illimitées et du support prioritaire.",
             "checkout_cancelled": "Le paiement de l'abonnement a été annulé.",
-            "cancelled_pro_until": "Votre abonnement a été annulé. Vous conserverez l'accès Pro jusqu'à {date}.",
+            "cancelled_pro_until": "Votre abonnement a été annulé. Vous conserverez l'accès jusqu'à {date}.",
             "resumed": "Votre abonnement a été repris.",
             "current_plan": "Plan actuel"
+        },
+        "privacy": {
+            "premium_required": "Vous devez être un abonné Premium pour activer le chiffrement de confidentialité."
         }
     },
     "admin": {

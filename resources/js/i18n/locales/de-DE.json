@@ -552,12 +552,14 @@
         }
     },
     "pricing": {
-        "pageTitle": "Preisgestaltung",
+        "pageTitle": "Preisgestaltung - BettrPrompt",
         "title": "Einfache, transparente Preisgestaltung",
         "subtitle": "Wählen Sie den Plan, der zu Ihnen passt",
         "tagline": "Kostenlos starten, upgraden wenn nötig",
-        "currency": "EUR",
+        "currency": "€",
         "popularBadge": "Am beliebtesten",
+        "recommendedBadge": "Am beliebtesten",
+        "encryptionNotice": "Alle Pläne enthalten Verschlüsselung im Ruhezustand für Ihre Daten. Mehrwertsteuer in EUR-Preisen enthalten.",
         "monthly": "Monatlich",
         "yearly": "Jährlich",
         "save": "{percent}% sparen",
@@ -581,74 +583,96 @@
             "cta": "Erste Schritte",
             "priceMonthly": "Kostenlos"
         },
+        "starter": {
+            "name": "Starter",
+            "priceMonthly": "11.99",
+            "priceYearly": "119",
+            "period": "pro Monat",
+            "periodYearly": "pro Jahr",
+            "description": "Für alle, die bereit sind, zu wachsen",
+            "cta": "Starter wählen",
+            "yearlySavings": "Sparen Sie {percent}%, wenn Sie jährlich zahlen – nur {amount}/{period}"
+        },
         "pro": {
             "name": "Pro",
-            "priceMonthly": "12",
-            "priceYearly": "99",
+            "priceMonthly": "29.99",
+            "priceYearly": "299",
             "period": "pro Monat",
             "periodYearly": "pro Jahr",
             "description": "Für Power-User, die die besten Ergebnisse möchten",
-            "cta": "Pro starten",
-            "yearlySavings": "{amount} / {period} - {percent}% sparen"
+            "cta": "Pro wählen",
+            "yearlySavings": "Sparen Sie {percent}%, wenn Sie jährlich zahlen – nur {amount}/{period}"
+        },
+        "premium": {
+            "name": "Premium",
+            "priceMonthly": "59.99",
+            "priceYearly": "599",
+            "period": "pro Monat",
+            "periodYearly": "pro Jahr",
+            "description": "Für alle, die unbegrenzten Zugang und Datenschutz benötigen",
+            "cta": "Premium wählen",
+            "yearlySavings": "Sparen Sie {percent}%, wenn Sie jährlich zahlen – nur {amount}/{period}"
         },
         "features": {
             "title": "Alle Funktionen enthalten",
-            "unlimited": "Unbegrenzte Anfragen",
-            "priority": "Prioritätsverarbeitung",
-            "privacy": "Datenschutzverschlüsselung",
-            "support": "Prioritätssupport",
             "free": {
                 "limit": "10 Prompts pro Monat",
                 "calibration": "Persönlichkeitskalibrierung",
                 "optimization": "Grundlegende Prompt-Optimierung"
             },
-            "pro": {
-                "unlimited": "Unbegrenzte Prompts",
+            "starter": {
+                "limit": "25 Prompts pro Monat",
                 "calibration": "Persönlichkeitskalibrierung",
                 "optimization": "Erweiterte Prompt-Optimierung",
                 "history": "Prompt-Verlauf"
             },
-            "private": {
+            "pro": {
+                "limit": "90 Prompts pro Monat",
+                "calibration": "Persönlichkeitskalibrierung",
+                "optimization": "Erweiterte Prompt-Optimierung",
+                "history": "Unbegrenzter Prompt-Verlauf",
+                "priority_frameworks": "Prioritäts-Framework-Vorschläge"
+            },
+            "premium": {
                 "unlimited": "Unbegrenzte Prompts",
                 "calibration": "Persönlichkeitskalibrierung",
                 "optimization": "Erweiterte Prompt-Optimierung",
-                "mode": "Privater Modus (eingeschränkter Zugriff)",
-                "support": "Prioritäts-Support",
-                "history": "Prompt-Verlauf"
-            }
+                "history": "Unbegrenzter Prompt-Verlauf",
+                "priority_frameworks": "Prioritäts-Framework-Vorschläge",
+                "privacy": "Datenschutzmodus – Ihre Daten werden niemals zum Trainieren von KI verwendet",
+                "support": "Prioritäts-Email-Support"
+            },
+            "unlimited": "Unbegrenzte Anfragen",
+            "priority": "Prioritätsverarbeitung",
+            "privacy": "Datenschutzverschlüsselung",
+            "support": "Prioritätssupport"
         },
         "faq": {
             "title": "Häufig gestellte Fragen",
             "items": {
                 "limit": {
-                    "question": "Was passiert, wenn ich mein kostenloses Limit erreiche?",
-                    "answer": "Kostenlose Konten sind auf 10 Anfragen pro Monat begrenzt. Ihr Limit wird am ersten Tag des Monats zurückgesetzt. Sie können jederzeit auf Pro upgraden, um unbegrenzte Anfragen zu erhalten."
+                    "question": "Was passiert, wenn ich mein monatliches Limit erreiche?",
+                    "answer": "Kostenlose Nutzer erhalten 10 Prompts pro Monat, Starter-Nutzer erhalten 25 und Pro-Nutzer erhalten 90. Sobald Sie diese aufgebraucht haben, müssen Sie upgraden, um mehr zu erhalten. Ihr monatliches Kontingent wird am 1. jeden Monats zurückgesetzt."
                 },
                 "privacy": {
-                    "question": "Was ist Datenschutzverschlüsselung?",
-                    "answer": "Pro-Benutzer erhalten ihre Anfragedaten im Ruhezustand verschlüsselt. Dies bedeutet, dass Ihre Anfragen und Antworten mit Verschlüsselungsschlüsseln geschützt sind, die nur Sie kontrollieren, um maximale Datenschutz für sensible Aufgaben zu gewährleisten."
+                    "question": "Was ist der Datenschutzmodus?",
+                    "answer": "Der Datenschutzmodus (nur Premium-Stufe) stellt sicher, dass Ihre Daten nicht zum Trainieren oder zur Produktverbesserung verwendet werden. Er umfasst eingeschränkten Mitarbeiterzugriff (nur mit Ihrer ausdrücklichen Zustimmung) und verstärkte Verschlüsselung."
                 },
                 "cancel": {
-                    "question": "Kann ich mein Abonnement stornieren?",
-                    "answer": "Ja, Sie können jederzeit kündigen. Sie behalten Pro-Zugriff bis zum Ende Ihres aktuellen Abrechnungszeitraums, dann werden Sie zum kostenlosen Plan verschoben."
+                    "question": "Kann ich mein Abonnement kündigen?",
+                    "answer": "Ja, Sie können jederzeit kündigen. Sie behalten Zugriff bis zum Ende des aktuellen Abrechnungszeitraums. Ihre Daten bleiben sicher verschlüsselt."
                 },
                 "payment": {
                     "question": "Welche Zahlungsmethoden akzeptieren Sie?",
-                    "answer": "Wir akzeptieren alle großen Kredit- und Debitkarten sowie Apple Pay und Google Pay über unseren sicheren Zahlungsanbieter Stripe."
+                    "answer": "Wir akzeptieren alle gängigen Kredit- und Debitkarten über Stripe. Ihre Zahlungsinformationen werden sicher verarbeitet."
                 }
             }
         },
-        "private": {
-            "name": "Privat",
-            "priceMonthly": "20",
-            "priceYearly": "200",
-            "cta": "Privat starten",
-            "yearlySavings": "Sparen Sie {percent}%, wenn Sie jährlich bezahlen – nur {amount}/{period}"
-        },
         "currentPlan": "Aktueller Plan",
         "upgrade": "Upgrade",
+        "upgradeToStarter": "Auf Starter upgraden",
         "upgradeToPro": "Auf Pro upgraden",
-        "upgradeToPrivate": "Auf Privat upgraden"
+        "upgradeToPremium": "Auf Premium upgraden"
     },
     "feedback": {
         "create": {
@@ -1897,13 +1921,17 @@
         "subscription": {
             "invalid_plan": "Ungültiger Plan ausgewählt.",
             "prompt_limit_reached": "Sie haben Ihr monatliches Prompt-Limit erreicht.",
-            "prompt_limit_reached_upgrade": "Sie haben Ihr monatliches Prompt-Limit erreicht. Upgraden Sie auf Pro für unbegrenzte Prompts.",
-            "welcome_pro": "Willkommen bei BettrPrompt Pro!",
-            "welcome_private": "Willkommen bei BettrPrompt Privat! Ihre Daten sind jetzt durch verbesserte Datenschutzmaßnahmen geschützt.",
+            "prompt_limit_reached_upgrade": "Sie haben Ihr monatliches Prompt-Limit erreicht. Upgraden Sie auf {tier} für {prompts} Prompts pro Monat.",
+            "welcome_starter": "Willkommen bei BettrPrompt Starter! Sie haben jetzt 25 Prompts pro Monat.",
+            "welcome_pro": "Willkommen bei BettrPrompt Pro! Sie haben jetzt 90 Prompts pro Monat.",
+            "welcome_premium": "Willkommen bei BettrPrompt Premium! Geniessen Sie unbegrenzte Prompts und Prioritäts-Support.",
             "checkout_cancelled": "Abonnement-Checkout wurde abgebrochen.",
-            "cancelled_pro_until": "Ihr Abonnement wurde gekündigt. Sie behalten Pro-Zugriff bis {date}.",
+            "cancelled_pro_until": "Ihr Abonnement wurde gekündigt. Sie behalten Zugriff bis {date}.",
             "resumed": "Ihr Abonnement wurde wiederaufgenommen.",
             "current_plan": "Aktueller Plan"
+        },
+        "privacy": {
+            "premium_required": "Sie müssen ein Premium-Abonnent sein, um Datenschutzverschlüsselung zu aktivieren."
         }
     }
 }
