@@ -3,7 +3,7 @@
  * Auto-generated from Resource docblock by bp:types:generate
  */
 
-import type { AdminEventResource } from '@/Types';
+import type { EventResource } from '@/Types';
 
 export interface SessionResource {
     readonly id: string;
@@ -19,5 +19,5 @@ export interface SessionResource {
     readonly utmCampaign: string | null;
     readonly isBounce: boolean;
     readonly converted: boolean;
-    readonly events?: AdminEventResource[];
+    readonly events?: EventResource[];
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreQuestionVariantRequest;
 use App\Http\Requests\Admin\UpdateQuestionVariantRequest;
-use App\Http\Resources\Admin\QuestionVariantResource;
+use App\Http\Resources\QuestionVariantResource;
 use App\Models\Question;
 use App\Models\QuestionVariant;
 use Illuminate\Http\JsonResponse;

@@ -1,38 +1,42 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources;
 
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * Resource for visitor list view
+ *
+ * @see \App\Models\Visitor
+ *
  * TypeScript interface:
  * ```typescript
- * interface AdminVisitorDetailResource {
+ * interface VisitorListResource {
  *     readonly id: string;
- *     readonly countryCode: string;
- *     readonly createdAt: string;
  *     readonly user: UserResource | null;
- *     readonly sessions: AdminSessionResource[];
+ *     readonly countryCode: string;
+ *     readonly sessionsCount: number;
+ *     readonly createdAt: string;
  * }
  * ```
  */
-class VisitorDetailResource extends JsonResource
+class VisitorListResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'countryCode' => $this->country_code,
+            'sessionsCount' => $this->sessions_count,
             'createdAt' => $this->created_at?->format('Y-m-d H:i:s'),
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {
                 return $this->user ? (new UserResource($this->user))->resolve() : null;
-            }),
-            'sessions' => $this->whenLoaded('sessions', function () {
-                return AdminSessionResource::collection($this->sessions);
             }),
         ];
     }

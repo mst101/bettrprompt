@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * TypeScript interface:
  * ```typescript
- * interface AdminSessionResource {
+ * interface SessionResource {
  *     readonly id: string;
  *     readonly startedAt: string;
  *     readonly endedAt: string | null;
@@ -22,11 +22,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     readonly utmCampaign: string | null;
  *     readonly isBounce: boolean;
  *     readonly converted: boolean;
- *     readonly events?: AdminEventResource[];
+ *     readonly events?: EventResource[];
  * }
  * ```
  */
-class AdminSessionResource extends JsonResource
+class SessionResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -47,7 +47,7 @@ class AdminSessionResource extends JsonResource
 
             // Relationships
             'events' => $this->whenLoaded('events', function () {
-                return AdminEventResource::collection($this->events);
+                return EventResource::collection($this->events);
             }),
         ];
     }

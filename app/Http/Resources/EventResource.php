@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * TypeScript interface:
  * ```typescript
- * interface AdminEventResource {
+ * interface EventResource {
  *     readonly eventId: string;
  *     readonly name: string;
  *     readonly pagePath: string | null;
@@ -17,7 +17,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * }
  * ```
  */
-class AdminEventResource extends JsonResource
+class EventResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

@@ -1,6 +1,5 @@
 import { Config } from 'ziggy-js';
 import type { UserResource } from './resources';
-import type { SubscriptionStatus } from './shared/subscription';
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,

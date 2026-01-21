@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
-import type { AdminSessionResource } from '@/Types';
+import type { SessionResource } from '@/Types';
 import { ref } from 'vue';
 
 interface Props {
-    session: AdminSessionResource;
+    session: SessionResource;
 }
 
 const props = defineProps<Props>();

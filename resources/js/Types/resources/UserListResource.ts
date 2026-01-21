@@ -1,16 +1,15 @@
 /**
- * TypeScript definition for AdminUserDetailResource
+ * TypeScript definition for UserListResource
  * Auto-generated from Resource docblock by bp:types:generate
  */
 
-import type { AdminVisitorDetailResource } from '@/Types';
-
-export interface AdminUserDetailResource {
+export interface UserListResource {
     readonly id: number;
     readonly name: string;
     readonly email: string;
     readonly personalityType: string | null;
     readonly isAdmin: boolean;
     readonly createdAt: string;
-    readonly visitor?: AdminVisitorDetailResource | null;
+    readonly visitorsCount: number;
+    readonly promptRunsCount: number;
 }

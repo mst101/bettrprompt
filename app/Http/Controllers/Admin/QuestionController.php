@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreQuestionRequest;
 use App\Http\Requests\Admin\UpdateQuestionRequest;
-use App\Http\Resources\Admin\QuestionResource;
+use App\Http\Resources\QuestionResource;
 use App\Models\Question;
 use App\Services\QuestionMarkdownGeneratorService;
 use Illuminate\Http\RedirectResponse;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -8,18 +8,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * TypeScript interface:
  * ```typescript
- * interface AdminUserDetailResource {
+ * interface UserDetailResource {
  *     readonly id: number;
  *     readonly name: string;
  *     readonly email: string;
  *     readonly personalityType: string | null;
  *     readonly isAdmin: boolean;
  *     readonly createdAt: string;
- *     readonly visitor?: AdminVisitorDetailResource | null;
+ *     readonly visitor?: VisitorDetailResource | null;
  * }
  * ```
  */
-class AdminUserDetailResource extends JsonResource
+class UserDetailResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -33,7 +33,7 @@ class AdminUserDetailResource extends JsonResource
 
             // Relationships
             'visitor' => $this->whenLoaded('visitor', function () {
-                return $this->visitor ? AdminVisitorDetailResource::make($this->visitor)->only(['id', 'sessions']) : null;
+                return $this->visitor ? VisitorDetailResource::make($this->visitor)->only(['id', 'sessions']) : null;
             }),
         ];
     }

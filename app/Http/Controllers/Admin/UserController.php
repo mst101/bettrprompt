@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AdminUserDetailResource;
-use App\Http\Resources\Admin\SessionStatsResource;
-use App\Http\Resources\Admin\UserResource;
 use App\Http\Resources\PromptRunResource;
+use App\Http\Resources\SessionStatsResource;
+use App\Http\Resources\UserDetailResource;
+use App\Http\Resources\UserListResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -36,7 +36,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Index', [
             'users' => [
-                'data' => UserResource::collection($users->items())->resolve(),
+                'data' => UserListResource::collection($users->items())->resolve(),
                 'links' => $users->linkCollection(),
                 'current_page' => $users->currentPage(),
                 'last_page' => $users->lastPage(),
@@ -110,7 +110,7 @@ class UserController extends Controller
         }
 
         return Inertia::render('Admin/Users/Show', [
-            'user' => AdminUserDetailResource::make($user)->resolve(),
+            'user' => UserDetailResource::make($user)->resolve(),
             'promptRuns' => PromptRunResource::collection($promptRuns->items())->resolve(),
             'pagination' => [
                 'currentPage' => $promptRuns->currentPage(),

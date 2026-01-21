@@ -5,12 +5,12 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import Pagination from '@/Components/Common/Pagination.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import type { AdminVisitorResource, Paginated } from '@/Types';
+import type { Paginated, VisitorListResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 interface Props {
-    visitors: Paginated<AdminVisitorResource>;
+    visitors: Paginated<VisitorListResource>;
     search: string | null;
 }
 

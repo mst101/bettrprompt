@@ -14,9 +14,9 @@ import { useLocalStorage } from '@/Composables/data/useLocalStorage';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type {
-    AdminUserDetailResource,
     PromptRunResource,
     SessionStatsResource,
+    UserDetailResource,
 } from '@/Types';
 import { truncateText } from '@/Utils/formatting/formatters';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -42,7 +42,7 @@ interface Filters {
 }
 
 interface Props {
-    user: AdminUserDetailResource;
+    user: UserDetailResource;
     promptRuns: PromptRunResource[];
     pagination: Pagination;
     filters: Filters;

@@ -5,14 +5,14 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import type { AdminUserResource } from '@/Types/resources/AdminUserResource';
+import type { UserListResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
 import { ref, watch } from 'vue';
 
 interface Props {
     users: {
-        data: AdminUserResource[];
+        data: UserListResource[];
         links: Array<Record<string, unknown>>;
         current_page: number;
         last_page: number;

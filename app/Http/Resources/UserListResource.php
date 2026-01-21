@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Resource for admin user list
+ * Resource for user list view
  *
  * @see \App\Models\User
  *
  * TypeScript interface:
  * ```typescript
- * interface AdminUserResource {
+ * interface UserListResource {
  *     readonly id: number;
  *     readonly name: string;
  *     readonly email: string;
@@ -24,7 +24,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * }
  * ```
  */
-class UserResource extends JsonResource
+class UserListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
