@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
- * interface AdminUser {
+ * interface AdminUserResource {
  *     readonly id: number;
  *     readonly name: string;
  *     readonly email: string;

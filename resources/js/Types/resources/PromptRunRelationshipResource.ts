@@ -9,4 +9,5 @@ export interface PromptRunRelationshipResource {
     readonly workflowStage: string;
     readonly createdAt: string | null;
     readonly personalityType: string | null;
+    readonly selectedFramework: { name: string | null } | null;
 }

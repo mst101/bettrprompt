@@ -79,6 +79,12 @@ export interface PromptRunPageResource {
         outputTokens?: number;
         totalCost?: number;
     } | null;
+    readonly questionRatings?: Array<{
+        questionId: string;
+        questionIndex: number;
+        rating: number;
+        explanation: string | null;
+    }>;
     readonly user?: UserResource | null;
     readonly visitor?: VisitorResource | null;
     readonly parent?: PromptRunRelationshipResource | null;

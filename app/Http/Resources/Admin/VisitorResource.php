@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * TypeScript interface:
  * ```typescript
- * interface AdminVisitor {
+ * interface AdminVisitorResource {
  *     readonly id: string;
  *     readonly user: UserResource | null;
  *     readonly countryCode: string;

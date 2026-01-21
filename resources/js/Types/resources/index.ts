@@ -4,6 +4,7 @@
  */
 
 export * from './AdminUserResource';
+export * from './AdminVisitorResource';
 export * from './ClaudeModelResource';
 export * from './CountryResource';
 export * from './CurrencyResource';

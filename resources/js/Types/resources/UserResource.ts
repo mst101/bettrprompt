@@ -19,4 +19,21 @@ export interface UserResource {
         identity: number | null;
     } | null;
     readonly isAdmin: boolean;
+    readonly subscription: {
+        readonly tier: string;
+        readonly isPaid: boolean;
+        readonly isPro: boolean;
+        readonly isPrivate: boolean;
+        readonly isFree: boolean;
+        readonly promptsUsed: number;
+        readonly promptsRemaining: number;
+        readonly promptLimit: number;
+        readonly daysUntilReset: number;
+        readonly subscriptionEndsAt: string | null;
+        readonly onGracePeriod: boolean;
+    };
+    readonly visitor?: {
+        readonly id: string;
+        readonly sessions?: unknown[];
+    };
 }

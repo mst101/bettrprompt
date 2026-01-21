@@ -5,17 +5,6 @@
 
 import type { UserResource, VisitorResource } from '@/Types';
 
-export interface PreAnalysisQuestion {
-    readonly id: string;
-    readonly type: 'choice' | 'yes_no' | 'text';
-    readonly question: string;
-    readonly options?: Array<{
-        readonly value: string;
-        readonly label: string;
-    }>;
-    readonly allowsOther?: boolean;
-}
-
 export interface PromptRunResource {
     readonly id: number;
     readonly userId: number | null;
@@ -52,6 +41,13 @@ export interface PromptRunResource {
     readonly preAnalysisApiUsage: Record<string, unknown> | null;
     readonly analysisApiUsage: Record<string, unknown> | null;
     readonly generationApiUsage: Record<string, unknown> | null;
+    // Question ratings
+    readonly questionRatings?: Array<{
+        questionId: string;
+        questionIndex: number;
+        rating: number;
+        explanation: string | null;
+    }>;
     // Relationships
     readonly visitor?: VisitorResource;
     readonly user?: UserResource | null;

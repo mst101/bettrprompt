@@ -19,7 +19,6 @@ export interface VisitorResource {
     readonly ipAddress: string | null;
     readonly firstVisitAt: string;
     readonly lastVisitAt: string;
-    readonly visitCount: number;
     readonly convertedAt: string | null;
     readonly createdAt: string;
     readonly updatedAt: string;
