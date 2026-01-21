@@ -82,7 +82,7 @@ const selectedCurrency = computed(() => props.currency);
 function updateCurrency(newCurrency: string) {
     router.post(
         countryRoute('currency.select'),
-        { currency_code: newCurrency },
+        { currencyCode: newCurrency },
         {
             onStart: () => {
                 isCurrencyUpdating.value = true;

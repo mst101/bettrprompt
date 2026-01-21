@@ -64,7 +64,7 @@ class VisitorController extends Controller
         $activeCurrencies = Currency::where('active', true)->pluck('id')->all();
 
         $validated = $request->validate([
-            'currency_code' => [
+            'currencyCode' => [
                 'required',
                 'string',
                 'size:3',
@@ -72,7 +72,7 @@ class VisitorController extends Controller
             ],
         ]);
 
-        $currencyCode = $validated['currency_code'];
+        $currencyCode = $validated['currencyCode'];
 
         if ($request->user()) {
             // Authenticated user: update user record
