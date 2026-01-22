@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' });
 <template>
     <nav
         v-if="meta.lastPage > 1"
-        class="isolate inline-flex -space-x-px rounded-md shadow-xs"
+        class="isolate inline-flex -space-x-px rounded-md bg-white text-indigo-700 shadow-xs"
         aria-label="Pagination"
     >
         <LinkButton

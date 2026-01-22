@@ -1426,6 +1426,7 @@
             "next": "Next",
             "show": "Show",
             "perPage": "per page",
+            "pageOf": "Page {current} of {total}",
             "resultsSummary": "Showing {from} to {to} of {total} results"
         },
         "tasks": {

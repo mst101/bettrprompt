@@ -1334,7 +1334,9 @@
             "previous": "Zurück",
             "next": "Weiter",
             "show": "Anzeigen",
-            "perPage": "pro Seite"
+            "perPage": "pro Seite",
+            "pageOf": "Seite {current} von {total}",
+            "resultsSummary": "Zeige {from} bis {to} von {total} Ergebnissen"
         },
         "tasks": {
             "title": "Aufgaben",

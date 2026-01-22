@@ -1888,7 +1888,9 @@
             "previous": "Précédent",
             "next": "Suivant",
             "show": "Afficher",
-            "perPage": "par page"
+            "perPage": "par page",
+            "pageOf": "Page {current} de {total}",
+            "resultsSummary": "Affichage {from} à {to} sur {total} résultats"
         },
         "tasks": {
             "title": "Tâches",

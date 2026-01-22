@@ -2,12 +2,13 @@
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
-import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 import AdminSidebarItem from './AdminSidebarItem.vue';
 import AdminSidebarSection from './AdminSidebarSection.vue';
 
 const { countryRoute } = useCountryRoute();
+const page = usePage();
 const isOpen = ref(false); // For mobile
 
 // Note: route() is a global function provided by Inertia.js/Ziggy
@@ -16,6 +17,24 @@ declare const route: {
     (name: string, params?: Record<string, any>): string;
     current(name?: string, params?: Record<string, any>): boolean | string;
 };
+
+// Dashboard active state using URL comparison (accounts for country prefix)
+const dashboardUrl = computed(() => countryRoute('admin.dashboard'));
+const isDashboardActive = computed(() => {
+    const currentUrl = page.url.split('?')[0].replace(/\/$/, '');
+
+    // Extract path from href (countryRoute returns full URL like https://app.localhost/gb/admin)
+    let hrefUrl = dashboardUrl.value;
+    try {
+        const url = new URL(dashboardUrl.value, window.location.origin);
+        hrefUrl = url.pathname;
+    } catch {
+        // If it's already a path, use it as-is
+    }
+    hrefUrl = hrefUrl.replace(/\/$/, '');
+
+    return currentUrl === hrefUrl;
+});
 
 const toggleSidebar = () => {
     isOpen.value = !isOpen.value;
@@ -82,11 +101,11 @@ const isWorkflowActive = (workflowNumber: number) => {
         <nav class="h-[calc(100vh-4rem)] overflow-y-auto px-3 py-4">
             <!-- Dashboard (always visible) -->
             <Link
-                :href="countryRoute('admin.dashboard')"
+                :href="dashboardUrl"
                 :class="[
                     'mb-2 flex items-center gap-3 rounded-lg px-3 py-2',
-                    route().current('admin.dashboard')
-                        ? 'bg-indigo-100 text-indigo-900'
+                    isDashboardActive
+                        ? 'bg-indigo-50 text-indigo-900'
                         : 'text-indigo-700 hover:bg-indigo-50',
                 ]"
                 @click="closeSidebar"
