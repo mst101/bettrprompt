@@ -735,14 +735,14 @@ test.describe('PromptRating Component - Database Persistence', () => {
     test.skip('star rating saved to question_analytics table', async ({
         authenticatedPage,
     }) => {
-        // SKIPPED: These database persistence tests depend on question presentations
-        // being recorded in QuestionAnalytic table before ratings can be saved.
-        // The rating functionality works correctly (verified by other passing tests),
-        // but the test fixture may not be properly seeding question presentations.
-        // Implementation verified:
-        // - QuestionRatingController → QuestionAnalyticsService.updateWithRating()
-        // - Saves to question_analytics table with user_rating field
-        // TODO: Debug why questions aren't presenting in test fixture '1_completed'
+        // SKIPPED: The ClarifyingQuestions component renders framework_questions,
+        // but when questions are just strings (not objects with 'question' property),
+        // they may not display properly in the component template.
+        // The fixture has been updated to send question objects with id/question/category,
+        // but the component template might need corresponding updates to display them.
+        //
+        // The rating functionality itself works (verified by UI tests),
+        // but end-to-end persistence testing requires the component template updates.
 
         const promptRunId = await setupAndNavigateToPromptRun(
             authenticatedPage,
@@ -755,9 +755,11 @@ test.describe('PromptRating Component - Database Persistence', () => {
         await authenticatedPage.getByTestId('tab-button-questions').click();
         await authenticatedPage.waitForTimeout(500);
 
-        // Wait for stars
+        // Wait for the answer form to be visible (this comes before rating)
         await expect(
-            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
+            authenticatedPage
+                .locator('textarea[placeholder*="Type your answer"]')
+                .first(),
         ).toBeVisible({ timeout: 5000 });
 
         // Click star

@@ -7,6 +7,7 @@ use App\Events\PromptOptimizationCompleted;
 use App\Models\AnalyticsEvent;
 use App\Models\PromptRun;
 use App\Models\Visitor;
+use App\Services\QuestionAnalyticsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -206,9 +207,24 @@ class TestBroadcastController extends Controller
                 'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                'What is the specific goal you want to achieve?',
-                'How will you measure success?',
-                'What is your timeline for achieving this goal?',
+                [
+                    'id' => 'Q0',
+                    'question' => 'What is the specific goal you want to achieve?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q1',
+                    'question' => 'How will you measure success?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q2',
+                    'question' => 'What is your timeline for achieving this goal?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
             ];
             // Add pre-analysis questions for testing
             $data['pre_analysis_questions'] = [
@@ -254,9 +270,24 @@ class TestBroadcastController extends Controller
                 'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                'What is the specific goal you want to achieve?',
-                'How will you measure success?',
-                'What is your timeline for achieving this goal?',
+                [
+                    'id' => 'Q0',
+                    'question' => 'What is the specific goal you want to achieve?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q1',
+                    'question' => 'How will you measure success?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q2',
+                    'question' => 'What is your timeline for achieving this goal?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
             ];
         } elseif ($state === '2_completed') {
             $data['workflow_stage'] = '2_completed';
@@ -273,9 +304,24 @@ class TestBroadcastController extends Controller
                 'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                'What is the specific goal you want to achieve?',
-                'How will you measure success?',
-                'What is your timeline for achieving this goal?',
+                [
+                    'id' => 'Q0',
+                    'question' => 'What is the specific goal you want to achieve?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q1',
+                    'question' => 'How will you measure success?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q2',
+                    'question' => 'What is your timeline for achieving this goal?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
             ];
             $data['optimized_prompt'] = 'This is a test optimised prompt.';
             $data['completed_at'] = now();
@@ -295,13 +341,48 @@ class TestBroadcastController extends Controller
                 'rationale' => 'Ideal for goal-setting, project planning, and outcome-focused tasks',
             ];
             $data['framework_questions'] = [
-                'What is the specific goal you want to achieve?',
-                'How will you measure success?',
-                'What is your timeline for achieving this goal?',
+                [
+                    'id' => 'Q0',
+                    'question' => 'What is the specific goal you want to achieve?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q1',
+                    'question' => 'How will you measure success?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
+                [
+                    'id' => 'Q2',
+                    'question' => 'What is your timeline for achieving this goal?',
+                    'category' => 'framework',
+                    'required' => true,
+                ],
             ];
         }
 
         $promptRun = PromptRun::create($data);
+
+        // Record question presentations for '1_completed' and higher states
+        // This simulates what happens in the n8n webhook when analysis completes
+        if (in_array($state, ['1_completed', '1_failed', '2_processing', '2_completed', '2_failed'])) {
+            if (! empty($promptRun->framework_questions)) {
+                $questionService = app(QuestionAnalyticsService::class);
+                foreach ($promptRun->framework_questions as $index => $question) {
+                    $questionService->recordPresentation(
+                        promptRun: $promptRun,
+                        visitorId: $promptRun->visitor_id,
+                        userId: $promptRun->user_id,
+                        questionId: is_array($question) ? ($question['id'] ?? "Q$index") : "Q$index",
+                        questionCategory: is_array($question) ? ($question['category'] ?? 'framework') : 'framework',
+                        personalityVariant: is_array($question) ? ($question['personality_variant'] ?? null) : null,
+                        displayOrder: $index + 1,
+                        wasRequired: is_array($question) ? ($question['required'] ?? true) : true,
+                    );
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
