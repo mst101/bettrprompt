@@ -1,10 +1,10 @@
 import { expect, test } from '../fixtures';
 
 /**
- * E2E Tests for Free Tier 5 Prompts Per Month Limit
+ * E2E Tests for Free Tier 10 Prompts Per Month Limit
  *
  * These tests verify that:
- * 1. Free tier users are limited to 5 prompts per month
+ * 1. Free tier users are limited to 10 prompts per month
  * 2. Warning banner displays when 1-2 prompts remain
  * 3. The backend enforces the limit via middleware
  * 4. Users see appropriate error messages when limit is reached
@@ -81,14 +81,14 @@ test.describe('Free Tier Prompt Limits', () => {
 
         // Verify subscription data structure
         expect(userData.isFree).toBe(true);
-        expect(userData.promptsRemaining).toBe(1); // 5 limit - 4 used = 1 remaining
+        expect(userData.promptsRemaining).toBe(6); // 10 limit - 4 used = 6 remaining
         expect(userData.subscription_tier).toBe('free');
     });
 
     test('free user with no prompts used does not see warning', async ({
         authenticatedPage,
     }) => {
-        // Fresh authenticated user has 0 prompts used (5 remaining)
+        // Fresh authenticated user has 0 prompts used (10 remaining)
         await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
         await authenticatedPage.waitForTimeout(1000);
@@ -98,7 +98,7 @@ test.describe('Free Tier Prompt Limits', () => {
             authenticatedPage.getByRole('heading', { name: 'Prompt Builder' }),
         ).toBeVisible();
 
-        // With 5 prompts remaining, warning should not show
+        // With 10 prompts remaining, warning should not show
         const warningBanner = authenticatedPage.getByTestId(
             'low-prompts-warning',
         );
@@ -108,7 +108,7 @@ test.describe('Free Tier Prompt Limits', () => {
     test('does not show warning banner when user has 3+ prompts remaining', async ({
         authenticatedPage,
     }) => {
-        // Fresh user has 5 prompts remaining - no warning
+        // Fresh user has 10 prompts remaining - no warning
         await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
         await authenticatedPage.waitForTimeout(1000);
@@ -143,7 +143,7 @@ test.describe('Free Tier Prompt Limits', () => {
         await expect(taskForm).toBeVisible();
     });
 
-    test('backend enforces 5 prompt limit with middleware', async ({
+    test('backend enforces 10 prompt limit with middleware', async ({
         authenticatedPage,
     }) => {
         // This test verifies that the backend middleware correctly rejects requests
@@ -160,7 +160,7 @@ test.describe('Free Tier Prompt Limits', () => {
             )?.getAttribute('content');
         });
 
-        // Update user to have 5 prompts used (at limit)
+        // Update user to have 10 prompts used (at limit)
         const updateResponse = await authenticatedPage.request.post(
             '/api/test/user/update-prompts',
             {
@@ -169,7 +169,7 @@ test.describe('Free Tier Prompt Limits', () => {
                     'X-Test-Auth': 'playwright-e2e-tests',
                 },
                 data: {
-                    monthly_prompt_count: 5,
+                    monthly_prompt_count: 10,
                     email: 'test@example.com',
                 },
             },
@@ -229,7 +229,7 @@ test.describe('Free Tier Prompt Limits', () => {
             )?.getAttribute('content');
         });
 
-        // Update user to 4 prompts (1 remaining)
+        // Update user to 9 prompts (1 remaining - should trigger warning)
         const updateResponse = await authenticatedPage.request.post(
             '/api/test/user/update-prompts',
             {
@@ -238,7 +238,7 @@ test.describe('Free Tier Prompt Limits', () => {
                     'X-Test-Auth': 'playwright-e2e-tests',
                 },
                 data: {
-                    monthly_prompt_count: 4,
+                    monthly_prompt_count: 9,
                     email: 'test@example.com',
                 },
             },
@@ -248,7 +248,7 @@ test.describe('Free Tier Prompt Limits', () => {
 
         // Verify daysUntilReset is included in response
         expect(userData.isFree).toBe(true);
-        expect(userData.promptsRemaining).toBe(1);
+        expect(userData.promptsRemaining).toBe(1); // 10 limit - 9 used = 1 remaining
         // The reset date should be set (may have daysUntilReset calculated)
         expect(userData.prompt_count_reset_at).toBeDefined();
     });
@@ -256,7 +256,7 @@ test.describe('Free Tier Prompt Limits', () => {
     test('free tier limit configuration is respected', async ({
         authenticatedPage,
     }) => {
-        // This test verifies that the free tier limit (5 prompts) is configured correctly
+        // This test verifies that the free tier limit (10 prompts) is configured correctly
         await authenticatedPage.goto('/gb/prompt-builder');
         await authenticatedPage.waitForLoadState('networkidle');
 
@@ -269,7 +269,7 @@ test.describe('Free Tier Prompt Limits', () => {
             )?.getAttribute('content');
         });
 
-        // Set user to limit (5 prompts used)
+        // Set user to limit (10 prompts used)
         const limitResponse = await authenticatedPage.request.post(
             '/api/test/user/update-prompts',
             {
@@ -278,7 +278,7 @@ test.describe('Free Tier Prompt Limits', () => {
                     'X-Test-Auth': 'playwright-e2e-tests',
                 },
                 data: {
-                    monthly_prompt_count: 5,
+                    monthly_prompt_count: 10,
                     email: 'test@example.com',
                 },
             },
@@ -288,7 +288,7 @@ test.describe('Free Tier Prompt Limits', () => {
         const limitData = await limitResponse.json();
 
         // Verify the response contains the correct user state
-        expect(limitData.monthly_prompt_count).toBe(5);
+        expect(limitData.monthly_prompt_count).toBe(10);
         expect(limitData.promptsRemaining).toBe(0);
         expect(limitData.success).toBe(true);
     });
