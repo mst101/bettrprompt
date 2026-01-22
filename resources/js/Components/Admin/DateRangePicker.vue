@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 interface Props {
     startDate: string;
@@ -9,7 +9,6 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const selectedRange = ref<string>('30');
 const customStartDate = ref(props.startDate);
 const customEndDate = ref(props.endDate);
 const showCustom = ref(false);
@@ -21,9 +20,23 @@ const presets = [
     { label: 'Custom', value: 'custom' },
 ];
 
-const updateDateRange = (range: string) => {
-    selectedRange.value = range;
+const selectedRange = computed(() => {
+    // Determine which preset matches the current date range
+    const endDate = new Date(props.endDate);
+    const startDate = new Date(props.startDate);
+    const daysDiff = Math.round(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
+    // Check if it matches a preset (add 1 to account for inclusive range)
+    if (daysDiff === 6) return '7';
+    if (daysDiff === 29) return '30';
+    if (daysDiff === 89) return '90';
+
+    return 'custom';
+});
+
+const updateDateRange = (range: string) => {
     if (range === 'custom') {
         showCustom.value = true;
         return;
