@@ -82,8 +82,8 @@ class UserResource extends JsonResource
                             'utm_source' => $session->utm_source,
                             'utm_medium' => $session->utm_medium,
                             'utm_campaign' => $session->utm_campaign,
-                            'is_bounce' => $session->is_bounce,
-                            'converted' => $session->converted,
+                            'is_bounce' => $session->isBounce(),
+                            'converted' => $session->isConverted(),
                             'events' => $session->relationLoaded('events')
                                 ? $session->events->map(fn ($event) => [
                                     'event_id' => $event->id,

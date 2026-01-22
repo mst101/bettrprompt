@@ -42,8 +42,8 @@ class SessionResource extends JsonResource
             'utmSource' => $this->utm_source,
             'utmMedium' => $this->utm_medium,
             'utmCampaign' => $this->utm_campaign,
-            'isBounce' => $this->is_bounce,
-            'converted' => $this->converted,
+            'isBounce' => $this->isBounce(),
+            'converted' => $this->isConverted(),
 
             // Relationships
             'events' => $this->whenLoaded('events', function () {

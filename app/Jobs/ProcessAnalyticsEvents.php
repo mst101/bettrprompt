@@ -202,8 +202,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'exit_page' => $firstEvent['page_path'] ?? null,
                 'device_type' => $firstEvent['device_type'] ?? null,
                 'referrer' => $visitor?->referrer,
-                'is_bounce' => true,
-                'converted' => false,
                 // Attribution from visitor's current utm (updated on each visit when utm params present)
                 'utm_source' => $visitor?->current_utm_source,
                 'utm_medium' => $visitor?->current_utm_medium,

@@ -32,11 +32,6 @@ class AnalyticsSessionFactory extends Factory
             'utm_content' => $this->faker->randomElement(['ad_variant_1', 'ad_variant_2', null]),
             'referrer' => $this->faker->randomElement(['google.com', 'facebook.com', null]),
             'device_type' => $this->faker->randomElement(['desktop', 'mobile', 'tablet']),
-            'is_bounce' => $this->faker->boolean(20),
-            'converted' => $this->faker->boolean(30),
-            'conversion_type' => $this->faker->randomElement(['signup', 'purchase', null]),
-            'prompts_started' => $this->faker->numberBetween(0, 5),
-            'prompts_completed' => $this->faker->numberBetween(0, 3),
         ];
     }
 

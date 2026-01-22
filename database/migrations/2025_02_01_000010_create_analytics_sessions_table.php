@@ -38,21 +38,11 @@ return new class extends Migration
             // Device (captured at session start)
             $table->string('device_type', 20)->nullable();
 
-            // Outcomes
-            $table->boolean('is_bounce')->default(true); // False after 2nd page view
-            $table->boolean('converted')->default(false);
-            $table->string('conversion_type', 50)->nullable(); // registered, subscribed_pro, etc.
-
-            // Prompt activity
-            $table->unsignedSmallInteger('prompts_started')->default(0);
-            $table->unsignedSmallInteger('prompts_completed')->default(0);
-
             $table->timestamps();
 
             // Indexes
             $table->index(['visitor_id', 'started_at']);
             $table->index('ended_at');
-            $table->index(['converted', 'started_at']);
 
             $table->foreign('visitor_id')
                 ->references('id')

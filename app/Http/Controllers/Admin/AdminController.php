@@ -83,7 +83,14 @@ class AdminController extends Controller
         }
         $avgBounceRate = $historical->avg('bounce_rate');
         if ($todaySessions->count() > 0) {
-            $todayBounceRate = $todaySessions->where('is_bounce', true)->count() / $todaySessions->count();
+            // Calculate bounce rate: sessions with ≤1 page view / total sessions
+            $bouncedCount = 0;
+            foreach ($todaySessions as $session) {
+                if ($session->isBounce()) {
+                    $bouncedCount++;
+                }
+            }
+            $todayBounceRate = $todaySessions->count() > 0 ? $bouncedCount / $todaySessions->count() : 0;
             $avgBounceRate = (($avgBounceRate ?? 0) + $todayBounceRate) / 2;
         }
 

@@ -118,7 +118,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
 
     /**
      * Calculate bounce rate from sessions
-     * Bounce rate = bounced sessions / total sessions
+     * Bounce rate = sessions with ≤1 page view / total sessions
      */
     private function calculateBounceRate($sessions): ?float
     {
@@ -127,9 +127,15 @@ class BuildAnalyticsDailyStats implements ShouldQueue
             return null;
         }
 
-        $bouncedSessions = $sessions->where('is_bounce', true)->count();
+        // Count sessions with ≤1 page view
+        $bouncedCount = 0;
+        foreach ($sessions as $session) {
+            if ($session->isBounce()) {
+                $bouncedCount++;
+            }
+        }
 
-        return $bouncedSessions / $totalSessions;
+        return $bouncedCount / $totalSessions;
     }
 
     /**
@@ -231,7 +237,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
     private function aggregateByUtmSource($dayStart, $dayEnd): ?object
     {
         $sessions = AnalyticsSession::whereBetween('started_at', [$dayStart, $dayEnd])
-            ->select('utm_source', 'converted')
+            ->select('id', 'utm_source')
             ->get();
 
         if ($sessions->isEmpty()) {
@@ -240,10 +246,17 @@ class BuildAnalyticsDailyStats implements ShouldQueue
 
         $grouped = $sessions->groupBy(fn ($session) => $session->utm_source ?? 'direct')
             ->mapWithKeys(function ($group, $source) {
+                // Count sessions with conversion events
+                $sessionIds = $group->pluck('id')->toArray();
+                $conversions = AnalyticsEvent::where('type', 'conversion')
+                    ->whereIn('session_id', $sessionIds)
+                    ->distinct('session_id')
+                    ->count('session_id');
+
                 return [
                     $source => [
                         'sessions' => $group->count(),
-                        'conversions' => $group->where('converted', true)->count(),
+                        'conversions' => $conversions,
                     ],
                 ];
             });
@@ -259,7 +272,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
     {
         $sessions = AnalyticsSession::whereBetween('started_at', [$dayStart, $dayEnd])
             ->with('visitor:id,country_code')
-            ->select('visitor_id', 'converted')
+            ->select('id', 'visitor_id')
             ->get();
 
         if ($sessions->isEmpty()) {
@@ -281,10 +294,17 @@ class BuildAnalyticsDailyStats implements ShouldQueue
                         ->count();
                 }
 
+                // Count sessions with conversion events
+                $sessionIds = $group->pluck('id')->toArray();
+                $conversions = AnalyticsEvent::where('type', 'conversion')
+                    ->whereIn('session_id', $sessionIds)
+                    ->distinct('session_id')
+                    ->count('session_id');
+
                 return [
                     $country => [
                         'sessions' => $group->count(),
-                        'conversions' => $group->where('converted', true)->count(),
+                        'conversions' => $conversions,
                         'registrations' => $registrations,
                     ],
                 ];
@@ -300,7 +320,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
     private function aggregateByDeviceType($dayStart, $dayEnd): ?object
     {
         $sessions = AnalyticsSession::whereBetween('started_at', [$dayStart, $dayEnd])
-            ->select('device_type', 'duration_seconds', 'prompts_completed')
+            ->select('id', 'device_type', 'duration_seconds')
             ->get();
 
         if ($sessions->isEmpty()) {
@@ -310,7 +330,12 @@ class BuildAnalyticsDailyStats implements ShouldQueue
         $grouped = $sessions->groupBy(fn ($session) => $session->device_type ?? 'unknown')
             ->mapWithKeys(function ($group) {
                 $avgDuration = $group->whereNotNull('duration_seconds')->avg('duration_seconds');
-                $promptsCompleted = $group->sum('prompts_completed') ?? 0;
+
+                // Count prompt_completed events across sessions
+                $sessionIds = $group->pluck('id')->toArray();
+                $promptsCompleted = AnalyticsEvent::where('name', 'prompt_completed')
+                    ->whereIn('session_id', $sessionIds)
+                    ->count();
 
                 return [
                     $group->first()->device_type ?? 'unknown' => [

@@ -34,7 +34,6 @@ class BuildAnalyticsDailyStatsTest extends TestCase
         $sessions5 = AnalyticsSession::factory()->count(5)->create([
             'started_at' => $dayStart->addHours(2),
             'duration_seconds' => 120,
-            'is_bounce' => false,
         ]);
 
         // Create 3 page_view events per session for first group
@@ -51,7 +50,6 @@ class BuildAnalyticsDailyStatsTest extends TestCase
         $sessions2 = AnalyticsSession::factory()->count(2)->create([
             'started_at' => $dayStart->addHours(4),
             'duration_seconds' => null,
-            'is_bounce' => true,
         ]);
 
         // Create 1 page_view event per session for second group
@@ -94,16 +92,32 @@ class BuildAnalyticsDailyStatsTest extends TestCase
     {
         $dayStart = $this->testDate->clone()->startOfDay();
 
-        // Create 10 sessions: 3 bounces, 7 non-bounces
-        AnalyticsSession::factory()->count(3)->create([
+        // Create 10 sessions: 3 bounces (≤1 page view), 7 non-bounces (>1 page view)
+        $bounceSessions = AnalyticsSession::factory()->count(3)->create([
             'started_at' => $dayStart->addHours(1),
-            'is_bounce' => true,
         ]);
 
-        AnalyticsSession::factory()->count(7)->create([
+        // Create 1 page_view per bounce session
+        foreach ($bounceSessions as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'name' => 'page_view',
+                'type' => 'engagement',
+            ]);
+        }
+
+        $nonBounceSessions = AnalyticsSession::factory()->count(7)->create([
             'started_at' => $dayStart->addHours(2),
-            'is_bounce' => false,
         ]);
+
+        // Create 2 page_view per non-bounce session
+        foreach ($nonBounceSessions as $session) {
+            AnalyticsEvent::factory()->count(2)->create([
+                'session_id' => $session->id,
+                'name' => 'page_view',
+                'type' => 'engagement',
+            ]);
+        }
 
         BuildAnalyticsDailyStats::dispatchSync($this->testDate);
 
@@ -178,23 +192,35 @@ class BuildAnalyticsDailyStatsTest extends TestCase
 
     public function test_it_aggregates_by_utm_source(): void
     {
-        AnalyticsSession::factory()->count(10)->create([
+        // Google sessions - all converted
+        $googleSessions = AnalyticsSession::factory()->count(10)->create([
             'started_at' => $this->testDate->addHours(1),
             'utm_source' => 'google',
-            'converted' => true,
         ]);
+        foreach ($googleSessions as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'type' => 'conversion',
+            ]);
+        }
 
+        // Facebook sessions - none converted
         AnalyticsSession::factory()->count(5)->create([
             'started_at' => $this->testDate->addHours(2),
             'utm_source' => 'facebook',
-            'converted' => false,
         ]);
 
-        AnalyticsSession::factory()->count(15)->create([
+        // Direct traffic sessions - all converted
+        $directSessions = AnalyticsSession::factory()->count(15)->create([
             'started_at' => $this->testDate->addHours(3),
-            'utm_source' => null, // direct traffic
-            'converted' => true,
+            'utm_source' => null,
         ]);
+        foreach ($directSessions as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'type' => 'conversion',
+            ]);
+        }
 
         BuildAnalyticsDailyStats::dispatchSync($this->testDate);
 
@@ -217,16 +243,22 @@ class BuildAnalyticsDailyStatsTest extends TestCase
         $gbVisitor = \App\Models\Visitor::factory()->create(['country_code' => 'gb']);
         $usVisitor = \App\Models\Visitor::factory()->create(['country_code' => 'us']);
 
-        AnalyticsSession::factory()->count(8)->create([
+        // GB sessions - all converted
+        $gbSessions = AnalyticsSession::factory()->count(8)->create([
             'started_at' => $dayStart->addHours(1),
             'visitor_id' => $gbVisitor->id,
-            'converted' => true,
         ]);
+        foreach ($gbSessions as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'type' => 'conversion',
+            ]);
+        }
 
+        // US sessions - none converted
         AnalyticsSession::factory()->count(5)->create([
             'started_at' => $dayStart->addHours(2),
             'visitor_id' => $usVisitor->id,
-            'converted' => false,
         ]);
 
         // Create registrations from these countries
@@ -251,19 +283,33 @@ class BuildAnalyticsDailyStatsTest extends TestCase
 
     public function test_it_aggregates_by_device_type(): void
     {
-        AnalyticsSession::factory()->count(6)->create([
+        // Mobile sessions with 2 prompt_completed events each
+        $mobileSessions = AnalyticsSession::factory()->count(6)->create([
             'started_at' => $this->testDate->addHours(1),
             'device_type' => 'mobile',
             'duration_seconds' => 60,
-            'prompts_completed' => 2,
         ]);
+        foreach ($mobileSessions as $session) {
+            AnalyticsEvent::factory()->count(2)->create([
+                'session_id' => $session->id,
+                'name' => 'prompt_completed',
+                'type' => 'engagement',
+            ]);
+        }
 
-        AnalyticsSession::factory()->count(4)->create([
+        // Desktop sessions with 1 prompt_completed event each
+        $desktopSessions = AnalyticsSession::factory()->count(4)->create([
             'started_at' => $this->testDate->addHours(2),
             'device_type' => 'desktop',
             'duration_seconds' => 180,
-            'prompts_completed' => 1,
         ]);
+        foreach ($desktopSessions as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'name' => 'prompt_completed',
+                'type' => 'engagement',
+            ]);
+        }
 
         BuildAnalyticsDailyStats::dispatchSync($this->testDate);
 

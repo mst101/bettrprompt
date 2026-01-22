@@ -105,14 +105,29 @@ class VisitorController extends Controller
         $totalPageViews = AnalyticsEvent::where('name', 'page_view')
             ->whereIn('session_id', $allSessions->pluck('id'))
             ->count();
+        // Calculate bounce rate from sessions with ≤1 page view
+        $bouncedCount = 0;
+        foreach ($allSessions as $session) {
+            if ($session->isBounce()) {
+                $bouncedCount++;
+            }
+        }
+        $bounceRate = $allSessions->count() > 0
+            ? round(($bouncedCount / $allSessions->count()) * 100, 1)
+            : 0;
+
+        // Count sessions with conversion events
+        $conversions = AnalyticsEvent::where('type', 'conversion')
+            ->whereIn('session_id', $allSessions->pluck('id'))
+            ->distinct('session_id')
+            ->count('session_id');
+
         $sessionStats = [
             'total_sessions' => $allSessions->count(),
             'total_page_views' => $totalPageViews,
             'avg_duration' => round($allSessions->avg('duration_seconds') ?? 0),
-            'bounce_rate' => $allSessions->count() > 0
-                ? round(($allSessions->where('is_bounce', true)->count() / $allSessions->count()) * 100, 1)
-                : 0,
-            'converted' => $allSessions->where('converted', true)->count(),
+            'bounce_rate' => $bounceRate,
+            'converted' => $conversions,
         ];
 
         return Inertia::render('Admin/Visitors/Show', [

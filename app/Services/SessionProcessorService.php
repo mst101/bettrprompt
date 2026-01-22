@@ -75,7 +75,6 @@ class SessionProcessorService
         // Find entry and exit pages
         $entryPage = null;
         $exitPage = null;
-        $pageViewCount = 0;
 
         foreach ($events as $event) {
             if ($event['name'] === 'page_view') {
@@ -85,23 +84,8 @@ class SessionProcessorService
                     $entryPage = $pagePath;
                 }
                 $exitPage = $pagePath;
-                $pageViewCount++;
             }
         }
-
-        // Detect bounce: single page view
-        $isBounce = $pageViewCount <= 1;
-
-        // Check for conversions in this session
-        $conversions = collect($events)->filter(fn ($e) => $e['type'] === 'conversion');
-        $hasConverted = $conversions->isNotEmpty();
-        $conversionType = $this->determineConversionType($conversions);
-
-        // Count prompts
-        $promptsStarted = collect($events)->filter(fn ($e) => $e['name'] === 'prompt_started')->count();
-        $promptsCompleted = collect($events)
-            ->filter(fn ($e) => $e['name'] === 'prompt_completed')
-            ->count();
 
         // Find or create session
         $session = AnalyticsSession::firstOrNew(
@@ -116,11 +100,6 @@ class SessionProcessorService
             'duration_seconds' => $duration,
             'entry_page' => $entryPage,
             'exit_page' => $exitPage,
-            'is_bounce' => $isBounce,
-            'converted' => $hasConverted,
-            'conversion_type' => $conversionType,
-            'prompts_started' => $promptsStarted,
-            'prompts_completed' => $promptsCompleted,
             // Attribution from visitor's current utm (updated on each visit when utm params present)
             'utm_source' => $visitor?->current_utm_source,
             'utm_medium' => $visitor?->current_utm_medium,
@@ -138,8 +117,8 @@ class SessionProcessorService
                 'session_id' => $sessionId,
                 'visitor_id' => $visitorId,
                 'visitor_found' => $visitor ? true : false,
-                'page_count' => $pageCount,
-                'converted' => $hasConverted,
+                'is_bounce' => $session->isBounce(),
+                'converted' => $session->isConverted(),
                 'utm_source' => $session->utm_source,
                 'utm_medium' => $session->utm_medium,
                 'utm_campaign' => $session->utm_campaign,
@@ -153,27 +132,6 @@ class SessionProcessorService
                 'error' => $e->getMessage(),
             ]);
         }
-    }
-
-    /**
-     * Determine conversion type from conversion events
-     */
-    private function determineConversionType($conversions): ?string
-    {
-        // Priority: subscription > registration > other
-        foreach ($conversions as $event) {
-            if (str_contains($event['name'], 'subscription')) {
-                return 'subscribed_'.($event['properties']['tier'] ?? 'unknown');
-            }
-        }
-
-        foreach ($conversions as $event) {
-            if (str_contains($event['name'], 'registration')) {
-                return 'registered';
-            }
-        }
-
-        return $conversions->first()?->name ?? null;
     }
 
     /**

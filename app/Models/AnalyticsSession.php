@@ -34,18 +34,11 @@ class AnalyticsSession extends Model
         'referrer',
         'device_type',
         'country_code',
-        'is_bounce',
-        'converted',
-        'conversion_type',
-        'prompts_started',
-        'prompts_completed',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
-        'is_bounce' => 'boolean',
-        'converted' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -70,8 +63,90 @@ class AnalyticsSession extends Model
         return $query->where('visitor_id', $visitorId);
     }
 
-    public function scopeConverted($query)
+    /**
+     * Get whether this session bounced (had ≤1 page view)
+     */
+    public function isBounce(): bool
     {
-        return $query->where('converted', true);
+        if ($this->relationLoaded('events')) {
+            return $this->events->where('name', 'page_view')->count() <= 1;
+        }
+
+        return AnalyticsEvent::where('session_id', $this->id)
+            ->where('name', 'page_view')
+            ->count() <= 1;
+    }
+
+    /**
+     * Get whether this session had a conversion
+     */
+    public function isConverted(): bool
+    {
+        if ($this->relationLoaded('events')) {
+            return $this->events->where('type', 'conversion')->isNotEmpty();
+        }
+
+        return AnalyticsEvent::where('session_id', $this->id)
+            ->where('type', 'conversion')
+            ->exists();
+    }
+
+    /**
+     * Get the conversion type from conversion events
+     */
+    public function getConversionType(): ?string
+    {
+        $conversions = $this->relationLoaded('events')
+            ? $this->events->where('type', 'conversion')
+            : AnalyticsEvent::where('session_id', $this->id)
+                ->where('type', 'conversion')
+                ->get();
+
+        if ($conversions->isEmpty()) {
+            return null;
+        }
+
+        // Priority: subscription > registration > other
+        foreach ($conversions as $event) {
+            if (str_contains($event['name'], 'subscription')) {
+                return 'subscribed_'.($event['properties']['tier'] ?? 'unknown');
+            }
+        }
+
+        foreach ($conversions as $event) {
+            if (str_contains($event['name'], 'registration')) {
+                return 'registered';
+            }
+        }
+
+        return $conversions->first()?->name ?? null;
+    }
+
+    /**
+     * Get count of prompts started in this session
+     */
+    public function getPromptsStarted(): int
+    {
+        if ($this->relationLoaded('events')) {
+            return $this->events->where('name', 'prompt_started')->count();
+        }
+
+        return AnalyticsEvent::where('session_id', $this->id)
+            ->where('name', 'prompt_started')
+            ->count();
+    }
+
+    /**
+     * Get count of prompts completed in this session
+     */
+    public function getPromptsCompleted(): int
+    {
+        if ($this->relationLoaded('events')) {
+            return $this->events->where('name', 'prompt_completed')->count();
+        }
+
+        return AnalyticsEvent::where('session_id', $this->id)
+            ->where('name', 'prompt_completed')
+            ->count();
     }
 }
