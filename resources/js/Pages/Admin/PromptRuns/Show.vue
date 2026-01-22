@@ -19,7 +19,7 @@ import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/Rela
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import AppLayout from '@/Layouts/AppLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { ClaudeModel, PromptRunResource } from '@/Types';
 import { Head, Link } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -33,7 +33,7 @@ interface Props {
 const props = defineProps<Props>();
 
 defineOptions({
-    layout: AppLayout,
+    layout: AdminLayout,
 });
 
 const { countryRoute } = useCountryRoute();

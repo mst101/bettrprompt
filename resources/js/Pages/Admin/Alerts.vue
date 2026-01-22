@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { AlertCircle, CheckCircle } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
+
+defineOptions({
+    layout: AdminLayout,
+});
 
 interface AlertHistory {
     id: number;

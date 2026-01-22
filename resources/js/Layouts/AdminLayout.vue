@@ -1,28 +1,16 @@
 <script setup lang="ts">
+import AdminSidebar from '@/Components/Admin/AdminSidebar.vue';
 import AlertDialog from '@/Components/Base/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
-import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
-import NavLink from '@/Components/Base/NavLink.vue';
-import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
-import { useCountryRoute } from '@/Composables/useCountryRoute';
-import SvgLogo from '@/Icons/SvgLogo.vue';
-import { Link } from '@inertiajs/vue3';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 
 interface Props {
     title?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-    title: 'Workflow',
+    title: 'Admin',
 });
-
-const { countryRoute } = useCountryRoute();
-
-const showingNavigationDropdown = ref(false);
-const firstMobileNavLink = ref<InstanceType<typeof ResponsiveNavLink> | null>(
-    null,
-);
 
 // Initialize dark mode from localStorage
 onMounted(() => {
@@ -37,197 +25,29 @@ onMounted(() => {
         document.documentElement.classList.remove('dark');
     }
 });
-
-// Focus management for mobile navigation
-watch(showingNavigationDropdown, async (isOpen) => {
-    if (isOpen) {
-        await nextTick();
-        firstMobileNavLink.value?.focus();
-    }
-});
 </script>
 
 <template>
     <div
-        class="min-h-screen bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
+        class="flex h-screen bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
     >
-        <!-- Navigation Bar -->
-        <nav class="bg-white shadow-xs shadow-indigo-50">
-            <div class="max-w-8xl mx-auto px-4 sm:px-4">
-                <div class="flex h-18 items-center justify-between">
-                    <!-- Logo -->
-                    <div class="flex shrink-0 items-center">
-                        <Link
-                            :href="countryRoute('home')"
-                            class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                            @click="showingNavigationDropdown = false"
-                        >
-                            <SvgLogo
-                                class="block h-10 w-auto fill-current text-indigo-800"
-                                size="lg"
-                            />
-                        </Link>
-                    </div>
+        <!-- Sidebar -->
+        <AdminSidebar />
 
-                    <!-- Navigation Links (Desktop) -->
-                    <div class="hidden space-x-1 md:flex">
-                        <NavLink
-                            :href="
-                                countryRoute('workflows.show', {
-                                    workflowNumber: 0,
-                                })
-                            "
-                            :active="$page.url.includes('/admin/workflows/0')"
-                        >
-                            Workflow 0
-                        </NavLink>
-                        <NavLink
-                            :href="
-                                countryRoute('workflows.show', {
-                                    workflowNumber: 1,
-                                })
-                            "
-                            :active="$page.url.includes('/admin/workflows/1')"
-                        >
-                            Workflow 1
-                        </NavLink>
-                        <NavLink
-                            :href="
-                                countryRoute('workflows.show', {
-                                    workflowNumber: 2,
-                                })
-                            "
-                            :active="$page.url.includes('/admin/workflows/2')"
-                        >
-                            Workflow 2
-                        </NavLink>
-                        <NavLink
-                            :href="countryRoute('admin.questions.index')"
-                            :active="route().current('admin.questions.index')"
-                        >
-                            Questions
-                        </NavLink>
-                        <NavLink
-                            :href="countryRoute('workflows.docs.index')"
-                            :active="route().current('workflows.docs.index')"
-                        >
-                            Docs
-                        </NavLink>
-                    </div>
+        <!-- Main content area -->
+        <div class="flex flex-1 flex-col overflow-hidden md:ml-64">
+            <!-- Top bar (simplified) -->
+            <nav
+                class="flex h-16 items-center justify-end bg-white px-6 shadow-sm"
+            >
+                <ButtonDarkMode class="size-10 shrink-0 p-2" />
+            </nav>
 
-                    <!-- Right Side Actions -->
-                    <div class="flex items-center space-x-2">
-                        <!-- Dark Mode Toggle -->
-                        <ButtonDarkMode class="size-10 shrink-0 p-2" />
-
-                        <!-- Hamburger (Mobile) -->
-                        <div class="md:hidden">
-                            <ButtonHamburger
-                                :is-open="showingNavigationDropdown"
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Responsive Navigation Menu -->
-            <Teleport to="body">
-                <Transition
-                    enter-active-class="transition ease-out duration-200"
-                    enter-from-class="opacity-0 -translate-y-2"
-                    enter-to-class="opacity-100 translate-y-0"
-                    leave-active-class="transition ease-in duration-75"
-                    leave-from-class="opacity-100 translate-y-0"
-                    leave-to-class="opacity-0 -translate-y-2"
-                >
-                    <div
-                        v-show="showingNavigationDropdown"
-                        class="fixed top-16 right-0 left-0 z-40 bg-white shadow-lg md:hidden"
-                    >
-                        <div class="space-y-1 pt-2 pb-3">
-                            <ResponsiveNavLink
-                                ref="firstMobileNavLink"
-                                :href="countryRoute('workflows.index')"
-                                :active="route().current('workflows.index')"
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Index
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink
-                                :href="
-                                    countryRoute('workflows.show', {
-                                        workflowNumber: 0,
-                                    })
-                                "
-                                :active="
-                                    $page.url.includes('/admin/workflows/0')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Workflow 0
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink
-                                :href="
-                                    countryRoute('workflows.show', {
-                                        workflowNumber: 1,
-                                    })
-                                "
-                                :active="
-                                    $page.url.includes('/admin/workflows/1')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Workflow 1
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink
-                                :href="
-                                    countryRoute('workflows.show', {
-                                        workflowNumber: 2,
-                                    })
-                                "
-                                :active="
-                                    $page.url.includes('/admin/workflows/2')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Workflow 2
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink
-                                :href="countryRoute('workflows.docs.index')"
-                                :active="
-                                    route().current('workflows.docs.index')
-                                "
-                                @click="showingNavigationDropdown = false"
-                            >
-                                Docs
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </Transition>
-            </Teleport>
-        </nav>
-
-        <!-- Mobile Navigation Overlay -->
-        <Teleport to="body">
-            <div
-                v-show="showingNavigationDropdown"
-                class="fixed inset-0 z-30 md:hidden"
-                @click="showingNavigationDropdown = false"
-            ></div>
-        </Teleport>
-
-        <!-- Page Content -->
-        <main class="max-w-8xl mx-auto px-4 py-8 sm:px-6">
-            <slot />
-        </main>
+            <!-- Page content (scrollable) -->
+            <main class="flex-1 overflow-y-auto px-4 py-8 sm:px-6">
+                <slot />
+            </main>
+        </div>
 
         <!-- Alert Dialog -->
         <AlertDialog />
