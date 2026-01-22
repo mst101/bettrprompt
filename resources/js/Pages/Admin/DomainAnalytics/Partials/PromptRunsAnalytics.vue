@@ -86,12 +86,11 @@ const handleSort = (column: string) => {
     const currentSortBy = sortBy.value;
     const currentDirection = sortDirection.value;
 
-    if (currentSortBy === column && currentDirection === 'asc') {
-        sortDirection.value = 'desc';
-    } else if (currentSortBy === column && currentDirection === 'desc') {
-        sortBy.value = 'createdAt';
-        sortDirection.value = 'desc';
+    if (currentSortBy === column) {
+        // Toggle direction if clicking the same column
+        sortDirection.value = currentDirection === 'asc' ? 'desc' : 'asc';
     } else {
+        // Sort by new column in ascending order
         sortBy.value = column;
         sortDirection.value = 'asc';
     }
