@@ -54,6 +54,7 @@ const { t } = useI18n({ useScope: 'global' });
         </span>
         <LinkButton
             v-if="meta.nextPageUrl"
+            class="text-indigo-700"
             :href="meta.nextPageUrl"
             variant="rounded-right"
             data-testid="pagination-next"

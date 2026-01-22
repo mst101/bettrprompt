@@ -20,7 +20,7 @@ useThemeStore();
 
 <template>
     <div
-        class="flex h-screen bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
+        class="flex h-screen flex-col bg-linear-to-br from-indigo-100 via-white to-purple-100 dark:from-indigo-50 dark:to-purple-50"
     >
         <!-- Sidebar -->
         <AdminSidebar />
@@ -43,7 +43,7 @@ useThemeStore();
             </nav>
 
             <!-- Page content (scrollable) -->
-            <main class="flex-1 overflow-y-auto px-4 py-8 sm:px-6">
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6">
                 <slot />
             </main>
         </div>

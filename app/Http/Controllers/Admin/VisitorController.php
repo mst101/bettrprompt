@@ -22,6 +22,7 @@ class VisitorController extends Controller
         $search = $request->input('search');
         $sortBy = $request->get('sort_by', 'created_at');
         $sortDirection = $request->get('sort_direction', 'desc');
+        $perPage = (int) $request->get('per_page', 50);
 
         // Validate sort parameters
         $validSortColumns = ['id', 'country_code', 'sessions_count', 'user_name', 'created_at', 'last_visit_at'];
@@ -31,6 +32,9 @@ class VisitorController extends Controller
         if (! in_array($sortDirection, ['asc', 'desc'])) {
             $sortDirection = 'desc';
         }
+
+        // Validate per_page (min 1, max 100)
+        $perPage = max(1, min(100, $perPage));
 
         $query = Visitor::query()
             ->when($search, function ($query, $search) {
@@ -56,7 +60,7 @@ class VisitorController extends Controller
         }
 
         $visitors = $query
-            ->paginate(50)
+            ->paginate($perPage)
             ->withQueryString();
 
         return Inertia::render('Admin/Visitors/Index', [
@@ -79,6 +83,7 @@ class VisitorController extends Controller
             'filters' => [
                 'sortBy' => $sortBy,
                 'sortDirection' => $sortDirection,
+                'perPage' => $perPage,
             ],
         ]);
     }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import AdminPaginationSection from '@/Components/Admin/AdminPaginationSection.vue';
 import Card from '@/Components/Base/Card.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import Pagination from '@/Components/Common/Pagination.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
@@ -16,6 +16,7 @@ interface Props {
     filters: {
         sortBy: string;
         sortDirection: string;
+        perPage?: number;
     };
 }
 
@@ -39,6 +40,7 @@ const debouncedSearch = () => {
                 search: searchQuery.value,
                 sort_by: props.filters.sortBy,
                 sort_direction: props.filters.sortDirection,
+                per_page: props.filters.perPage,
             },
             { preserveState: true, preserveScroll: true },
         );
@@ -60,6 +62,7 @@ const sortBy = (column: string) => {
             search: searchQuery.value,
             sort_by: column,
             sort_direction: newDirection,
+            per_page: props.filters.perPage,
         },
         {
             preserveState: true,
@@ -249,8 +252,13 @@ const formatDate = (dateStr: string): string => {
         </Card>
 
         <!-- Pagination -->
-        <div v-if="visitors.meta.lastPage > 1" class="mt-6 flex justify-center">
-            <Pagination :meta="visitors.meta" />
-        </div>
+        <AdminPaginationSection
+            :meta="visitors.meta"
+            :query-string-params="{
+                search: searchQuery,
+                sort_by: filters.sortBy,
+                sort_direction: filters.sortDirection,
+            }"
+        />
     </ContainerPage>
 </template>
