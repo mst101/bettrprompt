@@ -22,8 +22,8 @@ test('history page displays with default sorting', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('PromptBuilder/History')
         ->has('promptRuns.data', 3)
-        ->where('filters.sort_by', 'created_at')
-        ->where('filters.sort_direction', 'desc')
+        ->where('filters.sortBy', 'created_at')
+        ->where('filters.sortDirection', 'desc')
     );
 });
 
@@ -42,8 +42,8 @@ test('history page filters by different sort columns', function ($sortBy) {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', $sortBy)
-        ->where('filters.sort_direction', 'asc')
+        ->where('filters.sortBy', $sortBy)
+        ->where('filters.sortDirection', 'asc')
     );
 })->with(['created_at', 'personality_type', 'workflow_stage', 'task_description']);
 
@@ -60,7 +60,7 @@ test('history page rejects invalid sort column', function () {
     $response->assertOk();
     // Should default to created_at
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'created_at')
+        ->where('filters.sortBy', 'created_at')
     );
 });
 
@@ -77,7 +77,7 @@ test('history page rejects invalid sort direction', function () {
     $response->assertOk();
     // Should default to desc
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_direction', 'desc')
+        ->where('filters.sortDirection', 'desc')
     );
 });
 
@@ -112,7 +112,7 @@ test('history page respects custom per page parameter', function () {
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->has('promptRuns.data', 10)
-        ->where('filters.per_page', 10)
+        ->where('filters.perPage', 10)
     );
 });
 
@@ -128,7 +128,7 @@ test('history page clamps per page to valid bounds', function (int $perPage, int
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.per_page', $expectedPerPage)
+        ->where('filters.perPage', $expectedPerPage)
     );
 })->with([
     [500, 100],          // Exceeds max, clamps to 100
@@ -147,7 +147,7 @@ test('history page handles non-numeric per page gracefully', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.per_page', 6) // Should default to 6
+        ->where('filters.perPage', 6) // Should default to 6
     );
 });
 
@@ -166,9 +166,9 @@ test('history page maintains query parameters in pagination', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('filters.sort_by', 'workflow_stage')
-        ->where('filters.sort_direction', 'asc')
-        ->where('filters.per_page', 5)
+        ->where('filters.sortBy', 'workflow_stage')
+        ->where('filters.sortDirection', 'asc')
+        ->where('filters.perPage', 5)
     );
 });
 
