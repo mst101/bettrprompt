@@ -3,7 +3,7 @@ import type { FormSelectProps, Nullable } from '@/Types';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const props = withDefaults(defineProps<FormSelectProps>(), {
+const props = withDefaults(defineProps<Partial<FormSelectProps>>(), {
     modelValue: '',
     error: '',
     required: false,
@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<FormSelectProps>(), {
     showPlaceholder: true,
     helpText: '',
     autofocus: false,
+    options: () => [],
 });
 
 const emit = defineEmits<{
@@ -67,13 +68,17 @@ onMounted(() => {
             <option v-if="props.showPlaceholder" value="" disabled>
                 {{ placeholderText }}
             </option>
-            <option
-                v-for="option in props.options"
-                :key="option.value"
-                :value="option.value"
-            >
-                {{ option.label }}
-            </option>
+            <!-- Use options prop if provided, otherwise use slot -->
+            <template v-if="props.options.length > 0">
+                <option
+                    v-for="option in props.options"
+                    :key="option.value"
+                    :value="option.value"
+                >
+                    {{ option.label }}
+                </option>
+            </template>
+            <slot v-else />
         </select>
 
         <p v-if="props.helpText" class="mt-1 text-indigo-600">
