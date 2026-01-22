@@ -80,10 +80,6 @@ const formatDate = (dateStr: string): string => {
         day: 'numeric',
     });
 };
-
-const truncateId = (id: string): string => {
-    return id.substring(0, 8) + '...';
-};
 </script>
 
 <template>
@@ -126,7 +122,14 @@ const truncateId = (id: string): string => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                             >
-                                Linked User
+                                <TableHeaderSortable
+                                    column="user_name"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    Linked User
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
@@ -143,7 +146,14 @@ const truncateId = (id: string): string => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                             >
-                                Sessions
+                                <TableHeaderSortable
+                                    column="sessions_count"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    Sessions
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
@@ -157,36 +167,33 @@ const truncateId = (id: string): string => {
                                     First Seen
                                 </TableHeaderSortable>
                             </th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
-                            >
-                                Actions
-                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-indigo-100 bg-white">
-                        <tr
+                        <Link
                             v-for="visitor in visitors.data"
                             :key="visitor.id"
-                            class="hover:bg-indigo-50"
+                            :href="
+                                countryRoute('admin.visitors.show', {
+                                    visitor: visitor.id,
+                                })
+                            "
+                            as="tr"
+                            class="cursor-pointer transition hover:bg-indigo-50"
+                            data-testid="visitor-row"
                         >
                             <td
                                 class="px-6 py-4 font-mono text-sm whitespace-nowrap text-indigo-900"
                             >
-                                {{ truncateId(visitor.id) }}
+                                {{ visitor.id }}
                             </td>
                             <td class="px-6 py-4 text-sm whitespace-nowrap">
-                                <Link
+                                <span
                                     v-if="visitor.user"
-                                    :href="
-                                        countryRoute('admin.users.show', {
-                                            user: visitor.user.id,
-                                        })
-                                    "
-                                    class="text-indigo-600 hover:text-indigo-900 hover:underline"
+                                    class="text-indigo-900"
                                 >
                                     {{ visitor.user.name }}
-                                </Link>
+                                </span>
                                 <span v-else class="text-indigo-400">
                                     Anonymous
                                 </span>
@@ -206,23 +213,10 @@ const truncateId = (id: string): string => {
                             >
                                 {{ formatDate(visitor.createdAt) }}
                             </td>
-                            <td class="px-6 py-4 text-sm whitespace-nowrap">
-                                <Link
-                                    :href="
-                                        countryRoute('admin.visitors.show', {
-                                            visitor: visitor.id,
-                                        })
-                                    "
-                                    class="font-medium text-indigo-600 hover:text-indigo-900 hover:underline"
-                                    data-testid="view-visitor"
-                                >
-                                    View
-                                </Link>
-                            </td>
-                        </tr>
+                        </Link>
                         <tr v-if="visitors.data.length === 0">
                             <td
-                                colspan="6"
+                                colspan="5"
                                 class="px-6 py-4 text-center text-sm text-indigo-500"
                             >
                                 No visitors found

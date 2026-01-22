@@ -358,7 +358,7 @@ const handleSubmit = () => {
     <HeaderPage :title="$t('promptBuilder.title')" />
 
     <ContainerPage>
-        <Card>
+        <Card class="max-w-4xl">
             <!-- Error Alert -->
             <div
                 v-if="submissionError"

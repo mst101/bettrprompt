@@ -23,7 +23,7 @@ class UserController extends Controller
         $sortDirection = $request->get('sort_direction', 'desc');
 
         // Validate sort parameters
-        $validSortColumns = ['name', 'email', 'created_at'];
+        $validSortColumns = ['name', 'email', 'visitors_count', 'prompt_runs_count', 'created_at'];
         if (! in_array($sortBy, $validSortColumns)) {
             $sortBy = 'created_at';
         }
@@ -31,7 +31,7 @@ class UserController extends Controller
             $sortDirection = 'desc';
         }
 
-        $users = User::query()
+        $query = User::query()
             ->withCount([
                 'visitors',
                 'visitors as prompt_runs_count' => function ($query) {
@@ -41,8 +41,16 @@ class UserController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%$search%")
                     ->orWhere('email', 'like', "%$search%");
-            })
-            ->orderBy($sortBy, $sortDirection)
+            });
+
+        // Apply sorting
+        if ($sortBy === 'visitors_count' || $sortBy === 'prompt_runs_count') {
+            $query->orderBy($sortBy, $sortDirection);
+        } else {
+            $query->orderBy($sortBy, $sortDirection);
+        }
+
+        $users = $query
             ->paginate(20)
             ->withQueryString();
 

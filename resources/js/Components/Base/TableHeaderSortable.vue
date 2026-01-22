@@ -27,7 +27,7 @@ const isSorted = (): boolean => {
 
 <template>
     <button
-        class="group inline-flex items-center gap-1 rounded p-1 hover:text-indigo-700 focus:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden"
+        class="group inline-flex items-center gap-1 rounded p-1 uppercase hover:text-indigo-700 focus:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-100 focus:outline-hidden"
         @click="emit('sort', column)"
     >
         <slot />

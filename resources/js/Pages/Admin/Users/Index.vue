@@ -135,12 +135,26 @@ const sortDirection = computed(() => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                {{ $t('admin.users.columns.visitors') }}
+                                <TableHeaderSortable
+                                    column="visitors_count"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    {{ $t('admin.users.columns.visitors') }}
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                {{ $t('admin.users.columns.promptRuns') }}
+                                <TableHeaderSortable
+                                    column="prompt_runs_count"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    {{ $t('admin.users.columns.promptRuns') }}
+                                </TableHeaderSortable>
                             </th>
                         </tr>
                     </thead>

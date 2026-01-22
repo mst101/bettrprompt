@@ -35,10 +35,6 @@ const formatDuration = (seconds: number): string => {
     const secs = seconds % 60;
     return `${mins}m ${secs}s`;
 };
-
-const truncateId = (id: string): string => {
-    return id.substring(0, 16) + '...';
-};
 </script>
 
 <template>
@@ -49,16 +45,20 @@ const truncateId = (id: string): string => {
     <ContainerPage>
         <!-- Visitor Header -->
         <div class="mb-6 rounded-lg bg-white p-6 shadow">
-            <div class="mb-2 flex items-center justify-between">
+            <div
+                class="mb-2 flex-col space-y-4 sm:flex sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+            >
                 <div>
                     <h2 class="text-xs font-medium text-indigo-600 uppercase">
                         Visitor ID
                     </h2>
-                    <p class="font-mono text-lg font-semibold text-indigo-900">
-                        {{ truncateId(visitor.id) }}
+                    <p
+                        class="font-mono font-semibold text-indigo-900 sm:text-lg"
+                    >
+                        {{ visitor.id }}
                     </p>
                 </div>
-                <div class="text-right">
+                <div class="sm:text-right">
                     <h3 class="text-xs font-medium text-indigo-600 uppercase">
                         Linked User
                     </h3>
@@ -73,7 +73,7 @@ const truncateId = (id: string): string => {
                     >
                         {{ visitor.user.name }}
                     </Link>
-                    <p v-else class="text-lg font-semibold text-indigo-400">
+                    <p v-else class="font-semibold text-indigo-400 sm:text-lg">
                         Anonymous
                     </p>
                 </div>

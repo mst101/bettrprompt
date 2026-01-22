@@ -23,7 +23,7 @@ class VisitorController extends Controller
         $sortDirection = $request->get('sort_direction', 'desc');
 
         // Validate sort parameters
-        $validSortColumns = ['id', 'country_code', 'created_at'];
+        $validSortColumns = ['id', 'country_code', 'sessions_count', 'user_name', 'created_at'];
         if (! in_array($sortBy, $validSortColumns)) {
             $sortBy = 'created_at';
         }
@@ -31,7 +31,7 @@ class VisitorController extends Controller
             $sortDirection = 'desc';
         }
 
-        $visitors = Visitor::query()
+        $query = Visitor::query()
             ->when($search, function ($query, $search) {
                 $query->where('id', 'like', "%{$search}%")
                     ->orWhere('country_code', 'like', "%{$search}%")
@@ -41,8 +41,20 @@ class VisitorController extends Controller
                     });
             })
             ->withCount('sessions')
-            ->with('user:id,name,email')
-            ->orderBy($sortBy, $sortDirection)
+            ->with('user:id,name,email');
+
+        // Apply sorting
+        if ($sortBy === 'sessions_count') {
+            $query->orderBy('sessions_count', $sortDirection);
+        } elseif ($sortBy === 'user_name') {
+            $query->join('users', 'visitors.user_id', '=', 'users.id')
+                ->select('visitors.*')
+                ->orderBy('users.name', $sortDirection);
+        } else {
+            $query->orderBy($sortBy, $sortDirection);
+        }
+
+        $visitors = $query
             ->paginate(50)
             ->withQueryString();
 
