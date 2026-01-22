@@ -2,12 +2,16 @@
  * Subscription status for the current user
  */
 export interface SubscriptionStatus {
-    tier: 'free' | 'pro' | 'private';
+    tier: 'free' | 'starter' | 'pro' | 'premium';
+    isFree: boolean;
+    isStarter: boolean;
     isPro: boolean;
-    isPrivate: boolean;
+    isPremium: boolean;
+    isPaid: boolean;
     promptsUsed: number;
     promptsRemaining: number;
     promptLimit: number;
+    daysUntilReset: number;
     subscriptionEndsAt: string | null;
     onGracePeriod: boolean;
 }
@@ -34,7 +38,9 @@ export type PricingPlans = Record<string, PricingPlan>;
  */
 export interface PricingFeatures {
     free: string[];
+    starter: string[];
     pro: string[];
+    premium: string[];
 }
 
 /**
