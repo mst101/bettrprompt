@@ -3,9 +3,6 @@ import AlertDialog from '@/Components/Base/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
-import Dropdown from '@/Components/Base/Dropdown.vue';
-import DropdownLink from '@/Components/Base/DropdownLink.vue';
-import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import ModalForgotPassword from '@/Components/Base/Modal/ModalForgotPassword.vue';
 import ModalLogin from '@/Components/Base/Modal/ModalLogin.vue';
 import ModalRegister from '@/Components/Base/Modal/ModalRegister.vue';
@@ -16,20 +13,13 @@ import CookieBanner from '@/Components/Common/CookieBanner.vue';
 import Footer from '@/Components/Common/Footer.vue';
 import LanguageSwitcher from '@/Components/Common/LanguageSwitcher.vue';
 import NotificationCenter from '@/Components/Common/NotificationCenter.vue';
+import UserDropdown from '@/Components/Common/UserDropdown.vue';
 import { usePageTracking } from '@/Composables/analytics/usePageTracking';
 import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
-import { Link, router, usePage } from '@inertiajs/vue3';
-import {
-    computed,
-    nextTick,
-    onMounted,
-    onUnmounted,
-    provide,
-    ref,
-    watch,
-} from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed, nextTick, onMounted, provide, ref, watch } from 'vue';
 
 interface User {
     id: number;
@@ -85,19 +75,10 @@ const showResetPasswordModal = ref(false);
 const currentEmail = ref('');
 const resetPasswordEmail = ref('');
 const resetPasswordToken = ref('');
-const userDropdown = ref<InstanceType<typeof Dropdown> | null>(null);
 const firstMobileNavLink = ref<InstanceType<typeof ResponsiveNavLink> | null>(
     null,
 );
 const firstGuestMobileButton = ref<HTMLButtonElement | null>(null);
-
-// Close dropdown on navigation
-const closeDropdownOnNavigate = () => {
-    userDropdown.value?.close();
-};
-
-// Store the cleanup function returned by router.on
-let removeRouterListener: (() => void) | null = null;
 
 const openLogin = (email?: string) => {
     if (email) {
@@ -140,9 +121,6 @@ const openResetPassword = (email: string, token: string) => {
 };
 
 onMounted(() => {
-    // router.on returns a cleanup function
-    removeRouterListener = router.on('start', closeDropdownOnNavigate);
-
     // Handle modal query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const modalParam = urlParams.get('modal');
@@ -155,13 +133,6 @@ onMounted(() => {
         const email = urlParams.get('email') || '';
         const token = urlParams.get('token') || '';
         openResetPassword(email, token);
-    }
-});
-
-onUnmounted(() => {
-    // Call the cleanup function to remove the listener
-    if (removeRouterListener) {
-        removeRouterListener();
     }
 });
 
@@ -247,62 +218,13 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         >
                             <LanguageSwitcher />
                             <ButtonDarkMode class="size-10 shrink-0 p-2" />
-
-                            <!-- Authenticated User Dropdown -->
-                            <div v-if="isAuthenticated" class="relative">
-                                <Dropdown
-                                    ref="userDropdown"
-                                    align="right"
-                                    width="48"
-                                >
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                                                :aria-label="
-                                                    $t('common.aria.userMenu')
-                                                "
-                                            >
-                                                {{
-                                                    $page.props.auth!.user!.name
-                                                }}
-
-                                                <DynamicIcon
-                                                    name="chevron-down"
-                                                    class="ms-2 -me-0.5 h-4 w-4"
-                                                />
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="countryRoute('profile.edit')"
-                                        >
-                                            {{ $t('common.nav.profile') }}
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            v-if="isAdmin"
-                                            :href="
-                                                countryRoute('workflows.index')
-                                            "
-                                        >
-                                            {{ $t('navigation.workflows') }}
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="countryRoute('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            {{ $t('common.nav.logout') }}
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                            <UserDropdown />
 
                             <!-- Guest Buttons -->
-                            <nav v-else class="flex items-center gap-4">
+                            <nav
+                                v-if="!isAuthenticated"
+                                class="flex items-center gap-4"
+                            >
                                 <ButtonSecondary @click="openLogin()">
                                     {{ $t('common.nav.login') }}
                                 </ButtonSecondary>
