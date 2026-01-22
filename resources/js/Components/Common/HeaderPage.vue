@@ -12,9 +12,7 @@ defineProps<Props>();
             <!-- Mobile/Tablet: Stack vertically -->
             <div class="lg:flex lg:h-10 lg:items-center lg:justify-between">
                 <div class="mb-3 lg:mb-0">
-                    <h1
-                        class="ml-2 text-base font-thin text-indigo-700 sm:text-lg"
-                    >
+                    <h1 class="text-base font-thin text-indigo-700 sm:text-lg">
                         {{ title }}
                     </h1>
                     <slot name="subtitle" />

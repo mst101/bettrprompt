@@ -197,7 +197,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                             <div class="flex shrink-0 items-center">
                                 <Link
                                     :href="logoDestination"
-                                    class="flex items-center gap-1 rounded-md px-2 py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                                    class="flex items-center gap-1 rounded-md py-1 transition hover:opacity-80 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden sm:ms-2"
                                     @click="showingNavigationDropdown = false"
                                 >
                                     <SvgLogo

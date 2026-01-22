@@ -192,7 +192,9 @@ function getStarted() {
                 </button>
             </div>
 
-            <div class="grid gap-8 md:grid-cols-4">
+            <div
+                class="grid gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-8"
+            >
                 <!-- Free Tier -->
                 <PricingTierCard
                     tier="free"
@@ -246,9 +248,16 @@ function getStarted() {
                 />
             </div>
 
+            <!-- Encryption Notice -->
+            <div class="mx-4 mt-16 text-center text-sm text-gray-600">
+                {{ $t('pricing.encryptionNotice') }}
+            </div>
+
             <!-- FAQ Section -->
             <div class="mt-16">
-                <h2 class="mb-8 text-center text-2xl font-bold text-indigo-900">
+                <h2
+                    class="mx-4 mb-8 text-center text-2xl font-bold text-indigo-900"
+                >
                     {{ $t('pricing.faq.title') }}
                 </h2>
 
@@ -289,11 +298,6 @@ function getStarted() {
                         </p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Encryption Notice -->
-            <div class="mt-12 text-center text-sm text-gray-600">
-                {{ $t('pricing.encryptionNotice') }}
             </div>
         </div>
     </ContainerPage>
