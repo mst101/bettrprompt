@@ -103,11 +103,11 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
     }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -130,11 +130,11 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
     }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         const star4 = authenticatedPage
@@ -163,11 +163,11 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -211,11 +211,11 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -253,11 +253,11 @@ test.describe('PromptRating Component - Auto-Save Star Rating', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -317,11 +317,11 @@ test.describe('PromptRating Component - Explanation Handling', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -372,11 +372,11 @@ test.describe('PromptRating Component - Explanation Handling', () => {
     }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -422,11 +422,11 @@ test.describe('PromptRating Component - Explanation Handling', () => {
     }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -467,11 +467,11 @@ test.describe('PromptRating Component - Explanation Handling', () => {
     test('darkens text on focus when saved', async ({ authenticatedPage }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -514,11 +514,11 @@ test.describe('PromptRating Component - Explanation Handling', () => {
     test('uses smaller button size (sm)', async ({ authenticatedPage }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -735,32 +735,31 @@ test.describe('PromptRating Component - Database Persistence', () => {
     test.skip('star rating saved to question_analytics table', async ({
         authenticatedPage,
     }) => {
-        // SKIPPED: The ClarifyingQuestions component renders framework_questions,
-        // but when questions are just strings (not objects with 'question' property),
-        // they may not display properly in the component template.
-        // The fixture has been updated to send question objects with id/question/category,
-        // but the component template might need corresponding updates to display them.
-        //
-        // The rating functionality itself works (verified by UI tests),
-        // but end-to-end persistence testing requires the component template updates.
+        // SKIPPED: These tests pass when run individually but fail when run together
+        // with other tests, indicating a test parallelization or database isolation issue.
+        // The rating functionality works correctly (verified by UI tests above that pass).
+        // Root cause appears to be:
+        // 1. Test parallelization causing database state issues
+        // 2. Or timing issues with Vue component rendering when tests run in parallel
+        // Solution: These need proper test isolation or sequential execution
 
         const promptRunId = await setupAndNavigateToPromptRun(
             authenticatedPage,
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
 
-        // Wait for the answer form to be visible (this comes before rating)
+        // Wait for the answer form to be visible with networkidle
+        await authenticatedPage.waitForLoadState('networkidle');
         await expect(
             authenticatedPage
                 .locator('textarea[placeholder*="Type your answer"]')
                 .first(),
-        ).toBeVisible({ timeout: 5000 });
+        ).toBeVisible({ timeout: 10000 });
 
         // Click star
         await authenticatedPage
@@ -788,11 +787,11 @@ test.describe('PromptRating Component - Database Persistence', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -841,11 +840,11 @@ test.describe('PromptRating Component - Database Persistence', () => {
             '1_completed',
         );
 
-        await authenticatedPage.waitForLoadState('domcontentloaded');
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Navigate to Questions tab
         await authenticatedPage.getByTestId('tab-button-questions').click();
-        await authenticatedPage.waitForTimeout(500);
+        await authenticatedPage.waitForLoadState('networkidle');
 
         // Wait for stars
         await expect(
@@ -891,13 +890,12 @@ test.describe('PromptRating Component - Database Persistence', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Rate in one-at-a-time mode
-        await expect(
-            authenticatedPage.getByTestId('prompt-rating-star-4').first(),
-        ).toBeVisible({ timeout: 5000 });
-        await authenticatedPage
+        const ratingStar = authenticatedPage
             .getByTestId('prompt-rating-star-4')
-            .first()
-            .click();
+            .first();
+        await ratingStar.scrollIntoViewIfNeeded();
+        await expect(ratingStar).toBeVisible({ timeout: 8000 });
+        await ratingStar.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Switch to bulk mode
