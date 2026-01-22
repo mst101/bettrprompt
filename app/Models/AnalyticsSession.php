@@ -26,8 +26,6 @@ class AnalyticsSession extends Model
         'duration_seconds',
         'entry_page',
         'exit_page',
-        'page_count',
-        'event_count',
         'utm_source',
         'utm_medium',
         'utm_campaign',

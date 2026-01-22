@@ -75,7 +75,7 @@ class UserResource extends JsonResource
                             'started_at' => $session->started_at?->toIso8601String(),
                             'ended_at' => $session->ended_at?->toIso8601String(),
                             'duration_seconds' => $session->duration_seconds,
-                            'page_count' => $session->page_count,
+                            'page_count' => $session->relationLoaded('events') ? $session->events->where('name', 'page_view')->count() : 0,
                             'entry_page' => $session->entry_page,
                             'exit_page' => $session->exit_page,
                             'device_type' => $session->device_type,

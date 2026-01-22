@@ -75,7 +75,7 @@ class SessionProcessorService
         // Find entry and exit pages
         $entryPage = null;
         $exitPage = null;
-        $pageCount = 0;
+        $pageViewCount = 0;
 
         foreach ($events as $event) {
             if ($event['name'] === 'page_view') {
@@ -85,12 +85,12 @@ class SessionProcessorService
                     $entryPage = $pagePath;
                 }
                 $exitPage = $pagePath;
-                $pageCount++;
+                $pageViewCount++;
             }
         }
 
         // Detect bounce: single page view
-        $isBounce = $pageCount <= 1;
+        $isBounce = $pageViewCount <= 1;
 
         // Check for conversions in this session
         $conversions = collect($events)->filter(fn ($e) => $e['type'] === 'conversion');
@@ -116,8 +116,6 @@ class SessionProcessorService
             'duration_seconds' => $duration,
             'entry_page' => $entryPage,
             'exit_page' => $exitPage,
-            'page_count' => $pageCount,
-            'event_count' => count($events),
             'is_bounce' => $isBounce,
             'converted' => $hasConverted,
             'conversion_type' => $conversionType,

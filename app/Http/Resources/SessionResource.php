@@ -35,7 +35,7 @@ class SessionResource extends JsonResource
             'startedAt' => $this->started_at?->toIso8601String(),
             'endedAt' => $this->ended_at?->toIso8601String(),
             'durationSeconds' => $this->duration_seconds,
-            'pageCount' => $this->page_count,
+            'pageCount' => $this->whenLoaded('events', fn () => $this->events->where('name', 'page_view')->count(), 0),
             'entryPage' => $this->entry_page,
             'exitPage' => $this->exit_page,
             'deviceType' => $this->device_type,

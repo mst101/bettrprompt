@@ -7,6 +7,7 @@ use App\Http\Resources\PromptRunResource;
 use App\Http\Resources\SessionStatsResource;
 use App\Http\Resources\UserDetailResource;
 use App\Http\Resources\UserListResource;
+use App\Models\AnalyticsEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -124,9 +125,13 @@ class UserController extends Controller
         $sessionStats = null;
         if ($user->visitor) {
             $allSessions = $user->visitor->sessions()->get();
+            // Derive total page views from analytics_events (page_view events in user's sessions)
+            $totalPageViews = AnalyticsEvent::where('name', 'page_view')
+                ->whereIn('session_id', $allSessions->pluck('id'))
+                ->count();
             $sessionStats = SessionStatsResource::make([
                 'total_sessions' => $allSessions->count(),
-                'total_page_views' => $allSessions->sum('page_count'),
+                'total_page_views' => $totalPageViews,
                 'avg_duration' => round($allSessions->avg('duration_seconds') ?? 0),
                 'last_active' => $allSessions->first()?->started_at?->toIso8601String(),
             ])->resolve();

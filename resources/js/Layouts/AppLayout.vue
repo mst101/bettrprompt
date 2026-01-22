@@ -303,7 +303,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                             <!-- Guest Buttons -->
                             <nav v-else class="flex items-center gap-4">
-                                <ButtonSecondary @click="openLogin">
+                                <ButtonSecondary @click="openLogin()">
                                     {{ $t('common.nav.login') }}
                                 </ButtonSecondary>
                             </nav>

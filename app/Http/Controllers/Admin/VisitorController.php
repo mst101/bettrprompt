@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\SessionStatsResource;
 use App\Http\Resources\VisitorDetailResource;
 use App\Http\Resources\VisitorListResource;
+use App\Models\AnalyticsEvent;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -100,9 +101,13 @@ class VisitorController extends Controller
 
         // Calculate session statistics
         $allSessions = $visitor->sessions()->get();
+        // Derive total page views from analytics_events (page_view events in visitor's sessions)
+        $totalPageViews = AnalyticsEvent::where('name', 'page_view')
+            ->whereIn('session_id', $allSessions->pluck('id'))
+            ->count();
         $sessionStats = [
             'total_sessions' => $allSessions->count(),
-            'total_page_views' => $allSessions->sum('page_count'),
+            'total_page_views' => $totalPageViews,
             'avg_duration' => round($allSessions->avg('duration_seconds') ?? 0),
             'bounce_rate' => $allSessions->count() > 0
                 ? round(($allSessions->where('is_bounce', true)->count() / $allSessions->count()) * 100, 1)

@@ -200,8 +200,6 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 'duration_seconds' => 0,
                 'entry_page' => $firstEvent['page_path'] ?? null,
                 'exit_page' => $firstEvent['page_path'] ?? null,
-                'page_count' => 0,
-                'event_count' => 0,
                 'device_type' => $firstEvent['device_type'] ?? null,
                 'referrer' => $visitor?->referrer,
                 'is_bounce' => true,

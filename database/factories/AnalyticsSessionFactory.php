@@ -25,8 +25,6 @@ class AnalyticsSessionFactory extends Factory
             'duration_seconds' => $this->faker->numberBetween(30, 3600),
             'entry_page' => $this->faker->url(),
             'exit_page' => $this->faker->url(),
-            'page_count' => $this->faker->numberBetween(1, 20),
-            'event_count' => $this->faker->numberBetween(1, 50),
             'utm_source' => $this->faker->randomElement(['google', 'facebook', 'twitter', null]),
             'utm_medium' => $this->faker->randomElement(['cpc', 'organic', null]),
             'utm_campaign' => $this->faker->randomElement(['summer_sale', 'new_product', null]),

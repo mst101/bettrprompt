@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\AnalyticsDailyStat;
+use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
 use App\Models\PromptQualityMetric;
 use App\Models\PromptRun;
@@ -90,7 +91,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
     }
 
     /**
-     * Calculate traffic metrics from analytics sessions
+     * Calculate traffic metrics from analytics sessions and events
      */
     private function calculateTrafficMetrics($dayStart, $dayEnd): array
     {
@@ -101,7 +102,8 @@ class BuildAnalyticsDailyStats implements ShouldQueue
         $sessions = AnalyticsSession::whereBetween('started_at', [$dayStart, $dayEnd])->get();
 
         $totalSessions = $sessions->count();
-        $totalPageViews = $sessions->sum('page_count') ?? 0;
+        // Derive page views from analytics_events (page_view events in sessions from this day)
+        $totalPageViews = $this->countPageViews($dayStart, $dayEnd);
         $avgDuration = $sessions->whereNotNull('duration_seconds')->avg('duration_seconds');
         $bounceRate = $this->calculateBounceRate($sessions);
 
@@ -128,6 +130,22 @@ class BuildAnalyticsDailyStats implements ShouldQueue
         $bouncedSessions = $sessions->where('is_bounce', true)->count();
 
         return $bouncedSessions / $totalSessions;
+    }
+
+    /**
+     * Count page views from analytics_events for sessions in the given date range
+     * Page views are analytics_events where name = 'page_view' and session_id references
+     * a session that started within the date range
+     */
+    private function countPageViews($dayStart, $dayEnd): int
+    {
+        return AnalyticsEvent::where('name', 'page_view')
+            ->whereIn('session_id', function ($query) use ($dayStart, $dayEnd) {
+                $query->select('id')
+                    ->from('analytics_sessions')
+                    ->whereBetween('started_at', [$dayStart, $dayEnd]);
+            })
+            ->count();
     }
 
     /**

@@ -26,8 +26,6 @@ return new class extends Migration
             // Navigation
             $table->string('entry_page', 255)->nullable();
             $table->string('exit_page', 255)->nullable();
-            $table->unsignedSmallInteger('page_count')->default(0);
-            $table->unsignedSmallInteger('event_count')->default(0);
 
             // Attribution (captured at session start)
             $table->string('utm_source', 100)->nullable();

@@ -4,6 +4,7 @@ namespace Tests\Feature\Jobs;
 
 use App\Jobs\BuildAnalyticsDailyStats;
 use App\Models\AnalyticsDailyStat;
+use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
 use App\Models\PromptQualityMetric;
 use App\Models\PromptRun;
@@ -30,19 +31,37 @@ class BuildAnalyticsDailyStatsTest extends TestCase
         $dayStart = $this->testDate->clone()->startOfDay();
         $dayEnd = $this->testDate->clone()->endOfDay();
 
-        AnalyticsSession::factory()->count(5)->create([
+        $sessions5 = AnalyticsSession::factory()->count(5)->create([
             'started_at' => $dayStart->addHours(2),
             'duration_seconds' => 120,
             'is_bounce' => false,
-            'page_count' => 3,
         ]);
 
-        AnalyticsSession::factory()->count(2)->create([
+        // Create 3 page_view events per session for first group
+        foreach ($sessions5 as $session) {
+            for ($i = 0; $i < 3; $i++) {
+                AnalyticsEvent::factory()->create([
+                    'session_id' => $session->id,
+                    'name' => 'page_view',
+                    'type' => 'engagement',
+                ]);
+            }
+        }
+
+        $sessions2 = AnalyticsSession::factory()->count(2)->create([
             'started_at' => $dayStart->addHours(4),
             'duration_seconds' => null,
             'is_bounce' => true,
-            'page_count' => 1,
         ]);
+
+        // Create 1 page_view event per session for second group
+        foreach ($sessions2 as $session) {
+            AnalyticsEvent::factory()->create([
+                'session_id' => $session->id,
+                'name' => 'page_view',
+                'type' => 'engagement',
+            ]);
+        }
 
         // Execute job
         BuildAnalyticsDailyStats::dispatchSync($this->testDate);

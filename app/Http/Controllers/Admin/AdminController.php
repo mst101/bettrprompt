@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AnalyticsDailyStat;
+use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -68,9 +69,14 @@ class AdminController extends Controller
         // Get today's data from raw sessions (real-time)
         $todaySessions = AnalyticsSession::where('started_at', '>=', $today)->get();
 
+        // Derive today's page views from analytics_events
+        $todayPageViews = AnalyticsEvent::where('name', 'page_view')
+            ->whereIn('session_id', $todaySessions->pluck('id'))
+            ->count();
+
         $totalVisitors = $historical->sum('unique_visitors') + $todaySessions->unique('visitor_id')->count();
         $totalSessions = $historical->sum('total_sessions') + $todaySessions->count();
-        $totalPageViews = $historical->sum('total_page_views') + $todaySessions->sum('page_count');
+        $totalPageViews = $historical->sum('total_page_views') + $todayPageViews;
         $avgDuration = $historical->avg('avg_session_duration_seconds');
         if ($todaySessions->count() > 0) {
             $avgDuration = (($avgDuration ?? 0) + $todaySessions->avg('duration_seconds')) / 2;
