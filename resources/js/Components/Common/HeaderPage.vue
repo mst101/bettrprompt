@@ -9,10 +9,16 @@ defineProps<Props>();
 <template>
     <header class="">
         <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-            <div class="flex h-10 items-center justify-between">
-                <h1 class="ml-2 text-base font-thin text-indigo-700 sm:text-lg">
-                    {{ title }}
-                </h1>
+            <!-- Mobile/Tablet: Stack vertically -->
+            <div class="lg:flex lg:h-10 lg:items-center lg:justify-between">
+                <div class="mb-3 lg:mb-0">
+                    <h1
+                        class="ml-2 text-base font-thin text-indigo-700 sm:text-lg"
+                    >
+                        {{ title }}
+                    </h1>
+                    <slot name="subtitle" />
+                </div>
                 <slot name="actions" />
             </div>
         </div>

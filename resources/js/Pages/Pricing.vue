@@ -153,7 +153,7 @@ function getStarted() {
     <Head :title="$t('pricing.pageTitle')" />
 
     <HeaderPage :title="$t('pricing.title')">
-        <template #actions>
+        <template #subtitle>
             <p class="mt-2 text-indigo-600">
                 {{ $t('pricing.tagline') }}
             </p>

@@ -70,7 +70,7 @@ const handleClick = () => {
 </script>
 
 <template>
-    <div :class="cardClasses" :data-testid="testId">
+    <div class="mx-4" :class="cardClasses" :data-testid="testId">
         <!-- Recommended Badge -->
         <div
             v-if="isRecommended"

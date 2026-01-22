@@ -99,7 +99,7 @@ const supportedLanguages = computed(() =>
         <!-- Trigger Button -->
         <button
             type="button"
-            class="flex items-center gap-2 rounded-lg p-3 text-sm text-indigo-600 transition-colors hover:bg-indigo-50"
+            class="flex items-center rounded-lg p-3 text-sm text-indigo-600 transition-colors hover:bg-indigo-50"
             data-testid="language-switcher-button"
             @click="toggleDropdown"
         >

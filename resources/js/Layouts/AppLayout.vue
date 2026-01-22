@@ -100,7 +100,7 @@ const closeDropdownOnNavigate = () => {
 let removeRouterListener: (() => void) | null = null;
 
 const openLogin = (email?: string) => {
-    if (email && typeof email === 'string') {
+    if (email) {
         currentEmail.value = email;
     }
     showRegisterModal.value = false;
@@ -110,7 +110,7 @@ const openLogin = (email?: string) => {
 };
 
 const openRegister = (email?: string) => {
-    if (email && typeof email === 'string') {
+    if (email) {
         currentEmail.value = email;
     }
     showLoginModal.value = false;
@@ -120,7 +120,7 @@ const openRegister = (email?: string) => {
 };
 
 const openForgotPassword = (email?: string) => {
-    if (email && typeof email === 'string') {
+    if (email) {
         currentEmail.value = email;
     }
     showLoginModal.value = false;
@@ -243,7 +243,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
 
                         <!-- Right Side Navigation -->
                         <div
-                            class="hidden gap-2 md:ms-6 md:flex md:items-center"
+                            class="hidden md:ms-6 md:flex md:items-center md:gap-2"
                         >
                             <LanguageSwitcher />
                             <ButtonDarkMode class="size-10 shrink-0 p-2" />
@@ -310,7 +310,7 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </div>
 
                         <!-- Hamburger (Mobile) -->
-                        <div class="-me-2 flex items-center md:hidden">
+                        <div class="-me-2 flex items-center gap-1 md:hidden">
                             <LanguageSwitcher />
                             <ButtonDarkMode />
 
