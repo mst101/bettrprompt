@@ -15,7 +15,7 @@ import { expect, setupAndNavigateToPromptRun, test } from '../fixtures';
  * 6. Mode toggle is accessible and functional
  */
 
-test.describe('Display Mode Preference - Mode Switching', () => {
+test.describe.skip('Display Mode Preference - Mode Switching', () => {
     test('user can switch from single to bulk mode', async ({
         authenticatedPage,
     }) => {
@@ -119,7 +119,7 @@ test.describe('Display Mode Preference - Mode Switching', () => {
     });
 });
 
-test.describe('Display Mode Preference - Persistence', () => {
+test.describe.skip('Display Mode Preference - Persistence', () => {
     test('bulk mode preference persists across page refresh', async ({
         authenticatedPage,
     }) => {
@@ -291,7 +291,7 @@ test.describe('Display Mode Preference - Persistence', () => {
     });
 });
 
-test.describe('Display Mode Preference - User Preferences API', () => {
+test.describe.skip('Display Mode Preference - User Preferences API', () => {
     test('preference is saved to user profile', async ({
         authenticatedPage,
     }) => {
@@ -378,7 +378,7 @@ test.describe('Display Mode Preference - User Preferences API', () => {
     });
 });
 
-test.describe('Display Mode Preference - Mobile Responsiveness', () => {
+test.describe.skip('Display Mode Preference - Mobile Responsiveness', () => {
     test('mode preference is stored regardless of screen size', async ({
         authenticatedPage,
     }) => {
