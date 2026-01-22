@@ -49,9 +49,9 @@ const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
                 </DropdownLink>
                 <DropdownLink
                     v-if="isAdmin && showDashboardLink"
-                    :href="countryRoute('admin.dashboard')"
+                    :href="countryRoute('workflows.index')"
                 >
-                    {{ $t('common.nav.dashboard') }}
+                    {{ $t('navigation.workflows') }}
                 </DropdownLink>
                 <DropdownLink
                     :href="countryRoute('logout')"
