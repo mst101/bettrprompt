@@ -32,17 +32,17 @@ describe('useExperiment', () => {
             props: {
                 experiments: [
                     {
-                        experiment_id: 1,
-                        experiment_slug: 'pricing-layout',
-                        variant_slug: 'variant_a',
-                        variant_id: 101,
-                        config: { button_text: 'Buy Now' },
+                        experimentId: 1,
+                        experimentSlug: 'pricing-layout',
+                        variantSlug: 'variant_a',
+                        variantId: 101,
+                        config: { buttonText: 'Buy Now' },
                     },
                     {
-                        experiment_id: 2,
-                        experiment_slug: 'header-color',
-                        variant_slug: 'blue',
-                        variant_id: 202,
+                        experimentId: 2,
+                        experimentSlug: 'header-color',
+                        variantSlug: 'blue',
+                        variantId: 202,
                         config: { color: '#0000FF' },
                     },
                 ],
@@ -118,7 +118,7 @@ describe('useExperiment', () => {
         it('should return config', () => {
             const { config } = useExperiment('pricing-layout');
 
-            expect(config.value).toEqual({ button_text: 'Buy Now' });
+            expect(config.value).toEqual({ buttonText: 'Buy Now' });
         });
 
         it('should return null config when no config provided', () => {
@@ -126,10 +126,10 @@ describe('useExperiment', () => {
                 props: {
                     experiments: [
                         {
-                            experiment_id: 3,
-                            experiment_slug: 'test-exp',
-                            variant_slug: 'control',
-                            variant_id: 303,
+                            experimentId: 3,
+                            experimentSlug: 'test-exp',
+                            variantSlug: 'control',
+                            variantId: 303,
                             config: null,
                         },
                     ],
@@ -146,7 +146,7 @@ describe('useExperiment', () => {
         it('should retrieve config value by key', () => {
             const { getConfigValue } = useExperiment('pricing-layout');
 
-            const value = getConfigValue('button_text');
+            const value = getConfigValue('buttonText');
 
             expect(value).toBe('Buy Now');
         });
@@ -172,10 +172,10 @@ describe('useExperiment', () => {
                 props: {
                     experiments: [
                         {
-                            experiment_id: 3,
-                            experiment_slug: 'test-exp',
-                            variant_slug: 'control',
-                            variant_id: 303,
+                            experimentId: 3,
+                            experimentSlug: 'test-exp',
+                            variantSlug: 'control',
+                            variantId: 303,
                             config: null,
                         },
                     ],
@@ -194,10 +194,10 @@ describe('useExperiment', () => {
                 props: {
                     experiments: [
                         {
-                            experiment_id: 4,
-                            experiment_slug: 'multi-type',
-                            variant_slug: 'variant',
-                            variant_id: 404,
+                            experimentId: 4,
+                            experimentSlug: 'multi-type',
+                            variantSlug: 'variant',
+                            variantId: 404,
                             config: {
                                 text: 'hello',
                                 number: 42,
@@ -397,10 +397,10 @@ describe('useExperiment', () => {
                 props: {
                     experiments: [
                         {
-                            experiment_id: 5,
-                            experiment_slug: 'layout-test',
-                            variant_slug: 'control',
-                            variant_id: 501,
+                            experimentId: 5,
+                            experimentSlug: 'layout-test',
+                            variantSlug: 'control',
+                            variantId: 501,
                             config: null,
                         },
                     ],
@@ -417,10 +417,10 @@ describe('useExperiment', () => {
                 props: {
                     experiments: [
                         {
-                            experiment_id: 6,
-                            experiment_slug: 'null-test',
-                            variant_slug: null,
-                            variant_id: 601,
+                            experimentId: 6,
+                            experimentSlug: 'null-test',
+                            variantSlug: null,
+                            variantId: 601,
                             config: null,
                         },
                     ],
