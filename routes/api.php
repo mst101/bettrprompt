@@ -366,6 +366,8 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']
 // Domain analytics API (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('admin/domain-analytics')->group(function () {
+        Route::get('/prompt-runs', [DomainAnalyticsController::class, 'getPromptRunsAnalytics'])
+            ->name('api.admin.domain-analytics.prompt-runs');
         Route::get('/frameworks', [DomainAnalyticsController::class, 'getFrameworkAnalytics'])
             ->name('api.admin.domain-analytics.frameworks');
         Route::get('/questions', [DomainAnalyticsController::class, 'getQuestionAnalytics'])

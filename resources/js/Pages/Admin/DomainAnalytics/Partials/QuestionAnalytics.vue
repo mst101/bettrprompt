@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n';
 import StatCard from './StatCard.vue';
 
 const props = defineProps<{
-    dateRange: string;
+    dateFrom: string;
+    dateTo: string;
 }>();
 
 const emit = defineEmits<{
@@ -38,7 +39,7 @@ const loadData = async () => {
     try {
         // Fetch from API
         const response = await fetch(
-            `/api/admin/domain-analytics/questions?date=${props.dateRange}`,
+            `/api/admin/domain-analytics/questions?start_date=${props.dateFrom}&end_date=${props.dateTo}`,
             {
                 headers: {
                     Accept: 'application/json',

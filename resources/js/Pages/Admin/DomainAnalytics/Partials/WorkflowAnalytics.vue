@@ -5,7 +5,8 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
-    dateRange: string;
+    dateFrom: string;
+    dateTo: string;
 }>();
 
 const emit = defineEmits<{
@@ -34,7 +35,7 @@ const loadData = async () => {
     try {
         // Fetch from API
         const response = await fetch(
-            `/api/admin/domain-analytics/workflows?date=${props.dateRange}`,
+            `/api/admin/domain-analytics/workflows?start_date=${props.dateFrom}&end_date=${props.dateTo}`,
             {
                 headers: {
                     Accept: 'application/json',

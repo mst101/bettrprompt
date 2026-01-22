@@ -24,7 +24,7 @@ class VisitorController extends Controller
         $sortDirection = $request->get('sort_direction', 'desc');
 
         // Validate sort parameters
-        $validSortColumns = ['id', 'country_code', 'sessions_count', 'user_name', 'created_at'];
+        $validSortColumns = ['id', 'country_code', 'sessions_count', 'user_name', 'created_at', 'last_visit_at'];
         if (! in_array($sortBy, $validSortColumns)) {
             $sortBy = 'created_at';
         }

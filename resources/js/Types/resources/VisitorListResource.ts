@@ -11,4 +11,5 @@ export interface VisitorListResource {
     readonly countryCode: string;
     readonly sessionsCount: number;
     readonly createdAt: string;
+    readonly lastSeenAt: string;
 }

@@ -5,6 +5,6 @@
 
 export interface ApiUsageResource {
     readonly model: string;
-    readonly inputTokens: number;
-    readonly outputTokens: number;
+    readonly input_tokens: number;
+    readonly output_tokens: number;
 }

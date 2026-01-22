@@ -6,6 +6,7 @@ use App\Models\FrameworkDailyStat;
 use App\Models\Funnel;
 use App\Models\FunnelDailyStats;
 use App\Models\FunnelProgress;
+use App\Models\PromptRun;
 use App\Models\QuestionDailyStat;
 use App\Models\WorkflowDailyStat;
 use Carbon\Carbon;
@@ -15,14 +16,18 @@ use Illuminate\Http\Request;
 class DomainAnalyticsController
 {
     /**
-     * Get framework analytics for a date
+     * Get framework analytics for a date range
      */
     public function getFrameworkAnalytics(Request $request): JsonResponse
     {
-        $date = $request->query('date', now()->toDateString());
-        $dateObj = Carbon::parse($date);
+        $endDate = $request->has('end_date')
+            ? Carbon::parse($request->input('end_date'))->toDateString()
+            : now()->toDateString();
+        $startDate = $request->has('start_date')
+            ? Carbon::parse($request->input('start_date'))->toDateString()
+            : now()->subDays(29)->toDateString();
 
-        $stats = FrameworkDailyStat::where('date', $dateObj->toDateString())->get();
+        $stats = FrameworkDailyStat::whereBetween('date', [$startDate, $endDate])->get();
 
         $frameworks = $stats->map(function ($stat) {
             return [
@@ -53,14 +58,18 @@ class DomainAnalyticsController
     }
 
     /**
-     * Get question analytics for a date
+     * Get question analytics for a date range
      */
     public function getQuestionAnalytics(Request $request): JsonResponse
     {
-        $date = $request->query('date', now()->toDateString());
-        $dateObj = Carbon::parse($date);
+        $endDate = $request->has('end_date')
+            ? Carbon::parse($request->input('end_date'))->toDateString()
+            : now()->toDateString();
+        $startDate = $request->has('start_date')
+            ? Carbon::parse($request->input('start_date'))->toDateString()
+            : now()->subDays(29)->toDateString();
 
-        $stats = QuestionDailyStat::where('date', $dateObj->toDateString())->get();
+        $stats = QuestionDailyStat::whereBetween('date', [$startDate, $endDate])->get();
 
         $questions = $stats->map(function ($stat) {
             // Determine effectiveness
@@ -100,14 +109,18 @@ class DomainAnalyticsController
     }
 
     /**
-     * Get workflow analytics for a date
+     * Get workflow analytics for a date range
      */
     public function getWorkflowAnalytics(Request $request): JsonResponse
     {
-        $date = $request->query('date', now()->toDateString());
-        $dateObj = Carbon::parse($date);
+        $endDate = $request->has('end_date')
+            ? Carbon::parse($request->input('end_date'))->toDateString()
+            : now()->toDateString();
+        $startDate = $request->has('start_date')
+            ? Carbon::parse($request->input('start_date'))->toDateString()
+            : now()->subDays(29)->toDateString();
 
-        $stats = WorkflowDailyStat::where('date', $dateObj->toDateString())->get();
+        $stats = WorkflowDailyStat::whereBetween('date', [$startDate, $endDate])->get();
 
         $stages = $stats->map(function ($stat) {
             return [
@@ -153,6 +166,118 @@ class DomainAnalyticsController
             'totalInputTokens' => $totalInputTokens,
             'totalOutputTokens' => $totalOutputTokens,
             'costPerExecution' => (float) ($totalExecutions > 0 ? ($totalCost / $totalExecutions) : 0),
+        ]);
+    }
+
+    /**
+     * Get prompt run analytics for a date range
+     */
+    public function getPromptRunsAnalytics(Request $request): JsonResponse
+    {
+        $endDate = $request->has('end_date')
+            ? Carbon::parse($request->input('end_date'))->endOfDay()
+            : now()->endOfDay();
+        $startDate = $request->has('start_date')
+            ? Carbon::parse($request->input('start_date'))->startOfDay()
+            : now()->subDays(29)->startOfDay();
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        // Validate sort parameters
+        $validSortColumns = ['taskDescription', 'personalityType', 'framework', 'createdBy', 'status', 'durationMs', 'createdAt'];
+        if (! in_array($sortBy, $validSortColumns)) {
+            $sortBy = 'createdAt';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $query = PromptRun::whereBetween('created_at', [$startDate, $endDate])
+            ->with(['user:id,name', 'visitor:id,country_code']);
+
+        // Apply sorting (map frontend names to database column names)
+        $sortColumnMap = [
+            'taskDescription' => 'task_description',
+            'personalityType' => 'personality_type',
+            'framework' => 'framework_used',
+            'createdBy' => 'user_id',
+            'status' => 'workflow_stage',
+            'durationMs' => 'completed_at',
+            'createdAt' => 'created_at',
+        ];
+
+        $dbColumn = $sortColumnMap[$sortBy] ?? 'created_at';
+        $runs = $query->orderBy($dbColumn, $sortDirection)->get();
+
+        // Calculate summary stats
+        $totalRuns = $runs->count();
+        $completedRuns = $runs->filter(fn ($run) => $run->isCompleted())->count();
+        $failedRuns = $runs->filter(fn ($run) => $run->isFailed())->count();
+        $processingRuns = $runs->filter(fn ($run) => $run->isProcessing())->count();
+
+        $successRate = $totalRuns > 0 ? ($completedRuns / $totalRuns) * 100 : 0;
+
+        // Calculate average duration (from created_at to completed_at for completed runs)
+        $completedRunsCollection = $runs->filter(fn ($run) => $run->isCompleted());
+        $avgDurationMs = $completedRunsCollection->count() > 0
+            ? $completedRunsCollection
+                ->map(function ($run) {
+                    if ($run->completed_at && $run->created_at) {
+                        return abs($run->created_at->diffInMilliseconds($run->completed_at));
+                    }
+
+                    return 0;
+                })
+                ->filter(fn ($ms) => $ms > 0)
+                ->avg()
+            : 0;
+
+        // Format runs for table display
+        $runsData = $runs->map(function ($run) {
+            $framework = 'N/A';
+            if (is_array($run->framework_used) && isset($run->framework_used['name'])) {
+                $framework = $run->framework_used['name'];
+            } elseif ($run->selected_framework && is_array($run->selected_framework) && isset($run->selected_framework['name'])) {
+                $framework = $run->selected_framework['name'];
+            }
+
+            $durationMs = null;
+            if ($run->completed_at && $run->created_at) {
+                $durationMs = abs($run->created_at->diffInMilliseconds($run->completed_at));
+            }
+
+            return [
+                'id' => $run->id,
+                'personalityType' => $run->personality_type ?? 'N/A',
+                'framework' => $framework,
+                'createdBy' => $run->user?->name ?? ($run->visitor ? 'Visitor' : 'Unknown'),
+                'taskDescription' => substr($run->task_description ?? '', 0, 50),
+                'status' => $run->workflow_stage,
+                'createdAt' => $run->created_at->toIso8601String(),
+                'completedAt' => $run->completed_at?->toIso8601String(),
+                'durationMs' => $durationMs,
+            ];
+        })->values();
+
+        // Count by workflow stage
+        $stageBreakdown = [
+            'processing' => $processingRuns,
+            'completed' => $completedRuns,
+            'failed' => $failedRuns,
+        ];
+
+        return response()->json([
+            'stats' => [
+                'totalRuns' => $totalRuns,
+                'completedRuns' => $completedRuns,
+                'failedRuns' => $failedRuns,
+                'processingRuns' => $processingRuns,
+                'successRate' => (float) $successRate,
+                'avgDurationMs' => (int) $avgDurationMs,
+            ],
+            'stageBreakdown' => $stageBreakdown,
+            'runs' => $runsData,
         ]);
     }
 

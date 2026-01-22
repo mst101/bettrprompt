@@ -48,9 +48,22 @@ class AdminController extends Controller
     /**
      * Display domain analytics dashboard
      */
-    public function domainAnalytics(): Response
+    public function domainAnalytics(Request $request): Response
     {
-        return Inertia::render('Admin/DomainAnalytics/Index');
+        // Date range (default: last 30 days)
+        $endDate = $request->has('end_date')
+            ? \Carbon\Carbon::parse($request->input('end_date'))->endOfDay()
+            : now()->endOfDay();
+        $startDate = $request->has('start_date')
+            ? \Carbon\Carbon::parse($request->input('start_date'))->startOfDay()
+            : now()->subDays(29)->startOfDay();
+
+        return Inertia::render('Admin/DomainAnalytics/Index', [
+            'dateRange' => [
+                'start' => $startDate->toDateString(),
+                'end' => $endDate->toDateString(),
+            ],
+        ]);
     }
 
     /**

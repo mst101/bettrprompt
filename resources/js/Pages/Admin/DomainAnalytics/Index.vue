@@ -1,27 +1,33 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
+import DateRangePicker from '@/Components/Admin/DateRangePicker.vue';
+import ContainerPage from '@/Components/Common/ContainerPage.vue';
+import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { RefreshCw } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FrameworkAnalytics from './Partials/FrameworkAnalytics.vue';
+import PromptRunsAnalytics from './Partials/PromptRunsAnalytics.vue';
 import QuestionAnalytics from './Partials/QuestionAnalytics.vue';
 import WorkflowAnalytics from './Partials/WorkflowAnalytics.vue';
+
+interface Props {
+    dateRange: {
+        start: string;
+        end: string;
+    };
+}
+
+const props = defineProps<Props>();
 
 const { t } = useI18n();
 
 defineOptions({
-    layout: AppLayout,
+    layout: AdminLayout,
 });
 
-const tabs = ['frameworks', 'questions', 'workflows'];
-const activeTab = ref('frameworks');
-const dateRange = ref(new Date().toISOString().split('T')[0]);
-
-const refreshData = () => {
-    // Trigger refresh on child components
-    window.location.reload();
-};
+const tabs = ['prompt-runs', 'frameworks', 'questions', 'workflows'];
+const activeTab = ref('prompt-runs');
 
 const onDataLoaded = () => {
     // Placeholder for data load handling
@@ -31,64 +37,63 @@ const onDataLoaded = () => {
 <template>
     <Head :title="t('admin.domain_analytics.title')" />
 
-    <div class="space-y-8">
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold text-gray-900">
-                {{ t('admin.domain_analytics.title') }}
-            </h1>
-            <div class="flex items-center gap-4">
-                <input
-                    v-model="dateRange"
-                    type="date"
-                    class="rounded-lg border border-gray-300 px-3 py-2"
+    <HeaderPage :title="t('admin.domain_analytics.title')" />
+
+    <ContainerPage>
+        <div class="space-y-8">
+            <!-- Date Range Picker -->
+            <DateRangePicker
+                :start-date="props.dateRange.start"
+                :end-date="props.dateRange.end"
+            />
+
+            <!-- Tab Navigation -->
+            <div class="border-b border-indigo-200">
+                <div class="flex gap-8">
+                    <button
+                        v-for="tab in tabs"
+                        :key="tab"
+                        type="button"
+                        :class="[
+                            'transition-colours border-b-2 px-1 py-4 font-medium capitalize',
+                            activeTab === tab
+                                ? 'border-indigo-600 text-indigo-600'
+                                : 'border-transparent text-indigo-600 hover:text-indigo-900',
+                        ]"
+                        @click="activeTab = tab"
+                    >
+                        {{ tab }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div>
+                <PromptRunsAnalytics
+                    v-if="activeTab === 'prompt-runs'"
+                    :date-from="props.dateRange.start"
+                    :date-to="props.dateRange.end"
+                    @data-loaded="onDataLoaded"
                 />
-                <button
-                    class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
-                    @click="refreshData"
-                >
-                    <RefreshCw :size="16" />
-                    {{ t('admin.domain_analytics.refresh') }}
-                </button>
+                <FrameworkAnalytics
+                    v-else-if="activeTab === 'frameworks'"
+                    :date-from="props.dateRange.start"
+                    :date-to="props.dateRange.end"
+                    @data-loaded="onDataLoaded"
+                />
+                <QuestionAnalytics
+                    v-else-if="activeTab === 'questions'"
+                    :date-from="props.dateRange.start"
+                    :date-to="props.dateRange.end"
+                    @data-loaded="onDataLoaded"
+                />
+                <WorkflowAnalytics
+                    v-else-if="activeTab === 'workflows'"
+                    :date-from="props.dateRange.start"
+                    :date-to="props.dateRange.end"
+                    @data-loaded="onDataLoaded"
+                />
             </div>
         </div>
-
-        <!-- Tab Navigation -->
-        <div class="border-b border-gray-200">
-            <div class="flex gap-8">
-                <button
-                    v-for="tab in tabs"
-                    :key="tab"
-                    :class="[
-                        'border-b-2 px-1 py-4 font-medium transition-colors',
-                        activeTab === tab
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-gray-600 hover:text-gray-900',
-                    ]"
-                    @click="activeTab = tab"
-                >
-                    {{ t(`admin.domain_analytics.tab_${tab}`) }}
-                </button>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div>
-            <FrameworkAnalytics
-                v-if="activeTab === 'frameworks'"
-                :date-range="dateRange"
-                @data-loaded="onDataLoaded"
-            />
-            <QuestionAnalytics
-                v-else-if="activeTab === 'questions'"
-                :date-range="dateRange"
-                @data-loaded="onDataLoaded"
-            />
-            <WorkflowAnalytics
-                v-else-if="activeTab === 'workflows'"
-                :date-range="dateRange"
-                @data-loaded="onDataLoaded"
-            />
-        </div>
-    </div>
+    </ContainerPage>
 </template>

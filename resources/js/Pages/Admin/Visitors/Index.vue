@@ -167,6 +167,18 @@ const formatDate = (dateStr: string): string => {
                                     First Seen
                                 </TableHeaderSortable>
                             </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
+                            >
+                                <TableHeaderSortable
+                                    column="last_visit_at"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    Last Seen
+                                </TableHeaderSortable>
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-indigo-100 bg-white">
@@ -213,10 +225,19 @@ const formatDate = (dateStr: string): string => {
                             >
                                 {{ formatDate(visitor.createdAt) }}
                             </td>
+                            <td
+                                class="px-6 py-4 text-sm whitespace-nowrap text-indigo-700"
+                            >
+                                {{
+                                    visitor.lastSeenAt
+                                        ? formatDate(visitor.lastSeenAt)
+                                        : 'N/A'
+                                }}
+                            </td>
                         </Link>
                         <tr v-if="visitors.data.length === 0">
                             <td
-                                colspan="5"
+                                colspan="6"
                                 class="px-6 py-4 text-center text-sm text-indigo-500"
                             >
                                 No visitors found

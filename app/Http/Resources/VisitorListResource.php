@@ -18,6 +18,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     readonly countryCode: string;
  *     readonly sessionsCount: number;
  *     readonly createdAt: string;
+ *     readonly lastSeenAt: string;
  * }
  * ```
  */
@@ -33,6 +34,7 @@ class VisitorListResource extends JsonResource
             'countryCode' => $this->country_code,
             'sessionsCount' => $this->sessions_count,
             'createdAt' => $this->created_at?->toIso8601String(),
+            'lastSeenAt' => $this->last_visit_at?->toIso8601String(),
 
             // Relationships
             'user' => $this->whenLoaded('user', function () {

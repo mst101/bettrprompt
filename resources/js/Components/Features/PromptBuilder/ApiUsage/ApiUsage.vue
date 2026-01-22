@@ -25,14 +25,15 @@ const normaliseUsage = (
 
 const totalTokens = (usage: ApiUsageResource | null) => {
     if (!usage) return 0;
-    return usage.inputTokens + usage.outputTokens;
+    return (usage.input_tokens ?? 0) + (usage.output_tokens ?? 0);
 };
 
 const totalTokensForArray = (usageArray: ApiUsageResource[]): number => {
     return usageArray.reduce((sum, usage) => sum + totalTokens(usage), 0);
 };
 
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | undefined): string => {
+    if (num === undefined || num === null) return '0';
     return num.toLocaleString();
 };
 
@@ -55,9 +56,11 @@ const calculateCost = (usage: ApiUsageResource | null) => {
     const model = getModelPricing(usage.model);
     if (!model) return 0;
 
-    const inputCost = (usage.inputTokens / 1_000_000) * model.inputCostPerMtok;
-    const outputCost =
-        (usage.outputTokens / 1_000_000) * model.outputCostPerMtok;
+    const inputTokens = usage.input_tokens ?? 0;
+    const outputTokens = usage.output_tokens ?? 0;
+
+    const inputCost = (inputTokens / 1_000_000) * model.inputCostPerMtok;
+    const outputCost = (outputTokens / 1_000_000) * model.outputCostPerMtok;
 
     return inputCost + outputCost;
 };

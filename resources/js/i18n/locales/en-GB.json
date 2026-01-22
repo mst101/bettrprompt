@@ -1399,7 +1399,24 @@
             "stage": "Stage",
             "starts": "Starts",
             "conversions": "Conversions",
-            "current_state": "Current State"
+            "current_state": "Current State",
+            "workflow_stage_0": "Pre-Analysis",
+            "workflow_stage_1": "Analysis",
+            "workflow_stage_2": "Prompt Generation",
+            "last_seen": "Last Seen",
+            "total_runs": "Total Runs",
+            "success_rate": "Success Rate",
+            "completed": "Completed",
+            "processing": "Processing",
+            "failed": "Failed",
+            "task_description": "Task Description",
+            "personality_type": "Personality Type",
+            "framework": "Framework",
+            "created_by": "Created By",
+            "status": "Status",
+            "duration": "Duration",
+            "created_at": "Created",
+            "no_runs": "No prompt runs found"
         },
         "common": {
             "notAvailable": "Not available"
