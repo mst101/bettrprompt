@@ -24,23 +24,28 @@ test.describe('Pricing and Checkout Flows', () => {
         ).toBeVisible();
     });
 
-    test('displays all three tier cards side by side', async ({ page }) => {
-        // Check all three tier cards are visible
+    test('displays all four tier cards side by side', async ({ page }) => {
+        // Check all four tier cards are visible
         await expect(
             page.getByRole('heading', { name: /^free$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^starter$/i }),
         ).toBeVisible();
         await expect(
             page.getByRole('heading', { name: /^pro$/i }),
         ).toBeVisible();
         await expect(
-            page.getByRole('heading', { name: /^private$/i }),
+            page.getByRole('heading', { name: /^premium$/i }),
         ).toBeVisible();
 
         // Verify they're in separate cards
+        const starterCard = page.getByTestId('starter-tier-tab');
         const proCard = page.getByTestId('pro-tier-tab');
-        const privateCard = page.getByTestId('private-tier-tab');
+        const premiumCard = page.getByTestId('premium-tier-tab');
+        await expect(starterCard).toBeVisible();
         await expect(proCard).toBeVisible();
-        await expect(privateCard).toBeVisible();
+        await expect(premiumCard).toBeVisible();
     });
 
     test('allows toggling between monthly and yearly billing', async ({
@@ -60,8 +65,8 @@ test.describe('Pricing and Checkout Flows', () => {
 
     test('unauthenticated user sees subscribe button', async ({ page }) => {
         const subscribeButtons = page.getByTestId('subscribe-button');
-        // Both Pro and Private subscribe buttons should be visible
-        expect(await subscribeButtons.count()).toBe(2);
+        // All three paid tiers (Starter, Pro, Premium) should have subscribe buttons
+        expect(await subscribeButtons.count()).toBe(3);
         await expect(subscribeButtons.first()).toBeVisible();
     });
 
@@ -116,15 +121,17 @@ test.describe('Pricing and Checkout Flows', () => {
         // Get all subscribe buttons
         const subscribeButtons = page.getByTestId('subscribe-button');
 
-        // Should have 2 subscribe buttons (Pro and Private)
-        expect(await subscribeButtons.count()).toBe(2);
+        // Should have 3 subscribe buttons (Starter, Pro, Premium)
+        expect(await subscribeButtons.count()).toBe(3);
 
-        // Verify button text
+        // Verify buttons for each tier
+        const starterCard = page.getByTestId('starter-tier-tab');
         const proCard = page.getByTestId('pro-tier-tab');
-        const privateCard = page.getByTestId('private-tier-tab');
+        const premiumCard = page.getByTestId('premium-tier-tab');
 
+        await expect(starterCard.getByTestId('subscribe-button')).toBeVisible();
         await expect(proCard.getByTestId('subscribe-button')).toBeVisible();
-        await expect(privateCard.getByTestId('subscribe-button')).toBeVisible();
+        await expect(premiumCard.getByTestId('subscribe-button')).toBeVisible();
     });
 
     test('responsive design on mobile', async ({ page }) => {
@@ -163,89 +170,28 @@ test.describe('Pricing and Checkout Flows', () => {
         expect(await pounds.count()).toBeGreaterThan(0);
     });
 
-    test('shows all three tier names as headings', async ({ page }) => {
-        // All three tier names should be visible as headings
+    test('shows all four tier names as headings', async ({ page }) => {
+        // All four tier names should be visible as headings
         await expect(
             page.getByRole('heading', { name: /^free$/i }),
+        ).toBeVisible();
+        await expect(
+            page.getByRole('heading', { name: /^starter$/i }),
         ).toBeVisible();
         await expect(
             page.getByRole('heading', { name: /^pro$/i }),
         ).toBeVisible();
         await expect(
-            page.getByRole('heading', { name: /^private$/i }),
+            page.getByRole('heading', { name: /^premium$/i }),
         ).toBeVisible();
     });
 
-    test('displays currency switcher buttons', async ({ page }) => {
-        // Check that currency switcher buttons are visible
-        const gbpButton = page.getByTestId('currency-gbp');
-        const eurButton = page.getByTestId('currency-eur');
-        const usdButton = page.getByTestId('currency-usd');
-
-        await expect(gbpButton).toBeVisible();
-        await expect(eurButton).toBeVisible();
-        await expect(usdButton).toBeVisible();
-    });
-
-    test('defaults to GBP currency button as selected', async ({ page }) => {
-        const gbpButton = page.getByTestId('currency-gbp');
-        await expect(gbpButton).toHaveClass(/bg-green-100/);
-    });
-
-    test('allows switching between currencies', async ({ page }) => {
-        const eurButton = page.getByTestId('currency-eur');
-        const gbpButton = page.getByTestId('currency-gbp');
-
-        // Initially GBP should be selected
-        await expect(gbpButton).toHaveClass(/bg-green-100/);
-
-        // Click EUR button
-        await eurButton.click();
-
-        // Wait for currency update
-        await page.waitForLoadState('networkidle');
-
-        // EUR button should now be selected (after page reload)
-        // Note: The page reloads after currency update, so we might be back to GBP
-        // depending on database persistence
-        const currencyButtons = page.locator('[data-testid^="currency-"]');
-        await expect(currencyButtons.first()).toBeVisible();
-    });
-
-    test('currency switcher is keyboard accessible', async ({ page }) => {
-        const gbpButton = page.getByTestId('currency-gbp');
-        const eurButton = page.getByTestId('currency-eur');
-
-        // Focus on GBP button
-        await gbpButton.focus();
-        await expect(gbpButton).toBeFocused();
-
-        // Tab to next button (EUR)
-        await page.keyboard.press('Tab');
-        await expect(eurButton).toBeFocused();
-    });
-
-    test('currency buttons are disabled during update', async ({ page }) => {
-        // This is harder to test without slowing down the request,
-        // so we just verify the buttons exist and are clickable
-        const eurButton = page.getByTestId('currency-eur');
-        await expect(eurButton).toBeEnabled();
-    });
-
-    test('displays different prices for different currencies', async ({
+    test('displays currency based on region auto-detection', async ({
         page,
     }) => {
-        // Verify currency switcher is visible with multiple options
-        const gbpButton = page.getByTestId('currency-gbp');
-        const eurButton = page.getByTestId('currency-eur');
-        const usdButton = page.getByTestId('currency-usd');
-
-        // All three currency buttons should be visible
-        await expect(gbpButton).toBeVisible();
-        await expect(eurButton).toBeVisible();
-        await expect(usdButton).toBeVisible();
-
-        // GBP should be the default (selected) currency
-        await expect(gbpButton).toHaveClass(/bg-green-100/);
+        // Currency should be auto-detected based on user's region
+        // Check for currency symbol (GBP by default in test)
+        const pounds = page.locator('text=/£/');
+        expect(await pounds.count()).toBeGreaterThan(0);
     });
 });
