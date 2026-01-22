@@ -862,6 +862,7 @@ onBeforeUnmount(() => {
                 >
                     <ButtonSecondary
                         id="show-all-questions"
+                        data-testid="show-all-questions"
                         type="button"
                         :underline="true"
                         @click="showAllQuestions = !showAllQuestions"

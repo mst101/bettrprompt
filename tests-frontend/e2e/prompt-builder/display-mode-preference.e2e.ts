@@ -15,7 +15,7 @@ import { expect, setupAndNavigateToPromptRun, test } from '../fixtures';
  * 6. Mode toggle is accessible and functional
  */
 
-test.describe.skip('Display Mode Preference - Mode Switching', () => {
+test.describe('Display Mode Preference - Mode Switching', () => {
     test('user can switch from single to bulk mode', async ({
         authenticatedPage,
     }) => {
@@ -34,9 +34,8 @@ test.describe.skip('Display Mode Preference - Mode Switching', () => {
         await expect(singleQuestionForm.first()).toBeVisible({ timeout: 5000 });
 
         // Click "View all questions" button
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -63,9 +62,8 @@ test.describe.skip('Display Mode Preference - Mode Switching', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Switch to bulk mode
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -74,10 +72,8 @@ test.describe.skip('Display Mode Preference - Mode Switching', () => {
             authenticatedPage.locator('textarea[id^="bulk-answer-"]').first(),
         ).toBeVisible({ timeout: 5000 });
 
-        // Click "Back to single" or similar button to return to single mode
-        const backButton = authenticatedPage.getByRole('button', {
-            name: /back.*single|one.*question|single.*question/i,
-        });
+        // Click the toggle button again to return to single mode
+        const backButton = authenticatedPage.getByTestId('show-all-questions');
         const isBackButtonVisible = await backButton
             .isVisible()
             .catch(() => false);
@@ -119,7 +115,7 @@ test.describe.skip('Display Mode Preference - Mode Switching', () => {
     });
 });
 
-test.describe.skip('Display Mode Preference - Persistence', () => {
+test.describe('Display Mode Preference - Persistence', () => {
     test('bulk mode preference persists across page refresh', async ({
         authenticatedPage,
     }) => {
@@ -132,9 +128,8 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Switch to bulk mode
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -162,9 +157,7 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
 
         if (!isBulkVisible) {
             // If not in bulk mode, click the button to switch
-            const button = authenticatedPage.getByRole('button', {
-                name: /view all questions|all questions/i,
-            });
+            const button = authenticatedPage.getByTestId('show-all-questions');
             const isButtonVisible = await button.isVisible().catch(() => false);
             expect(isButtonVisible).toBe(true);
         } else {
@@ -188,9 +181,7 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
         await authenticatedPage.getByTestId('tab-button-questions').click();
         await authenticatedPage.waitForTimeout(500);
 
-        let viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        let viewAllButton = authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -222,9 +213,7 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
 
         if (!isBulkVisible) {
             // If not automatically in bulk, button should be available
-            viewAllButton = authenticatedPage.getByRole('button', {
-                name: /view all questions|all questions/i,
-            });
+            viewAllButton = authenticatedPage.getByTestId('show-all-questions');
             const isButtonVisible = await viewAllButton
                 .isVisible()
                 .catch(() => false);
@@ -246,9 +235,8 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
         await authenticatedPage.getByTestId('tab-button-questions').click();
         await authenticatedPage.waitForTimeout(500);
 
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -277,9 +265,8 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
 
         if (!isBulkVisible) {
             // If not in bulk mode, the toggle button should be visible
-            const toggleButton = authenticatedPage.getByRole('button', {
-                name: /view all questions|all questions/i,
-            });
+            const toggleButton =
+                authenticatedPage.getByTestId('show-all-questions');
             const isToggleVisible = await toggleButton
                 .isVisible()
                 .catch(() => false);
@@ -291,7 +278,7 @@ test.describe.skip('Display Mode Preference - Persistence', () => {
     });
 });
 
-test.describe.skip('Display Mode Preference - User Preferences API', () => {
+test.describe('Display Mode Preference - User Preferences API', () => {
     test('preference is saved to user profile', async ({
         authenticatedPage,
     }) => {
@@ -303,9 +290,8 @@ test.describe.skip('Display Mode Preference - User Preferences API', () => {
         await authenticatedPage.getByTestId('tab-button-questions').click();
         await authenticatedPage.waitForTimeout(500);
 
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
@@ -338,16 +324,12 @@ test.describe.skip('Display Mode Preference - User Preferences API', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Toggle to bulk
-        let viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        let viewAllButton = authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(300);
 
         // Toggle back to single
-        const backButton = authenticatedPage.getByRole('button', {
-            name: /back.*single|one.*question|single.*question/i,
-        });
+        const backButton = authenticatedPage.getByTestId('show-all-questions');
         const isBackVisible = await backButton.isVisible().catch(() => false);
 
         if (isBackVisible) {
@@ -362,9 +344,7 @@ test.describe.skip('Display Mode Preference - User Preferences API', () => {
             ).toBeVisible({ timeout: 2000 });
 
             // Toggle to bulk again
-            viewAllButton = authenticatedPage.getByRole('button', {
-                name: /view all questions|all questions/i,
-            });
+            viewAllButton = authenticatedPage.getByTestId('show-all-questions');
             await viewAllButton.click();
             await authenticatedPage.waitForTimeout(300);
 
@@ -378,8 +358,8 @@ test.describe.skip('Display Mode Preference - User Preferences API', () => {
     });
 });
 
-test.describe.skip('Display Mode Preference - Mobile Responsiveness', () => {
-    test('mode preference is stored regardless of screen size', async ({
+test.describe('Display Mode Preference - Mobile Responsiveness', () => {
+    test.skip('mode preference is stored regardless of screen size', async ({
         authenticatedPage,
     }) => {
         await setupAndNavigateToPromptRun(authenticatedPage, '1_completed');
@@ -390,16 +370,28 @@ test.describe.skip('Display Mode Preference - Mobile Responsiveness', () => {
         await authenticatedPage.getByTestId('tab-button-questions').click();
         await authenticatedPage.waitForTimeout(500);
 
-        const viewAllButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const viewAllButton =
+            authenticatedPage.getByTestId('show-all-questions');
         await viewAllButton.click();
         await authenticatedPage.waitForTimeout(500);
 
-        // Verify bulk mode
-        await expect(
-            authenticatedPage.locator('textarea[id^="bulk-answer-"]').first(),
-        ).toBeVisible({ timeout: 5000 });
+        // Verify bulk mode (wait a bit longer for Vue to render)
+        const bulkTextarea = authenticatedPage
+            .locator('textarea[id^="bulk-answer-"]')
+            .first();
+        await bulkTextarea
+            .waitFor({ state: 'visible', timeout: 8000 })
+            .catch(() => {});
+        const isBulkVisible = await bulkTextarea.isVisible().catch(() => false);
+        if (!isBulkVisible) {
+            // If bulk textareas aren't immediately visible, try scrolling to see if they exist
+            await authenticatedPage.evaluate(() => window.scrollBy(0, 100));
+            await authenticatedPage.waitForTimeout(500);
+        }
+        expect(
+            isBulkVisible ||
+                (await bulkTextarea.isVisible().catch(() => false)),
+        ).toBe(true);
 
         // Wait for preference to be saved
         await authenticatedPage.waitForTimeout(1000);
@@ -432,21 +424,22 @@ test.describe.skip('Display Mode Preference - Mobile Responsiveness', () => {
         await authenticatedPage.waitForTimeout(500);
 
         // Check if preference persisted after mobile viewport test
-        const bulkTextarea = authenticatedPage.locator(
+        const bulkTextareaAfterMobile = authenticatedPage.locator(
             'textarea[id^="bulk-answer-"]',
         );
-        const isBulkVisible = await bulkTextarea.isVisible().catch(() => false);
+        const isBulkVisibleAfterMobile = await bulkTextareaAfterMobile
+            .isVisible()
+            .catch(() => false);
 
         // Either bulk mode persisted or the button is available to toggle
-        const toggleButton = authenticatedPage.getByRole('button', {
-            name: /view all questions|all questions/i,
-        });
+        const toggleButton =
+            authenticatedPage.getByTestId('show-all-questions');
         const isToggleVisible = await toggleButton
             .isVisible()
             .catch(() => false);
 
-        expect(isQuestionsVisible || isBulkVisible || isToggleVisible).toBe(
-            true,
-        );
+        expect(
+            isQuestionsVisible || isBulkVisibleAfterMobile || isToggleVisible,
+        ).toBe(true);
     });
 });
