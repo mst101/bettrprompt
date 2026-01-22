@@ -10,6 +10,13 @@ import AdminSidebarSection from './AdminSidebarSection.vue';
 const { countryRoute } = useCountryRoute();
 const isOpen = ref(false); // For mobile
 
+// Note: route() is a global function provided by Inertia.js/Ziggy
+// It's declared in resources/js/Types/global.d.ts
+declare const route: {
+    (name: string, params?: Record<string, any>): string;
+    current(name?: string, params?: Record<string, any>): boolean | string;
+};
+
 const toggleSidebar = () => {
     isOpen.value = !isOpen.value;
 };
