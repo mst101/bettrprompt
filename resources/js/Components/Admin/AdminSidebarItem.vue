@@ -6,23 +6,13 @@ const props = defineProps<{
     href: string;
     label: string;
     active?: boolean;
-    routeName?: string;
 }>();
 
-// route() is a global function provided by Inertia.js/Ziggy
-// Declared in resources/js/Types/global.d.ts
-declare const route: {
-    (name: string, params?: Record<string, any>): string;
-    current(name?: string, params?: Record<string, any>): boolean | string;
-};
-
-// Auto-detect active state based on route name or explicit prop
+// Auto-detect active state by comparing URLs (accounts for country prefix)
 const isActive = computed(() => {
     if (props.active !== undefined) return props.active;
-    if (props.routeName) {
-        return !!route().current(props.routeName);
-    }
-    return false;
+    // Compare the href (generated with countryRoute) with current pathname
+    return window.location.pathname === props.href;
 });
 </script>
 

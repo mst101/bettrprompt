@@ -100,13 +100,11 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('admin.traffic-analytics.index')"
                     label="Traffic Analytics"
-                    route-name="admin.traffic-analytics.index"
                     @click="closeSidebar"
                 />
                 <AdminSidebarItem
                     :href="countryRoute('admin.domain-analytics.index')"
                     label="Domain Analytics"
-                    route-name="admin.domain-analytics.index"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
@@ -116,13 +114,11 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('admin.users.index')"
                     label="Users"
-                    route-name="admin.users.index"
                     @click="closeSidebar"
                 />
                 <AdminSidebarItem
                     :href="countryRoute('admin.visitors.index')"
                     label="Visitors"
-                    route-name="admin.visitors.index"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
@@ -132,7 +128,6 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('admin.tasks.index')"
                     label="Tasks"
-                    route-name="admin.tasks.index"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
@@ -142,13 +137,11 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('admin.questions.index')"
                     label="Question Bank"
-                    route-name="admin.questions.index"
                     @click="closeSidebar"
                 />
                 <AdminSidebarItem
                     :href="countryRoute('admin.questions.create')"
                     label="Create Question"
-                    route-name="admin.questions.create"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
@@ -158,7 +151,6 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('workflows.index')"
                     label="Workflow Hub"
-                    route-name="workflows.index"
                     @click="closeSidebar"
                 />
                 <AdminSidebarItem
@@ -194,7 +186,6 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('workflows.docs.index')"
                     label="Reference Docs"
-                    route-name="workflows.docs.index"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
@@ -204,13 +195,11 @@ const isWorkflowActive = (workflowNumber: number) => {
                 <AdminSidebarItem
                     :href="countryRoute('admin.experiments.index')"
                     label="All Experiments"
-                    route-name="admin.experiments.index"
                     @click="closeSidebar"
                 />
                 <AdminSidebarItem
                     :href="countryRoute('admin.experiments.create')"
                     label="Create Experiment"
-                    route-name="admin.experiments.create"
                     @click="closeSidebar"
                 />
             </AdminSidebarSection>
