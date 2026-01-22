@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Card from '@/Components/Base/Card.vue';
+import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import Pagination from '@/Components/Common/Pagination.vue';
@@ -7,11 +8,15 @@ import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 interface Props {
     visitors: Paginated<VisitorListResource>;
     search: string | null;
+    filters: {
+        sortBy: string;
+        sortDirection: string;
+    };
 }
 
 const props = defineProps<Props>();
@@ -30,11 +35,42 @@ const debouncedSearch = () => {
     debounceTimeout = setTimeout(() => {
         router.get(
             window.location.pathname,
-            { search: searchQuery.value },
+            {
+                search: searchQuery.value,
+                sort_by: props.filters.sortBy,
+                sort_direction: props.filters.sortDirection,
+            },
             { preserveState: true, preserveScroll: true },
         );
     }, 300);
 };
+
+const sortBy = (column: string) => {
+    const currentSortBy = props.filters.sortBy;
+    const currentDirection = props.filters.sortDirection;
+
+    let newDirection = 'asc';
+    if (currentSortBy === column && currentDirection === 'asc') {
+        newDirection = 'desc';
+    }
+
+    router.get(
+        window.location.pathname,
+        {
+            search: searchQuery.value,
+            sort_by: column,
+            sort_direction: newDirection,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+const sortDirection = computed(() => {
+    return props.filters.sortDirection;
+});
 
 const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
@@ -78,7 +114,14 @@ const truncateId = (id: string): string => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                             >
-                                Visitor ID
+                                <TableHeaderSortable
+                                    column="id"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    Visitor ID
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
@@ -88,7 +131,14 @@ const truncateId = (id: string): string => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                             >
-                                Country
+                                <TableHeaderSortable
+                                    column="country_code"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    Country
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
@@ -98,7 +148,14 @@ const truncateId = (id: string): string => {
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                             >
-                                First Seen
+                                <TableHeaderSortable
+                                    column="created_at"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    First Seen
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"

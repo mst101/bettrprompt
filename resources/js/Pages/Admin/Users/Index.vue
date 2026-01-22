@@ -2,13 +2,15 @@
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
+import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { UserListResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
     users: {
@@ -19,21 +21,55 @@ interface Props {
     };
     filters: {
         search?: string;
+        sortBy: string;
+        sortDirection: string;
     };
 }
 
 const props = defineProps<Props>();
 const search = ref(props.filters.search || '');
+const { countryRoute } = useCountryRoute();
 
 const debouncedSearch = useDebounceFn(() => {
     router.get(
         countryRoute('admin.users.index'),
-        { search: search.value },
+        {
+            search: search.value,
+            sort_by: props.filters.sortBy,
+            sort_direction: props.filters.sortDirection,
+        },
         { preserveState: true, replace: true },
     );
 }, 300);
 
 watch(search, debouncedSearch);
+
+const sortBy = (column: string) => {
+    const currentSortBy = props.filters.sortBy;
+    const currentDirection = props.filters.sortDirection;
+
+    let newDirection = 'asc';
+    if (currentSortBy === column && currentDirection === 'asc') {
+        newDirection = 'desc';
+    }
+
+    router.get(
+        countryRoute('admin.users.index'),
+        {
+            search: search.value,
+            sort_by: column,
+            sort_direction: newDirection,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+};
+
+const sortDirection = computed(() => {
+    return props.filters.sortDirection;
+});
 </script>
 
 <template>
@@ -75,12 +111,26 @@ watch(search, debouncedSearch);
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                {{ $t('admin.users.columns.name') }}
+                                <TableHeaderSortable
+                                    column="name"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    {{ $t('admin.users.columns.name') }}
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"
                             >
-                                {{ $t('admin.users.columns.email') }}
+                                <TableHeaderSortable
+                                    column="email"
+                                    :current-sort="filters.sortBy"
+                                    :sort-direction="sortDirection"
+                                    @sort="sortBy"
+                                >
+                                    {{ $t('admin.users.columns.email') }}
+                                </TableHeaderSortable>
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-indigo-500 uppercase"

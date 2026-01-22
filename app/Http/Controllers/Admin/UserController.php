@@ -19,6 +19,18 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        // Validate sort parameters
+        $validSortColumns = ['name', 'email', 'created_at'];
+        if (! in_array($sortBy, $validSortColumns)) {
+            $sortBy = 'created_at';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
         $users = User::query()
             ->withCount([
                 'visitors',
@@ -30,7 +42,7 @@ class UserController extends Controller
                 $query->where('name', 'like', "%$search%")
                     ->orWhere('email', 'like', "%$search%");
             })
-            ->latest()
+            ->orderBy($sortBy, $sortDirection)
             ->paginate(20)
             ->withQueryString();
 
@@ -41,7 +53,10 @@ class UserController extends Controller
                 'currentPage' => $users->currentPage(),
                 'lastPage' => $users->lastPage(),
             ],
-            'filters' => $request->only('search'),
+            'filters' => $request->only('search') + [
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+            ],
         ]);
     }
 

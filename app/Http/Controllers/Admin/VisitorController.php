@@ -19,6 +19,17 @@ class VisitorController extends Controller
     public function index(Request $request): Response
     {
         $search = $request->input('search');
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        // Validate sort parameters
+        $validSortColumns = ['id', 'country_code', 'created_at'];
+        if (! in_array($sortBy, $validSortColumns)) {
+            $sortBy = 'created_at';
+        }
+        if (! in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
 
         $visitors = Visitor::query()
             ->when($search, function ($query, $search) {
@@ -31,7 +42,7 @@ class VisitorController extends Controller
             })
             ->withCount('sessions')
             ->with('user:id,name,email')
-            ->orderBy('created_at', 'desc')
+            ->orderBy($sortBy, $sortDirection)
             ->paginate(50)
             ->withQueryString();
 
@@ -52,6 +63,10 @@ class VisitorController extends Controller
                 ],
             ],
             'search' => $search,
+            'filters' => [
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+            ],
         ]);
     }
 
