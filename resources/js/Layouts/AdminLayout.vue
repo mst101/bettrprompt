@@ -2,7 +2,7 @@
 import AdminSidebar from '@/Components/Admin/AdminSidebar.vue';
 import AlertDialog from '@/Components/Base/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
-import { onMounted } from 'vue';
+import { useThemeStore } from '@/Stores/themeStore';
 
 interface Props {
     title?: string;
@@ -12,19 +12,8 @@ withDefaults(defineProps<Props>(), {
     title: 'Admin',
 });
 
-// Initialize dark mode from localStorage
-onMounted(() => {
-    const isDark =
-        localStorage.getItem('theme') === 'dark' ||
-        (!('theme' in localStorage) &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    if (isDark) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-});
+// Initialize theme store to ensure consistent dark mode handling
+useThemeStore();
 </script>
 
 <template>
