@@ -4,10 +4,10 @@ import { usePage } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 
 interface ExperimentAssignment {
-    experiment_id: number;
-    experiment_slug: string;
-    variant_slug: string;
-    variant_id: number;
+    experimentId: number;
+    experimentSlug: string;
+    variantSlug: string;
+    variantId: number;
     config: Record<string, unknown> | null;
 }
 
@@ -36,18 +36,16 @@ export function useExperiment(experimentSlug: string) {
     const assignment = computed(() => {
         const experiments =
             (page.props.experiments as ExperimentAssignment[]) || [];
-        return experiments.find(
-            (exp) => exp.experiment_slug === experimentSlug,
-        );
+        return experiments.find((exp) => exp.experimentSlug === experimentSlug);
     });
 
-    const variant = computed(() => assignment.value?.variant_slug || null);
+    const variant = computed(() => assignment.value?.variantSlug || null);
 
     const config = computed(() => assignment.value?.config || null);
 
-    const experimentId = computed(() => assignment.value?.experiment_id);
+    const experimentId = computed(() => assignment.value?.experimentId);
 
-    const variantId = computed(() => assignment.value?.variant_id);
+    const variantId = computed(() => assignment.value?.variantId);
 
     const isAssigned = computed(() => !!assignment.value);
 
