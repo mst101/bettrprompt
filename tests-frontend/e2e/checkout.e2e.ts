@@ -96,9 +96,7 @@ test.describe('Pricing and Checkout Flows', () => {
 
     test('shows features for free tier', async ({ page }) => {
         // Free tier features should be visible
-        const freeSection = page
-            .locator('[class*="rounded-2xl border border-indigo-200"]')
-            .first();
+        const freeSection = page.getByTestId('free-tier-tab');
         await expect(freeSection).toBeVisible();
 
         // Should contain "10 prompts" or similar

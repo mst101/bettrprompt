@@ -242,12 +242,14 @@ watch(showingNavigationDropdown, async (isOpen) => {
                         </div>
 
                         <!-- Right Side Navigation -->
-                        <div class="hidden md:ms-6 md:flex md:items-center">
+                        <div
+                            class="hidden gap-2 md:ms-6 md:flex md:items-center"
+                        >
                             <LanguageSwitcher />
-                            <ButtonDarkMode class="ms-2 size-10 shrink-0 p-2" />
+                            <ButtonDarkMode class="size-10 shrink-0 p-2" />
 
                             <!-- Authenticated User Dropdown -->
-                            <div v-if="isAuthenticated" class="relative ms-3">
+                            <div v-if="isAuthenticated" class="relative">
                                 <Dropdown
                                     ref="userDropdown"
                                     align="right"

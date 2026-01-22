@@ -58,6 +58,8 @@ const cardClasses = computed(() => {
     return `${base} border border-indigo-200`;
 });
 
+const testId = computed(() => `${props.tier}-tier-tab`);
+
 const handleClick = () => {
     if (props.isFree) {
         emit('getStarted');
@@ -68,7 +70,7 @@ const handleClick = () => {
 </script>
 
 <template>
-    <div :class="cardClasses">
+    <div :class="cardClasses" :data-testid="testId">
         <!-- Recommended Badge -->
         <div
             v-if="isRecommended"

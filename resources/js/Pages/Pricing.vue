@@ -143,7 +143,7 @@ async function subscribe(tier: 'starter' | 'pro' | 'premium') {
 }
 
 function getStarted() {
-    // Navigate to prompt-builder for both authenticated and unauthenticated users
+    // Navigate to prompt-builder for both authenticated and unauthenticated users.
     // Unauthenticated users can use the free tier immediately
     router.visit(countryRoute('prompt-builder.index'));
 }
