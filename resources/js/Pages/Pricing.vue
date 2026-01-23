@@ -2,6 +2,7 @@
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import PricingTierCard from '@/Components/Pricing/PricingTierCard.vue';
+import { usePricingCalculations } from '@/Composables/features/usePricingCalculations';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { analyticsService } from '@/services/analytics';
@@ -41,50 +42,23 @@ const openRegisterModal = inject<(() => void) | undefined>(
     undefined,
 );
 
-// Computed properties to get prices from database
-const starterPrice = computed(() => {
-    const key = `starter_${selectedPlan.value}`;
-    const price = props.plans[key]?.price ?? 0;
-    // Remove decimals for yearly prices
-    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
-});
-
-const starterMonthlyEquivalent = computed(() => {
-    if (selectedPlan.value === 'yearly') {
-        return (starterPrice.value / 12).toFixed(2);
-    }
-    return null;
-});
-
-const proPrice = computed(() => {
-    const key = `pro_${selectedPlan.value}`;
-    const price = props.plans[key]?.price ?? 0;
-    // Remove decimals for yearly prices
-    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
-});
-
-const proMonthlyEquivalent = computed(() => {
-    if (selectedPlan.value === 'yearly') {
-        return (proPrice.value / 12).toFixed(2);
-    }
-    return null;
-});
-
-const premiumPrice = computed(() => {
-    const key = `premium_${selectedPlan.value}`;
-    const price = props.plans[key]?.price ?? 0;
-    // Remove decimals for yearly prices
-    return selectedPlan.value === 'yearly' ? Math.round(price) : price;
-});
-
-const premiumMonthlyEquivalent = computed(() => {
-    if (selectedPlan.value === 'yearly') {
-        return (premiumPrice.value / 12).toFixed(2);
-    }
-    return null;
-});
-
 const selectedPlan = ref<'monthly' | 'yearly'>('yearly');
+
+// Pricing calculations
+const { getPrice, getMonthlyEquivalent } = usePricingCalculations(
+    props.plans,
+    selectedPlan,
+);
+
+// Computed properties for each pricing tier
+const starterPrice = getPrice('starter');
+const starterMonthlyEquivalent = getMonthlyEquivalent('starter');
+
+const proPrice = getPrice('pro');
+const proMonthlyEquivalent = getMonthlyEquivalent('pro');
+
+const premiumPrice = getPrice('premium');
+const premiumMonthlyEquivalent = getMonthlyEquivalent('premium');
 const isLoading = ref(false);
 
 async function subscribe(tier: 'starter' | 'pro' | 'premium') {
