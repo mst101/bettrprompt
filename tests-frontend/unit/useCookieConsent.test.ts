@@ -1,5 +1,6 @@
 import { useCookieConsent } from '@/Composables/features/useCookieConsent';
 import type { CookiePreferences } from '@/Constants/cookies';
+import { logger } from '@/Utils/logger';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useCookieConsent', () => {
@@ -128,8 +129,8 @@ describe('useCookieConsent', () => {
         // Set an invalid cookie
         document.cookie = 'cookie_consent=invalid-json;path=/';
 
-        const consoleErrorSpy = vi
-            .spyOn(console, 'error')
+        const loggerErrorSpy = vi
+            .spyOn(logger, 'error')
             .mockImplementation(() => {});
 
         // Create new composable instance after setting invalid cookie
@@ -138,12 +139,12 @@ describe('useCookieConsent', () => {
         // Manually call load to trigger the error handling
         loadPreferences();
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect(loggerErrorSpy).toHaveBeenCalledWith(
             'Failed to parse cookie preferences:',
             expect.any(Error),
         );
 
-        consoleErrorSpy.mockRestore();
+        loggerErrorSpy.mockRestore();
     });
 
     it('should check consent for specific category', () => {
