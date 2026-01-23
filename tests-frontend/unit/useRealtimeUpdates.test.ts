@@ -1,4 +1,5 @@
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
+import { logger } from '@/Utils/logger';
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';
@@ -150,7 +151,7 @@ describe('useRealtimeUpdates', () => {
                 throw new Error('Handler error');
             });
             const events = { TestEvent: errorHandler };
-            const consoleSpy = vi.spyOn(console, 'error');
+            const loggerSpy = vi.spyOn(logger, 'error');
 
             const TestComponent = defineComponent({
                 setup() {
@@ -169,7 +170,7 @@ describe('useRealtimeUpdates', () => {
             registeredHandler({ data: 'test' });
 
             // Should log error but not crash
-            expect(consoleSpy).toHaveBeenCalledWith(
+            expect(loggerSpy).toHaveBeenCalledWith(
                 '[useRealtimeUpdates] Error handling TestEvent:',
                 expect.any(Error),
             );
@@ -339,7 +340,7 @@ describe('useRealtimeUpdates', () => {
             global.window.Echo.leave = vi.fn().mockImplementation(() => {
                 throw new Error('Channel leave error');
             });
-            const consoleSpy = vi.spyOn(console, 'error');
+            const loggerSpy = vi.spyOn(logger, 'error');
 
             let composableState: any;
 
@@ -357,7 +358,7 @@ describe('useRealtimeUpdates', () => {
 
             // Should not throw
             expect(() => composableState.cleanup()).not.toThrow();
-            expect(consoleSpy).toHaveBeenCalledWith(
+            expect(loggerSpy).toHaveBeenCalledWith(
                 '[useRealtimeUpdates] Error leaving channel:',
                 expect.any(Error),
             );
@@ -762,9 +763,7 @@ describe('useRealtimeUpdates', () => {
             await nextTick();
 
             // Make Echo.leave throw an error
-            const consoleWarnSpy = vi
-                .spyOn(console, 'warn')
-                .mockImplementation(() => {});
+            const loggerWarnSpy = vi.spyOn(logger, 'warn');
             vi.mocked(window.Echo.leave).mockImplementation(() => {
                 throw new Error('Leave channel failed');
             });
@@ -775,12 +774,12 @@ describe('useRealtimeUpdates', () => {
             await nextTick();
 
             // Should have warned about the error
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
+            expect(loggerWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('Error leaving old channel'),
                 expect.any(Error),
             );
 
-            consoleWarnSpy.mockRestore();
+            loggerWarnSpy.mockRestore();
             wrapper.unmount();
         });
     });
