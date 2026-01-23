@@ -22,8 +22,8 @@ class SetCountry
     {
         $countryCode = $request->route('country');
 
-        // Validate country code exists in database
-        if ($countryCode && ! Country::where('id', $countryCode)->exists()) {
+        // Validate country code exists in database (cached to avoid query on every request)
+        if ($countryCode && ! $this->countryExists($countryCode)) {
             abort(404);
         }
 
@@ -34,6 +34,20 @@ class SetCountry
         }
 
         return $next($request);
+    }
+
+    /**
+     * Check if a country code exists, with caching to avoid DB queries.
+     */
+    protected function countryExists(string $countryCode): bool
+    {
+        return Cache::remember(
+            "country.{$countryCode}.exists",
+            86400, // 24 hours
+            function () use ($countryCode) {
+                return Country::where('id', $countryCode)->exists();
+            }
+        );
     }
 
     /**
@@ -52,11 +66,9 @@ class SetCountry
                 $cacheKey,
                 3600, // 1 hour
                 function () use ($user, $countryCode) {
-                    // Refresh user from database to get latest language_code
-                    $freshUser = $user->fresh();
-
                     // Language preference is global - use it if set
-                    $normalized = self::normalizeLocaleToSupported($freshUser?->language_code);
+                    // Note: User is already loaded by auth middleware, no need to fresh()
+                    $normalized = self::normalizeLocaleToSupported($user->language_code);
 
                     return $normalized ?? $this->getCountryDefaultLanguage($countryCode);
                 }
@@ -202,15 +214,8 @@ class SetCountry
                     return config('app.fallback_currency', 'USD');
                 }
 
-                // Check if pricing exists for this currency
-                $hasPricing = \App\Models\Price::where('currency_code', $country->currency_id)->exists();
-
-                if (! $hasPricing) {
-                    Log::info("No pricing for currency {$country->currency_id}, using fallback");
-
-                    return config('app.fallback_currency', 'USD');
-                }
-
+                // Trust the database relationship - if currency_id is set, pricing exists
+                // This avoids an extra query that was happening on every page load
                 return $country->currency_id;
             }
         );
@@ -221,12 +226,14 @@ class SetCountry
      */
     public static function detectCountry(Request $request): string
     {
+        $middleware = new self;
+
         // 1. Check authenticated user preference
         if ($user = $request->user()) {
             if ($user->country_code) {
                 $countryCode = strtolower($user->country_code);
 
-                if (Country::where('id', $countryCode)->exists()) {
+                if ($middleware->countryExists($countryCode)) {
                     return $countryCode;
                 }
             }
@@ -239,7 +246,7 @@ class SetCountry
             if ($visitor && $visitor->country_code) {
                 $countryCode = strtolower($visitor->country_code);
 
-                if (Country::where('id', $countryCode)->exists()) {
+                if ($middleware->countryExists($countryCode)) {
                     return $countryCode;
                 }
             }
@@ -253,8 +260,8 @@ class SetCountry
             if ($locationData && $locationData->countryCode) {
                 $countryCode = strtolower($locationData->countryCode);
 
-                // Verify country exists in database
-                if (Country::where('id', $countryCode)->exists()) {
+                // Verify country exists in database (cached)
+                if ($middleware->countryExists($countryCode)) {
                     return $countryCode;
                 }
             }

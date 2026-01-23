@@ -11,21 +11,43 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Fonts - preload with optional display to prevent render blocking -->
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="preload" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet"></noscript>
 
-    <!-- Fullstory Analytics -->
+    <!-- Fullstory Analytics Config - Deferred loading for better FCP -->
     @production
         @php
             $shouldDisableAnalytics = request()->is('horizon', 'horizon/*', '*/admin', '*/admin/*');
         @endphp
         @unless($shouldDisableAnalytics)
-        <script>
+        <script id="fullstory-config">
             window['_fs_host'] = 'fullstory.com';
             window['_fs_script'] = 'edge.fullstory.com/s/fs.js';
             window['_fs_org'] = 'o-2442T0-na1';
             window['_fs_namespace'] = 'FS';
+        </script>
+        @endunless
+    @endproduction
+
+    <!-- Scripts -->
+    @routes
+    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
+    @inertiaHead
+</head>
+<body class="font-sans antialiased">
+@inertia
+
+<!-- Fullstory Initialization - Loaded after page render for better FCP/LCP -->
+@production
+    @php
+        $shouldDisableAnalytics = request()->is('horizon', 'horizon/*', '*/admin', '*/admin/*');
+    @endphp
+    @unless($shouldDisableAnalytics)
+    <script>
+        // Load FullStory SDK after page load
+        if (window._fs_namespace && window._fs_script && window._fs_host) {
             !function(m, n, e, t, l, o, g, y) {
                 var s, f, a = function(h) {
                         return !(h in m) || (m.console && m.console.log && m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].'), !1);
@@ -135,19 +157,12 @@
                     };
                 }(), s = 'fetch',
                     f = 'XMLHttpRequest', g._w = {}, g._w[f] = m[f], g._w[s] = m[s], m[s] && (m[s] = function() {
-                    return g._w[s].apply(this, arguments);
+                    return g._w.apply(this, arguments);
                 }), g._v = '2.0.0');
             }(window, document, window._fs_namespace, 'script', window._fs_script);
-        </script>
-        @endunless
-    @endproduction
-
-    <!-- Scripts -->
-    @routes
-    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
-    @inertiaHead
-</head>
-<body class="font-sans antialiased">
-@inertia
+        }
+    </script>
+    @endunless
+@endproduction
 </body>
 </html>

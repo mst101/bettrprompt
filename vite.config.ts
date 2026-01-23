@@ -26,6 +26,10 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
         },
     },
+    build: {
+        // Increase chunk size warning threshold since we have large pages
+        chunkSizeWarningLimit: 600,
+    },
     server: {
         host: '0.0.0.0',
         hmr: {
