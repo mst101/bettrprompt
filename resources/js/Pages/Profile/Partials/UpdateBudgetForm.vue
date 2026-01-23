@@ -4,11 +4,12 @@ import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
@@ -50,29 +51,11 @@ const budgetOptions = computed(() => [
     },
 ]);
 
-const form = useForm({
-    budgetConsciousness: props.budgetData.budgetConsciousness || '',
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.budget.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        budgetConsciousness: props.budgetData.budgetConsciousness || '',
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.budget.notifications.updated') },
 );
 
 const submit = () => {

@@ -3,11 +3,12 @@ import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
@@ -45,31 +46,13 @@ const workModeOptions = computed(() => [
     { value: 'freelance', label: t('profile.team.options.mode.freelance') },
 ]);
 
-const form = useForm({
-    teamSize: props.teamData.teamSize || '',
-    teamRole: props.teamData.teamRole || '',
-    workMode: props.teamData.workMode || '',
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.team.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        teamSize: props.teamData.teamSize || '',
+        teamRole: props.teamData.teamRole || '',
+        workMode: props.teamData.workMode || '',
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.team.notifications.updated') },
 );
 
 const submit = () => {

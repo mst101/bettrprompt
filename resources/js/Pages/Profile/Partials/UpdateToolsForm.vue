@@ -5,11 +5,12 @@ import FormCheckbox from '@/Components/Base/Form/FormCheckbox.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
@@ -88,31 +89,13 @@ const programmingLanguages = [
     'R',
 ];
 
-const form = useForm({
-    preferredTools: props.toolsData.preferredTools || [],
-    primaryProgrammingLanguage:
-        props.toolsData.primaryProgrammingLanguage || '',
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.tools.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        preferredTools: props.toolsData.preferredTools || [],
+        primaryProgrammingLanguage:
+            props.toolsData.primaryProgrammingLanguage || '',
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.tools.notifications.updated') },
 );
 
 const toggleTool = (tool: string) => {

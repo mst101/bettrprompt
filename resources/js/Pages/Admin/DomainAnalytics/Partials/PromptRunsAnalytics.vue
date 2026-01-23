@@ -102,17 +102,6 @@ onMounted(() => {
     loadData();
 });
 
-const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
-
 const formatDuration = (ms: number | null): string => {
     if (ms === null) return 'N/A';
     const seconds = Math.floor(ms / 1000);

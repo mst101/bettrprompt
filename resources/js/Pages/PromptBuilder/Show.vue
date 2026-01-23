@@ -130,81 +130,88 @@ interface Props {
     claudeModels?: ClaudeModel[];
 }
 
-// Define tabs
-const tabs = computed<Tab[]>(() => {
-    const allTabs: Tab[] = [];
+// Individual condition computeds for better caching
+const hasFramework = computed(() => !!props.promptRun.selectedFramework);
 
-    // Your Task tab (always shown)
-    allTabs.push({
-        id: 'task',
-        label: t('promptBuilder.tabs.task'),
-        icon: 'squares-2x2',
-    });
-
-    // Framework tab (show whenever a framework has been selected, regardless of workflow stage)
-    if (props.promptRun.selectedFramework) {
-        allTabs.push({
-            id: 'framework',
-            label: t('promptBuilder.tabs.framework'),
-            mobileLabel: t('promptBuilder.tabs.frameworkMobile'),
-            icon: 'cube',
-        });
-    }
-
-    // Add personality tab if tier is not 'none' and UI complexity is advanced
-    if (
-        props.promptRun.personalityTier &&
+const hasPersonality = computed(
+    () =>
+        !!props.promptRun.personalityTier &&
         props.promptRun.personalityTier !== 'none' &&
-        props.uiComplexity === 'advanced'
-    ) {
-        allTabs.push({
-            id: 'personality',
-            label: t('promptBuilder.tabs.personality'),
-            icon: 'user',
-        });
-    }
+        props.uiComplexity === 'advanced',
+);
 
-    // Add questions tab (only when framework questions exist)
-    if (
-        props.promptRun.frameworkQuestions &&
-        props.promptRun.frameworkQuestions.length > 0
-    ) {
-        allTabs.push({
-            id: 'questions',
-            label: t('promptBuilder.tabs.questions'),
-            icon: 'question-mark-circle',
-        });
-    }
+const hasFrameworkQuestions = computed(
+    () =>
+        !!props.promptRun.frameworkQuestions &&
+        props.promptRun.frameworkQuestions.length > 0,
+);
 
-    // Recommendations tab (only shown when model recommendations exist)
-    if (
-        props.promptRun.modelRecommendations ||
-        props.promptRun.iterationSuggestions
-    ) {
-        allTabs.push({
-            id: 'recommendations',
-            label: t('promptBuilder.tabs.recommendations'),
-            icon: 'light-bulb',
-        });
-    }
+const hasModelRecommendations = computed(
+    () =>
+        !!props.promptRun.modelRecommendations ||
+        !!props.promptRun.iterationSuggestions,
+);
 
-    // API Usage tab (only shown in advanced mode and for admins)
-    if (props.uiComplexity === 'advanced' && isAdmin.value) {
-        allTabs.push({
-            id: 'api-usage',
-            label: t('promptBuilder.tabs.costs'),
-            icon: 'chart-bar',
-        });
-    }
+const showApiUsage = computed(
+    () => props.uiComplexity === 'advanced' && isAdmin.value,
+);
 
-    // Optimised Prompt tab (only for completed runs with prompt)
-    if (props.promptRun.optimizedPrompt) {
-        allTabs.push({
-            id: 'prompt',
-            label: t('promptBuilder.tabs.prompt'),
-            icon: 'sparkles',
-        });
-    }
+const showOptimisedPrompt = computed(() => !!props.promptRun.optimizedPrompt);
+
+// Individual tab computeds
+const taskTab = computed<Tab>(() => ({
+    id: 'task',
+    label: t('promptBuilder.tabs.task'),
+    icon: 'squares-2x2',
+}));
+
+const frameworkTab = computed<Tab>(() => ({
+    id: 'framework',
+    label: t('promptBuilder.tabs.framework'),
+    mobileLabel: t('promptBuilder.tabs.frameworkMobile'),
+    icon: 'cube',
+}));
+
+const personalityTab = computed<Tab>(() => ({
+    id: 'personality',
+    label: t('promptBuilder.tabs.personality'),
+    icon: 'user',
+}));
+
+const questionsTab = computed<Tab>(() => ({
+    id: 'questions',
+    label: t('promptBuilder.tabs.questions'),
+    icon: 'question-mark-circle',
+}));
+
+const recommendationsTab = computed<Tab>(() => ({
+    id: 'recommendations',
+    label: t('promptBuilder.tabs.recommendations'),
+    icon: 'light-bulb',
+}));
+
+const apiUsageTab = computed<Tab>(() => ({
+    id: 'api-usage',
+    label: t('promptBuilder.tabs.costs'),
+    icon: 'chart-bar',
+}));
+
+const optimisedPromptTab = computed<Tab>(() => ({
+    id: 'prompt',
+    label: t('promptBuilder.tabs.prompt'),
+    icon: 'sparkles',
+}));
+
+// Compose tabs from individual pieces
+const tabs = computed<Tab[]>(() => {
+    const allTabs: Tab[] = [taskTab.value];
+
+    if (hasFramework.value) allTabs.push(frameworkTab.value);
+    if (hasPersonality.value) allTabs.push(personalityTab.value);
+    if (hasFrameworkQuestions.value) allTabs.push(questionsTab.value);
+    if (hasModelRecommendations.value) allTabs.push(recommendationsTab.value);
+    if (showApiUsage.value) allTabs.push(apiUsageTab.value);
+    if (showOptimisedPrompt.value) allTabs.push(optimisedPromptTab.value);
 
     return allTabs;
 });

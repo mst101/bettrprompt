@@ -2,6 +2,7 @@
 import Card from '@/Components/Base/Card.vue';
 import DynamicIcon from '@/Components/Base/DynamicIcon.vue';
 import type { SessionResource } from '@/Types';
+import { formatDateTime, formatDuration } from '@/Utils/formatting/formatters';
 import { ref } from 'vue';
 
 interface Props {
@@ -14,23 +15,6 @@ const expanded = ref(false);
 
 const toggleExpand = () => {
     expanded.value = !expanded.value;
-};
-
-const formatDateTime = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
-
-const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}m ${secs}s`;
 };
 
 const getUtmString = (): string => {

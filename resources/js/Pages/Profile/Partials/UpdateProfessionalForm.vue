@@ -4,11 +4,12 @@ import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
 import FormSelect from '@/Components/Base/Form/FormSelect.vue';
 import ButtonTrash from '@/Components/Common/ButtonTrash.vue';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useNotification } from '@/Composables/ui/useNotification';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { useForm } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface Props {
@@ -43,32 +44,14 @@ const companySizeOptions = computed(() => [
     },
 ]);
 
-const form = useForm({
-    jobTitle: props.professionalData.jobTitle || '',
-    industry: props.professionalData.industry || '',
-    experienceLevel: props.professionalData.experienceLevel || '',
-    companySize: props.professionalData.companySize || '',
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.professional.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        jobTitle: props.professionalData.jobTitle || '',
+        industry: props.professionalData.industry || '',
+        experienceLevel: props.professionalData.experienceLevel || '',
+        companySize: props.professionalData.companySize || '',
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.professional.notifications.updated') },
 );
 
 const submit = () => {

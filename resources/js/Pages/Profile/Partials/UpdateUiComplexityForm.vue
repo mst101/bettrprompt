@@ -2,9 +2,8 @@
 import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormRadio from '@/Components/Base/Form/FormRadio.vue';
 import InputLabel from '@/Components/Base/InputLabel.vue';
-import { useNotification } from '@/Composables/ui/useNotification';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -13,33 +12,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
 const { countryRoute } = useCountryRoute();
 
-const form = useForm({
-    uiComplexity: props.uiComplexity,
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.uiComplexity.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        uiComplexity: props.uiComplexity,
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.uiComplexity.notifications.updated') },
 );
 
 // Auto-save when the selected option changes

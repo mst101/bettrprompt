@@ -4,11 +4,12 @@ import Card from '@/Components/Base/Card.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useTableSorting } from '@/Composables/data/useTableSorting';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
     visitors: Paginated<VisitorListResource>;
@@ -47,42 +48,16 @@ const debouncedSearch = () => {
     }, 300);
 };
 
-const sortBy = (column: string) => {
-    const currentSortBy = props.filters.sortBy;
-    const currentDirection = props.filters.sortDirection;
-
-    let newDirection = 'asc';
-    if (currentSortBy === column && currentDirection === 'asc') {
-        newDirection = 'desc';
-    }
-
-    router.get(
-        window.location.pathname,
-        {
+const { sortBy, sortDirection } = useTableSorting(
+    props.filters.sortBy,
+    props.filters.sortDirection,
+    {
+        additionalParams: {
             search: searchQuery.value,
-            sort_by: column,
-            sort_direction: newDirection,
             per_page: props.filters.perPage,
         },
-        {
-            preserveState: true,
-            preserveScroll: true,
-        },
-    );
-};
-
-const sortDirection = computed(() => {
-    return props.filters.sortDirection;
-});
-
-const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
+    },
+);
 </script>
 
 <template>

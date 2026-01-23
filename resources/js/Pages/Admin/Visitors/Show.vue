@@ -6,6 +6,7 @@ import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { SessionStatsResource, VisitorDetailResource } from '@/Types';
+import { formatDuration } from '@/Utils/formatting/formatters';
 import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
@@ -20,21 +21,6 @@ defineOptions({
 });
 
 const { countryRoute } = useCountryRoute();
-
-const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-};
-
-const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}m ${secs}s`;
-};
 </script>
 
 <template>

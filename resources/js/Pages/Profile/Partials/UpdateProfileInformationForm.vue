@@ -2,10 +2,9 @@
 import ButtonPrimary from '@/Components/Base/Button/ButtonPrimary.vue';
 import CollapsibleSection from '@/Components/Base/CollapsibleSection.vue';
 import FormInput from '@/Components/Base/Form/FormInput.vue';
-import { useNotification } from '@/Composables/ui/useNotification';
+import { useFormWithNotifications } from '@/Composables/data/useFormWithNotifications';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{
@@ -14,34 +13,15 @@ defineProps<{
 }>();
 
 const user = usePage().props.auth!.user!;
-const { success, error } = useNotification();
 const { t } = useI18n({ useScope: 'global' });
 const { countryRoute } = useCountryRoute();
 
-const form = useForm({
-    name: user.name,
-    email: user.email,
-});
-
-watch(
-    () => form.recentlySuccessful,
-    (value) => {
-        if (value) {
-            success(t('profile.profileInfo.notifications.updated'));
-        }
+const form = useFormWithNotifications(
+    {
+        name: user.name,
+        email: user.email,
     },
-);
-
-watch(
-    () => Object.keys(form.errors).length > 0,
-    (hasErrors) => {
-        if (hasErrors) {
-            const errorMessage = Object.values(form.errors)[0];
-            if (typeof errorMessage === 'string') {
-                error(errorMessage);
-            }
-        }
-    },
+    { successMessage: t('profile.profileInfo.notifications.updated') },
 );
 </script>
 
