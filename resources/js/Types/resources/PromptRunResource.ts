@@ -4,6 +4,16 @@
  */
 
 import type { UserResource, VisitorResource } from '@/Types';
+import type {
+    AlternativeFramework,
+    ApiUsage,
+    CognitiveRequirements,
+    ModelRecommendation,
+    PersonalityTier,
+    SelectedFramework,
+    TaskClassification,
+    TaskTraitAlignment,
+} from '@/Types/models/PromptData';
 
 export interface PromptRunResource {
     readonly id: number;
@@ -13,12 +23,12 @@ export interface PromptRunResource {
     readonly personalityType: string | null;
     readonly traitPercentages: Record<string, number> | null;
     readonly taskDescription: string;
-    readonly preAnalysisQuestions: Array<unknown> | null;
+    readonly preAnalysisQuestions: Array<Record<string, unknown>> | null;
     readonly preAnalysisAnswers: Record<string, string> | null;
     readonly preAnalysisReasoning: string | null;
     readonly preAnalysisSkipped: boolean;
-    readonly frameworkQuestions: Array<unknown> | null;
-    readonly clarifyingAnswers: Array<unknown> | null;
+    readonly frameworkQuestions: Array<Record<string, unknown>> | null;
+    readonly clarifyingAnswers: Array<Record<string, unknown>> | null;
     readonly optimizedPrompt: string | null;
     readonly workflowStage: string;
     readonly errorMessage: string | null;
@@ -26,21 +36,21 @@ export interface PromptRunResource {
     readonly createdAt: string;
     readonly updatedAt: string;
     // Prompt Builder specific fields
-    readonly taskClassification: Record<string, unknown> | null;
-    readonly cognitiveRequirements: Record<string, unknown> | null;
-    readonly selectedFramework: Record<string, unknown> | null;
-    readonly alternativeFrameworks: Array<unknown> | null;
-    readonly personalityTier: string | null;
-    readonly taskTraitAlignment: Record<string, unknown> | null;
+    readonly taskClassification: TaskClassification | null;
+    readonly cognitiveRequirements: CognitiveRequirements | null;
+    readonly selectedFramework: SelectedFramework | null;
+    readonly alternativeFrameworks: AlternativeFramework[] | null;
+    readonly personalityTier: PersonalityTier | null;
+    readonly taskTraitAlignment: TaskTraitAlignment | null;
     readonly personalityAdjustmentsPreview: Array<string> | null;
     readonly questionRationale: string | null;
-    readonly frameworkUsed: Record<string, unknown> | null;
+    readonly frameworkUsed: SelectedFramework | null;
     readonly personalityAdjustmentsSummary: Array<string> | null;
-    readonly modelRecommendations: Array<unknown> | null;
+    readonly modelRecommendations: ModelRecommendation[] | null;
     readonly iterationSuggestions: Array<string> | null;
-    readonly preAnalysisApiUsage: Record<string, unknown> | null;
-    readonly analysisApiUsage: Record<string, unknown> | null;
-    readonly generationApiUsage: Record<string, unknown> | null;
+    readonly preAnalysisApiUsage: ApiUsage | ApiUsage[] | null;
+    readonly analysisApiUsage: ApiUsage | ApiUsage[] | null;
+    readonly generationApiUsage: ApiUsage | ApiUsage[] | null;
     // Question ratings
     readonly questionRatings?: Array<{
         questionId: string;
