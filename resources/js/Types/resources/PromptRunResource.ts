@@ -17,14 +17,16 @@
 import type { UserResource, VisitorResource } from '@/Types';
 import type {
     AlternativeFramework,
-    ApiUsage,
     CognitiveRequirements,
-    ModelRecommendation,
     PersonalityTier,
     SelectedFramework,
     TaskClassification,
     TaskTraitAlignment,
 } from '@/Types/models/PromptData';
+import type {
+    ApiUsageResource,
+    ModelRecommendationResource,
+} from '@/Types/resources';
 
 export interface PromptRunResource {
     readonly id: number;
@@ -57,11 +59,11 @@ export interface PromptRunResource {
     readonly questionRationale: string | null;
     readonly frameworkUsed: SelectedFramework | null;
     readonly personalityAdjustmentsSummary: Array<string> | null;
-    readonly modelRecommendations: ModelRecommendation[] | null;
+    readonly modelRecommendations: ModelRecommendationResource[] | null;
     readonly iterationSuggestions: Array<string> | null;
-    readonly preAnalysisApiUsage: ApiUsage | ApiUsage[] | null;
-    readonly analysisApiUsage: ApiUsage | ApiUsage[] | null;
-    readonly generationApiUsage: ApiUsage | ApiUsage[] | null;
+    readonly preAnalysisApiUsage: ApiUsageResource | ApiUsageResource[] | null;
+    readonly analysisApiUsage: ApiUsageResource | ApiUsageResource[] | null;
+    readonly generationApiUsage: ApiUsageResource | ApiUsageResource[] | null;
     // Question ratings
     readonly questionRatings?: Array<{
         questionId: string;

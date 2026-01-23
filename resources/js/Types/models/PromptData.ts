@@ -3,6 +3,12 @@
  * These types ensure type safety when passing data to components
  */
 
+import type {
+    AmplifiedTraitResource,
+    CounterbalancedTraitResource,
+    NeutralTraitResource,
+} from '@/Types/resources';
+
 // Framework selection data
 export interface SelectedFramework {
     name: string;
@@ -34,22 +40,14 @@ export interface CognitiveRequirements {
 // Personality data
 export type PersonalityTier = 'full' | 'partial' | 'none';
 
+/**
+ * TaskTraitAlignment structure as returned by Laravel
+ * Contains amplified, counterbalanced, and neutral trait resources
+ */
 export interface TaskTraitAlignment {
-    amplified: Array<{
-        trait: string;
-        description: string;
-        percentage: number;
-    }>;
-    counterbalanced: Array<{
-        trait: string;
-        description: string;
-        percentage: number;
-    }>;
-    neutral: Array<{
-        trait: string;
-        description: string;
-        percentage: number;
-    }>;
+    amplified: AmplifiedTraitResource[];
+    counterbalanced: CounterbalancedTraitResource[];
+    neutral: NeutralTraitResource[];
 }
 
 // Recommendations data
