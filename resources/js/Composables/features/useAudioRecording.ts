@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCountryRoute } from '@/Composables/useCountryRoute';
+import { logger } from '@/Utils/logger';
 import { onUnmounted, ref } from 'vue';
 
 export function useAudioRecording() {
@@ -42,7 +43,7 @@ export function useAudioRecording() {
             } else {
                 error.value = 'Failed to start recording. Please try again.';
             }
-            console.error('Audio recording error:', err);
+            logger.error('Audio recording error:', err);
 
             // Auto-dismiss error after 5 seconds
             setTimeout(() => {
@@ -143,7 +144,7 @@ export function useAudioRecording() {
 
             return data.transcript;
         } catch (err) {
-            console.error('Upload error:', err);
+            logger.error('Upload error:', err);
             throw err;
         }
     };

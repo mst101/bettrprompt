@@ -4,12 +4,11 @@ import Card from '@/Components/Base/Card.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useDebounceSearch } from '@/Composables/data/useDebounceSearch';
 import { useTableSorting } from '@/Composables/data/useTableSorting';
-import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
     visitors: Paginated<VisitorListResource>;
@@ -27,33 +26,21 @@ defineOptions({
     layout: AdminLayout,
 });
 
-const { countryRoute } = useCountryRoute();
-
-const searchQuery = ref(props.search || '');
-let debounceTimeout: ReturnType<typeof setTimeout>;
-
-const debouncedSearch = () => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-        router.get(
-            window.location.pathname,
-            {
-                search: searchQuery.value,
-                sort_by: props.filters.sortBy,
-                sort_direction: props.filters.sortDirection,
-                per_page: props.filters.perPage,
-            },
-            { preserveState: true, preserveScroll: true },
-        );
-    }, 300);
-};
+const { search } = useDebounceSearch(props.search || '', {
+    additionalParams: {
+        sort_by: props.filters.sortBy,
+        sort_direction: props.filters.sortDirection,
+        per_page: props.filters.perPage,
+    },
+    preserveScroll: true,
+});
 
 const { sortBy, sortDirection } = useTableSorting(
     props.filters.sortBy,
     props.filters.sortDirection,
     {
         additionalParams: {
-            search: searchQuery.value,
+            search: search.value,
             per_page: props.filters.perPage,
         },
     },
@@ -70,12 +57,11 @@ const { sortBy, sortDirection } = useTableSorting(
         <div class="mb-6">
             <input
                 id="visitor-search"
-                v-model="searchQuery"
+                v-model="search"
                 type="text"
                 placeholder="Search by visitor ID, country, or linked user..."
                 class="w-full rounded-lg border border-indigo-200 px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 data-testid="visitor-search"
-                @input="debouncedSearch"
             />
         </div>
 

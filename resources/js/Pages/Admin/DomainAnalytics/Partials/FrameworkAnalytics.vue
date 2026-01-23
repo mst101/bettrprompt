@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { useAnalyticsDataFetch } from '@/Composables/data/useAnalyticsDataFetch';
+import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StatCard from './StatCard.vue';
 
@@ -23,7 +24,6 @@ interface FrameworkData {
     copyRate: number;
 }
 
-const loading = ref(false);
 const frameworks = ref<FrameworkData[]>([]);
 const topFrameworks = ref<FrameworkData[]>([]);
 const stats = ref({
@@ -33,41 +33,32 @@ const stats = ref({
     copyRate: 0,
 });
 
-const loadData = async () => {
-    loading.value = true;
-    try {
-        // Fetch from API
-        const response = await fetch(
-            `/api/admin/domain-analytics/frameworks?start_date=${props.dateFrom}&end_date=${props.dateTo}`,
-            {
-                headers: {
-                    Accept: 'application/json',
-                },
-                credentials: 'same-origin',
-            },
-        );
-        if (!response.ok) {
-            throw new Error(
-                `Failed to load framework analytics: HTTP ${response.status}`,
-            );
-        }
-        const data = await response.json();
+const { loading, fetchData } = useAnalyticsDataFetch(
+    '/api/admin/domain-analytics/frameworks',
+);
 
+const loadAnalytics = async () => {
+    try {
+        const data = await fetchData(props.dateFrom, props.dateTo);
         frameworks.value = data.frameworks || [];
         stats.value = data.stats || {};
         topFrameworks.value = frameworks.value.slice(0, 5);
-
         emit('dataLoaded');
-    } catch (error) {
-        console.error('Failed to load framework analytics:', error);
-    } finally {
-        loading.value = false;
+    } catch {
+        // Error already logged in composable
     }
 };
 
 onMounted(() => {
-    loadData();
+    loadAnalytics();
 });
+
+watch(
+    () => [props.dateFrom, props.dateTo],
+    () => {
+        loadAnalytics();
+    },
+);
 </script>
 
 <template>

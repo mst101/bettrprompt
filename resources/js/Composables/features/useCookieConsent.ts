@@ -1,4 +1,5 @@
 import { type CookiePreferences } from '@/Constants/cookies';
+import { logger } from '@/Utils/logger';
 import { computed, ref } from 'vue';
 
 const CONSENT_COOKIE_NAME = 'cookie_consent';
@@ -49,7 +50,7 @@ export function useCookieConsent() {
                 cookiePreferences.value = JSON.parse(stored);
                 hasConsent.value = true;
             } catch (e) {
-                console.error('Failed to parse cookie preferences:', e);
+                logger.error('Failed to parse cookie preferences:', e);
                 cookiePreferences.value = null;
                 hasConsent.value = false;
             }

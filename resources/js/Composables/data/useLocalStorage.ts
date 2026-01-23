@@ -1,3 +1,4 @@
+import { logger } from '@/Utils/logger';
 import { ref, watch, type Ref } from 'vue';
 
 /**
@@ -20,7 +21,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): Ref<T> {
                 return JSON.parse(stored);
             }
         } catch (error) {
-            console.warn(`Error reading localStorage key "${key}":`, error);
+            logger.warn(`Error reading localStorage key "${key}":`, error);
         }
         return defaultValue;
     };
@@ -34,10 +35,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): Ref<T> {
             try {
                 localStorage.setItem(key, JSON.stringify(newValue));
             } catch (error) {
-                console.error(
-                    `Error writing localStorage key "${key}":`,
-                    error,
-                );
+                logger.error(`Error writing localStorage key "${key}":`, error);
             }
         },
         { deep: true },

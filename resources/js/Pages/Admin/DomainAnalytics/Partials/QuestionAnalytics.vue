@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { useAnalyticsDataFetch } from '@/Composables/data/useAnalyticsDataFetch';
+import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StatCard from './StatCard.vue';
 
@@ -23,7 +24,6 @@ interface QuestionData {
     isEffective: boolean;
 }
 
-const loading = ref(false);
 const questions = ref<QuestionData[]>([]);
 const mostEffective = ref<QuestionData[]>([]);
 const needsImprovement = ref<QuestionData[]>([]);
@@ -34,26 +34,13 @@ const stats = ref({
     avgTimeMs: 0,
 });
 
-const loadData = async () => {
-    loading.value = true;
-    try {
-        // Fetch from API
-        const response = await fetch(
-            `/api/admin/domain-analytics/questions?start_date=${props.dateFrom}&end_date=${props.dateTo}`,
-            {
-                headers: {
-                    Accept: 'application/json',
-                },
-                credentials: 'same-origin',
-            },
-        );
-        if (!response.ok) {
-            throw new Error(
-                `Failed to load question analytics: HTTP ${response.status}`,
-            );
-        }
-        const data = await response.json();
+const { loading, fetchData } = useAnalyticsDataFetch(
+    '/api/admin/domain-analytics/questions',
+);
 
+const loadAnalytics = async () => {
+    try {
+        const data = await fetchData(props.dateFrom, props.dateTo);
         questions.value = data.questions || [];
         stats.value = data.stats || {};
         mostEffective.value = questions.value
@@ -64,18 +51,22 @@ const loadData = async () => {
             .filter((q) => !q.isEffective)
             .sort((a, b) => b.skipRate - a.skipRate)
             .slice(0, 5);
-
         emit('dataLoaded');
-    } catch (error) {
-        console.error('Failed to load question analytics:', error);
-    } finally {
-        loading.value = false;
+    } catch {
+        // Error already logged in composable
     }
 };
 
 onMounted(() => {
-    loadData();
+    loadAnalytics();
 });
+
+watch(
+    () => [props.dateFrom, props.dateTo],
+    () => {
+        loadAnalytics();
+    },
+);
 </script>
 
 <template>

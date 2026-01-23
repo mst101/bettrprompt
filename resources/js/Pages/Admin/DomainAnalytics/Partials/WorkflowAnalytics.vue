@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useAnalyticsDataFetch } from '@/Composables/data/useAnalyticsDataFetch';
 import type { ErrorAnalyticsResource, WorkflowStageResource } from '@/Types';
 import { AlertCircle, CheckCircle } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
@@ -15,12 +16,15 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const loading = ref(false);
 const workflowStages = ref<WorkflowStageResource[]>([]);
 const topErrors = ref<ErrorAnalyticsResource[]>([]);
 const totalCost = ref(0);
 const totalInputTokens = ref(0);
 const totalOutputTokens = ref(0);
+
+const { fetchData } = useAnalyticsDataFetch(
+    '/api/admin/domain-analytics/workflows',
+);
 
 const costPerExecution = computed(() => {
     const totalExecutions = workflowStages.value.reduce(
@@ -30,43 +34,30 @@ const costPerExecution = computed(() => {
     return totalExecutions > 0 ? totalCost.value / totalExecutions : 0;
 });
 
-const loadData = async () => {
-    loading.value = true;
+const loadAnalytics = async () => {
     try {
-        // Fetch from API
-        const response = await fetch(
-            `/api/admin/domain-analytics/workflows?start_date=${props.dateFrom}&end_date=${props.dateTo}`,
-            {
-                headers: {
-                    Accept: 'application/json',
-                },
-                credentials: 'same-origin',
-            },
-        );
-        if (!response.ok) {
-            throw new Error(
-                `Failed to load workflow analytics: HTTP ${response.status}`,
-            );
-        }
-        const data = await response.json();
-
+        const data = await fetchData(props.dateFrom, props.dateTo);
         workflowStages.value = data.stages || [];
         topErrors.value = data.topErrors || [];
         totalCost.value = data.totalCost || 0;
         totalInputTokens.value = data.totalInputTokens || 0;
         totalOutputTokens.value = data.totalOutputTokens || 0;
-
         emit('dataLoaded');
-    } catch (error) {
-        console.error('Failed to load workflow analytics:', error);
-    } finally {
-        loading.value = false;
+    } catch {
+        // Error already logged in composable
     }
 };
 
 onMounted(() => {
-    loadData();
+    loadAnalytics();
 });
+
+watch(
+    () => [props.dateFrom, props.dateTo],
+    () => {
+        loadAnalytics();
+    },
+);
 </script>
 
 <template>

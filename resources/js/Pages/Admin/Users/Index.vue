@@ -5,13 +5,12 @@ import FormInput from '@/Components/Base/Form/FormInput.vue';
 import TableHeaderSortable from '@/Components/Base/TableHeaderSortable.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
+import { useDebounceSearch } from '@/Composables/data/useDebounceSearch';
 import { useTableSorting } from '@/Composables/data/useTableSorting';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { UserListResource } from '@/Types';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { useDebounceFn } from '@vueuse/core';
-import { ref, watch } from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
     users: {
@@ -33,22 +32,15 @@ defineOptions({
     layout: AdminLayout,
 });
 
-const search = ref(props.filters.search || '');
 const { countryRoute } = useCountryRoute();
 
-const debouncedSearch = useDebounceFn(() => {
-    router.get(
-        countryRoute('admin.users.index'),
-        {
-            search: search.value,
-            sort_by: props.filters.sortBy,
-            sort_direction: props.filters.sortDirection,
-        },
-        { preserveState: true, replace: true },
-    );
-}, 300);
-
-watch(search, debouncedSearch);
+const { search } = useDebounceSearch(props.filters.search || '', {
+    routePath: countryRoute('admin.users.index'),
+    additionalParams: {
+        sort_by: props.filters.sortBy,
+        sort_direction: props.filters.sortDirection,
+    },
+});
 
 const { sortBy, sortDirection } = useTableSorting(
     props.filters.sortBy,
