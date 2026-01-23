@@ -39,16 +39,17 @@
 <body class="font-sans antialiased">
 @inertia
 
-<!-- Fullstory Initialization - Loaded after page render for better FCP/LCP -->
+<!-- Fullstory Initialization - Deferred via requestIdleCallback for better TBT -->
 @production
     @php
         $shouldDisableAnalytics = request()->is('horizon', 'horizon/*', '*/admin', '*/admin/*');
     @endphp
     @unless($shouldDisableAnalytics)
     <script>
-        // Load FullStory SDK after page load
-        if (window._fs_namespace && window._fs_script && window._fs_host) {
-            !function(m, n, e, t, l, o, g, y) {
+        // Defer FullStory initialization until browser is idle to minimize TBT
+        function initFullStory() {
+            if (window._fs_namespace && window._fs_script && window._fs_host) {
+                !function(m, n, e, t, l, o, g, y) {
                 var s, f, a = function(h) {
                         return !(h in m) || (m.console && m.console.log && m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].'), !1);
                     }(e)
@@ -159,7 +160,16 @@
                     f = 'XMLHttpRequest', g._w = {}, g._w[f] = m[f], g._w[s] = m[s], m[s] && (m[s] = function() {
                     return g._w.apply(this, arguments);
                 }), g._v = '2.0.0');
-            }(window, document, window._fs_namespace, 'script', window._fs_script);
+                }(window, document, window._fs_namespace, 'script', window._fs_script);
+            }
+        }
+
+        // Load FullStory when browser is idle (after render + user interaction opportunity)
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initFullStory, { timeout: 3000 });
+        } else {
+            // Fallback for browsers without requestIdleCallback
+            setTimeout(initFullStory, 2000);
         }
     </script>
     @endunless
