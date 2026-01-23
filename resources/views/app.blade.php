@@ -11,10 +11,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Fonts - preload with optional display to prevent render blocking -->
+    <!-- Fonts - use swap to show text immediately, then swap in custom font when loaded -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
-    <link rel="preload" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet"></noscript>
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Fullstory Analytics Config - Deferred loading for better FCP -->
     @production
