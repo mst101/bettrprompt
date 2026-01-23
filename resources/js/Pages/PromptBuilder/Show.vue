@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
 import LinkButton from '@/Components/Base/LinkButton.vue';
-import Tabs, { type Tab } from '@/Components/Base/Tabs.vue';
+import Tabs from '@/Components/Base/Tabs.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
@@ -18,6 +18,7 @@ import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/Tas
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
 // Lazily loaded - conditionally rendered
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
+import { useTabVisibility } from '@/Composables/features/useTabVisibility';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -130,91 +131,12 @@ interface Props {
     claudeModels?: ClaudeModel[];
 }
 
-// Individual condition computeds for better caching
-const hasFramework = computed(() => !!props.promptRun.selectedFramework);
-
-const hasPersonality = computed(
-    () =>
-        !!props.promptRun.personalityTier &&
-        props.promptRun.personalityTier !== 'none' &&
-        props.uiComplexity === 'advanced',
+// Tab visibility logic - centralised in composable
+const { tabs } = useTabVisibility(
+    props.promptRun,
+    props.uiComplexity,
+    isAdmin.value,
 );
-
-const hasFrameworkQuestions = computed(
-    () =>
-        !!props.promptRun.frameworkQuestions &&
-        props.promptRun.frameworkQuestions.length > 0,
-);
-
-const hasModelRecommendations = computed(
-    () =>
-        !!props.promptRun.modelRecommendations ||
-        !!props.promptRun.iterationSuggestions,
-);
-
-const showApiUsage = computed(
-    () => props.uiComplexity === 'advanced' && isAdmin.value,
-);
-
-const showOptimisedPrompt = computed(() => !!props.promptRun.optimizedPrompt);
-
-// Individual tab computeds
-const taskTab = computed<Tab>(() => ({
-    id: 'task',
-    label: t('promptBuilder.tabs.task'),
-    icon: 'squares-2x2',
-}));
-
-const frameworkTab = computed<Tab>(() => ({
-    id: 'framework',
-    label: t('promptBuilder.tabs.framework'),
-    mobileLabel: t('promptBuilder.tabs.frameworkMobile'),
-    icon: 'cube',
-}));
-
-const personalityTab = computed<Tab>(() => ({
-    id: 'personality',
-    label: t('promptBuilder.tabs.personality'),
-    icon: 'user',
-}));
-
-const questionsTab = computed<Tab>(() => ({
-    id: 'questions',
-    label: t('promptBuilder.tabs.questions'),
-    icon: 'question-mark-circle',
-}));
-
-const recommendationsTab = computed<Tab>(() => ({
-    id: 'recommendations',
-    label: t('promptBuilder.tabs.recommendations'),
-    icon: 'light-bulb',
-}));
-
-const apiUsageTab = computed<Tab>(() => ({
-    id: 'api-usage',
-    label: t('promptBuilder.tabs.costs'),
-    icon: 'chart-bar',
-}));
-
-const optimisedPromptTab = computed<Tab>(() => ({
-    id: 'prompt',
-    label: t('promptBuilder.tabs.prompt'),
-    icon: 'sparkles',
-}));
-
-// Compose tabs from individual pieces
-const tabs = computed<Tab[]>(() => {
-    const allTabs: Tab[] = [taskTab.value];
-
-    if (hasFramework.value) allTabs.push(frameworkTab.value);
-    if (hasPersonality.value) allTabs.push(personalityTab.value);
-    if (hasFrameworkQuestions.value) allTabs.push(questionsTab.value);
-    if (hasModelRecommendations.value) allTabs.push(recommendationsTab.value);
-    if (showApiUsage.value) allTabs.push(apiUsageTab.value);
-    if (showOptimisedPrompt.value) allTabs.push(optimisedPromptTab.value);
-
-    return allTabs;
-});
 
 // Determine initial tab based on workflow stage
 const getInitialTab = (): string => {
