@@ -1,4 +1,5 @@
-import { computed, ref } from 'vue';
+import { useLocalStorage } from '@/Composables/data/useLocalStorage';
+import { computed } from 'vue';
 
 const STORAGE_KEY = 'personality-prompt-dismissed';
 
@@ -7,28 +8,15 @@ const STORAGE_KEY = 'personality-prompt-dismissed';
  * Persists the preference to localStorage so it won't show again on future visits
  */
 export const usePersonalityPromptPreference = () => {
-    // Initialize isDismissed from localStorage
-    const getInitialValue = () => {
-        if (typeof window === 'undefined') return false;
-        const stored = localStorage.getItem(STORAGE_KEY);
-        return stored === 'true';
-    };
-
-    const isDismissed = ref<boolean>(getInitialValue());
+    const isDismissed = useLocalStorage(STORAGE_KEY, false);
     const showPrompt = computed(() => !isDismissed.value);
 
     const dismissPrompt = () => {
         isDismissed.value = true;
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, 'true');
-        }
     };
 
     const resetPreference = () => {
         isDismissed.value = false;
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem(STORAGE_KEY);
-        }
     };
 
     return {

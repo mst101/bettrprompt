@@ -2,11 +2,12 @@
 import Card from '@/Components/Base/Card.vue';
 import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
-import { useWorkflowStageColor } from '@/Composables/features/useWorkflowStageColor';
+import { useStatusBadge } from '@/Composables/ui/useStatusBadge';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { PromptRunResource } from '@/Types';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
     taskDescription: string;
@@ -25,8 +26,9 @@ defineOptions({
 });
 
 const { countryRoute } = useCountryRoute();
+const { t } = useI18n({ useScope: 'global' });
 
-const { getWorkflowStageColor } = useWorkflowStageColor();
+const { getStatusConfig } = useStatusBadge();
 
 const handleRowClick = (event: MouseEvent, runId: number): void => {
     // Allow default behaviour for right-click and middle-click
@@ -193,12 +195,16 @@ const handleMiddleClick = (event: MouseEvent, runId: number): void => {
                                 <span
                                     :class="[
                                         'inline-flex rounded-full px-2 text-xs leading-5 font-semibold',
-                                        getWorkflowStageColor(
-                                            run.workflowStage,
-                                        ),
+                                        getStatusConfig(run.workflowStage)
+                                            .colorClass,
                                     ]"
                                 >
-                                    {{ run.workflowStage }}
+                                    {{
+                                        t(
+                                            getStatusConfig(run.workflowStage)
+                                                .labelKey,
+                                        )
+                                    }}
                                 </span>
                             </td>
                             <td

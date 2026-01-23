@@ -16,22 +16,8 @@ const { t } = useI18n({ useScope: 'global' });
 const { getStatusConfig } = useStatusBadge();
 const config = computed(() => getStatusConfig(props.workflowStage));
 
-// Translate status labels based on workflow stage
-const translatedLabel = computed(() => {
-    const labelMap: Record<string, string> = {
-        '2_completed': 'status.completed',
-        '0_completed': 'status.awaitingQuestions',
-        '1_completed': 'status.awaitingAnswers',
-        '0_processing': 'status.processing',
-        '1_processing': 'status.processing',
-        '2_processing': 'status.processing',
-        '0_failed': 'status.failed',
-        '1_failed': 'status.failed',
-        '2_failed': 'status.failed',
-    };
-    const key = labelMap[props.workflowStage as string];
-    return key ? t(key) : config.value.label;
-});
+// Translate status label from the labelKey
+const translatedLabel = computed(() => t(config.value.labelKey));
 </script>
 
 <template>

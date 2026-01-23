@@ -1,4 +1,5 @@
 /**
+ * @deprecated Use `useStatusBadge` instead for consistent status handling
  * Gets the colour class for a workflow stage badge
  * Extracts the stage status part from the workflow stage (e.g., "1_processing" -> "processing")
  */
