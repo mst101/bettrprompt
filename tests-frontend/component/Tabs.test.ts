@@ -144,4 +144,106 @@ describe('Tabs', () => {
         const nav = wrapper.find('nav');
         expect(nav.attributes('aria-label')).toBe('Tabs');
     });
+
+    describe('Keyboard navigation', () => {
+        it('should navigate to next tab with Arrow Right', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab1',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[0].trigger('keydown', { key: 'ArrowRight' });
+
+            expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab2']);
+        });
+
+        it('should navigate to previous tab with Arrow Left', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab2',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[1].trigger('keydown', { key: 'ArrowLeft' });
+
+            expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab1']);
+        });
+
+        it('should wrap to first tab when pressing Arrow Right on last tab', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab3',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[2].trigger('keydown', { key: 'ArrowRight' });
+
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab1']);
+        });
+
+        it('should wrap to last tab when pressing Arrow Left on first tab', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab1',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[0].trigger('keydown', { key: 'ArrowLeft' });
+
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab3']);
+        });
+
+        it('should navigate to first tab with Home key', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab2',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[1].trigger('keydown', { key: 'Home' });
+
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab1']);
+        });
+
+        it('should navigate to last tab with End key', async () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab2',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            await buttons[1].trigger('keydown', { key: 'End' });
+
+            expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tab3']);
+        });
+
+        it('should set active tab to have tabindex=0', () => {
+            const wrapper = mount(Tabs, {
+                props: {
+                    tabs: defaultTabs,
+                    modelValue: 'tab2',
+                },
+            });
+
+            const buttons = wrapper.findAll('button');
+            expect(buttons[0].attributes('tabindex')).toBe('-1');
+            expect(buttons[1].attributes('tabindex')).toBe('0');
+            expect(buttons[2].attributes('tabindex')).toBe('-1');
+        });
+    });
 });

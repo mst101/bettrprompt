@@ -13,10 +13,16 @@ export const usePersonalityPromptPreference = () => {
 
     const dismissPrompt = () => {
         isDismissed.value = true;
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, 'true');
+        }
     };
 
     const resetPreference = () => {
         isDismissed.value = false;
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, 'false');
+        }
     };
 
     return {

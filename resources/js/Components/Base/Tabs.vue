@@ -39,6 +39,39 @@ const selectOptions = computed<SelectOption[]>(() => {
 const selectTab = (tabId: string) => {
     activeTab.value = tabId;
 };
+
+const handleKeyDown = (event: KeyboardEvent) => {
+    const currentIndex = props.tabs.findIndex(
+        (tab) => tab.id === activeTab.value,
+    );
+    if (currentIndex === -1) return;
+
+    let nextIndex: number | null = null;
+
+    switch (event.key) {
+        case 'ArrowRight':
+            nextIndex = (currentIndex + 1) % props.tabs.length;
+            event.preventDefault();
+            break;
+        case 'ArrowLeft':
+            nextIndex =
+                (currentIndex - 1 + props.tabs.length) % props.tabs.length;
+            event.preventDefault();
+            break;
+        case 'Home':
+            nextIndex = 0;
+            event.preventDefault();
+            break;
+        case 'End':
+            nextIndex = props.tabs.length - 1;
+            event.preventDefault();
+            break;
+    }
+
+    if (nextIndex !== null) {
+        selectTab(props.tabs[nextIndex].id);
+    }
+};
 </script>
 
 <template>
@@ -64,7 +97,7 @@ const selectTab = (tabId: string) => {
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
-                :tabindex="activeTab === tab.id ? -1 : 0"
+                :tabindex="activeTab === tab.id ? 0 : -1"
                 :data-testid="`tab-button-${tab.id}`"
                 :class="[
                     activeTab === tab.id
@@ -75,6 +108,7 @@ const selectTab = (tabId: string) => {
                 ]"
                 :aria-current="activeTab === tab.id ? 'page' : undefined"
                 @click="selectTab(tab.id)"
+                @keydown="handleKeyDown"
             >
                 <DynamicIcon
                     v-if="tab.icon"

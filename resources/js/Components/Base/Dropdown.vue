@@ -86,7 +86,16 @@ watch(open, async (isOpen) => {
 
 <template>
     <div class="relative">
-        <div ref="trigger" @click="open = !open">
+        <div
+            ref="trigger"
+            role="button"
+            tabindex="0"
+            :aria-expanded="open"
+            aria-haspopup="true"
+            @click="open = !open"
+            @keydown.enter="open = !open"
+            @keydown.space="open = !open"
+        >
             <slot name="trigger" />
         </div>
 

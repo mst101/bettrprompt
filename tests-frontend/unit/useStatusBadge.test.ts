@@ -7,7 +7,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('2_completed');
 
-        expect(config.label).toBe('Completed');
+        expect(config.labelKey).toBe('status.completed');
         expect(config.colorClass).toBe('bg-green-100 text-green-900');
     });
 
@@ -15,7 +15,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('1_processing');
 
-        expect(config.label).toContain('Analysing');
+        expect(config.labelKey).toBe('status.processing');
         expect(config.colorClass).toBe(
             'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
         );
@@ -25,7 +25,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('0_processing');
 
-        expect(config.label).toContain('Pre-Analysis');
+        expect(config.labelKey).toBe('status.processing');
         expect(config.colorClass).toBe(
             'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
         );
@@ -35,7 +35,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('2_failed');
 
-        expect(config.label).toBe('Failed');
+        expect(config.labelKey).toBe('status.failed');
         expect(config.colorClass).toBe('bg-red-100 text-red-900');
     });
 
@@ -43,7 +43,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('1_completed');
 
-        expect(config.label).toBe('Awaiting Answers');
+        expect(config.labelKey).toBe('status.awaitingAnswers');
         expect(config.colorClass).toBe(
             'bg-blue-200 text-blue-800 dark:bg-blue-400 dark:text-blue-900',
         );
@@ -53,7 +53,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig('0_completed');
 
-        expect(config.label).toBe('Awaiting Questions');
+        expect(config.labelKey).toBe('status.awaitingQuestions');
         expect(config.colorClass).toBe(
             'bg-yellow-400 text-yellow-900 dark:text-yellow-50',
         );
@@ -64,13 +64,14 @@ describe('useStatusBadge', () => {
         const config = getStatusConfig('unknown-stage');
 
         expect(config.colorClass).toBe('bg-indigo-100 text-indigo-900');
+        expect(config.labelKey).toBe('status.unknown');
     });
 
     it('should handle null workflow stage', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig(null as any);
 
-        expect(config.label).toBe('Unknown');
+        expect(config.labelKey).toBe('status.unknown');
         expect(config.colorClass).toBe('bg-indigo-100 text-indigo-900');
     });
 
@@ -78,7 +79,7 @@ describe('useStatusBadge', () => {
         const { getStatusConfig } = useStatusBadge();
         const config = getStatusConfig(undefined as any);
 
-        expect(config.label).toBe('Unknown');
+        expect(config.labelKey).toBe('status.unknown');
         expect(config.colorClass).toBe('bg-indigo-100 text-indigo-900');
     });
 
