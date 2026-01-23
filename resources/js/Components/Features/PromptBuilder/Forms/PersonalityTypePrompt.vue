@@ -92,6 +92,7 @@ watch(
                             href="https://16personalities.com"
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label="Learn about your personality type on 16personalities.com"
                         >
                             <DynamicIcon
                                 name="personalities"
@@ -100,13 +101,13 @@ watch(
                         </a>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-indigo-900">
+                        <h2 class="text-lg font-semibold text-indigo-900">
                             {{
                                 $t(
                                     'promptBuilder.components.personalityTypePrompt.title',
                                 )
                             }}
-                        </h3>
+                        </h2>
                         <p class="mt-2 text-sm">
                             <i18n-t
                                 keypath="promptBuilder.components.personalityTypePrompt.description"

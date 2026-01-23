@@ -145,7 +145,7 @@ const handleTranscription = (text: string) => {
             </div>
             <p
                 v-if="questionPurpose"
-                class="mt-4 ml-10 text-sm text-indigo-600"
+                class="mt-4 ml-10 text-sm text-indigo-700"
             >
                 {{ questionPurpose }}
             </p>

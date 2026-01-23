@@ -12,6 +12,7 @@ import { ref, type Component } from 'vue';
 
 interface Props {
     prompt: string;
+    headingNumber: number;
 }
 
 const props = defineProps<Props>();
@@ -102,7 +103,10 @@ const handleProviderClick = async (provider: AIProvider) => {
 <template>
     <div class="space-y-3">
         <div class="flex items-center justify-between">
-            <h4 class="text-indigo-800">
+            <h3 v-if="headingNumber === 3" class="text-indigo-800">
+                {{ $t('promptBuilder.components.aiProviderLinks.description') }}
+            </h3>
+            <h4 v-if="headingNumber === 4" class="text-indigo-800">
                 {{ $t('promptBuilder.components.aiProviderLinks.description') }}
             </h4>
             <p

@@ -1000,13 +1000,13 @@ onBeforeUnmount(() => {
             class="mt-6 border-t border-indigo-200 pt-6"
         >
             <div class="flex flex-col items-center gap-3">
-                <h4 class="text-sm font-medium text-indigo-700">
+                <h3 class="text-sm font-medium text-indigo-700">
                     {{
                         $t(
                             'promptBuilder.components.clarifyingQuestions.rateQuestion',
                         )
                     }}
-                </h4>
+                </h3>
                 <PromptRating
                     :model-value="
                         questionRatings.get(currentIndex)?.rating ?? null

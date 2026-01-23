@@ -121,7 +121,7 @@ const expandedUseCases = ref<string[]>([]);
                         :title="$t('home.features.feature1.title')"
                         :description="$t('home.features.feature1.description')"
                         icon-bg-colour="bg-indigo-100"
-                        icon-colour="text-indigo-600"
+                        icon-colour="text-indigo-700"
                     />
 
                     <FeatureCard
@@ -138,7 +138,7 @@ const expandedUseCases = ref<string[]>([]);
                         :title="$t('home.features.feature3.title')"
                         :description="$t('home.features.feature3.description')"
                         icon-bg-colour="bg-indigo-100"
-                        icon-colour="text-indigo-600"
+                        icon-colour="text-indigo-700"
                     />
                 </div>
             </div>
@@ -180,7 +180,7 @@ const expandedUseCases = ref<string[]>([]);
 
                         <div class="space-y-4">
                             <div>
-                                <p class="text-sm font-medium text-gray-500">
+                                <p class="text-sm font-medium text-gray-600">
                                     {{ $t('home.comparison.labels.you') }}
                                 </p>
                                 <p
@@ -194,7 +194,7 @@ const expandedUseCases = ref<string[]>([]);
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-gray-500">
+                                <p class="text-sm font-medium text-gray-600">
                                     {{ $t('home.comparison.chatgpt.label') }}
                                 </p>
                                 <p
@@ -204,7 +204,7 @@ const expandedUseCases = ref<string[]>([]);
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-gray-500">
+                                <p class="text-sm font-medium text-gray-600">
                                     {{ $t('home.comparison.labels.youGet') }}
                                 </p>
                                 <p
@@ -216,7 +216,7 @@ const expandedUseCases = ref<string[]>([]);
                         </div>
 
                         <div
-                            class="mt-4 flex items-center gap-2 text-sm text-gray-500"
+                            class="mt-4 flex items-center gap-2 text-sm text-gray-600"
                         >
                             <DynamicIcon name="clock" class="h-4 w-4" />
                             <span>{{
@@ -235,7 +235,7 @@ const expandedUseCases = ref<string[]>([]);
                             >
                                 <DynamicIcon
                                     name="hash"
-                                    class="h-5 w-5 text-indigo-600"
+                                    class="h-5 w-5 text-indigo-700"
                                 />
                             </div>
                             <h3 class="text-lg font-semibold text-indigo-900">
@@ -245,7 +245,7 @@ const expandedUseCases = ref<string[]>([]);
 
                         <div class="space-y-4">
                             <div>
-                                <p class="text-sm font-medium text-indigo-600">
+                                <p class="text-sm font-medium text-indigo-700">
                                     {{ $t('home.comparison.labels.you') }}
                                 </p>
                                 <p
@@ -259,7 +259,7 @@ const expandedUseCases = ref<string[]>([]);
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-indigo-600">
+                                <p class="text-sm font-medium text-indigo-700">
                                     {{
                                         $t('home.comparison.bettrprompt.label')
                                     }}
@@ -275,7 +275,7 @@ const expandedUseCases = ref<string[]>([]);
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-indigo-600">
+                                <p class="text-sm font-medium text-indigo-700">
                                     {{ $t('home.comparison.labels.youGet') }}
                                 </p>
                                 <p
@@ -289,7 +289,7 @@ const expandedUseCases = ref<string[]>([]);
                         </div>
 
                         <div
-                            class="mt-4 flex items-center gap-2 text-sm text-indigo-600"
+                            class="mt-4 flex items-center gap-2 text-sm text-indigo-700"
                         >
                             <DynamicIcon name="check-circle" class="h-4 w-4" />
                             <span>{{
@@ -333,7 +333,7 @@ const expandedUseCases = ref<string[]>([]);
                             $t('home.objections.learning.description')
                         "
                         icon-bg-colour="bg-indigo-100"
-                        icon-colour="text-indigo-600"
+                        icon-colour="text-indigo-700"
                     />
                 </div>
             </div>
@@ -411,7 +411,7 @@ const expandedUseCases = ref<string[]>([]);
                     >
                         {{ $t('home.example.title') }}
                     </h2>
-                    <p class="mt-4 text-lg text-indigo-600">
+                    <p class="mt-4 text-lg text-indigo-700">
                         {{ $t('home.example.subtitle') }}
                     </p>
                 </div>

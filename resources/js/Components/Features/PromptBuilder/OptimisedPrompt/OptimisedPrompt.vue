@@ -195,9 +195,9 @@ const handleRatingSubmit = async (data: {
                 <div class="rounded-lg bg-green-100 p-2 text-green-600">
                     <DynamicIcon name="check-circle" class="h-6 w-6" />
                 </div>
-                <h3 class="text-lg font-semibold text-indigo-900">
+                <h2 class="text-lg font-semibold text-indigo-900">
                     {{ $t('promptBuilder.components.optimizedPrompt.title') }}
-                </h3>
+                </h2>
             </div>
 
             <!-- Action Buttons (top - all screens) -->
@@ -280,7 +280,10 @@ const handleRatingSubmit = async (data: {
 
             <!-- Desktop: Show providers inline -->
             <div v-if="!isEditing" class="hidden sm:block">
-                <AIProviderLinks :prompt="optimizedPrompt" />
+                <AIProviderLinks
+                    :prompt="optimizedPrompt"
+                    :heading-number="3"
+                />
             </div>
 
             <!-- Mobile: Show providers dropdown -->
@@ -307,7 +310,10 @@ const handleRatingSubmit = async (data: {
                     />
                 </button>
                 <div v-if="showProvidersDropdown" class="mb-4">
-                    <AIProviderLinks :prompt="optimizedPrompt" />
+                    <AIProviderLinks
+                        :prompt="optimizedPrompt"
+                        :heading-number="3"
+                    />
                 </div>
             </div>
 
@@ -427,16 +433,23 @@ const handleRatingSubmit = async (data: {
                 </ButtonSecondary>
             </div>
 
+            <!-- AI Provider Links (visible on all screens) -->
+            <AIProviderLinks
+                v-if="!isEditing"
+                :prompt="optimizedPrompt"
+                :heading-number="4"
+            />
+
             <!-- Rating Section -->
-            <div v-if="!isEditing" class="mt-6 border-t border-gray-200 pt-6">
+            <div v-if="!isEditing" class="mt-6 border-t border-indigo-200 pt-6">
                 <div class="flex flex-col items-center gap-3">
-                    <h3 class="text-sm font-medium text-gray-700">
+                    <h5 class="text-sm font-medium text-indigo-700">
                         {{
                             $t(
                                 'promptBuilder.components.optimizedPrompt.ratePrompt',
                             )
                         }}
-                    </h3>
+                    </h5>
                     <PromptRating
                         v-model="userRating"
                         :explanation="ratingExplanation"
@@ -454,14 +467,11 @@ const handleRatingSubmit = async (data: {
                             )
                         }}
                     </p>
-                    <p v-if="isSavingRating" class="text-sm text-gray-500">
+                    <p v-if="isSavingRating" class="text-sm text-indigo-500">
                         {{ $t('common.labels.saving') }}
                     </p>
                 </div>
             </div>
-
-            <!-- AI Provider Links (visible on all screens) -->
-            <AIProviderLinks v-if="!isEditing" :prompt="optimizedPrompt" />
         </div>
     </Card>
 </template>

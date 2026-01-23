@@ -289,7 +289,7 @@ import AIProviderLinks from '@/Components/Features/PromptBuilder/OptimisedPrompt
                     }}
                 </div>
                 <div class="pt-1">
-                    <AIProviderLinks prompt="" />
+                    <AIProviderLinks prompt="" :heading-number="4" />
                 </div>
             </div>
         </ExampleStageCard>

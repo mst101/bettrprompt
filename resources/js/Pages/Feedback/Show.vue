@@ -9,6 +9,7 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { formatDate } from '@/Utils';
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -121,7 +122,7 @@ const submit = () => {
                         {{ $t('feedback.show.actions.edit') }}
                     </ButtonSecondary>
                 </div>
-                <p class="mt-2 text-xs text-indigo-500">
+                <p class="mt-2 text-xs text-indigo-600">
                     {{
                         $t('feedback.show.lastUpdated', {
                             date: formatDate(feedback.updatedAt),

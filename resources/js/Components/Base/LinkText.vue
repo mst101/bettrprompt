@@ -24,7 +24,7 @@ defineExpose({ focus });
         ref="linkRef"
         :href="href"
         tabindex="0"
-        class="rounded-md p-1 text-indigo-600 underline underline-offset-3 transition hover:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-indigo-100 focus:outline-hidden"
+        class="rounded-md p-1 text-indigo-700 underline underline-offset-3 transition hover:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-indigo-100 focus:outline-hidden"
     >
         <slot />
     </Link>

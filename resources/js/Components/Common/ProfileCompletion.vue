@@ -43,7 +43,7 @@ const getCompletionLabel = (percentage: number) => {
             />
         </div>
 
-        <p class="text-xs text-indigo-500 sm:text-sm">
+        <p class="text-xs text-indigo-600 sm:text-sm">
             {{ getCompletionLabel(percentage) }}
         </p>
     </div>

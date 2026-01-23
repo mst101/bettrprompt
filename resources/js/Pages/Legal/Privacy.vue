@@ -19,7 +19,7 @@ defineOptions({
 
     <HeaderPage :title="t('legal.privacy.title')">
         <template #actions>
-            <p class="mt-2 w-1/2 text-sm text-indigo-600">
+            <p class="mt-2 w-1/2 text-sm text-indigo-700">
                 {{ t('legal.lastUpdated') }}:
                 {{
                     new Date().toLocaleDateString('en-GB', {
@@ -229,7 +229,7 @@ defineOptions({
                             href="https://www.anthropic.com/legal/privacy"
                             target="_blank"
                             rel="noopener"
-                            class="text-indigo-600 hover:text-indigo-800"
+                            class="text-indigo-700 hover:text-indigo-800"
                             >Privacy Policy</a
                         >
                         and
@@ -237,7 +237,7 @@ defineOptions({
                             href="https://www.anthropic.com/legal/consumer-terms"
                             target="_blank"
                             rel="noopener"
-                            class="text-indigo-600 hover:text-indigo-800"
+                            class="text-indigo-700 hover:text-indigo-800"
                             >Terms of Service</a
                         >.
                     </li>
@@ -250,7 +250,7 @@ defineOptions({
                             href="https://openai.com/policies/privacy-policy"
                             target="_blank"
                             rel="noopener"
-                            class="text-indigo-600 hover:text-indigo-800"
+                            class="text-indigo-700 hover:text-indigo-800"
                             >Privacy Policy</a
                         >
                         and
@@ -258,7 +258,7 @@ defineOptions({
                             href="https://openai.com/policies/terms-of-use"
                             target="_blank"
                             rel="noopener"
-                            class="text-indigo-600 hover:text-indigo-800"
+                            class="text-indigo-700 hover:text-indigo-800"
                             >Terms of Use</a
                         >.
                     </li>
@@ -269,7 +269,7 @@ defineOptions({
                             href="https://policies.google.com/privacy"
                             target="_blank"
                             rel="noopener"
-                            class="text-indigo-600 hover:text-indigo-800"
+                            class="text-indigo-700 hover:text-indigo-800"
                             >Privacy Policy</a
                         >.
                     </li>
@@ -521,7 +521,7 @@ defineOptions({
                         :href="LEGAL_URLS.ico"
                         target="_blank"
                         rel="noopener"
-                        class="text-indigo-600 hover:text-indigo-800"
+                        class="text-indigo-700 hover:text-indigo-800"
                         >{{ LEGAL_URLS.ico }}</a
                     ><br />
                     Telephone: {{ LEGAL_URLS.icoPhone }}

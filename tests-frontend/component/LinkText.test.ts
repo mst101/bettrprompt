@@ -44,7 +44,7 @@ describe('LinkText', () => {
         const link = wrapper.find('a');
         expect(link.classes()).toContain('rounded-md');
         expect(link.classes()).toContain('p-1');
-        expect(link.classes()).toContain('text-indigo-600');
+        expect(link.classes()).toContain('text-indigo-700');
     });
 
     it('should have hover styling', () => {
@@ -53,7 +53,7 @@ describe('LinkText', () => {
         });
 
         const link = wrapper.find('a');
-        expect(link.classes()).toContain('hover:text-indigo-700');
+        expect(link.classes()).toContain('hover:text-indigo-800');
     });
 
     it('should have transition classes', () => {
