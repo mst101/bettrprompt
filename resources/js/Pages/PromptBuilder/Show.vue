@@ -277,7 +277,7 @@ watch(
 useRealtimeUpdates(
     computed(() => `prompt-run.${props.promptRun.id}`),
     {
-        PreAnalysisCompleted: (data) => {
+        PreAnalysisCompleted: (data: Record<string, unknown>) => {
             console.log(
                 '🎉 [WebSocket] PreAnalysisCompleted event received:',
                 data,
@@ -301,7 +301,7 @@ useRealtimeUpdates(
                 },
             });
         },
-        AnalysisCompleted: (data) => {
+        AnalysisCompleted: (data: Record<string, unknown>) => {
             console.log(
                 '🎉 [WebSocket] AnalysisCompleted event received:',
                 data,
@@ -313,7 +313,11 @@ useRealtimeUpdates(
                 properties: {
                     prompt_run_id: props.promptRun.id,
                     workflow_stage: 1,
-                    framework_selected: data.selectedFramework?.code,
+                    framework_selected: (
+                        data.selectedFramework as
+                            | Record<string, unknown>
+                            | undefined
+                    )?.code,
                 },
             });
 
@@ -326,7 +330,7 @@ useRealtimeUpdates(
                 },
             });
         },
-        PromptOptimizationCompleted: (data) => {
+        PromptOptimizationCompleted: (data: Record<string, unknown>) => {
             console.log(
                 '🎉 [WebSocket] PromptOptimizationCompleted event received:',
                 data,
@@ -358,7 +362,7 @@ useRealtimeUpdates(
                 only: ['promptRun'],
             });
         },
-        WorkflowFailed: (data) => {
+        WorkflowFailed: (data: Record<string, unknown>) => {
             console.log('🎉 [WebSocket] WorkflowFailed event received:', data);
             // Reload page to show error message
             router.reload({

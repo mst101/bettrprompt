@@ -36,7 +36,7 @@ export interface TabVisibilityResult extends TabVisibilityFlags {
  */
 export function useTabVisibility(
     promptRun: PromptRunResource | PromptRunTabData,
-    uiComplexity: string,
+    uiComplexity: string | undefined,
     isAdmin: boolean,
 ): TabVisibilityResult {
     const { t } = useI18n({ useScope: 'global' });
