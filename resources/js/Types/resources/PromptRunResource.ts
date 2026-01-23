@@ -1,6 +1,17 @@
 /**
- * TypeScript definition for PromptRunResource
- * Auto-generated from Resource docblock by bp:types:generate
+ * PromptRunResource - Primary type for PromptRun data
+ *
+ * ✅ Use this type for:
+ * - Component props receiving prompt run data from backend
+ * - WebSocket/realtime updates
+ * - API responses
+ *
+ * This is auto-generated from app/Http/Resources/PromptRunResource.php.
+ * DO NOT modify directly - update the PHP docblock and run:
+ * php artisan bp:types:generate
+ *
+ * @see PromptRun for base model type (rarely used)
+ * @see PromptRunPageResource for lightweight page load variant (internal use only)
  */
 
 import type { UserResource, VisitorResource } from '@/Types';

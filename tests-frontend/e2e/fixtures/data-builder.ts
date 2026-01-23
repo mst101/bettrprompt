@@ -6,7 +6,7 @@ import type { Page } from '@playwright/test';
  * Usage: await builder.withPromptRun('submitted').create()
  */
 
-export interface PromptRunData {
+export interface PromptRunTestFixture {
     task: string;
     state: '1_processing' | '1_completed' | '2_completed';
     frameworkName?: string;
@@ -24,7 +24,7 @@ export interface UserData {
  */
 export class TestDataBuilder {
     private page: Page;
-    private promptRunData: Partial<PromptRunData> = {};
+    private promptRunData: Partial<PromptRunTestFixture> = {};
     private userData: Partial<UserData> = {};
 
     constructor(page: Page) {
@@ -35,7 +35,7 @@ export class TestDataBuilder {
      * Set up a prompt run with a specific workflow stage
      * '1_processing' = Running main analysis, '1_completed' = Ready for framework selection, '2_completed' = Completed
      */
-    withPromptRun(state: PromptRunData['state']): this {
+    withPromptRun(state: PromptRunTestFixture['state']): this {
         this.promptRunData.state = state;
         return this;
     }

@@ -2,7 +2,7 @@ import type { Tab } from '@/Components/Base/Tabs.vue';
 import { computed, type ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export interface PromptRunData {
+export interface PromptRunTabData {
     selectedFramework?: Record<string, unknown> | null;
     personalityTier?: string | null;
     frameworkQuestions?: unknown[] | null;
@@ -30,7 +30,7 @@ export interface TabVisibilityResult extends TabVisibilityFlags {
  * Centralises visibility logic and tab definitions
  */
 export function useTabVisibility(
-    promptRun: PromptRunData,
+    promptRun: PromptRunTabData,
     uiComplexity: string,
     isAdmin: boolean,
 ): TabVisibilityResult {

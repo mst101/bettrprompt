@@ -1,6 +1,11 @@
 /**
- * TypeScript definition for PromptRunPageResource
- * Auto-generated from Resource docblock by bp:types:generate
+ * Lightweight PromptRun resource for initial page loads
+ *
+ * This variant excludes large JSON fields to avoid exceeding Nginx buffer limits.
+ * You should NEVER import this directly - Inertia automatically converts it to
+ * PromptRunResource structure on the frontend.
+ *
+ * @internal Only used by Laravel controllers for page props
  */
 
 import type {

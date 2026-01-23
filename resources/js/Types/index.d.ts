@@ -25,3 +25,6 @@ export * from './integrations/n8n';
 
 // Re-export form types
 export * from './form';
+
+// Re-export workflow constants for easier importing
+export type { PersonalityType, WorkflowStage } from '@/Constants/workflow';

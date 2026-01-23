@@ -6,7 +6,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StatCard from './StatCard.vue';
 
-interface PromptRunData {
+interface PromptRunAnalyticsRow {
     id: string;
     personalityType: string;
     framework: string;
@@ -32,7 +32,7 @@ interface AnalyticsData {
         completed: number;
         failed: number;
     };
-    runs: PromptRunData[];
+    runs: PromptRunAnalyticsRow[];
 }
 
 const props = defineProps<{

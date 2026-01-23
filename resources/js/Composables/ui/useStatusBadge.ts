@@ -1,5 +1,5 @@
+import type { WorkflowStage } from '@/Constants/workflow';
 import { isFailedStage, isProcessingStage } from '@/Constants/workflow';
-import type { WorkflowStage } from '@/Types/resources/PromptRunResource';
 
 export type StatusType = WorkflowStage | string;
 
