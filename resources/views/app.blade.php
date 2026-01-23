@@ -158,7 +158,7 @@
                     };
                 }(), s = 'fetch',
                     f = 'XMLHttpRequest', g._w = {}, g._w[f] = m[f], g._w[s] = m[s], m[s] && (m[s] = function() {
-                    return g._w.apply(this, arguments);
+                    return g._w[s].apply(this, arguments);
                 }), g._v = '2.0.0');
                 }(window, document, window._fs_namespace, 'script', window._fs_script);
             }
