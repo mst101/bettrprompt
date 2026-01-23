@@ -22,6 +22,15 @@ interface EventHandlers {
 type ChannelNameParam = string | Ref<string> | ComputedRef<string>;
 
 /**
+ * Extended Channel interface to include internal properties
+ * that may not be exposed in the type definition
+ */
+interface ExtendedChannel extends Channel {
+    subscriptionError?: (callback: (error: Error) => void) => void;
+    listeners?: Record<string, unknown> | (() => Record<string, unknown>);
+}
+
+/**
  * Composable for real-time updates via Laravel Echo/WebSockets
  * with automatic fallback to polling if WebSockets fail
  *
@@ -61,7 +70,7 @@ export function useRealtimeUpdates(
     const connected = ref(false);
     const usingFallback = ref(false);
     let pollInterval: number | null = null;
-    let channel: Channel | null = null;
+    let channel: ExtendedChannel | null = null;
 
     const startPolling = () => {
         if (pollInterval) return; // Already polling
@@ -140,8 +149,8 @@ export function useRealtimeUpdates(
                 }
             });
 
-            if ('subscriptionError' in channel) {
-                (channel as any).subscriptionError((error: Error) => {
+            if (channel.subscriptionError) {
+                channel.subscriptionError((error: Error) => {
                     logger.error(
                         '[useRealtimeUpdates] Subscription error:',
                         error,
@@ -199,10 +208,10 @@ export function useRealtimeUpdates(
             try {
                 // Force unsubscribe from all events on this channel
                 if (
-                    'listeners' in channel &&
-                    typeof (channel as any).listeners === 'function'
+                    channel.listeners &&
+                    typeof channel.listeners === 'function'
                 ) {
-                    (channel as any).listeners = {};
+                    channel.listeners = {};
                 }
                 window.Echo?.leave(channelName.value);
                 channel = null;

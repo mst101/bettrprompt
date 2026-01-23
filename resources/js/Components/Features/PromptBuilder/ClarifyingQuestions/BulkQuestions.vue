@@ -192,7 +192,13 @@ const handleStarRatingSaveBulk = (index: number, rating: number) => {
                 </p>
                 <FormTextareaWithActions
                     :id="`bulk-answer-${index}`"
-                    :ref="(el: any) => setTextareaRef(el, index)"
+                    :ref="
+                        (
+                            el: InstanceType<
+                                typeof FormTextareaWithActions
+                            > | null,
+                        ) => setTextareaRef(el, index)
+                    "
                     :model-value="answers[index] ?? ''"
                     :label="
                         $t(

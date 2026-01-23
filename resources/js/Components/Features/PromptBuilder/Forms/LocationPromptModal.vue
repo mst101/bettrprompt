@@ -11,7 +11,7 @@ import TimezoneSelect from '@/Components/Common/TimezoneSelect.vue';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import type { LocationDataResource } from '@/Types';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -129,9 +129,12 @@ const submit = async () => {
             dontAskAgain: dontAskAgain.value,
             countryCode: form.countryCode,
         });
-    } catch (error: any) {
-        if (error?.response?.status === 422) {
-            setErrors(error.response.data.errors || {});
+    } catch (error: unknown) {
+        const axiosError = error as AxiosError<{
+            errors?: Record<string, unknown>;
+        }>;
+        if (axiosError?.response?.status === 422) {
+            setErrors(axiosError.response.data.errors || {});
         }
     } finally {
         isSubmitting.value = false;

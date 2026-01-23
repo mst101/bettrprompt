@@ -5,13 +5,13 @@ import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const page = usePage();
+const page = usePage<{ isReturningVisitor?: boolean }>();
 const { t } = useI18n({ useScope: 'global' });
 
 const buttonText = computed(() => {
     // Show "Try it now" for authenticated users or returning visitors
     const isAuthenticated = !!page.props.auth?.user;
-    const isReturningVisitor = !!(page.props as any).isReturningVisitor;
+    const isReturningVisitor = !!page.props.isReturningVisitor;
 
     return isAuthenticated || isReturningVisitor
         ? t('components.common.heroCta.tryNow')

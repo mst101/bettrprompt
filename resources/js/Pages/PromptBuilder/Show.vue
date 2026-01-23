@@ -695,14 +695,14 @@ onUnmounted(() => {
                         promptRun.taskClassification &&
                         uiComplexity === 'advanced'
                     "
-                    :classification="promptRun.taskClassification as any"
+                    :classification="promptRun.taskClassification"
                 />
                 <CognitiveRequirements
                     v-if="
                         promptRun.cognitiveRequirements &&
                         uiComplexity === 'advanced'
                     "
-                    :requirements="promptRun.cognitiveRequirements as any"
+                    :requirements="promptRun.cognitiveRequirements"
                 />
             </div>
 
@@ -715,16 +715,16 @@ onUnmounted(() => {
                 <SelectedFramework
                     v-if="promptRun.selectedFramework"
                     ref="selectedFrameworkRef"
-                    :framework="promptRun.selectedFramework as any"
+                    :framework="promptRun.selectedFramework"
                     :show-proceed-button="shouldShowProceedButton"
                     @proceed="handleProceedToQuestions"
                 />
                 <AlternativeFrameworks
                     v-if="promptRun.alternativeFrameworks"
-                    :frameworks="promptRun.alternativeFrameworks as any"
+                    :frameworks="promptRun.alternativeFrameworks"
                     :prompt-run-id="promptRun.id"
                     :prompt-run="promptRun"
-                    :current-framework="promptRun.selectedFramework as any"
+                    :current-framework="promptRun.selectedFramework"
                     :visitor-has-completed-prompts="
                         visitorHasCompletedPromptsComputed
                     "
@@ -739,18 +739,16 @@ onUnmounted(() => {
             >
                 <TaskTraitAlignment
                     v-if="promptRun.taskTraitAlignment"
-                    :alignment="promptRun.taskTraitAlignment as any"
+                    :alignment="promptRun.taskTraitAlignment"
                 />
                 <PersonalityAdjustments
                     v-if="promptRun.personalityTier"
-                    :tier="promptRun.personalityTier as any"
+                    :tier="promptRun.personalityTier"
                     :adjustments="promptRun.personalityAdjustmentsPreview || []"
                 />
                 <PersonalityAdjustmentsSummary
                     v-if="promptRun.personalityAdjustmentsSummary"
-                    :adjustments="
-                        promptRun.personalityAdjustmentsSummary as any
-                    "
+                    :adjustments="promptRun.personalityAdjustmentsSummary"
                 />
             </div>
 
@@ -795,21 +793,17 @@ onUnmounted(() => {
                 data-testid="tab-recommendations"
             >
                 <Recommendations
-                    :model-recommendations="
-                        promptRun.modelRecommendations as any
-                    "
-                    :iteration-suggestions="
-                        promptRun.iterationSuggestions as any
-                    "
+                    :model-recommendations="promptRun.modelRecommendations"
+                    :iteration-suggestions="promptRun.iterationSuggestions"
                 />
             </div>
 
             <!-- API Usage Tab -->
             <div v-if="activeTab === 'api-usage'" data-testid="tab-api-usage">
                 <ApiUsage
-                    :pre-analysis-usage="promptRun.preAnalysisApiUsage as any"
-                    :analysis-usage="promptRun.analysisApiUsage as any"
-                    :generation-usage="promptRun.generationApiUsage as any"
+                    :pre-analysis-usage="promptRun.preAnalysisApiUsage"
+                    :analysis-usage="promptRun.analysisApiUsage"
+                    :generation-usage="promptRun.generationApiUsage"
                     :claude-models="claudeModels || []"
                 />
             </div>

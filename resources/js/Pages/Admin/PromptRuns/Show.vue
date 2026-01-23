@@ -184,12 +184,12 @@ const hasRelatedRuns = computed(
 
                 <TaskClassification
                     v-if="promptRun.taskClassification"
-                    :classification="promptRun.taskClassification as any"
+                    :classification="promptRun.taskClassification"
                 />
 
                 <CognitiveRequirements
                     v-if="promptRun.cognitiveRequirements"
-                    :requirements="promptRun.cognitiveRequirements as any"
+                    :requirements="promptRun.cognitiveRequirements"
                 />
             </div>
 
@@ -197,16 +197,16 @@ const hasRelatedRuns = computed(
             <div v-if="activeTab === 'framework'" class="space-y-4">
                 <SelectedFramework
                     v-if="promptRun.selectedFramework"
-                    :framework="promptRun.selectedFramework as any"
+                    :framework="promptRun.selectedFramework"
                     :show-proceed-button="false"
                 />
 
                 <AlternativeFrameworks
                     v-if="promptRun.alternativeFrameworks"
-                    :frameworks="promptRun.alternativeFrameworks as any"
+                    :frameworks="promptRun.alternativeFrameworks"
                     :prompt-run-id="promptRun.id"
                     :prompt-run="promptRun"
-                    :current-framework="promptRun.selectedFramework as any"
+                    :current-framework="promptRun.selectedFramework"
                 />
             </div>
 
@@ -214,20 +214,18 @@ const hasRelatedRuns = computed(
             <div v-if="activeTab === 'personality'" class="space-y-4">
                 <TaskTraitAlignment
                     v-if="promptRun.taskTraitAlignment"
-                    :alignment="promptRun.taskTraitAlignment as any"
+                    :alignment="promptRun.taskTraitAlignment"
                 />
 
                 <PersonalityAdjustments
                     v-if="promptRun.personalityTier"
-                    :tier="promptRun.personalityTier as any"
+                    :tier="promptRun.personalityTier"
                     :adjustments="promptRun.personalityAdjustmentsPreview || []"
                 />
 
                 <PersonalityAdjustmentsSummary
                     v-if="promptRun.personalityAdjustmentsSummary"
-                    :adjustments="
-                        promptRun.personalityAdjustmentsSummary as any
-                    "
+                    :adjustments="promptRun.personalityAdjustmentsSummary"
                 />
             </div>
 
@@ -243,21 +241,17 @@ const hasRelatedRuns = computed(
             <!-- Recommendations Tab -->
             <div v-if="activeTab === 'recommendations'" class="space-y-4">
                 <Recommendations
-                    :model-recommendations="
-                        promptRun.modelRecommendations as any
-                    "
-                    :iteration-suggestions="
-                        promptRun.iterationSuggestions as any
-                    "
+                    :model-recommendations="promptRun.modelRecommendations"
+                    :iteration-suggestions="promptRun.iterationSuggestions"
                 />
             </div>
 
             <!-- Costs Tab -->
             <div v-if="activeTab === 'costs'" class="space-y-4">
                 <ApiUsage
-                    :pre-analysis-usage="promptRun.preAnalysisApiUsage as any"
-                    :analysis-usage="promptRun.analysisApiUsage as any"
-                    :generation-usage="promptRun.generationApiUsage as any"
+                    :pre-analysis-usage="promptRun.preAnalysisApiUsage"
+                    :analysis-usage="promptRun.analysisApiUsage"
+                    :generation-usage="promptRun.generationApiUsage"
                     :claude-models="claudeModels || []"
                 />
             </div>

@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import { logger } from '@/Utils/logger';
 import { onUnmounted, ref } from 'vue';
+
+type AudioRecordingError = DOMException | Error;
 
 export function useAudioRecording() {
     const isRecording = ref(false);
@@ -34,11 +35,12 @@ export function useAudioRecording() {
 
             mediaRecorder.start();
             isRecording.value = true;
-        } catch (err: any) {
-            if (err.name === 'NotAllowedError') {
+        } catch (err: unknown) {
+            const audioError = err as AudioRecordingError;
+            if (audioError.name === 'NotAllowedError') {
                 error.value =
                     'Microphone access denied. Please enable microphone permissions.';
-            } else if (err.name === 'NotFoundError') {
+            } else if (audioError.name === 'NotFoundError') {
                 error.value = 'No microphone found. Please check your device.';
             } else {
                 error.value = 'Failed to start recording. Please try again.';
@@ -79,7 +81,7 @@ export function useAudioRecording() {
 
                     isProcessing.value = false;
                     resolve(transcript);
-                } catch (err: any) {
+                } catch (err: unknown) {
                     isProcessing.value = false;
                     error.value =
                         'Failed to transcribe audio. Please try again.';
