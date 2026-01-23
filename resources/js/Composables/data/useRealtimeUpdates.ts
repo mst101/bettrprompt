@@ -1,3 +1,4 @@
+import { logger } from '@/Utils/logger';
 import { router } from '@inertiajs/vue3';
 import type { Channel } from 'laravel-echo';
 import {
@@ -71,7 +72,7 @@ export function useRealtimeUpdates(
         }
 
         usingFallback.value = true;
-        console.warn(
+        logger.warn(
             '[useRealtimeUpdates] WebSocket unavailable, falling back to polling',
         );
 
@@ -91,7 +92,7 @@ export function useRealtimeUpdates(
 
     const stopPolling = () => {
         if (pollInterval) {
-            console.log(
+            logger.debug(
                 '[useRealtimeUpdates] WebSocket reconnected, stopping polling fallback',
             );
             clearInterval(pollInterval);
@@ -115,7 +116,7 @@ export function useRealtimeUpdates(
                     try {
                         handler(data);
                     } catch (error) {
-                        console.error(
+                        logger.error(
                             `[useRealtimeUpdates] Error handling ${eventName}:`,
                             error,
                         );
@@ -127,12 +128,12 @@ export function useRealtimeUpdates(
             });
 
             channel.error((error: Error) => {
-                console.error(
+                logger.error(
                     '[useRealtimeUpdates] WebSocket channel error:',
                     error,
                 );
                 if (!usingFallback.value) {
-                    console.warn(
+                    logger.warn(
                         '[useRealtimeUpdates] WebSocket error detected, starting polling fallback',
                     );
                     startPolling();
@@ -141,7 +142,7 @@ export function useRealtimeUpdates(
 
             if ('subscriptionError' in channel) {
                 (channel as any).subscriptionError((error: Error) => {
-                    console.error(
+                    logger.error(
                         '[useRealtimeUpdates] Subscription error:',
                         error,
                     );
@@ -149,12 +150,12 @@ export function useRealtimeUpdates(
             }
 
             connected.value = true;
-            console.log(
+            logger.debug(
                 '[useRealtimeUpdates] WebSocket connected to channel:',
                 channelName.value,
             );
         } catch (error) {
-            console.error('[useRealtimeUpdates] Failed to set up Echo:', error);
+            logger.error('[useRealtimeUpdates] Failed to set up Echo:', error);
             startPolling();
         }
     };
@@ -181,7 +182,7 @@ export function useRealtimeUpdates(
                 window.Echo.leave(channelName.value);
             }
         } catch (error) {
-            console.error('[useRealtimeUpdates] Error leaving channel:', error);
+            logger.error('[useRealtimeUpdates] Error leaving channel:', error);
         }
 
         // Remove event listeners
@@ -206,7 +207,7 @@ export function useRealtimeUpdates(
                 window.Echo?.leave(channelName.value);
                 channel = null;
             } catch (error) {
-                console.warn(
+                logger.warn(
                     '[useRealtimeUpdates] Error leaving old channel:',
                     error,
                 );
@@ -263,7 +264,7 @@ export function useRealtimeUpdates(
                     try {
                         window.Echo?.leave(previousChannelName);
                     } catch (error) {
-                        console.warn(
+                        logger.warn(
                             '[useRealtimeUpdates] Error leaving old channel during name change:',
                             error,
                         );

@@ -9,12 +9,16 @@ import NotificationToast from '@/Components/Features/Workflow/NotificationToast.
 import OutputPanel from '@/Components/Features/Workflow/OutputPanel.vue';
 import PageHeader from '@/Components/Features/Workflow/PageHeader.vue';
 import VariantSelector from '@/Components/Features/Workflow/VariantSelector.vue';
+import { useWorkflowOperations } from '@/Composables/features/useWorkflowOperations';
+import { useWorkflowViewModes } from '@/Composables/features/useWorkflowViewModes';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { getCsrfToken } from '@/Utils/cookies';
-import DOMPurify from 'dompurify';
-import { marked } from 'marked';
+import {
+    copyToClipboard,
+    getMessagesAsText,
+    renderMarkdown,
+} from '@/Utils/workflow/textFormatting';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -82,14 +86,44 @@ const workflowRoute = (
     });
 };
 
-const isPreparingOld = ref(false);
-const isPreparingNew = ref(false);
-const isExecutingOld = ref(false);
-const isExecutingNew = ref(false);
-const isUploadingOld = ref(false);
-const isUploadingNew = ref(false);
-const isUploadingToLive = ref(false);
-const error = ref<string | null>(null);
+// Use composables for operations and view modes
+const {
+    isPreparingOld,
+    isPreparingNew,
+    isExecutingOld,
+    isExecutingNew,
+    isUploadingOld,
+    isUploadingNew,
+    isUploadingToLive,
+    error,
+    saveMessage,
+    reloadJavaScriptFromWorkflowAsOld,
+    reloadJavaScriptFromWorkflowAsNew,
+    executeWorkflowOld: executeWorkflowOldOp,
+    executeWorkflowNew: executeWorkflowNewOp,
+    uploadWorkflowOld: uploadWorkflowOldOp,
+    uploadWorkflowNew: uploadWorkflowNewOp,
+    uploadWorkflowToLive: uploadWorkflowToLiveOp,
+    saveInputData: saveInputDataOp,
+    saveOldJavaScriptToFile: saveOldJavaScriptToFileOp,
+    saveNewJavaScriptToFile: saveNewJavaScriptToFileOp,
+    preparePromptOld: preparePromptOldOp,
+    preparePromptNew: preparePromptNewOp,
+    savePassInputData: savePassInputDataOp,
+} = useWorkflowOperations(workflowRoute);
+
+const {
+    expandedView,
+    rawModeMessagesOld,
+    rawModeMessagesNew,
+    rawModeSystemOld,
+    rawModeSystemNew,
+    rawModeWorkflowMessagesOld,
+    rawModeWorkflowMessagesNew,
+    rawModeWorkflowSystemOld,
+    rawModeWorkflowSystemNew,
+    handleRawModeUpdate,
+} = useWorkflowViewModes();
 
 const input = ref(props.input);
 const inputJson = ref(JSON.stringify(props.input, null, 2));
@@ -103,7 +137,6 @@ const outputNew = ref(props.outputNew);
 const preparePromptNodes = ref(props.preparePromptNodes || []);
 
 // Track which pass is selected when multiple passes exist (0-based index)
-// Initialize from URL query parameter (passed via props)
 const selectedPass = ref(props.currentPass);
 
 // Get the current node being displayed based on selected pass
@@ -123,7 +156,6 @@ const passOptions = computed(() => {
 watch(selectedPass, (newPass) => {
     const url = new URL(window.location.href);
     if (newPass === 0) {
-        // Default value, remove from URL for cleaner URLs
         url.searchParams.delete('pass');
     } else {
         url.searchParams.set('pass', String(newPass));
@@ -131,284 +163,48 @@ watch(selectedPass, (newPass) => {
     window.location.href = url.toString();
 });
 
-// Modal state for maximized views
-// Uses dynamic values like 'javascript-old-0', 'javascript-old-1', etc. for multiple nodes
-const expandedView = ref<string | null>(null);
-const saveMessage = ref<string | null>(null);
-
-// Track raw vs formatted mode for expanded views
-const rawModeMessagesOld = ref(false);
-const rawModeMessagesNew = ref(false);
-const rawModeSystemOld = ref(false);
-const rawModeSystemNew = ref(false);
-const rawModeWorkflowMessagesOld = ref(false);
-const rawModeWorkflowMessagesNew = ref(false);
-const rawModeWorkflowSystemOld = ref(false);
-const rawModeWorkflowSystemNew = ref(false);
-
-const makeRequest = async (url: string, method: string, body?: unknown) => {
-    const csrfToken = getCsrfToken();
-    const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-    };
-    if (csrfToken) {
-        const decodedToken = decodeURIComponent(csrfToken);
-        headers['X-CSRF-TOKEN'] = decodedToken;
-        headers['X-XSRF-TOKEN'] = decodedToken;
-    }
-
-    const config: RequestInit = {
-        method,
-        headers,
-        credentials: 'same-origin',
-    };
-    if (body) {
-        config.body = JSON.stringify(body);
-    }
-
-    return fetch(url, config);
-};
-
-const reloadJavaScriptFromWorkflowAsOld = async () => {
-    try {
-        const response = await makeRequest(
-            workflowRoute('workflows.reload-javascript-old', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value =
-                result.error || 'Failed to reload JavaScript from workflow';
-        } else {
-            // Update each node with the reloaded JavaScript
-            if (result.reloadedNodes && Array.isArray(result.reloadedNodes)) {
-                result.reloadedNodes.forEach((reloadedNode) => {
-                    const node = preparePromptNodes.value.find(
-                        (n) => n.name === reloadedNode.nodeName,
-                    );
-                    if (node && reloadedNode.javascript) {
-                        node.javascriptOld = reloadedNode.javascript;
-                    }
-                });
-            }
-            saveMessage.value = 'JavaScript reloaded from workflow (not saved)';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to reload JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
-};
-
-const reloadJavaScriptFromWorkflowAsNew = async () => {
-    try {
-        const response = await makeRequest(
-            workflowRoute('workflows.reload-javascript-new', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value =
-                result.error || 'Failed to reload JavaScript from workflow';
-        } else {
-            // Update each node with the reloaded JavaScript
-            if (result.reloadedNodes && Array.isArray(result.reloadedNodes)) {
-                result.reloadedNodes.forEach((reloadedNode) => {
-                    const node = preparePromptNodes.value.find(
-                        (n) => n.name === reloadedNode.nodeName,
-                    );
-                    if (node && reloadedNode.javascript) {
-                        node.javascriptNew = reloadedNode.javascript;
-                    }
-                });
-            }
-            saveMessage.value = 'JavaScript reloaded from workflow (not saved)';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to reload JavaScript: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
-};
-
+// Wrapper functions for composable operations
 const executeWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
-    if (!inputJson.value) {
-        error.value = 'Input data is required';
-        return;
-    }
-
-    isExecutingOld.value = true;
-    error.value = null;
-
-    try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.execute-workflow-old', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-            { input: inputData, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Workflow execution failed';
-            return;
-        }
-
-        outputOld.value = result.output;
-    } catch (err) {
-        error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isExecutingOld.value = false;
+    const output = await executeWorkflowOldOp(
+        inputJson.value,
+        props.currentVariant,
+        nodeName,
+    );
+    if (output) {
+        outputOld.value = output;
     }
 };
 
 const executeWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
-    if (!inputJson.value) {
-        error.value = 'Input data is required';
-        return;
-    }
-
-    isExecutingNew.value = true;
-    error.value = null;
-
-    try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.execute-workflow-new', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-            { input: inputData, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Workflow execution failed';
-            return;
-        }
-
-        outputNew.value = result.output;
-    } catch (err) {
-        error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isExecutingNew.value = false;
+    const output = await executeWorkflowNewOp(
+        inputJson.value,
+        props.currentVariant,
+        nodeName,
+    );
+    if (output) {
+        outputNew.value = output;
     }
 };
 
 const uploadWorkflowOld = async (nodeName: string = 'Prepare Prompt') => {
-    isUploadingOld.value = true;
-    error.value = null;
-
-    try {
-        // First, save the old JavaScript to ensure it's up to date
-        await saveOldJavaScriptToFile();
-
-        const response = await makeRequest(
-            workflowRoute('workflows.upload-to-n8n-old', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-            { nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Failed to upload workflow to n8n';
-            return;
-        }
-
-        error.value = null;
-    } catch (err) {
-        error.value = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isUploadingOld.value = false;
-    }
+    await saveOldJavaScriptToFileOp(
+        currentNode.value?.javascriptOld ?? javascriptOld.value,
+        props.currentVariant,
+        currentNode.value?.name || 'Prepare Prompt',
+    );
+    await uploadWorkflowOldOp(props.currentVariant, nodeName);
 };
 
 const uploadWorkflowNew = async (nodeName: string = 'Prepare Prompt') => {
-    isUploadingNew.value = true;
-    error.value = null;
-
-    try {
-        // First, save the new JavaScript to ensure it's up to date
-        await saveNewJavaScriptToFile();
-
-        const response = await makeRequest(
-            workflowRoute('workflows.upload-to-n8n-new', {
-                variant: props.currentVariant,
-            }),
-            'POST',
-            { nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Failed to upload workflow to n8n';
-            return;
-        }
-
-        error.value = null;
-    } catch (err) {
-        error.value = `Upload error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isUploadingNew.value = false;
-    }
+    await saveNewJavaScriptToFileOp(
+        currentNode.value?.javascriptNew ?? javascriptNew.value,
+        props.currentVariant,
+        currentNode.value?.name || 'Prepare Prompt',
+    );
+    await uploadWorkflowNewOp(props.currentVariant, nodeName);
 };
 
 const uploadWorkflowToLive = async () => {
-    // Show confirmation dialog
     const confirmed = await confirm(
         t('workflow.confirmUploadMessage'),
         t('workflow.confirmUploadTitle'),
@@ -423,423 +219,70 @@ const uploadWorkflowToLive = async () => {
         return;
     }
 
-    isUploadingToLive.value = true;
-    error.value = null;
-
-    try {
-        const response = await makeRequest(
-            workflowRoute('workflows.upload-to-live'),
-            'POST',
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value =
-                result.error || 'Failed to upload workflow to live server';
-            await showError(
-                result.error || t('workflow.uploadFailedMessage'),
-                t('workflow.uploadFailedTitle'),
-            );
-            return;
-        }
-
+    const success_result = await uploadWorkflowToLiveOp();
+    if (success_result) {
         await success(
             t('workflow.uploadSuccessMessage'),
             t('workflow.uploadSuccessTitle'),
         );
-        error.value = null;
-    } catch (err) {
-        const errorMessage = `${t('workflow.uploadErrorPrefix')} ${err instanceof Error ? err.message : 'Unknown error'}`;
-        error.value = errorMessage;
-        await showError(errorMessage, t('workflow.uploadFailedTitle'));
-    } finally {
-        isUploadingToLive.value = false;
+    } else if (error.value) {
+        await showError(
+            error.value || t('workflow.uploadFailedMessage'),
+            t('workflow.uploadFailedTitle'),
+        );
     }
-};
-
-const renderMarkdown = (text: string | null | undefined): string => {
-    if (!text) return '';
-    const html = marked(text) as string;
-    return DOMPurify.sanitize(html);
-};
-
-const handleRawModeUpdate = (
-    section:
-        | 'messages-old'
-        | 'messages-new'
-        | 'system-old'
-        | 'system-new'
-        | 'workflow-messages-old'
-        | 'workflow-messages-new'
-        | 'workflow-system-old'
-        | 'workflow-system-new',
-    isRaw: boolean,
-) => {
-    if (section === 'system-old') {
-        rawModeSystemOld.value = isRaw;
-    } else if (section === 'system-new') {
-        rawModeSystemNew.value = isRaw;
-    } else if (section === 'messages-old') {
-        rawModeMessagesOld.value = isRaw;
-    } else if (section === 'messages-new') {
-        rawModeMessagesNew.value = isRaw;
-    } else if (section === 'workflow-messages-old') {
-        rawModeWorkflowMessagesOld.value = isRaw;
-    } else if (section === 'workflow-messages-new') {
-        rawModeWorkflowMessagesNew.value = isRaw;
-    } else if (section === 'workflow-system-old') {
-        rawModeWorkflowSystemOld.value = isRaw;
-    } else if (section === 'workflow-system-new') {
-        rawModeWorkflowSystemNew.value = isRaw;
-    }
-};
-
-const copyToClipboard = async (text: string | null | undefined) => {
-    if (!text) return;
-    try {
-        await navigator.clipboard.writeText(text);
-    } catch (err) {
-        console.error('Failed to copy to clipboard:', err);
-    }
-};
-
-const getMessagesAsText = (messages: unknown) => {
-    if (!Array.isArray(messages)) {
-        return JSON.stringify(messages, null, 2);
-    }
-    return messages
-        .map((msg) => {
-            if (typeof msg === 'object' && msg !== null) {
-                if ((msg as Record<string, unknown>).content)
-                    return String((msg as Record<string, unknown>).content);
-                return JSON.stringify(msg, null, 2);
-            }
-            return String(msg);
-        })
-        .join('\n\n');
 };
 
 const saveInputData = async () => {
-    try {
-        // Parse the input JSON to validate and wrap in array format
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.save-input'),
-            'POST',
-            Array.isArray(inputData) ? inputData : [inputData],
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value = result.error || 'Failed to save input data';
-        } else {
-            saveMessage.value = 'Input data saved successfully!';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to save input data: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
+    await saveInputDataOp(inputJson.value);
 };
 
 const saveOldJavaScriptToFile = async () => {
-    try {
-        // Use the current node's JavaScript if in multi-node mode, otherwise use the global ref
-        const code = currentNode.value?.javascriptOld ?? javascriptOld.value;
-        const nodeName = currentNode.value?.name || 'Prepare Prompt';
-
-        const response = await makeRequest(
-            workflowRoute('workflows.save-javascript-old'),
-            'POST',
-            { code, variant: props.currentVariant, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value = result.error || 'Failed to save JavaScript code';
-        } else {
-            saveMessage.value = 'Old JavaScript code saved successfully!';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to save JavaScript code: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
+    const code = currentNode.value?.javascriptOld ?? javascriptOld.value;
+    const nodeName = currentNode.value?.name || 'Prepare Prompt';
+    await saveOldJavaScriptToFileOp(code, props.currentVariant, nodeName);
 };
 
 const saveNewJavaScriptToFile = async () => {
-    try {
-        // Use the current node's JavaScript if in multi-node mode, otherwise use the global ref
-        const code = currentNode.value?.javascriptNew ?? javascriptNew.value;
-        const nodeName = currentNode.value?.name || 'Prepare Prompt';
-
-        const response = await makeRequest(
-            workflowRoute('workflows.save-javascript-new'),
-            'POST',
-            { code, variant: props.currentVariant, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value = result.error || 'Failed to save new JavaScript code';
-        } else {
-            saveMessage.value = 'New JavaScript code saved successfully!';
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to save new JavaScript code: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    }
+    const code = currentNode.value?.javascriptNew ?? javascriptNew.value;
+    const nodeName = currentNode.value?.name || 'Prepare Prompt';
+    await saveNewJavaScriptToFileOp(code, props.currentVariant, nodeName);
 };
 
 const preparePromptOld = async (nodeName: string = 'Prepare Prompt') => {
-    const node = preparePromptNodes.value.find((n) => n.name === nodeName);
-    if (!node?.javascriptOld || !inputJson.value) {
-        error.value = 'Both input and JavaScript code are required';
-        return;
-    }
-
-    isPreparingOld.value = true;
-    error.value = null;
-
-    try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
-
-        // If input is an array (n8n format), extract the first element
-        if (Array.isArray(inputData) && inputData.length > 0) {
-            inputData = inputData[0];
-        }
-
-        // For Pass 2+, require the previous pass to have been run
-        const currentPassIndex = preparePromptNodes.value.findIndex(
-            (n) => n.name === nodeName,
-        );
-        if (currentPassIndex > 0) {
-            const previousNode = preparePromptNodes.value[currentPassIndex - 1];
-            if (!previousNode?.promptOld) {
-                error.value = `Pass ${currentPassIndex + 1} requires Pass ${currentPassIndex} to be run first. Please run "Prepare Prompt ${currentPassIndex === 1 ? '' : currentPassIndex}" and generate its output first.`;
-                return;
-            }
-
-            // Merge the classification and selected_questions from the previous pass output
-            // This simulates the "Filter Questions by Category" node output in the actual workflow
-            inputData.classification = previousNode.promptOld.classification;
-            inputData.selected_questions =
-                previousNode.promptOld.selected_questions;
-        }
-
-        // Save the old JavaScript to file first (for backwards compatibility, also save primary node)
-        if (nodeName === 'Prepare Prompt') {
-            await saveOldJavaScriptToFile();
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.prepare-prompt-old'),
-            'POST',
-            { input: inputData, variant: props.currentVariant, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Execution failed';
-            return;
-        }
-
-        // Update the node's prompt data
-        // Handle both array format (from workflow) and object format
-        let promptData = result.prompt;
-        if (
-            Array.isArray(promptData) &&
-            promptData.length > 0 &&
-            promptData[0] &&
-            promptData[0].json
-        ) {
-            promptData = promptData[0].json;
-        }
-        node.promptOld = promptData;
-        // Also update the main promptOld if this is the primary node
-        if (nodeName === 'Prepare Prompt') {
-            promptOld.value = promptData;
-        }
-    } catch (err) {
-        error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isPreparingOld.value = false;
+    const promptData = await preparePromptOldOp(
+        inputJson.value,
+        props.currentVariant,
+        preparePromptNodes.value,
+        nodeName,
+    );
+    if (nodeName === 'Prepare Prompt' && promptData) {
+        promptOld.value = promptData;
     }
 };
 
 const preparePromptNew = async (nodeName: string = 'Prepare Prompt') => {
-    const node = preparePromptNodes.value.find((n) => n.name === nodeName);
-    if (!node?.javascriptNew || !inputJson.value) {
-        error.value = 'Both input and JavaScript code are required';
-        return;
-    }
-
-    isPreparingNew.value = true;
-    error.value = null;
-
-    try {
-        // Parse the input JSON
-        let inputData;
-        try {
-            inputData = JSON.parse(inputJson.value);
-        } catch {
-            error.value = 'Invalid JSON in input data';
-            return;
-        }
-
-        // If input is an array (n8n format), extract the first element
-        if (Array.isArray(inputData) && inputData.length > 0) {
-            inputData = inputData[0];
-        }
-
-        // For Pass 2+, require the previous pass to have been run
-        const currentPassIndex = preparePromptNodes.value.findIndex(
-            (n) => n.name === nodeName,
-        );
-        if (currentPassIndex > 0) {
-            const previousNode = preparePromptNodes.value[currentPassIndex - 1];
-            if (!previousNode?.promptNew) {
-                error.value = `Pass ${currentPassIndex + 1} requires Pass ${currentPassIndex} to be run first. Please run "Prepare Prompt ${currentPassIndex === 1 ? '' : currentPassIndex}" and generate its output first.`;
-                return;
-            }
-
-            // Merge the classification and selected_questions from the previous pass output
-            // This simulates the "Filter Questions by Category" node output in the actual workflow
-            inputData.classification = previousNode.promptNew.classification;
-            inputData.selected_questions =
-                previousNode.promptNew.selected_questions;
-        }
-
-        // Save the new JavaScript to file first (for backwards compatibility, also save primary node)
-        if (nodeName === 'Prepare Prompt') {
-            await saveNewJavaScriptToFile();
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.prepare-prompt-new'),
-            'POST',
-            { input: inputData, variant: props.currentVariant, nodeName },
-        );
-
-        if (!response.ok) {
-            error.value = `Server error: ${response.status} ${response.statusText}`;
-            return;
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-            error.value = result.error || 'Execution failed';
-            return;
-        }
-
-        // Update the node's prompt data
-        // Handle both array format (from workflow) and object format
-        let promptData = result.prompt;
-
-        if (
-            Array.isArray(promptData) &&
-            promptData.length > 0 &&
-            promptData[0] &&
-            promptData[0].json
-        ) {
-            promptData = promptData[0].json;
-        }
-
-        node.promptNew = promptData;
-        // Also update the main promptNew if this is the primary node
-        if (nodeName === 'Prepare Prompt') {
-            promptNew.value = promptData;
-        }
-    } catch (err) {
-        error.value = `Execution error: ${err instanceof Error ? err.message : 'Unknown error'}`;
-    } finally {
-        isPreparingNew.value = false;
+    const promptData = await preparePromptNewOp(
+        inputJson.value,
+        props.currentVariant,
+        preparePromptNodes.value,
+        nodeName,
+    );
+    if (nodeName === 'Prepare Prompt' && promptData) {
+        promptNew.value = promptData;
     }
 };
 
-/**
- * Save pass-specific input data
- */
 const savePassInputData = async (nodeName: string, passNumber: number) => {
-    try {
-        let inputData;
-        try {
-            inputData = JSON.parse(passInputJson.value[nodeName]);
-        } catch {
-            error.value = 'Invalid JSON in pass input data';
-            return;
-        }
-
-        const response = await makeRequest(
-            workflowRoute('workflows.save-pass-input', { passNumber }),
-            'POST',
-            Array.isArray(inputData) ? inputData : [inputData],
-        );
-
-        const result = await response.json();
-        if (!result.success) {
-            error.value = result.error || 'Failed to save pass input data';
-        } else {
-            saveMessage.value = `Pass ${passNumber} input saved successfully!`;
-            setTimeout(() => {
-                saveMessage.value = null;
-            }, 3000);
-            error.value = null;
-        }
-    } catch (err) {
-        error.value = `Failed to save pass input data: ${
-            err instanceof Error ? err.message : 'Unknown error'
-        }`;
-    }
+    await savePassInputDataOp(
+        nodeName,
+        passNumber,
+        passInputJson.value[nodeName],
+    );
 };
 
 // Auto-execute both versions when page loads if they have code
 onMounted(async () => {
-    // Initialize pass input JSON for each node (Pass 2+)
     props.preparePromptNodes.forEach((node) => {
         if (node.passNumber > 1) {
             passInputJson.value[node.name] = JSON.stringify(
@@ -850,7 +293,6 @@ onMounted(async () => {
         }
     });
 
-    // Execute the current node (old and new versions)
     if (currentNode.value) {
         if (currentNode.value.javascriptOld && input.value) {
             await preparePromptOld(currentNode.value.name);

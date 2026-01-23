@@ -6,23 +6,17 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import VisitorLimitBanner from '@/Components/Common/VisitorLimitBanner.vue';
 import WorkflowError from '@/Components/Common/WorkflowError.vue';
-import ApiUsage from '@/Components/Features/PromptBuilder/ApiUsage/ApiUsage.vue';
-import ClarifyingQuestions from '@/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue';
-import AlternativeFrameworks from '@/Components/Features/PromptBuilder/Framework/AlternativeFrameworks.vue';
+// Eagerly loaded - always visible
 import SelectedFramework from '@/Components/Features/PromptBuilder/Framework/SelectedFramework.vue';
-import OptimizedPrompt from '@/Components/Features/PromptBuilder/OptimisedPrompt/OptimisedPrompt.vue';
-import PersonalityAdjustments from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustments.vue';
 import PersonalityAdjustmentsSummary from '@/Components/Features/PromptBuilder/Personality/PersonalityAdjustmentsSummary.vue';
 import TaskTraitAlignment from '@/Components/Features/PromptBuilder/Personality/TaskTraitAlignment.vue';
 import AnalysisProgress from '@/Components/Features/PromptBuilder/Progress/AnalysisProgress.vue';
 import GenerationProgress from '@/Components/Features/PromptBuilder/Progress/GenerationProgress.vue';
 import PreAnalysisProgress from '@/Components/Features/PromptBuilder/Progress/PreAnalysisProgress.vue';
-import Recommendations from '@/Components/Features/PromptBuilder/Recommendations/Recommendations.vue';
 import CognitiveRequirements from '@/Components/Features/PromptBuilder/YourTask/CognitiveRequirements.vue';
-import PreAnalysisQuestions from '@/Components/Features/PromptBuilder/YourTask/PreAnalysisQuestions.vue';
-import RelatedPromptRuns from '@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue';
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
+// Lazily loaded - conditionally rendered
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { useAlert } from '@/Composables/ui/useAlert';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
@@ -30,10 +24,48 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { analyticsService } from '@/services/analytics';
 import type { ClaudeModel, PromptRunResource, User } from '@/Types';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, inject, nextTick, onUnmounted, ref, watch } from 'vue';
+import {
+    computed,
+    defineAsyncComponent,
+    inject,
+    nextTick,
+    onUnmounted,
+    ref,
+    watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
-
 const props = defineProps<Props>();
+const ApiUsage = defineAsyncComponent(
+    () => import('@/Components/Features/PromptBuilder/ApiUsage/ApiUsage.vue'),
+);
+const ClarifyingQuestions = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/ClarifyingQuestions/ClarifyingQuestions.vue'),
+);
+const AlternativeFrameworks = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/Framework/AlternativeFrameworks.vue'),
+);
+const OptimizedPrompt = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/OptimisedPrompt/OptimisedPrompt.vue'),
+);
+const PersonalityAdjustments = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/Personality/PersonalityAdjustments.vue'),
+);
+const Recommendations = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/Recommendations/Recommendations.vue'),
+);
+const PreAnalysisQuestions = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/YourTask/PreAnalysisQuestions.vue'),
+);
+const RelatedPromptRuns = defineAsyncComponent(
+    () =>
+        import('@/Components/Features/PromptBuilder/YourTask/RelatedPromptRuns.vue'),
+);
 
 const page = usePage<{
     auth?: { user?: User };

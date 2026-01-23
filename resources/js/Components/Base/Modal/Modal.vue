@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = withDefaults(
     defineProps<{
@@ -17,21 +17,59 @@ const props = withDefaults(
 const emit = defineEmits(['close']);
 const dialog = ref();
 const showSlot = ref(props.show);
+const previouslyFocusedElement = ref<HTMLElement | null>(null);
+const focusableSelectors = [
+    'button',
+    '[href]',
+    'input',
+    'select',
+    'textarea',
+    '[tabindex]:not([tabindex="-1"])',
+].join(', ');
+
+const getFocusableElements = (): HTMLElement[] => {
+    if (!dialog.value) return [];
+    const focusableElements = dialog.value.querySelectorAll(focusableSelectors);
+    return Array.from(focusableElements);
+};
 
 watch(
     () => props.show,
     () => {
         if (props.show) {
+            // Store the currently focused element so we can restore it later
+            previouslyFocusedElement.value =
+                document.activeElement as HTMLElement;
+
             document.body.style.overflow = 'hidden';
             showSlot.value = true;
 
             dialog.value?.showModal();
+
+            // Move focus to the first focusable element in the modal
+            nextTick(() => {
+                const focusableElements = getFocusableElements();
+                if (focusableElements.length > 0) {
+                    focusableElements[0].focus();
+                } else {
+                    // If no focusable elements, focus the dialog itself
+                    dialog.value?.focus();
+                }
+            });
         } else {
             document.body.style.overflow = '';
 
             setTimeout(() => {
                 dialog.value?.close();
                 showSlot.value = false;
+
+                // Restore focus to the previously focused element
+                if (
+                    previouslyFocusedElement.value &&
+                    previouslyFocusedElement.value.focus
+                ) {
+                    previouslyFocusedElement.value.focus();
+                }
             }, 200);
         }
     },
@@ -44,20 +82,42 @@ const close = () => {
 };
 
 const closeOnEscape = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && props.show) {
         e.preventDefault();
+        close();
+    }
+};
 
-        if (props.show) {
-            close();
+const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Tab' && props.show) {
+        const focusableElements = getFocusableElements();
+        if (focusableElements.length === 0) {
+            e.preventDefault();
+            return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const activeElement = document.activeElement as HTMLElement;
+
+        if (e.shiftKey && activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+        } else if (!e.shiftKey && activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
         }
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
+onMounted(() => {
+    dialog.value?.addEventListener('keydown', closeOnEscape);
+    dialog.value?.addEventListener('keydown', handleKeyDown);
+});
 
 onUnmounted(() => {
-    document.removeEventListener('keydown', closeOnEscape);
-
+    dialog.value?.removeEventListener('keydown', closeOnEscape);
+    dialog.value?.removeEventListener('keydown', handleKeyDown);
     document.body.style.overflow = '';
 });
 
@@ -75,6 +135,8 @@ const maxWidthClass = computed(() => {
 <template>
     <dialog
         ref="dialog"
+        role="dialog"
+        aria-modal="true"
         data-testid="modal-dialog"
         class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent backdrop:bg-transparent"
     >
