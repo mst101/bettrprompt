@@ -430,7 +430,8 @@ watch(
                 properties: {
                     prompt_run_id: props.promptRun.id,
                     recommended_framework: newFramework.code,
-                    task_category: props.promptRun.taskCategory,
+                    task_category:
+                        props.promptRun.taskClassification?.primary_category,
                     personality_type: props.promptRun.personalityType,
                 },
             });
