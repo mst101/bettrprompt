@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Events\WorkflowFailed;
@@ -81,7 +82,7 @@ Route::post('/n8n/webhook', function (Request $request) {
         // Validate payload structure
         $validator = Validator::make($request->all(), [
             'prompt_run_id' => 'required|integer|exists:prompt_runs,id',
-            'workflow_stage' => 'nullable|string|in:0_processing,0_completed,0_failed,1_processing,1_completed,1_failed,2_processing,2_completed,2_failed',
+            'workflow_stage' => 'nullable|string|in:'.implode(',', WorkflowStage::values()),
             'selected_framework' => 'nullable|array',
             'selected_framework.name' => 'required_with:selected_framework|string',
             'selected_framework.code' => 'required_with:selected_framework|string',
