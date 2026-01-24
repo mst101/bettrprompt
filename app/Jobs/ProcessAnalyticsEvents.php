@@ -182,7 +182,7 @@ class ProcessAnalyticsEvents implements ShouldQueue
                 return;
             }
 
-            $firstEvent = reset($enrichedEvents);
+            $firstEvent = array_first($enrichedEvents);
             if (! $firstEvent) {
                 return;
             }

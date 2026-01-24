@@ -35,6 +35,7 @@ class N8nWorkflowClient
      * Always returns gracefully - never throws exceptions.
      * Note: Does NOT use personality data - only task description
      */
+    #[\NoDiscard]
     public function executePreAnalysis(string $taskDescription, ?array $userContext = null): array
     {
         // Return mock response in testing environment (prevents real n8n calls during tests)
@@ -125,6 +126,7 @@ class N8nWorkflowClient
     /**
      * Execute analysis workflow - analyse task and select appropriate framework
      */
+    #[\NoDiscard]
     public function executeAnalysis(
         string $taskDescription,
         ?string $personalityType,
@@ -219,6 +221,7 @@ class N8nWorkflowClient
     /**
      * Execute generation workflow - generate the optimised prompt
      */
+    #[\NoDiscard]
     public function executeGeneration(GenerationPayload $payload): array
     {
         // Return mock response in testing environment (prevents real n8n calls during tests)

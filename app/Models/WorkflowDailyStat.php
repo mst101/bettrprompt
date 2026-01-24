@@ -113,7 +113,7 @@ class WorkflowDailyStat extends Model
     public function getMostCommonError(): ?array
     {
         if ($this->top_errors && is_array($this->top_errors)) {
-            return reset($this->top_errors);
+            return array_first($this->top_errors);
         }
 
         return null;

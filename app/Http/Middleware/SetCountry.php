@@ -294,9 +294,9 @@ class SetCountry
             }
         }
 
-        $language = strtolower(explode('-', $normalized)[0]);
+        $language = strtolower(array_first(explode('-', $normalized)));
         foreach ($supported as $supportedLocale) {
-            if (strtolower(explode('-', $supportedLocale)[0]) === $language) {
+            if (strtolower(array_first(explode('-', $supportedLocale))) === $language) {
                 return $supportedLocale;
             }
         }

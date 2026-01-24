@@ -59,8 +59,8 @@ class SessionProcessorService
             return $timeA <=> $timeB;
         });
 
-        $firstEvent = reset($events);
-        $lastEvent = end($events);
+        $firstEvent = array_first($events);
+        $lastEvent = array_last($events);
 
         $visitorId = $firstEvent['visitor_id'];
         $userId = $firstEvent['user_id'] ?? null;
