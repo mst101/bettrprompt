@@ -381,13 +381,11 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
 
     test('should view prompt history', async ({ authenticatedPage }) => {
         // Navigate to history page
-        await authenticatedPage.goto('/history');
+        await authenticatedPage.goto('/gb/history');
 
-        // Should see the heading
-        const heading = authenticatedPage.getByRole('heading', {
-            name: /prompt history/i,
-        });
-        await expect(heading).toBeVisible({ timeout: 5000 });
+        // Should see the page header
+        const pageHeader = authenticatedPage.getByTestId('page-header-history');
+        await expect(pageHeader).toBeVisible({ timeout: 5000 });
 
         // Should see either a table with prompts or empty state
         const emptyState = authenticatedPage.getByText(
@@ -481,9 +479,8 @@ test.describe('Prompt Builder - Full Journey (authenticated)', () => {
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Click "Create New" button/link to go back to index
-        const createNewButton = authenticatedPage.getByRole('link', {
-            name: /create new/i,
-        });
+        const createNewButton =
+            authenticatedPage.getByTestId('button-create-new');
         await expect(createNewButton).toBeVisible();
         await createNewButton.click();
 
