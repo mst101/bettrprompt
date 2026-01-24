@@ -114,7 +114,10 @@ export function useRealtimeUpdates(
         try {
             // Use .value to get the actual string from the computed ref
             const actualChannelName = channelName.value;
-            channel = window.Echo?.channel(actualChannelName);
+            const nextChannel = window.Echo?.channel(actualChannelName);
+            if (nextChannel) {
+                channel = nextChannel as ExtendedChannel;
+            }
 
             if (!channel) {
                 throw new Error('Echo channel could not be created');
@@ -232,7 +235,7 @@ export function useRealtimeUpdates(
             return;
         }
 
-        // Always try to setup Echo, even if connection state is uncertain
+        // Always try to set up Echo, even if connection state is uncertain
         // The setupEcho function will handle errors and fallback to polling if needed
         try {
             setupEcho();
