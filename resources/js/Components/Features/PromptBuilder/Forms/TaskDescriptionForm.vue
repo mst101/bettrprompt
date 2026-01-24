@@ -114,6 +114,7 @@ defineExpose({ focus });
             <!-- Submit Button -->
             <div class="flex items-center justify-end">
                 <ButtonPrimary
+                    data-testid="button-analyse-task"
                     class="w-full sm:w-fit"
                     type="submit"
                     icon="arrow-right"

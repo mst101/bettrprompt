@@ -327,11 +327,16 @@ export async function loginWithMockOAuth(
     // Navigate to trigger Inertia to reload with auth
     await page.goto(getDefaultCountryUrl(), { waitUntil: 'domcontentloaded' });
 
-    // Verify we're logged in
-    const userMenu = page.getByRole('button', { name: /user menu/i });
+    // Verify we're logged in by checking for user menu button
+    const userMenu = page.getByTestId('button-user-menu');
     await expect(userMenu)
         .toBeVisible({ timeout: 5000 })
-        .catch(() => {
-            throw new Error('OAuth login failed - user menu not visible');
+        .catch(async () => {
+            // Debug: Take a screenshot to see what's on the page
+            const screenshotPath = '/tmp/oauth-login-failure.png';
+            await page.screenshot({ path: screenshotPath });
+            throw new Error(
+                `OAuth login failed - user menu not visible. Screenshot saved to ${screenshotPath}`,
+            );
         });
 }

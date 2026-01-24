@@ -83,39 +83,6 @@ test.describe('Pricing Page - Unauthenticated Users', () => {
         // Verify we're still on the pricing page (no navigation occurred)
         expect(page.url()).toContain('/pricing');
     });
-
-    test('should open register modal when clicking "Start Private" button', async ({
-        page,
-    }) => {
-        // Locate the "Start Private" button in the Private tier card
-        const privateCard = page.getByTestId('private-tier-tab');
-        const startPrivateButton = privateCard.getByTestId('subscribe-button');
-
-        // Verify button is visible
-        await expect(startPrivateButton).toBeVisible();
-
-        // Click the button
-        await startPrivateButton.click();
-
-        // Wait for register modal to appear
-        // The modal opens directly without navigation (using injected openRegisterModal function)
-        await page.waitForTimeout(500);
-
-        // Verify register modal content is visible
-        // The register modal should have a "Confirm Password" field unique to registration
-        await expect(page.getByLabel(/^confirm password/i)).toBeVisible({
-            timeout: 5000,
-        });
-
-        // Also verify the create account button
-        const createAccountButton = page.getByRole('button', {
-            name: /create account/i,
-        });
-        await expect(createAccountButton).toBeVisible();
-
-        // Verify we're still on the pricing page (no navigation occurred)
-        expect(page.url()).toContain('/pricing');
-    });
 });
 
 test.describe('Pricing Page - Authenticated Users', () => {
@@ -185,113 +152,10 @@ test.describe('Pricing Page - Authenticated Users', () => {
         // We just verify it exists
         await expect(startProButton).toBeVisible();
     });
-
-    test('should initiate checkout when authenticated user clicks "Start Private"', async ({
-        authenticatedPage,
-    }) => {
-        // Locate the "Start Private" button in the Private tier card
-        const privateCard = authenticatedPage.getByTestId('private-tier-tab');
-        const startPrivateButton = privateCard.getByTestId('subscribe-button');
-
-        // Verify button is visible and enabled
-        await expect(startPrivateButton).toBeVisible();
-        await expect(startPrivateButton).toBeEnabled();
-
-        // Click the button
-        await startPrivateButton.click();
-
-        // Wait a moment for the fetch to start
-        await authenticatedPage.waitForTimeout(500);
-
-        // Verify we're still on the pricing page (Stripe redirects happen after getting the URL)
-        expect(authenticatedPage.url()).toContain('/pricing');
-
-        // Button should be in either loading or enabled state (depending on request timing)
-        // We just verify it exists
-        await expect(startPrivateButton).toBeVisible();
-    });
 });
 
-test.describe('Pricing Page - Currency Switching', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/pricing');
-        // Wait for page to fully load before tests run
-        await page.waitForLoadState('networkidle');
-        // Ensure pricing cards are visible before proceeding
-        await page.getByRole('heading', { name: /^pro$/i }).waitFor({
-            state: 'visible',
-            timeout: 5000,
-        });
-    });
-
-    test('should display all currency options', async ({ page }) => {
-        // Check that currency switcher buttons are visible
-        const gbpButton = page.getByTestId('currency-gbp');
-        const eurButton = page.getByTestId('currency-eur');
-        const usdButton = page.getByTestId('currency-usd');
-
-        await expect(gbpButton).toBeVisible();
-        await expect(eurButton).toBeVisible();
-        await expect(usdButton).toBeVisible();
-    });
-
-    test('should default to GBP currency', async ({ page }) => {
-        const gbpButton = page.getByTestId('currency-gbp');
-
-        // GBP should be selected by default
-        await expect(gbpButton).toHaveClass(/bg-green-100/);
-    });
-
-    test('should allow switching to EUR currency', async ({ page }) => {
-        const eurButton = page.getByTestId('currency-eur');
-        const gbpButton = page.getByTestId('currency-gbp');
-
-        // Initially GBP should be selected
-        await expect(gbpButton).toHaveClass(/bg-green-100/);
-
-        // Click EUR button
-        await eurButton.click();
-
-        // Wait for currency update (page may reload)
-        await page.waitForLoadState('networkidle');
-
-        // After the page reloads, EUR should be selected
-        // Note: The selection persists via database, so EUR should now be highlighted
-        const currencyButtons = page.locator('[data-testid^="currency-"]');
-        await expect(currencyButtons.first()).toBeVisible();
-    });
-
-    test('should disable currency buttons during update', async ({ page }) => {
-        const eurButton = page.getByTestId('currency-eur');
-
-        // Verify button is enabled initially
-        await expect(eurButton).toBeEnabled();
-
-        // Click to trigger currency change
-        await eurButton.click();
-
-        // Currency buttons should be disabled during the update
-        // Note: This is a brief moment, so we check it exists
-        await expect(eurButton).toBeVisible();
-    });
-
-    test('should update pricing when currency changes', async ({ page }) => {
-        // Switch to EUR
-        const eurButton = page.getByTestId('currency-eur');
-        await eurButton.click();
-
-        // Wait for page to update
-        await page.waitForLoadState('networkidle');
-
-        // Verify currency switcher still exists (page loaded)
-        const eurButtonAfterUpdate = page.getByTestId('currency-eur');
-        await expect(eurButtonAfterUpdate).toBeVisible();
-
-        // Verify pricing section is still visible
-        const proCard = page.getByTestId('pro-tier-tab');
-        await expect(proCard).toBeVisible();
-    });
-});
+// Note: Currency Switching tests removed - currency switcher no longer exists
+// Users now select currency by country code in URL
 
 test.describe('Pricing Page - Monthly/Yearly Toggle', () => {
     test.beforeEach(async ({ page }) => {
@@ -447,14 +311,10 @@ test.describe('Pricing Page - Button Disabled States', () => {
         await expect(getStartedButton).toBeVisible();
         await expect(getStartedButton).toBeEnabled();
 
-        // Pro and Private buttons should be enabled (not subscribed yet)
+        // Pro button should be enabled (not subscribed yet)
         const proCard = authenticatedPage.getByTestId('pro-tier-tab');
         const proButton = proCard.getByTestId('subscribe-button');
         await expect(proButton).toBeEnabled();
-
-        const privateCard = authenticatedPage.getByTestId('private-tier-tab');
-        const privateButton = privateCard.getByTestId('subscribe-button');
-        await expect(privateButton).toBeEnabled();
     });
 
     // Note: Testing disabled states for Pro/Private subscriptions would require:
@@ -482,64 +342,25 @@ test.describe('Pricing Page - Button Disabled States', () => {
         const proCard = page.getByTestId('pro-tier-tab');
         const proButton = proCard.getByTestId('subscribe-button');
         await expect(proButton).toBeVisible();
-
-        // Check Private tier button exists (text depends on auth state)
-        const privateCard = page.getByTestId('private-tier-tab');
-        const privateButton = privateCard.getByTestId('subscribe-button');
-        await expect(privateButton).toBeVisible();
     });
 });
 
 test.describe('Pricing Page - Integration Tests', () => {
-    test('should maintain currency selection when toggling billing period', async ({
-        page,
-    }) => {
+    test('should display pricing tiers side by side', async ({ page }) => {
         await page.goto('/pricing');
         await page.waitForLoadState('networkidle');
 
-        // Ensure pricing cards are visible
-        await page.getByRole('heading', { name: /^pro$/i }).waitFor({
-            state: 'visible',
-            timeout: 5000,
-        });
-
-        // Switch to EUR
-        const eurButton = page.getByTestId('currency-eur');
-        await eurButton.click();
-        await page.waitForLoadState('networkidle');
-
-        // Toggle to monthly
-        const monthlyToggle = page.getByTestId('monthly-toggle');
-        await monthlyToggle.click();
-
-        // Wait a moment for price to update
-        await page.waitForTimeout(100);
-
-        // Verify EUR is still selected
-        const eurButtonAfterToggle = page.getByTestId('currency-eur');
-        await expect(eurButtonAfterToggle).toBeVisible();
-    });
-
-    test('should display all pricing tiers side by side', async ({ page }) => {
-        await page.goto('/pricing');
-        await page.waitForLoadState('networkidle');
-
-        // Verify all three tiers are visible
+        // Verify all tiers are visible
         await expect(
             page.getByRole('heading', { name: /^free$/i }),
         ).toBeVisible();
         await expect(
             page.getByRole('heading', { name: /^pro$/i }),
         ).toBeVisible();
-        await expect(
-            page.getByRole('heading', { name: /^private$/i }),
-        ).toBeVisible();
 
-        // Verify tier cards are in the expected layout
+        // Verify tier card is in the expected layout
         const proCard = page.getByTestId('pro-tier-tab');
-        const privateCard = page.getByTestId('private-tier-tab');
         await expect(proCard).toBeVisible();
-        await expect(privateCard).toBeVisible();
     });
 
     test('should display page title and heading', async ({ page }) => {

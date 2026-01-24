@@ -11,7 +11,7 @@ test.describe('Google OAuth Authentication', () => {
         const googleButton = page.getByTestId('google-sign-in-button');
 
         if ((await googleButton.count()) > 0) {
-            await expect(googleButton).toBeVisible();
+            await expect(googleButton).toBeVisible({ timeout: 5000 });
         }
     });
 
@@ -87,8 +87,8 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
         expect(page.url()).toContain('/');
 
         // Verify user menu is visible (indicates logged in)
-        const userMenu = page.getByRole('button', { name: /user menu/i });
-        await expect(userMenu).toBeVisible();
+        const userMenu = page.getByTestId('button-user-menu');
+        await expect(userMenu).toBeVisible({ timeout: 5000 });
     });
 
     test('should create new user account from OAuth data', async ({ page }) => {
@@ -100,13 +100,13 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
 
         // Should be logged in
         expect(page.url()).toContain('/');
-        const userMenu = page.getByRole('button', { name: /user menu/i });
-        await expect(userMenu).toBeVisible();
+        const userMenu = page.getByTestId('button-user-menu');
+        await expect(userMenu).toBeVisible({ timeout: 5000 });
 
         // Open user menu to verify name is set
         await userMenu.click();
         const profileLink = page.getByRole('link', { name: /profile/i });
-        await expect(profileLink).toBeVisible();
+        await expect(profileLink).toBeVisible({ timeout: 5000 });
     });
 
     test('should link Google account to existing email', async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
         await loginAsTestUser(page);
 
         // Then log out
-        const userMenu = page.getByRole('button', { name: /user menu/i });
+        const userMenu = page.getByTestId('button-user-menu');
         await userMenu.click();
         const logoutButton = page.getByRole('button', { name: /log out/i });
         await logoutButton.click();
@@ -127,10 +127,8 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
         await loginWithMockOAuth(page, 'test@example.com', 'Test User');
 
         // Should be logged in successfully
-        const userMenuAfterOAuth = page.getByRole('button', {
-            name: /user menu/i,
-        });
-        await expect(userMenuAfterOAuth).toBeVisible();
+        const userMenuAfterOAuth = page.getByTestId('button-user-menu');
+        await expect(userMenuAfterOAuth).toBeVisible({ timeout: 5000 });
     });
 
     test('should log out user after OAuth login', async ({ page }) => {
@@ -142,13 +140,13 @@ test.describe('Google OAuth - Successful Login (using mock endpoint)', () => {
         );
 
         // User should be logged in
-        const userMenu = page.getByRole('button', { name: /user menu/i });
-        await expect(userMenu).toBeVisible();
+        const userMenu = page.getByTestId('button-user-menu');
+        await expect(userMenu).toBeVisible({ timeout: 5000 });
 
         // Find and click logout button
         await userMenu.click();
         const logoutButton = page.getByRole('button', { name: /log out/i });
-        await expect(logoutButton).toBeVisible();
+        await expect(logoutButton).toBeVisible({ timeout: 5000 });
         await logoutButton.click();
 
         // Should redirect to home and user menu should disappear

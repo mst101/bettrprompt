@@ -1008,7 +1008,7 @@ class PromptBuilderController extends Controller
         $perPage = max(1, min(100, $perPage));
 
         // Validate sort column
-        $allowedSortColumns = ['created_at', 'personality_type', 'workflow_stage', 'task_description'];
+        $allowedSortColumns = ['created_at', 'personality_type', 'workflow_stage', 'task_description', 'selected_framework'];
         if (! in_array($sortBy, $allowedSortColumns)) {
             $sortBy = 'created_at';
         }
@@ -1024,7 +1024,7 @@ class PromptBuilderController extends Controller
         // Find visitor record linked to this user (if they converted from visitor)
         $visitor = Visitor::where('user_id', $user->id)->first();
 
-        $promptRuns = PromptRun::where(function ($query) use ($user, $visitor) {
+        $query = PromptRun::where(function ($query) use ($user, $visitor) {
             $query->where('user_id', $user->id);
             if ($visitor) {
                 // Include prompts created when they were a visitor
@@ -1036,10 +1036,18 @@ class PromptBuilderController extends Controller
                 // or workflow_1 (analysis)
                 $query->whereNotNull('task_classification') // Completed workflow_1
                     ->orWhereNotNull('pre_analysis_questions'); // Completed workflow_0
-            })
-            ->orderBy($sortBy, $sortDirection)
-            ->paginate($perPage)
-            ->withQueryString();
+            });
+
+        // Handle sorting for JSON and regular columns
+        if ($sortBy === 'selected_framework') {
+            // Sort by framework name within the JSON column (case-insensitive for PostgreSQL)
+            $direction = strtoupper($sortDirection) === 'DESC' ? 'DESC' : 'ASC';
+            $query->orderByRaw("(selected_framework->>'name') {$direction}");
+        } else {
+            $query->orderBy($sortBy, $sortDirection);
+        }
+
+        $promptRuns = $query->paginate($perPage)->withQueryString();
 
         return Inertia::render('PromptBuilder/History', [
             'promptRuns' => inertiaPaginated($promptRuns, PromptRunResource::class),

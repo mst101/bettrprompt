@@ -20,6 +20,10 @@ withDefaults(defineProps<Props>(), {
     iconPosition: 'left',
 });
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const buttonRef = ref<InstanceType<typeof Button> | null>(null);
 
 const focus = () => {
@@ -38,6 +42,7 @@ defineExpose({ focus });
         :loading="loading"
         :icon="icon"
         :icon-position="iconPosition"
+        v-bind="$attrs"
     >
         <slot />
     </Button>

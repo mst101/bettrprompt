@@ -64,15 +64,15 @@ test.describe('Prompt Builder History - Empty State', () => {
     }) => {
         // Page is already navigated to empty state in beforeEach
         // Verify empty state message is visible when no prompts exist
-        const emptyStateContainer = authenticatedPageWithUniqueUser.locator(
-            'text=/no prompt history yet\./i',
+        const emptyStateMessage = authenticatedPageWithUniqueUser.locator(
+            '[data-testid="empty-state-message"]',
         );
-        await expect(emptyStateContainer).toBeVisible({ timeout: 5000 });
+        await expect(emptyStateMessage).toBeVisible({ timeout: 5000 });
 
         // Verify there's a link to create the first prompt
-        const createLink = authenticatedPageWithUniqueUser.getByRole('link', {
-            name: /create your first optimised prompt/i,
-        });
+        const createLink = authenticatedPageWithUniqueUser.locator(
+            '[data-testid="empty-state-link"]',
+        );
         await expect(createLink).toBeVisible({ timeout: 5000 });
     });
 
@@ -144,14 +144,14 @@ test.describe('Prompt Builder History - With Data', () => {
         // Wait for page and table to load
         await authenticatedPage.waitForLoadState('networkidle');
 
-        // Should see the table with created data
-        const table = authenticatedPage.locator('table');
-        await expect(table).toBeVisible({ timeout: 10000 });
+        // Should see at least one task cell (we created 15 in beforeEach)
+        const firstTaskCell = authenticatedPage
+            .locator('[data-testid="table-cell-task"]')
+            .first();
+        await expect(firstTaskCell).toBeVisible({ timeout: 10000 });
 
-        // Should see at least one row (we created 10 in beforeEach)
+        // Should see at least one row
         const rows = authenticatedPage.locator('tbody tr');
-        await expect(rows.first()).toBeVisible({ timeout: 5000 });
-
         const rowCount = await rows.count();
         expect(rowCount).toBeGreaterThanOrEqual(1);
     });
@@ -167,29 +167,29 @@ test.describe('Prompt Builder History - With Data', () => {
         // Wait for page and table to fully load
         await authenticatedPage.waitForLoadState('networkidle');
 
-        // Wait for table to be visible
-        const table = authenticatedPage.locator('table');
-        await expect(table).toBeVisible({ timeout: 10000 });
-
         // Should see all column headers on desktop
         await expect(
-            authenticatedPage.getByRole('columnheader', {
-                name: /personality type/i,
-            }),
+            authenticatedPage.locator(
+                '[data-testid="column-header-personality-type"]',
+            ),
         ).toBeVisible();
         await expect(
-            authenticatedPage.getByRole('columnheader', {
-                name: /task description/i,
-            }),
+            authenticatedPage.locator(
+                '[data-testid="column-header-task-description"]',
+            ),
         ).toBeVisible();
         await expect(
-            authenticatedPage.getByRole('columnheader', { name: /framework/i }),
+            authenticatedPage.locator(
+                '[data-testid="column-header-framework"]',
+            ),
         ).toBeVisible();
         await expect(
-            authenticatedPage.getByRole('columnheader', { name: /status/i }),
+            authenticatedPage.locator(
+                '[data-testid="column-header-workflow-stage"]',
+            ),
         ).toBeVisible();
         await expect(
-            authenticatedPage.getByRole('columnheader', { name: /created/i }),
+            authenticatedPage.locator('[data-testid="column-header-created"]'),
         ).toBeVisible();
     });
 
@@ -271,21 +271,11 @@ test.describe('Prompt Builder History - With Data', () => {
         // Wait for page to load
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Wait for table to appear
-        const table = authenticatedPage.locator('table');
-        await expect(table).toBeVisible({ timeout: 5000 });
-
-        // Wait for rows to appear
-        const rows = authenticatedPage.locator('tbody tr');
-        await expect(rows.first()).toBeVisible({ timeout: 5000 });
-
-        // Task descriptions should be visible
-        const taskCell = authenticatedPage.locator(
-            '[data-testid="table-cell-task"], tbody tr td:nth-child(2)',
-        );
-
-        const firstTaskCell = taskCell.first();
-        await expect(firstTaskCell).toBeVisible();
+        // Wait for task cell to appear
+        const firstTaskCell = authenticatedPage
+            .locator('[data-testid="table-cell-task"]')
+            .first();
+        await expect(firstTaskCell).toBeVisible({ timeout: 5000 });
 
         const taskText = await firstTaskCell.textContent();
 
@@ -365,7 +355,7 @@ test.describe('Prompt Builder History - Sorting', () => {
 
         // Click task description header to sort
         const taskHeader = authenticatedPage
-            .getByRole('columnheader', { name: /task description/i })
+            .locator('[data-testid="column-header-task-description"]')
             .locator('button');
 
         // Wait for URL to change after clicking
@@ -375,8 +365,6 @@ test.describe('Prompt Builder History - Sorting', () => {
             }),
             taskHeader.click(),
         ]);
-
-        // Wait for navigation to complete
 
         // URL should contain sort parameters
         expect(authenticatedPage.url()).toContain('sort_by=task_description');
@@ -402,7 +390,7 @@ test.describe('Prompt Builder History - Sorting', () => {
 
         // Click workflow stage header
         const workflowStageHeader = authenticatedPage
-            .getByRole('columnheader', { name: /workflow stage|status/i })
+            .locator('[data-testid="column-header-workflow-stage"]')
             .locator('button');
 
         // Wait for URL to change after clicking
@@ -426,7 +414,7 @@ test.describe('Prompt Builder History - Sorting', () => {
 
         // Click personality type header
         const personalityHeader = authenticatedPage
-            .getByRole('columnheader', { name: /personality type/i })
+            .locator('[data-testid="column-header-personality-type"]')
             .locator('button');
 
         // Wait for URL to change after clicking
@@ -448,10 +436,11 @@ test.describe('Prompt Builder History - Sorting', () => {
 
         await authenticatedPage.goto('/history');
 
-        // Click framework header
+        // Click framework header using data-testid
         const frameworkHeader = authenticatedPage
-            .getByRole('columnheader', { name: /framework/i })
+            .locator('[data-testid="column-header-framework"]')
             .locator('button');
+        await expect(frameworkHeader).toBeVisible({ timeout: 5000 });
 
         // Wait for URL to change after clicking
         const sortPromise = authenticatedPage.waitForURL(
@@ -488,20 +477,16 @@ test.describe('Prompt Builder History - Pagination', () => {
         // Wait for page to load
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
-        // Wait for table to appear
-        const table = authenticatedPage.locator('table');
-        await expect(table).toBeVisible({ timeout: 5000 });
-
         // Desktop size to see pagination
         await authenticatedPage.setViewportSize({ width: 1280, height: 720 });
 
-        // Should see "Showing X to Y of Z results" text (use .last() to get desktop version)
+        // Should see pagination results info
         const resultsText = authenticatedPage
             .getByText(/Showing \d+ to \d+ of \d+ results/i)
             .last();
         await expect(resultsText).toBeVisible({ timeout: 5000 });
 
-        // Should see page indicator (use .last() to get desktop version)
+        // Should see page indicator
         const pageIndicator = authenticatedPage
             .getByText(/page \d+ of \d+/i)
             .last();
@@ -513,10 +498,6 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         // Wait for page to load
         await authenticatedPage.waitForLoadState('domcontentloaded');
-
-        // Wait for table to appear (we created 25 items, so should have 3 pages)
-        const table = authenticatedPage.locator('table');
-        await expect(table).toBeVisible({ timeout: 10000 });
 
         // Wait for rows to be visible
         const rows = authenticatedPage.locator('tbody tr');
@@ -599,15 +580,18 @@ test.describe('Prompt Builder History - Pagination', () => {
 
         await authenticatedPage.goto('/history?per_page=10');
 
-        // Should see mobile "Page X of Y" text (use .first() for mobile version)
-        const pageIndicator = authenticatedPage
-            .getByText(/page \d+ of \d+/i)
-            .first();
-        await expect(pageIndicator).toBeVisible();
+        // Wait for page to load (we created 25 items so should have multiple pages)
+        await authenticatedPage.waitForLoadState('domcontentloaded');
+
+        // Should see mobile "Page X of Y" text (shown when lastPage > 1)
+        const pageIndicator = authenticatedPage.locator(
+            '[data-testid="pagination-page-indicator-mobile"]',
+        );
+        await expect(pageIndicator).toBeVisible({ timeout: 5000 });
 
         // Should see Previous or Next button (depending on page)
         const mobileButtons = authenticatedPage.locator(
-            '#pagination-prev-mobile, #pagination-next-mobile',
+            '[data-testid="pagination-prev-mobile"], [data-testid="pagination-next-mobile"]',
         );
         const buttonCount = await mobileButtons.count();
         expect(buttonCount).toBeGreaterThan(0);
@@ -715,14 +699,20 @@ test.describe('Prompt Builder History - Navigation', () => {
     }) => {
         await authenticatedPage.goto('/history');
 
+        // Wait for page to load
+        await authenticatedPage.waitForLoadState('domcontentloaded');
+
         // Click Create New button in header
-        const createButton = authenticatedPage.getByRole('link', {
-            name: /create new/i,
-        });
+        const createButton = authenticatedPage.locator(
+            '[data-testid="button-create-new"]',
+        );
+        await expect(createButton).toBeVisible({ timeout: 5000 });
         await createButton.click();
 
-        // Should navigate to prompt optimiser
-        await authenticatedPage.waitForURL('/prompt-builder');
+        // Should navigate to prompt builder
+        await authenticatedPage.waitForURL(/\/prompt-builder/, {
+            timeout: 5000,
+        });
         expect(authenticatedPage.url()).toContain('/prompt-builder');
     });
 

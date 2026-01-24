@@ -30,6 +30,7 @@ const isAdmin = computed(() => page.props.auth?.user?.isAdmin ?? false);
                 <span class="inline-flex rounded-md">
                     <button
                         type="button"
+                        data-testid="button-user-menu"
                         class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-3 text-sm leading-4 font-medium text-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-50 hover:text-indigo-800 focus:text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                         :aria-label="$t('common.aria.userMenu')"
                     >

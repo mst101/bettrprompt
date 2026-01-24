@@ -153,6 +153,7 @@ const labelClass = computed(() =>
         <textarea
             :id="props.id"
             ref="textarea"
+            data-testid="textarea-task-description"
             :value="props.modelValue"
             :rows="dynamicRows"
             :placeholder="props.placeholder"

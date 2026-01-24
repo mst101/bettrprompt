@@ -190,13 +190,17 @@ const handleDelete = async (promptRunId: number, event: Event) => {
 <template>
     <Head :title="$t('promptBuilder.history.title')" />
 
-    <HeaderPage :title="$t('promptBuilder.history.title')">
+    <HeaderPage
+        :title="$t('promptBuilder.history.title')"
+        data-testid="page-header-history"
+    >
         <template #actions>
             <LinkButton
                 :href="countryRoute('prompt-builder.index')"
                 variant="primary"
                 icon="plus"
                 icon-position="left"
+                data-testid="button-create-new"
             >
                 {{ $t('promptBuilder.actions.createNew') }}
             </LinkButton>
@@ -207,11 +211,15 @@ const handleDelete = async (promptRunId: number, event: Event) => {
         <Card padding="none">
             <div
                 v-if="promptRuns.data.length === 0"
+                data-testid="empty-state-container"
                 class="p-6 text-center text-indigo-500"
             >
-                <p>{{ $t('promptBuilder.history.empty.title') }}</p>
+                <p data-testid="empty-state-message">
+                    {{ $t('promptBuilder.history.empty.title') }}
+                </p>
                 <a
                     :href="countryRoute('prompt-builder.index')"
+                    data-testid="empty-state-link"
                     class="mt-2 text-indigo-700 hover:text-indigo-800"
                 >
                     {{ $t('promptBuilder.history.empty.cta') }}
@@ -226,11 +234,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                             <tr>
                                 <th
                                     scope="col"
+                                    data-testid="column-header-personality-type"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-indigo-700 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="personality_type"
-                                        :current-sort="filters.sort_by"
+                                        :current-sort="filters.sortBy"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
@@ -243,11 +252,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
+                                    data-testid="column-header-task-description"
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-indigo-700 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="task_description"
-                                        :current-sort="filters.sort_by"
+                                        :current-sort="filters.sortBy"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
@@ -260,11 +270,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
+                                    data-testid="column-header-framework"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase lg:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="selected_framework"
-                                        :current-sort="filters.sort_by"
+                                        :current-sort="filters.sortBy"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
@@ -277,11 +288,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
+                                    data-testid="column-header-workflow-stage"
                                     class="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase sm:table-cell"
                                 >
                                     <TableHeaderSortable
                                         column="workflow_stage"
-                                        :current-sort="filters.sort_by"
+                                        :current-sort="filters.sortBy"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
@@ -294,11 +306,12 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                                 </th>
                                 <th
                                     scope="col"
+                                    data-testid="column-header-created"
                                     class="px-6 py-3 text-left text-xs font-medium tracking-wider text-indigo-700 uppercase"
                                 >
                                     <TableHeaderSortable
                                         column="created_at"
-                                        :current-sort="filters.sort_by"
+                                        :current-sort="filters.sortBy"
                                         :sort-direction="sortDirection"
                                         @sort="sortBy"
                                     >
@@ -422,6 +435,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                         <LinkButton
                             v-if="promptRuns.meta.prevPageUrl"
                             id="pagination-prev-mobile"
+                            data-testid="pagination-prev-mobile"
                             :href="promptRuns.meta.prevPageUrl"
                             @click="handlePaginationClick('prev')"
                         >
@@ -433,6 +447,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
 
                     <p
                         v-if="promptRuns.meta.lastPage > 1"
+                        data-testid="pagination-page-indicator-mobile"
                         class="text-center text-sm text-indigo-700"
                     >
                         {{
@@ -447,6 +462,7 @@ const handleDelete = async (promptRunId: number, event: Event) => {
                         <LinkButton
                             v-if="promptRuns.meta.nextPageUrl"
                             id="pagination-next-mobile"
+                            data-testid="pagination-next-mobile"
                             :href="promptRuns.meta.nextPageUrl"
                             @click="handlePaginationClick('next')"
                         >

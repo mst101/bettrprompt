@@ -235,6 +235,7 @@ const handleStarRatingSaveBulk = (index: number, rating: number) => {
                     <!-- Toggle button to show/hide rating UI -->
                     <button
                         type="button"
+                        :data-testid="`button-rate-question-${index}`"
                         class="rounded px-2 py-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         @click="toggleRatingUI(index)"
                     >
@@ -309,6 +310,7 @@ const handleStarRatingSaveBulk = (index: number, rating: number) => {
             <ButtonSecondary
                 v-if="showBack"
                 type="button"
+                data-testid="button-back-questions"
                 :disabled="isSubmitting"
                 class="w-full sm:w-auto"
                 @click="emit('back')"
@@ -317,6 +319,7 @@ const handleStarRatingSaveBulk = (index: number, rating: number) => {
             </ButtonSecondary>
             <ButtonPrimary
                 type="button"
+                data-testid="button-submit-all-questions-bulk"
                 :disabled="isSubmitting"
                 :loading="isSubmitting"
                 class="w-full sm:w-auto"

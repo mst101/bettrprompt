@@ -206,6 +206,7 @@ const handleTranscription = (text: string) => {
                 <ButtonSecondary
                     v-if="!isRequired && currentQuestionNumber < totalQuestions"
                     type="button"
+                    data-testid="button-submit-all-questions"
                     :disabled="isSubmitting"
                     :loading="isSubmitting"
                     class="w-full sm:w-auto"

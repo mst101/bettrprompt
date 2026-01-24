@@ -30,17 +30,15 @@ test.describe('Complete Rating Flow - From Questions to Prompt Rating', () => {
         await authenticatedPage.waitForLoadState('domcontentloaded');
 
         // Step 1: Answer clarifying questions
-        const questionsTab = authenticatedPage.getByTestId(
-            'tab-button-questions',
+        const questionsTab = authenticatedPage.locator(
+            '[data-testid="tab-button-questions"]',
         );
         await expect(questionsTab).toBeVisible({ timeout: 5000 });
         await questionsTab.click();
         await authenticatedPage.waitForTimeout(500);
 
         // Answer first question if needed
-        const questionForm = authenticatedPage.locator(
-            'textarea[placeholder*="Type your answer"]',
-        );
+        const questionForm = authenticatedPage.getByTestId('answer-textarea');
         const hasQuestion = await questionForm.isVisible().catch(() => false);
 
         if (hasQuestion) {
@@ -515,10 +513,8 @@ test.describe('Complete Rating Flow - Rating Updates', () => {
 
                         // Submit update
                         const updateButton = authenticatedPage
-                            .getByRole('button', {
-                                name: /update explanation/i,
-                            })
-                            .first();
+                            .getByTestId('prompt-rating-submit')
+                            .nth(1);
 
                         if (await updateButton.isVisible().catch(() => false)) {
                             await updateButton.click();
