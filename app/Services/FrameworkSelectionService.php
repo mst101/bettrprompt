@@ -198,8 +198,8 @@ class FrameworkSelectionService
         return FrameworkSelection::distinct('chosen_framework')
             ->pluck('chosen_framework')
             ->toArray()
-            |> (fn ($frameworks) => array_map(fn ($fw) => $this->getFrameworkPerformance($fw), $frameworks))()
-            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']) ? $arr : $arr))()
-            |> (fn ($arr) => array_slice($arr, 0, $limit))();
+            |> (fn ($frameworks) => array_map(fn ($fw) => $this->getFrameworkPerformance($fw), $frameworks))
+            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']) ? $arr : $arr))
+            |> (fn ($arr) => array_slice($arr, 0, $limit));
     }
 }
