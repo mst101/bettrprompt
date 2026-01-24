@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "ext-curl": "*",
         "geoip2/geoip2": "~3.0",
         "inertiajs/inertia-laravel": "^2.0",
