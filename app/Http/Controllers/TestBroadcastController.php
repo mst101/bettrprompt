@@ -189,11 +189,11 @@ class TestBroadcastController extends Controller
             if ($state === '0_failed') {
                 $data['error_message'] = 'Test pre-analysis failure for E2E testing';
             }
-        } elseif ($state === WorkflowStage::PreAnalysisCompleted) {
+        } elseif ($state === WorkflowStage::PreAnalysisCompleted->value) {
             $data['workflow_stage'] = WorkflowStage::PreAnalysisCompleted;
-        } elseif ($state === WorkflowStage::AnalysisProcessing) {
+        } elseif ($state === WorkflowStage::AnalysisProcessing->value) {
             $data['workflow_stage'] = WorkflowStage::AnalysisProcessing;
-        } elseif ($state === WorkflowStage::AnalysisCompleted) {
+        } elseif ($state === WorkflowStage::AnalysisCompleted->value) {
             $data['workflow_stage'] = WorkflowStage::AnalysisCompleted;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
@@ -253,10 +253,10 @@ class TestBroadcastController extends Controller
                     'when_to_use_instead' => 'For structured improvement plans',
                 ],
             ];
-        } elseif ($state === WorkflowStage::AnalysisFailed) {
+        } elseif ($state === WorkflowStage::AnalysisFailed->value) {
             $data['workflow_stage'] = WorkflowStage::AnalysisFailed;
             $data['error_message'] = 'Test main analysis failure for E2E testing';
-        } elseif ($state === WorkflowStage::GenerationProcessing) {
+        } elseif ($state === WorkflowStage::GenerationProcessing->value) {
             $data['workflow_stage'] = WorkflowStage::GenerationProcessing;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
@@ -290,7 +290,7 @@ class TestBroadcastController extends Controller
                     'required' => true,
                 ],
             ];
-        } elseif ($state === WorkflowStage::GenerationCompleted) {
+        } elseif ($state === WorkflowStage::GenerationCompleted->value) {
             $data['workflow_stage'] = WorkflowStage::GenerationCompleted;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
@@ -326,7 +326,7 @@ class TestBroadcastController extends Controller
             ];
             $data['optimized_prompt'] = 'This is a test optimised prompt.';
             $data['completed_at'] = now();
-        } elseif ($state === WorkflowStage::GenerationFailed) {
+        } elseif ($state === WorkflowStage::GenerationFailed->value) {
             $data['workflow_stage'] = WorkflowStage::GenerationFailed;
             $data['error_message'] = 'Test prompt optimisation failure for E2E testing';
             $data['selected_framework'] = [

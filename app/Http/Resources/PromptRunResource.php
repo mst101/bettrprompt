@@ -92,7 +92,7 @@ class PromptRunResource extends JsonResource
                 : $this->clarifying_answers,
             'currentQuestionIndex' => $this->current_question_index,
             'optimizedPrompt' => $this->optimized_prompt,
-            'workflowStage' => $this->workflow_stage,
+            'workflowStage' => $this->workflow_stage?->value,
             'errorMessage' => $this->error_message,
             'completedAt' => $this->completed_at?->toIso8601String(),
             'createdAt' => $this->created_at?->toIso8601String(),
