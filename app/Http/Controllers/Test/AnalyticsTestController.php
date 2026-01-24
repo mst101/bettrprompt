@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Test;
 
+use App\Enums\WorkflowStage;
 use App\Http\Controllers\Controller;
 use App\Models\PromptRun;
 use App\Models\QuestionAnalytic;
@@ -81,7 +82,7 @@ class AnalyticsTestController extends Controller
                 'identity' => 80,
             ],
             'task_description' => 'Test task for visitor restrictions',
-            'workflow_stage' => '1_completed',
+            'workflow_stage' => WorkflowStage::AnalysisCompleted,
             'selected_framework' => [
                 'code' => 'smart',
                 'name' => 'S.M.A.R.T. Goals Framework',
@@ -143,7 +144,7 @@ class AnalyticsTestController extends Controller
                     'identity' => 80,
                 ],
                 'task_description' => 'Test task for visitor restrictions',
-                'workflow_stage' => '2_completed',
+                'workflow_stage' => WorkflowStage::GenerationCompleted,
                 'selected_framework' => [
                     'code' => 'smart',
                     'name' => 'S.M.A.R.T. Goals Framework',
@@ -219,7 +220,7 @@ class AnalyticsTestController extends Controller
                 'identity' => 80,
             ],
             'task_description' => 'Test task for visitor restrictions',
-            'workflow_stage' => '2_completed',
+            'workflow_stage' => WorkflowStage::GenerationCompleted,
             'selected_framework' => [
                 'code' => 'smart',
                 'name' => 'S.M.A.R.T. Goals Framework',
@@ -286,7 +287,7 @@ class AnalyticsTestController extends Controller
                 'identity' => 80,
             ],
             'task_description' => 'Test task for visitor restrictions',
-            'workflow_stage' => '2_completed',
+            'workflow_stage' => WorkflowStage::GenerationCompleted,
             'selected_framework' => [
                 'code' => 'smart',
                 'name' => 'S.M.A.R.T. Goals Framework',

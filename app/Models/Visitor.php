@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WorkflowStage;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -142,7 +143,7 @@ class Visitor extends Model
     public function hasCompletedPrompts(): bool
     {
         return $this->promptRuns()
-            ->where('workflow_stage', '2_completed')
+            ->where('workflow_stage', WorkflowStage::GenerationCompleted->value)
             ->whereNotNull('optimized_prompt')
             ->exists();
     }

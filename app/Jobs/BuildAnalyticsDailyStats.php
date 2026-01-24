@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\WorkflowStage;
 use App\Models\AnalyticsDailyStat;
 use App\Models\AnalyticsEvent;
 use App\Models\AnalyticsSession;
@@ -212,7 +213,7 @@ class BuildAnalyticsDailyStats implements ShouldQueue
             ->count();
 
         $completed = PromptRun::whereBetween('completed_at', [$dayStart, $dayEnd])
-            ->where('workflow_stage', '2_completed')
+            ->where('workflow_stage', WorkflowStage::GenerationCompleted->value)
             ->whereNull('parent_id')
             ->count();
 

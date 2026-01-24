@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\WorkflowStage;
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\AnalyticsEvent;
@@ -57,7 +58,7 @@ class TestBroadcastController extends Controller
                     'How will you measure success?',
                     'What is your timeline for achieving this goal?',
                 ],
-                'workflow_stage' => '1_completed',
+                'workflow_stage' => WorkflowStage::AnalysisCompleted,
             ]);
 
             $promptRun->refresh();
@@ -103,7 +104,7 @@ class TestBroadcastController extends Controller
         // Update the prompt run to simulate completed optimisation (2_completed)
         if (! $promptRun->optimized_prompt) {
             $promptRun->update([
-                'workflow_stage' => '2_completed',
+                'workflow_stage' => WorkflowStage::GenerationCompleted,
                 'optimized_prompt' => "# Test Optimised Prompt\n\nThis is a test prompt generated for E2E testing purposes.\n\n## Your Task\n$promptRun->task_description\n\n## Recommended Framework\n$promptRun->selected_framework\n\nPlease proceed with this structured approach to achieve the best results.",
                 'completed_at' => now(),
             ]);
@@ -149,14 +150,14 @@ class TestBroadcastController extends Controller
      *
      * Workflow stages supported:
      * - '0_processing': Pre-analysis in progress
-     * - '0_completed': Pre-analysis complete with quick queries
+     * - WorkflowStage::PreAnalysisCompleted: Pre-analysis complete with quick queries
      * - '0_failed': Pre-analysis failed
-     * - '1_processing': Main analysis in progress, no framework selected
-     * - '1_completed': Framework selected, no optimised prompt
-     * - '1_failed': Main analysis failed
-     * - '2_processing': Prompt optimisation in progress
-     * - '2_completed': Full workflow completed with optimised prompt
-     * - '2_failed': Prompt optimisation failed
+     * - WorkflowStage::AnalysisProcessing: Main analysis in progress, no framework selected
+     * - WorkflowStage::AnalysisCompleted: Framework selected, no optimised prompt
+     * - WorkflowStage::AnalysisFailed: Main analysis failed
+     * - WorkflowStage::GenerationProcessing: Prompt optimisation in progress
+     * - WorkflowStage::GenerationCompleted: Full workflow completed with optimised prompt
+     * - WorkflowStage::GenerationFailed: Prompt optimisation failed
      */
     public function createTestPromptRun(Request $request): JsonResponse
     {
@@ -165,7 +166,7 @@ class TestBroadcastController extends Controller
             abort(403, 'Unauthorised');
         }
 
-        $state = $request->query('state', '1_processing');
+        $state = $request->query('state', WorkflowStage::AnalysisProcessing);
         $userId = auth()->id();
 
         $visitorId = $request->cookie('visitor_id');
@@ -188,12 +189,12 @@ class TestBroadcastController extends Controller
             if ($state === '0_failed') {
                 $data['error_message'] = 'Test pre-analysis failure for E2E testing';
             }
-        } elseif ($state === '0_completed') {
-            $data['workflow_stage'] = '0_completed';
-        } elseif ($state === '1_processing') {
-            $data['workflow_stage'] = '1_processing';
-        } elseif ($state === '1_completed') {
-            $data['workflow_stage'] = '1_completed';
+        } elseif ($state === WorkflowStage::PreAnalysisCompleted) {
+            $data['workflow_stage'] = WorkflowStage::PreAnalysisCompleted;
+        } elseif ($state === WorkflowStage::AnalysisProcessing) {
+            $data['workflow_stage'] = WorkflowStage::AnalysisProcessing;
+        } elseif ($state === WorkflowStage::AnalysisCompleted) {
+            $data['workflow_stage'] = WorkflowStage::AnalysisCompleted;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
                 'code' => 'SMART',
@@ -252,11 +253,11 @@ class TestBroadcastController extends Controller
                     'when_to_use_instead' => 'For structured improvement plans',
                 ],
             ];
-        } elseif ($state === '1_failed') {
-            $data['workflow_stage'] = '1_failed';
+        } elseif ($state === WorkflowStage::AnalysisFailed) {
+            $data['workflow_stage'] = WorkflowStage::AnalysisFailed;
             $data['error_message'] = 'Test main analysis failure for E2E testing';
-        } elseif ($state === '2_processing') {
-            $data['workflow_stage'] = '2_processing';
+        } elseif ($state === WorkflowStage::GenerationProcessing) {
+            $data['workflow_stage'] = WorkflowStage::GenerationProcessing;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
                 'code' => 'SMART',
@@ -289,8 +290,8 @@ class TestBroadcastController extends Controller
                     'required' => true,
                 ],
             ];
-        } elseif ($state === '2_completed') {
-            $data['workflow_stage'] = '2_completed';
+        } elseif ($state === WorkflowStage::GenerationCompleted) {
+            $data['workflow_stage'] = WorkflowStage::GenerationCompleted;
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
                 'code' => 'SMART',
@@ -325,8 +326,8 @@ class TestBroadcastController extends Controller
             ];
             $data['optimized_prompt'] = 'This is a test optimised prompt.';
             $data['completed_at'] = now();
-        } elseif ($state === '2_failed') {
-            $data['workflow_stage'] = '2_failed';
+        } elseif ($state === WorkflowStage::GenerationFailed) {
+            $data['workflow_stage'] = WorkflowStage::GenerationFailed;
             $data['error_message'] = 'Test prompt optimisation failure for E2E testing';
             $data['selected_framework'] = [
                 'name' => 'SMART Goals',
@@ -364,9 +365,9 @@ class TestBroadcastController extends Controller
 
         $promptRun = PromptRun::create($data);
 
-        // Record question presentations for '1_completed' and higher states
+        // Record question presentations for WorkflowStage::AnalysisCompleted and higher states
         // This simulates what happens in the n8n webhook when analysis completes
-        if (in_array($state, ['1_completed', '1_failed', '2_processing', '2_completed', '2_failed'])) {
+        if (in_array($state, [WorkflowStage::AnalysisCompleted, WorkflowStage::AnalysisFailed, WorkflowStage::GenerationProcessing, WorkflowStage::GenerationCompleted, WorkflowStage::GenerationFailed])) {
             if (! empty($promptRun->framework_questions)) {
                 $questionService = app(QuestionAnalyticsService::class);
                 foreach ($promptRun->framework_questions as $index => $question) {
