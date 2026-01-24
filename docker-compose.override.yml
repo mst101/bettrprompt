@@ -3,10 +3,10 @@ services:
   laravel.test:
     environment:
       - XDEBUG_MODE=off
-    # Disable extensions which conflict with PHP 8.4 JIT
+    # Disable extensions which conflict with PHP 8.5 JIT
     entrypoint: bash -c "phpdismod xdebug && phpdismod swoole && phpdismod pcov && start-container"
   reverb:
     environment:
       - XDEBUG_MODE=off
-    # Disable extensions which conflict with PHP 8.4 JIT
+    # Disable extensions which conflict with PHP 8.5 JIT
     entrypoint: bash -c "phpdismod xdebug && phpdismod swoole && phpdismod pcov && start-container"
