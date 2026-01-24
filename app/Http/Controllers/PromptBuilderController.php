@@ -131,7 +131,7 @@ class PromptBuilderController extends Controller
         if ($userId) {
             $user = auth()->user();
             if (
-                ! $user->hasLocationData()
+                ! $user->hasLocationData
                 && config('geoip.enabled')
                 && ! $user->location_prompt_dismissed
             ) {
@@ -408,7 +408,7 @@ class PromptBuilderController extends Controller
             if ($visitorId) {
                 $visitor = Visitor::find($visitorId);
                 if ($visitor) {
-                    $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts();
+                    $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts;
                     $visitorHasAccount = $visitor->user_id !== null;
                 }
             }
@@ -877,7 +877,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Only allow retry for failed runs
-        if (! $promptRun->isFailed()) {
+        if (! $promptRun->isFailed) {
             return back()->with('error', __('messages.prompt_builder.only_failed_runs_can_retry'));
         }
 

@@ -52,7 +52,7 @@ Route::prefix('{country}')
                 // - Created more than 1 hour ago, OR
                 // - Has been updated since creation (last_visit_at > created_at by significant amount)
                 if ($visitor) {
-                    $isReturningVisitor = $visitor->isReturning();
+                    $isReturningVisitor = $visitor->isReturning;
 
                     // Fallback: if visitor exists and was created more than 5 minutes ago,
                     // they're likely returning (even if they cleared cookies and came back quickly)

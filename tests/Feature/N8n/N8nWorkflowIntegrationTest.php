@@ -114,7 +114,7 @@ test('workflow recovers from failed state', function () {
         ->failed('API timeout error')
         ->build();
 
-    expect($promptRun->isFailed())->toBeTrue()
+    expect($promptRun->isFailed)->toBeTrue()
         ->and($promptRun->error_message)->toContain('timeout');
 
     // Retry: reset to processing

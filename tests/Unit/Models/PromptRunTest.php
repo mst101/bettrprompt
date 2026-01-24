@@ -270,13 +270,13 @@ describe('PromptRun state helpers', function () {
     test('isProcessing returns true for processing stages', function () {
         $promptRun = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisProcessing]);
 
-        expect($promptRun->isProcessing())->toBeTrue();
+        expect($promptRun->isProcessing)->toBeTrue();
     });
 
     test('isProcessing returns false for completed stages', function () {
         $promptRun = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisCompleted]);
 
-        expect($promptRun->isProcessing())->toBeFalse();
+        expect($promptRun->isProcessing)->toBeFalse();
     });
 
     test('isCompleted returns true only for workflow 2 completed', function () {
@@ -284,9 +284,9 @@ describe('PromptRun state helpers', function () {
         $promptRun2 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisCompleted]);
         $promptRun3 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationCompleted]);
 
-        expect($promptRun1->isCompleted())->toBeFalse()
-            ->and($promptRun2->isCompleted())->toBeFalse()
-            ->and($promptRun3->isCompleted())->toBeTrue();
+        expect($promptRun1->isCompleted)->toBeFalse()
+            ->and($promptRun2->isCompleted)->toBeFalse()
+            ->and($promptRun3->isCompleted)->toBeTrue();
     });
 
     test('isFailed returns true for any failed stage', function () {
@@ -294,9 +294,9 @@ describe('PromptRun state helpers', function () {
         $promptRun2 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisFailed]);
         $promptRun3 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationFailed]);
 
-        expect($promptRun1->isFailed())->toBeTrue()
-            ->and($promptRun2->isFailed())->toBeTrue()
-            ->and($promptRun3->isFailed())->toBeTrue();
+        expect($promptRun1->isFailed)->toBeTrue()
+            ->and($promptRun2->isFailed)->toBeTrue()
+            ->and($promptRun3->isFailed)->toBeTrue();
     });
 
     test('getFailedWorkflow returns correct workflow number', function () {

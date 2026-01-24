@@ -143,12 +143,8 @@ class SessionProcessorService
             return null;
         }
 
-        try {
-            $uri = new \PHP\URI\URI($value);
+        $path = parse_url($value, PHP_URL_PATH);
 
-            return $uri->path && $uri->path !== '' ? $uri->path : $value;
-        } catch (\Exception) {
-            return $value;
-        }
+        return is_string($path) && $path !== '' ? $path : $value;
     }
 }

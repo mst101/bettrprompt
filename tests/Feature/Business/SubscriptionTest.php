@@ -6,38 +6,38 @@ describe('Subscription Feature Tests', function () {
     describe('Subscription Tiers', function () {
         it('free user has correct tier status', function () {
             $user = User::factory()->create(['subscription_tier' => 'free']);
-            expect($user->isFree())->toBeTrue();
-            expect($user->isPaid())->toBeFalse();
-            expect($user->isStarter())->toBeFalse();
-            expect($user->isPro())->toBeFalse();
-            expect($user->isPremium())->toBeFalse();
+            expect($user->isFree)->toBeTrue();
+            expect($user->isPaid)->toBeFalse();
+            expect($user->isStarter)->toBeFalse();
+            expect($user->isPro)->toBeFalse();
+            expect($user->isPremium)->toBeFalse();
         });
 
         it('starter user has correct tier status', function () {
             $user = User::factory()->create(['subscription_tier' => 'starter']);
-            expect($user->isPaid())->toBeTrue();
-            expect($user->isStarter())->toBeTrue();
-            expect($user->isPro())->toBeFalse();
-            expect($user->isPremium())->toBeFalse();
-            expect($user->isFree())->toBeFalse();
+            expect($user->isPaid)->toBeTrue();
+            expect($user->isStarter)->toBeTrue();
+            expect($user->isPro)->toBeFalse();
+            expect($user->isPremium)->toBeFalse();
+            expect($user->isFree)->toBeFalse();
         });
 
         it('pro user has correct tier status', function () {
             $user = User::factory()->create(['subscription_tier' => 'pro']);
-            expect($user->isPaid())->toBeTrue();
-            expect($user->isStarter())->toBeFalse();
-            expect($user->isPro())->toBeTrue();
-            expect($user->isPremium())->toBeFalse();
-            expect($user->isFree())->toBeFalse();
+            expect($user->isPaid)->toBeTrue();
+            expect($user->isStarter)->toBeFalse();
+            expect($user->isPro)->toBeTrue();
+            expect($user->isPremium)->toBeFalse();
+            expect($user->isFree)->toBeFalse();
         });
 
         it('premium user has correct tier status', function () {
             $user = User::factory()->create(['subscription_tier' => 'premium']);
-            expect($user->isPaid())->toBeTrue();
-            expect($user->isStarter())->toBeFalse();
-            expect($user->isPro())->toBeFalse();
-            expect($user->isPremium())->toBeTrue();
-            expect($user->isFree())->toBeFalse();
+            expect($user->isPaid)->toBeTrue();
+            expect($user->isStarter)->toBeFalse();
+            expect($user->isPro)->toBeFalse();
+            expect($user->isPremium)->toBeTrue();
+            expect($user->isFree)->toBeFalse();
         });
     });
 

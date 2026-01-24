@@ -58,7 +58,7 @@ describe('Visitor conversion status', function () {
             'converted_at' => now(),
         ]);
 
-        expect($visitor->hasConverted())->toBeTrue();
+        expect($visitor->hasConverted)->toBeTrue();
     });
 
     test('hasConverted returns false when user_id is null', function () {
@@ -67,7 +67,7 @@ describe('Visitor conversion status', function () {
             'converted_at' => now(),
         ]);
 
-        expect($visitor->hasConverted())->toBeFalse();
+        expect($visitor->hasConverted)->toBeFalse();
     });
 
     test('hasConverted returns false when converted_at is null', function () {
@@ -77,7 +77,7 @@ describe('Visitor conversion status', function () {
             'converted_at' => null,
         ]);
 
-        expect($visitor->hasConverted())->toBeFalse();
+        expect($visitor->hasConverted)->toBeFalse();
     });
 
     test('hasConverted returns false when both user_id and converted_at are null', function () {
@@ -86,7 +86,7 @@ describe('Visitor conversion status', function () {
             'converted_at' => null,
         ]);
 
-        expect($visitor->hasConverted())->toBeFalse();
+        expect($visitor->hasConverted)->toBeFalse();
     });
 });
 
@@ -98,7 +98,7 @@ describe('Visitor return status', function () {
             'last_visit_at' => now(),
         ]);
 
-        expect($visitor->isReturning())->toBeTrue();
+        expect($visitor->isReturning)->toBeTrue();
     });
 
     test('isReturning returns false when first and last visit are within 1 hour', function () {
@@ -108,7 +108,7 @@ describe('Visitor return status', function () {
             'last_visit_at' => now(),
         ]);
 
-        expect($visitor->isReturning())->toBeFalse();
+        expect($visitor->isReturning)->toBeFalse();
     });
 
     test('isReturning returns false when first and last visit are the same', function () {
@@ -118,7 +118,7 @@ describe('Visitor return status', function () {
             'last_visit_at' => $sameTime,
         ]);
 
-        expect($visitor->isReturning())->toBeFalse();
+        expect($visitor->isReturning)->toBeFalse();
     });
 
     test('isReturning returns true when first and last visit are days apart', function () {
@@ -128,7 +128,7 @@ describe('Visitor return status', function () {
             'last_visit_at' => now(),
         ]);
 
-        expect($visitor->isReturning())->toBeTrue();
+        expect($visitor->isReturning)->toBeTrue();
     });
 });
 
@@ -141,13 +141,13 @@ describe('Visitor prompt completion status', function () {
             'optimized_prompt' => 'Test optimised prompt',
         ]);
 
-        expect($visitor->hasCompletedPrompts())->toBeTrue();
+        expect($visitor->hasCompletedPrompts)->toBeTrue();
     });
 
     test('hasCompletedPrompts returns false when visitor has no prompt runs', function () {
         $visitor = Visitor::factory()->create();
 
-        expect($visitor->hasCompletedPrompts())->toBeFalse();
+        expect($visitor->hasCompletedPrompts)->toBeFalse();
     });
 
     test('hasCompletedPrompts returns false when prompt runs are not completed', function () {
@@ -158,7 +158,7 @@ describe('Visitor prompt completion status', function () {
             'optimized_prompt' => null,
         ]);
 
-        expect($visitor->hasCompletedPrompts())->toBeFalse();
+        expect($visitor->hasCompletedPrompts)->toBeFalse();
     });
 
     test('hasCompletedPrompts returns false when completed runs have null optimized_prompt', function () {
@@ -169,7 +169,7 @@ describe('Visitor prompt completion status', function () {
             'optimized_prompt' => null,
         ]);
 
-        expect($visitor->hasCompletedPrompts())->toBeFalse();
+        expect($visitor->hasCompletedPrompts)->toBeFalse();
     });
 
     test('hasCompletedPrompts returns true with multiple completed runs', function () {
@@ -180,7 +180,7 @@ describe('Visitor prompt completion status', function () {
             'optimized_prompt' => 'Test prompt',
         ]);
 
-        expect($visitor->hasCompletedPrompts())->toBeTrue();
+        expect($visitor->hasCompletedPrompts)->toBeTrue();
     });
 
     test('hasCompletedPrompts ignores other visitors prompt runs', function () {
@@ -193,7 +193,7 @@ describe('Visitor prompt completion status', function () {
             'optimized_prompt' => 'Test prompt',
         ]);
 
-        expect($visitor1->hasCompletedPrompts())->toBeFalse();
+        expect($visitor1->hasCompletedPrompts)->toBeFalse();
     });
 });
 
@@ -204,7 +204,7 @@ describe('Visitor location data', function () {
             'timezone' => 'Europe/London',
         ]);
 
-        expect($visitor->hasLocationData())->toBeTrue();
+        expect($visitor->hasLocationData)->toBeTrue();
     });
 
     test('hasLocationData returns false when country_code is null', function () {
@@ -213,7 +213,7 @@ describe('Visitor location data', function () {
             'timezone' => 'Europe/London',
         ]);
 
-        expect($visitor->hasLocationData())->toBeFalse();
+        expect($visitor->hasLocationData)->toBeFalse();
     });
 
     test('hasLocationData returns false when timezone is null', function () {
@@ -222,7 +222,7 @@ describe('Visitor location data', function () {
             'timezone' => null,
         ]);
 
-        expect($visitor->hasLocationData())->toBeFalse();
+        expect($visitor->hasLocationData)->toBeFalse();
     });
 
     test('hasLocationData returns false when both are null', function () {
@@ -231,7 +231,7 @@ describe('Visitor location data', function () {
             'timezone' => null,
         ]);
 
-        expect($visitor->hasLocationData())->toBeFalse();
+        expect($visitor->hasLocationData)->toBeFalse();
     });
 });
 

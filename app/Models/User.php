@@ -567,7 +567,7 @@ class User extends Authenticatable
     public function getPromptsRemaining(): int
     {
         // Premium tier is unlimited
-        if ($this->isPremium()) {
+        if ($this->isPremium) {
             return PHP_INT_MAX;
         }
 
@@ -596,7 +596,7 @@ class User extends Authenticatable
     public function canCreatePrompt(): bool
     {
         // Premium tier is unlimited
-        if ($this->isPremium()) {
+        if ($this->isPremium) {
             return true;
         }
 
@@ -688,7 +688,7 @@ class User extends Authenticatable
      */
     public function canEnablePrivacy(): bool
     {
-        return $this->isPremium() && ! $this->privacy_enabled;
+        return $this->isPremium && ! $this->privacy_enabled;
     }
 
     /**

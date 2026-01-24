@@ -123,10 +123,10 @@ describe('User profile management', function () {
 });
 
 describe('User referral code', function () {
-    test('getReferralCode generates code if none exists', function () {
+    test('referralCode generates code if none exists', function () {
         $user = User::factory()->create(['referral_code' => null]);
 
-        $code = $user->getReferralCode();
+        $code = $user->referralCode;
 
         expect($code)
             ->toBeString()
@@ -135,10 +135,10 @@ describe('User referral code', function () {
 
     });
 
-    test('getReferralCode returns existing code without regenerating', function () {
+    test('referralCode returns existing code without regenerating', function () {
         $user = User::factory()->create(['referral_code' => 'EXISTING']);
 
-        $code = $user->getReferralCode();
+        $code = $user->referralCode;
 
         expect($code)->toBe('EXISTING');
     });
