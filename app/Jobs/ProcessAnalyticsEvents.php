@@ -302,29 +302,33 @@ class ProcessAnalyticsEvents implements ShouldQueue
             return null;
         }
 
-        $url = parse_url($value);
-        if (! is_array($url)) {
-            return $value;
-        }
+        try {
+            $uri = new \PHP\URI\URI($value);
 
-        $host = $url['host'] ?? null;
-        if ($host && $this->isInternalHost($host)) {
-            $path = $url['path'] ?? '/';
-            if (! empty($url['query'])) {
-                $path .= '?'.$url['query'];
+            if ($uri->host && $this->isInternalHost($uri->host)) {
+                $path = $uri->path ?? '/';
+                if ($uri->query) {
+                    $path .= '?'.$uri->query;
+                }
+
+                return $path;
             }
 
-            return $path;
+            return $value;
+        } catch (\Exception) {
+            return $value;
         }
-
-        return $value;
     }
 
     private function isInternalHost(string $host): bool
     {
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        try {
+            $appUri = new \PHP\URI\URI(config('app.url'));
 
-        return $appHost && strcasecmp($appHost, $host) === 0;
+            return $appUri->host && strcasecmp($appUri->host, $host) === 0;
+        } catch (\Exception) {
+            return false;
+        }
     }
 
     /**

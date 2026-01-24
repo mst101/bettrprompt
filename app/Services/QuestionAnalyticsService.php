@@ -255,19 +255,12 @@ class QuestionAnalyticsService
      */
     public function getLeastEffectiveQuestions(int $limit = 5): array
     {
-        $questionIds = QuestionAnalytic::distinct('question_id')
+        return QuestionAnalytic::distinct('question_id')
             ->pluck('question_id')
-            ->toArray();
-
-        $performance = array_map(
-            fn ($questionId) => $this->getQuestionPerformance($questionId),
-            $questionIds,
-        );
-
-        // Sort by skip rate descending
-        usort($performance, fn ($a, $b) => $b['skip_rate'] <=> $a['skip_rate']);
-
-        return array_slice($performance, 0, $limit);
+            ->toArray()
+            |> (fn ($ids) => array_map(fn ($id) => $this->getQuestionPerformance($id), $ids))()
+            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['skip_rate'] <=> $a['skip_rate']) ? $arr : $arr))()
+            |> (fn ($arr) => array_slice($arr, 0, $limit))();
     }
 
     /**
@@ -275,24 +268,14 @@ class QuestionAnalyticsService
      */
     public function getMostEffectiveQuestions(int $limit = 5): array
     {
-        $questionIds = QuestionAnalytic::distinct('question_id')
+        $scoreCalc = fn ($perf) => ($perf['answer_rate'] ?? 0) + max(0, $perf['answer_rating_correlation'] ?? 0);
+
+        return QuestionAnalytic::distinct('question_id')
             ->pluck('question_id')
-            ->toArray();
-
-        $performance = array_map(
-            fn ($questionId) => $this->getQuestionPerformance($questionId),
-            $questionIds,
-        );
-
-        // Sort by combination of answer rate and rating correlation
-        usort($performance, function ($a, $b) {
-            $scoreA = ($a['answer_rate'] ?? 0) + max(0, $a['answer_rating_correlation'] ?? 0);
-            $scoreB = ($b['answer_rate'] ?? 0) + max(0, $b['answer_rating_correlation'] ?? 0);
-
-            return $scoreB <=> $scoreA;
-        });
-
-        return array_slice($performance, 0, $limit);
+            ->toArray()
+            |> (fn ($ids) => array_map(fn ($id) => $this->getQuestionPerformance($id), $ids))()
+            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $scoreCalc($b) <=> $scoreCalc($a)) ? $arr : $arr))()
+            |> (fn ($arr) => array_slice($arr, 0, $limit))();
     }
 
     /**

@@ -96,18 +96,22 @@ class AnalyticsEventController extends Controller
             return $params;
         }
 
-        $parsed = parse_url($url);
-        if (! isset($parsed['query'])) {
+        try {
+            $uri = new \PHP\URI\URI($url);
+            if (! $uri->query) {
+                return $params;
+            }
+
+            $query = $uri->getQueryParameters();
+
+            return [
+                'utm_source' => $query['utm_source'] ?? null,
+                'utm_medium' => $query['utm_medium'] ?? null,
+                'utm_campaign' => $query['utm_campaign'] ?? null,
+            ];
+        } catch (\Exception) {
             return $params;
         }
-
-        parse_str($parsed['query'], $query);
-
-        return [
-            'utm_source' => $query['utm_source'] ?? null,
-            'utm_medium' => $query['utm_medium'] ?? null,
-            'utm_campaign' => $query['utm_campaign'] ?? null,
-        ];
     }
 
     /**

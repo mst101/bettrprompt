@@ -36,18 +36,18 @@ abstract class Controller
             $pagePath = '/'.$pagePath;
         }
 
-        // Extract path from referrer URL
+        // Extract path from referrer URL using PHP 8.5 URI extension
         $referrer = null;
         $refererHeader = $request->header('Referer');
         if ($refererHeader) {
-            $parsedUrl = parse_url($refererHeader);
-            if (is_array($parsedUrl)) {
-                $path = $parsedUrl['path'] ?? '/';
-                if (! empty($parsedUrl['query'])) {
-                    $path .= '?'.$parsedUrl['query'];
+            try {
+                $uri = new \PHP\URI\URI($refererHeader);
+                $path = $uri->path ?? '/';
+                if ($uri->query) {
+                    $path .= '?'.$uri->query;
                 }
                 $referrer = $path;
-            } else {
+            } catch (\Exception) {
                 $referrer = $refererHeader;
             }
         }

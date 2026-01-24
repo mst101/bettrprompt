@@ -239,14 +239,14 @@ class PromptQualityService
             return [];
         }
 
-        $count = count($metrics);
+        $percentile = fn ($p) => (float) $metrics[ceil(count($metrics) * $p) - 1];
 
         return [
-            'p10' => (float) $metrics[ceil($count * 0.1) - 1],
-            'p25' => (float) $metrics[ceil($count * 0.25) - 1],
-            'p50' => (float) $metrics[ceil($count * 0.5) - 1],
-            'p75' => (float) $metrics[ceil($count * 0.75) - 1],
-            'p90' => (float) $metrics[ceil($count * 0.9) - 1],
+            'p10' => $percentile(0.1),
+            'p25' => $percentile(0.25),
+            'p50' => $percentile(0.5),
+            'p75' => $percentile(0.75),
+            'p90' => $percentile(0.9),
         ];
     }
 

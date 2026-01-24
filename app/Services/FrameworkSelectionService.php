@@ -195,18 +195,11 @@ class FrameworkSelectionService
      */
     public function getTopFrameworks(int $limit = 5): array
     {
-        $frameworks = FrameworkSelection::distinct('chosen_framework')
+        return FrameworkSelection::distinct('chosen_framework')
             ->pluck('chosen_framework')
-            ->toArray();
-
-        $performance = array_map(
-            fn ($framework) => $this->getFrameworkPerformance($framework),
-            $frameworks,
-        );
-
-        // Sort by acceptance rate descending
-        usort($performance, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']);
-
-        return array_slice($performance, 0, $limit);
+            ->toArray()
+            |> (fn ($frameworks) => array_map(fn ($fw) => $this->getFrameworkPerformance($fw), $frameworks))()
+            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']) ? $arr : $arr))()
+            |> (fn ($arr) => array_slice($arr, 0, $limit))();
     }
 }
