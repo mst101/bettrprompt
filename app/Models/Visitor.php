@@ -117,9 +117,8 @@ class Visitor extends Model
     /**
      * Determine if the visitor has converted to a registered user.
      */
-    public function hasConverted(): bool
-    {
-        return $this->user_id !== null && $this->converted_at !== null;
+    public bool $hasConverted {
+        get => $this->user_id !== null && $this->converted_at !== null;
     }
 
     /**
@@ -127,22 +126,22 @@ class Visitor extends Model
      * A visitor is considered returning if they have visited more than once
      * (i.e. first_visit_at differs significantly from last_visit_at).
      */
-    public function isReturning(): bool
-    {
-        if ($this->first_visit_at && $this->last_visit_at) {
-            // Consider returning if more than 1 hour has passed between first and last visit
-            return $this->first_visit_at->diffInHours($this->last_visit_at) >= 1;
-        }
+    public bool $isReturning {
+        get {
+            if ($this->first_visit_at && $this->last_visit_at) {
+                // Consider returning if more than 1 hour has passed between first and last visit
+                return $this->first_visit_at->diffInHours($this->last_visit_at) >= 1;
+            }
 
-        return false;
+            return false;
+        }
     }
 
     /**
      * Determine if the visitor has completed at least one prompt run.
      */
-    public function hasCompletedPrompts(): bool
-    {
-        return $this->promptRuns()
+    public bool $hasCompletedPrompts {
+        get => $this->promptRuns()
             ->where('workflow_stage', WorkflowStage::GenerationCompleted->value)
             ->whereNotNull('optimized_prompt')
             ->exists();
@@ -151,9 +150,8 @@ class Visitor extends Model
     /**
      * Check if visitor has location data
      */
-    public function hasLocationData(): bool
-    {
-        return ! is_null($this->country_code) && ! is_null($this->timezone);
+    public bool $hasLocationData {
+        get => ! is_null($this->country_code) && ! is_null($this->timezone);
     }
 
     /**
@@ -161,7 +159,7 @@ class Visitor extends Model
      */
     public function getLocationSummary(): string
     {
-        if (! $this->hasLocationData()) {
+        if (! $this->hasLocationData) {
             return __('messages.location.unknown');
         }
 

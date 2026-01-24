@@ -30,24 +30,25 @@ class Price extends Model
     /**
      * Get formatted price display (e.g., "£12.00", "$15.99")
      */
-    public function getFormattedAttribute(): string
-    {
-        $currency = $this->currency;
-        if (! $currency) {
-            return (string) $this->amount;
-        }
+    public string $formatted {
+        get {
+            $currency = $this->currency;
+            if (! $currency) {
+                return (string) $this->amount;
+            }
 
-        $symbol = $currency->symbol;
-        $amount = number_format($this->amount, $currency->decimal_digits, $currency->decimal_separator, $currency->thousands_separator);
+            $symbol = $currency->symbol;
+            $amount = number_format($this->amount, $currency->decimal_digits, $currency->decimal_separator, $currency->thousands_separator);
 
-        if ($currency->symbol_on_left) {
-            $glue = $currency->space_between_amount_and_symbol ? ' ' : '';
+            if ($currency->symbol_on_left) {
+                $glue = $currency->space_between_amount_and_symbol ? ' ' : '';
 
-            return $symbol.$glue.$amount;
-        } else {
-            $glue = $currency->space_between_amount_and_symbol ? ' ' : '';
+                return $symbol.$glue.$amount;
+            } else {
+                $glue = $currency->space_between_amount_and_symbol ? ' ' : '';
 
-            return $amount.$glue.$symbol;
+                return $amount.$glue.$symbol;
+            }
         }
     }
 

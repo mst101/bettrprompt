@@ -170,21 +170,15 @@ class User extends Authenticatable
     /**
      * Get or generate the referral code for this user
      */
-    public function getReferralCode(): string
-    {
-        if (! $this->referral_code) {
-            return $this->generateReferralCode();
-        }
-
-        return $this->referral_code;
+    public string $referralCode {
+        get => $this->referral_code ?? $this->generateReferralCode();
     }
 
     /**
      * Check if user has location data
      */
-    public function hasLocationData(): bool
-    {
-        return ! is_null($this->country_code) && ! is_null($this->timezone);
+    public bool $hasLocationData {
+        get => ! is_null($this->country_code) && ! is_null($this->timezone);
     }
 
     /**
@@ -250,9 +244,8 @@ class User extends Authenticatable
     /**
      * Get UI complexity level (defaults to 'advanced')
      */
-    public function getUiComplexity(): string
-    {
-        return $this->ui_complexity ?? 'advanced';
+    public string $uiComplexity {
+        get => $this->ui_complexity ?? 'advanced';
     }
 
     /**
@@ -505,9 +498,8 @@ class User extends Authenticatable
     /**
      * Check if user has any active subscription (Starter, Pro, or Premium)
      */
-    public function isPaid(): bool
-    {
-        return $this->subscribed('default') ||
+    public bool $isPaid {
+        get => $this->subscribed('default') ||
                ($this->subscription_ends_at && $this->subscription_ends_at->isFuture()) ||
                in_array($this->subscription_tier, ['starter', 'pro', 'premium']);
     }
@@ -515,25 +507,22 @@ class User extends Authenticatable
     /**
      * Check if user is on Starter tier
      */
-    public function isStarter(): bool
-    {
-        return $this->subscription_tier === 'starter';
+    public bool $isStarter {
+        get => $this->subscription_tier === 'starter';
     }
 
     /**
      * Check if user is on Pro tier (either via active subscription or grace period)
      */
-    public function isPro(): bool
-    {
-        return $this->subscription_tier === 'pro';
+    public bool $isPro {
+        get => $this->subscription_tier === 'pro';
     }
 
     /**
      * Check if user is on Premium tier (renamed from Private)
      */
-    public function isPremium(): bool
-    {
-        return $this->subscription_tier === 'premium';
+    public bool $isPremium {
+        get => $this->subscription_tier === 'premium';
     }
 
     /**
@@ -547,9 +536,15 @@ class User extends Authenticatable
     /**
      * Check if user is on free tier
      */
-    public function isFree(): bool
-    {
-        return ! $this->isPaid();
+    public bool $isFree {
+        get => ! $this->isPaid;
+    }
+
+    /**
+     * Check if user is on grace period for their subscription
+     */
+    public bool $isOnGracePeriod {
+        get => $this->subscription()?->onGracePeriod() ?? false;
     }
 
     /**
@@ -661,17 +656,17 @@ class User extends Authenticatable
 
         return [
             'tier' => $this->subscription_tier ?? 'free',
-            'isPaid' => $this->isPaid(),
-            'isFree' => $this->isFree(),
-            'isStarter' => $this->isStarter(),
-            'isPro' => $this->isPro(),
-            'isPremium' => $this->isPremium(),
+            'isPaid' => $this->isPaid,
+            'isFree' => $this->isFree,
+            'isStarter' => $this->isStarter,
+            'isPro' => $this->isPro,
+            'isPremium' => $this->isPremium,
             'isPrivate' => $this->isPrivate(), // Legacy
             'promptsUsed' => $this->monthly_prompt_count ?? 0,
             'promptsRemaining' => $this->getPromptsRemaining(),
             'promptLimit' => $promptLimit === PHP_INT_MAX ? null : $promptLimit,
             'subscriptionEndsAt' => $this->subscription_ends_at?->toIso8601String(),
-            'onGracePeriod' => $this->subscription('default')?->onGracePeriod() ?? false,
+            'onGracePeriod' => $this->isOnGracePeriod,
             'daysUntilReset' => $this->getDaysUntilPromptReset(),
         ];
     }

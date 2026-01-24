@@ -212,14 +212,14 @@ class DomainAnalyticsController
 
         // Calculate summary stats
         $totalRuns = $runs->count();
-        $completedRuns = $runs->filter(fn ($run) => $run->isCompleted())->count();
-        $failedRuns = $runs->filter(fn ($run) => $run->isFailed())->count();
-        $processingRuns = $runs->filter(fn ($run) => $run->isProcessing())->count();
+        $completedRuns = $runs->filter(fn ($run) => $run->isCompleted)->count();
+        $failedRuns = $runs->filter(fn ($run) => $run->isFailed)->count();
+        $processingRuns = $runs->filter(fn ($run) => $run->isProcessing)->count();
 
         $successRate = $totalRuns > 0 ? ($completedRuns / $totalRuns) * 100 : 0;
 
         // Calculate average duration (from created_at to completed_at for completed runs)
-        $completedRunsCollection = $runs->filter(fn ($run) => $run->isCompleted());
+        $completedRunsCollection = $runs->filter(fn ($run) => $run->isCompleted);
         $avgDurationMs = $completedRunsCollection->count() > 0
             ? $completedRunsCollection
                 ->map(function ($run) {

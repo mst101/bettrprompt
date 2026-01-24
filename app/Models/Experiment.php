@@ -105,11 +105,10 @@ class Experiment extends Model
     /**
      * Check if experiment is currently running
      */
-    public function isRunning(): bool
-    {
-        return $this->status === 'running' &&
-            $this->started_at?->isPast() &&
-            (! $this->ended_at || $this->ended_at->isFuture());
+    public bool $isRunning {
+        get => $this->status === 'running' &&
+               $this->started_at?->isPast() &&
+               (! $this->ended_at || $this->ended_at->isFuture());
     }
 
     /**

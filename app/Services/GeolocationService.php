@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class GeolocationService
 {
-    private ?Reader $reader = null;
+    public private(set) ?Reader $reader = null;
 
     /**
      * Maximum age of cached results (30 days)

@@ -39,7 +39,7 @@ class HandleInertiaRequests extends Middleware
         // Check if visitor has completed prompts (for banner display)
         $visitorHasCompletedPrompts = false;
         if (! $request->user() && $visitor) {
-            $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts() ?? false;
+            $visitorHasCompletedPrompts = $visitor->hasCompletedPrompts ?? false;
         }
 
         // Get country from route or detect

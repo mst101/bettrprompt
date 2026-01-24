@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
  */
 class N8nWorkflowClient
 {
-    private string $n8nBaseUrl;
+    public private(set) string $n8nBaseUrl;
 
     public function __construct()
     {

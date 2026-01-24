@@ -97,7 +97,7 @@ class OAuthController extends Controller
                         $updates['trait_percentages'] = $visitor->trait_percentages;
                     }
                     // Copy location data from visitor
-                    if ($visitor->hasLocationData()) {
+                    if ($visitor->hasLocationData) {
                         $updates['country_code'] = $visitor->country_code;
                         $updates['region'] = $visitor->region;
                         $updates['city'] = $visitor->city;
@@ -130,13 +130,13 @@ class OAuthController extends Controller
                         'visitor_id' => $visitorId,
                         'claimed_prompt_runs' => $claimedCount,
                         'copied_personality' => (bool) $visitor->personality_type,
-                        'copied_location' => $visitor->hasLocationData(),
+                        'copied_location' => $visitor->hasLocationData,
                     ]);
                 }
             }
 
             // Fallback: If user still doesn't have location data, look it up from IP
-            if (! $user->hasLocationData() && config('geoip.enabled') && config('geoip.features.lookup_on_registration')) {
+            if (! $user->hasLocationData && config('geoip.enabled') && config('geoip.features.lookup_on_registration')) {
                 try {
                     $geolocationService = new GeolocationService;
                     $locationData = $geolocationService->lookupIp($request->ip());

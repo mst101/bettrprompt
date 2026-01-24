@@ -162,25 +162,22 @@ class PromptRun extends Model
     /**
      * Check if the prompt run is actively processing (background job running)
      */
-    public function isProcessing(): bool
-    {
-        return $this->workflow_stage?->isProcessing() ?? false;
+    public bool $isProcessing {
+        get => $this->workflow_stage?->isProcessing() ?? false;
     }
 
     /**
      * Check if the prompt run is completed successfully
      */
-    public function isCompleted(): bool
-    {
-        return $this->workflow_stage === WorkflowStage::GenerationCompleted;
+    public bool $isCompleted {
+        get => $this->workflow_stage === WorkflowStage::GenerationCompleted;
     }
 
     /**
      * Check if the prompt run has failed at any stage
      */
-    public function isFailed(): bool
-    {
-        return $this->workflow_stage?->isFailed() ?? false;
+    public bool $isFailed {
+        get => $this->workflow_stage?->isFailed() ?? false;
     }
 
     /**

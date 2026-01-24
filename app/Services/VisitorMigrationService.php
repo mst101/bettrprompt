@@ -53,7 +53,7 @@ class VisitorMigrationService
         }
 
         // Copy location data from visitor if user doesn't have it
-        if ($visitor->hasLocationData() && ! $user->hasLocationData()) {
+        if ($visitor->hasLocationData && ! $user->hasLocationData) {
             $updates['country_code'] = $visitor->country_code;
             $updates['region'] = $visitor->region;
             $updates['city'] = $visitor->city;
@@ -89,7 +89,7 @@ class VisitorMigrationService
             'visitor_id' => $visitorId,
             'claimed_prompt_runs' => $claimedCount,
             'copied_personality' => isset($updates['personality_type']),
-            'copied_location' => $visitor->hasLocationData() && ! $user->hasLocationData(),
+            'copied_location' => $visitor->hasLocationData && ! $user->hasLocationData,
             'copied_referrer' => isset($updates['referred_by_user_id']),
         ]);
 

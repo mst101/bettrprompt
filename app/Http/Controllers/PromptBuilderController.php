@@ -402,7 +402,7 @@ class PromptBuilderController extends Controller
         $uiComplexity = 'advanced'; // default for guests
 
         if (auth()->check()) {
-            $uiComplexity = auth()->user()->getUiComplexity();
+            $uiComplexity = auth()->user()->uiComplexity;
         } else {
             $visitorId = $this->getVisitorId($request);
             if ($visitorId) {

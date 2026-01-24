@@ -48,7 +48,7 @@ class RegisteredUserController extends Controller
         }
 
         // Fallback: If user still doesn't have location data, look it up from IP
-        if (! $user->hasLocationData() && config('geoip.enabled') && config('geoip.features.lookup_on_registration')) {
+        if (! $user->hasLocationData && config('geoip.enabled') && config('geoip.features.lookup_on_registration')) {
             try {
                 $geolocationService = new GeolocationService;
                 $locationData = $geolocationService->lookupIp($request->ip());

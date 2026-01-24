@@ -92,7 +92,7 @@ class FeedbackController extends Controller
 
         // Get or generate referral code
         $user = auth()->user();
-        $referralCode = $user->getReferralCode();
+        $referralCode = $user->referralCode;
         $referralUrl = countryRoute('home', ['ref' => $referralCode]);
 
         return Inertia::render('Feedback/ThankYou', [

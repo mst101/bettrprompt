@@ -16,7 +16,7 @@ class VisitorLimitService
 
         $visitor = Visitor::find($visitorId);
 
-        return $visitor?->hasCompletedPrompts() ?? false;
+        return $visitor?->hasCompletedPrompts ?? false;
     }
 
     public function checkLimit(bool $isAuthenticated, ?string $visitorId): bool

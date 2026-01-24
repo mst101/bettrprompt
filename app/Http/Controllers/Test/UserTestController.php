@@ -61,7 +61,7 @@ class UserTestController
             'monthly_prompt_count' => $user->monthly_prompt_count,
             'prompt_count_reset_at' => $user->prompt_count_reset_at,
             'subscription_tier' => $user->subscription_tier,
-            'isFree' => $user->isFree(),
+            'isFree' => $user->isFree,
             'promptsRemaining' => $user->getPromptsRemaining(),
         ]);
     }
