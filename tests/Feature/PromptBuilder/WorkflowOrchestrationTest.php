@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -30,7 +31,7 @@ describe('Workflow 0: Pre-Analysis Initiation', function () {
         expect($promptRun->user_id)->toBe($user->id)
             ->and($promptRun->task_description)->toBe('Create a detailed project plan for a new software product')
             ->and($promptRun->personality_type)->toBe('INTJ-A')
-            ->and($promptRun->workflow_stage)->toBe('0_processing');
+            ->and($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisProcessing);
     });
 
     test('dispatches pre-analysis job', function () {
@@ -122,7 +123,7 @@ describe('Workflow 1: Analysis from Pre-Analysis', function () {
             ]);
 
         $promptRun->refresh();
-        expect($promptRun->workflow_stage)->toBe('1_processing');
+        expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisProcessing);
     });
 
     test('stores pre-analysis answers from user', function () {

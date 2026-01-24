@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ test('create child from task description creates child successfully', function (
     $parentRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
         'task_classification' => ['category' => 'planning'],
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->post($this->countryRoute('prompt-builder.create-child-from-task', [
@@ -31,7 +32,7 @@ test('create child from task description creates child successfully', function (
     expect($childRun)->not->toBeNull()
         ->and($childRun->task_description)->toBe('Updated task description for child run')
         ->and($childRun->parent_id)->toBe($parentRun->id)
-        ->and($childRun->workflow_stage)->toBe('0_processing');
+        ->and($childRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisProcessing);
 
     // Verify job was dispatched (ProcessPreAnalysis for Workflow 0)
     Queue::assertPushed(\App\Jobs\ProcessPreAnalysis::class);
@@ -82,7 +83,7 @@ test('create child from answers creates child successfully', function () {
         ],
         'clarifying_answers' => ['Old answer 1', 'Old answer 2'],
         'personality_tier' => 'full',
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->post($this->countryRoute('prompt-builder.create-child-from-answers', [

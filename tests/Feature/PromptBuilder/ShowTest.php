@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ test('show page displays prompt run details', function () {
         'task_description' => 'My test task',
         'personality_type' => 'INTJ-A',
         'selected_framework' => ['code' => 'SMART', 'name' => 'SMART Goals'],
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response = $this->get($this->countryRoute('prompt-builder.show', [
@@ -35,7 +36,7 @@ test('show page displays current question', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'framework_questions' => [
             ['question' => 'What is your goal?'],
             ['question' => 'How will you measure success?'],
@@ -94,7 +95,7 @@ test('show page includes personality tier in response', function () {
         'personality_type' => 'INTJ-A',
         'selected_framework' => ['code' => 'SMART'],
         'personality_tier' => 'full',
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response = $this->get($this->countryRoute('prompt-builder.show', [
@@ -112,7 +113,7 @@ test('show page displays completed prompt run with optimized prompt', function (
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
         'optimized_prompt' => 'This is your personalised, optimised prompt based on your INTJ personality.',
     ]);
 
@@ -124,7 +125,7 @@ test('show page displays completed prompt run with optimized prompt', function (
     $response->assertInertia(fn ($page) => $page
         ->where('promptRun.optimizedPrompt',
             'This is your personalised, optimised prompt based on your INTJ personality.')
-        ->where('promptRun.workflowStage', '2_completed')
+        ->where('promptRun.workflowStage', WorkflowStage::GenerationCompleted)
     );
 });
 
@@ -156,7 +157,7 @@ test('answer question saves answer successfully', function () {
     expect($promptRun->clarifying_answers)->toHaveCount(2)
         ->and($promptRun->clarifying_answers[0])->toBe('This is my detailed answer to the first question')
         ->and($promptRun->current_question_index)->toBe(1)
-        ->and($promptRun->workflow_stage)->toBe('1_completed');
+        ->and($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted);
 });
 
 test('answer question rejects invalid workflow stage', function () {
@@ -164,7 +165,7 @@ test('answer question rejects invalid workflow stage', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',  // Invalid stage for answering (too far ahead)
+        'workflow_stage' => WorkflowStage::GenerationCompleted,  // Invalid stage for answering (too far ahead)
         'framework_questions' => [['question' => 'Question 1']],
         'clarifying_answers' => [],
         'current_question_index' => 0,
@@ -187,7 +188,7 @@ test('user cannot answer other users questions', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'framework_questions' => [['question' => 'Question 1']],
         'clarifying_answers' => [],
         'current_question_index' => 0,
@@ -208,7 +209,7 @@ test('go back to previous question updates index', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -227,7 +228,7 @@ test('go back to previous question updates index', function () {
 
     $promptRun->refresh();
     expect($promptRun->current_question_index)->toBe(0)
-        ->and($promptRun->workflow_stage)->toBe('1_completed');
+        ->and($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted);
 });
 
 test('cannot go back from first question', function () {
@@ -235,7 +236,7 @@ test('cannot go back from first question', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'framework_questions' => [
             ['question' => 'Question 1'],
         ],

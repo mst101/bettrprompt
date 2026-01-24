@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
@@ -16,7 +17,7 @@ test('webhook requires valid secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response->assertOk();
@@ -29,7 +30,7 @@ test('webhook rejects missing secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ], false); // No secret
 
     $response->assertStatus(403);
@@ -42,7 +43,7 @@ test('webhook rejects invalid secret', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ], 'invalid-secret');
 
     $response->assertStatus(403);
@@ -51,7 +52,7 @@ test('webhook rejects invalid secret', function () {
 
 test('webhook validates prompt run id required', function () {
     $response = webhookPost([
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response->assertStatus(422);
@@ -65,7 +66,7 @@ test('webhook validates prompt run id required', function () {
 test('webhook validates prompt run id exists', function () {
     $response = webhookPost([
         'prompt_run_id' => 999999,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response->assertStatus(422);
@@ -114,7 +115,7 @@ test('webhook updates prompt run successfully', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
     ]);
 
     $response = webhookPost(createFrameworkSelectedPayload($promptRun));
@@ -123,7 +124,7 @@ test('webhook updates prompt run successfully', function () {
     $response->assertJson(['success' => true]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_completed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted)
         ->and($promptRun->selected_framework['name'])->toBe('SMART Goals')
         ->and($promptRun->selected_framework['rationale'])->toBe('This framework suits your task')
         ->and($promptRun->framework_questions)->toHaveCount(2);
@@ -135,7 +136,7 @@ test('webhook broadcasts analysis completed event', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
     ]);
 
     $response = webhookPost(createFrameworkSelectedPayload(
@@ -156,7 +157,7 @@ test('webhook broadcasts completion event', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
     ]);
 
     $response = webhookPost(createCompletedPayload($promptRun, 'Your optimised prompt here'));
@@ -172,7 +173,7 @@ test('webhook sets completed at timestamp', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
         'completed_at' => null,
     ]);
 
@@ -182,7 +183,7 @@ test('webhook sets completed at timestamp', function () {
 
     $promptRun->refresh();
     expect($promptRun->completed_at)->not->toBeNull()
-        ->and($promptRun->workflow_stage)->toBe('2_completed');
+        ->and($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationCompleted);
 });
 
 test('webhook handles missing prompt run', function () {
@@ -195,7 +196,7 @@ test('webhook handles missing prompt run', function () {
     // Validation kicks in before manual checks, so deleted IDs return 422, not 404
     $response = webhookPost([
         'prompt_run_id' => $promptRunId,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response->assertStatus(422);
@@ -210,19 +211,19 @@ test('webhook stores error message', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
     ]);
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'OpenAI API rate limit exceeded',
     ]);
 
     $response->assertOk();
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisFailed)
         ->and($promptRun->error_message)->toBe('OpenAI API rate limit exceeded');
 });
 
@@ -236,14 +237,14 @@ test('webhook handles rapid requests without error', function () {
     for ($i = 0; $i < 5; $i++) {
         $response = webhookPost([
             'prompt_run_id' => $promptRun->id,
-            'workflow_stage' => '1_completed',
+            'workflow_stage' => WorkflowStage::AnalysisCompleted,
         ]);
         $response->assertStatus(200);
     }
 
     // Verify the prompt run was updated
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_completed');
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted);
 });
 
 test('webhook does not broadcast on non milestone stages', function () {
@@ -252,13 +253,13 @@ test('webhook does not broadcast on non milestone stages', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     // Update to 2_processing (not a milestone)
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
     ]);
 
     $response->assertOk();

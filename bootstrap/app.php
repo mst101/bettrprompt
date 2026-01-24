@@ -96,6 +96,27 @@ return Application::configure(basePath: dirname(__DIR__))
             // });
         });
 
+        // Handle custom exceptions
+        $exceptions->render(function (
+            \App\Exceptions\VisitorLimitExceededException $e,
+            \Illuminate\Http\Request $request
+        ) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $e->getMessage()], 403);
+            }
+            return back()->with('error', $e->getMessage());
+        });
+
+        $exceptions->render(function (
+            \App\Exceptions\WorkflowStageException $e,
+            \Illuminate\Http\Request $request
+        ) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $e->getMessage()], 422);
+            }
+            return back()->with('error', $e->getMessage());
+        });
+
         // Handle CSRF token expiration (419 errors)
         $exceptions->render(function (
             \Illuminate\Session\TokenMismatchException $e,

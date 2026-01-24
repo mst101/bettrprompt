@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\WorkflowStage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateChildFromAnswersRequest;
 use App\Http\Requests\CreateChildFromTaskRequest;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
 use App\Models\PromptRun;
-use App\Models\Visitor;
 use App\Services\DatabaseService;
+use App\Services\VisitorLimitService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ use Illuminate\Support\Facades\Log;
  */
 class PromptRunEditController extends Controller
 {
+    public function __construct(
+        private VisitorLimitService $visitorLimitService,
+    ) {}
+
     /**
      * Create a child prompt run from edited task description
      *
@@ -66,7 +71,7 @@ class PromptRunEditController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
-                    'workflow_stage' => '0_processing',
+                    'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
                 ]);
             });
 
@@ -152,7 +157,7 @@ class PromptRunEditController extends Controller
                     'question_rationale' => $promptRun->question_rationale,
                     'framework_questions' => $promptRun->framework_questions,
                     'clarifying_answers' => $clarifyingAnswers,
-                    'workflow_stage' => '2_processing',
+                    'workflow_stage' => WorkflowStage::GenerationProcessing,
                 ]);
             });
 
@@ -182,46 +187,16 @@ class PromptRunEditController extends Controller
      */
     private function checkVisitorRestriction(Request $request, PromptRun $promptRun): ?JsonResponse
     {
-        // Authenticated users can always edit
-        if (auth()->check()) {
+        if ($this->visitorLimitService->checkLimit(auth()->check(), $promptRun->visitor_id)) {
             return null;
         }
 
-        // Guest visitor - check if they have completed a prompt
-        // Use the prompt run's visitor_id, not the cookie
-        $visitorId = $promptRun->visitor_id;
-
-        Log::info('API: Checking visitor restriction', [
+        Log::info('API: Visitor limit exceeded', [
             'prompt_run_id' => $promptRun->id,
-            'visitor_id' => $visitorId,
-            'auth_check' => auth()->check(),
+            'visitor_id' => $promptRun->visitor_id,
         ]);
 
-        if ($visitorId) {
-            $visitor = Visitor::find($visitorId);
-
-            Log::info('API: Found visitor', [
-                'visitor_id' => $visitorId,
-                'visitor' => $visitor?->id,
-            ]);
-
-            if ($visitor) {
-                $hasCompleted = $visitor->hasCompletedPrompts();
-
-                Log::info('API: Checking completed prompts', [
-                    'visitor_id' => $visitorId,
-                    'has_completed' => $hasCompleted,
-                ]);
-
-                if ($hasCompleted) {
-                    return response()->json([
-                        'error' => __('messages.prompt_builder.visitor_limit_reached'),
-                    ], 403);
-                }
-            }
-        }
-
-        return null;
+        return $this->visitorLimitService->createApiErrorResponse();
     }
 
     /**

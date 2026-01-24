@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WorkflowStage;
 use App\Services\DatabaseService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -81,6 +82,8 @@ class PromptRun extends Model
         'generation_api_usage' => 'array',
         // Privacy
         'is_encrypted' => 'boolean',
+        // Workflow
+        'workflow_stage' => WorkflowStage::class,
     ];
 
     public function visitor(): BelongsTo
@@ -161,11 +164,7 @@ class PromptRun extends Model
      */
     public function isProcessing(): bool
     {
-        return in_array($this->workflow_stage, [
-            '0_processing',
-            '1_processing',
-            '2_processing',
-        ]);
+        return $this->workflow_stage?->isProcessing() ?? false;
     }
 
     /**
@@ -173,7 +172,7 @@ class PromptRun extends Model
      */
     public function isCompleted(): bool
     {
-        return $this->workflow_stage === '2_completed';
+        return $this->workflow_stage === WorkflowStage::GenerationCompleted;
     }
 
     /**
@@ -181,11 +180,7 @@ class PromptRun extends Model
      */
     public function isFailed(): bool
     {
-        return in_array($this->workflow_stage, [
-            '0_failed',
-            '1_failed',
-            '2_failed',
-        ]);
+        return $this->workflow_stage?->isFailed() ?? false;
     }
 
     /**
@@ -193,12 +188,9 @@ class PromptRun extends Model
      */
     public function getFailedWorkflow(): ?int
     {
-        return match ($this->workflow_stage) {
-            '0_failed' => 0,
-            '1_failed' => 1,
-            '2_failed' => 2,
-            default => null,
-        };
+        return $this->workflow_stage?->isFailed()
+            ? $this->workflow_stage->getWorkflowNumber()
+            : null;
     }
 
     /**
@@ -252,7 +244,7 @@ class PromptRun extends Model
             $this->update([
                 'clarifying_answers' => $answers,
                 'current_question_index' => $nextIndex,
-                'workflow_stage' => '1_completed',
+                'workflow_stage' => WorkflowStage::AnalysisCompleted,
             ]);
         });
 

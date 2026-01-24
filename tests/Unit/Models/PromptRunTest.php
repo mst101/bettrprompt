@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 use App\Models\Visitor;
@@ -78,7 +79,7 @@ describe('PromptRun clarifying answers', function () {
             ->and($promptRun->fresh())
             ->clarifying_answers->toBe($answers)
             ->current_question_index->toBe(1)
-            ->workflow_stage->toBe('1_completed');
+            ->workflow_stage->toBe(WorkflowStage::AnalysisCompleted);
 
     });
 
@@ -169,20 +170,20 @@ describe('PromptRun clarifying answers', function () {
 describe('PromptRun workflow state transitions', function () {
     test('markWorkflowCompleted sets correct stage and clears error', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '1_processing',
+            'workflow_stage' => WorkflowStage::AnalysisProcessing,
             'error_message' => 'Previous error',
         ]);
 
         $promptRun->markWorkflowCompleted(1);
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('1_completed')
+            ->workflow_stage->toBe(WorkflowStage::AnalysisCompleted)
             ->error_message->toBeNull();
     });
 
     test('markWorkflowCompleted accepts additional data', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '0_processing',
+            'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         ]);
 
         $promptRun->markWorkflowCompleted(0, [
@@ -191,7 +192,7 @@ describe('PromptRun workflow state transitions', function () {
         ]);
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('0_completed')
+            ->workflow_stage->toBe(WorkflowStage::PreAnalysisCompleted)
             ->pre_analysis_questions->toBe([['question' => 'Test']])
             ->pre_analysis_reasoning->toBe('Need clarification')
             ->error_message->toBeNull();
@@ -199,21 +200,21 @@ describe('PromptRun workflow state transitions', function () {
 
     test('markWorkflowCompleted sets completed_at for workflow 2', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '2_processing',
+            'workflow_stage' => WorkflowStage::GenerationProcessing,
             'completed_at' => null,
         ]);
 
         $promptRun->markWorkflowCompleted(2);
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('2_completed')
+            ->workflow_stage->toBe(WorkflowStage::GenerationCompleted)
             ->completed_at->not->toBeNull();
     });
 
     test('markWorkflowCompleted does not override explicit completed_at', function () {
         $explicitTime = now()->subDay();
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '2_processing',
+            'workflow_stage' => WorkflowStage::GenerationProcessing,
         ]);
 
         $promptRun->markWorkflowCompleted(2, ['completed_at' => $explicitTime]);
@@ -224,33 +225,33 @@ describe('PromptRun workflow state transitions', function () {
 
     test('markWorkflowFailed sets failure stage and error message', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '1_processing',
+            'workflow_stage' => WorkflowStage::AnalysisProcessing,
             'error_message' => null,
         ]);
 
         $promptRun->markWorkflowFailed(1, 'Service timeout');
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('1_failed')
+            ->workflow_stage->toBe(WorkflowStage::AnalysisFailed)
             ->error_message->toBe('Service timeout');
     });
 
     test('markWorkflowProcessing sets processing stage and clears error', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '0_completed',
+            'workflow_stage' => WorkflowStage::PreAnalysisCompleted,
             'error_message' => 'Old error',
         ]);
 
         $promptRun->markWorkflowProcessing(1);
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('1_processing')
+            ->workflow_stage->toBe(WorkflowStage::AnalysisProcessing)
             ->error_message->toBeNull();
     });
 
     test('markWorkflowProcessing accepts additional data', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '0_completed',
+            'workflow_stage' => WorkflowStage::PreAnalysisCompleted,
         ]);
 
         $promptRun->markWorkflowProcessing(1, [
@@ -259,7 +260,7 @@ describe('PromptRun workflow state transitions', function () {
         ]);
 
         expect($promptRun->fresh())
-            ->workflow_stage->toBe('1_processing')
+            ->workflow_stage->toBe(WorkflowStage::AnalysisProcessing)
             ->pre_analysis_skipped->toBeTrue()
             ->pre_analysis_reasoning->toBe('Clear task');
     });
@@ -267,21 +268,21 @@ describe('PromptRun workflow state transitions', function () {
 
 describe('PromptRun state helpers', function () {
     test('isProcessing returns true for processing stages', function () {
-        $promptRun = PromptRun::factory()->create(['workflow_stage' => '1_processing']);
+        $promptRun = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisProcessing]);
 
         expect($promptRun->isProcessing())->toBeTrue();
     });
 
     test('isProcessing returns false for completed stages', function () {
-        $promptRun = PromptRun::factory()->create(['workflow_stage' => '1_completed']);
+        $promptRun = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisCompleted]);
 
         expect($promptRun->isProcessing())->toBeFalse();
     });
 
     test('isCompleted returns true only for workflow 2 completed', function () {
-        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => '0_completed']);
-        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => '1_completed']);
-        $promptRun3 = PromptRun::factory()->create(['workflow_stage' => '2_completed']);
+        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::PreAnalysisCompleted]);
+        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisCompleted]);
+        $promptRun3 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationCompleted]);
 
         expect($promptRun1->isCompleted())->toBeFalse()
             ->and($promptRun2->isCompleted())->toBeFalse()
@@ -289,9 +290,9 @@ describe('PromptRun state helpers', function () {
     });
 
     test('isFailed returns true for any failed stage', function () {
-        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => '0_failed']);
-        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => '1_failed']);
-        $promptRun3 = PromptRun::factory()->create(['workflow_stage' => '2_failed']);
+        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::PreAnalysisFailed]);
+        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisFailed]);
+        $promptRun3 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationFailed]);
 
         expect($promptRun1->isFailed())->toBeTrue()
             ->and($promptRun2->isFailed())->toBeTrue()
@@ -299,10 +300,10 @@ describe('PromptRun state helpers', function () {
     });
 
     test('getFailedWorkflow returns correct workflow number', function () {
-        $promptRun0 = PromptRun::factory()->create(['workflow_stage' => '0_failed']);
-        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => '1_failed']);
-        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => '2_failed']);
-        $promptRunSuccess = PromptRun::factory()->create(['workflow_stage' => '2_completed']);
+        $promptRun0 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::PreAnalysisFailed]);
+        $promptRun1 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisFailed]);
+        $promptRun2 = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationFailed]);
+        $promptRunSuccess = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::GenerationCompleted]);
 
         expect($promptRun0->getFailedWorkflow())->toBe(0)
             ->and($promptRun1->getFailedWorkflow())->toBe(1)
@@ -314,7 +315,7 @@ describe('PromptRun state helpers', function () {
 describe('PromptRun error handling edge cases', function () {
     test('workflow transitions always clear error on success', function () {
         $promptRun = PromptRun::factory()->create([
-            'workflow_stage' => '0_failed',
+            'workflow_stage' => WorkflowStage::PreAnalysisFailed,
             'error_message' => 'Critical failure',
         ]);
 
@@ -329,12 +330,12 @@ describe('PromptRun error handling edge cases', function () {
     });
 
     test('workflow can transition from failed to processing to completed', function () {
-        $promptRun = PromptRun::factory()->create(['workflow_stage' => '1_failed']);
+        $promptRun = PromptRun::factory()->create(['workflow_stage' => WorkflowStage::AnalysisFailed]);
 
         $promptRun->markWorkflowProcessing(1);
-        expect($promptRun->fresh()->workflow_stage)->toBe('1_processing');
+        expect($promptRun->fresh()->workflow_stage)->toBe(WorkflowStage::AnalysisProcessing);
 
         $promptRun->markWorkflowCompleted(1);
-        expect($promptRun->fresh()->workflow_stage)->toBe('1_completed');
+        expect($promptRun->fresh()->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted);
     });
 });

@@ -6,6 +6,7 @@
  * These tests verify end-to-end workflow progression through multiple webhook updates
  */
 
+use App\Enums\WorkflowStage;
 use App\Events\AnalysisCompleted;
 use App\Events\PromptOptimizationCompleted;
 use App\Models\PromptRun;
@@ -22,21 +23,21 @@ test('complete workflow progression from submission to completion', function () 
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
 
     ]);
 
     // Step 1: Framework selected
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
 
         'selected_framework' => createSmartFramework(),
         'framework_questions' => createFrameworkQuestions(2),
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_completed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted)
         ->and($promptRun->selected_framework['code'])->toBe('SMART');
 
     // Step 2: User answers questions (simulated)
@@ -48,12 +49,12 @@ test('complete workflow progression from submission to completion', function () 
     // Step 3: Prompt generation
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
 
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('2_processing');
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationProcessing);
 
     // Step 4: Completion
     webhookPost(createCompletedPayload(
@@ -62,7 +63,7 @@ test('complete workflow progression from submission to completion', function () 
     ));
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('2_completed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationCompleted)
         ->and($promptRun->completed_at)->not->toBeNull()
         ->and($promptRun->optimized_prompt)->toContain('SMART framework');
 });
@@ -77,14 +78,14 @@ test('workflow handles user personality during processing', function () {
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
         'personality_type' => 'ENFP-A',
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'task_description' => 'Create a marketing campaign for a new product',
     ]);
 
     // Framework selected tailored to ENFP personality
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'selected_framework' => [
             'name' => 'Design Thinking',
             'code' => 'DT',
@@ -119,14 +120,14 @@ test('workflow recovers from failed state', function () {
     // Retry: reset to processing
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
 
         'selected_framework' => createSmartFramework(),
         'error_message' => null,
     ]);
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_completed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted)
         ->and($promptRun->error_message)->toBeNull();
 });
 
@@ -136,7 +137,7 @@ test('workflow broadcasts events at correct milestones', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
     ]);
 
     // Framework selection triggers analysis completed event
@@ -169,7 +170,7 @@ test('workflow preserves user context through multiple updates', function () {
     // Update workflow but verify user context persists
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'selected_framework' => [
             'name' => 'Waterfall',
             'code' => 'WF',
@@ -196,16 +197,16 @@ test('workflow handles multiple concurrent updates correctly', function () {
     // Update first prompt run
     webhookPost(createFrameworkSelectedPayload($promptRun1));
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('1_completed');
+    expect($promptRun1->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted);
 
     // Update second prompt run independently
     webhookPost(createCompletedPayload($promptRun2));
     $promptRun2->refresh();
-    expect($promptRun2->workflow_stage)->toBe('2_completed');
+    expect($promptRun2->workflow_stage)->toBe(WorkflowStage::GenerationCompleted);
 
     // First should not be affected
     $promptRun1->refresh();
-    expect($promptRun1->workflow_stage)->toBe('1_completed')
+    expect($promptRun1->workflow_stage)->toBe(WorkflowStage::AnalysisCompleted)
         ->and($promptRun1->id)->not->toBe($promptRun2->id);
 });
 
@@ -220,7 +221,7 @@ test('workflow validates data integrity through updates', function () {
 
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'selected_framework' => $framework,
         'framework_questions' => createFrameworkQuestions(3),
     ]);

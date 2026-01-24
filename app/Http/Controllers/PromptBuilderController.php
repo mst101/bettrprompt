@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\WorkflowStage;
 use App\Http\Requests\AnswerQuestionRequest;
 use App\Http\Requests\CreateChildFromAnswersRequest;
 use App\Http\Requests\CreateChildFromTaskRequest;
@@ -26,6 +27,7 @@ use App\Models\Visitor;
 use App\Services\DatabaseService;
 use App\Services\GeolocationService;
 use App\Services\QuestionAnalyticsService;
+use App\Services\VisitorLimitService;
 use App\Services\WorkflowAnalyticsService;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,6 +41,7 @@ class PromptBuilderController extends Controller
     public function __construct(
         private WorkflowAnalyticsService $workflowAnalytics,
         private QuestionAnalyticsService $questionAnalytics,
+        private VisitorLimitService $visitorLimitService,
     ) {}
 
     /**
@@ -185,7 +188,7 @@ class PromptBuilderController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
-                    'workflow_stage' => '0_processing',
+                    'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
                 ]);
             });
 
@@ -243,19 +246,16 @@ class PromptBuilderController extends Controller
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
-        // Check if unregistered visitor has already completed a prompt
-        if (! auth()->check()) {
-            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
-                }
-            }
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $promptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
         }
 
         // Validate workflow stage
-        if ($promptRun->workflow_stage !== '0_completed') {
+        if ($promptRun->workflow_stage !== WorkflowStage::PreAnalysisCompleted) {
             return back()->with('error', __('messages.prompt_builder.invalid_workflow_stage'));
         }
 
@@ -275,7 +275,7 @@ class PromptBuilderController extends Controller
                 $promptRun->update([
                     'pre_analysis_answers' => $validated['answers'],
                     'pre_analysis_context' => $preAnalysisContext,
-                    'workflow_stage' => '1_processing',
+                    'workflow_stage' => WorkflowStage::AnalysisProcessing,
                 ]);
             });
 
@@ -313,15 +313,12 @@ class PromptBuilderController extends Controller
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
-        // Check if unregistered visitor has already completed a prompt
-        if (! auth()->check()) {
-            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
-                }
-            }
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $promptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
         }
 
         // Validate workflow stage - should have pre-analysis questions
@@ -345,7 +342,7 @@ class PromptBuilderController extends Controller
                 $promptRun->update([
                     'pre_analysis_answers' => $validated['answers'],
                     'pre_analysis_context' => $preAnalysisContext,
-                    'workflow_stage' => '1_processing',
+                    'workflow_stage' => WorkflowStage::AnalysisProcessing,
                 ]);
             });
 
@@ -501,7 +498,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that we're in the correct workflow stage
-        if ($promptRun->workflow_stage !== '1_completed') {
+        if ($promptRun->workflow_stage !== WorkflowStage::AnalysisCompleted) {
             return back()->with('error', __('messages.prompt_builder.cannot_go_back'));
         }
 
@@ -569,7 +566,7 @@ class PromptBuilderController extends Controller
             DatabaseService::retryOnDeadlock(function () use ($promptRun, $answers) {
                 $promptRun->update([
                     'clarifying_answers' => $answers,
-                    'workflow_stage' => '2_processing',
+                    'workflow_stage' => WorkflowStage::GenerationProcessing,
                 ]);
             });
 
@@ -613,7 +610,7 @@ class PromptBuilderController extends Controller
         $this->authorizePromptRun($promptRun, $request);
 
         // Validate that the prompt run is completed
-        if ($promptRun->workflow_stage !== '2_completed') {
+        if ($promptRun->workflow_stage !== WorkflowStage::GenerationCompleted) {
             return back()->with('error', __('messages.prompt_builder.can_only_edit_completed'));
         }
 
@@ -656,15 +653,12 @@ class PromptBuilderController extends Controller
         $parentPromptRun = $this->resolvePromptRun($request, $parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
-        // Check if unregistered visitor has already completed a prompt
-        if (! auth()->check()) {
-            $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
-                }
-            }
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $parentPromptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
         }
 
         $validated = $request->validated();
@@ -691,7 +685,7 @@ class PromptBuilderController extends Controller
                     'personality_type' => $personalityType,
                     'trait_percentages' => $traitPercentages,
                     'task_description' => $validated['task_description'],
-                    'workflow_stage' => '0_processing',
+                    'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
                 ]);
             });
 
@@ -725,15 +719,12 @@ class PromptBuilderController extends Controller
         $parentPromptRun = $this->resolvePromptRun($request, $parentPromptRun);
         $this->authorizePromptRun($parentPromptRun, $request);
 
-        // Check if unregistered visitor has already completed a prompt
-        if (! auth()->check()) {
-            $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
-                }
-            }
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $parentPromptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
         }
 
         if (empty($parentPromptRun->framework_questions)) {
@@ -780,7 +771,7 @@ class PromptBuilderController extends Controller
                     'question_rationale' => $parentPromptRun->question_rationale,
                     'framework_questions' => $parentPromptRun->framework_questions,
                     'clarifying_answers' => $clarifyingAnswers,
-                    'workflow_stage' => '2_processing',
+                    'workflow_stage' => WorkflowStage::GenerationProcessing,
                 ]);
             });
 
@@ -814,15 +805,12 @@ class PromptBuilderController extends Controller
         $promptRun = $this->resolvePromptRun($request, $promptRun);
         $this->authorizePromptRun($promptRun, $request);
 
-        // Check if unregistered visitor has already completed a prompt
-        if (! auth()->check()) {
-            $visitorId = $promptRun->visitor_id ?? $this->getVisitorId($request);
-            if ($visitorId) {
-                $visitor = Visitor::find($visitorId);
-                if ($visitor && $visitor->hasCompletedPrompts()) {
-                    return back()->with('error', __('messages.prompt_builder.visitor_limit_reached'));
-                }
-            }
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $promptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
         }
 
         $validated = $request->validated();
@@ -851,7 +839,7 @@ class PromptBuilderController extends Controller
                     'pre_analysis_answers' => $promptRun->pre_analysis_answers,
                     'pre_analysis_context' => $promptRun->pre_analysis_context,
                     'pre_analysis_reasoning' => $promptRun->pre_analysis_reasoning,
-                    'workflow_stage' => '1_processing',
+                    'workflow_stage' => WorkflowStage::AnalysisProcessing,
                 ]);
             });
 
@@ -905,7 +893,7 @@ class PromptBuilderController extends Controller
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'workflow_stage' => '0_processing',
+                        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
                         'error_message' => null,
                         'completed_at' => null,
                     ]);
@@ -925,7 +913,7 @@ class PromptBuilderController extends Controller
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'workflow_stage' => '1_processing',
+                        'workflow_stage' => WorkflowStage::AnalysisProcessing,
                         'error_message' => null,
                         'completed_at' => null,
                     ]);
@@ -945,7 +933,7 @@ class PromptBuilderController extends Controller
 
                 DatabaseService::retryOnDeadlock(function () use ($promptRun) {
                     $promptRun->update([
-                        'workflow_stage' => '2_processing',
+                        'workflow_stage' => WorkflowStage::GenerationProcessing,
                         'error_message' => null,
                     ]);
                 });

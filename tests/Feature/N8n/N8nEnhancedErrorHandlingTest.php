@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Events\WorkflowFailed;
 use App\Models\PromptRun;
 use App\Models\User;
@@ -22,7 +23,7 @@ test('webhook accepts and stores error context on failure', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'Claude API returned an error',
         'error_context' => $errorContext,
     ]);
@@ -32,7 +33,7 @@ test('webhook accepts and stores error context on failure', function () {
 
     // Verify error context was stored
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisFailed)
         ->and($promptRun->error_message)->toBe('Claude API returned an error')
         ->and($promptRun->error_context)->toEqual($errorContext)
         ->and($promptRun->last_error_at)->not->toBeNull();
@@ -45,7 +46,7 @@ test('webhook validates error context structure', function () {
     // Invalid error_context (string instead of array)
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'Test error',
         'error_context' => 'invalid string',
     ]);
@@ -64,7 +65,7 @@ test('webhook accepts and stores retry count', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'retry_count' => 2,
     ]);
 
@@ -81,7 +82,7 @@ test('webhook validates retry count limits', function () {
     // Test negative retry count
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'retry_count' => -1,
     ]);
 
@@ -91,7 +92,7 @@ test('webhook validates retry count limits', function () {
     // Test exceeding max retry count
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'retry_count' => 11, // Max is 10
     ]);
 
@@ -108,7 +109,7 @@ test('webhook sets last error at timestamp on failed stages', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '2_failed',
+        'workflow_stage' => WorkflowStage::GenerationFailed,
         'error_message' => 'Generation failed',
     ]);
 
@@ -128,7 +129,7 @@ test('webhook does not set last error at on successful stages', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
     ]);
 
     $response->assertOk();
@@ -145,7 +146,7 @@ test('webhook broadcasts workflow failed event on failed stages', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '0_failed',
+        'workflow_stage' => WorkflowStage::PreAnalysisFailed,
         'error_message' => 'Pre-analysis failed',
     ]);
 
@@ -163,7 +164,7 @@ test('webhook broadcasts workflow failed event for all failed stages', function 
     $user = User::factory()->create();
 
     // Test each failed stage
-    $failedStages = ['0_failed', '1_failed', '2_failed'];
+    $failedStages = [WorkflowStage::PreAnalysisFailed, WorkflowStage::AnalysisFailed, WorkflowStage::GenerationFailed];
 
     foreach ($failedStages as $stage) {
         $promptRun = PromptRun::factory()->create(['user_id' => $user->id]);
@@ -171,7 +172,7 @@ test('webhook broadcasts workflow failed event for all failed stages', function 
         webhookPost([
             'prompt_run_id' => $promptRun->id,
             'workflow_stage' => $stage,
-            'error_message' => "Stage {$stage} failed",
+            'error_message' => "Stage {$stage->value} failed",
         ]);
     }
 
@@ -187,7 +188,7 @@ test('webhook does not broadcast workflow failed event on processing stages', fu
 
     webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
     ]);
 
     // Verify WorkflowFailed was NOT broadcast
@@ -211,7 +212,7 @@ test('webhook stores comprehensive error details', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '2_failed',
+        'workflow_stage' => WorkflowStage::GenerationFailed,
         'error_message' => 'Request timed out after 90 seconds',
         'error_context' => $errorContext,
         'retry_count' => 3,
@@ -235,7 +236,7 @@ test('webhook validates error message max length', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => $longErrorMessage,
     ]);
 
@@ -254,7 +255,7 @@ test('webhook handles rate limit error type', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'API rate limit exceeded',
         'error_context' => $errorContext,
     ]);
@@ -269,7 +270,7 @@ test('webhook updates existing prompt run error details', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'error_message' => 'Old error',
         'retry_count' => 1,
     ]);
@@ -277,7 +278,7 @@ test('webhook updates existing prompt run error details', function () {
     // Update with new error details
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'New error after retry',
         'retry_count' => 2,
     ]);
@@ -287,7 +288,7 @@ test('webhook updates existing prompt run error details', function () {
     $promptRun->refresh();
     expect($promptRun->error_message)->toBe('New error after retry')
         ->and($promptRun->retry_count)->toBe(2)
-        ->and($promptRun->workflow_stage)->toBe('1_failed');
+        ->and($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisFailed);
 });
 
 test('webhook handles malformed error context gracefully', function () {
@@ -297,7 +298,7 @@ test('webhook handles malformed error context gracefully', function () {
     // Send error_context with unexpected structure (but still valid array)
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'Test error',
         'error_context' => [
             'unexpected_key' => 'value',
@@ -316,7 +317,7 @@ test('webhook preserves previous successful data when recording error', function
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'selected_framework' => ['name' => 'SMART', 'code' => 'smart'],
         'framework_questions' => ['Question 1', 'Question 2'],
     ]);
@@ -324,7 +325,7 @@ test('webhook preserves previous successful data when recording error', function
     // Update to failed stage with error
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '2_failed',
+        'workflow_stage' => WorkflowStage::GenerationFailed,
         'error_message' => 'Generation failed',
     ]);
 
@@ -333,7 +334,7 @@ test('webhook preserves previous successful data when recording error', function
     $promptRun->refresh();
 
     // Previous successful data should be preserved
-    expect($promptRun->workflow_stage)->toBe('2_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationFailed)
         ->and($promptRun->selected_framework)->toEqual(['name' => 'SMART', 'code' => 'smart'])
         ->and($promptRun->framework_questions)->toEqual(['Question 1', 'Question 2'])
         ->and($promptRun->error_message)->toBe('Generation failed');
@@ -345,7 +346,7 @@ test('webhook handles zero retry count', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'Failed on first attempt',
         'retry_count' => 0,
     ]);
@@ -362,7 +363,7 @@ test('webhook handles max retry count', function () {
 
     $response = webhookPost([
         'prompt_run_id' => $promptRun->id,
-        'workflow_stage' => '1_failed',
+        'workflow_stage' => WorkflowStage::AnalysisFailed,
         'error_message' => 'Failed after maximum retries',
         'retry_count' => 10, // Max allowed
     ]);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 
@@ -13,7 +14,7 @@ test('retry handles service failure', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '0_failed',
+        'workflow_stage' => WorkflowStage::PreAnalysisFailed,
         'task_description' => 'Failed task',
         'personality_type' => $this->user->personality_type,
         'trait_percentages' => $this->user->trait_percentages,
@@ -26,7 +27,7 @@ test('retry handles service failure', function () {
     $response->assertRedirect();
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('0_processing');
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisProcessing);
 });
 
 test('retry resets failed prompt run to processing state', function () {
@@ -34,7 +35,7 @@ test('retry resets failed prompt run to processing state', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '0_failed',
+        'workflow_stage' => WorkflowStage::PreAnalysisFailed,
         'task_description' => 'Failed task',
         'personality_type' => $this->user->personality_type,
         'trait_percentages' => $this->user->trait_percentages,
@@ -47,14 +48,14 @@ test('retry resets failed prompt run to processing state', function () {
     $response->assertRedirect();
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('0_processing');
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisProcessing);
 });
 
 test('user cannot retry other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'workflow_stage' => '0_failed',
+        'workflow_stage' => WorkflowStage::PreAnalysisFailed,
     ]);
 
     $response = $this->post($this->countryRoute('prompt-builder.retry', [

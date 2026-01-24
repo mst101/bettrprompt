@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Models\PromptRun;
 use App\Models\User;
 
@@ -13,7 +14,7 @@ test('generate optimised prompt successfully', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'framework_questions' => [
             ['question' => 'Question 1'],
             ['question' => 'Question 2'],
@@ -36,7 +37,7 @@ test('generate optimised prompt successfully', function () {
 
     // Verify workflow_stage was set to processing
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('2_processing')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationProcessing)
         ->and($promptRun->clarifying_answers)->toBe(['Answer 1', 'Answer 2']);
 
     // Verify job was dispatched
@@ -48,7 +49,7 @@ test('update optimised prompt successfully', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
         'optimized_prompt' => 'Original prompt',
     ]);
 
@@ -70,7 +71,7 @@ test('update optimised prompt validates required field', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
@@ -85,7 +86,7 @@ test('update optimised prompt validates string type', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
@@ -102,7 +103,7 @@ test('update optimised prompt validates max length', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->patch($this->countryRoute('prompt-builder.update-prompt', [
@@ -119,7 +120,7 @@ test('update optimised prompt only allows completed workflow stage', function ()
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '1_completed',
+        'workflow_stage' => WorkflowStage::AnalysisCompleted,
         'optimized_prompt' => null,
     ]);
 
@@ -159,7 +160,7 @@ test('user cannot update other users prompt runs', function () {
     $otherUser = User::factory()->create();
     $otherRun = PromptRun::factory()->create([
         'user_id' => $otherUser->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
         'optimized_prompt' => 'Original prompt',
     ]);
 
@@ -177,7 +178,7 @@ test('update optimised prompt preserves other fields', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
         'optimized_prompt' => 'Original prompt',
         'task_description' => 'Original task',
         'selected_framework' => ['code' => 'SMART'],
@@ -199,7 +200,7 @@ test('update optimised prompt supports unicode characters', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $unicodePrompt = 'Unicode test: 你好世界 🌍 Ñoño Über';
@@ -221,7 +222,7 @@ test('update optimised prompt allows newlines and formatting', function () {
 
     $promptRun = PromptRun::factory()->create([
         'user_id' => $this->user->id,
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $formattedPrompt = "Line 1\n\nLine 2\n\n- Bullet 1\n- Bullet 2";
@@ -241,7 +242,7 @@ test('update optimised prompt allows newlines and formatting', function () {
 test('update optimised prompt requires authentication or ownership', function () {
     // Test unauthenticated access to unowned prompt
     $promptRun = PromptRun::factory()->create([
-        'workflow_stage' => '2_completed',
+        'workflow_stage' => WorkflowStage::GenerationCompleted,
     ]);
 
     $response = $this->patchCountry(route('prompt-builder.update-prompt', [

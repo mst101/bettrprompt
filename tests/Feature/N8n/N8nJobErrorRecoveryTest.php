@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WorkflowStage;
 use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
@@ -16,7 +17,7 @@ test('pre analysis job handles service failure and updates database', function (
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '0_processing',
+        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -37,7 +38,7 @@ test('pre analysis job handles service failure and updates database', function (
 
     // Verify database was updated with error
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('0_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisFailed)
         ->and($promptRun->error_message)->toContain('N8n service unavailable');
 });
 
@@ -45,7 +46,7 @@ test('analysis job handles service failure and updates database', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -66,7 +67,7 @@ test('analysis job handles service failure and updates database', function () {
 
     // Verify database was updated
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisFailed)
         ->and($promptRun->error_message)->toContain('Analysis failed');
 });
 
@@ -74,7 +75,7 @@ test('prompt generation job handles service failure and updates database', funct
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
         'task_description' => 'Test task',
         'selected_framework' => ['name' => 'SMART', 'code' => 'smart'],
         'framework_questions' => ['Q1', 'Q2'],
@@ -100,7 +101,7 @@ test('prompt generation job handles service failure and updates database', funct
 
     // Verify database was updated
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('2_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationFailed)
         ->and($promptRun->error_message)->toContain('Generation failed');
 });
 
@@ -108,7 +109,7 @@ test('pre analysis job succeeds and dispatches next job', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '0_processing',
+        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -132,7 +133,7 @@ test('pre analysis job succeeds and dispatches next job', function () {
 
     // Verify workflow stage updated
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_processing')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisProcessing)
         ->and($promptRun->pre_analysis_skipped)->toBeTrue()
         ->and($promptRun->error_message)->toBeNull();
 });
@@ -141,7 +142,7 @@ test('pre analysis job with questions does not dispatch next job', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '0_processing',
+        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -167,7 +168,7 @@ test('pre analysis job with questions does not dispatch next job', function () {
 
     // Verify workflow stage is 0_completed
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('0_completed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisCompleted)
         ->and($promptRun->pre_analysis_questions)->toHaveCount(1)
         ->and($promptRun->error_message)->toBeNull();
 });
@@ -176,7 +177,7 @@ test('jobs clear previous error messages on success', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '0_processing',
+        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         'task_description' => 'Test task',
         'error_message' => 'Previous error',
     ]);
@@ -203,7 +204,7 @@ test('jobs handle n8n rate limit errors', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '1_processing',
+        'workflow_stage' => WorkflowStage::AnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -222,7 +223,7 @@ test('jobs handle n8n rate limit errors', function () {
     }
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('1_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::AnalysisFailed)
         ->and($promptRun->error_message)->toContain('rate limit');
 });
 
@@ -230,7 +231,7 @@ test('jobs handle n8n timeout errors', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
         'task_description' => 'Test task',
         'selected_framework' => ['name' => 'SMART'],
         'framework_questions' => ['Q1'],
@@ -254,7 +255,7 @@ test('jobs handle n8n timeout errors', function () {
     }
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('2_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationFailed)
         ->and($promptRun->error_message)->toContain('timed out');
 });
 
@@ -262,7 +263,7 @@ test('jobs preserve previous successful data on failure', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '2_processing',
+        'workflow_stage' => WorkflowStage::GenerationProcessing,
         'task_description' => 'Test task',
         'selected_framework' => ['name' => 'SMART', 'code' => 'smart'],
         'framework_questions' => ['Question 1', 'Question 2'],
@@ -288,7 +289,7 @@ test('jobs preserve previous successful data on failure', function () {
     $promptRun->refresh();
 
     // Previous data should be preserved
-    expect($promptRun->workflow_stage)->toBe('2_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::GenerationFailed)
         ->and($promptRun->selected_framework)->toEqual(['name' => 'SMART', 'code' => 'smart'])
         ->and($promptRun->framework_questions)->toEqual(['Question 1', 'Question 2'])
         ->and($promptRun->clarifying_answers)->toEqual(['Answer 1', 'Answer 2']);
@@ -298,7 +299,7 @@ test('pre analysis job handles n8n circuit breaker open', function () {
     $user = User::factory()->create();
     $promptRun = PromptRun::factory()->create([
         'user_id' => $user->id,
-        'workflow_stage' => '0_processing',
+        'workflow_stage' => WorkflowStage::PreAnalysisProcessing,
         'task_description' => 'Test task',
     ]);
 
@@ -317,6 +318,6 @@ test('pre analysis job handles n8n circuit breaker open', function () {
     }
 
     $promptRun->refresh();
-    expect($promptRun->workflow_stage)->toBe('0_failed')
+    expect($promptRun->workflow_stage)->toBe(WorkflowStage::PreAnalysisFailed)
         ->and($promptRun->error_message)->toContain('temporarily unavailable');
 });
