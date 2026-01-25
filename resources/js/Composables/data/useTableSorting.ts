@@ -39,9 +39,9 @@ export function useTableSorting(
         }
 
         const params: Record<string, unknown> = {
+            ...(options?.additionalParams || {}),
             sort_by: column,
             sort_direction: newDirection,
-            ...(options?.additionalParams || {}),
         };
 
         const path = options?.routePath || window.location.pathname;

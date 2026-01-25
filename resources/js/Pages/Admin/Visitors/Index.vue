@@ -28,7 +28,10 @@ defineOptions({
     layout: AdminLayout,
 });
 
+const { countryRoute } = useCountryRoute();
+
 const { search } = useDebounceSearch(props.search || '', {
+    routePath: countryRoute('admin.visitors.index'),
     additionalParams: {
         sort_by: props.filters.sortBy,
         sort_direction: props.filters.sortDirection,
@@ -36,8 +39,6 @@ const { search } = useDebounceSearch(props.search || '', {
     },
     preserveScroll: true,
 });
-
-const { countryRoute } = useCountryRoute();
 
 const { sortBy, sortDirection } = useTableSorting(
     props.filters.sortBy,
