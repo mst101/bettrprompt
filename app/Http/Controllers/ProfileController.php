@@ -194,7 +194,7 @@ class ProfileController extends Controller
                 $request->user()->save();
             });
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'profile-updated');
 
         } catch (QueryException $e) {
@@ -220,7 +220,7 @@ class ProfileController extends Controller
                 ]);
             });
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'personality-updated');
 
         } catch (QueryException $e) {
@@ -247,7 +247,7 @@ class ProfileController extends Controller
             'ui_complexity' => $validated['uiComplexity'],
         ]);
 
-        return Redirect::route('profile.edit')
+        return Redirect::route('profile.edit', ['country' => $request->route('country')])
             ->with('status', 'ui-complexity-updated');
     }
 
@@ -350,7 +350,7 @@ class ProfileController extends Controller
                 return response()->json(['success' => true]);
             }
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'location-updated');
         } catch (Exception $e) {
             Log::error('Failed to update user location', [
@@ -370,7 +370,7 @@ class ProfileController extends Controller
         try {
             $request->user()->updateProfessional($request->validated());
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'professional-updated');
         } catch (Exception $e) {
             Log::error('Failed to update professional context', [
@@ -390,7 +390,7 @@ class ProfileController extends Controller
         try {
             $request->user()->updateTeam($request->validated());
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'team-updated');
         } catch (Exception $e) {
             Log::error('Failed to update team context', [
@@ -410,7 +410,7 @@ class ProfileController extends Controller
         try {
             $request->user()->updateBudget($request->validated());
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'budget-updated');
         } catch (Exception $e) {
             Log::error('Failed to update budget preferences', [
@@ -430,7 +430,7 @@ class ProfileController extends Controller
         try {
             $request->user()->updateTools($request->validated());
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'tools-updated');
         } catch (Exception $e) {
             Log::error('Failed to update tool preferences', [
@@ -495,7 +495,7 @@ class ProfileController extends Controller
                     ->with('status', 'location-detected-updated');
             }
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'location-detected-updated');
         } catch (Exception $e) {
             Log::error('Failed to detect location', [
@@ -524,7 +524,7 @@ class ProfileController extends Controller
                 return response()->json(['success' => true]);
             }
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'location-cleared');
         } catch (Exception $e) {
             Log::error('Failed to clear location', [
@@ -561,7 +561,7 @@ class ProfileController extends Controller
         try {
             $request->user()->clearProfessional();
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'professional-cleared');
         } catch (Exception $e) {
             Log::error('Failed to clear professional information', [
@@ -578,7 +578,7 @@ class ProfileController extends Controller
         try {
             $request->user()->clearTeam();
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'team-cleared');
         } catch (Exception $e) {
             Log::error('Failed to clear team information', [
@@ -595,7 +595,7 @@ class ProfileController extends Controller
         try {
             $request->user()->clearBudget();
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'budget-cleared');
         } catch (Exception $e) {
             Log::error('Failed to clear budget preferences', [
@@ -612,7 +612,7 @@ class ProfileController extends Controller
         try {
             $request->user()->clearTools();
 
-            return Redirect::route('profile.edit')
+            return Redirect::route('profile.edit', ['country' => $request->route('country')])
                 ->with('status', 'tools-cleared');
         } catch (Exception $e) {
             Log::error('Failed to clear tools & technologies', [

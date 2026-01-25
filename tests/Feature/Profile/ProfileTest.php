@@ -8,6 +8,36 @@ test('profile page requires authentication', function () {
     $response->assertRedirect(route('login'));
 });
 
+test('profile information update redirects with country parameter in location header', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile'), [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+
+    // Verify the Location header contains the country code
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('profile information update redirect can be followed', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile'), [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+
+    // Follow the redirect and verify it succeeds
+    $followResponse = $this->get($response->headers->get('Location'));
+    $followResponse->assertOk();
+});
+
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 
@@ -402,4 +432,138 @@ test('unauthenticated user cannot update tools preferences', function () {
         ]);
 
     $response->assertRedirect(route('login'));
+});
+
+// Verify redirect URLs contain country parameter for all update endpoints
+test('location update redirects with country parameter', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile/location'), [
+            'countryCode' => 'GB',
+            'region' => 'England',
+            'city' => 'London',
+        ]);
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('professional update redirects with country parameter', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile/professional'), [
+            'jobTitle' => 'Senior Developer',
+        ]);
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('team update redirects with country parameter', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile/team'), [
+            'teamSize' => 'medium',
+        ]);
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('budget update redirects with country parameter', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile/budget'), [
+            'budgetConsciousness' => 'free_first',
+        ]);
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('tools update redirects with country parameter', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch($this->withCountryPrefix('/profile/tools'), [
+            'primaryProgrammingLanguage' => 'typescript',
+        ]);
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('location clear redirects with country parameter', function () {
+    $user = User::factory()->create([
+        'country_code' => 'GB',
+        'city' => 'London',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete($this->withCountryPrefix('/profile/location'));
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('professional clear redirects with country parameter', function () {
+    $user = User::factory()->create([
+        'job_title' => 'Developer',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete($this->withCountryPrefix('/profile/professional'));
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('team clear redirects with country parameter', function () {
+    $user = User::factory()->create([
+        'team_size' => 'small',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete($this->withCountryPrefix('/profile/team'));
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('budget clear redirects with country parameter', function () {
+    $user = User::factory()->create([
+        'budget_consciousness' => 'free_first',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete($this->withCountryPrefix('/profile/budget'));
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
+
+test('tools clear redirects with country parameter', function () {
+    $user = User::factory()->create([
+        'preferred_tools' => ['vscode'],
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->delete($this->withCountryPrefix('/profile/tools'));
+
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
 });

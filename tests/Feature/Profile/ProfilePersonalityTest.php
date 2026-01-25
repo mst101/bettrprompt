@@ -259,3 +259,20 @@ test('updating personality does not affect other user data', function () {
         ->and($this->user->email)->toBe($originalEmail)
         ->and($this->user->created_at->timestamp)->toBe($originalCreatedAt->timestamp);
 });
+
+test('personality update redirects with country parameter in location header', function () {
+    $response = $this->patch($this->withCountryPrefix('/profile/personality'), [
+        'personalityType' => 'ENFP-T',
+        'traitPercentages' => [
+            'mind' => 62,
+            'energy' => 85,
+            'nature' => 65,
+            'tactics' => 73,
+            'identity' => 55,
+        ],
+    ]);
+
+    // Verify the Location header contains the country code
+    $location = $response->headers->get('Location');
+    expect($location)->toContain('/gb/profile');
+});
