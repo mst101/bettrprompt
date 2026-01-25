@@ -3,10 +3,6 @@ import AlertDialog from '@/Components/Base/AlertDialog.vue';
 import ButtonDarkMode from '@/Components/Base/Button/ButtonDarkMode.vue';
 import ButtonHamburger from '@/Components/Base/Button/ButtonHamburger.vue';
 import ButtonSecondary from '@/Components/Base/Button/ButtonSecondary.vue';
-import ModalForgotPassword from '@/Components/Base/Modal/ModalForgotPassword.vue';
-import ModalLogin from '@/Components/Base/Modal/ModalLogin.vue';
-import ModalRegister from '@/Components/Base/Modal/ModalRegister.vue';
-import ModalResetPassword from '@/Components/Base/Modal/ModalResetPassword.vue';
 import NavLink from '@/Components/Base/NavLink.vue';
 import ResponsiveNavLink from '@/Components/Base/ResponsiveNavLink.vue';
 import CookieBanner from '@/Components/Common/CookieBanner.vue';
@@ -19,7 +15,29 @@ import { useSessionTimeout } from '@/Composables/features/useSessionTimeout';
 import { useCountryRoute } from '@/Composables/useCountryRoute';
 import SvgLogo from '@/Icons/SvgLogo.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed, nextTick, onMounted, provide, ref, watch } from 'vue';
+import {
+    computed,
+    defineAsyncComponent,
+    nextTick,
+    onMounted,
+    provide,
+    ref,
+    watch,
+} from 'vue';
+
+// Lazy load auth modals - only loaded when needed
+const ModalLogin = defineAsyncComponent(
+    () => import('@/Components/Base/Modal/ModalLogin.vue'),
+);
+const ModalRegister = defineAsyncComponent(
+    () => import('@/Components/Base/Modal/ModalRegister.vue'),
+);
+const ModalForgotPassword = defineAsyncComponent(
+    () => import('@/Components/Base/Modal/ModalForgotPassword.vue'),
+);
+const ModalResetPassword = defineAsyncComponent(
+    () => import('@/Components/Base/Modal/ModalResetPassword.vue'),
+);
 
 interface User {
     id: number;
