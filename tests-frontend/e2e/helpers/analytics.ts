@@ -240,7 +240,7 @@ export async function waitForRatingToSave(
     );
 }
 
-interface AnalyticsRecord {
+export interface AnalyticsRecord {
     [key: string]: unknown;
 }
 
