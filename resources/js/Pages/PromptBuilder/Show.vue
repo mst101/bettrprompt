@@ -132,8 +132,10 @@ interface Props {
 }
 
 // Tab visibility logic - centralised in composable
+// Wrap props.promptRun in a computed so it remains reactive when Inertia reloads
+const promptRunData = computed(() => props.promptRun);
 const { tabs } = useTabVisibility(
-    props.promptRun,
+    promptRunData,
     props.uiComplexity,
     isAdmin.value,
 );

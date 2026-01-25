@@ -1,6 +1,6 @@
 import type { Tab } from '@/Components/Base/Tabs.vue';
 import type { PromptRunResource } from '@/Types';
-import { computed, type ComputedRef } from 'vue';
+import { computed, isRef, type ComputedRef, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 /**
@@ -33,39 +33,57 @@ export interface TabVisibilityResult extends TabVisibilityFlags {
 /**
  * Composable for managing tab visibility based on prompt run state
  * Centralises visibility logic and tab definitions
+ *
+ * @param promptRun Can be a plain object or a computed/ref for reactive updates
  */
 export function useTabVisibility(
-    promptRun: PromptRunResource | PromptRunTabData,
+    promptRun:
+        | PromptRunResource
+        | PromptRunTabData
+        | ComputedRef<PromptRunResource | PromptRunTabData>
+        | Ref<PromptRunResource | PromptRunTabData>,
     uiComplexity: string | undefined,
     isAdmin: boolean,
 ): TabVisibilityResult {
     const { t } = useI18n({ useScope: 'global' });
 
+    // Convert to computed for consistent reactive access
+    const promptRunComputed = computed(() => {
+        if (isRef(promptRun)) {
+            return promptRun.value;
+        }
+        return promptRun as PromptRunResource | PromptRunTabData;
+    });
+
     // Tab visibility flags
-    const hasFramework = computed(() => !!promptRun.selectedFramework);
+    const hasFramework = computed(
+        () => !!promptRunComputed.value.selectedFramework,
+    );
 
     const hasPersonality = computed(
         () =>
-            !!promptRun.personalityTier &&
-            promptRun.personalityTier !== 'none' &&
+            !!promptRunComputed.value.personalityTier &&
+            promptRunComputed.value.personalityTier !== 'none' &&
             uiComplexity === 'advanced',
     );
 
     const hasFrameworkQuestions = computed(
         () =>
-            !!promptRun.frameworkQuestions &&
-            promptRun.frameworkQuestions.length > 0,
+            !!promptRunComputed.value.frameworkQuestions &&
+            promptRunComputed.value.frameworkQuestions.length > 0,
     );
 
     const hasModelRecommendations = computed(
         () =>
-            !!promptRun.modelRecommendations ||
-            !!promptRun.iterationSuggestions,
+            !!promptRunComputed.value.modelRecommendations ||
+            !!promptRunComputed.value.iterationSuggestions,
     );
 
     const showApiUsage = computed(() => uiComplexity === 'advanced' && isAdmin);
 
-    const showOptimisedPrompt = computed(() => !!promptRun.optimizedPrompt);
+    const showOptimisedPrompt = computed(
+        () => !!promptRunComputed.value.optimizedPrompt,
+    );
 
     // Tab definitions
     const tabDefinitions = {
@@ -124,14 +142,14 @@ export function useTabVisibility(
 
         // Debug logging - always log for analysis completion
         console.log('📋 [useTabVisibility] Tab computation:', {
-            selectedFramework: promptRun.selectedFramework,
-            frameworkQuestions: promptRun.frameworkQuestions,
+            selectedFramework: promptRunComputed.value.selectedFramework,
+            frameworkQuestions: promptRunComputed.value.frameworkQuestions,
             hasFramework: hasFramework.value,
             hasFrameworkQuestions: hasFrameworkQuestions.value,
             frameworkQuestionsLength:
-                promptRun.frameworkQuestions?.length ?? null,
+                promptRunComputed.value.frameworkQuestions?.length ?? null,
             tabIds: allTabs.map((t) => t.id),
-            workflowStage: promptRun.workflowStage,
+            workflowStage: promptRunComputed.value.workflowStage,
         });
 
         return allTabs;
