@@ -138,7 +138,7 @@ class PromptRun extends Model
         }
 
         // Fall back to visitor context (location only)
-        if ($this->visitor && $this->visitor->hasLocationData()) {
+        if ($this->visitor && $this->visitor->hasLocationData) {
             return [
                 'location' => [
                     'country' => $this->visitor->country_name,
