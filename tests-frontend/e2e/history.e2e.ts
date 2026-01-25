@@ -52,11 +52,11 @@ test.describe('Prompt Builder History - Empty State', () => {
         authenticatedPageWithUniqueUser,
     }) => {
         // Already navigated in beforeEach, just verify content
-        // Should see the page heading
-        const heading = authenticatedPageWithUniqueUser.getByRole('heading', {
-            name: /prompt history/i,
-        });
-        await expect(heading).toBeVisible({ timeout: 5000 });
+        // Should see the page header
+        const pageHeader = authenticatedPageWithUniqueUser.getByTestId(
+            'page-header-history',
+        );
+        await expect(pageHeader).toBeVisible({ timeout: 5000 });
     });
 
     test('should show empty state message when no history exists', async ({
@@ -81,9 +81,8 @@ test.describe('Prompt Builder History - Empty State', () => {
     }) => {
         // Page already navigated in beforeEach
         // Should see "Create New" button
-        const createButton = authenticatedPageWithUniqueUser.getByRole('link', {
-            name: /create new/i,
-        });
+        const createButton =
+            authenticatedPageWithUniqueUser.getByTestId('button-create-new');
         await expect(createButton).toBeVisible({ timeout: 5000 });
         expect(await createButton.getAttribute('href')).toContain(
             '/prompt-builder',
