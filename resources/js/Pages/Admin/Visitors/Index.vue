@@ -8,6 +8,7 @@ import { useDebounceSearch } from '@/Composables/data/useDebounceSearch';
 import { useTableSorting } from '@/Composables/data/useTableSorting';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
+import { formatDate } from '@/Utils';
 import { Head, Link } from '@inertiajs/vue3';
 
 interface Props {
@@ -216,7 +217,7 @@ const { sortBy, sortDirection } = useTableSorting(
         <AdminPaginationSection
             :meta="visitors.meta"
             :query-string-params="{
-                search: searchQuery,
+                search: search,
                 sort_by: filters.sortBy,
                 sort_direction: filters.sortDirection,
             }"
