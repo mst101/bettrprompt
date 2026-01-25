@@ -63,8 +63,9 @@ createInertiaApp({
         ),
     async setup({ el, App, props, plugin }) {
         // Initialize i18n and set locale from server-side props
+        // Default to en-GB (core target market)
         const locale =
-            (props.initialPage.props.locale as LocaleCode) || 'en-US';
+            (props.initialPage.props.locale as LocaleCode) || 'en-GB';
         await initializeI18n();
         await setLocale(locale);
 

@@ -154,18 +154,19 @@ export const locales: LocaleInfo[] = [
     },
 ];
 
+// Use en-GB as default since it's the core target market
 export const i18n = createI18n({
     legacy: false,
-    locale: 'en-US',
-    fallbackLocale: 'en-US',
+    locale: 'en-GB',
+    fallbackLocale: 'en-GB',
     messages: {},
 });
 
 /**
- * Initialize i18n with default locale messages
+ * Initialize i18n with default locale messages (en-GB is core target)
  */
 export async function initializeI18n(): Promise<void> {
-    await loadLocaleMessages('en-US');
+    await loadLocaleMessages('en-GB');
 }
 
 /**
