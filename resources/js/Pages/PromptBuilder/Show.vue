@@ -17,6 +17,7 @@ import CognitiveRequirements from '@/Components/Features/PromptBuilder/YourTask/
 import TaskClassification from '@/Components/Features/PromptBuilder/YourTask/TaskClassification.vue';
 import TaskInformation from '@/Components/Features/PromptBuilder/YourTask/TaskInformation.vue';
 // Lazily loaded - conditionally rendered
+import { initializeEchoIfNeeded } from '@/bootstrap';
 import { useRealtimeUpdates } from '@/Composables/data/useRealtimeUpdates';
 import { useTabVisibility } from '@/Composables/features/useTabVisibility';
 import { useAlert } from '@/Composables/ui/useAlert';
@@ -30,12 +31,24 @@ import {
     defineAsyncComponent,
     inject,
     nextTick,
+    onMounted,
     onUnmounted,
     ref,
     watch,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 const props = defineProps<Props>();
+
+// Initialize WebSocket connection (Echo/Pusher) on component mount
+// This is deferred from bootstrap to avoid blocking initial page load
+onMounted(async () => {
+    try {
+        await initializeEchoIfNeeded();
+    } catch (error) {
+        console.error('Failed to initialize Echo:', error);
+    }
+});
+
 const ApiUsage = defineAsyncComponent(
     () => import('@/Components/Features/PromptBuilder/ApiUsage/ApiUsage.vue'),
 );

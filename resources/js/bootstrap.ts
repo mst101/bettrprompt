@@ -27,26 +27,37 @@ window.axios.interceptors.request.use((config) => {
 
 /**
  * Laravel Echo for real-time broadcasting with comprehensive error handling
+ * Deferred initialization - only loaded when prompt-builder or authenticated pages need it
  */
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-
-window.Pusher = Pusher;
 
 // Track connection state
 let echoInstance: Echo<unknown> | null = null;
 let connectionState: 'connected' | 'connecting' | 'disconnected' | 'failed' =
-    'connecting';
+    'disconnected';
+let echoInitialized = false;
 
-// Initialize Echo with error handling
-function initializeEcho() {
+// Lazy imports - only loaded when needed
+async function initializeEcho() {
+    // Return early if already initialized
+    if (echoInitialized) {
+        return;
+    }
+    echoInitialized = true;
+
     try {
+        // Import only when needed
+        const { default: Echo } = await import('laravel-echo');
+        const { default: Pusher } = await import('pusher-js');
+
+        window.Pusher = Pusher;
         // Only initialize Echo if we have a valid app key
         if (!import.meta.env.VITE_REVERB_APP_KEY) {
             connectionState = 'disconnected';
             window.Echo = null;
             return;
         }
+
+        connectionState = 'connecting';
 
         const reverbConfig = {
             broadcaster: 'reverb',
@@ -114,10 +125,14 @@ window.getEchoConnectionState = () => {
     return connectionState;
 };
 
-// Initialize Echo
-initializeEcho();
+// Echo is now deferred - will be initialized when needed (prompt-builder, real-time pages)
+// Don't initialize on app startup to avoid blocking the main thread
 
 // Export for use in components
+export async function initializeEchoIfNeeded(): Promise<void> {
+    return initializeEcho();
+}
+
 export function getEcho(): Echo<unknown> | null {
     return echoInstance;
 }
