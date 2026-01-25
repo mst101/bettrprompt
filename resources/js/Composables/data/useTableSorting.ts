@@ -3,7 +3,9 @@ import { computed } from 'vue';
 
 export interface UseTableSortingOptions {
     routePath?: string;
-    additionalParams?: Record<string, unknown>;
+    additionalParams?:
+        | Record<string, unknown>
+        | (() => Record<string, unknown>);
 }
 
 /**
@@ -38,8 +40,14 @@ export function useTableSorting(
             newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
         }
 
+        // Get additionalParams - can be a function (for reactive values) or an object
+        const baseParams =
+            typeof options?.additionalParams === 'function'
+                ? options.additionalParams()
+                : options?.additionalParams || {};
+
         const params: Record<string, unknown> = {
-            ...(options?.additionalParams || {}),
+            ...baseParams,
             sort_by: column,
             sort_direction: newDirection,
         };

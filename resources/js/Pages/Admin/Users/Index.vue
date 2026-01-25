@@ -47,9 +47,9 @@ const { sortBy, sortDirection } = useTableSorting(
     props.filters.sortDirection,
     {
         routePath: countryRoute('admin.users.index'),
-        additionalParams: {
+        additionalParams: () => ({
             search: search.value,
-        },
+        }),
     },
 );
 </script>
