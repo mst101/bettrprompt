@@ -6,6 +6,7 @@ import ContainerPage from '@/Components/Common/ContainerPage.vue';
 import HeaderPage from '@/Components/Common/HeaderPage.vue';
 import { useDebounceSearch } from '@/Composables/data/useDebounceSearch';
 import { useTableSorting } from '@/Composables/data/useTableSorting';
+import { useCountryRoute } from '@/Composables/useCountryRoute';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import type { Paginated, VisitorListResource } from '@/Types';
 import { formatDate } from '@/Utils';
@@ -36,10 +37,13 @@ const { search } = useDebounceSearch(props.search || '', {
     preserveScroll: true,
 });
 
+const { countryRoute } = useCountryRoute();
+
 const { sortBy, sortDirection } = useTableSorting(
     props.filters.sortBy,
     props.filters.sortDirection,
     {
+        routePath: countryRoute('admin.visitors.index'),
         additionalParams: {
             search: search.value,
             per_page: props.filters.perPage,
