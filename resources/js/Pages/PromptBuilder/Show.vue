@@ -168,7 +168,13 @@ const getInitialTab = (): string => {
     return 'task';
 };
 
-const activeTab = ref<string>(getInitialTab());
+const initialTab = getInitialTab();
+console.log('📱 [Component Init] Initial tab:', initialTab, {
+    selectedFramework: props.promptRun.selectedFramework,
+    frameworkQuestions: props.promptRun.frameworkQuestions,
+    workflowStage: props.promptRun.workflowStage,
+});
+const activeTab = ref<string>(initialTab);
 const isProgrammaticTabSwitch = ref(false);
 const clarifyingQuestionsRef = ref<InstanceType<
     typeof ClarifyingQuestions
@@ -322,10 +328,26 @@ useRealtimeUpdates(
             });
 
             // Reload page to show analysis results
+            console.log(
+                '🔄 [AnalysisCompleted] Calling router.reload() with only=["promptRun"]',
+            );
             router.reload({
                 only: ['promptRun'],
                 onSuccess: () => {
+                    console.log(
+                        '✅ [AnalysisCompleted] router.reload() onSuccess - data after reload:',
+                        {
+                            selectedFramework:
+                                props.promptRun.selectedFramework,
+                            frameworkQuestions:
+                                props.promptRun.frameworkQuestions,
+                            workflowStage: props.promptRun.workflowStage,
+                        },
+                    );
                     // Switch to Framework tab after reload
+                    console.log(
+                        '📌 [AnalysisCompleted] Calling switchTabProgrammatically("framework")',
+                    );
                     switchTabProgrammatically('framework');
                 },
             });
@@ -460,8 +482,19 @@ watch(
     tabs,
     (newTabs) => {
         const tabIds = newTabs.map((tab) => tab.id);
+        console.log('👀 [Tabs watcher] Tabs changed:', {
+            tabIds,
+            activeTab: activeTab.value,
+            isTabValid: tabIds.includes(activeTab.value),
+            selectedFramework: props.promptRun.selectedFramework,
+            frameworkQuestions: props.promptRun.frameworkQuestions,
+        });
         if (!tabIds.includes(activeTab.value)) {
             // Current tab is no longer valid, switch to first tab
+            console.log(
+                '⚠️ [Tabs watcher] Current tab not valid, switching to:',
+                newTabs[0]?.id || 'task',
+            );
             switchTabProgrammatically(newTabs[0]?.id || 'task');
         }
     },

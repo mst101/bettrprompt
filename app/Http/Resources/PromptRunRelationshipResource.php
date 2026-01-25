@@ -34,7 +34,7 @@ class PromptRunRelationshipResource extends JsonResource
         return [
             'id' => $this->id,
             'taskDescription' => $this->task_description,
-            'workflowStage' => $this->workflow_stage,
+            'workflowStage' => $this->workflow_stage?->value,
             'createdAt' => $this->created_at?->toIso8601String(),
             'personalityType' => $this->personality_type,
             'selectedFramework' => $this->selected_framework ? ['name' => $this->selected_framework['name'] ?? null] : null,

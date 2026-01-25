@@ -122,6 +122,18 @@ export function useTabVisibility(
         if (showOptimisedPrompt.value)
             allTabs.push(tabDefinitions.optimisedPrompt as Tab);
 
+        // Debug logging - always log for analysis completion
+        console.log('📋 [useTabVisibility] Tab computation:', {
+            selectedFramework: promptRun.selectedFramework,
+            frameworkQuestions: promptRun.frameworkQuestions,
+            hasFramework: hasFramework.value,
+            hasFrameworkQuestions: hasFrameworkQuestions.value,
+            frameworkQuestionsLength:
+                promptRun.frameworkQuestions?.length ?? null,
+            tabIds: allTabs.map((t) => t.id),
+            workflowStage: promptRun.workflowStage,
+        });
+
         return allTabs;
     });
 
