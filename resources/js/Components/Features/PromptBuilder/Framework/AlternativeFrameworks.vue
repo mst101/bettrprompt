@@ -25,6 +25,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    currentFramework: undefined,
     visitorHasCompletedPrompts: false,
 });
 

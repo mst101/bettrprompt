@@ -30,8 +30,12 @@ const props = withDefaults(
         savedQuestionRatings?: Set<number>;
     }>(),
     {
+        submitLabel: undefined,
+        backLabel: undefined,
         showBack: true,
         isEditMode: false,
+        questionRatings: undefined,
+        savedQuestionRatings: undefined,
     },
 );
 
