@@ -169,44 +169,55 @@ describe('Workflow 1: Analysis from Pre-Analysis', function () {
 
 });
 
-describe('Update Pre-Analysis Answers', function () {
-    test('updates answers and re-triggers analysis', function () {
+describe('Create Child from Pre-Analysis Answers', function () {
+    test('creates child prompt run with updated answers', function () {
         Bus::fake();
 
         $user = User::factory()->create();
-        $promptRun = PromptRun::factory()->create([
+        $parentPromptRun = PromptRun::factory()->create([
             'user_id' => $user->id,
-            'workflow_stage' => '1_processing',
+            'workflow_stage' => '1_completed',
             'pre_analysis_questions' => [
-                ['question' => 'What is the scope?'],
+                ['id' => 'q1', 'question' => 'What is the scope?'],
             ],
-            'pre_analysis_answers' => ['Original answer'],
+            'pre_analysis_answers' => ['q1' => 'Original answer'],
         ]);
 
+        expect(PromptRun::count())->toBe(1);
+
         $this->actingAs($user)
-            ->postCountry(route('prompt-builder.update-pre-analysis-answers', ['promptRun' => $promptRun], false), [
-                'answers' => ['Updated answer'],
+            ->postCountry(route('prompt-builder.create-child-from-pre-analysis-answers', ['parentPromptRun' => $parentPromptRun], false), [
+                'answers' => ['q1' => 'Updated answer'],
             ]);
 
-        $promptRun->refresh();
-        expect($promptRun->pre_analysis_answers)->toBe(['Updated answer']);
+        expect(PromptRun::count())->toBe(2);
+        $childPromptRun = PromptRun::where('parent_id', $parentPromptRun->id)->first();
+
+        expect($childPromptRun)
+            ->not->toBeNull()
+            ->and($childPromptRun->pre_analysis_answers)->toBe(['q1' => 'Updated answer'])
+            ->and($childPromptRun->workflow_stage)->toBe(WorkflowStage::AnalysisProcessing);
+
+        // Parent should remain unchanged
+        $parentPromptRun->refresh();
+        expect($parentPromptRun->pre_analysis_answers)->toBe(['q1' => 'Original answer']);
     });
 
-    test('dispatches ProcessAnalysis job when updating answers', function () {
+    test('dispatches ProcessAnalysis job on child prompt run', function () {
         Bus::fake();
 
         $user = User::factory()->create();
-        $promptRun = PromptRun::factory()->create([
+        $parentPromptRun = PromptRun::factory()->create([
             'user_id' => $user->id,
-            'workflow_stage' => '1_processing',
+            'workflow_stage' => '1_completed',
             'pre_analysis_questions' => [
-                ['question' => 'What is the scope?'],
+                ['id' => 'q1', 'question' => 'What is the scope?'],
             ],
         ]);
 
         $this->actingAs($user)
-            ->postCountry(route('prompt-builder.update-pre-analysis-answers', ['promptRun' => $promptRun], false), [
-                'answers' => ['Updated answer'],
+            ->postCountry(route('prompt-builder.create-child-from-pre-analysis-answers', ['parentPromptRun' => $parentPromptRun], false), [
+                'answers' => ['q1' => 'Updated answer'],
             ]);
 
         Bus::assertDispatched(\App\Jobs\ProcessAnalysis::class);

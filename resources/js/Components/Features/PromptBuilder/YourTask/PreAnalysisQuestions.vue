@@ -313,9 +313,12 @@ const submitAnswers = () => {
     if (hasAnswers.value) {
         form.answers = finalAnswers;
         form.post(
-            countryRoute('prompt-builder.update-pre-analysis-answers', {
-                promptRun: props.promptRun.id,
-            }),
+            countryRoute(
+                'prompt-builder.create-child-from-pre-analysis-answers',
+                {
+                    parentPromptRun: props.promptRun.id,
+                },
+            ),
             {
                 onSuccess: () => {
                     window.scrollTo(0, 0);

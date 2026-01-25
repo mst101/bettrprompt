@@ -11,7 +11,6 @@ use App\Http\Requests\GeneratePromptRequest;
 use App\Http\Requests\PromptBuilderAnalyseRequest;
 use App\Http\Requests\SubmitPreAnalysisAnswersRequest;
 use App\Http\Requests\UpdateOptimizedPromptRequest;
-use App\Http\Requests\UpdatePreAnalysisAnswersRequest;
 use App\Http\Resources\ClaudeModelResource;
 use App\Http\Resources\PromptRunPageResource;
 use App\Http\Resources\PromptRunResource;
@@ -297,73 +296,6 @@ class PromptBuilderController extends Controller
             ]);
 
             return back()->with('error', __('messages.prompt_builder.submit_answers_failed'));
-        }
-    }
-
-    /**
-     * Workflow 1: Update pre-analysis answers and re-analyse
-     * Allows users to edit pre-analysis answers and re-run the analysis.
-     * Used in view-edit mode for tweaking responses before clarifying questions.
-     */
-    public function updatePreAnalysisAnswers(
-        UpdatePreAnalysisAnswersRequest $request,
-        string $locale,
-        PromptRun|string $promptRun
-    ) {
-        $promptRun = $this->resolvePromptRun($request, $promptRun);
-        $this->authorizePromptRun($promptRun, $request);
-
-        // Check visitor limit for unauthenticated users
-        if (! $this->visitorLimitService->checkLimit(
-            auth()->check(),
-            $promptRun->visitor_id ?? $this->getVisitorId($request)
-        )) {
-            return $this->visitorLimitService->createWebErrorResponse();
-        }
-
-        // Validate workflow stage - should have pre-analysis questions
-        if (! $promptRun->pre_analysis_questions || empty($promptRun->pre_analysis_questions)) {
-            return back()->with('error', __('messages.prompt_builder.no_quick_queries'));
-        }
-
-        $validated = $request->validated();
-
-        try {
-            // Build structured pre_analysis_context from updated answers
-            // Merges inferred values (from pre-analysis) with user answers
-            $preAnalysisContext = $this->buildPreAnalysisContext(
-                $promptRun->pre_analysis_questions,
-                $validated['answers'],
-                $promptRun
-            );
-
-            // Update the prompt run with new answers and context, then dispatch workflow_1
-            DatabaseService::retryOnDeadlock(function () use ($promptRun, $validated, $preAnalysisContext) {
-                $promptRun->update([
-                    'pre_analysis_answers' => $validated['answers'],
-                    'pre_analysis_context' => $preAnalysisContext,
-                    'workflow_stage' => WorkflowStage::AnalysisProcessing,
-                ]);
-            });
-
-            // Record workflow 1 start in analytics
-            $promptRun->refresh();
-            $this->workflowAnalytics->recordStart($promptRun, 1);
-
-            // Dispatch workflow_1 again to re-analyse with new answers
-            ProcessAnalysis::dispatch($promptRun, null, $this->getJobDatabase($request));
-
-            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $promptRun]))
-                ->with('success', __('messages.prompt_builder.updating_answers'));
-
-        } catch (Exception $e) {
-            Log::error('Failed to update quick queries', [
-                'prompt_run_id' => $promptRun->id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return back()->with('error', __('messages.prompt_builder.update_answers_failed'));
         }
     }
 
@@ -782,6 +714,87 @@ class PromptBuilderController extends Controller
                 ->with('success', __('messages.prompt_builder.generating_optimised_prompt'));
         } catch (Exception $e) {
             Log::error('Failed to create child prompt run for prompt builder', [
+                'parent_prompt_run_id' => $parentPromptRun->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->with('error', __('messages.prompt_builder.create_prompt_run_failed'));
+        }
+    }
+
+    /**
+     * Create a child prompt run with edited pre-analysis answers
+     * Allows users to re-run analysis with updated pre-analysis answers.
+     * Creates a new variant that inherits everything from parent but re-analyzes with new answers.
+     */
+    public function createChildFromPreAnalysisAnswers(
+        SubmitPreAnalysisAnswersRequest $request,
+        string $locale,
+        PromptRun|string $parentPromptRun
+    ) {
+        $parentPromptRun = $this->resolvePromptRun($request, $parentPromptRun);
+        $this->authorizePromptRun($parentPromptRun, $request);
+
+        // Check visitor limit for unauthenticated users
+        if (! $this->visitorLimitService->checkLimit(
+            auth()->check(),
+            $parentPromptRun->visitor_id ?? $this->getVisitorId($request)
+        )) {
+            return $this->visitorLimitService->createWebErrorResponse();
+        }
+
+        if (empty($parentPromptRun->pre_analysis_questions)) {
+            return back()->with('error', __('messages.prompt_builder.no_quick_queries'));
+        }
+
+        $validated = $request->validated();
+
+        // Build structured pre_analysis_context from updated answers
+        $preAnalysisContext = $this->buildPreAnalysisContext(
+            $parentPromptRun->pre_analysis_questions,
+            $validated['answers'],
+            $parentPromptRun
+        );
+
+        $user = auth()->user();
+        $visitorId = $parentPromptRun->visitor_id ?? $this->getVisitorId($request);
+
+        try {
+            $childPromptRun = DatabaseService::retryOnDeadlock(function () use (
+                $user,
+                $visitorId,
+                $parentPromptRun,
+                $validated,
+                $preAnalysisContext
+            ) {
+                return PromptRun::create([
+                    'visitor_id' => $visitorId,
+                    'user_id' => $user?->id,
+                    'parent_id' => $parentPromptRun->id,
+                    'personality_type' => $user?->personality_type ?? $parentPromptRun->personality_type,
+                    'trait_percentages' => $user?->trait_percentages ?? $parentPromptRun->trait_percentages,
+                    'task_description' => $parentPromptRun->task_description,
+                    'pre_analysis_questions' => $parentPromptRun->pre_analysis_questions,
+                    'pre_analysis_answers' => $validated['answers'],
+                    'pre_analysis_context' => $preAnalysisContext,
+                    'pre_analysis_reasoning' => $parentPromptRun->pre_analysis_reasoning,
+                    'workflow_stage' => WorkflowStage::AnalysisProcessing,
+                ]);
+            });
+
+            // Record workflow 1 start in analytics
+            $childPromptRun->refresh();
+            $this->workflowAnalytics->recordStart($childPromptRun, 1);
+
+            // Dispatch the job to analyse with updated pre-analysis answers
+            ProcessAnalysis::dispatch($childPromptRun, null, $this->getJobDatabase($request));
+
+            return redirect(countryRoute('prompt-builder.show', ['promptRun' => $childPromptRun]))
+                ->with('success', __('messages.prompt_builder.analysing_task'));
+        } catch (Exception $e) {
+            Log::error('Failed to create child prompt run from pre-analysis answers', [
                 'parent_prompt_run_id' => $parentPromptRun->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),

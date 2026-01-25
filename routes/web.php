@@ -137,9 +137,6 @@ Route::prefix('{country}')
         Route::post('/prompt-builder/{promptRun}/pre-analysis-answers',
             [PromptBuilderController::class, 'analyse'])
             ->name('prompt-builder.pre-analysis-answers');
-        Route::post('/prompt-builder/{promptRun}/update-pre-analysis-answers',
-            [PromptBuilderController::class, 'updatePreAnalysisAnswers'])
-            ->name('prompt-builder.update-pre-analysis-answers');
         Route::get('/prompt-builder/{promptRun}', [PromptBuilderController::class, 'show'])
             ->name('prompt-builder.show');
         Route::get('/api/prompt-builder/{promptRun}', [PromptBuilderController::class, 'getFullDetails'])
@@ -160,6 +157,10 @@ Route::prefix('{country}')
             [PromptBuilderController::class, 'createChildFromAnswers'])
             ->middleware(['auth', 'prompt.limit', 'prompt.track'])
             ->name('prompt-builder.create-child-from-answers');
+        Route::post('/prompt-builder/{parentPromptRun}/create-child-from-pre-analysis-answers',
+            [PromptBuilderController::class, 'createChildFromPreAnalysisAnswers'])
+            ->middleware(['auth', 'prompt.limit', 'prompt.track'])
+            ->name('prompt-builder.create-child-from-pre-analysis-answers');
         Route::post('/prompt-builder/{promptRun}/create-child-with-framework',
             [PromptBuilderController::class, 'switchFramework'])
             ->middleware(['auth', 'prompt.limit', 'prompt.track'])
