@@ -33,8 +33,9 @@ export function useTableSorting(
 
     const sortBy = (column: string) => {
         let newDirection = 'asc';
-        if (currentSortBy === column && currentDirection === 'asc') {
-            newDirection = 'desc';
+        if (currentSortBy === column) {
+            // Toggle direction if clicking the same column
+            newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
         }
 
         const params: Record<string, unknown> = {
