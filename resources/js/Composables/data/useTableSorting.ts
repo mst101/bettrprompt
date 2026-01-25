@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, isRef, type ComputedRef, type Ref } from 'vue';
 
 export interface UseTableSortingOptions {
     routePath?: string;
@@ -17,9 +17,9 @@ export interface UseTableSortingOptions {
  * @example
  * ```typescript
  * const { sortBy, sortDirection } = useTableSorting(
- *     props.filters.sortBy,
- *     props.filters.sortDirection,
- *     { additionalParams: { search: searchQuery.value, per_page: 25 } }
+ *     () => props.filters.sortBy,
+ *     () => props.filters.sortDirection,
+ *     { additionalParams: () => ({ search: search.value, per_page: 25 }) }
  * );
  *
  * // In template
@@ -27,17 +27,37 @@ export interface UseTableSortingOptions {
  * ```
  */
 export function useTableSorting(
-    currentSortBy: string,
-    currentDirection: string,
+    currentSortBy: string | (() => string) | ComputedRef<string> | Ref<string>,
+    currentDirection:
+        | string
+        | (() => string)
+        | ComputedRef<string>
+        | Ref<string>,
     options?: UseTableSortingOptions,
 ) {
-    const sortDirection = computed(() => currentDirection);
+    // Convert to getters for consistent access
+    const getSortBy = () => {
+        if (typeof currentSortBy === 'function') return currentSortBy();
+        if (isRef(currentSortBy)) return currentSortBy.value;
+        return currentSortBy;
+    };
+
+    const getDirection = () => {
+        if (typeof currentDirection === 'function') return currentDirection();
+        if (isRef(currentDirection)) return currentDirection.value;
+        return currentDirection;
+    };
+
+    const sortDirection = computed(() => getDirection());
 
     const sortBy = (column: string) => {
+        const currentSortByValue = getSortBy();
+        const currentDirectionValue = getDirection();
+
         let newDirection = 'asc';
-        if (currentSortBy === column) {
+        if (currentSortByValue === column) {
             // Toggle direction if clicking the same column
-            newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+            newDirection = currentDirectionValue === 'asc' ? 'desc' : 'asc';
         }
 
         // Get additionalParams - can be a function (for reactive values) or an object

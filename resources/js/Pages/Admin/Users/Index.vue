@@ -43,8 +43,8 @@ const { search } = useDebounceSearch(props.filters.search || '', {
 });
 
 const { sortBy, sortDirection } = useTableSorting(
-    props.filters.sortBy,
-    props.filters.sortDirection,
+    () => props.filters.sortBy,
+    () => props.filters.sortDirection,
     {
         routePath: countryRoute('admin.users.index'),
         additionalParams: () => ({
