@@ -99,14 +99,17 @@ const currentItem = computed(() => props.items[activeIndex.value]);
             <button
                 type="button"
                 :aria-label="$t('components.base.carousel.previous')"
-                class="shrink-0 rounded-full bg-indigo-50 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
+                class="shrink-0 rounded-full bg-indigo-100 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
                 @click="previousSlide"
             >
                 <DynamicIcon name="chevron-left" class="size-8" />
             </button>
 
             <!-- Carousel Content Container -->
-            <div class="relative flex-1 overflow-hidden">
+            <div
+                class="relative flex-1 cursor-pointer overflow-hidden"
+                @click="nextSlide"
+            >
                 <div class="relative flex h-72 items-start">
                     <TransitionGroup
                         enter-active-class="absolute left-0 right-0 top-0 transition-all duration-300"
@@ -182,7 +185,7 @@ const currentItem = computed(() => props.items[activeIndex.value]);
             <button
                 type="button"
                 :aria-label="$t('components.base.carousel.next')"
-                class="shrink-0 rounded-full bg-indigo-50 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
+                class="shrink-0 rounded-full bg-indigo-100 p-3 text-white transition-colors hover:bg-indigo-500 focus:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-50 focus:outline-hidden"
                 @click="nextSlide"
             >
                 <DynamicIcon name="chevron-right" class="size-8" />
