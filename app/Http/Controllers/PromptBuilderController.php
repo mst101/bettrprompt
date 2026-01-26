@@ -18,6 +18,7 @@ use App\Jobs\ProcessAnalysis;
 use App\Jobs\ProcessPreAnalysis;
 use App\Jobs\ProcessPromptGeneration;
 use App\Models\AnalyticsEvent;
+use App\Models\AnalyticsSession;
 use App\Models\ClaudeModel;
 use App\Models\Country;
 use App\Models\Currency;
@@ -196,6 +197,12 @@ class PromptBuilderController extends Controller
 
             // Track prompt started
             $context = $this->getAnalyticsContext($request);
+
+            // Ensure the analytics session exists if we have a session_id
+            if ($context['session_id']) {
+                $this->ensureAnalyticsSessionExists($context['session_id'], $visitorId);
+            }
+
             AnalyticsEvent::create([
                 'event_id' => (string) Str::uuid(),
                 'name' => 'prompt_started',
@@ -1272,5 +1279,52 @@ class PromptBuilderController extends Controller
         }
 
         return $context;
+    }
+
+    /**
+     * Ensure the analytics session exists before referencing it in events
+     */
+    protected function ensureAnalyticsSessionExists(string $sessionId, ?string $visitorId): void
+    {
+        try {
+            // Check if session already exists
+            if (AnalyticsSession::where('id', $sessionId)->exists()) {
+                return;
+            }
+
+            $now = now();
+            $visitor = $visitorId ? Visitor::find($visitorId) : null;
+
+            // Create a minimal session record
+            AnalyticsSession::create([
+                'id' => $sessionId,
+                'started_at' => $now,
+                'ended_at' => $now,
+                'duration_seconds' => 0,
+                'entry_page' => null,
+                'exit_page' => null,
+                'device_type' => null,
+                'referrer' => $visitor?->referrer,
+                'utm_source' => $visitor?->current_utm_source,
+                'utm_medium' => $visitor?->current_utm_medium,
+                'utm_campaign' => $visitor?->current_utm_campaign,
+                'utm_term' => $visitor?->current_utm_term,
+                'utm_content' => $visitor?->current_utm_content,
+                'user_id' => auth()->id(),
+                'visitor_id' => $visitorId,
+            ]);
+
+            Log::info('Created analytics session from PromptBuilderController', [
+                'session_id' => $sessionId,
+                'visitor_id' => $visitorId,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Failed to create analytics session in PromptBuilderController', [
+                'session_id' => $sessionId,
+                'visitor_id' => $visitorId,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't rethrow - continue with event creation without session
+        }
     }
 }

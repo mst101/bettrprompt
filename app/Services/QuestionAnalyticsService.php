@@ -259,7 +259,7 @@ class QuestionAnalyticsService
             ->pluck('question_id')
             ->toArray()
             |> (fn ($ids) => array_map(fn ($id) => $this->getQuestionPerformance($id), $ids))
-            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['skip_rate'] <=> $a['skip_rate']) ? $arr : $arr))
+            |> (fn ($arr) => usort($arr, fn ($a, $b) => $b['skip_rate'] <=> $a['skip_rate']) ? $arr : $arr)
             |> (fn ($arr) => array_slice($arr, 0, $limit));
     }
 
@@ -274,7 +274,7 @@ class QuestionAnalyticsService
             ->pluck('question_id')
             ->toArray()
             |> (fn ($ids) => array_map(fn ($id) => $this->getQuestionPerformance($id), $ids))
-            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $scoreCalc($b) <=> $scoreCalc($a)) ? $arr : $arr))
+            |> (fn ($arr) => usort($arr, fn ($a, $b) => $scoreCalc($b) <=> $scoreCalc($a)) ? $arr : $arr)
             |> (fn ($arr) => array_slice($arr, 0, $limit));
     }
 

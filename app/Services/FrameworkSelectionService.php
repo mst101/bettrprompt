@@ -199,7 +199,7 @@ class FrameworkSelectionService
             ->pluck('chosen_framework')
             ->toArray()
             |> (fn ($frameworks) => array_map(fn ($fw) => $this->getFrameworkPerformance($fw), $frameworks))
-            |> (fn ($arr) => (usort($arr, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']) ? $arr : $arr))
+            |> (fn ($arr) => usort($arr, fn ($a, $b) => $b['acceptance_rate'] <=> $a['acceptance_rate']) ? $arr : $arr)
             |> (fn ($arr) => array_slice($arr, 0, $limit));
     }
 }
