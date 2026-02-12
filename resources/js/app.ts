@@ -31,6 +31,7 @@ type FullStoryAuth = {
 
 // Fullstory visitor identification
 function identifyVisitorInFullstory(auth: FullStoryAuth) {
+    // FullStory is disabled via FULLSTORY_ENABLED config or not in production
     if (!window.FS) {
         return;
     }

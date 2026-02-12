@@ -67,6 +67,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'fullstory' => [
+        'enabled' => env('FULLSTORY_ENABLED', true),
+    ],
+
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
     ],
