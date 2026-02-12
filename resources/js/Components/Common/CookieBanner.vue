@@ -52,7 +52,7 @@ const closeSettings = () => {
                                     }}
                                 </h2>
                                 <p
-                                    class="mt-2 text-xs text-indigo-300 sm:text-sm"
+                                    class="mt-2 text-xs text-indigo-200 sm:text-sm"
                                 >
                                     {{
                                         $t(
