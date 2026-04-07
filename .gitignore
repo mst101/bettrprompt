@@ -6,6 +6,7 @@
 .env.backup
 .env.bettrprompt
 .env.production
+.env.testing
 .env.e2e
 .phpactor.json
 .phpunit.result.cache
